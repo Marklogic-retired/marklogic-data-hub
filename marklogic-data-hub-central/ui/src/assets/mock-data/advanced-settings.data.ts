@@ -21,7 +21,7 @@ const advancedMapping = {
 };
 
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad
-const stepLoad = { "data" : 
+const stepLoad = { "data" :
     {
         "collections": [ "testCollection" ],
         "additionalCollections": [ "addedCollection" ],
@@ -54,7 +54,7 @@ const stepLoad = { "data" :
 };
 
 // Returned from endpoint: /api/steps/ingestion/AdvancedMapping
-const stepMapping = { "data" : 
+const stepMapping = { "data" :
     {
         "collections": [ "testCollection" ],
         "additionalCollections": [ "addedCollection" ],
@@ -88,6 +88,7 @@ const stepMapping = { "data" :
 
 const data = {
     advancedLoad: advancedLoad,
+    customLoad: {...advancedLoad, stepData: {name: 'CustomLoad'}},
     advancedMapping: advancedMapping,
     stepLoad: stepLoad,
     stepMapping: stepMapping,

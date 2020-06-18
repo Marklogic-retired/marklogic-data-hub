@@ -25,7 +25,8 @@ describe('Advanced Step Settings dialog', () => {
     );
 
     expect(getByText('Advanced Step Settings')).toBeInTheDocument();
-
+    //'Step Definition Name' should be present only for custom ingestion steps
+    expect(queryByText('Step Definition Name')).not.toBeInTheDocument();
     //Verify if the step name is available in the settings dialog
     expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedLoad.stepData.name);
 
@@ -57,6 +58,48 @@ describe('Advanced Step Settings dialog', () => {
     fireEvent.click(getByText('Custom Hook'));
     expect(getByText('{ "hook": true }')).toBeInTheDocument();
 
+  });
+
+  /* Custom ingestion step should be same as default-ingestion except that for "step definition name"
+     field which should be present*/
+  test('Verify settings for Custom Load step', async () => {
+      const { getByText, getAllByText, queryByText } = render(
+          <AdvancedSettingsDialog {...data.customLoad} />
+      );
+
+      expect(getByText('Advanced Step Settings')).toBeInTheDocument();
+
+      //Verify if the step name is available in the settings dialog
+      expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.customLoad.stepData.name);
+      expect(queryByText('Source Database')).not.toBeInTheDocument();
+      expect(getByText('Target Database')).toBeInTheDocument();
+      expect(getByText('data-hub-STAGING')).toBeInTheDocument();
+
+      expect(getByText('Target Collections')).toBeInTheDocument();
+      expect(getByText('Please add target collections')).toBeInTheDocument();
+      expect(getByText('Default Collections')).toBeInTheDocument();
+
+      expect((await(waitForElement(() => getAllByText('custom-ingestion')))).length > 0);
+      expect(getByText('Step Definition Name')).toBeInTheDocument();
+
+      expect(getByText('Target Permissions')).toBeInTheDocument();
+
+      expect(getByText('Provenance Granularity')).toBeInTheDocument();
+      expect(getByText('Coarse-grained')).toBeInTheDocument();
+
+      expect(getByText('Batch Size')).toBeInTheDocument();
+
+      expect(getByText('Header Content')).toBeInTheDocument();
+      expect(getByText('{ "header": true }')).toBeInTheDocument();
+
+      expect(getByText('Processors')).toBeInTheDocument();
+      expect(getByText('Custom Hook')).toBeInTheDocument();
+
+      fireEvent.click(getByText('Processors'));
+      expect(getByText('{ "processor": true }')).toBeInTheDocument();
+
+      fireEvent.click(getByText('Custom Hook'));
+      expect(getByText('{ "hook": true }')).toBeInTheDocument();
   });
 
   test('Verify settings for Mapping', async () => {
@@ -345,7 +388,7 @@ describe('Advanced Step Settings dialog', () => {
     fireEvent.click(getByText('Processors'));
     fireEvent.click(getByText('Custom Hook'));
     let tipIcons  = getAllByLabelText('icon: question-circle');
-    const tips = ['sourceDatabase', 'targetDatabase', 'additionalCollections', 'targetPermissions', 
+    const tips = ['sourceDatabase', 'targetDatabase', 'additionalCollections', 'targetPermissions',
       'targetFormat', 'provGranularity', 'batchSize', 'headers', 'processors', 'customHook'];
     tips.forEach(async (tip, i) => {
       fireEvent.mouseOver(tipIcons[i]);
