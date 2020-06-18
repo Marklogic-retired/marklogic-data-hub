@@ -9,7 +9,7 @@ let artifact = {
   "definitions": {},
   "language": "zxx"
 };
-hubUtils.replaceLangWithLanguage(artifact);
+hubUtils.replaceLanguageWithLang(artifact);
 assertions.push(
   test.assertEqual("zxx", artifact.lang),
   test.assertTrue(artifact.language === undefined)
@@ -18,7 +18,7 @@ assertions.push(
 artifact = {
   "langNotHere": "hello"
 };
-hubUtils.replaceLangWithLanguage(artifact);
+hubUtils.replaceLanguageWithLang(artifact);
 assertions.push(
   test.assertEqual("hello", fn.string(artifact.langNotHere)),
   test.assertEqual(1, Object.keys(artifact).length)

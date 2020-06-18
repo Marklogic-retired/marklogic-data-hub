@@ -73,24 +73,24 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     @Override
     protected String getPayload(CommandContext context) {
         String payload = super.getPayload(context);
+        return payload != null ? preparePayloadBeforeSubmitting(payload) : null;
+    }
 
-        if (payload != null) {
-            try {
-                ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
-                payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
-                removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
+    protected String preparePayloadBeforeSubmitting(String payload) {
+        try {
+            ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
+            payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
+            removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
 
-                // language is somehow being added in a test; not sure how, but strip it out if it exists
-                if (payloadNode.has("language")) {
-                    payloadNode.remove("language");
-                }
-                return payloadNode.toString();
-            } catch (IOException e) {
-                throw new DataHubConfigurationException(e);
+            if (payloadNode.has("language") && "zxx".equalsIgnoreCase(payloadNode.get("language").asText())) {
+                logger.warn("Removing 'language' property because it has a value of 'zxx'; complete payload: " + payload);
+                payloadNode.remove("language");
             }
-        }
 
-        return payload;
+            return payloadNode.toString();
+        } catch (IOException e) {
+            throw new DataHubConfigurationException(e);
+        }
     }
 
     /**
@@ -122,7 +122,6 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     private void removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(ObjectNode payload) {
         if (hubConfig.getIsProvisionedEnvironment()) {
-            // for DHS we have to remove some keys
             logger.warn("Deploying indexes only to a provisioned environment");
             payload.remove("schema-database");
             payload.remove("triggers-database");
