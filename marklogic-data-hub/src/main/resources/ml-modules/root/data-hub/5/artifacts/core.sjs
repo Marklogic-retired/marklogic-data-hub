@@ -193,7 +193,7 @@ function setArtifact(artifactType, artifactName, artifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
     }
     artifact.lastUpdated = fn.string(fn.currentDateTime());
-    dataHub.hubUtils.replaceLangWithLanguage(artifact);
+    dataHub.hubUtils.replaceLanguageWithLang(artifact);
     for (const db of artifactDatabases) {
         dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
     }

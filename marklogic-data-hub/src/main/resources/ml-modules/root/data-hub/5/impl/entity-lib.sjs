@@ -231,7 +231,7 @@ function writeModel(entityName, model) {
 
   const dataHub = DataHubSingleton.instance();
 
-  dataHub.hubUtils.replaceLangWithLanguage(model);
+  dataHub.hubUtils.replaceLanguageWithLang(model);
 
   let permsString = dataHub.config.MODELPERMISSIONS;
   if (!permsString || permsString.startsWith("%%ml")) {

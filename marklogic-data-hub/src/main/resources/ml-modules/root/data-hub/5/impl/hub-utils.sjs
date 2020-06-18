@@ -246,7 +246,7 @@ class HubUtils {
    *
    * @param artifact
    */
-  replaceLangWithLanguage(artifact) {
+  replaceLanguageWithLang(artifact) {
     if (artifact.language) {
       artifact.lang = artifact.language;
       delete artifact.language;
