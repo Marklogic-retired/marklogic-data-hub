@@ -134,7 +134,7 @@ class RunFlowTask extends HubTask {
         inputs.setSteps(steps)
 
         if (project.ext.properties.containsKey("optionsFile")){
-            inputs.setOptionsFile(project.ext.options)
+            inputs.setOptionsFile(project.ext.optionsFile)
         }
         else if (project.ext.properties.containsKey("options")) {
             inputs.setOptionsJSON(project.ext.options)
