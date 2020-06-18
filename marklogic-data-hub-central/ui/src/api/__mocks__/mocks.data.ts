@@ -67,7 +67,7 @@ const curateAPI = (axiosMock) => {
       case '/api/steps/ingestion':
         return Promise.resolve(loadData.loads);
       case '/api/steps/ingestion/' + loadData.loads.data[0].name:
-        return Promise.resolve(loadData.loadSettings);    
+        return Promise.resolve(loadData.loadSettings);
       case '/api/steps/mapping':
         return Promise.resolve(curateData.mappings);
       case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name:
@@ -183,6 +183,9 @@ const advancedAPI = (axiosMock) => {
       switch (url) {
           case '/api/steps/ingestion/AdvancedLoad':
               return Promise.resolve(advancedData.stepLoad);
+          //Settings for a custom ingestion step
+          case '/api/steps/ingestion/CustomLoad':
+              return Promise.resolve({data:{...advancedData.stepLoad.data, stepDefinitionName:'custom-ingestion', name: 'CustomLoad'},status: 200});
           case '/api/steps/mapping/AdvancedMapping':
               return Promise.resolve(advancedData.stepMapping);
           default:
