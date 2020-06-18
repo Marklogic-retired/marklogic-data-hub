@@ -3,12 +3,6 @@
   "description": "Generic developer account; will soon be superceded by persona-specific accounts",
   "password": "%%testPassword%%",
   "role": [
-    "data-hub-developer",
-    "hub-central-user",
-    "hub-central-entity-model-writer",
-    "hub-central-load-writer",
-    "hub-central-mapping-writer",
-    "hub-central-flow-writer",
-    "hub-central-downloader"
+    "hub-central-developer"
   ]
 }

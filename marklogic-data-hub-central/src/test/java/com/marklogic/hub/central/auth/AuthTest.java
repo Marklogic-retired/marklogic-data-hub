@@ -66,7 +66,7 @@ class AuthTest extends AbstractMvcTest {
                 String strResponse = result.getResponse().getContentAsString();
                 JsonNode jsonResponse = objectMapper.readTree(strResponse);
                 assertTrue(jsonResponse.get("authorities").isArray());
-                assertFalse(jsonResponse.get("authorities").toString().contains("downloadProjectFiles"));
+                assertTrue(jsonResponse.get("authorities").toString().contains("loginToHubCentral"));
             })
             .andExpect(status().isOk());
 

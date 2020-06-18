@@ -3,10 +3,7 @@
   "description": "Pari is a MarkLogic expert",
   "password": "%%testPassword%%",
   "role": [
-    "data-hub-developer",
-    "hub-central-downloader",
-    "hub-central-load-writer",
-    "hub-central-mapping-writer",
-    "hub-central-flow-writer"
+    "hub-central-developer",
+    "data-hub-developer"
   ]
 }

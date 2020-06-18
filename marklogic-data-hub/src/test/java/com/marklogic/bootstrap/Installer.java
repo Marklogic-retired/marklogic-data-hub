@@ -48,23 +48,13 @@ public class Installer extends HubTestBase implements InitializingBean {
         User dataHubDeveloper = new User(api, "test-data-hub-developer");
         dataHubDeveloper.setPassword("password");
         dataHubDeveloper.addRole("data-hub-developer");
-        // Temporary until we get the hub-central-developer role complete
-        dataHubDeveloper.addRole("hub-central-user");
-        dataHubDeveloper.addRole("hub-central-load-writer");
-        dataHubDeveloper.addRole("hub-central-mapping-reader");
-        dataHubDeveloper.addRole("hub-central-mapping-writer");
-        dataHubDeveloper.addRole("hub-central-step-runner");
-        dataHubDeveloper.addRole("hub-central-flow-writer");
+        dataHubDeveloper.addRole("hub-central-developer");
         dataHubDeveloper.save();
 
         User dataHubOperator = new User(api, "test-data-hub-operator");
         dataHubOperator.setPassword("password");
         dataHubOperator.addRole("data-hub-operator");
-        // Temporary until we get the hub-central-operator role complete
-        dataHubOperator.addRole("hub-central-user");
-        dataHubOperator.addRole("hub-central-load-reader");
-        dataHubOperator.addRole("hub-central-mapping-reader");
-        dataHubOperator.addRole("hub-central-step-runner");
+        dataHubOperator.addRole("hub-central-operator");
         dataHubOperator.save();
 
         User hubCentralMappingReader = new User(api, "test-hub-mapping-reader");

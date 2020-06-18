@@ -70,7 +70,7 @@ class CreateFlowTaskTest extends BaseTest {
         flowDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "myTestFlow.flow.json").toFile());
-        def expectedPermissions = 'data-hub-operator,read,data-hub-operator,update'
+        def expectedPermissions = 'data-hub-common,read,data-hub-common-writer,update'
         data.steps.'1'.name == 'ingestion-step'
         data.steps.'1'.options.permissions == expectedPermissions
         data.steps.'2'.name == 'mapping-step'

@@ -83,7 +83,7 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
             return;
         }
 
-        runAsDataHubDeveloper();
+        runAsTestUserWithRoles("data-hub-developer");
         try {
             new DataHubImpl(getHubClient()).clearUserData();
             fail("This should have failed because a data-hub-developer does not have the privileges for clearing a database");
