@@ -66,6 +66,10 @@ public class HubCentralManager extends LoggingObject {
      * @param zipFile
      */
     public void applyHubCentralZipToProject(HubProject hubProject, File zipFile) {
+        if (zipFile == null || !zipFile.exists()) {
+            throw new RuntimeException("Unable to apply zip file to project, file does not exist: " + zipFile);
+        }
+
         deleteUserArtifacts(hubProject);
         deleteEntityBasedArtifacts(hubProject);
 
