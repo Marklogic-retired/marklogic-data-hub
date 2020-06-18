@@ -85,6 +85,19 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         verifyFlowsAndEntitiesAndStepsWereDeletedFromProject();
     }
 
+    @Test
+    void fileDoesNotExist() {
+        installProjectInFolder("test-projects/all-artifacts");
+        generateEntityBasedArtifacts();
+        try {
+            new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), new File("doesnt-exist.zip"));
+            fail("Should have failed immediately because the file doesn't exist");
+        } catch (RuntimeException ex) {
+            assertEquals("Unable to apply zip file to project, file does not exist: doesnt-exist.zip", ex.getMessage());
+            verifyEntityBasedArtifactsExist();
+        }
+    }
+
     private void generateEntityBasedArtifacts() {
         EntityManagerImpl em = new EntityManagerImpl(getHubConfig());
         em.saveDbIndexes();
