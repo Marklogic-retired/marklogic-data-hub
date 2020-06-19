@@ -56,6 +56,7 @@ public class ModelControllerTest extends AbstractHubCentralTest {
     @Test
     @WithMockUser(roles = {"writeEntityModel"})
     void testModelsServicesEndpoints() {
+        runAsDataHubDeveloper();
         createModel();
         updateModelInfo();
         updateModelEntityTypes();

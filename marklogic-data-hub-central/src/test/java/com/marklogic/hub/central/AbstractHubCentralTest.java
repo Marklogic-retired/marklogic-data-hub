@@ -1,6 +1,5 @@
 package com.marklogic.hub.central;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
 import com.marklogic.hub.HubClient;
@@ -8,6 +7,7 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,10 +64,15 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         testHubConfig = new HubConfigImpl(testHubProject);
 
         resetHubProject();
-        // By default, a test should run as a data-hub-developer
-        runAsDataHubDeveloper();
-        logger.info("Initialized test, time: " + (System.currentTimeMillis() - start));
 
+        // Run as the least-privileged HC user
+        runAsHubCentralUser();
+
+        logger.info("Initialized test, time: " + (System.currentTimeMillis() - start));
+    }
+
+    protected void runAsHubCentralUser() {
+        runAsTestUserWithRoles("hub-central-user");
     }
 
     @Override
@@ -121,7 +126,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
     protected void addStagingDoc(String resource, String uri, String... collections) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.getCollections().addAll(collections);
-        metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        metadata.getPermissions().add("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         FileHandle handle = new FileHandle(getFileFromClasspath(resource));
         getHubClient().getStagingClient().newDocumentManager().write(uri, metadata, handle);
     }
@@ -134,12 +139,34 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         }
     }
 
-    protected ObjectNode newLoadDataConfig() {
-        return readJsonObject("{ \"name\": \"validArtifact\", \"sourceFormat\": \"xml\", \"targetFormat\": \"json\"}");
+    /**
+     * While DHF core tests default to running as a developer, HC tests do not. But any time we want to install the
+     * reference project, we need to do it as a developer. So this method handles that.
+     *
+     * @return
+     */
+    @Override
+    protected ReferenceModelProject installReferenceModelProject() {
+        runAsDataHubDeveloper();
+        return super.installReferenceModelProject();
+    }
+
+    /**
+     * While DHF core tests default to running as a developer, HC tests do not. But any time we want to install the
+     * reference project, we need to do it as a developer. So this method handles that.
+     *
+     * @param loadQueryOptions
+     * @return
+     */
+    @Override
+    protected ReferenceModelProject installOnlyReferenceModelEntities(boolean loadQueryOptions) {
+        runAsDataHubDeveloper();
+        return super.installOnlyReferenceModelEntities(loadQueryOptions);
     }
 
     /**
      * Installs the provided project but will not load query options.
+     *
      * @param folderInClasspath
      */
     protected void installProjectInFolder(String folderInClasspath) {
