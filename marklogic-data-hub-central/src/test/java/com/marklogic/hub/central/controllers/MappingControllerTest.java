@@ -1,105 +1,70 @@
 package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.central.AbstractHubCentralTest;
+import com.marklogic.hub.central.AbstractMvcTest;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MappingControllerTest extends AbstractHubCentralTest {
-
-    @Autowired
-    MappingController controller;
+public class MappingControllerTest extends AbstractMvcTest {
 
     static final String VALID_MAPPING = "{\n" +
-        "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
+        "    \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\",\n" +
         "    \"properties\": {\n" +
-        "        \"id\": {\n" +
-        "            \"sourcedFrom\": \"concat(id, 'A')\"\n" +
+        "        \"name\": {\n" +
+        "            \"sourcedFrom\": \"concat(name, 'A')\"\n" +
         "        }\n" +
         "    }\n" +
         "}";
 
     static final String INVALID_MAPPING = "{\n" +
-        "    \"targetEntityType\": \"http://marklogic.com/data-hub/example/Customer-0.0.1/Customer\",\n" +
+        "    \"targetEntityType\": \"http://example.org/Customer-0.0.1/Customer\",\n" +
         "    \"properties\": {\n" +
-        "        \"id\": {\n" +
-        "            \"sourcedFrom\": \"concat(id, ')\"\n" +
+        "        \"name\": {\n" +
+        "            \"sourcedFrom\": \"concat(name, ')\"\n" +
         "        }\n" +
-        "    }\n" +
-        "}";
-
-    static final String TEST_ENTITY_MODEL = "{\n" +
-        "    \"info\": {\n" +
-        "        \"title\": \"Customer\",\n" +
-        "        \"version\": \"0.0.1\",\n" +
-        "        \"description\": \"A customer\",\n" +
-        "        \"baseUri\": \"http://marklogic.com/data-hub/example/\"\n" +
-        "    },\n" +
-        "    \"definitions\": {\n" +
-        "        \"Customer\": {\n" +
-        "            \"primaryKey\": \"id\",\n" +
-        "            \"required\": [],\n" +
-        "            \"properties\": {\n" +
-        "                \"id\": {\n" +
-        "                    \"datatype\": \"string\",\n" +
-        "                    \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
-        "                }\n" +
-        "            }\n" +
-        "        }\n" +
-        "    }\n" +
-        "}";
-
-    static final String TEST_ENTITY_INSTANCE = "{\n" +
-        "    \"envelope\": {\n" +
-        "        \"instance\": {\n" +
-        "            \"id\": \"100\"\n" +
-        "        },\n" +
-        "        \"attachments\": null\n" +
         "    }\n" +
         "}";
 
     @Test
-    @WithMockUser(roles = "readMapping")
-    void testValidateMappings() {
-        DatabaseClient databaseClient = getHubClient().getFinalClient();
-        databaseClient.newJSONDocumentManager().write(
-            "/test/entities/Customer.entity.json",
-            new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),
-            new StringHandle(TEST_ENTITY_MODEL).withFormat(Format.JSON)
-        );
-        databaseClient.newJSONDocumentManager().write(
-            "/test/customer100.json",
-            new StringHandle(TEST_ENTITY_INSTANCE).withFormat(Format.JSON)
-        );
+    void testValidateMappings() throws Exception {
+        runAsDataHubDeveloper();
+        ReferenceModelProject project = installOnlyReferenceModelEntities();
+        project.createRawCustomer(1, "Jane");
 
-        ObjectNode result = controller.testMapping(readJsonObject(VALID_MAPPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
-        assertEquals("concat(id, 'A')", result.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, 'A')");
-        assertEquals("100A", result.get("properties").get("id").get("output").asText(), "outpus should be 100A");
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
 
-        ObjectNode errorResult = controller.testMapping(readJsonObject(INVALID_MAPPING), "/test/customer100.json", getHubClient().getDbName(DatabaseKind.FINAL)).getBody();
-        assertEquals("concat(id, ')", errorResult.get("properties").get("id").get("sourcedFrom").asText(), "SourcedFrom should be concat(id, ')");
-        assertEquals("Invalid XPath expression: concat(id, ')", errorResult.get("properties").get("id").get("errorMessage").asText(), "errorMessage should be Invalid XPath expression: concat(id, ')");
+        postJson("/api/artifacts/mapping/validation?uri=/customer1.json&db=data-hub-STAGING", VALID_MAPPING)
+            .andExpect(status().isOk())
+            .andDo(response -> {
+                JsonNode result = parseJsonResponse(response);
+                System.out.println("RESULT: " + result);
+                assertEquals("concat(name, 'A')", result.get("properties").get("name").get("sourcedFrom").asText());
+                assertEquals("JaneA", result.get("properties").get("name").get("output").asText());
+            });
+
+        postJson("/api/artifacts/mapping/validation?uri=/customer1.json&db=data-hub-STAGING", INVALID_MAPPING)
+            .andDo(response -> {
+                JsonNode errorResult = parseJsonResponse(response);
+                assertEquals("concat(name, ')", errorResult.get("properties").get("name").get("sourcedFrom").asText());
+                assertEquals("Invalid XPath expression: concat(name, ')", errorResult.get("properties").get("name").get("errorMessage").asText());
+            });
     }
 
     /**
      * This is just a smoke test to verify we get a response; the real tests are ML unit tests.
      */
     @Test
-    @WithMockUser(roles = {"readMapping", "writeMapping"})
-    void testGetMappingFunctions() {
-        ObjectNode result = controller.getMappingFunctions().getBody();
-        assertTrue(result.size() > 100, "Should have at least 100 functions");
-        assertTrue(result.get("sum") != null, "Should have function 'sum'");
+    void testGetMappingFunctions() throws Exception {
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+        getJson("/api/artifacts/mapping/functions").andExpect(status().isOk()).andDo(result -> {
+            JsonNode response = parseJsonResponse(result);
+            assertTrue(response.size() > 100, "Should have at least 100 functions");
+            assertTrue(response.get("sum") != null, "Should have function 'sum'");
+        });
     }
 
     /**
@@ -107,24 +72,28 @@ public class MappingControllerTest extends AbstractHubCentralTest {
      * life easy for the mapping tool.
      */
     @Test
-    @WithMockUser(roles = {"readMapping", "writeMapping"})
-    void getEntityForMapping() {
+    void getEntityForMapping() throws Exception {
+        runAsDataHubDeveloper();
         installReferenceModelProject();
 
-        JsonNode customer = controller.getEntityForMapping("Customer");
-        JsonNode properties = customer.get("definitions").get("Customer").get("properties");
+        loginAsTestUserWithRoles("hub-central-mapping-writer");
 
-        JsonNode shipping = properties.get("shipping");
-        assertTrue(shipping.has("subProperties"), "shipping should be expanded to include the Address properties");
-        JsonNode shippingProperties = shipping.get("subProperties");
-        assertEquals("string", shippingProperties.get("street").get("datatype").asText());
-        assertEquals("string", shippingProperties.get("city").get("datatype").asText());
-        assertEquals("string", shippingProperties.get("state").get("datatype").asText());
+        getJson("/api/artifacts/mapping/entity/Customer").andExpect(status().isOk()).andDo(result -> {
+            JsonNode customer = parseJsonResponse(result);
+            JsonNode properties = customer.get("definitions").get("Customer").get("properties");
 
-        JsonNode zip = shipping.get("subProperties").get("zip");
-        assertTrue(zip.has("subProperties"), "zip should be expanded to include the Zip properties");
-        JsonNode zipProperties = zip.get("subProperties");
-        assertEquals("string", zipProperties.get("fiveDigit").get("datatype").asText());
-        assertEquals("string", zipProperties.get("plusFour").get("datatype").asText());
+            JsonNode shipping = properties.get("shipping");
+            assertTrue(shipping.has("subProperties"), "shipping should be expanded to include the Address properties");
+            JsonNode shippingProperties = shipping.get("subProperties");
+            assertEquals("string", shippingProperties.get("street").get("datatype").asText());
+            assertEquals("string", shippingProperties.get("city").get("datatype").asText());
+            assertEquals("string", shippingProperties.get("state").get("datatype").asText());
+
+            JsonNode zip = shipping.get("subProperties").get("zip");
+            assertTrue(zip.has("subProperties"), "zip should be expanded to include the Zip properties");
+            JsonNode zipProperties = zip.get("subProperties");
+            assertEquals("string", zipProperties.get("fiveDigit").get("datatype").asText());
+            assertEquals("string", zipProperties.get("plusFour").get("datatype").asText());
+        });
     }
 }

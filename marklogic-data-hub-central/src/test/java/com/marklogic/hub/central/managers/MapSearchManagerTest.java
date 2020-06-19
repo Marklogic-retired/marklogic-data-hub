@@ -5,15 +5,9 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.models.SJSSearchQuery;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class MapSearchManagerTest extends AbstractHubCentralTest {
-
-    @BeforeEach
-    void before() {
-        addStagingDoc("input/employee2.json", "/employee2.json", "UrisOnly");
-    }
 
     @Test
     void sjsSearchUrisOnly() {
@@ -26,6 +20,10 @@ class MapSearchManagerTest extends AbstractHubCentralTest {
     }
 
     private void sjsSearch(boolean urisOnly) {
+        runAsDataHubDeveloper();
+        addStagingDoc("input/employee2.json", "/employee2.json", "UrisOnly");
+
+        runAsTestUserWithRoles("hub-central-mapping-reader");
         SJSSearchQuery query = new SJSSearchQuery();
         query.database = getHubClient().getDbName(DatabaseKind.STAGING);
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";

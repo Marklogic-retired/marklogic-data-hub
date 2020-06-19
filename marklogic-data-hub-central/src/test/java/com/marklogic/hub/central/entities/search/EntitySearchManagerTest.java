@@ -28,7 +28,6 @@ import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -40,12 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     static String ACTUAL_QUERY_OPTIONS = EntitySearchManager.QUERY_OPTIONS;
-    EntitySearchManager entitySearchManager;
-
-    @BeforeEach
-    public void setUpDocs() {
-        entitySearchManager = new EntitySearchManager(getHubClient());
-    }
 
     @AfterEach
     public void resetData() {
@@ -58,16 +51,19 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
      */
     @Test
     void searchWithTransform() {
+        runAsDataHubDeveloper();
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
         project.createCustomerInstance(new Customer(1, "Jane"));
         project.createCustomerInstance(new Customer(2, "Sally"));
+
+        runAsHubCentralUser();
 
         SearchQuery query = new SearchQuery();
         DocSearchQueryInfo info = new DocSearchQueryInfo();
         info.setEntityTypeIds(Arrays.asList("Customer"));
         query.setQuery(info);
 
-        StringHandle results = entitySearchManager.search(query);
+        StringHandle results = new EntitySearchManager(getHubClient()).search(query);
         ObjectNode node = readJsonObject(results.get());
         assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
             "columns to display");
@@ -80,30 +76,36 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     @Test
     void noEntityTypesSelected() {
+        runAsDataHubDeveloper();
         // Need at least one entity model to exist for this scenario
         installOnlyReferenceModelEntities(true);
+
+        runAsHubCentralUser();
 
         SearchQuery query = new SearchQuery();
         DocSearchQueryInfo info = new DocSearchQueryInfo();
         info.setEntityTypeIds(Arrays.asList(" "));
         query.setQuery(info);
 
-        String results = entitySearchManager.search(query).get();
+        String results = new EntitySearchManager(getHubClient()).search(query).get();
         ObjectNode node = readJsonObject(results);
         assertEquals(0, node.get("total").asInt(), "When entityTypeIds has values, but they're all empty strings, the " +
-                "backend should return no results, and not throw an error");
+            "backend should return no results, and not throw an error");
     }
 
     @Test
     public void testSearchResultsOnNoData() {
+        runAsDataHubDeveloper();
         EntitySearchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
         getHubClient().getFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
-        assertTrue(entitySearchManager.search(new SearchQuery()).get().isEmpty());
+
+        runAsHubCentralUser();
+        assertTrue(new EntitySearchManager(getHubClient()).search(new SearchQuery()).get().isEmpty());
 
         SearchQuery query = new SearchQuery();
         query.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
-        assertTrue(entitySearchManager.search(query).get().isEmpty());
+        assertTrue(new EntitySearchManager(getHubClient()).search(query).get().isEmpty());
     }
 
     @Test
@@ -127,8 +129,8 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         sortOrderList.add(sortOrder);
         searchQuery.setSortOrder(sortOrderList);
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<options><sort-order type=\"xs:string\" direction=\"ascending\"><element ns=\"\" name=\"entityTypeProperty1\"/>\n" +
-                "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
+            "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
+        assertTrue(new EntitySearchManager(getHubClient()).buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 
     @Test
@@ -138,28 +140,28 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         searchQuery.getQuery().setSearchText("&<>'\"");
 
         String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<qtext>&amp;&lt;&gt;&apos;&quot;</qtext><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(entitySearchManager.buildSearchOptions(query, searchQuery).equals(expectedResult));
+        assertTrue(new EntitySearchManager(getHubClient()).buildSearchOptions(query, searchQuery).equals(expectedResult));
     }
 
     @Test
     void testGetColumnNamesForRowExport() throws JsonProcessingException {
         String json = "{\n" +
-                "  \"savedQuery\": {\n" +
-                "    \"name\": \"some-query\",\n" +
-                "    \"description\": \"some-query-description\",\n" +
-                "    \"query\": {\n" +
-                "      \"searchText\": \"some-string\",\n" +
-                "      \"entityTypeIds\": [\n" +
-                "        \"Entity1\"\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
-                "  }\n" +
-                "}";
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"some-query\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\"]\n" +
+            "  }\n" +
+            "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
         List<String> expectedCols = Arrays.asList("facet1", "EntityTypeProperty1");
 
-        List<String> actualCols = entitySearchManager.getColumnNamesForRowExport(queryDocument);
+        List<String> actualCols = new EntitySearchManager(getHubClient()).getColumnNamesForRowExport(queryDocument);
 
         assertEquals(expectedCols, actualCols);
     }
@@ -168,21 +170,21 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     void testGetQueryName() throws JsonProcessingException {
         String expectedQueryName = "query123";
         String json = "{\n" +
-                "  \"savedQuery\": {\n" +
-                "    \"name\": \"" + expectedQueryName + "\",\n" +
-                "    \"description\": \"some-query-description\",\n" +
-                "    \"query\": {\n" +
-                "      \"searchText\": \"some-string\",\n" +
-                "      \"entityTypeIds\": [\n" +
-                "        \"Entity1\"\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
-                "  }\n" +
-                "}";
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"" + expectedQueryName + "\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "  }\n" +
+            "}";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
-        String actualQueryName = entitySearchManager.getQueryName(queryDocument);
+        String actualQueryName = new EntitySearchManager(getHubClient()).getQueryName(queryDocument);
 
         assertEquals(expectedQueryName, actualQueryName);
     }
@@ -190,28 +192,28 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @Test
     void testGetEntityTypeForRowExport() throws JsonProcessingException {
         String json = "{\n" +
-                "  \"savedQuery\": {\n" +
-                "    \"name\": \"some-query\",\n" +
-                "    \"description\": \"some-query-description\",\n" +
-                "    \"query\": {\n" +
-                "      \"searchText\": \"some-string\",\n" +
-                "      \"entityTypeIds\": [\n" +
-                "        \"Entity-1\"\n" +
-                "      ]\n" +
-                "    },\n" +
-                "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
-                "  }\n" +
-                "}";
+            "  \"savedQuery\": {\n" +
+            "    \"name\": \"some-query\",\n" +
+            "    \"description\": \"some-query-description\",\n" +
+            "    \"query\": {\n" +
+            "      \"searchText\": \"some-string\",\n" +
+            "      \"entityTypeIds\": [\n" +
+            "        \"Entity-1\"\n" +
+            "      ]\n" +
+            "    },\n" +
+            "    \"propertiesToDisplay\": [\"facet1\", \"EntityTypeProperty1\", \"facet1.facet\", \"EntityTypeProperty1.property\", \"EntityType-Property\"]\n" +
+            "  }\n" +
+            "}";
         String expectedEntityTypeId = "Entity-1";
         JsonNode queryDocument = new ObjectMapper().readTree(json);
 
-        String actualEntityTypeId = entitySearchManager.getEntityTypeIdForRowExport(queryDocument);
+        String actualEntityTypeId = new EntitySearchManager(getHubClient()).getEntityTypeIdForRowExport(queryDocument);
 
         assertEquals(expectedEntityTypeId, actualEntityTypeId);
     }
 
     @Test
     void testGetQueryOptions() {
-        assertThrows(DataHubException.class, () -> entitySearchManager.getQueryOptions("non-existent-options"));
+        assertThrows(DataHubException.class, () -> new EntitySearchManager(getHubClient()).getQueryOptions("non-existent-options"));
     }
 }

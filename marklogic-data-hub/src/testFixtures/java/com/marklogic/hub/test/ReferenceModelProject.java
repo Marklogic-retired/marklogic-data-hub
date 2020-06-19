@@ -28,7 +28,7 @@ public class ReferenceModelProject extends TestObject {
         customer.put("name", name);
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
             .withCollections(INPUT_COLLECTION)
-            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/customer" + customerId + ".json", metadata, new JacksonHandle(customer));
     }
 
@@ -56,7 +56,7 @@ public class ReferenceModelProject extends TestObject {
 
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
             .withCollections(customerEntityType)
-            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/" + customerEntityType + customer.customerId + ".json", metadata, new JacksonHandle(envelope));
     }
 
