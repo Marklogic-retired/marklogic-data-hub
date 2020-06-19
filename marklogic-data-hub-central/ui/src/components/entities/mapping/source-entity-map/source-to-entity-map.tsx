@@ -620,12 +620,12 @@ const SourceToEntityMap = (props) => {
                     autoSize={{ minRows: 1 }}
                     disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
                 <span>
-                    <Dropdown overlay={sourceSearchMenu} trigger={['click']} >
-                        <i  id="listIcon"><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split('/').pop()+'-listIcon'}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
+                    <Dropdown overlay={sourceSearchMenu} trigger={['click']} disabled={!props.canReadWrite}>
+                        <i  id="listIcon" data-testid={row.name.split('/').pop()+'-listIcon1'}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split('/').pop()+'-listIcon'}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
                     </Dropdown>
                 </span>
                 &nbsp;&nbsp;
-                <span ><Dropdown overlay={menu} trigger={['click']}><Button id="functionIcon" data-testid={`${row.name.split('/').pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
+                <span ><Dropdown overlay={menu} trigger={['click']} disabled={!props.canReadWrite}><Button id="functionIcon" data-testid={`${row.name.split('/').pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
                 {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+'-expErr'} className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {

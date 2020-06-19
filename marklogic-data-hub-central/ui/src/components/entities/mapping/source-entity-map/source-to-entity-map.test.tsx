@@ -499,6 +499,10 @@ describe('RTL Source-to-entity map tests', () => {
         //Verify Clear button click
         fireEvent.click(getByText('Clear'))
         expect(getByTestId('propAttribute-value')).not.toHaveTextContent('home')
+
+        //Verify that fx/source-data list is disabled for mapping reader user
+        expect(getByTestId('propId-1-functionIcon')).toBeDisabled();
+        expect(getByTestId('propId-listIcon1')).toHaveAttribute('disabled')
     })
 
     test('Verify evaluation of invalid expression for mapping writer user', async () => {
@@ -531,6 +535,10 @@ describe('RTL Source-to-entity map tests', () => {
         //Verify Clear button click
         fireEvent.click(getByText('Clear'))
         expect(queryByTestId('propId-expErr')).toBeNull()
+
+        //Verify that fx/source-data list is enabled for mapping writer user
+        expect(getByTestId('propId-1-functionIcon')).toBeEnabled();
+        expect(getByTestId('propId-listIcon1')).not.toHaveAttribute('disabled')
     })
 
     test('Verify evaluation of invalid expression for mapping reader user', async () => {
