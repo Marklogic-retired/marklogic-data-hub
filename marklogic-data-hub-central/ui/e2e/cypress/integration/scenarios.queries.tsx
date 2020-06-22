@@ -282,6 +282,87 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveModalIcon().should('not.be.visible')
     });
 
+    // Reset query confirmation
+    it('Show Reset query button, open reset confirmation', () => {
+        // Clicking on reset after selected facets are applied, saves new query and navigates to zero state
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getResetQueryButton().click();
+        //selecting cancel will be in the same state as before
+        browsePage.getResetConfirmationCancelClick();
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.getResetQueryButton().click();
+        // clicking on no doesn't create a new query and navigates to zero state
+        browsePage.getResetConfirmationNoClick();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+        browsePage.selectEntity('Customer');
+        browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getResetQueryButton().click();
+        //selecting yes will save the new query and navigates to zero state
+        browsePage.getResetConfirmationYesClick();
+        browsePage.getSaveQueryName().should('be.visible');
+        browsePage.getSaveQueryName().type('reset-query');
+        browsePage.getSaveQueryButton().click();
+        browsePage.getExploreButton().should('be.visible')
+        browsePage.getExploreButton().click();
+        browsePage.selectEntity('Customer');
+        browsePage.selectQuery('reset-query');
+        browsePage.getAppliedFacets('Kelley').should('exist');
+    });
+
+    it('Show Reset query button, clicking reset confirmation when making changes to saved query', () => {
+        // Select saved query, make changes, click on reset opens a confirmation
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.getSelectedQuery().should('contain', 'select a query');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.selectQuery('reset-query');
+        browsePage.getSelectedQuery().should('contain', 'reset-query');
+        browsePage.getFacetItemCheckbox('lastname', 'Oneal').click();
+        browsePage.getResetQueryButton().click();
+        //selecting cancel will be in the same state as before
+        browsePage.getResetConfirmationCancelClick();
+        browsePage.getSelectedQuery().should('contain', 'reset-query');
+        // clicking on no doesn't update query and navigates to zero state
+        browsePage.getResetQueryButton().click();
+        browsePage.getResetConfirmationNoClick();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+        //selecting yes will update the query and navigates to zero state
+        browsePage.selectEntity('Customer');
+        browsePage.selectQuery('reset-query');
+        browsePage.getFacetItemCheckbox('lastname', 'Oneal').click();
+        browsePage.getResetQueryButton().click();
+        browsePage.getResetConfirmationYesClick();
+        browsePage.getRadioOptionSelected();
+        browsePage.getEditSaveChangesButton().click();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+        browsePage.selectEntity('Customer');
+        browsePage.selectQuery('reset-query');
+        browsePage.getAppliedFacets('Oneal').should('exist');
+    });
+
+    it('Show Reset query button, clicking reset icon navigates to zero state', () => {
+        // Select saved query, make changes, click on reset opens a confirmation
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.selectQuery('reset-query');
+        browsePage.getResetQueryButton().click();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+    })
+
 });
 
 

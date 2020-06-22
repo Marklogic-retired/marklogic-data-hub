@@ -23,6 +23,7 @@ interface Props {
     isSaveQueryChanged: () => boolean;
     entityQueryUpdate: boolean;
     toggleEntityQueryUpdate: () => void;
+    resetYesClicked: boolean
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -34,6 +35,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
         searchOptions,
         applySaveQuery,
         setAllGreyedOptions,
+        setZeroState,
         setSelectedQuery
     } = useContext(SearchContext);
 
@@ -122,11 +124,24 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                     }
                     props.setCurrentQueryName(props.nextQueryName);
                 }
-                props.setCurrentQueryDescription(queryDescription);
-                if (props.entityQueryUpdate) {
+                if (props.entityQueryUpdate && !props.resetYesClicked) {
                     props.setCurrentQueryOnEntityChange();
                     props.toggleEntityQueryUpdate();
                 }
+                if(props.resetYesClicked && !props.entityQueryUpdate){
+                    setZeroState(true)
+                    let options: QueryOptions = {
+                        searchText: '',
+                        entityTypeIds: [],
+                        selectedFacets: {},
+                        selectedQuery: 'select a query',
+                        propertiesToDisplay: [],
+                        zeroState: true,
+                        manageQueryModal: false,
+                    }
+                    applySaveQuery(options);
+                }
+                props.setCurrentQueryDescription(queryDescription);
             }
         } catch (error) {
             if (error.response.status === 400) {
