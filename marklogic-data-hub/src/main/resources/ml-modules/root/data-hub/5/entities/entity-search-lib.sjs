@@ -44,9 +44,10 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
   }
   selectedPropertyMetadata = selectedPropertyMetadata.length > 0 ? selectedPropertyMetadata : propertyMetadata.slice(0, maxDefaultProperties);
 
-  // Add entityProperties to each search result
+  // Add entityProperties and primaryKey to each search result
   searchResponse.results.forEach(result => {
     result.entityProperties = [];
+    result.primaryKey = {};
 
     let instance = null;
     try {
@@ -55,14 +56,25 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
       console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     }
 
+    let entityDef = entityModel.definitions[entityName];
     if (instance != null) {
       const entityInstance = instance[entityName];
       if (!entityInstance) {
         console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityName}'; will not add entity properties to its search result`);
       } else {
         selectedPropertyMetadata.forEach(parentProperty => {
-          result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
-        });
+            result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
+            result.primaryKey = getPrimaryValue(entityInstance, entityDef);
+
+            // no primaryKey in entity instance, so use URI
+            if (result.primaryKey === null) {
+              result.primaryKey = {
+                "propertyPath": "uri",
+                "propertyValue": result.uri
+              }
+            }
+          }
+        );
       }
     }
   });
@@ -267,6 +279,30 @@ function getPropertyValues(currentProperty, entityInstance) {
         (currentProperty.multiple ? [] : "");
   }
   return resultObject;
+}
+
+// returns null to use uri
+function getPrimaryValue(entityInstance, entityDefinition) {
+  let primaryKeyData = {}
+  if (entityDefinition.hasOwnProperty("primaryKey")) {
+    let primaryKey = entityDefinition.primaryKey;
+
+    if (entityInstance.hasOwnProperty(primaryKey)) {
+      let primaryKeyValue = entityInstance[primaryKey]
+
+      if (primaryKeyValue === null || primaryKeyValue === "") {
+        return null;
+      } else {
+        primaryKeyData.propertyPath = primaryKey;
+        primaryKeyData.propertyValue = primaryKeyValue;
+        return primaryKeyData;
+      }
+    } else { // no primaryKey in entityInstance, so use uri
+      return null;
+    }
+  } else { // no primaryKey in entityDef, so use uri
+    return null;
+  }
 }
 
 module.exports = {

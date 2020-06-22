@@ -1,0 +1,36 @@
+{
+  "envelope": {
+    "instance": {
+      "Customer": {
+        "shipping": [
+          {
+            "Address": {
+              "street": "Sutter Place",
+              "city": "Sacramento",
+              "state": "California",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "95758",
+                  "plusFour": "1718"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": "Oliverio Drive",
+              "city": "Coppell",
+              "state": "Texas",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "94070",
+                  "plusFour": "1234"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
