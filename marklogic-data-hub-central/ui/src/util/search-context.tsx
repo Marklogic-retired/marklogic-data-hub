@@ -181,6 +181,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       entityTypeIds: entityOptions,
       pageLength: searchOptions.pageSize,
       selectedQuery: 'select a query',
+      selectedTableProperties: [],
     });
     setGreyedOptions({
       ...greyedOptions,
