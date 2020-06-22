@@ -22,6 +22,7 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 var stepDefinitionType;
 var stepProperties;
 
+stepDefinitionType = stepDefinitionType.toLowerCase();
 stepProperties = stepProperties.toObject();
 const stepName = stepProperties.name;
 

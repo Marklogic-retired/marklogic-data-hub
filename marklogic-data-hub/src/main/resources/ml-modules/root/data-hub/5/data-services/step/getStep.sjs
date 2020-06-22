@@ -15,4 +15,8 @@
  */
 'use strict';
 
+var stepDefinitionType;
+var stepName;
+
+stepDefinitionType = stepDefinitionType.toLowerCase();
 require('/data-hub/5/artifacts/core.sjs').getArtifact(stepDefinitionType, stepName);
