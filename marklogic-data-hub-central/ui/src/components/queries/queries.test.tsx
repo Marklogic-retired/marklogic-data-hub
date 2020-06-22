@@ -34,4 +34,23 @@ describe('Queries Component', () => {
         />);
         expect(queryByTitle('discard-changes')).not.toBeInTheDocument();
     });
+
+    test('Verify save changes button does not exist', () => {
+        const { queryByTitle } = render(<Query
+            isSavedQueryUser={false}
+            selectedFacets={[]}
+            greyFacets={[]}
+        />);
+        expect(queryByTitle('save-changes')).not.toBeInTheDocument();
+    });
+
+    test('Verify reset changes button does not exist', () => {
+        const { queryByTitle } = render(<Query
+            isSavedQueryUser={false}
+            selectedFacets={[]}
+            greyFacets={[]}
+        />);
+        expect(queryByTitle('reset-changes')).not.toBeInTheDocument();
+    });
+
 });

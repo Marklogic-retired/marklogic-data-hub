@@ -330,6 +330,10 @@ class BrowsePage {
       return cy.get('.manage-modal-close-icon');
   }
 
+  getResetQueryButton(){
+      return cy.get('#reset-changes')
+  }
+
     //temp query icon
   getManageQueriesIcon(){
     return cy.get('[data-testid=manage-queries-modal-icon]');
@@ -390,6 +394,18 @@ class BrowsePage {
     return cy.get('#entity-confirmation-yes-button');
   }
 
+  // Reset Query Confirmation buttons
+    getResetConfirmationCancelClick(){
+        return cy.get('#reset-confirmation-cancel-button').click();
+    }
+
+    getResetConfirmationNoClick(){
+        return cy.get('#reset-confirmation-no-button').click();
+    }
+
+    getResetConfirmationYesClick(){
+        return cy.get('#reset-confirmation-yes-button').click();
+    }
 
   // Zero state Explorer
   getExploreButton() {

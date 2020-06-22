@@ -4,7 +4,7 @@ import { UserContext } from '../../util/user-context';
 import { SearchContext } from '../../util/search-context';
 import SelectedFacets from '../../components/selected-facets/selected-facets';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPencilAlt, faSave, faCopy, faUndo } from '@fortawesome/free-solid-svg-icons'
+import { faPencilAlt, faSave, faCopy, faUndo, faWindowClose } from '@fortawesome/free-solid-svg-icons'
 import SaveQueryModal from "../../components/queries/saving/save-query-modal/save-query-modal";
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
 import { fetchQueries, creatNewQuery, fetchQueryById } from '../../api/queries'
@@ -28,7 +28,8 @@ const Query = (props) => {
         applySaveQuery,
         clearAllGreyFacets,
         setEntity,
-        setNextEntity
+        setNextEntity,
+        setZeroState
     } = useContext(SearchContext);
 
     const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -50,6 +51,11 @@ const Query = (props) => {
     const [showEntityConfirmation, toggleEntityConfirmation] = useState(false);
     const [entityQueryUpdate, toggleEntityQueryUpdate] = useState(false);
     const [entityCancelClicked, toggleEntityCancelClicked] = useState(false);
+    const [resetQueryIcon, setResetQueryIcon] = useState(true);
+    const [showResetQueryNewConfirmation, toggleResetQueryNewConfirmation] = useState(false);
+    const [showResetQueryEditedConfirmation, toggleResetQueryEditedConfirmation] = useState(false);
+
+    const [resetYesClicked, toggleResetYesClicked] = useState(false);
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -92,7 +98,7 @@ const Query = (props) => {
     const getSaveQueryWithId = async (key) => {
        try {
            const response = await fetchQueryById(key);
-           if (response.data) {               
+           if (response.data) {
             let options: QueryOptions = {
                 searchText: response.data.savedQuery.query.searchText,
                 entityTypeIds: response.data.savedQuery.query.entityTypeIds,
@@ -120,10 +126,11 @@ const Query = (props) => {
            resetSessionTime()
        }
    }
+
     const isSaveQueryChanged = () => {
         if (currentQuery && currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
             if ((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
-                (currentQuery.savedQuery.query.searchText !== searchOptions.query) || 
+                (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
                 (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
                 (props.greyFacets.length > 0)) {
                 return true;
@@ -147,7 +154,9 @@ const Query = (props) => {
     }, [searchOptions.entityTypeIds]);
 
     useEffect(() => {
-            if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {     // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
+            if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]
+                && !searchOptions.zeroState) {
+                // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
                 if (isSaveQueryChanged()) {
                     toggleEntityConfirmation(true);
                 } else {
@@ -158,7 +167,7 @@ const Query = (props) => {
             }
     }, [searchOptions.nextEntityType]);
 
-
+    // Switching between entity confirmation modal buttons
     const onCancel = () => {
         toggleEntityConfirmation(false);
         toggleEntityCancelClicked(true);
@@ -176,11 +185,72 @@ const Query = (props) => {
     }
 
     const setCurrentQueryOnEntityChange = () => {
-         setEntity(searchOptions.nextEntityType);
-         setCurrentQuery({});
-         setCurrentQueryName('select a query');
-         setCurrentQueryDescription('');
-         toggleEntityConfirmation(false);
+        setEntity(searchOptions.nextEntityType);
+        setCurrentQuery({});
+        setCurrentQueryName('select a query');
+        setCurrentQueryDescription('');
+        toggleEntityConfirmation(false);
+    }
+
+   // Reset confirmation modal buttons when making changes to saved query
+    const onResetCancel = () => {
+        toggleResetQueryNewConfirmation(false);
+        toggleResetQueryEditedConfirmation(false);
+
+    }
+
+    const onResetOk = () => {
+        if(showResetQueryNewConfirmation){
+          setOpenSaveModal(true);
+          toggleResetYesClicked(true);
+        }
+        else{
+          setOpenSaveChangesModal(true);
+          toggleResetYesClicked(true);
+        }
+        toggleResetQueryNewConfirmation(false);
+        toggleResetQueryEditedConfirmation(false);
+    }
+
+    const onNoResetClick = () => {
+        setZeroState(true);
+        let options: QueryOptions = {
+            searchText: '',
+            entityTypeIds: [],
+            selectedFacets: {},
+            selectedQuery: 'select a query',
+            propertiesToDisplay: [],
+            zeroState: true,
+            manageQueryModal: false,
+        }
+        applySaveQuery(options);
+        toggleResetQueryEditedConfirmation(false);
+        toggleResetQueryNewConfirmation(false);
+    }
+
+    const resetIconClicked = () => {
+        const resetQueryEditedConfirmation = props.isSavedQueryUser && queries.length > 0
+                                            && searchOptions.selectedQuery !== 'select a query' && isSaveQueryChanged()
+        const resetQueryNewConfirmation = props.isSavedQueryUser && queries.length > 0 &&
+                                          (props.selectedFacets.length > 0 || searchOptions.query.length > 0 || props.greyFacets.length > 0)
+                                          && searchOptions.selectedQuery === 'select a query'
+        if (resetQueryNewConfirmation) {
+            toggleResetQueryNewConfirmation(true)
+        } else if (resetQueryEditedConfirmation) {
+            toggleResetQueryEditedConfirmation(true)
+        } else {
+            setZeroState(true);
+            let options: QueryOptions = {
+                searchText: '',
+                entityTypeIds: [],
+                selectedFacets: {},
+                selectedQuery: 'select a query',
+                propertiesToDisplay: [],
+                zeroState: true,
+                manageQueryModal: false,
+            }
+            applySaveQuery(options);
+        }
     }
 
     useEffect(() => {
@@ -194,20 +264,24 @@ const Query = (props) => {
 
 
     useEffect(() => {
-        if (!showSaveNewIcon && isSaveQueryChanged()) {
+        if (isSaveQueryChanged()) {
             toggleSaveChangesIcon(true);
             toggleDiscardIcon(true);
+            toggleSaveNewIcon(false);
         }
         else{
             toggleSaveChangesIcon(false);
             toggleDiscardIcon(false);
         }
+
     }, [searchOptions, props.greyFacets, isSaveQueryChanged()])
 
     return (
         <div>
             <div>
-                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || searchOptions.selectedTableProperties.length > 0) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
+                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query
+                    || searchOptions.selectedTableProperties.length > 0) &&
+                showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === 'select a query' &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save the current query'}>
                             <FontAwesomeIcon
@@ -240,6 +314,7 @@ const Query = (props) => {
                                     setCurrentQueryName={setCurrentQueryName}
                                     currentQueryDescription={currentQueryDescription}
                                     setCurrentQueryDescription={setCurrentQueryDescription}
+                                    resetYesClicked={resetYesClicked}
                                 />}
                         </div>
                     </div>}
@@ -282,6 +357,7 @@ const Query = (props) => {
                                     isSaveQueryChanged={isSaveQueryChanged}
                                     entityQueryUpdate={entityQueryUpdate}
                                     toggleEntityQueryUpdate={()=>toggleEntityQueryUpdate(false)}
+                                    resetYesClicked={resetYesClicked}
                                 />}
                         </div>
                     </div>}
@@ -377,8 +453,48 @@ const Query = (props) => {
                             setCurrentQueryName={setCurrentQueryName}
                             currentQueryDescription={currentQueryDescription}
                             setCurrentQueryDescription={setCurrentQueryDescription}
+                            resetYesClicked={resetYesClicked}
                         />}
                 </div>}
+            { resetQueryIcon && props.isSavedQueryUser && queries.length > 0 &&
+            <div style={searchOptions.selectedQuery !== 'select a query' ? {
+                marginLeft: '256px',
+                marginTop: '-21px',
+            } : {
+                marginLeft: '192px',
+                marginTop: '-66px',
+            }}>
+                <Tooltip title={'Clear query'}>
+                   <FontAwesomeIcon
+                        icon={faWindowClose}
+                        title={'reset-changes'}
+                        size="lg"
+                        onClick={() => resetIconClicked()}
+                        style={{ width: '18px', color: '#5b69af',  cursor:'pointer' }}
+                        id='reset-changes'
+                    />
+                </Tooltip>
+                <Modal
+                    visible={showResetQueryEditedConfirmation || showResetQueryNewConfirmation}
+                    title={'Confirmation'}
+                    onCancel={()=> onResetCancel()}
+                    footer={[
+                        <Button key='cancel' id='reset-confirmation-cancel-button' onClick={() => onResetCancel()}>Cancel</Button>,
+                        <Button key="back" id='reset-confirmation-no-button' onClick={() => onNoResetClick()}>
+                            No
+                        </Button>,
+                        <Button key="submit"  id='reset-confirmation-yes-button' type="primary"  onClick={()=> onResetOk()}>
+                            Yes
+                        </Button>
+                    ]}>
+                    {showResetQueryEditedConfirmation &&
+                    <div><p><strong>{searchOptions.selectedQuery}</strong> has been edited since it was last saved.</p>
+                    <br/>
+                    <p>Would you like to save the changes to <strong>{searchOptions.selectedQuery}</strong> before resetting?</p>
+                    </div>}
+                    {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
+                </Modal>
+            </div>}
             <div id="selected-query-description" style={props.isSavedQueryUser ? {marginTop: '10px'} : {marginTop: '-36px'}}
                  className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
                 <Tooltip title={currentQueryDescription}>
