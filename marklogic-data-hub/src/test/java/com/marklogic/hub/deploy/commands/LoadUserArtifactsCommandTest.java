@@ -15,28 +15,25 @@
  */
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class LoadUserArtifactsCommandTest extends HubTestBase {
+public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
 
     private LoadUserArtifactsCommand loadUserArtifactsCommand;
 
@@ -135,25 +132,75 @@ public class LoadUserArtifactsCommandTest extends HubTestBase {
         config.setFlowPermissions("manage-user,read,manage-admin,update");
         config.setMappingPermissions("manage-user,read,manage-admin,update");
         config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getEntityModelPermissions(),"http://marklogic.com/entity-services/models").getPermissions();
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getEntityModelPermissions(), "http://marklogic.com/entity-services/models").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-entity-model-writer"));
 
-        perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-step-definition-writer"));
 
-        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(), "http://marklogic.com/data-hub/flow").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-flow-reader"));
 
-        perms = loadUserArtifactsCommand.buildMetadata(config.getMappingPermissions(),"http://marklogic.com/data-hub/mappings").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(config.getMappingPermissions(), "http://marklogic.com/data-hub/mappings").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-mapping-reader"));
+    }
 
+    @Test
+    void scaffoldedIngestionStep() {
+        final String stepName = "testIngester";
+        final String stepType = "INGESTION"; // use uppercase to verify it gets converted to lowercase
+
+        File file = new ScaffoldingImpl(getHubConfig()).createStepFile(stepName, stepType).getLeft();
+        verifyScaffoldedFileDoesntHavePropertiesThatBackendWillSet(file, stepName);
+
+        loadUserArtifactsCommand.loadUserArtifacts();
+
+        JsonNode step = StepService.on(getHubClient().getStagingClient()).getStep(stepType, stepName);
+        assertEquals(stepName, step.get("name").asText());
+        assertEquals("default-ingestion", step.get("stepDefinitionName").asText());
+        assertEquals("ingestion", step.get("stepDefinitionType").asText());
+        assertEquals(stepName + "-ingestion", step.get("stepId").asText());
+    }
+
+    @Test
+    void scaffoldedMappingStep() throws IOException {
+        installOnlyReferenceModelEntities();
+
+        final String stepName = "testMapper";
+        final String stepType = "MAPPING";
+
+        File file = new ScaffoldingImpl(getHubConfig()).createStepFile(stepName, stepType).getLeft();
+        verifyScaffoldedFileDoesntHavePropertiesThatBackendWillSet(file, stepName);
+
+        // Fix targetEntityType so the mapping can be loaded
+        ObjectNode fileStep = readJsonObject(file);
+        fileStep.put("targetEntityType", "http://example.org/Customer-0.0.1/Customer");
+        objectMapper.writeValue(file, fileStep);
+
+        loadUserArtifactsCommand.loadUserArtifacts();
+
+        JsonNode step = StepService.on(getHubClient().getStagingClient()).getStep(stepType, stepName);
+        assertEquals(stepName, step.get("name").asText());
+        assertEquals("entity-services-mapping", step.get("stepDefinitionName").asText());
+        assertEquals("mapping", step.get("stepDefinitionType").asText());
+        assertEquals(stepName + "-mapping", step.get("stepId").asText());
+    }
+
+    private void verifyScaffoldedFileDoesntHavePropertiesThatBackendWillSet(File file, String stepName) {
+        ObjectNode fileStep = readJsonObject(file);
+        assertEquals(stepName, fileStep.get("name").asText());
+        final String message = "The default scaffolded step shouldn't have stepDefinitionName/stepDefinitionType/stepId " +
+            "because those will be populated by the backend when the step is loaded";
+        assertFalse(fileStep.has("stepDefinitionName"), message);
+        assertFalse(fileStep.has("stepDefinitionType"), message);
+        assertFalse(fileStep.has("stepId"), message);
     }
 }

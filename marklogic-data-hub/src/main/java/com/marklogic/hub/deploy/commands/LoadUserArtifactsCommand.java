@@ -39,6 +39,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -110,6 +111,14 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
+        loadUserArtifacts();
+    }
+
+    /**
+     * The CommandContext has no bearing on how user artifacts are loaded, so this method is easier to use when this
+     * class is used outside a deployment context.
+     */
+    public void loadUserArtifacts() {
         DatabaseClient stagingClient = hubConfig.newStagingClient(null);
 
         try {
@@ -122,7 +131,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             ArtifactService artifactService = ArtifactService.on(stagingClient);
 
             // Then load steps
-            loadSteps(artifactService);
+            loadSteps(stagingClient);
 
             // TODO Can simplify this to just having a method for flows and a method for step definitions once
             // we're no longer creating matching settings
@@ -345,13 +354,14 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * Loads steps, where the assumption is that the name of each directory under the steps path corresponds to a step
      * definition type. And thus each .step.json file in that directory should be loaded as a step.
      *
-     * @param artifactService
+     * @param stagingClient
      * @throws IOException
      */
-    private void loadSteps(ArtifactService artifactService) throws IOException {
+    private void loadSteps(DatabaseClient stagingClient) throws IOException {
         final Path stepsPath = hubConfig.getHubProject().getStepsPath();
         if (stepsPath.toFile().exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
+            StepService stepService = StepService.on(stagingClient);
             for (File stepTypeDir : stepsPath.toFile().listFiles(file -> file.isDirectory())) {
                 final String stepType = stepTypeDir.getName();
                 for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
@@ -363,7 +373,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     if (logger.isInfoEnabled()) {
                         logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
                     }
-                    artifactService.setArtifact(stepType, stepName, step);
+                    stepService.saveStep(stepType, step);
                 }
             }
         }

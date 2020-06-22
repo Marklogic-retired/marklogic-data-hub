@@ -21,6 +21,7 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 var stepDefinitionType;
 var stepName;
 
+stepDefinitionType = stepDefinitionType.toLowerCase();
 const stepId = stepName + "-" + stepDefinitionType;
 xdmp.trace(consts.TRACE_STEP, `Deleting step ${stepId}`);
 
