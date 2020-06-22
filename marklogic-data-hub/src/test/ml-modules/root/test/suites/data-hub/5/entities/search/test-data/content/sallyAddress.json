@@ -1,0 +1,36 @@
+{
+  "envelope": {
+    "instance": {
+      "Customer": {
+        "shipping": [
+          {
+            "Address": {
+              "street": "Whitwell Place",
+              "city": "Ellerslie",
+              "state": "Georgia",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "52239",
+                  "plusFour": "1718"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": "Skyway road",
+              "city": "San carlos",
+              "state": "California",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "94070",
+                  "plusFour": "1234"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
