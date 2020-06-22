@@ -16,6 +16,7 @@ interface Props {
     setSaveNewIconVisibility: (clicked: boolean) => void;
     currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
+    resetYesClicked: boolean;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -26,7 +27,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         setAllSearchFacets,
         searchOptions,
         applySaveQuery,
-        setAllGreyedOptions
+        setAllGreyedOptions,
+        setZeroState
     } = useContext(SearchContext);
 
     const {
@@ -82,6 +84,19 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             applySaveQuery(options);
             props.setCurrentQueryName(queryName);
             props.setCurrentQueryDescription(queryDescription);
+            if(props.resetYesClicked){
+                setZeroState(true);
+                let options: QueryOptions = {
+                    searchText: '',
+                    entityTypeIds: [],
+                    selectedFacets: {},
+                    selectedQuery: 'select a query',
+                    propertiesToDisplay: [],
+                    zeroState: true,
+                    manageQueryModal: false,
+                }
+                applySaveQuery(options);
+            }
         } catch (error) {
             if (error.response.status === 400) {
                 if (error.response.data.hasOwnProperty('message')) {
