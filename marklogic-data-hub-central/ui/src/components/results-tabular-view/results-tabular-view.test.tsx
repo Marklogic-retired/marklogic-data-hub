@@ -15,7 +15,6 @@ describe("Results Table view component", () => {
                     hasStructured={false}
                 />
         )
-
         // Check table column headers are rendered
         expect(getByText('customerId')).toBeInTheDocument();
         expect(getByText('name')).toBeInTheDocument();
@@ -46,5 +45,25 @@ describe("Results Table view component", () => {
         )
         // Check for Empty Table
         expect(getByText(/No Data/i)).toBeInTheDocument();
+    });
+
+    test('Array data renders properly', () => {
+        const {  getByText, queryByText } = render(
+                <ResultsTabularView
+                    data={entitySearch.results}
+                    entityPropertyDefinitions={entityPropertyDefinitions}
+                    selectedPropertyDefinitions={selectedPropertyDefinitions}
+                    columns={[]}
+                    hasStructured={false}
+                />
+        )
+
+        expect(queryByText('Carmdin')).toBeNull();
+        expect(queryByText('Carm din')).toBeNull();
+        expect(getByText('Carm')).toBeInTheDocument();
+        expect(getByText('din')).toBeInTheDocument();
+        expect(getByText('Carm')).toContainHTML('<div style="text-overflow: ellipsis; overflow: hidden;">Carm</div>');
+        expect(getByText('din')).toContainHTML('<div style="text-overflow: ellipsis; overflow: hidden;">din</div>');
+        expect(getByText('Carm').closest('td')).toEqual(getByText('din').closest('td'))
     });
 })

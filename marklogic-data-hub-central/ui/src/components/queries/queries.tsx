@@ -50,7 +50,7 @@ const Query = (props) => {
     const [showEntityConfirmation, toggleEntityConfirmation] = useState(false);
     const [entityQueryUpdate, toggleEntityQueryUpdate] = useState(false);
     const [entityCancelClicked, toggleEntityCancelClicked] = useState(false);
-
+    
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
 
@@ -65,7 +65,7 @@ const Query = (props) => {
                     entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : props.entities,
                     selectedFacets: facets,
                 },
-                propertiesToDisplay: props.columns,
+                propertiesToDisplay: searchOptions.selectedTableProperties,
             }
         }
         props.setIsLoading(true);
@@ -86,7 +86,6 @@ const Query = (props) => {
         } finally {
             resetSessionTime()
         }
-
     }
 
     const getSaveQueryWithId = async (key) => {
@@ -207,7 +206,7 @@ const Query = (props) => {
     return (
         <div>
             <div>
-                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || searchOptions.selectedTableProperties.length > 0) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
+                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query || props.isColumnSelectorTouched) && showSaveNewIcon && searchOptions.entityTypeIds.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save the current query'}>
                             <FontAwesomeIcon

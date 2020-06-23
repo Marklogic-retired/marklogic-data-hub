@@ -13,6 +13,8 @@ interface Props {
   selectedPropertyDefinitions: any[];
   popoverVisibility: boolean;
   setPopoverVisibility: (state: boolean) => void;
+  setColumnSelectorTouched: (state: boolean) => void;
+  columns: any[];
 };
 
 const ColumnSelector: React.FC<Props> = (props) => {
@@ -124,6 +126,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   const onApply = () => {
     let selectedProperties = getSelectedTableProperties(allProperties, checkedKeys);
+    props.setColumnSelectorTouched(JSON.stringify(selectedProperties) !== JSON.stringify(props.columns))
     setSelectedTableProperties(selectedProperties);
     props.setPopoverVisibility(false);
   };
