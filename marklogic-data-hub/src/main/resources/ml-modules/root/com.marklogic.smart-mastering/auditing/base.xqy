@@ -236,7 +236,7 @@ declare function auditing:auditing-receipts-for-doc-history($doc-uri as xs:strin
 declare function auditing:auditing-receipts-for-doc-history($doc-uris as xs:string*, $returned-docs)
 {
   if (fn:exists($doc-uris)) then
-    cts:search(fn:collection($const:AUDITING-COLL)/prov:document,
+    cts:search(fn:collection()/prov:document,
       cts:and-query((
         cts:element-value-query(
           (
