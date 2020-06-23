@@ -79,7 +79,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     public LoadUserArtifactsCommand() {
         super();
         this.objectMapper = ObjectMapperFactory.getObjectMapper();
-        setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 1);
+        setExecuteSortOrder(LoadHubArtifactsCommand.SORT_ORDER + 1);
     }
 
     /**
@@ -130,9 +130,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
             ArtifactService artifactService = ArtifactService.on(stagingClient);
 
-            // Then load steps
-            loadSteps(stagingClient);
-
             // TODO Can simplify this to just having a method for flows and a method for step definitions once
             // we're no longer creating matching settings
             ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
@@ -181,6 +178,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     loadArtifactsWithDataService(artifactPath, modulesFinder, artifactService, typeInfo);
                 }
             }
+
+            // Then load steps
+            loadSteps(stagingClient);
         }
         catch (IOException e) {
             throw new RuntimeException("Unable to load user artifacts, cause: " + e.getMessage(), e);

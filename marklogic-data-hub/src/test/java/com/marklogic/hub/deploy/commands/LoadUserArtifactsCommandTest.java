@@ -155,6 +155,10 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
 
     @Test
     void scaffoldedIngestionStep() {
+        assertTrue(new LoadUserArtifactsCommand().getExecuteSortOrder() > new LoadHubArtifactsCommand().getExecuteSortOrder(),
+            "Hub artifacts must be loaded before user artifacts so that OOTB step definitions are present when " +
+                "user steps are loaded");
+
         final String stepName = "testIngester";
         final String stepType = "INGESTION"; // use uppercase to verify it gets converted to lowercase
 

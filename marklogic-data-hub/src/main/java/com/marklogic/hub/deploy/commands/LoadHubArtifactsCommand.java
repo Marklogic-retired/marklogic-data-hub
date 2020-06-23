@@ -47,6 +47,12 @@ import java.util.*;
 @Component
 public class LoadHubArtifactsCommand extends AbstractCommand {
 
+    /**
+     * Hub artifacts are deployed after triggers for no particular reason yet other than that user artifacts must be
+     * deployed after both triggers (because of entity models) and after hub artifacts.
+     */
+    public static int SORT_ORDER = SortOrderConstants.DEPLOY_TRIGGERS + 10;
+
     @Autowired
     private HubConfig hubConfig;
 
@@ -54,9 +60,7 @@ public class LoadHubArtifactsCommand extends AbstractCommand {
 
     public LoadHubArtifactsCommand() {
         super();
-
-        // Sort order for this command must be more than LoadUserArtifactsCommand
-        setExecuteSortOrder(SortOrderConstants.DEPLOY_TRIGGERS + 10);
+        setExecuteSortOrder(SORT_ORDER);
     }
 
     /**

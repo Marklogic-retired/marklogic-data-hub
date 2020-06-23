@@ -50,13 +50,15 @@ if (existingStep) {
   stepProperties.stepId = stepName + "-" + stepDefinitionType;
 
   const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
-  const stepDefOptions = stepDef.options;
-  Object.keys(stepDefOptions).forEach(key => {
-    // Step artifact libraries are expected to apply their own concept of default collections
-    if (!stepProperties[key] && key !== "collections") {
-      stepProperties[key] = stepDefOptions[key];
-    }
-  });
+  if (stepDef != null && stepDef.options != null) {
+    const stepDefOptions = stepDef.options;
+    Object.keys(stepDefOptions).forEach(key => {
+      // Step artifact libraries are expected to apply their own concept of default collections
+      if (!stepProperties[key] && key !== "collections") {
+        stepProperties[key] = stepDefOptions[key];
+      }
+    });
+  }
 
   Artifacts.setArtifact(stepDefinitionType, stepName, stepProperties);
 }
