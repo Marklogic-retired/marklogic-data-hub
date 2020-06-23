@@ -1,9 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { MLTable } from '@marklogic/design-system';
 import QueryExport from "../query-export/query-export";
 import { AuthoritiesContext } from "../../util/authorities";
 import styles from './results-tabular-view.module.scss';
 import ColumnSelector from '../../components/column-selector/column-selector';
+import { Tooltip } from 'antd';
+import { SearchContext } from '../../util/search-context';
 
 interface Props {
     data: any;
@@ -15,6 +17,11 @@ interface Props {
 
 const ResultsTabularView = (props) => {
     const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
+
+    const {
+        searchOptions,
+        setSelectedTableProperties,
+      } = useContext(SearchContext);
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -29,6 +36,42 @@ const ResultsTabularView = (props) => {
                     key: item.propertyPath,
                     title: item.propertyLabel,
                     type: item.datatype,
+                    onCell: () => {
+                        return {
+                            style: {
+                                whiteSpace: 'nowrap',
+                                maxWidth: 150,
+                            }
+                        }
+                    },
+                    render: (value) => {
+                        if (Array.isArray(value) && value.length > 1) {
+                            let values = new Array();
+                            value.forEach(item => {
+                                let title = item.toString();
+                                if (item && title && title.length > 0) {
+                                    values.push(
+                                        <Tooltip
+                                            title={title}>
+                                            <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{item}</div>
+                                        </Tooltip>
+                                    )
+                                }
+                            })
+                            return {
+                                children: values
+                            }
+                        } else {
+                            return {
+                                children: (
+                                    <Tooltip
+                                        title={value}>
+                                        <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
+                                    </Tooltip>
+                                )
+                            }
+                        }
+                    },
                 }
             } else {
                 return {
@@ -79,6 +122,12 @@ const ResultsTabularView = (props) => {
         //}
     });
 
+    useEffect(() => {
+        if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
+            setSelectedTableProperties(props.columns)
+        }
+    }, [props.columns])
+
     return (
         <>
             <div className={styles.icon}>
@@ -86,7 +135,7 @@ const ResultsTabularView = (props) => {
                     {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} />}
                 </div>
                 <div className={styles.columnSelector} data-cy="column-selector">
-                    <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />
+                    <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} />
                 </div>
             </div>
             <div className={styles.tabular}>

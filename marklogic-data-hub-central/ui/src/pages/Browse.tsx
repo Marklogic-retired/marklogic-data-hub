@@ -62,8 +62,9 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [columns, setColumns] = useState<string[]>();
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
   const [queries, setQueries] = useState<any>([]);
-  const [entityPropertyDefinitions, setEntityPropertyDefinitions]= useState<any[]>([]);
-  const [selectedPropertyDefinitions,setSelectedPropertyDefinitions] = useState<any[]>([]);
+  const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
+  const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
+  const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
 
   const getEntityModel = async () => {
     try {
@@ -101,11 +102,11 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       });
       if (componentIsMounted.current) {
-         setData(response.data.results);
-        if(response.data.hasOwnProperty('entityPropertyDefinitions')){
+        setData(response.data.results);
+        if (response.data.hasOwnProperty('entityPropertyDefinitions')) {
           setEntityPropertyDefinitions(response.data.entityPropertyDefinitions);
         }
-        if(response.data.hasOwnProperty('selectedPropertyDefinitions')){
+        if (response.data.hasOwnProperty('selectedPropertyDefinitions')) {
           setSelectedPropertyDefinitions(response.data.selectedPropertyDefinitions);
         }
         setFacets(response.data.facets);
@@ -162,8 +163,8 @@ const Browse: React.FC<Props> = ({ location }) => {
         propertiesToDisplay: [],
         zeroState: true,
         manageQueryModal: false,
-    }
-    applySaveQuery(options);
+      }
+      applySaveQuery(options);
     }
   }, [searchOptions.zeroState]);
 
@@ -276,17 +277,18 @@ const Browse: React.FC<Props> = ({ location }) => {
                     </div>
                   </div>
                 </div>
-                <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} />
+                <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} isColumnSelectorTouched={isColumnSelectorTouched}/>
               </div>
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
-                      <ResultsTabularView
-                          data={data}
-                          entityPropertyDefinitions = {entityPropertyDefinitions}
-                          selectedPropertyDefinitions = {selectedPropertyDefinitions}
-                          columns={columns}
-                      />
+                    <ResultsTabularView
+                      data={data}
+                      entityPropertyDefinitions={entityPropertyDefinitions}
+                      selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      columns={columns}
+                      setColumnSelectorTouched={setColumnSelectorTouched}
+                    />
                   </div>
                   : <SearchResults data={data} entityDefArray={entityDefArray} />
                 }
