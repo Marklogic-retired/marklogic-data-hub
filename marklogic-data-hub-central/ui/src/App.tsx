@@ -100,46 +100,48 @@ const App: React.FC<Props> = ({history, location}) => {
       <Header environment={getEnvironment()} />
       <ModalStatus/>
       <main>
-      <Switch>
-        <Route path="/" exact component={Login}/>
-        <PrivateRoute path="/home" exact>
-          <Home/>
-        </PrivateRoute>
-        <PrivateRoute path="/load" exact>
-          <Load/>
-        </PrivateRoute>
-        <PrivateRoute path="/curate" exact>
-          <Curate/>
-        </PrivateRoute>
-        <PrivateRoute path="/run" exact>
-          <Run/>
-        </PrivateRoute>
-        <SearchProvider>
-          <PrivateRoute path="/view" exact>
-              <View/>
-          </PrivateRoute>
-          <PrivateRoute path="/browse" exact>
-              <Browse/>
-          </PrivateRoute>
-          <PrivateRoute path="/detail/:pk/:uri">
-            <Detail/>
-          </PrivateRoute>
-          <ModelingProvider>
-            <PrivateRoute path="/model" exact>
-              <Modeling/>
+        <div className="contentContainer">
+          <Switch>
+            <Route path="/" exact component={Login}/>
+            <PrivateRoute path="/home" exact>
+              <Home/>
             </PrivateRoute>
-            <PrivateRoute path="/tiles" exact>
-              <TilesView/>
+            <PrivateRoute path="/load" exact>
+              <Load/>
             </PrivateRoute>
-            <PrivateRoute path="/tiles-run" exact>
-              <TilesView id='run'/>
+            <PrivateRoute path="/curate" exact>
+              <Curate/>
             </PrivateRoute>
-          </ModelingProvider>
-        </SearchProvider>
-        <Route component={NoMatchRedirect}/>
-      </Switch>
+            <PrivateRoute path="/run" exact>
+              <Run/>
+            </PrivateRoute>
+            <SearchProvider>
+              <PrivateRoute path="/view" exact>
+                  <View/>
+              </PrivateRoute>
+              <PrivateRoute path="/browse" exact>
+                  <Browse/>
+              </PrivateRoute>
+              <PrivateRoute path="/detail/:pk/:uri">
+                <Detail/>
+              </PrivateRoute>
+              <ModelingProvider>
+                <PrivateRoute path="/model" exact>
+                  <Modeling/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles" exact>
+                  <TilesView/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles-run" exact>
+                  <TilesView id='run'/>
+                </PrivateRoute>
+              </ModelingProvider>
+            </SearchProvider>
+            <Route component={NoMatchRedirect}/>
+          </Switch>
+          <Footer pageTheme={pageTheme}/>
+        </div>
       </main>
-      <Footer pageTheme={pageTheme}/>
     </div>
   );
 }
