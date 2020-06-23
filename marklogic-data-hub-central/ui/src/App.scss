@@ -8,6 +8,17 @@
 
 body {
   font-family: "Helvetica Neue";
+  overflow: hidden;
+}
+
+
+.contentContainer{
+  top: 70px;
+  position: relative;
+  margin-right: 70px;
+  overflow-y: auto;
+  height: 100vh;
+  max-height: 92vh;
 }
 
 .ant-layout-header {

@@ -14,6 +14,10 @@
     padding-left: 10px;
 }
 
+div.mosaic-container{
+    z-index: 0;
+}
+
 
 div.mosaic-container div.mosaic-tile {
     border: solid 1px;

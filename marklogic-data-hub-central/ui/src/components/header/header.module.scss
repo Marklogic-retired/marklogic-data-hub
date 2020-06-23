@@ -1,4 +1,7 @@
 header.container {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
   div.logoContainer {
     height: 0px;
     width: 240px;
