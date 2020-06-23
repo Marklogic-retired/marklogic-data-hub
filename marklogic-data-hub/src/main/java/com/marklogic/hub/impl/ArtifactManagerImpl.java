@@ -56,10 +56,6 @@ public class ArtifactManagerImpl implements ArtifactManager {
         getArtifactService().deleteArtifact(artifactType, artifactName);
     }
 
-    public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson) {
-        return (ObjectNode) getArtifactService().validateArtifact(artifactType, artifactName, artifactJson);
-    }
-
     protected ArtifactService getArtifactService() {
         return ArtifactService.on(hubClient.getStagingClient());
     }
@@ -76,16 +72,5 @@ public class ArtifactManagerImpl implements ArtifactManager {
             }
         }
         return allArtifactTypeInfo;
-    }
-
-    public ArtifactTypeInfo getArtifactTypeInfo(String artifactType) {
-        ArtifactTypeInfo artifactTypeInfo = null;
-        for (ArtifactTypeInfo typeInfo : getArtifactTypeInfoList()) {
-            if (typeInfo.getType().equals(artifactType)) {
-                artifactTypeInfo = typeInfo;
-                break;
-            }
-        }
-        return artifactTypeInfo;
     }
 }

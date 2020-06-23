@@ -16,10 +16,7 @@ function invokeGetAllService(artifactType) {
 }
 
 function invokeValidateService(artifactType, artifactName, artifact) {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
-        {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-    ));
+  return Artifacts.validateArtifact(artifactType, artifactName, artifact);
 }
 
 function updateMappingConfig(artifactName) {

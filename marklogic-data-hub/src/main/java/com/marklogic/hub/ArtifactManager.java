@@ -64,30 +64,11 @@ public interface ArtifactManager {
     public void deleteArtifact(String artifactType, String artifactName);
 
     /**
-     * Validates an artifact of a given type and name.
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @param artifactName - identifier of the artifact
-     * @param artifactJson - JSON of artifact to persist
-     * @return ObjectNode with validation details
-     */
-    public ObjectNode validateArtifact(String artifactType, String artifactName, JsonNode artifactJson);
-
-
-    /**
      * Provides metadata about the various artifact types
      *
      * @return List&lt;ArtifactTypeInfo&gt; providing information about the various artifact types
      */
     public List<ArtifactTypeInfo> getArtifactTypeInfoList();
-
-    /**
-     * Provides metadata about the a given artifact type
-     *
-     * @param artifactType - type of artifact the operation is dealing with
-     * @return ArtifactTypeInfo providing information about the specified artifact type
-     */
-    ArtifactTypeInfo getArtifactTypeInfo(String artifactType);
 
     /**
      * Provides metadata about the a given artifact type
