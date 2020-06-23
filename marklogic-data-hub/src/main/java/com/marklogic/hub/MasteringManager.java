@@ -55,4 +55,10 @@ public interface MasteringManager {
      */
     public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options);
 
+    /**
+     * Returns provenance information about a merged document
+     * @param mergedURI - URI of the document that represents a merge
+     * @return - a JsonNode with the historical information
+     */
+    public JsonNode documentHistory(String mergedURI);
 }

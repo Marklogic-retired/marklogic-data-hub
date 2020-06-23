@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -28,10 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -193,7 +191,22 @@ public class MasterTest extends HubTestBase {
         assertEquals(1, getFinalDocCount("sm-person-auditing"),"One auditing document should have been created");
         assertEquals(docsToMerge.size(), getFinalDocCount("sm-person-archived"),docsToMerge.size() + " documents should have been archived");
         assertTrue(mergeResults.path("mergedDocument").path("value").path("envelope").has("instance"), "Resulting document should have the merged document instance");
+        StringHandle mergedUriHandle = new StringHandle();
+        runInDatabase("xdmp:node-uri(fn:head(fn:collection('sm-person-merged')))", HubConfig.DEFAULT_FINAL_NAME, mergedUriHandle);
+        String mergedUri = mergedUriHandle.get();
+        testDocumentHistory(mergedUri, docsToMerge);
+    }
 
+    private void testDocumentHistory(String mergedUri, List<String> docsInMerge) {
+        JsonNode documentHistory = masteringManager.documentHistory(mergedUri);
+        JsonNode activityInformation = documentHistory.path("activities").path(0);
+        List<String> derivedFrom = new ArrayList<>();
+        activityInformation.path("wasDerivedFromUris").elements().forEachRemaining((uriTextNode) -> {
+            derivedFrom.add(uriTextNode.asText());
+        });
+        for (String docInMerge: docsInMerge) {
+            assertTrue(derivedFrom.contains(docInMerge), "Document history should contain every document in merge. Missing: " + docInMerge);
+        }
     }
 
     private void testUnmerge() {

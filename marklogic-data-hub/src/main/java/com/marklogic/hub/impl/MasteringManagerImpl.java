@@ -37,46 +37,45 @@ public class MasteringManagerImpl implements MasteringManager {
     @Autowired
     protected HubProject hubProject;
 
-    protected DatabaseClient srcClient = null;
-
-    protected MergeResource mergeResource = null;
-
-    protected MatchResource matchResource = null;
-
     @Override
     public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
-        return getMergeResource().unmerge(mergeURI, retainAuditTrail, blockFutureMerges);
+        return getMergeResource(DatabaseKind.FINAL).unmerge(mergeURI, retainAuditTrail, blockFutureMerges);
     }
 
     @Override
     public JsonNode merge(List<String> mergeURIs, String flowName, String stepNumber, Boolean preview, JsonNode options) {
-        return getMergeResource().merge(mergeURIs, flowName, stepNumber, preview, options);
+        return getMergeResource(DatabaseKind.FINAL).merge(mergeURIs, flowName, stepNumber, preview, options);
     }
 
     @Override
     public JsonNode match(String matchURI, String flowName, String stepNumber, Boolean includeMatchDetails, JsonNode options) {
-        return getMatchResource().match(matchURI, flowName, stepNumber, includeMatchDetails, options);
+        return getMatchResource(DatabaseKind.FINAL).match(matchURI, flowName, stepNumber, includeMatchDetails, options);
     }
 
-    private MergeResource getMergeResource() {
-        if (mergeResource == null) {
-            mergeResource = new MergeResource(getSrcClient(), hubConfig.getDbName(DatabaseKind.FINAL));
-        }
-        return mergeResource;
+    @Override
+    public JsonNode documentHistory(String mergedURI) {
+        return getDocumentHistoryResource(DatabaseKind.FINAL).documentHistory(mergedURI);
     }
 
-    private MatchResource getMatchResource() {
-        if (matchResource == null) {
-            matchResource = new MatchResource(getSrcClient(), hubConfig.getDbName(DatabaseKind.FINAL));
-        }
-        return matchResource;
+    private MergeResource getMergeResource(DatabaseKind databaseKind) {
+        return new MergeResource(getSrcClient(databaseKind), hubConfig.getDbName(databaseKind));
     }
 
-    private DatabaseClient getSrcClient() {
-        if (srcClient == null) {
-            srcClient = hubConfig.newStagingClient();
+    private MatchResource getMatchResource(DatabaseKind databaseKind) {
+        return new MatchResource(getSrcClient(databaseKind), hubConfig.getDbName(databaseKind));
+    }
+
+    private DocumentHistoryResource getDocumentHistoryResource(DatabaseKind databaseKind) {
+        return new DocumentHistoryResource(getSrcClient(databaseKind));
+    }
+
+    private DatabaseClient getSrcClient(DatabaseKind databaseKind) {
+        switch (databaseKind) {
+            case FINAL:
+                return hubConfig.newFinalClient(null);
+            default:
+                return hubConfig.newStagingClient(null);
         }
-        return srcClient;
     }
 
     static class MergeResource extends ResourceManager {
@@ -139,6 +138,23 @@ public class MasteringManagerImpl implements MasteringManager {
             params.put("sourceDatabase", targetDatabase);
             JacksonHandle jsonOptions = new JacksonHandle().with(options);
             resp = this.getServices().post(params, jsonOptions, new JacksonHandle()).get();
+            return resp;
+        }
+    }
+
+    static class DocumentHistoryResource extends ResourceManager {
+
+        public DocumentHistoryResource(DatabaseClient srcClient) {
+            super();
+            srcClient.init("mlSmHistoryDocument" , this);
+        }
+
+        public JsonNode documentHistory(String mergedURI) {
+            JsonNode resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("uri", mergedURI);
+            resp = this.getServices().get(params, new JacksonHandle()).get();
             return resp;
         }
     }
