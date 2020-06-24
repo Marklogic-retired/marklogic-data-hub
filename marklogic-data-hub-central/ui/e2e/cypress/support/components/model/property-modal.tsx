@@ -3,6 +3,10 @@ class PropertyModal {
     cy.get('#property-name').type(str);
   }
 
+  clearPropertyName() {
+    cy.get('#property-name').clear();
+  }
+
   getStructuredTypeName() {
     return cy.get('#structured-label');
   }
@@ -27,16 +31,20 @@ class PropertyModal {
     return cy.get(`[aria-label="${radioLabel}-no"]`);
   }
 
+  getCheckbox(checkboxId: string) {
+    return cy.get(`#${checkboxId}`);
+  }
+
   clickCheckbox(checkboxId: string) {
     return cy.get(`#${checkboxId}`).check();
   }
 
   getCancelButton() {
-    return cy.get('#property-modal-cancel');
+    return cy.get('[aria-label="property-modal-submit"');
   }
 
-  getAddButton() {
-    return cy.get('#property-modal-add');
+  getSubmitButton() {
+    return cy.get('[aria-label="property-modal-submit"');
   }
 
 }

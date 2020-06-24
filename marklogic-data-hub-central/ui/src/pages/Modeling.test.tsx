@@ -24,8 +24,8 @@ describe("Modeling Page", () => {
     jest.clearAllMocks();
   });
 
-  test("Modeling: with mock data, renders modified Alert component and Dev role can click add", () => {
-    axiosMock.get['mockImplementation']( jest.fn(() => Promise.resolve({status: 200, data: getEntityTypes})));
+  test("Modeling: with mock data, renders modified Alert component and Dev role can click add", async () => {
+    await axiosMock.get['mockImplementation']( jest.fn(() => Promise.resolve({status: 200, data: getEntityTypes})));
   
     const { getByText, getByLabelText, queryByText } = render(
       <AuthoritiesContext.Provider value={mockDevRolesService}>
@@ -46,8 +46,8 @@ describe("Modeling Page", () => {
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
   });
 
-  test("Modeling: with mock data, no Alert component renders and operator role can not click add", () => {
-    axiosMock.get['mockImplementation']( jest.fn(() => Promise.resolve({status: 200, data: getEntityTypes})));
+  test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
+    await axiosMock.get['mockImplementation']( jest.fn(() => Promise.resolve({status: 200, data: getEntityTypes})));
   
     const { getByText, getByLabelText, queryByText } = render(
       <AuthoritiesContext.Provider value={mockOpRolesService}>

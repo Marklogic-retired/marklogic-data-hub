@@ -31,3 +31,14 @@ export const entityNamesArray = {
     ]
   }
 }
+
+export const customerEntityNamesArray = {
+  modelingOptions: {
+    entityTypeNamesArray: [
+      {
+        name: 'Customer',
+        entityTypeId: 'http://marklogic.com/example/Customer-0.0.1/Customer'
+      }
+    ]
+  }
+}

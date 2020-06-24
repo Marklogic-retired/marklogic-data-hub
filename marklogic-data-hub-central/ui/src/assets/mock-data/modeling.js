@@ -490,7 +490,7 @@ export const propertyTableEntities = [
                       "invalid_reason"
                   ],
                   "rangeIndex": [],
-                  "wordLexicon": [],
+                  "wordLexicon": ["vocabulary"],
                   "properties": {
                       "concept_id": {
                           "datatype": "unsignedLong",

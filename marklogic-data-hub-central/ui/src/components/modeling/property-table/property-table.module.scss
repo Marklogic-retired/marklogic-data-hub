@@ -1,4 +1,4 @@
-.icon, .multipleIcon, .advancedSearchIcon {
+.icon, .multipleIcon, .wildcardIcon {
   font-size: 20px;
   color: #333;
 }
@@ -7,7 +7,7 @@
   margin-left: 15px;
 }
 
-.advancedSearchIcon {
+.wildcardIcon {
   margin-left: 45px;
 }
 
@@ -55,4 +55,9 @@
 
 .disabledButton {
   pointer-events: none;
+}
+
+.link {
+  color: #5B69AF;
+  cursor: pointer;
 }

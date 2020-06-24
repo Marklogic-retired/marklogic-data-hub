@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Icon, Input, Modal, Tooltip } from 'antd';
+import { MLButton } from '@marklogic/design-system';
 import styles from './structured-type-modal.module.scss'
 
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -39,7 +40,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     }
   };
 
-  const onOk = (event) => {
+  const onSubmit = (event) => {
   event.preventDefault();
   let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name })
     if (!NAME_REGEX.test(name)) {
@@ -56,24 +57,36 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     props.toggleModal(false);
   };
 
+  const modalFooter = <div className={styles.modalFooter}>
+    <MLButton
+      aria-label="structured-type-modal-cancel"
+      size="default"
+      onClick={onCancel}
+    >Cancel</MLButton>
+    <MLButton 
+      aria-label="structured-type-modal-submit"
+      form="pstructured-type-form"
+      type="primary"
+      htmlType="submit"
+      size="default"
+      onClick={onSubmit}
+    >Add</MLButton>
+</div>
+
   return (
     <Modal
       className={styles.modal}
       visible={props.isVisible}
       closable={true}
       title={"Add New Structured Property Type"}
-      cancelText="Cancel"
-      cancelButtonProps={{ id: 'structured-modal-cancel' }}
-      onCancel={() => onCancel()} 
-      okText={"Add"}
-      onOk={onOk}
-      okButtonProps={{ id: 'structured-modal-add', form:'structured-type-form', htmlType: 'submit' }}
       maskClosable={false}
+      onCancel={onCancel}
+      footer={modalFooter}
     >
       <Form
         {...layout}
         id='structured-type-form'
-        onSubmit={onOk}
+        onSubmit={onSubmit}
       >
         <Form.Item
           className={styles.formItem}

@@ -122,7 +122,7 @@ const ModelingTooltips = {
   pii: 'Personally identifiable information, or data this is sensitive in that it can identify a particular person and can be used fraudulent purposes.',
   sort: 'Enables display in ascending or descending order.',
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
-  advancedSearch: 'Enables wildcard search, search suggestions, and type-ahead.',
+  wildcard: 'Enables wildcard search.',
   addStructuredProperty: 'Click to add properties within this structured property.',
   entityEditedAlert: 'You have edited some of the entity types and/or properties. This information has not been saved. '
   + 'Be sure to Save your changes (by entity type or all together) to make the changes which may include updating indexes. '

@@ -3,12 +3,40 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import PropertyModal from './property-modal';
-import { StructuredTypeOptions } from '../../../types/modeling-types';
+import { 
+  StructuredTypeOptions,
+  EditPropertyOptions,
+  PropertyType,
+  PropertyOptions
+} from '../../../types/modeling-types';
 import { definitionsParser } from '../../../util/data-conversion';
 import { propertyTableEntities } from '../../../assets/mock-data/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { ModelingContext } from '../../../util/modeling-context';
-import { entityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+import { entityNamesArray, customerEntityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+
+const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = { 
+  isStructured: false,
+  name: '',
+  propertyName: ''
+}
+
+const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
+  propertyType: PropertyType.Basic,
+  type: '',
+  identifier: '',
+  multiple: '',
+  pii: '',
+  sort: false,
+  facet: false,
+  wildcard: false
+}
+
+const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
+  name: '',
+  isEdit: false,
+  propertyOptions: DEFAULT_SELECTED_PROPERTY_OPTIONS
+}
 
 describe('Property Modal Component', () => {
   test('Modal is not visible', () => {
@@ -17,10 +45,12 @@ describe('Property Modal Component', () => {
       entityName=''
       entityDefinitionsArray={[]}
       isVisible={false} 
-      structuredTypeOptions={{ name: '', isStructured: false }}
+      editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+      structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
       toggleModal={jest.fn()}
       addPropertyToDefinition={jest.fn()}
       addStructuredTypeToDefinition={jest.fn()}
+      editPropertyUpdateDefinition={jest.fn()}
     />);
 
     expect(queryByText('Add Property')).toBeNull();
@@ -36,11 +66,13 @@ describe('Property Modal Component', () => {
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          structuredTypeOptions={{isStructured: false, name: ''}}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           isVisible={true} 
           toggleModal={jest.fn()}
           addPropertyToDefinition={mockAdd}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -67,9 +99,9 @@ describe('Property Modal Component', () => {
     fireEvent.change(piiRadio, { target: { value: "no" } });
     expect(piiRadio['value']).toBe('no');
 
-    const advancedSearchCheckbox = screen.getByLabelText('Advanced Search')
-    fireEvent.change(advancedSearchCheckbox, { target: { checked: true } });
-    expect(advancedSearchCheckbox).toBeChecked();
+    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    expect(wildcardCheckbox).toBeChecked();
 
     userEvent.click(getByText('Add'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
@@ -80,16 +112,18 @@ describe('Property Modal Component', () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
 
-    const { getByPlaceholderText, getByText } =  render(
+    const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true} 
-          structuredTypeOptions={{isStructured: false, name: ''}}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
           addPropertyToDefinition={mockAdd}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -104,13 +138,13 @@ describe('Property Modal Component', () => {
     expect(screen.queryByLabelText('pii-yes')).toBeNull();
     expect(screen.queryByLabelText('Sort')).toBeNull();
     expect(screen.queryByLabelText('Facet')).toBeNull();
-    expect(screen.queryByLabelText('Advanced Search')).toBeNull();
+    expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
   
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
-    userEvent.click(getByText('Add'));
+    userEvent.click(getByLabelText('property-modal-submit'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
 
@@ -123,11 +157,13 @@ describe('Property Modal Component', () => {
       <PropertyModal 
         entityName={entityType?.entityName}
         entityDefinitionsArray={entityDefninitionsArray}
-        structuredTypeOptions={{isStructured: false, name: ''}}
+        editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+        structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
         isVisible={true} 
         toggleModal={jest.fn()}
         addPropertyToDefinition={mockAdd}
         addStructuredTypeToDefinition={jest.fn()}
+        editPropertyUpdateDefinition={jest.fn()}
       />);
 
     await userEvent.type(getByLabelText('input-name'), '123-name');
@@ -147,21 +183,23 @@ describe('Property Modal Component', () => {
     expect(mockAdd).toHaveBeenCalledTimes(0);
   });
 
-  test('Add a Property with a structured type', async () => {
+  test('Add a Property with a structured type, no relationship type in dropdown', async () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
 
-    const { getByPlaceholderText, getByText } =  render(
-      <ModelingContext.Provider value={entityNamesArray}>
+    const { getByPlaceholderText, getByText, getByLabelText } =  render(
+      <ModelingContext.Provider value={customerEntityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true} 
-          structuredTypeOptions={{isStructured: false, name: ''}}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
           addPropertyToDefinition={mockAdd}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -172,13 +210,14 @@ describe('Property Modal Component', () => {
     userEvent.click(getByText('Structured'));
     userEvent.click(getByText('Address'));
 
+    expect(screen.queryByText('Relationship')).toBeNull();
     expect(screen.queryByLabelText('identifier-yes')).toBeNull();
   
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
-    userEvent.click(getByText('Add'));
+    userEvent.click(getByLabelText('property-modal-submit'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
 
@@ -187,16 +226,18 @@ describe('Property Modal Component', () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const { getByPlaceholderText, getByText } =  render(
+    const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          isVisible={true} 
-          structuredTypeOptions={{isStructured: true, name: 'propName,Employee'}}
+          isVisible={true}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={{isStructured: true, name: 'propName,Employee', propertyName: ''}}
           toggleModal={jest.fn()}
           addPropertyToDefinition={addMock}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -218,11 +259,11 @@ describe('Property Modal Component', () => {
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
-    const advancedSearchCheckbox = screen.getByLabelText('Advanced Search')
-    fireEvent.change(advancedSearchCheckbox, { target: { checked: true } });
-    expect(advancedSearchCheckbox).toBeChecked();
+    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    expect(wildcardCheckbox).toBeChecked();
 
-    userEvent.click(getByText('Add'));
+    userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
   });
 
@@ -231,16 +272,18 @@ describe('Property Modal Component', () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const { getByPlaceholderText, getByText, getAllByText } =  render(
+    const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          isVisible={true} 
-          structuredTypeOptions={{isStructured: false, name: ''}}
+          isVisible={true}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
           addPropertyToDefinition={addMock}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -266,7 +309,7 @@ describe('Property Modal Component', () => {
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
-    userEvent.click(getAllByText('Add')[0]);
+    userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
   });
 
@@ -275,16 +318,18 @@ describe('Property Modal Component', () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const { getByPlaceholderText, getByText } =  render(
+    const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          isVisible={true} 
-          structuredTypeOptions={{isStructured: false, name: ''}}
+          isVisible={true}
+          editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
           addPropertyToDefinition={addMock}
           addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
         />
       </ModelingContext.Provider>
     );
@@ -293,12 +338,251 @@ describe('Property Modal Component', () => {
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
 
-    const identifierRadio = screen.getByLabelText('multiple-yes')
+    const identifierRadio = screen.getByLabelText('identifier-yes')
     fireEvent.change(identifierRadio, { target: { value: "yes" } });
     expect(identifierRadio['value']).toBe('yes');
 
-    userEvent.click(getByText('Add'));
+    userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('can edit a basic property, but cancel changes', async () => {
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let editMock = jest.fn();
+
+    const basicPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Basic,
+      type: 'integer',
+      identifier: 'yes',
+      multiple: '',
+      pii: 'yes',
+      sort: false,
+      facet: false,
+      wildcard: true
+    }
+    
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'customerId',
+      isEdit: true,
+      propertyOptions: basicPropertyOptions
+    }
+
+    const { getByLabelText, getByText, queryByTestId } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={{isStructured: true, name: 'propName,Employee', propertyName: ''}}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={editMock}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText('Edit Property')).toBeInTheDocument();
+
+    const multipleRadio = screen.getByLabelText('multiple-yes')
+    expect(multipleRadio['value']).toBe('yes');
+
+    const piiRadio = screen.getByLabelText('pii-yes')
+    expect(piiRadio['value']).toBe('yes');
+
+    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    expect(wildcardCheckbox).toBeChecked();
+
+    fireEvent.change(multipleRadio, { target: { value: "no" } });
+    expect(multipleRadio['value']).toBe('no');
+
+    fireEvent.change(wildcardCheckbox, { target: { checked: false } });
+    expect(wildcardCheckbox).toHaveProperty("checked", false);
+
+    userEvent.click(getByLabelText('property-modal-cancel'));
+    expect(editMock).toHaveBeenCalledTimes(0);
+  });
+
+  test('can edit a relationship property', async () => {
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let editMock = jest.fn();
+
+    const relationshipPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Relationship,
+      type: 'Order',
+      identifier: 'no',
+      multiple: 'yes',
+      pii: 'no',
+      sort: false,
+      facet: false,
+      wildcard: false
+    }
+    
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'order',
+      isEdit: true,
+      propertyOptions: relationshipPropertyOptions
+    }
+
+    const { getByLabelText, getByText, queryByTestId, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={{isStructured: true, name: 'propName,Employee', propertyName: ''}}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={editMock}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText('Edit Property')).toBeInTheDocument();
+
+    const multipleRadio = screen.getByLabelText('multiple-yes')
+    expect(multipleRadio['value']).toBe('yes');
+
+    fireEvent.change(multipleRadio, { target: { value: "no" } });
+    expect(multipleRadio['value']).toBe('no');
+
+    userEvent.click(getByLabelText('property-modal-submit'));
+    expect(editMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('can edit a structured type property and change property name', async () => {
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let editMock = jest.fn();
+
+    const structuredPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Structured,
+      type: 'Address',
+      identifier: 'no',
+      multiple: 'yes',
+      pii: 'no',
+      sort: false,
+      facet: false,
+      wildcard: false
+    }
+    
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'shipping',
+      isEdit: true,
+      propertyOptions: structuredPropertyOptions
+    }
+
+    const structuredOptions: StructuredTypeOptions = { 
+      isStructured: true,
+      name: 'Address',
+      propertyName: 'shipping'
+    }
+
+    const { getByLabelText, getByText, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={structuredOptions}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={editMock}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText('Edit Property')).toBeInTheDocument();
+
+    userEvent.clear(getByPlaceholderText('Enter the property name'));
+    await userEvent.type(getByPlaceholderText('Enter the property name'), 'alt_shipping');
+
+    const multipleRadio = screen.getByLabelText('multiple-yes')
+    expect(multipleRadio['value']).toBe('yes');
+
+    fireEvent.change(multipleRadio, { target: { value: "no" } });
+    expect(multipleRadio['value']).toBe('no');
+
+    const piiRadio = screen.getByLabelText('pii-yes')
+    fireEvent.change(piiRadio, { target: { value: "yes" } });
+    expect(piiRadio['value']).toBe('yes');
+
+    userEvent.click(getByLabelText('property-modal-submit'));
+    expect(editMock).toHaveBeenCalledTimes(1);
+  });
+
+  test('can edit a basic property from a structured type', async () => {
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let editMock = jest.fn();
+
+    const structuredPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Basic,
+      type: 'gMonth',
+      identifier: 'no',
+      multiple: 'no',
+      pii: 'yes',
+      sort: false,
+      facet: false,
+      wildcard: true
+    }
+    
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'state',
+      isEdit: true,
+      propertyOptions: structuredPropertyOptions
+    }
+
+    const structuredOptions: StructuredTypeOptions = { 
+      isStructured: true,
+      name: 'Address',
+      propertyName: 'address'
+    }
+
+    const { getByLabelText, getByText, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={structuredOptions}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={editMock}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText('Edit Property')).toBeInTheDocument();
+    expect(getByText('Structured Type:')).toBeInTheDocument();
+
+    userEvent.clear(getByPlaceholderText('Enter the property name'));
+    await userEvent.type(getByPlaceholderText('Enter the property name'), 'county');
+
+    const piiRadio = screen.getByLabelText('pii-yes')
+    expect(piiRadio['value']).toBe('yes');
+
+    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    expect(wildcardCheckbox).toBeChecked();
+
+    fireEvent.change(piiRadio, { target: { value: "no" } });
+    expect(piiRadio['value']).toBe('no');
+
+    fireEvent.change(wildcardCheckbox, { target: { checked: false } });
+    expect(wildcardCheckbox).toHaveProperty("checked", false);
+
+
+    userEvent.click(getByLabelText('property-modal-submit'));
+    expect(editMock).toHaveBeenCalledTimes(1);
   });
 });
 
