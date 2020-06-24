@@ -21,6 +21,7 @@ describe('Entity Modeling', () => {
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer").withRequest()    
 
     toolbar.getModelToolbarIcon().should('exist');
+    cy.wait(200);
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should('exist');
   });
@@ -40,12 +41,12 @@ describe('Entity Modeling', () => {
     propertyModal.getNoRadio('identifier').click();
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
-    propertyModal.clickCheckbox('advancedSearch');
-    propertyModal.getAddButton().click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('newID').should('exist');
     propertyTable.getPiiIcon('newID').should('exist');
-    propertyTable.getAdvancedSearchIcon('newID').should('exist');
+    propertyTable.getWildcardIcon('newID').should('exist');
   });
 
   it('can create a new entity, relationship type, and adding identifier confirmation', () => {
@@ -63,7 +64,7 @@ describe('Entity Modeling', () => {
     propertyModal.getTypeFromDropdown('Relationship').click();    
     propertyModal.getCascadedTypeFromDropdown('Person').click();
     propertyModal.getYesRadio('multiple').click();
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('user').should('exist');
 
@@ -77,12 +78,12 @@ describe('Entity Modeling', () => {
     propertyModal.getYesRadio('identifier').click();
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getNoRadio('pii').click();
-    propertyModal.clickCheckbox('advancedSearch');
-    propertyModal.getAddButton().click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getIdentifierIcon('newId').should('exist');
     propertyTable.getMultipleIcon('newId').should('exist');
-    propertyTable.getAdvancedSearchIcon('newId').should('exist');
+    propertyTable.getWildcardIcon('newId').should('exist');
 
     // add basic type with identifier, show confirmation modal
     propertyTable.getAddPropertyButton('Product').click();
@@ -92,13 +93,32 @@ describe('Entity Modeling', () => {
 
     propertyModal.getYesRadio('identifier').click();
     confirmationModal.getYesButton().click()
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getIdentifierIcon('newId').should('not.exist');
     propertyTable.getIdentifierIcon('product-id').should('exist');
+
+    // edit property and change type to relationship
+    propertyTable.editProperty('product-id');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('user-id');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();  
+    propertyModal.getCascadedTypeFromDropdown('Customer').click(); 
+  
+    propertyModal.getYesRadio('idenifier').should('not.exist');
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getNoRadio('pii').should('not.exist');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('user-id').should('exist');
+    propertyTable.getIdentifierIcon('user-id').should('not.exist');
+    propertyTable.getPiiIcon('user-id').should('not.exist');
+    propertyTable.getWildcardIcon('user-id').should('not.exist');
+
   });
 
-  it('can create a structured type, and properties to structure type, and add structure type as property', () => {
+  it('can create a structured type, add properties to structure type, add structure type as property, and edit properties', () => {
     entityTypeTable.expandEntityRow(1);
     propertyTable.getAddPropertyButton('Product').click();
 
@@ -112,7 +132,7 @@ describe('Entity Modeling', () => {
     structuredTypeModal.getAddButton().click();
 
     propertyModal.getYesRadio('multiple').click();
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('address').should('exist');
 
@@ -128,12 +148,12 @@ describe('Entity Modeling', () => {
 
     propertyModal.getNoRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
-    propertyModal.clickCheckbox('advancedSearch');
-    propertyModal.getAddButton().click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('street').should('not.exist');
     propertyTable.getPiiIcon('street').should('exist');
-    propertyTable.getAdvancedSearchIcon('street').should('exist');
+    propertyTable.getWildcardIcon('street').should('exist');
 
     // add structured property to structured type
     propertyTable.getAddPropertyToStructureType('Address').click({ force: true });
@@ -147,11 +167,11 @@ describe('Entity Modeling', () => {
 
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getNoRadio('pii').click();
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('zip').should('exist');
     propertyTable.getPiiIcon('zip').should('not.exist');
-    propertyTable.getAdvancedSearchIcon('zip').should('not.exist');
+    propertyTable.getWildcardIcon('zip').should('not.exist');
 
     // add properties to nested structured type
     propertyTable.getAddPropertyToStructureType('Zip').should('exist').trigger('mouseover');
@@ -163,11 +183,11 @@ describe('Entity Modeling', () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More number types').click();    
     propertyModal.getCascadedTypeFromDropdown('int').click();
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('code').should('not.exist');
     propertyTable.getPiiIcon('code').should('not.exist');
-    propertyTable.getAdvancedSearchIcon('code').should('not.exist');
+    propertyTable.getWildcardIcon('code').should('not.exist');
 
     // Test for additional nesting of structured types
     propertyTable.getAddPropertyToStructureType('Zip').click({ force: true });
@@ -179,7 +199,7 @@ describe('Entity Modeling', () => {
     structuredTypeModal.newName('Extra');
     structuredTypeModal.getAddButton().click();
 
-    propertyModal.getAddButton().click();
+    propertyModal.getSubmitButton().click();
 
     propertyTable.getAddPropertyToStructureType('Extra').should('exist').trigger('mouseover');
     cy.contains(`Click to add properties within this structured property.`);
@@ -189,12 +209,56 @@ describe('Entity Modeling', () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('integer').click();    
     propertyModal.getYesRadio('pii').click();
-    propertyModal.clickCheckbox('advancedSearch');
-    propertyModal.getAddButton().click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
 
-    propertyTable.expandNestedPropertyRow('extra0');
+    propertyTable.expandNestedPropertyRow('Product-extra-Zip-Extra');
     propertyTable.getMultipleIcon('fourDigit').should('not.exist');
     propertyTable.getPiiIcon('fourDigit').should('exist');
-    propertyTable.getAdvancedSearchIcon('fourDigit').should('exist');
+    propertyTable.getWildcardIcon('fourDigit').should('exist');
+
+    //Edit Property Structured Property
+    propertyTable.editProperty('street');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('integer').click();    
+
+    propertyModal.getYesRadio('idenifier').should('not.exist');
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getNoRadio('pii').click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('street').should('exist');
+    propertyTable.getPiiIcon('street').should('not.exist');
+    propertyTable.getWildcardIcon('street').should('exist');
+
+    //rename property and change type from structured to relationship
+    propertyTable.editProperty('address');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('alt_address');
+
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getCascadedTypeFromDropdown('Person').click(); 
+
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getYesRadio('idenifier').should('not.exist');
+    propertyModal.getYesRadio('pii').should('not.exist');
+    propertyModal.getCheckbox('wildcard').should('not.exist');
+
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('alt_address').should('exist');
+    propertyTable.getIdentifierIcon('alt_address').should('not.exist');
+    propertyTable.getPiiIcon('alt_address').should('not.exist');
+
+    // change relationship property to structured
+    propertyTable.editProperty('alt_address');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Structured').click();
+    propertyModal.getCascadedTypeFromDropdown('Address').click(); 
+    propertyModal.getSubmitButton().click();
+    propertyTable.expandNestedPropertyRow('Product-alt_address-Address'); 
+    propertyTable.getProperty('street').should('exist')
   })
 });

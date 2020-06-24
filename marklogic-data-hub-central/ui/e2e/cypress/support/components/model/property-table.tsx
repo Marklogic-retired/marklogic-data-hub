@@ -4,8 +4,8 @@ class PropertyTable {
     return cy.get(`[aria-label=${entityName}-add-property]`);
   }
 
-  getEntity(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-span]');
+  getProperty(propertyName: string) {
+    return cy.get('[data-testid=' + propertyName + '-span]');
   }
 
   getEntityInstanceCount(entityName: string) {
@@ -34,8 +34,8 @@ class PropertyTable {
     return cy.get(`[data-testid=facet-${propertyName}]`);
   }
 
-  getAdvancedSearchIcon(propertyName: string) {
-    return cy.get(`[data-testid=adv-srch-${propertyName}]`);
+  getWildcardIcon(propertyName: string) {
+    return cy.get(`[data-testid=wildcard-${propertyName}]`);
   }
 
   getPiiIcon(propertyName: string) {
@@ -46,9 +46,13 @@ class PropertyTable {
     return cy.get(`[data-testid=add-struct-${structureTypeName}]`);
   }
 
-  //propertyName must include rowKey ex. fiveDigit2
-  expandNestedPropertyRow(propertyName: string) {
-    return cy.get(`[data-row-key="${propertyName}"] > td > div > [role=img]`).eq(0).click();
+  editProperty(propertyName: string) {
+    return cy.get('[data-testid=' + propertyName + '-span]').click();
+  }
+
+  //Format: EntityTypeName-PropertyName-Definition-Definition
+  expandNestedPropertyRow(nestedStructureClass: string) {
+    return cy.get(`.${nestedStructureClass}`).find('td > div > [role=img]').eq(0).click();
   }
 }
 

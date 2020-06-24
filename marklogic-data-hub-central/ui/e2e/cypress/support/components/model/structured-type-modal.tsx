@@ -4,11 +4,11 @@ class StructuredTypeModal {
   }
 
   getCancelButton() {
-    return cy.get('#structured-modal-cancel');
+    return cy.get('[aria-label="structured-type-modal-cancel"');
   }
 
   getAddButton() {
-    return cy.get('#structured-modal-add');
+    return cy.get('[aria-label="structured-type-modal-submit"');
   }
 
 }

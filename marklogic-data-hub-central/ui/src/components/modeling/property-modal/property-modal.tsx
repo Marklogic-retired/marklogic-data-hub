@@ -1,11 +1,22 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Form, Input, Tooltip, Icon, Radio, Checkbox, Cascader } from 'antd';
-import styles from './property-modal.module.scss';
+import { MLButton } from '@marklogic/design-system';
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";import styles from './property-modal.module.scss';
 
 import StructuredTypeModal from '../structured-type-modal/structured-type-modal';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
-import { ConfirmationType, StructuredTypeOptions } from '../../../types/modeling-types';
 import { ModelingContext } from '../../../util/modeling-context';
+import { ModelingTooltips } from '../../../config/tooltips.config';
+
+import { 
+  ConfirmationType,
+  StructuredTypeOptions,
+  PropertyOptions,
+  EditPropertyOptions,
+  PropertyType
+} from '../../../types/modeling-types';
+
 import { 
   COMMON_PROPERTY_TYPES,
   MORE_STRING_TYPES,
@@ -13,16 +24,17 @@ import {
   MORE_DATE_TYPES,
   DROPDOWN_PLACEHOLDER 
 } from '../../../config/modeling.config';
-import { ModelingTooltips } from '../../../config/tooltips.config';
 
 type Props = {
   entityName: any;
   entityDefinitionsArray: any[];
   isVisible: boolean;
+  editPropertyOptions: EditPropertyOptions;
   structuredTypeOptions: StructuredTypeOptions;
   toggleModal: (isVisible: boolean) => void;
-  addPropertyToDefinition: (definitionName: string, propertyName: string, propertyOptions: any) => void;
+  addPropertyToDefinition: (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => void;
   addStructuredTypeToDefinition: (structuredTypeName: string) => void;
+  editPropertyUpdateDefinition: (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => void;
 };
 
 const ALL_RADIO_DISPLAY_VALUES = [
@@ -55,9 +67,9 @@ const ALL_CHECKBOX_DISPLAY_VALUES = [
     tooltip: ModelingTooltips.multiple
   },
   {
-    label: 'Advanced Search',
-    value: 'advancedSearch',
-    tooltip: ModelingTooltips.advancedSearch
+    label: 'Wildcard Search',
+    value: 'wildcard',
+    tooltip: ModelingTooltips.wildcard
   }
 ];
 
@@ -72,7 +84,6 @@ const DEFAULT_STRUCTURED_DROPDOWN_OPTIONS = {
   ]
 }
 
-
 const DEFAULT_DROPDOWN_OPTIONS = [
   ...COMMON_PROPERTY_TYPES,
   DROPDOWN_PLACEHOLDER('1'),
@@ -83,14 +94,15 @@ const DEFAULT_DROPDOWN_OPTIONS = [
   MORE_DATE_TYPES
 ];
 
-const DEFAULT_SELECTED_PROPERTY_OPTIONS = {
+const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
+  propertyType: PropertyType.Basic,
   type: '',
   identifier: '',
   multiple: '',
   pii: '',
   sort: false,
   facet: false,
-  advancedSearch: false
+  wildcard: false
 }
 
 const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
@@ -103,10 +115,12 @@ const layout = {
 const PropertyModal: React.FC<Props> = (props) => {
   const { modelingOptions } = useContext(ModelingContext);
 
+  const [modalTitle, setModalTitle] = useState('');
   const [name, setName] = useState('');
   const [isNameDisabled, toggleIsNameDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
+  const [structuredTypeLabel, setStructuredTypeLabel] = useState('');
   const [showStructuredTypeModal, toggleStructuredTypeModal] = useState(false);
 
   const [showIdentifierModal, toggleIdentifierModal] = useState(false);
@@ -125,12 +139,70 @@ const PropertyModal: React.FC<Props> = (props) => {
   useEffect(() => {
     if (props.isVisible){
       updateTypeDropdown();
-      setName('');
-      setErrorMessage('');
-      setTypeDisplayValue([]);
-      setRadioValues([]);
-      toggleShowConfigurationOptions(false);
-      setSelectedPropertyOptions(DEFAULT_SELECTED_PROPERTY_OPTIONS);
+      if (props.editPropertyOptions.isEdit) {
+        let structuredLabel = '';
+        let typeDisplayValue = [props.editPropertyOptions.propertyOptions.type];
+        let isCommonType = COMMON_PROPERTY_TYPES.some( property => property.value === props.editPropertyOptions.propertyOptions.type);
+        let showConfigOptions = true;
+        let newRadioValues = ALL_RADIO_DISPLAY_VALUES;
+
+        if (!isCommonType && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
+          let type = '';
+          let isMoreStringType = MORE_STRING_TYPES.children.some( property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreNumberType = MORE_NUMBER_TYPES.children.some( property => property.value === props.editPropertyOptions.propertyOptions.type);
+          let isMoreDateType = MORE_DATE_TYPES.children.some( property => property.value === props.editPropertyOptions.propertyOptions.type);
+
+          if (isMoreStringType) {
+            type = 'moreStringTypes';
+          } else if (isMoreNumberType) {
+            type = 'moreNumberTypes';
+          } else if (isMoreDateType) {
+            type = 'moreDateTypes';
+          }
+
+          typeDisplayValue = [ type, props.editPropertyOptions.propertyOptions.type ]
+
+        } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Relationship){
+          typeDisplayValue = [ 'relationship', props.editPropertyOptions.propertyOptions.type ]
+          showConfigOptions = false;
+          newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
+
+        } else if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
+          typeDisplayValue = [ 'structured', props.editPropertyOptions.propertyOptions.type ]
+          newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
+          showConfigOptions = false;
+          structuredLabel = props.structuredTypeOptions.name;
+        }
+        
+        if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
+          structuredLabel = props.structuredTypeOptions.name;
+          newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
+          showConfigOptions = true;
+        }
+
+        setModalTitle('Edit Property');
+        setStructuredTypeLabel(structuredLabel);
+        setName(props.editPropertyOptions.name);
+        setErrorMessage('');
+        setRadioValues(newRadioValues);
+        toggleShowConfigurationOptions(showConfigOptions);
+        setTypeDisplayValue(typeDisplayValue);
+        setSelectedPropertyOptions(props.editPropertyOptions.propertyOptions);
+      } else {
+        let modalTitle = 'Add Property'
+        if (props.structuredTypeOptions.isStructured) {
+          modalTitle = 'Add Structured Type Property';
+          setStructuredTypeLabel(props.structuredTypeOptions.name.split(',').slice(1).join('.'));
+        }
+
+        setModalTitle(modalTitle);
+        setName('');
+        setErrorMessage('');
+        setTypeDisplayValue([]);
+        setRadioValues([]);
+        toggleShowConfigurationOptions(false);
+        setSelectedPropertyOptions(DEFAULT_SELECTED_PROPERTY_OPTIONS);
+      }
     }
   }, [props.isVisible]);
 
@@ -148,12 +220,22 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const onPropertyTypeChange = (value, selectedOptions) => {
     if (value.length) {
+      let newSelectedPropertyOptions = {...selectedPropertyOptions}
+
       switch(value[0]) {
         case 'relationship':
+          newSelectedPropertyOptions.propertyType = PropertyType.Relationship;
+          newSelectedPropertyOptions.identifier = '';
+          newSelectedPropertyOptions.pii = '';
+          newSelectedPropertyOptions.wildcard = false;
+
           setRadioValues([ALL_RADIO_DISPLAY_VALUES[1]]);
           toggleShowConfigurationOptions(false);
           break;
         case 'structured':
+          newSelectedPropertyOptions.propertyType = PropertyType.Structured;
+          newSelectedPropertyOptions.identifier = '';
+          newSelectedPropertyOptions.wildcard = false;
           if (value[1] === 'newPropertyType') {
             toggleStructuredTypeModal(true);
           } else {
@@ -162,6 +244,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           }
           break;
         default:
+          newSelectedPropertyOptions.propertyType = PropertyType.Basic;
           if (props.structuredTypeOptions.isStructured){
             setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
           } else {
@@ -170,33 +253,71 @@ const PropertyModal: React.FC<Props> = (props) => {
           toggleShowConfigurationOptions(true);
           break;
       }
-      
+
       setTypeDisplayValue(value);
-      setSelectedPropertyOptions({ ...selectedPropertyOptions, type: value.join(',') });
+      setSelectedPropertyOptions({ ...newSelectedPropertyOptions, type: value.join(',') });
 
     } else {
       setTypeDisplayValue([]);
       setRadioValues([]);
       toggleShowConfigurationOptions(false);
-      setSelectedPropertyOptions({ ...selectedPropertyOptions, type: '' });
+      setSelectedPropertyOptions({ ...selectedPropertyOptions, type: '', propertyType: PropertyType.Basic });
     }
+    setTypeErrorMessage('');
   }
 
-  const onOk = (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
     if (!NAME_REGEX.test(name)) {
       setErrorMessage(ModelingTooltips.nameRegex)
     } else {
-      if (entityPropertyNamesArray.includes(name)){
-        setErrorMessage(`A property already exists with a name of ${name}`)
-      } else if (selectedPropertyOptions.type === '') {
-        setTypeErrorMessage('Type is required');
+      if (props.editPropertyOptions.isEdit) {
+        let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(propertyName => propertyName !== props.editPropertyOptions.name);
+
+        if (editEntityPropertyNamesArray.includes(name)){
+          setErrorMessage(`A property already exists with a name of ${name}`)
+        } else if (selectedPropertyOptions.type === '') {
+          setTypeErrorMessage('Type is required');
+        } else {
+
+          let definitionName = props.entityName;
+          let typeChangeCheck = props.editPropertyOptions.propertyOptions.propertyType
+
+          if (props.structuredTypeOptions.isStructured && props.structuredTypeOptions.name !== props.editPropertyOptions.propertyOptions.propertyType) {
+            definitionName = props.structuredTypeOptions.name;
+          }
+          if (props.structuredTypeOptions.isStructured && props.structuredTypeOptions.name === props.editPropertyOptions.propertyOptions.type) {
+            definitionName = props.entityName;
+          }
+          if (typeChangeCheck === PropertyType.Structured && typeChangeCheck !== selectedPropertyOptions.propertyType ) {
+            definitionName = props.entityName;
+          }
+
+          const newEditPropertyOptions: EditPropertyOptions = {
+            name: name,
+            isEdit: true,
+            propertyOptions: selectedPropertyOptions
+          }
+
+          props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
+          setErrorMessage('');
+          setTypeErrorMessage('');
+          props.toggleModal(false);
+        }
+
       } else {
-        let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
-        setErrorMessage('');
-        setTypeErrorMessage('');
-        props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions);
-        props.toggleModal(false)
+        // Add Property 
+        if (entityPropertyNamesArray.includes(name)){
+          setErrorMessage(`A property already exists with a name of ${name}`)
+        } else if (selectedPropertyOptions.type === '') {
+          setTypeErrorMessage('Type is required');
+        } else {
+          let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
+          props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions); 
+          setErrorMessage('');
+          setTypeErrorMessage('');
+          props.toggleModal(false);
+        }
       }
     }
   };
@@ -285,20 +406,34 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
 
-    } else if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured) {
+    } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
-      let relationshipDropdown = createRelationshipDropdown();
 
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER('1'),
         structuredDropdown,
-        relationshipDropdown,
         DROPDOWN_PLACEHOLDER('2'),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
         MORE_DATE_TYPES
       ]);
+    } else if ( props.editPropertyOptions.isEdit && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured 
+      || modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured
+      ) {
+        let structuredDropdown = createStructuredDropdown(structuredDefinitions);
+        let relationshipDropdown = createRelationshipDropdown();
+
+        setDropdownOptions([
+          ...COMMON_PROPERTY_TYPES,
+          DROPDOWN_PLACEHOLDER('1'),
+          structuredDropdown,
+          relationshipDropdown,
+          DROPDOWN_PLACEHOLDER('2'),
+          MORE_STRING_TYPES,
+          MORE_NUMBER_TYPES,
+          MORE_DATE_TYPES
+        ]);
 
     } else if (props.structuredTypeOptions.isStructured) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
@@ -393,7 +528,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       >
         <Checkbox
           id={checkbox.value}
-          disabled={checkbox.value === 'advancedSearch' ? false : true}
+          disabled={checkbox.value === 'wildcard' ? false : true}
           checked={selectedPropertyOptions[checkbox.value]}
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
         >{checkbox.label}</Checkbox>
@@ -404,26 +539,45 @@ const PropertyModal: React.FC<Props> = (props) => {
     )
   });
 
+  const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
+    { props.editPropertyOptions.isEdit && 
+      <MLButton type="link" disabled={true}>
+        <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
+      </MLButton>
+    }
+    <div>
+      <MLButton
+        aria-label="property-modal-cancel"
+        size="default"
+        onClick={onCancel}
+      >Cancel</MLButton>
+      <MLButton 
+        aria-label="property-modal-submit"
+        form="property-form"
+        type="primary"
+        htmlType="submit"
+        size="default"
+        onClick={onSubmit}
+      >{props.editPropertyOptions.isEdit ? 'OK' : 'Add'}</MLButton>
+    </div>
+  </div>
+
   return (
     <Modal
       className={styles.modal}
       visible={props.isVisible} 
       closable={true}
-      title={props.structuredTypeOptions.isStructured ? "Add Structured Type Property" : "Add Property"} 
-      cancelText="Cancel"
-      onCancel={() => onCancel()} 
-      cancelButtonProps={{ id: 'property-modal-cancel'}}
-      okText="Add"
-      onOk={onOk}
-      okButtonProps={{ id: 'property-modal-add', form:'property-form', htmlType: 'submit' }}
+      title={modalTitle}
       maskClosable={false}
       width="600px"
       style={{ top: 30 }}
+      onCancel={onCancel}
+      footer={modalFooter}
     >
       <Form
         {...layout}
         id='property-form'
-        onSubmit={onOk}
+        onSubmit={onSubmit}
       >
         <Form.Item
           className={styles.formItemEntityType}
@@ -434,15 +588,14 @@ const PropertyModal: React.FC<Props> = (props) => {
           <span>{props.entityName}</span>
         </Form.Item>
 
-        { props.structuredTypeOptions.isStructured && 
-        (
+        { props.structuredTypeOptions.isStructured && selectedPropertyOptions.type !== props.structuredTypeOptions.name && (
           <Form.Item
             className={styles.formItemEntityType}
             label={<span>Structured Type:</span>}
             colon={false}
             labelAlign="left"
           >
-            <span id="structured-label">{props.structuredTypeOptions.name.split(',').slice(1).join('.')}</span>
+            <span id="structured-label">{structuredTypeLabel}</span>
           </Form.Item>
         )}
 
@@ -511,7 +664,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       />
       <ConfirmationModal
         isVisible={showIdentifierModal}
-        type={ConfirmationType.identifer}
+        type={ConfirmationType.Identifer}
         boldTextArray={identifierModalBoldTextArray}  
         toggleModal={toggleIdentifierModal}
         confirmAction={updateIdentifier}

@@ -2,10 +2,13 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
+import scrollIntoView from 'scroll-into-view';
 
 import { propertyTableEntities } from '../../../assets/mock-data/modeling';
 
 describe('Entity Modeling Property Table Component', () => {
+  window.scrollTo = jest.fn()
+
   test('Property Table renders an Entity with no properties, no writer role', () => {
     let entityName = 'NewEntity';
     let definitions = { NewEntity : { properties: {} } };
@@ -17,12 +20,13 @@ describe('Entity Modeling Property Table Component', () => {
         definitions={definitions}
       />
     )
+    
 
     expect(getByText('Add Property')).toBeInTheDocument();
     expect(getByText('Property Name')).toBeInTheDocument();
     expect(getByText('Multiple')).toBeInTheDocument();
     expect(getByText('Sort')).toBeInTheDocument();
-    expect(getByText('Advanced Search')).toBeInTheDocument();
+    expect(getByText('Wildcard Search')).toBeInTheDocument();
     expect(getByLabelText('NewEntity-add-property')).toBeDisabled();
   });
 
@@ -41,6 +45,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('identifier-concept_name')).toBeInTheDocument();
     expect(getByTestId('multiple-synonyms')).toBeInTheDocument();
     expect(getByTestId('pii-source_concept_code')).toBeInTheDocument();
+    expect(getByTestId('wildcard-vocabulary')).toBeInTheDocument();
 
     expect(getByText('invalid_reason')).toBeInTheDocument();
     expect(getByText('vocabulary')).toBeInTheDocument();
@@ -57,7 +62,7 @@ describe('Entity Modeling Property Table Component', () => {
   test('Property Table renders with structured and external datatypes, no writer role', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole, getByLabelText } =  render(
+    const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole, getByLabelText, queryByTestId } =  render(
       <PropertyTable 
         canReadEntityModel={true}
         canWriteEntityModel={false}
@@ -70,6 +75,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
     expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
+    expect(queryByTestId('customerId-span')).toBeNull();
 
     expect(getByText('Order')).toBeInTheDocument();
     expect(getByText('integer')).toBeInTheDocument();
@@ -136,7 +142,7 @@ describe('Entity Modeling Property Table Component', () => {
   test('can add a new structured type property to the table', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId, getByLabelText, debug } =  render(
+    const { getByText } =  render(
       <PropertyTable 
         canReadEntityModel={true}
         canWriteEntityModel={true}
@@ -159,6 +165,44 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.submit(screen.getByLabelText('input-name'));
 
     expect(getByText('newStructure')).toBeInTheDocument();
+  });
+
+  test('can edit a basic property', async () => {
+    let entityName = propertyTableEntities[2].entityName;
+    let definitions = propertyTableEntities[2].model.definitions;
+    const { getByText, getByTestId, queryByTestId, getAllByTestId } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    expect(getByTestId('identifier-customerId')).toBeInTheDocument();
+    expect(getByTestId('multiple-orders')).toBeInTheDocument();
+    expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
+
+    userEvent.click(getByTestId('customerId-span'));
+    userEvent.clear(screen.getByLabelText('input-name'));
+
+    await userEvent.type(screen.getByLabelText('input-name'), 'newId');
+
+    const multipleRadio = screen.getByLabelText('multiple-yes');
+    fireEvent.change(multipleRadio, { target: { value: "yes" } });
+    expect(multipleRadio['value']).toBe('yes');
+
+    const piiRadio = screen.getByLabelText('pii-yes')
+    fireEvent.change(piiRadio, { target: { value: "yes" } });
+    expect(piiRadio['value']).toBe('yes');
+
+    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    expect(wildcardCheckbox).toBeChecked();
+
+    userEvent.click(screen.getByLabelText('property-modal-submit'));  
+
+    expect(getByText('newId')).toBeInTheDocument();
   });
 });
 

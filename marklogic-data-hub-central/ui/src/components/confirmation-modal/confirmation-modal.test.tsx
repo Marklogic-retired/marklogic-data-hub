@@ -16,7 +16,7 @@ describe('Confirmation Modal Component', () => {
     const { queryByText, getByText, getAllByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
-        type={ConfirmationType.identifer}
+        type={ConfirmationType.Identifer}
         boldTextArray={[currentIdentifier, newIdentifier]} 
         toggleModal={toggleModal}
         confirmAction={confirmAction}
@@ -27,7 +27,7 @@ describe('Confirmation Modal Component', () => {
 
     rerender(<ConfirmationModal 
       isVisible={true}
-      type={ConfirmationType.identifer}
+      type={ConfirmationType.Identifer}
       boldTextArray={[currentIdentifier, newIdentifier]} 
       toggleModal={toggleModal}
       confirmAction={confirmAction}

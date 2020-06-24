@@ -36,3 +36,18 @@
 .asterisk {
   color: #B32424;
 }
+
+.editFooter {
+  display: flex;
+  justify-content: space-between;
+}
+
+.trashIcon {
+  font-size: 20px;
+  //color: #B32424;
+}
+
+.addFooter {
+  display: flex;
+  justify-content: flex-end; 
+}

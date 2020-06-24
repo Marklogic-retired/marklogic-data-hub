@@ -26,7 +26,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       okButtonProps={{ id: 'confirm-modal-yes'}}
       maskClosable={false}
     >
-      {  props.type === ConfirmationType.identifer && (
+      {  props.type === ConfirmationType.Identifer && (
         <>
           <p>Each entity type is allowed a maximum of one identifier. The current identifier is <b>{props.boldTextArray[0]}</b>.
           Choosing a different identifier could affect custom applications and other code that uses <b>{props.boldTextArray[0]}</b> for searching.</p>
