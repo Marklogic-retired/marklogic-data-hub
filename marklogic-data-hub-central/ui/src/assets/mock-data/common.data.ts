@@ -322,6 +322,44 @@ const dropDownWithSearch = {
   srcData: [ {key:'id', value:'id'}, {key:'name', value:'name'}]
 };
 
+const customData = [{
+    "name": "customJSON",
+    "stepDefinitionName": "custom-step",
+    "additionalSettings": {
+        "dummy": "value"
+    },
+    "dummy": "value",
+    "stepDefinitionType": "custom",
+    "sourceDatabase": "db1",
+    "targetDatabase": "db2",
+    "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+    "stepId": "customJSON-custom",
+    "selectedSource": "query",
+    "sourceQuery": "cts.collectionQuery(['loadCustomerJSON'])",
+    "permissions": "role1,read,role2,update",
+    "batchSize": 50,
+    "collections": ["Customer", "mapCustomerJSON"],
+    "lastUpdated": "2020-06-19T16:31:04.360975-07:00"
+    },
+    {
+        "name": "customXML",
+        "stepDefinitionName": "custom-mapping",
+        "stepDefinitionType": "custom",
+        "stepId": "customXML-custom",
+        "selectedSource": "collection",
+        "sourceQuery": "cts.collectionQuery(['loadCustomersXML'])",
+        "lastUpdated": "2020-06-19T16:31:05.372697-07:00",
+        "targetFormat": "XML"
+    }
+];
+
+const viewCustom = {
+    viewCustom: true,
+    setViewCustom: jest.fn(),
+    canReadWrite: false,
+    customData: customData[0]
+}
+
 const data = {
   data: {
     canRead: false,
@@ -342,7 +380,9 @@ const data = {
   entityTypePropertiesMultipleSiblings: entityTypePropertiesMultipleSiblings,
   jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings,
   truncatedJSONResponse: truncatedJSONResponse,
-  truncatedEntityProps: truncatedEntityProps
+  truncatedEntityProps: truncatedEntityProps,
+  customData: customData,
+  viewCustom: viewCustom
 };
 
 export default data;

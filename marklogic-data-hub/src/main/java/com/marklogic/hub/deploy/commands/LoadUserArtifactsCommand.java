@@ -135,7 +135,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
             for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
                 final String artifactType = typeInfo.getType();
-                if ("ingestion".equals(artifactType) || "mapping".equals(artifactType)) {
+                if ("ingestion".equals(artifactType) || "mapping".equals(artifactType) || "custom".equals(artifactType)) {
                     continue;
                 }
                 final Path artifactPath = hubConfig.getHubProject().getArtifactTypePath(typeInfo);

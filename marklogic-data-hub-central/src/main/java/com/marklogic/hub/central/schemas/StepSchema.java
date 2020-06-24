@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "description",
     "stepId",
     "headers",
+    "additionalSettings",
     "validateEntity",
     "targetDatabase",
     "sourceDatabase",
@@ -100,6 +101,13 @@ public class StepSchema {
     @JsonProperty("headers")
     @JsonPropertyDescription("Any properties in this object will be copied into the headers of each document processed by the step")
     private Headers headers;
+    /**
+     * Non-DataHub options set by users; used only in UI in custom steps currently
+     * 
+     */
+    @JsonProperty("additionalSettings")
+    @JsonPropertyDescription("Non-DataHub options set by users; used only in UI in custom steps currently")
+    private AdditionalSettings additionalSettings;
     /**
      * Applicable to mapping steps only
      * 
@@ -328,6 +336,24 @@ public class StepSchema {
     @JsonProperty("headers")
     public void setHeaders(Headers headers) {
         this.headers = headers;
+    }
+
+    /**
+     * Non-DataHub options set by users; used only in UI in custom steps currently
+     * 
+     */
+    @JsonProperty("additionalSettings")
+    public AdditionalSettings getAdditionalSettings() {
+        return additionalSettings;
+    }
+
+    /**
+     * Non-DataHub options set by users; used only in UI in custom steps currently
+     * 
+     */
+    @JsonProperty("additionalSettings")
+    public void setAdditionalSettings(AdditionalSettings additionalSettings) {
+        this.additionalSettings = additionalSettings;
     }
 
     /**
@@ -618,6 +644,10 @@ public class StepSchema {
         sb.append('=');
         sb.append(((this.headers == null)?"<null>":this.headers));
         sb.append(',');
+        sb.append("additionalSettings");
+        sb.append('=');
+        sb.append(((this.additionalSettings == null)?"<null>":this.additionalSettings));
+        sb.append(',');
         sb.append("validateEntity");
         sb.append('=');
         sb.append(((this.validateEntity == null)?"<null>":this.validateEntity));
@@ -705,6 +735,7 @@ public class StepSchema {
         result = ((result* 31)+((this.sourceDatabase == null)? 0 :this.sourceDatabase.hashCode()));
         result = ((result* 31)+((this.collections == null)? 0 :this.collections.hashCode()));
         result = ((result* 31)+((this.permissions == null)? 0 :this.permissions.hashCode()));
+        result = ((result* 31)+((this.additionalSettings == null)? 0 :this.additionalSettings.hashCode()));
         result = ((result* 31)+((this.stepDefinitionName == null)? 0 :this.stepDefinitionName.hashCode()));
         result = ((result* 31)+((this.outputFormat == null)? 0 :this.outputFormat.hashCode()));
         result = ((result* 31)+((this.additionalCollections == null)? 0 :this.additionalCollections.hashCode()));
@@ -730,7 +761,7 @@ public class StepSchema {
             return false;
         }
         StepSchema rhs = ((StepSchema) other);
-        return ((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.targetEntityType == rhs.targetEntityType)||((this.targetEntityType!= null)&&this.targetEntityType.equals(rhs.targetEntityType))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
+        return (((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.additionalSettings == rhs.additionalSettings)||((this.additionalSettings!= null)&&this.additionalSettings.equals(rhs.additionalSettings))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.targetEntityType == rhs.targetEntityType)||((this.targetEntityType!= null)&&this.targetEntityType.equals(rhs.targetEntityType))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
     }
 
     public enum OutputFormat {

@@ -4,7 +4,7 @@ import {Card, Icon, Tooltip, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
-import { convertDateFromISO, getInitialChars } from '../../../util/conversionFunctions';
+import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
@@ -116,15 +116,6 @@ const MappingCard: React.FC<Props> = (props) => {
             padding: '5px'
         }
         return customStyles;
-    }
-
-    const extractCollectionFromSrcQuery = (query) => {
-
-        let srcCollection = query.substring(
-            query.lastIndexOf("[") + 2,
-            query.lastIndexOf("]") - 1
-        );
-        return getInitialChars(srcCollection,30,'...');
     }
 
     const handleCardDelete = (name) => {

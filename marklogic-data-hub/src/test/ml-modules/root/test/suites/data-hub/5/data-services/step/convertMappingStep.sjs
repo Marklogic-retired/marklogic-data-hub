@@ -45,7 +45,6 @@ assertions.push(
   test.assertEqual("entity-services-mapping", flowStep.stepDefinitionName),
   test.assertEqual(stepDefinitionType, flowStep.stepDefinitionType),
   test.assertEqual(100, flowStep.batchSize),
-  test.assertEqual("collection", options.selectedSource),
   test.assertEqual("cts.collectionQuery('customer-input')", options.sourceQuery),
   test.assertEqual("http://example.org/Customer-0.0.1/Customer", options.targetEntityType),
   test.assertEqual("data-hub-STAGING", options.sourceDatabase),

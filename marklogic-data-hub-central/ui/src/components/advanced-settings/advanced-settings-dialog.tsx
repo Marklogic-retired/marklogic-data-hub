@@ -80,6 +80,7 @@ const AdvancedSettingsDialog = (props) => {
   const [customHookTouched, setCustomHookTouched] = useState(false);
   const [customHookExpanded, setCustomHookExpanded] = useState(false);
   const [customHookValid, setCustomHookValid] = useState(true);
+  const [additionalSettings, setAdditionalSettings] = useState('');
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [loading,setLoading] = useState(false);
@@ -117,6 +118,7 @@ const AdvancedSettingsDialog = (props) => {
       setHeaders('');
       setProcessors('');
       setCustomHook('');
+      setAdditionalSettings('');
 
       setProcessorsExpanded(false);
       setCustomHookExpanded(false);
@@ -182,7 +184,6 @@ const AdvancedSettingsDialog = (props) => {
               setIsCustomIngestion(true);
               setStepDefinitionName(response.data.stepDefinitionName);
           }
-
           if (response.data.sourceDatabase) {
             setSourceDatabase(response.data.sourceDatabase);
           }
@@ -198,9 +199,18 @@ const AdvancedSettingsDialog = (props) => {
           setProvGranularity(response.data.provenanceGranularityLevel);
           setValidateEntity(response.data.validateEntity) ;
           setBatchSize(response.data.batchSize);
-          setHeaders(formatJSON(response.data.headers));
-          setProcessors(formatJSON(response.data.processors));
-          setCustomHook(formatJSON(response.data.customHook));
+          if(response.data.headers){
+              setHeaders(formatJSON(response.data.headers));
+          }
+          if(response.data.processors){
+              setProcessors(formatJSON(response.data.processors));
+          }
+          if(response.data.customHook){
+              setCustomHook(formatJSON(response.data.customHook));
+          }
+          if(response.data.additionalSettings){
+              setAdditionalSettings(formatJSON(response.data.additionalSettings));
+          }
         }
       } catch (error) {
         let message = error.response;
@@ -218,6 +228,7 @@ const AdvancedSettingsDialog = (props) => {
         setCustomHook('');
         setStepDefinitionName('');
         setIsCustomIngestion(false);
+        setAdditionalSettings('');
       } finally {
         resetSessionTime();
       }
@@ -765,6 +776,27 @@ const AdvancedSettingsDialog = (props) => {
           />
           { !customHookValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
         </div> : ''}
+        { stepType ==='custom' ? <Form.Item
+            label={<span>Additional Settings</span>}
+            labelAlign="left"
+            className={styles.formItem}
+        >
+            <TextArea
+                id="additionalSettings"
+                placeholder="Please enter additional settings"
+                value={additionalSettings}
+                disabled={!canReadWrite}
+                className={styles.textarea}
+                rows={6}
+                aria-label="options-textarea"
+            />
+            <div className={styles.selectTooltip}>
+                <Tooltip title={props.tooltipsData.additionalSettings} placement={'right'}>
+                    <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+                </Tooltip>
+            </div>
+        </Form.Item> : null
+        }
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <Button data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</Button>&nbsp;&nbsp;

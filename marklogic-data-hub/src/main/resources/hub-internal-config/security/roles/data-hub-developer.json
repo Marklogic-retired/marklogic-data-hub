@@ -13,7 +13,8 @@
     "data-hub-entity-model-writer",
     "data-hub-match-merge-writer",
     "data-hub-ingestion-writer",
-    "data-hub-saved-query-user"
+    "data-hub-saved-query-user",
+    "data-hub-custom-writer"
   ],
   "privilege": [
     {
