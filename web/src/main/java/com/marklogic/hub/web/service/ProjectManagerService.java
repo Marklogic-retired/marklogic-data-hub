@@ -39,6 +39,7 @@ public class ProjectManagerService {
 
     public ProjectManagerService() {}
 
+    @SuppressWarnings("unchecked")
     public synchronized Map<Integer, ProjectInfo> getProjects() {
         Map<Integer, ProjectInfo> projects;
         byte[] bytes = prefs.getByteArray("projects", null);

@@ -84,7 +84,7 @@ public class DiskQueueTest {
         instance.add("second");
         instance.add("third");
         assertEquals(3, instance.size());
-        instance.finalize();
+        instance.close();
     }
 
     @Test
@@ -113,7 +113,7 @@ public class DiskQueueTest {
     public void testFinalize() throws Exception {
         DiskQueue<String> instance = new DiskQueue<String>(1);
         try {
-            instance.finalize();
+            instance.close();
         } catch (Throwable ex) {
             fail();
         }

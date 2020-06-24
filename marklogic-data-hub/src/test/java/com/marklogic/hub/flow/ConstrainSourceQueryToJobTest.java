@@ -44,7 +44,7 @@ public class ConstrainSourceQueryToJobTest extends HubTestBase {
 
     @Test
     public void test() {
-        RunFlowResponse flowResponse = flowRunner.runFlow("testFlow", Arrays.asList("1"), "job1", null, null);
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", "1").withJobId("job1"));
         flowRunner.awaitCompletion();
         RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
         assertEquals("job1", stepResponse.getJobId());
@@ -55,13 +55,13 @@ public class ConstrainSourceQueryToJobTest extends HubTestBase {
         final Map<String, Object> options = new HashMap<>();
         options.put("constrainSourceQueryToJob", true);
 
-        flowResponse = flowRunner.runFlow("testFlow", Arrays.asList(mapXmlStep), "job2", options, null);
+        flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", mapXmlStep).withJobId("job2").withOptions(options));
         flowRunner.awaitCompletion();
         stepResponse = flowResponse.getStepResponses().get(mapXmlStep);
         assertEquals(0, stepResponse.getSuccessfulBatches(), "Since the sourceQuery was constrained to job2, and " +
             "no documents have that value for their datahubCreatedByJob metadata key, then nothing should have been processed");
 
-        flowResponse = flowRunner.runFlow("testFlow", Arrays.asList(mapXmlStep), "job1", options, null);
+        flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", mapXmlStep).withJobId("job1"));
         flowRunner.awaitCompletion();
         stepResponse = flowResponse.getStepResponses().get(mapXmlStep);
         assertEquals(1, stepResponse.getSuccessfulBatches(), "Since the sourceQuery was constrained to job1, and the " +

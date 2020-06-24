@@ -132,6 +132,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public StepRunner withOptions(Map<String, Object> options) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
@@ -290,7 +291,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     @Override
-    public RunStepResponse run(Collection uris) {
+    public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
         try {
@@ -329,7 +330,7 @@ public class QueryStepRunner implements StepRunner {
         return uris;
     }
 
-    private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection uris) {
+    private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection<String> uris) {
         StepMetrics stepMetrics = new StepMetrics();
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {

@@ -219,9 +219,9 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
         ObjectNode alertRuleNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
         ObjectNode ctsQuery = ObjectMapperFactory.getObjectMapper().createObjectNode();
-        ctsQuery.put("wordQuery", ObjectMapperFactory.getObjectMapper().createObjectNode().put("text", "MarkLogic"));
+        ctsQuery.set("wordQuery", ObjectMapperFactory.getObjectMapper().createObjectNode().put("text", "MarkLogic"));
         alertRuleNode.put("name", "my-rule");
-        alertRuleNode.put("query", ctsQuery);
+        alertRuleNode.set("query", ctsQuery);
         alertRuleNode.put("description", "my-rule");
 
         try {

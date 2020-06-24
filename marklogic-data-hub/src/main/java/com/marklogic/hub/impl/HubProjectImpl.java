@@ -211,10 +211,12 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve("flows");
     }
 
+    @Deprecated
     @Override public Path getHubStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
+    @Deprecated
     @Override public Path getUserStagingModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }
@@ -223,6 +225,7 @@ public class HubProjectImpl implements HubProject {
         return this.projectDir.resolve(MODULES_DIR);
     }
 
+    @Deprecated
     @Override public Path getUserFinalModulesDir() {
         return this.projectDir.resolve(MODULES_DIR);
     }

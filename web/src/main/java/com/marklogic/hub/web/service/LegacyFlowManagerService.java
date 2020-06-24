@@ -122,19 +122,6 @@ public class LegacyFlowManagerService {
         return destFolder.resolve(entityName + "-harmonize-" + flowName + ".txt");
     }
 
-    public Map<String, Object> getHarmonizeFlowOptionsFromFile(String entityName, String flowName) throws IOException {
-        Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
-        Path filePath = getHarmonizeOptionsFilePath(destFolder, entityName, flowName);
-        File file = filePath.toFile();
-        if(file.exists()) {
-            return new ObjectMapper().readValue(file, Map.class);
-        }
-
-        Map<String, Object> result = new HashMap<>();
-        result.put("harmonize_file_path", hubConfig.getHubConfigDir());
-        return result;
-    }
-
     public void saveOrUpdateHarmonizeFlowOptionsToFile(String entityName, String flowName, String harmonizeOptionsFileContent) throws IOException {
         Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         File destFolderFile = destFolder.toFile();
@@ -166,6 +153,7 @@ public class LegacyFlowManagerService {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Object> getFlowMlcpOptionsFromFile(String entityName, String flowName) throws IOException {
         Path destFolder = hubConfig.getHubProjectDir().resolve(PROJECT_TMP_FOLDER);
         Path filePath = getMlcpOptionsFilePath(destFolder, entityName, flowName);

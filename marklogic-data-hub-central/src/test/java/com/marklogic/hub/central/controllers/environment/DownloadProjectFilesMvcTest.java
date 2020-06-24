@@ -36,7 +36,7 @@ public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
 
                 // We trust the zip to be constructed correctly based on DownloadConfigurationFilesTest, so just
                 // doing a quick sanity check here
-                List<String> entryNames = new ArrayList();
+                List<String> entryNames = new ArrayList<>();
                 try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
                     ZipEntry entry;
                     while ((entry = zipStream.getNextEntry()) != null) {

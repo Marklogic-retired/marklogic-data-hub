@@ -73,14 +73,14 @@ public class SSLsetup {
 
         ObjectNode node = ObjectMapperFactory.getObjectMapper().createObjectNode();
         if (certAuth) {
-            node.put("authentication", "certificate");            
+            node.put("authentication", "certificate");
             ArrayNode certnode = node.arrayNode();
             certnode.add(cacert);
-            node.put("ssl-client-certificate-pem", certnode );
+            node.set("ssl-client-certificate-pem", certnode );
 
         }
         node.put("ssl-certificate-template", "dhf-cert");
-        
+
         try {
             FileUtils.writeStringToFile(new File(System.getProperty("java.io.tmpdir") + "/ssl-server.json"),
                     node.toString());

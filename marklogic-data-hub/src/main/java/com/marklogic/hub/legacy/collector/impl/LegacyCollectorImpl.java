@@ -105,6 +105,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
     }
 
     @Override
+    @Deprecated
     public DiskQueue<String> run(String jobId, String entity, String flow, int threadCount, Map<String, Object> options) {
         try {
             DiskQueue<String> results = new DiskQueue<>(5000);
@@ -158,6 +159,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
         }
     }
 
+    @Deprecated
     private RestTemplate newRestTemplate(String username, String password) {
         DatabaseClientFactory.SecurityContext securityContext = client.getSecurityContext();
 
@@ -192,7 +194,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
                     @Override
                     public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {}
                 };
-                
+
             } else if (verifier == SSLHostnameVerifier.COMMON) {
                 hostnameVerifier = null;
             } else if (verifier == SSLHostnameVerifier.STRICT) {
@@ -210,13 +212,14 @@ public class LegacyCollectorImpl implements LegacyCollector {
         return rt;
     }
 
+    @Deprecated
     static private class HostnameVerifierAdapter implements X509HostnameVerifier {
         private DatabaseClientFactory.SSLHostnameVerifier verifier;
 
         protected HostnameVerifierAdapter(DatabaseClientFactory.SSLHostnameVerifier verifier) {
           this.verifier = verifier;
         }
-        
+
         public void verify(String hostname, X509Certificate cert) throws SSLException {
           ArrayList<String> cnArray = new ArrayList<>();
           try {
@@ -254,12 +257,12 @@ public class LegacyCollectorImpl implements LegacyCollector {
         @Override
         public void verify(String hostname, SSLSocket ssl) throws IOException {
             Certificate[] certificates = ssl.getSession().getPeerCertificates();
-            verify(hostname, (X509Certificate) certificates[0]);             
+            verify(hostname, (X509Certificate) certificates[0]);
         }
 
         @Override
         public void verify(String hostname, String[] cns, String[] subjectAlts) throws SSLException {
-            verifier.verify(hostname, cns, subjectAlts);            
+            verifier.verify(hostname, cns, subjectAlts);
         }
 
         @Override
@@ -268,7 +271,7 @@ public class LegacyCollectorImpl implements LegacyCollector {
               Certificate[] certificates = session.getPeerCertificates();
               verify(hostname, (X509Certificate) certificates[0]);
               return true;
-              } 
+              }
             catch(SSLException e) {
               return false;
             }

@@ -122,7 +122,7 @@ public class MasterTest extends HubTestBase {
 
     @Test
     public void testMasterStep() {
-        RunFlowResponse flowResponse = flowRunner.runFlow("myNewFlow", Arrays.asList("1","2","3"));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("myNewFlow", "1","2","3"));
         flowRunner.awaitCompletion();
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess(), "Mastering job failed!");
@@ -164,7 +164,7 @@ public class MasterTest extends HubTestBase {
             "))";
         assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
 
-        RunFlowResponse flowMergeResponse = flowRunner.runFlow("myMatchMergeFlow", Collections.singletonList("4"));
+        RunFlowResponse flowMergeResponse = flowRunner.runFlow(new FlowInputs("myMatchMergeFlow", "4"));
         flowRunner.awaitCompletion();
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
         assertTrue(mergeJob.isSuccess(), "Merging job failed!");

@@ -413,7 +413,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     @Override
-    public HashMap<String, Boolean> runPreInstallCheck() {
+    public Map<String, Object> runPreInstallCheck() {
         return runPreInstallCheck(constructServerManager(hubConfig));
     }
 
@@ -423,14 +423,14 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * @param serverManager
      * @return
      */
-    protected HashMap<String, Boolean> runPreInstallCheck(ServerManager serverManager) {
+    protected Map<String, Object> runPreInstallCheck(ServerManager serverManager) {
         Map<Integer, String> portsInUse;
 
         try {
             portsInUse = getServerPortsInUse(serverManager);
         } catch (HttpClientErrorException e) {
             logger.warn("Used non-existing user to verify data hub.  Usually this means a fresh system, ready to install.");
-            HashMap response = new HashMap();
+            Map<String, Object> response = new HashMap<>();
             response.put("serverVersion", serverVersion);
             // no server means give it a shot.
             response.put("serverVersionOk", true);
@@ -466,7 +466,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
         serverVersion = versions.getMarkLogicVersion();
         serverVersionOk = isServerVersionValid(serverVersion);
-        HashMap response = new HashMap();
+        Map<String, Object> response = new HashMap<>();
         response.put("serverVersion", serverVersion);
         response.put("serverVersionOk", serverVersionOk);
         response.put("stagingPortInUse", stagingPortInUse);
@@ -708,7 +708,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      * @param commandsMap
      */
     private void updateModuleCommandList(Map<String, List<Command>> commandsMap) {
-        List<Command> commands = new ArrayList();
+        List<Command> commands = new ArrayList<>();
         commands.add(loadHubModulesCommand);
         commands.add(loadUserModulesCommand);
         commands.add(loadUserArtifactsCommand);

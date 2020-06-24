@@ -54,7 +54,7 @@ public class HubConfigTest extends HubTestBase {
 
         AppConfig config = adminHubConfig.getAppConfig();
 
-        assertEquals(new Integer(8011), config.getRestPort(),
+        assertEquals((Integer)8011, config.getRestPort(),
             "The final port should be used as restPort so that any ml-gradle feature that depends on mlRestPost " +
                 "ends up talking to the final app server");
         if (!(isCertAuth() || isSslRun())) {
@@ -84,7 +84,7 @@ public class HubConfigTest extends HubTestBase {
         config = adminHubConfig.getAppConfig();
 
         assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
-        assertEquals(new Integer(8123), config.getRestPort());
+        assertEquals((Integer)8123, config.getRestPort());
         assertEquals("/path/to/file", config.getRestCertFile());
         assertEquals("changeme", config.getRestCertPassword());
         assertEquals("somename", config.getRestExternalName());

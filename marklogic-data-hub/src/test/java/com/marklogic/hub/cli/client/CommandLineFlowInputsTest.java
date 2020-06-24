@@ -53,6 +53,7 @@ public class CommandLineFlowInputsTest {
         assertEquals(3, stepConfig.get("threadCount"));
         assertEquals(50, stepConfig.get("batchSize"));
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> fileLocations = (Map<String, Object>) stepConfig.get("fileLocations");
         assertEquals("CSV", fileLocations.get("inputFileType"));
         assertEquals(";", fileLocations.get("separator"));
@@ -77,6 +78,7 @@ public class CommandLineFlowInputsTest {
         Map<String, Object> options = pair.getLeft().getOptions();
         assertEquals("world", options.get("hello"));
 
+        @SuppressWarnings("unchecked")
         List<String> values = (List<String>) options.get("values");
         assertEquals("red", values.get(0));
         assertEquals("green", values.get(1));

@@ -220,7 +220,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     @RequestMapping(value = "/preinstall-check", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public String preInstallCheck() {
-        HashMap response = dataHubService.preInstallCheck(hubConfig);
+        Map<String, Object> response = dataHubService.preInstallCheck(hubConfig);
         String jsonResponse = null;
         try {
             jsonResponse = new ObjectMapper().writeValueAsString(response);

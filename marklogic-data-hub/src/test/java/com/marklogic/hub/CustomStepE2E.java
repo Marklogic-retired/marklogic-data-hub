@@ -2,6 +2,7 @@ package com.marklogic.hub;
 
 import com.marklogic.bootstrap.Installer;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
@@ -93,7 +94,7 @@ public class CustomStepE2E extends HubTestBase{
             throw new Exception("Admissions Flow Not Found");
         }
         //Running all three ingestion steps here for E2E, but its the 3rd step that is of type custom ingestion
-        RunFlowResponse flowResponse = flowRunner.runFlow("Admissions", Arrays.asList("1","2","3"));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("Admissions", "1", "2", "3"));
         flowRunner.awaitCompletion();
         RunStepResponse ingestionJob = flowResponse.getStepResponses().get("3");
         assertTrue(ingestionJob.isSuccess(), "Custom ingestion job failed: "+ingestionJob.stepOutput);
@@ -110,7 +111,7 @@ public class CustomStepE2E extends HubTestBase{
             throw new Exception("Admissions Flow Not Found");
         }
         //Running custom mapping step
-        RunFlowResponse flowResponse = flowRunner.runFlow("Admissions", Arrays.asList("4"));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("Admissions", "4"));
         flowRunner.awaitCompletion();
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("4");
         assertTrue(mappingJob.isSuccess(), "Custom mapping job failed: "+mappingJob.stepOutput);
@@ -127,7 +128,7 @@ public class CustomStepE2E extends HubTestBase{
             throw new Exception("Admissions Flow Not Found");
         }
         //Running custom mastering step
-        RunFlowResponse flowResponse = flowRunner.runFlow("Admissions", Arrays.asList("5"));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("Admissions", "5"));
         flowRunner.awaitCompletion();
         RunStepResponse masteringJob = flowResponse.getStepResponses().get("5");
         assertTrue(masteringJob.isSuccess(), "Custom mastering job failed: "+masteringJob.stepOutput);

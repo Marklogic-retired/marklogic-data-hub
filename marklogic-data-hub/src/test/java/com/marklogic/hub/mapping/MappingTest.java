@@ -12,6 +12,7 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
@@ -391,7 +392,7 @@ public class MappingTest extends HubTestBase {
     }
 
     protected RunFlowResponse runFlow(String flowName, String... stepIds) {
-        RunFlowResponse flowResponse = flowRunner.runFlow(flowName, Arrays.asList(stepIds));
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs(flowName, stepIds));
         flowRunner.awaitCompletion();
         return flowResponse;
     }
