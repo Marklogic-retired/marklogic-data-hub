@@ -230,7 +230,10 @@ class DataHubPlugin implements Plugin<Project> {
 
         project.task("hubDeployAsDeveloper", group: deployGroup, type: DeployAsDeveloperTask,
             description: "Deploy project configuration as a user with the data-hub-developer role"
-        ).finalizedBy(["hubGenerateExplorerOptions"]).mustRunAfter("hubDeployAsSecurityAdmin")
+        )
+            .dependsOn("mlPrepareBundles") // Needed for https://github.com/marklogic-community/ml-gradle/wiki/Bundles
+            .finalizedBy(["hubGenerateExplorerOptions"])
+            .mustRunAfter("hubDeployAsSecurityAdmin")
 
         project.task("hubDeploy", group: deployGroup, dependsOn: ["hubDeployAsDeveloper", "hubDeployAsSecurityAdmin"],
             description: "Deploy project configuration as a user with the data-hub-security-admin and data-hub-developer roles")
