@@ -1,0 +1,39 @@
+.customContainer{
+    margin-top: 3vh;
+}
+.cardStyle{
+    width: 330px;
+    margin-top: 9px;
+    text-align: left;
+    align-content: left;
+    padding-bottom: 2px;
+    border: 1px solid #d7d6d6;
+    margin-bottom: 10px;
+}
+.cardStyle:hover {
+    border: 1px solid #67749c;
+}
+.customNameStyle{
+    font-size: 20px;
+    padding-bottom: 2px;
+}
+.sourceQuery {
+    font-size: 13px;
+    margin-top: 10px;
+}
+
+.disabledDeleteIcon {
+    font-size: 21px;
+    opacity: 0.5;
+    pointer-events: none;
+    padding-bottom: 2px;
+}
+
+.lastUpdatedStyle{
+    font-size: 13px;
+    margin-bottom: 0px;
+}
+
+.input{
+    width: 95%;
+}

@@ -1,3 +1,4 @@
+import commonData from "../../assets/mock-data/common.data";
 const response = {"data":{"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "status": 200};
 
 let stepFailedWithError = [
@@ -473,6 +474,16 @@ const loadSettings = {"data" :
     "status" :200
 };
 
+const customSteps = {"data" :{"stepsWithEntity":[{
+        "entityType": "Customer",
+        "entityTypeId": "http://example.org/Customer-0.0.1/Customer",
+        "artifacts": [{...commonData.customData[0]}]
+    }],
+    "stepsWithoutEntity": [{...commonData.customData[1]}]},
+    "status" :200
+}
+
+
 const data = {
     primaryEntityTypes,
     flows: flows,
@@ -487,7 +498,9 @@ const data = {
     flowsXML: flowsXML,
     loadsXML: loadsXML,
     loadSettings: loadSettings,
-    mappingSettings: mappingSettings
+    mappingSettings: mappingSettings,
+    customSteps
+
 };
 
 export default data;

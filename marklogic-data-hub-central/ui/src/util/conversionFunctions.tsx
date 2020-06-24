@@ -6,7 +6,7 @@ const convertDateFromISO = (InputDate) => {
     let hr = date.getHours();
     let min:any = date.getMinutes();
     let dayTime = (hr < 12 && hr >= 0) ? 'AM' : 'PM';
-    
+
     if (dt < 10) {
         dt = '0' + dt;
     }
@@ -37,6 +37,15 @@ const getInitialChars = (str, num, suffix) => {
     return result;
 }
 
+const extractCollectionFromSrcQuery = (query) => {
+
+    let srcCollection = query.substring(
+        query.lastIndexOf("[") + 2,
+        query.lastIndexOf("]") - 1
+    );
+    return getInitialChars(srcCollection,30,'...');
+}
+
 const getLastChars = (str, num, prefix) => {
     prefix = prefix ? prefix : '...';
     let result = str;
@@ -49,5 +58,6 @@ const getLastChars = (str, num, prefix) => {
 export {
     convertDateFromISO,
     getInitialChars,
-    getLastChars
+    getLastChars,
+    extractCollectionFromSrcQuery
 }

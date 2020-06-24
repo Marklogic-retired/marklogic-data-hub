@@ -43,7 +43,16 @@ if (existingStep) {
 
   // For now, can assume the stepDefinitionName based on the type. Can add stepDefinitionType as a parameter once we need
   // more flexibility.
-  const stepDefinitionName = "mapping" === stepDefinitionType.toLowerCase() ? "entity-services-mapping" : "default-ingestion";
+  let stepDefinitionName;
+  if("mapping" === stepDefinitionType){
+    stepDefinitionName = "entity-services-mapping";
+  }
+  else if("ingestion" === stepDefinitionType){
+    stepDefinitionName = "default-ingestion";
+  }
+  else {
+    stepDefinitionName = stepProperties.stepDefinitionName;
+  }
 
   stepProperties.stepDefinitionName = stepDefinitionName;
   stepProperties.stepDefinitionType = stepDefinitionType;

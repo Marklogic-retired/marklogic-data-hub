@@ -1,6 +1,7 @@
 import loadData from "../../assets/mock-data/ingestion.data";
 import curateData from "../../assets/mock-data/flows.data";
 import advancedData from "../../assets/mock-data/advanced-settings.data";
+import commonData from "../../assets/mock-data/common.data";
 
 const loadAPI = (axiosMock) => {
   axiosMock.delete['mockImplementation']((url) => {
@@ -74,6 +75,10 @@ const curateAPI = (axiosMock) => {
         return Promise.resolve(curateData.mappingSettings);
       case '/api/artifacts/matching':
         return Promise.resolve(curateData.matchings);
+      case '/api/steps/custom':
+          return Promise.resolve(curateData.customSteps);
+      case '/api/steps/custom/customJSON':
+          return Promise.resolve({status:200, data:commonData.customData[0]});
       default:
         return Promise.reject(new Error('not found'));
     }

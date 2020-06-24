@@ -25,6 +25,7 @@ const Curate: React.FC = () => {
     const canReadMatchMerge = authorityService.canReadMatchMerge();
     const canWriteMatchMerge = authorityService.canWriteMatchMerge();
     const canWriteFlow = authorityService.canWriteFlow();
+    const canReadCustom = authorityService.canReadCustom();
 
     const getEntityModels = async () => {
         try {
@@ -115,6 +116,8 @@ const Curate: React.FC = () => {
             canWriteMatchMerge={canWriteMatchMerge}
             canWriteMapping={canWriteMapping}
             canReadMapping={canReadMapping}
+            canReadCustom={canReadCustom}
+            canWriteCustom={false}
             entityModels={entityModels}
             getEntityModels={getEntityModels}
             canWriteFlow={canWriteFlow}

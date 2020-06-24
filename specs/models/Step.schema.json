@@ -52,6 +52,10 @@
       "type": "object",
       "description": "Any properties in this object will be copied into the headers of each document processed by the step"
     },
+    "additionalSettings": {
+      "type": "object",
+      "description": "Non-DataHub options set by users; used only in UI in custom steps currently"
+    },
     "validateEntity": {
       "type": "string",
       "description": "Applicable to mapping steps only"

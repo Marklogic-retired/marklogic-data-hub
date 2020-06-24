@@ -4,7 +4,7 @@ import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
-import { convertDateFromISO } from '../../../util/conversionFunctions';
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
 
 interface Props {
@@ -52,24 +52,6 @@ const MatchingCard: React.FC<Props> = (props) => {
         return customStyles;
     }
 
-    //Truncate a string (Step Name) to desired no. of characters
-    const getInitialChars = (str, num, suffix) => {
-        suffix = suffix ? suffix : '...';
-        let result = str;
-        if (typeof str === 'string' && str.length > num) {
-            result = str.substr(0, num) + suffix;
-        }
-        return result;
-    }
-
-    const extractCollectionFromSrcQuery = (query) => {
-
-        let srcCollection = query.substring(
-            query.lastIndexOf("[") + 2, 
-            query.lastIndexOf("]") - 1
-        );
-        return getInitialChars(srcCollection,30,'...');
-    }
 
     const handleCardDelete = (name) => {
         setDialogVisible(true);
@@ -83,7 +65,7 @@ const MatchingCard: React.FC<Props> = (props) => {
 
       const onCancel = () => {
         setDialogVisible(false);
-      }  
+      }
 
     const deleteConfirmation = <Modal
         visible={dialogVisible}
@@ -117,13 +99,13 @@ const MatchingCard: React.FC<Props> = (props) => {
                             props.canWriteMatchMerge ? <Tooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></Tooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
                         className={styles.cardStyle}
-                        
+
                         size="small"
                     >
                         <div className={styles.formatFileContainer}>
                             <span className={styles.matchingNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                             {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
-                            
+
                         </div><br />
                         {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                         <br /><br />
@@ -131,8 +113,8 @@ const MatchingCard: React.FC<Props> = (props) => {
                     </Card></Col>
                 )) : <span></span> }</Row>
                 <CreateEditMatchingDialog
-                newMatching={newMatching} 
-                title={title} 
+                newMatching={newMatching}
+                title={title}
                 setNewMatching={setNewMatching}
                 targetEntityType={props.entityName}
                 createMatchingArtifact={props.createMatchingArtifact}
@@ -141,7 +123,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                 canReadWrite={props.canWriteMatchMerge}
                 canReadOnly={props.canReadMatchMerge}/>
                 {deleteConfirmation}
-                
+
         </div>
     );
 

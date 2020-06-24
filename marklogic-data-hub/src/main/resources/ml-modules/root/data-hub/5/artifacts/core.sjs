@@ -21,6 +21,7 @@ const LoadData = require('./loadData');
 const Mapping = require('./mapping');
 const Matching = require('./matching');
 const StepDef = require('./stepDefinition');
+const CustomStep = require('./customStep')
 
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
@@ -29,11 +30,12 @@ const dataHub = DataHubSingleton.instance();
 // define constants for caching expensive operations
 const cachedArtifacts = {};
 const registeredArtifactTypes = {
-  ingestion: LoadData,
+    ingestion: LoadData,
     flow: Flow,
     stepDefinition: StepDef,
     mapping: Mapping,
-    matching: Matching
+    matching: Matching,
+    custom: CustomStep
 };
 
 function getTypesInfo() {
@@ -68,7 +70,7 @@ function getTypesInfo() {
     return typesInfo;
 }
 
-const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering'];
+const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering', 'custom'];
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -394,7 +396,7 @@ function convertStepReferenceToInlineStep(stepId) {
     "name", "description", "stepDefinitionName", "stepDefinitionType", "stepId",
     "customHook", "processors", "batchSize", "threadCount"
   ].forEach(key => {
-    if (referencedStep[key]) {
+    if (referencedStep[key] === "" || referencedStep[key]) {
       newFlowStep[key] = referencedStep[key];
       delete referencedStep[key];
     }
@@ -416,11 +418,13 @@ function convertStepReferenceToInlineStep(stepId) {
   if (collections.length > 0) {
     referencedStep.collections = collections;
   }
-
-  // Copy all remaining properties on the referenced step over as options
+  const propsNotToBeCopiedToOptions = ["lastUpdated", "selectedSource"]
+  // Copy all remaining properties on the referenced step that are not in 'propsNotToBeCopiedToOptions' as options
   newFlowStep.options = {};
   Object.keys(referencedStep).forEach(key => {
-    newFlowStep.options[key] = referencedStep[key];
+    if(! propsNotToBeCopiedToOptions.includes(key)) {
+      newFlowStep.options[key] = referencedStep[key];
+    }
   });
 
   return newFlowStep;
@@ -435,5 +439,6 @@ module.exports = {
     validateArtifact,
     linkToStepOptions,
     removeLinkToStepOptions,
-    getFullFlow
+    getFullFlow,
+    convertStepReferenceToInlineStep
 };

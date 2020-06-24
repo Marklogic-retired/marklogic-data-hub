@@ -50,8 +50,13 @@ const AdvMapTooltips = {
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
  }
 
+const AdvCustomTooltips = {
+    'additionalSettings': 'A JSON object containing key-value pairs to pass to the custom step module.',
+}
+
 const NewMatchTooltips = {
-    'name': 'The name of this matching configuration.',	    'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
+    'name': 'The name of this matching configuration.',
+    'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
     'description': 'The description of this matching configuration.',	    'targetDatabase': 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
     'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
 }
@@ -60,6 +65,12 @@ const AdvMatchTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For matching, the default is data-hub-FINAL.',
     'targetDatabase': 'The database where to store the processed data. Must be the same as the *Source Database*.',
     'provGranularity': 'The level of detail logged for provenance. Choose *fine* for more detailed logging, *coarse* for the default level, or *off* for no provenance logging.',
+}
+
+const NewCustomTooltips = {
+  'name':'The name of this custom configuration.',
+  'description':'The description of this custom configuration.',
+  'sourceQuery':'The collection or CTS query that selects the source data to process in this configuration.',
 }
 
 const NewMergeTooltips = {
@@ -133,5 +144,7 @@ export {
     NewMergeTooltips,
     AdvMergeTooltips,
     ModelingTooltips,
-    RunToolTips
+    RunToolTips,
+    NewCustomTooltips,
+    AdvCustomTooltips
 }
