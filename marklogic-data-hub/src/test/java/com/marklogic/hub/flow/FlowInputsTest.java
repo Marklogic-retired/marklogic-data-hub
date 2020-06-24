@@ -14,11 +14,13 @@ public class FlowInputsTest {
         FlowInputs inputs = new FlowInputs("anyflow");
         inputs.setInputFilePath("/path/to/data");
 
+        @SuppressWarnings("unchecked")
         Map<String, Object> fileLocations = (Map<String, Object>) inputs.getStepConfig().get("fileLocations");
         assertEquals("/path/to/data", fileLocations.get("inputFilePath"));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void setInputFilePathWithExistingStepConfig() {
         FlowInputs inputs = new FlowInputs("anyflow");
 

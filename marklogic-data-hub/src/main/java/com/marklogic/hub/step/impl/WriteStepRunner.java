@@ -178,6 +178,7 @@ public class WriteStepRunner implements StepRunner {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public StepRunner withOptions(Map<String, Object> options) {
         if(flow == null){
             throw new DataHubConfigurationException("Flow has to be set before setting options");
@@ -335,6 +336,7 @@ public class WriteStepRunner implements StepRunner {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void loadStepRunnerParameters(){
         JsonNode comboOptions = null;
         try {

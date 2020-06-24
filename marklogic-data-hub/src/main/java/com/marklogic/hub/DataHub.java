@@ -21,6 +21,7 @@ import com.marklogic.hub.error.ServerValidationException;
 import com.marklogic.hub.flow.FlowRunner;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles creation and orchastration of DHF with a MarkLogic server.
@@ -74,7 +75,7 @@ public interface DataHub {
      * Must be run as a user with sufficient privileges to install a data hub.
      * @return - a hashmap of the results of the preinstall check
      */
-    HashMap runPreInstallCheck();
+    Map<String, Object> runPreInstallCheck();
 
     /**
      * Installs the data hub configuration and server-side config files into MarkLogic

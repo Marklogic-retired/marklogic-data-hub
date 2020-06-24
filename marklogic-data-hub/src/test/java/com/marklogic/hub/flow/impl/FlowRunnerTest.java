@@ -215,10 +215,12 @@ public class FlowRunnerTest extends HubTestBase {
         }
      }
 
-     protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String,Object> options, Map<String, Object> stepConfig) {
+    @SuppressWarnings("deprecation")
+    protected RunFlowResponse runFlow(String flowName, String commaDelimitedSteps, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {
         List<String> steps = commaDelimitedSteps != null ? Arrays.asList(commaDelimitedSteps.split(",")) : null;
-         return flowRunner.runFlow(flowName, steps, jobId, options, stepConfig);
-     }
+        // This is intentionally being used to ensure that the deprecated approach still works
+        return flowRunner.runFlow(flowName, steps, jobId, options, stepConfig);
+    }
 
     @Test
     public void testIngestCSVasXMLCustomDelimiter(){

@@ -76,6 +76,7 @@ public class MappingImpl implements Mapping {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Mapping deserialize(JsonNode json) {
         ObjectMapper mapper = new ObjectMapper();
         HashMap<String, ObjectNode> jsonProperties = new HashMap<>();

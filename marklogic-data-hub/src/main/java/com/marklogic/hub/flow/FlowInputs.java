@@ -32,7 +32,8 @@ public class FlowInputs {
         if (stepConfig == null) {
             stepConfig = new HashMap<>();
         }
-        Map<String, Object> fileLocations = (Map<String, Object>)stepConfig.get("fileLocations");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> fileLocations = (Map)stepConfig.get("fileLocations");
         if (fileLocations == null) {
             fileLocations = new HashMap<>();
             stepConfig.put("fileLocations", fileLocations);

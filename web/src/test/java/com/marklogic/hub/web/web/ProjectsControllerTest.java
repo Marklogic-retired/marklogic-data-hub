@@ -70,6 +70,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void getProjects() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
         assertEquals(false, pc.getProjects().keySet().contains("lastProject"));
@@ -80,6 +81,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void addProject() throws IOException {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
@@ -90,6 +92,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void getProject() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
         assertEquals(false, pc.getProjects().keySet().contains("lastProject"));
@@ -103,6 +106,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void removeProject() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
@@ -115,6 +119,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void initializeProject() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
@@ -129,6 +134,7 @@ public class ProjectsControllerTest extends BaseTestController {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void getDefaults() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 

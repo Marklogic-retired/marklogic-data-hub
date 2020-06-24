@@ -159,6 +159,7 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
     }
 
     @Override
+    @Deprecated
     public JobTicket run() {
         String jobId = UUID.randomUUID().toString();
         LegacyJobManager jobManager = LegacyJobManager.create(hubConfig.newJobDbClient());
@@ -411,6 +412,7 @@ public class LegacyFlowRunnerImpl implements LegacyFlowRunner {
         }
     }
 
+    @Deprecated
     protected RunFlowResponse handleFlowRunnerException (Exception e) {
         ObjectMapper objectMapper = new ObjectMapper();
         RunFlowResponse resp = null;

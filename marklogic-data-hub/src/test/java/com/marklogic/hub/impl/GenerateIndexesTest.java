@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class GenerateIndexesTest extends HubTestBase {
 
-    private List<JsonNode> entities = new ArrayList();
+    private List<JsonNode> entities = new ArrayList<>();
     private ObjectNode indexes;
 
     @Test

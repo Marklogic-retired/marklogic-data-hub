@@ -70,6 +70,7 @@ class EntitiesController {
 
     @RequestMapping(value = "/entities/", method = RequestMethod.POST)
     @ResponseBody
+    @Deprecated
     public ResponseEntity<?> saveEntities(@RequestBody List<EntityModel> entities) throws ClassNotFoundException, IOException {
 
         for (EntityModel entity : entities) {
@@ -92,6 +93,7 @@ class EntitiesController {
 
     @RequestMapping(value = "/entities/{entityName}", method = RequestMethod.PUT)
     @ResponseBody
+    @Deprecated
     public EntityModel saveEntity(@RequestBody EntityModel entity) throws ClassNotFoundException, IOException {
         entityManagerService.saveEntityUiData(entity);
         EntityModel m = entityManagerService.saveEntity(entity);

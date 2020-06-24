@@ -158,6 +158,7 @@ public class FlowController {
 
     @RequestMapping(value = "/{flowName}/run", method = RequestMethod.POST)
     @ResponseBody
+    @Deprecated
     public ResponseEntity<?> runFlow(@PathVariable String flowName, @RequestBody(required = false) List<String> steps) {
         FlowStepModel flow = flowManagerService.runFlow(flowName, steps);
         return new ResponseEntity<>(flow, HttpStatus.OK);

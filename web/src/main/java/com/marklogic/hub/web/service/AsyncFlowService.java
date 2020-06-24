@@ -226,6 +226,7 @@ public class AsyncFlowService implements InitializingBean, DisposableBean {
             threadCnt++;
         }
 
+        @SuppressWarnings("unchecked")
         ExecutorCompletionService<FlowStepsWithThreadInfo> ecs = new ExecutorCompletionService(
             executor);
         Future[] futures = IntStream.range(0, threadCnt)

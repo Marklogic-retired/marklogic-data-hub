@@ -47,6 +47,7 @@ public class GenerateHubTDETemplateCommand extends GenerateModelArtifactsCommand
     private Path userFinalSchemasTDEs;
 
     private String entityNames;
+    @SuppressWarnings("unchecked")
     private List<String> entityNamesList = Collections.EMPTY_LIST;
 
     public GenerateHubTDETemplateCommand(HubConfig hubConfig) {

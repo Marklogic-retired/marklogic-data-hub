@@ -319,6 +319,7 @@ public class FlowManagerService {
      * @param steps
      * @return
      */
+    @Deprecated
     public synchronized FlowStepModel runFlow(String flowName, List<String> steps) {
         if (steps == null || steps.size() == 0) {
             flowRunner.runFlow(flowName);

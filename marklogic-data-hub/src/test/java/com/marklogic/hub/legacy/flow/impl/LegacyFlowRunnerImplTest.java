@@ -6,6 +6,7 @@ import com.marklogic.hub.legacy.flow.RunFlowResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@Deprecated
 class LegacyFlowRunnerImplTest  {
 
     @Test

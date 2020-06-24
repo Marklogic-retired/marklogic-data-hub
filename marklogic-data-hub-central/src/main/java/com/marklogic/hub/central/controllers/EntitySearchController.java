@@ -126,7 +126,7 @@ public class EntitySearchController extends BaseController {
     @Secured("ROLE_savedQueryUser")
     public ResponseEntity<Void> deleteQueryDocument(@RequestParam String id) {
         getEntitySearchService().deleteSavedQuery(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     /*

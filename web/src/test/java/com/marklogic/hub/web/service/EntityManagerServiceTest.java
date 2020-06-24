@@ -137,6 +137,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
     }
 
     @Test
+    @Deprecated
     public void saveEntity() throws IOException {
         Path entityDir = projectDir.resolve("entities");
         String entityFilename = ENTITY2 + EntityManagerService.ENTITY_FILE_EXTENSION;
@@ -228,6 +229,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
      * Addresses https://github.com/marklogic/marklogic-data-hub/issues/558.
      */
     @Test
+    @Deprecated
     public void changeEntityName() throws IOException {
         final String RENAMED_ENTITY = "renamed-entity";
 

@@ -129,7 +129,7 @@ public class DataHubService {
         dataHub.deleteDocument(uri, databaseKind);
     }
 
-    public HashMap preInstallCheck(HubConfig config) {
+    public Map<String, Object> preInstallCheck(HubConfig config) {
         return dataHub.runPreInstallCheck();
     }
 

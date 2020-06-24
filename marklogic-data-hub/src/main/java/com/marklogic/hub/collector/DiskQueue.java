@@ -45,7 +45,7 @@ import java.util.logging.Logger;
  *
  * @param <E> - A Serializable Class
  */
-public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
+public class DiskQueue<E extends Serializable> extends AbstractQueue<String> implements AutoCloseable {
 
     private static final Logger LOG = Logger.getLogger(DiskQueue.class.getName());
 
@@ -109,17 +109,11 @@ public class DiskQueue<E extends Serializable> extends AbstractQueue<String> {
         refillMemoryRatio = DEFAULT_REFILL_RATIO;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#finalize()
-     *
-     * Close down streams, and toss the temp file.
-     */
     @Override
-    protected void finalize() throws Throwable {
+    public void close() {
         if (closeFile()) {
-            LOG.warning(MessageFormat.format("{0} still had open file in finalize", DiskQueue.class.getSimpleName()));
+            LOG.warning(MessageFormat.format("{0} still had open file", com.marklogic.hub.legacy.collector.DiskQueue.class.getSimpleName()));
         }
-        super.finalize();
     }
 
     /**
