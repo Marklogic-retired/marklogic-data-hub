@@ -55,6 +55,9 @@ class DeveloperRolesService implements IAuthoritiesContextInterface{
     public canRunStep:() => boolean = () => {
         return true;
     };
+    public canClearUserData:() => boolean = () => {
+        return true;
+    };
 }
 
 // Roles service for data-hub-operator
@@ -111,6 +114,9 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     };
     public canRunStep:() => boolean = () => {
         return true;
+    };
+    public canClearUserData:() => boolean = () => {
+        return false;
     };
   }
 

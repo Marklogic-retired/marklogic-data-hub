@@ -19,6 +19,7 @@ export interface IAuthoritiesContextInterface {
     canExportEntityInstances: () => boolean;
     isSavedQueryUser: () => boolean;
     canRunStep: () => boolean;
+    canClearUserData: () => boolean;
 }
 
 /**
@@ -82,6 +83,9 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public isSavedQueryUser:() => boolean = () => {
         return this.authorities.includes('savedQueryUser');
+    };
+    public canClearUserData:() => boolean = () => {
+        return this.authorities.includes('clearUserData');
     };
 }
 
