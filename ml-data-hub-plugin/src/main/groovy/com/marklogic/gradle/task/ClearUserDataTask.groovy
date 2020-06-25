@@ -1,9 +1,8 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.impl.DataHubImpl
-import org.gradle.api.tasks.TaskAction
 
-class ClearUserDataTask extends AbstractConfirmableTask {
+class ClearUserDataTask extends AbstractConfirmableHubTask {
 
     @Override
     void executeIfConfirmed() {

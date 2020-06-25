@@ -31,34 +31,75 @@ import com.marklogic.hub.legacy.flow.LegacyFlowRunner
 import com.marklogic.hub.legacy.flow.FlowType
 import com.marklogic.hub.legacy.flow.LegacyFlow
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 
 class RunLegacyFlowTask extends HubTask {
 
     @Input
+    @Optional
     public String entityName
 
     @Input
+    @Optional
     public String flowName
 
     @Input
+    @Optional
     public Integer batchSize
 
     @Input
+    @Optional
     public Integer threadCount
 
     @Input
+    @Optional
     public String sourceDB
 
     @Input
+    @Optional
     public String destDB
 
     @Input
+    @Optional
     public Boolean showOptions
 
     @Input
+    @Optional
     public Boolean failHard
+
+    String getEntityName() {
+        return entityName
+    }
+
+    String getFlowName() {
+        return flowName
+    }
+
+    Integer getBatchSize() {
+        return batchSize
+    }
+
+    Integer getThreadCount() {
+        return threadCount
+    }
+
+    String getSourceDB() {
+        return sourceDB
+    }
+
+    String getDestDB() {
+        return destDB
+    }
+
+    Boolean getShowOptions() {
+        return showOptions
+    }
+
+    Boolean getFailHard() {
+        return failHard
+    }
 
     @TaskAction
     void runFlow() {

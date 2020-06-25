@@ -21,7 +21,7 @@ plugins {
     id 'java'
     id 'eclipse'
     id 'idea'
-    id 'com.moowork.node' version '1.2.0'
+    id "com.github.node-gradle.node" version "2.2.4"
     id 'org.springframework.boot' version '2.1.3.RELEASE'
 }
 apply plugin: 'maven-publish'
@@ -69,12 +69,30 @@ dependencies {
 
   //https://github.com/jaegertracing/jaeger-client-java/tree/master/jaeger-core
   compile("io.jaegertracing:jaeger-core:0.35.4")
-  compile("io.jaegertracing:jaeger-thrift:0.35.4")
+  compile("io.jaegertracing:jaeger-thrift:0.35.4") {
+    // We don't want this, we want the version of okhttp3 that Java Client 5.2.0 wants
+    exclude group: "com.squareup.okhttp3"
+  }
 
   compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
-    compile project(":marklogic-data-hub")
-    compile("org.apache.commons:commons-csv:1.4")
+
+  // Similar to the ./marklogic-data-hub core project, have to force use of 1.3.61 here, as otherwise 1.2.x versions
+  // are coming onto the classpath, breaking things.
+  compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.61"
+  compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61"
+
+  // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
+  // down from 4.4.0 to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
+  // then explicitly depending on the desired versions.
+  compile(project(":marklogic-data-hub")) {
+    exclude group: "com.squareup.okhttp3", module: "okhttp"
+    exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
+  }
+  compile "com.squareup.okhttp3:okhttp:4.4.0"
+  compile "com.squareup.okhttp3:logging-interceptor:4.4.0"
+
+  compile("org.apache.commons:commons-csv:1.4")
 
     // Optional Boot library - see https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html
     compile("org.springframework.boot:spring-boot-devtools")
@@ -120,6 +138,7 @@ node {
   npmVersion = '6.13.1'
 
   download = true
+  distBaseUrl = 'http://nodejs.org/dist'
 
   // Set the work directory for unpacking node
   workDir = file("${project.buildDir}/nodejs")

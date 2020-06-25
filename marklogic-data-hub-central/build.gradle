@@ -5,7 +5,7 @@ buildscript {
 	}
 	dependencies {
 		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.6.RELEASE"
-		classpath "com.github.node-gradle:gradle-node-plugin:2.2.3"
+		classpath "com.github.node-gradle:gradle-node-plugin:2.2.4"
         classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.0.2'
 	}
 }
@@ -55,7 +55,15 @@ repositories {
 }
 
 dependencies {
-    compile project(":marklogic-data-hub")
+    // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
+    // down from 4.4.0 to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
+    // then explicitly depending on the desired versions.
+    compile (project(":marklogic-data-hub")) {
+        exclude group: "com.squareup.okhttp3", module: "okhttp"
+        exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
+    }
+    runtime "com.squareup.okhttp3:okhttp:4.4.0"
+    runtime "com.squareup.okhttp3:logging-interceptor:4.4.0"
 
     // Used to generate Swagger docs at /swagger-ui.html
     compile "io.springfox:springfox-swagger2:2.9.2"

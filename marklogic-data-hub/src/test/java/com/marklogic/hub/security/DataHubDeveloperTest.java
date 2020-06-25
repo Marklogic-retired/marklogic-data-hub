@@ -113,7 +113,8 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
             assertEquals("rest-writer", updatedPath.getPermission().get(0).getRoleName(), "The protect-path privilege should allow " +
                 "the user to both create and update protected paths");
         } finally {
-            userWithRoleBeingTestedClient.delete("/manage/v2/protected-paths/" + URLEncoder.encode(pathExpression, "UTF-8") + "?force=true");
+            String pathId = adminProtectedPathManager.getAsXml().getIdForNameOrId(pathExpression);
+            userWithRoleBeingTestedClient.delete("/manage/v2/protected-paths/" + pathId + "?force=true");
             assertFalse(adminProtectedPathManager.exists(pathExpression),
                 "The remove-path privilege should allow the user to delete a protected path. Note that in ML 10.0-3, the unprotect-path " +
                     "privilege is not needed to perform this operation. The Admin UI requires first unprotecting a protected path, but " +
