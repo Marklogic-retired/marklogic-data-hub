@@ -75,7 +75,7 @@ public interface ModelsService {
                 this.req_getModelReferences = this.baseProxy.request(
                     "getModelReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
-                    "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                    "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -175,19 +175,16 @@ public interface ModelsService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode updateModelEntityTypes(String name, com.fasterxml.jackson.databind.JsonNode input) {
-                return updateModelEntityTypes(
-                    this.req_updateModelEntityTypes.on(this.dbClient), name, input
+            public void updateModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input) {
+                updateModelEntityTypes(
+                    this.req_updateModelEntityTypes.on(this.dbClient), input
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode updateModelEntityTypes(BaseProxy.DBFunctionRequest request, String name, com.fasterxml.jackson.databind.JsonNode input) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
+            private void updateModelEntityTypes(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode input) {
+              request
                       .withParams(
-                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)),
                           BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
-                          ).responseSingle(false, Format.JSON)
-                );
+                          ).responseNone();
             }
         }
 
@@ -254,10 +251,9 @@ public interface ModelsService {
   /**
    * Invokes the updateModelEntityTypes operation on the database server
    *
-   * @param name	The name of the model
    * @param input	provides input
-   * @return	as output
+   * 
    */
-    com.fasterxml.jackson.databind.JsonNode updateModelEntityTypes(String name, com.fasterxml.jackson.databind.JsonNode input);
+    void updateModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
 
 }

@@ -22,7 +22,7 @@ public class ModelMvcTest extends AbstractMvcTest {
 
         verifyRequestIsForbidden(buildJsonPost("/api/models", "{}"));
         verifyRequestIsForbidden(buildJsonPut("/api/models/doesntMatter/info", "{}"));
-        verifyRequestIsForbidden(buildJsonPut("/api/models/doesntMatter/entityTypes", "{}"));
+        verifyRequestIsForbidden(buildJsonPut("/api/models/entityTypes", "{}"));
         delete("/api/models/doesntMatter").andExpect(status().isForbidden());
     }
 }

@@ -1,6 +1,5 @@
 package com.marklogic.hub.central.controllers.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -52,7 +51,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
     @Test
     @WithMockUser(roles = {"writeEntityModel"})
     void testModelsServicesEndpoints() {
-        runAsDataHubDeveloper();
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
         createModel();
         updateModelInfo();
         updateModelEntityTypes();
@@ -94,29 +93,37 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         // Loading unrelated indexes so that we can check for them after updating entity model
         loadUnrelatedIndexes();
 
-        String entityTypes = "{\"" + MODEL_NAME + "\" : {\n" +
-                "      \"required\" : [ ],\n" +
-                "      \"pii\" : [ \"" + ENTITY_PROPERTY_1 + "\" ]," +
-                "      \"elementRangeIndex\" : [ \"" + ENTITY_PROPERTY_1 + "\" ],\n" +
-                "      \"rangeIndex\" : [ \"" + ENTITY_PROPERTY_2 + "\" ]," +
-                "      \"properties\" : {\n" +
-                "        \"" + ENTITY_PROPERTY_1 + "\" : {\n" +
-                "          \"datatype\" : \"string\",\n" +
-                "          \"collation\" : \"http://marklogic.com/collation/codepoint\"\n" +
-                "        },\n" +
-                "         \"" + ENTITY_PROPERTY_2 + "\" : {\n" +
-                "          \"datatype\" : \"string\",\n" +
-                "          \"collation\" : \"http://marklogic.com/collation/codepoint\"\n" +
-                "        }" +
+        String entityTypes = "[\n" +
+                "  {\n" +
+                "    \"entityName\": \"" + MODEL_NAME + "\",\n" +
+                "    \"modelDefinition\": {\n" +
+                "      \"Customer\": {\n" +
+                "        \"required\": [],\n" +
+                "        \"pii\": [\n" +
+                "          \"" + ENTITY_PROPERTY_1 + "\"\n" +
+                "        ],\n" +
+                "        \"elementRangeIndex\": [\n" +
+                "          \"" + ENTITY_PROPERTY_1 + "\"\n" +
+                "        ],\n" +
+                "        \"rangeIndex\": [\n" +
+                "          \"" + ENTITY_PROPERTY_2 + "\"\n" +
+                "        ],\n" +
+                "        \"properties\": {\n" +
+                "          \"" + ENTITY_PROPERTY_1 + "\": {\n" +
+                "            \"datatype\": \"string\",\n" +
+                "            \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
+                "          },\n" +
+                "          \"" + ENTITY_PROPERTY_2 + "\": {\n" +
+                "            \"datatype\": \"string\",\n" +
+                "            \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
+                "          }\n" +
+                "        }\n" +
                 "      }\n" +
-                "    }}";
+                "    }\n" +
+                "  }\n" +
+                "]";
 
-        try {
-            controller.updateModelEntityTypes(objectMapper.readTree(entityTypes), MODEL_NAME);
-        }
-        catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        controller.updateModelEntityTypes(readJsonArray(entityTypes));
 
         assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
         assertPIIFilesDeployment();
@@ -133,16 +140,13 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         runAsAdmin();
         ManageClient manageClient = getHubClient().getManageClient();
 
-        try {
-            String protectedPaths = manageClient.getJson("/manage/v2/protected-paths");
-            assertTrue(protectedPaths.contains(ENTITY_PROPERTY_1), "Expected " + ENTITY_PROPERTY_1 + " to be in protected paths: " + protectedPaths);
+        String protectedPaths = manageClient.getJson("/manage/v2/protected-paths");
+        assertTrue(protectedPaths.contains(ENTITY_PROPERTY_1), "Expected " + ENTITY_PROPERTY_1 + " to be in protected paths: " + protectedPaths);
 
-            JsonNode queryRolesets = objectMapper.readTree(manageClient.getJson("/manage/v2/query-rolesets"));
-            assertTrue(queryRolesets.get("query-roleset-default-list").get("list-items").get("list-count").get("value").asInt() >= 1, "Expected at least 1 query roleset (pii-reader) since we are deploying PII files.");
-        }
-        catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        JsonNode queryRolesets = readJsonObject(manageClient.getJson("/manage/v2/query-rolesets"));
+        assertTrue(queryRolesets.get("query-roleset-default-list").get("list-items").get("list-count").get("value").asInt() >= 1, "Expected at least 1 query roleset (pii-reader) since we are deploying PII files.");
+
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
     }
 
     private void assertIndexDeployment() {

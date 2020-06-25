@@ -23,6 +23,21 @@
       "privilege-name": "xdmp:eval",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "manage",
+      "action": "http://marklogic.com/xdmp/privileges/manage",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "protect-path",
+      "action": "http://marklogic.com/xdmp/privileges/protect-path",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "add-query-rolesets",
+      "action": "http://marklogic.com/xdmp/privileges/add-query-rolesets",
+      "kind": "execute"
     }
   ]
 }

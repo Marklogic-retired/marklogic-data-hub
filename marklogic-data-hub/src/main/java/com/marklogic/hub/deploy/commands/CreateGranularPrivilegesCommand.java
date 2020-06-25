@@ -134,6 +134,7 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         final String adminRole = "data-hub-admin";
         final String clearUserDataRole = "hub-central-clear-user-data";
         final String developerRole = "data-hub-developer";
+        final String hubCentralEntityModelWriterRole = "hub-central-entity-model-writer";
 
         List<Privilege> list = new ArrayList<>();
         list.add(buildPrivilege(client, "admin-database-clear-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")",
@@ -144,9 +145,9 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
             "clear-data-hub-JOBS", existingPrivilegeNames, adminRole, clearUserDataRole));
 
         list.add(buildPrivilege(client, "admin-database-index-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")",
-            "STAGING-index-editor", existingPrivilegeNames, developerRole));
+            "STAGING-index-editor", existingPrivilegeNames, developerRole, hubCentralEntityModelWriterRole));
         list.add(buildPrivilege(client, "admin-database-index-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")",
-            "FINAL-index-editor", existingPrivilegeNames, developerRole));
+            "FINAL-index-editor", existingPrivilegeNames, developerRole, hubCentralEntityModelWriterRole));
         list.add(buildPrivilege(client, "admin-database-index-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + jobsDbName + ")",
             "JOBS-index-editor", existingPrivilegeNames, developerRole));
 

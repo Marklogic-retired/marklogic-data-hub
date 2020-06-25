@@ -68,10 +68,12 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-STAGING", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
+        assertEquals("hub-central-entity-model-writer", p.getRole().get(1));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-FINAL", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
+        assertEquals("hub-central-entity-model-writer", p.getRole().get(1));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-JOBS", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + jobsDbId, p.getAction());

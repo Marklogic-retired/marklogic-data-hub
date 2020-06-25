@@ -15,8 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
-    private final static String MODEL_NAME = "CreateModelTestEntity";
-    private final static String EXPECTED_URI = "/entities/" + MODEL_NAME + ".entity.json";
+    private final static String CUSTOMER_MODEL_NAME = "CreateModelTestEntity";
+    private final static String ORDER_MODEL_NAME = "OrderModelTestEntity";
+    private final static String EXPECTED_CUSTOMER_MODEL_URI = "/entities/" + CUSTOMER_MODEL_NAME + ".entity.json";
+    private final static String EXPECTED_ORDER_MODEL_URI = "/entities/" + ORDER_MODEL_NAME + ".entity.json";
 
     private ModelsService service;
 
@@ -27,15 +29,15 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     @Test
     void createAndUpdateInfoThenUpdateEntityTypes() {
-        ObjectNode input = newModel(MODEL_NAME);
-        input.put("description", "Initial description");
-
-        JsonNode model = service.createModel(input);
+        ObjectNode customerNode = newModel(CUSTOMER_MODEL_NAME);
+        customerNode.put("description", "Initial description");
+        JsonNode model = service.createModel(customerNode);
+        service.createModel(newModel(ORDER_MODEL_NAME));
 
         verifyModelContents(model, "Initial description");
         verifyPersistedModels("Initial description");
 
-        service.updateModelInfo(MODEL_NAME, "Modified description");
+        service.updateModelInfo(CUSTOMER_MODEL_NAME, "Modified description");
         verifyPersistedModels("Modified description");
 
         updateEntityTypes();
@@ -86,12 +88,12 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     }
 
     private void verifyModelContents(JsonNode model, String expectedDescription) {
-        assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertEquals(CUSTOMER_MODEL_NAME, model.get("info").get("title").asText());
         assertEquals("1.0.0", model.get("info").get("version").asText());
         assertEquals("http://example.org/", model.get("info").get("baseUri").asText(),
             "Until a user can enter a baseUri via the GUI, the service will use a default value");
 
-        assertEquals(expectedDescription, model.get("definitions").get(MODEL_NAME).get("description").asText());
+        assertEquals(expectedDescription, model.get("definitions").get(CUSTOMER_MODEL_NAME).get("description").asText());
     }
 
     /**
@@ -103,11 +105,11 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
         JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
 
-        verifyModelContents(stagingMgr.read(EXPECTED_URI, new JacksonHandle()).get(), expectedDescription);
-        verifyModelContents(finalMgr.read(EXPECTED_URI, new JacksonHandle()).get(), expectedDescription);
+        verifyModelContents(stagingMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get(), expectedDescription);
+        verifyModelContents(finalMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get(), expectedDescription);
 
-        verifyModelMetadata(stagingMgr.readMetadata(EXPECTED_URI, new DocumentMetadataHandle()));
-        verifyModelMetadata(finalMgr.readMetadata(EXPECTED_URI, new DocumentMetadataHandle()));
+        verifyModelMetadata(stagingMgr.readMetadata(EXPECTED_CUSTOMER_MODEL_URI, new DocumentMetadataHandle()));
+        verifyModelMetadata(finalMgr.readMetadata(EXPECTED_CUSTOMER_MODEL_URI, new DocumentMetadataHandle()));
     }
 
     private void verifyModelMetadata(DocumentMetadataHandle metadata) {
@@ -118,42 +120,59 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
     }
 
     private void updateEntityTypes() {
-        String entityTypes = "{\"" + MODEL_NAME + "\" : {\n" +
-            "      \"required\" : [ ],\n" +
-            "      \"properties\" : {\n" +
-            "        \"someProperty\" : {\n" +
-            "          \"datatype\" : \"string\",\n" +
-            "          \"collation\" : \"http://marklogic.com/collation/codepoint\"\n" +
-            "        }\n" +
-            "      }\n" +
-            "    }}";
-        service.updateModelEntityTypes(MODEL_NAME, readJsonObject(entityTypes));
+        String entityTypes = "[{\"entityName\":\"" + CUSTOMER_MODEL_NAME + "\",\"modelDefinition\":{\"" + CUSTOMER_MODEL_NAME + "\" : {\n" +
+                "      \"required\" : [ ],\n" +
+                "      \"properties\" : {\n" +
+                "        \"someProperty\" : {\n" +
+                "          \"datatype\" : \"string\",\n" +
+                "          \"collation\" : \"http://marklogic.com/collation/codepoint\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }}}," +
+                "{\"entityName\":\"" + ORDER_MODEL_NAME + "\",\"modelDefinition\":{\"" + ORDER_MODEL_NAME + "\" : {\n" +
+                "      \"required\" : [ ],\n" +
+                "      \"properties\" : {\n" +
+                "        \"someOtherProperty\" : {\n" +
+                "          \"datatype\" : \"string\",\n" +
+                "          \"collation\" : \"http://marklogic.com/collation/codepoint\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }}}]";
+        service.updateModelEntityTypes(readJsonArray(entityTypes));
 
         JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
         JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
 
-        JsonNode model = stagingMgr.read(EXPECTED_URI, new JacksonHandle()).get();
-        assertEquals("string", model.get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
-        model = finalMgr.read(EXPECTED_URI, new JacksonHandle()).get();
-        assertEquals("string", model.get("definitions").get(MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
+        JsonNode model = stagingMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get();
+        assertEquals("string", model.get("definitions").get(CUSTOMER_MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
+        model = finalMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get();
+        assertEquals("string", model.get("definitions").get(CUSTOMER_MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());
 
-        verifyModelMetadata(stagingMgr.readMetadata(EXPECTED_URI, new DocumentMetadataHandle()));
-        verifyModelMetadata(finalMgr.readMetadata(EXPECTED_URI, new DocumentMetadataHandle()));
+        verifyModelMetadata(stagingMgr.readMetadata(EXPECTED_CUSTOMER_MODEL_URI, new DocumentMetadataHandle()));
+        verifyModelMetadata(finalMgr.readMetadata(EXPECTED_CUSTOMER_MODEL_URI, new DocumentMetadataHandle()));
+
+        model = stagingMgr.read(EXPECTED_ORDER_MODEL_URI, new JacksonHandle()).get();
+        assertEquals("string", model.get("definitions").get(ORDER_MODEL_NAME).get("properties").get("someOtherProperty").get("datatype").asText());
+        model = finalMgr.read(EXPECTED_ORDER_MODEL_URI, new JacksonHandle()).get();
+        assertEquals("string", model.get("definitions").get(ORDER_MODEL_NAME).get("properties").get("someOtherProperty").get("datatype").asText());
+
+        verifyModelMetadata(stagingMgr.readMetadata(EXPECTED_ORDER_MODEL_URI, new DocumentMetadataHandle()));
+        verifyModelMetadata(finalMgr.readMetadata(EXPECTED_ORDER_MODEL_URI, new DocumentMetadataHandle()));
     }
 
     private void updateEntityTypesWithInvalidData() {
-        String entityTypes = "{\"" + MODEL_NAME + "\" : {\n" +
+        String entityTypes = "[{\"entityName\":\""+ CUSTOMER_MODEL_NAME +"\",\"modelDefinition\":{\"" + CUSTOMER_MODEL_NAME + "\" : {\n" +
             "      \"required\" : [ ],\n" +
             "      \"properties\" : {\n" +
             "        \"1cantStartWithANumber\" : {\n" +
             "          \"datatype\" : \"string\"\n" +
             "        }\n" +
             "      }\n" +
-            "    }}";
-        JsonNode input = readJsonObject(entityTypes);
+            "    }}}]";
+        JsonNode input = readJsonArray(entityTypes);
 
         try {
-            service.updateModelEntityTypes(MODEL_NAME, input);
+            service.updateModelEntityTypes(input);
             fail("Expected an error because of an invalid property name");
         } catch (Exception ex) {
             logger.info("Caught expected error: " + ex.getMessage());

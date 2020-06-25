@@ -18,16 +18,29 @@
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-var name;
-var input = fn.head(xdmp.fromJSON(input));
+var input = JSON.parse(input);
 
-const uri = entityLib.getModelUri(name);
-if (!fn.docAvailable(uri)) {
-  ds.throwBadRequest("Could not find model with name: " + name);
+if (!input || !Array.isArray(input)) {
+  ds.throwBadRequest("Valid array input required.");
 }
 
-const model = cts.doc(uri).toObject();
-model.definitions = input;
-entityLib.writeModel(name, model);
+input.forEach(entry => {
+  const entityName = entry["entityName"];
+  if (!entityName) {
+    ds.throwBadRequest("Must specify an entity name.");
+  }
 
-model;
+  const modelDefinition = entry["modelDefinition"];
+  if (!modelDefinition) {
+    ds.throwBadRequest(`Must specify a model definition for entity: ${entityName}`);
+  }
+
+  const uri = entityLib.getModelUri(entityName);
+  if (!fn.docAvailable(uri)) {
+    ds.throwBadRequest("Could not find model with name: " + entityName);
+  }
+
+  const model = cts.doc(uri).toObject();
+  model.definitions = modelDefinition;
+  entityLib.writeModel(entityName, model);
+});
