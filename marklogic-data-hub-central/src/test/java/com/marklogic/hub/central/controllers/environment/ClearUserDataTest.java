@@ -14,6 +14,7 @@ public class ClearUserDataTest extends AbstractMvcTest {
 
     @AfterEach
     void loadHubArtifactsInCaseAnythingWentWrongAndTheyreNoLongerThere() {
+        loginAsTestUserWithRoles("hub-central-developer");
         new LoadHubArtifactsCommand(getHubConfig()).execute(null);
     }
 

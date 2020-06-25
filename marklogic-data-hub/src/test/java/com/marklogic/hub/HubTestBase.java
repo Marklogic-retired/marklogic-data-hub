@@ -1108,6 +1108,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected void setupProjectForRunningTestFlow() {
+        runAsAdmin();
+        // clear user modules as part of reset
+        getDataHub().clearUserModules();
         resetHubProject();
         copyFlowArtifactsToProject();
         installUserModules(getDataHubAdminConfig(), true);
@@ -1130,6 +1133,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
                 adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/custom-modules/custom/value-step/main.sjs"),
                 adminHubConfig.getModulesDir().resolve("root/custom-modules/custom/value-step").toFile());
+            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/mapping-functions/add-function.xqy"),
+                adminHubConfig.getModulesDir().resolve("root/custom-modules/mapping-functions/").toFile());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

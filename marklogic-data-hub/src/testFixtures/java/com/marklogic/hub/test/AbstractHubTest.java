@@ -289,26 +289,32 @@ public abstract class AbstractHubTest extends TestObject {
         loadUserModulesCommand.setLoadQueryOptions(loadQueryOptions);
         commands.add(loadUserModulesCommand);
 
+        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
+        deployer.setCommands(commands);
+        deployer.deploy(hubConfig.getAppConfig());
+
+        // Generate function metadata must occur after loading modules
+        // and before loading mapping artifacts
+        try {
+            new GenerateFunctionMetadataCommand(hubConfig).generateFunctionMetadata();
+        } catch (Exception ex) {
+            logger.warn("Unable to generate function metadata. Catching this by default, as at least one test " +
+                    "- GetPrimaryEntityTypesTest - is failing in Jenkins because it cannot generate metadata for a module " +
+                    "for unknown reasons (the test passes locally). That test does not depend on metadata. If your test " +
+                    "does depend on knowing that metadata generation failed, consider overriding this to allow for the " +
+                    "exception to propagate; cause: " + ex.getMessage(), ex);
+        }
+
         LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
         loadUserArtifactsCommand.setForceLoad(forceLoad);
-        commands.add(loadUserArtifactsCommand);
+        commands.set(0,loadUserArtifactsCommand);
 
-        SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
 
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
 
-        try {
-            new GenerateFunctionMetadataCommand(hubConfig).generateFunctionMetadata();
-        } catch (Exception ex) {
-            logger.warn("Unable to generate function metadata. Catching this by default, as at least one test " +
-                "- GetPrimaryEntityTypesTest - is failing in Jenkins because it cannot generate metadata for a module " +
-                "for unknown reasons (the test passes locally). That test does not depend on metadata. If your test " +
-                "does depend on knowing that metadata generation failed, consider overriding this to allow for the " +
-                "exception to propagate; cause: " + ex.getMessage(), ex);
-        }
     }
 
     protected void installUserArtifacts() {
