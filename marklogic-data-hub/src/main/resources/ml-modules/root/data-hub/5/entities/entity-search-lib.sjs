@@ -68,7 +68,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
             result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
             result.primaryKey = getPrimaryValue(entityInstance, entityDef);
 
-            // no primaryKey in entity instance, so use URI
+            // no primaryKey in entityInst / entityDef, so use URI
             if (result.primaryKey === null) {
               result.primaryKey = {
                 "propertyPath": "uri",
@@ -298,9 +298,9 @@ function getPrimaryValue(entityInstance, entityDefinition) {
     let primaryKey = entityDefinition.primaryKey;
 
     if (entityInstance.hasOwnProperty(primaryKey)) {
-      let primaryKeyValue = entityInstance[primaryKey]
+      let primaryKeyValue = entityInstance[primaryKey];
 
-      if (primaryKeyValue === null || primaryKeyValue === "") {
+      if (primaryKeyValue === null || String(primaryKeyValue).trim().length === 0) {
         return null;
       } else {
         primaryKeyData.propertyPath = primaryKey;
