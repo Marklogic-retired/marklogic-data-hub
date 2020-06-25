@@ -422,6 +422,10 @@ function verifyPrimaryKeyWithDefinedEntities() {
       {
         "index": 2,
         "uri": "/content/sally.json",
+      },
+      {
+        "index": 3,
+        "uri": "/content/tim.json",
       }
     ]
   };
@@ -430,7 +434,9 @@ function verifyPrimaryKeyWithDefinedEntities() {
     test.assertEqual(101, response.results[0].primaryKey.propertyValue),
     test.assertEqual("customerId", response.results[0].primaryKey.propertyPath),
     test.assertEqual(101, response.results[1].primaryKey.propertyValue),
-    test.assertEqual("customerId", response.results[1].primaryKey.propertyPath)
+    test.assertEqual("customerId", response.results[1].primaryKey.propertyPath),
+    test.assertEqual("uri", response.results[2].primaryKey.propertyPath, "primaryKey is an empty string, so use uri"),
+    test.assertEqual("/content/tim.json", response.results[2].primaryKey.propertyValue)
   ];
 }
 
