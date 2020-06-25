@@ -129,7 +129,7 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
       propertyMetadata["properties"] = metaData["allPropertiesMetadata"];
       propertyMetadataObject["properties"] = metaData["allPropertiesMetadata"];
 
-      granularPropertyMetadata = {...granularPropertyMetadata, ...metaData["granularPropertyMetadata"]};
+      granularPropertyMetadata = Object.assign({},granularPropertyMetadata, metaData["granularPropertyMetadata"]);
     }
     granularPropertyMetadata[propertyMetadataObject["propertyPath"]] = propertyMetadataObject;
     allPropertiesMetadata.push(propertyMetadata);

@@ -22,9 +22,9 @@ let dataHubOptions = ["sourceQuery", "sourceQueryIsScript", "constrainSourceQuer
 let additionalSettings = {};
 let step = Artifacts.getArtifact("custom", stepName)
 let options = Artifacts.convertStepReferenceToInlineStep(step.stepId).options;
-for (let [key, value] of Object.entries(options)) {
+for (let key of Object.keys(options)) {
   if(!dataHubOptions.includes(key)){
-    additionalSettings[key] = value;
+    additionalSettings[key] = options[key];
   }
 }
 step["additionalSettings"] = additionalSettings;

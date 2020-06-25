@@ -24,12 +24,12 @@ let info = {
 
 stepService.saveStep(stepDefinitionType, info);
 try{
-  stepService.saveStep(stepDefinitionType, {...info, name:"anotherCustom", stepDefinitionType:"anotherCustom"})
+  stepService.saveStep(stepDefinitionType, Object.assign({}, info, {name:"anotherCustom", stepDefinitionType:"anotherCustom"}))
 }
 catch(ex) {
   assertions.concat(test)
 }
-stepService.saveStep(stepDefinitionType, {...info, name:"anotherCustom", username:"joe", targetEntityType :""})
+stepService.saveStep(stepDefinitionType, Object.assign({}, info, {name:"anotherCustom", username:"joe", targetEntityType :""}))
 
 const expectedUri = "/steps/custom/myCustom.step.json";
 assertions = assertions
