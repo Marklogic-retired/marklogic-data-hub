@@ -23,7 +23,7 @@ const entityName = "Customer";
 function verifySimpleSelectedPropertiesResults() {
   const response = {
     "snippet-format": "snippet",
-    "total": 2,
+    "total": 3,
     "results": [
       {
         "index": 1,
@@ -32,6 +32,10 @@ function verifySimpleSelectedPropertiesResults() {
       {
         "index": 2,
         "uri": "/content/sally.json",
+      },
+      {
+        "index": 3,
+        "uri": "/content/sally.xml",
       }
     ]
   };
@@ -66,19 +70,19 @@ function verifySimpleSelectedPropertiesResults() {
   ];
 
   entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
-  return([
+  return[
     test.assertEqual(janeExpectedResult, response.results[0].entityProperties),
     test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
+    test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
     test.assertEqual(2, response.selectedPropertyDefinitions.length),
     test.assertEqual(7, response.entityPropertyDefinitions.length)
-  ]);
-
+  ];
 }
 
 function verifyStructuredFirstLevelSelectedPropertiesResults() {
   const response = {
     "snippet-format": "snippet",
-    "total": 2,
+    "total": 3,
     "results": [
       {
         "index": 1,
@@ -87,6 +91,10 @@ function verifyStructuredFirstLevelSelectedPropertiesResults() {
       {
         "index": 2,
         "uri": "/content/sally.json",
+      },
+      {
+        "index": 3,
+        "uri": "/content/sally.xml",
       }
     ]
   };
@@ -190,18 +198,20 @@ function verifyStructuredFirstLevelSelectedPropertiesResults() {
       ]
     }
   ];
+
   entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
-  return([
+  return[
     test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
+    test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
     test.assertEqual(2, response.selectedPropertyDefinitions.length),
     test.assertEqual(7, response.entityPropertyDefinitions.length)
-  ]);
+  ];
 }
 
 function verifyStructuredSelectedPropertiesResults() {
   const response = {
     "snippet-format": "snippet",
-    "total": 2,
+    "total": 3,
     "results": [
       {
         "index": 1,
@@ -210,6 +220,10 @@ function verifyStructuredSelectedPropertiesResults() {
       {
         "index": 2,
         "uri": "/content/sally.json",
+      },
+      {
+        "index": 3,
+        "uri": "/content/sally.xml",
       }
     ]
   };
@@ -276,10 +290,18 @@ function verifyStructuredSelectedPropertiesResults() {
       ]
     }
   ];
+  const assertions = []
   const selectedProperties = ["shipping.street", "shipping.zip.fiveDigit", "billing.zip.fiveDigit", "billing.street"];
   entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
+  assertions.push([
+    test.assertEqual(sallyExpectedResult, response.results[1].entityProperties),
+    test.assertEqual(sallyExpectedResult, response.results[2].entityProperties),
+    test.assertEqual(2, response.selectedPropertyDefinitions.length),
+    test.assertEqual(7, response.entityPropertyDefinitions.length)
+  ]);
+
   const selectedMetadata = response.selectedPropertyDefinitions;
-  return([
+  assertions.push([
     test.assertEqual("shipping", selectedMetadata[0].propertyPath),
     test.assertEqual("shipping.street", selectedMetadata[0].properties[0].propertyPath),
     test.assertEqual("shipping.zip", selectedMetadata[0].properties[1].propertyPath),
@@ -289,12 +311,13 @@ function verifyStructuredSelectedPropertiesResults() {
     test.assertEqual("billing.zip.fiveDigit", selectedMetadata[1].properties[0].properties[0].propertyPath),
     test.assertEqual("billing.street", selectedMetadata[1].properties[1].propertyPath)
   ]);
+  return assertions;
 }
 
 function verifyResultsWithoutSelectedProperties() {
   const response = {
     "snippet-format": "snippet",
-    "total": 2,
+    "total": 3,
     "results": [
       {
         "index": 1,
@@ -303,6 +326,10 @@ function verifyResultsWithoutSelectedProperties() {
       {
         "index": 2,
         "uri": "/content/sally.json",
+      },
+      {
+        "index": 3,
+        "uri": "/content/sally.xml",
       }
     ]
   };
@@ -367,15 +394,20 @@ function verifyResultsWithoutSelectedProperties() {
     ]
   ];
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
-  return ([
+  return [
     test.assertEqual(5, Object.keys(response.results[1].entityProperties).length, "Sally has all 7 props populated, but we only want the first 5"),
     test.assertEqual(101, response.results[1].entityProperties[0].propertyValue),
     test.assertEqual("Sally Hardin", response.results[1].entityProperties[1].propertyValue),
     test.assertEqual(["Sal", "din", "shh"], response.results[1].entityProperties[2].propertyValue),
     test.assertEqual(sallyShippingResults, response.results[1].entityProperties[3].propertyValue),
+    test.assertEqual(5, Object.keys(response.results[2].entityProperties).length, "Sally has all 7 props populated, but we only want the first 5"),
+    test.assertEqual(101, response.results[2].entityProperties[0].propertyValue),
+    test.assertEqual("Sally Hardin", response.results[2].entityProperties[1].propertyValue),
+    test.assertEqual(["Sal", "din", "shh"], response.results[2].entityProperties[2].propertyValue),
+    test.assertEqual(sallyShippingResults, response.results[2].entityProperties[3].propertyValue),
     test.assertEqual(5, response.selectedPropertyDefinitions.length),
     test.assertEqual(7, response.entityPropertyDefinitions.length)
-  ]);
+  ];
 }
 
 function verifyPrimaryKeyWithDefinedEntities() {
@@ -394,12 +426,12 @@ function verifyPrimaryKeyWithDefinedEntities() {
     ]
   };
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
-  return([
+  return [
     test.assertEqual(101, response.results[0].primaryKey.propertyValue),
     test.assertEqual("customerId", response.results[0].primaryKey.propertyPath),
     test.assertEqual(101, response.results[1].primaryKey.propertyValue),
     test.assertEqual("customerId", response.results[1].primaryKey.propertyPath)
-  ]);
+  ];
 }
 
 function verifyPrimaryKeyWithoutDefinedEntities() {
@@ -418,12 +450,12 @@ function verifyPrimaryKeyWithoutDefinedEntities() {
     ]
   };
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
-  return([
+  return [
     test.assertEqual("/content/sallyAddress.json", response.results[0].primaryKey.propertyValue),
     test.assertEqual("uri", response.results[0].primaryKey.propertyPath),
     test.assertEqual("/content/janeAddress.json", response.results[1].primaryKey.propertyValue),
     test.assertEqual("uri", response.results[1].primaryKey.propertyPath)
-  ]);
+  ];
 }
 
 []

@@ -1,0 +1,51 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <instance>
+        <Customer xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="">
+            <customerId xsi:type="xs:integer">101</customerId>
+            <name xsi:type="xs:string">Sally Hardin</name>
+            <nicknames datatype="array" xsi:type="xs:string">Sal</nicknames>
+            <nicknames datatype="array" xsi:type="xs:string">din</nicknames>
+            <nicknames datatype="array" xsi:type="xs:string">shh</nicknames>
+            <shipping datatype="array">
+                <Address>
+                    <street xsi:type="xs:string">Whitwell Place</street>
+                    <city xsi:type="xs:string">Ellerslie</city>
+                    <zip>
+                        <Zip>
+                            <fiveDigit xsi:type="xs:string">52239</fiveDigit>
+                            <plusFour xsi:type="xs:string">1718</plusFour>
+                        </Zip>
+                    </zip>
+                    <state xsi:type="xs:string">Georgia</state>
+                </Address>
+            </shipping>
+            <shipping datatype="array">
+                <Address>
+                    <street xsi:type="xs:string">Skyway road</street>
+                    <city xsi:type="xs:string">San carlos</city>
+                    <zip>
+                        <Zip>
+                            <fiveDigit xsi:type="xs:string">94070</fiveDigit>
+                            <plusFour xsi:type="xs:string">1234</plusFour>
+                        </Zip>
+                    </zip>
+                    <state xsi:type="xs:string">California</state>
+                </Address>
+            </shipping>
+            <billing>
+                <Address>
+                    <street xsi:type="xs:string">Anna Court</street>
+                    <city xsi:type="xs:string">Stewart</city>
+                    <state xsi:type="xs:string">Kansas</state>
+                    <zip>
+                        <Zip>
+                            <fiveDigit xsi:type="xs:string">62601</fiveDigit>
+                            <plusFour xsi:type="xs:string">6783</plusFour>
+                        </Zip>
+                    </zip>
+                </Address>
+            </billing>
+        </Customer>
+    </instance>
+</envelope>
