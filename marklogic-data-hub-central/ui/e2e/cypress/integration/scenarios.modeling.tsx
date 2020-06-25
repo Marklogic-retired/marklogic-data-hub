@@ -10,7 +10,7 @@ import {
 } from '../support/components/model/index'; 
 import { confirmationModal, toolbar, tiles } from '../support/components/common/index';
 import { Application } from '../support/application.config';
-
+import 'cypress-wait-until';
 
 describe('Entity Modeling', () => {
 
@@ -19,10 +19,8 @@ describe('Entity Modeling', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer").withRequest()    
-
-    toolbar.getModelToolbarIcon().should('exist');
-    cy.wait(200);
-    toolbar.getModelToolbarIcon().click();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     tiles.getModelTile().should('exist');
   });
 

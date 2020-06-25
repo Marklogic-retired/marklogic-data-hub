@@ -3,7 +3,7 @@
 import loginPage from '../support/pages/login';
 import { Application } from '../support/application.config';
 import { toolbar, tiles, projectInfo } from '../support/components/common/index';
-
+import 'cypress-wait-until';
 
 describe('login', () => {
 
@@ -76,14 +76,17 @@ describe('login', () => {
         //All tiles but Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate', 'Run'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+
       });
 
       toolbar.getExploreToolbarIcon().trigger('mouseover');
       cy.contains('Explore');
       cy.visit('/tiles');
+      cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
       projectInfo.getAboutProject().should('exist');
-      toolbar.getExploreToolbarIcon().click();
+      cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
       tiles.getExploreTile().should('exist');
   });
 
@@ -93,12 +96,14 @@ describe('login', () => {
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Curate', 'Run'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
       });
 
       ['Model', 'Explore'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}`);
+        //   cy.contains(`${tile}`);
+          cy.waitUntil(() => cy.contains(`${tile}`))
       });
 
       //Modeling tests will verify that a valid user is able to access Model tile and its features
@@ -110,12 +115,14 @@ describe('login', () => {
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Model', 'Curate', 'Run'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
       });
 
       ['Load', 'Explore'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}`);
+        //   cy.contains(`${tile}`);
+          cy.waitUntil(() => cy.contains(`${tile}`))
       });
 
       //Load Data tests will verify that a valid user is able to access Load tile and its features
@@ -127,12 +134,14 @@ describe('login', () => {
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Run'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
       });
 
       ['Curate', 'Explore'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}`);
+        //   cy.contains(`${tile}`);
+          cy.waitUntil(() => cy.contains(`${tile}`))
       });
 
       //Mapping tests will verify that a valid user is able to access Curate tile and its features
@@ -144,12 +153,14 @@ describe('login', () => {
       //All tiles but TBD, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
       });
 
       ['Run', 'Explore'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}`);
+        //   cy.contains(`${tile}`);
+          cy.waitUntil(() => cy.contains(`${tile}`))
       });
 
       //Run steps tests will verify that a valid user is able to access Run tile and its features
@@ -161,12 +172,13 @@ describe('login', () => {
       //All tiles but TBD, should show a tooltip that says contact your administrator
       ['TBD'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
-      });
+          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+        });
 
       ['TBD'].forEach((tile) => {
           toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.contains(`${tile}`);
+        //   cy.contains(`${tile}`);
+          cy.waitUntil(() => cy.contains(`${tile}`))
       });
 
       //Run flow tests will verify that a valid user is able to access Run tile and its features

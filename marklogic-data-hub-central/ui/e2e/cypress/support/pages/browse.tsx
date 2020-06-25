@@ -1,3 +1,5 @@
+import 'cypress-wait-until';
+
 class BrowsePage {
 
   getSelectedEntity() {
@@ -5,8 +7,8 @@ class BrowsePage {
   }
 
   selectEntity(entity: string) {
-    cy.get('#entity-select').click();
-    return cy.get('[data-cy=entity-option]').each(function (item) {
+    cy.waitUntil(() => cy.get('#entity-select')).click();
+    return cy.waitUntil(() => cy.get('[data-cy=entity-option]')).each(function (item) {
       if (item.text() === entity) {
         return item.click();
       }
@@ -14,9 +16,13 @@ class BrowsePage {
   }
 
   getTotalDocuments() {
-    return cy.get('[data-cy=total-documents]').eq(0).then(function (value) {
+    return cy.waitUntil(() => cy.get('[data-cy=total-documents]').eq(0).then(function (value) {
       return parseInt(value.text().replace(/,/g, ""));
-    });
+    }));
+
+    // return cy.get('[data-cy=total-documents]').eq(0).then(function (value) {
+    //   return parseInt(value.text().replace(/,/g, ""));
+    // });
   }
 
   getInstanceViewIcon(){
@@ -336,8 +342,11 @@ class BrowsePage {
   }
 
   getManageQueriesModalOpened(){
-    cy.get('.fa-cog').click();
-    cy.get('.ant-dropdown-menu-item').click();
+    cy.wait(200);
+    cy.waitUntil(() => cy.get('.fa-cog')).click();
+    cy.wait(200);
+    cy.waitUntil(() => cy.get('.ant-dropdown-menu-item')).click();
+    cy.wait(200);
   }
 
   //saved query dropdown
