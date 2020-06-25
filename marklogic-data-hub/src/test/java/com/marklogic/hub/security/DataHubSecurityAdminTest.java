@@ -1,5 +1,6 @@
 package com.marklogic.hub.security;
 
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.RolePrivilege;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,20 +86,65 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
         }
     }
 
+    /**
+     * Per DHFPROD-4801, data-hub-security-admin now has "data-role-inherit-" privileges so that it can inherit
+     * certain DHF roles when creating a custom role.
+     */
     @Test
-    public void task5CannotCreateCustomRoleInheritingExistingRole() {
-        final String roleName = "test-custom-role2";
+    void createCustomRoleInheritingCertainDataHubRoles() {
+        final String roleName = "test-custom-role";
         Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
-        customRole.setRole(Arrays.asList("manage-admin"));
+        customRole.setRole(CreateGranularPrivilegesCommand.ROLES_THAT_CAN_BE_INHERITED);
 
         try {
             customRole.save();
-            fail("The role creation should have failed because the role inherits an existing ML-created role");
-        } catch (Exception ex) {
-            logger.info("Caught expected exception: " + ex.getMessage());
+            Role actualRole = getRole(roleName);
+            assertEquals(roleName, actualRole.getRoleName());
+            customRole.getRole().forEach(role ->
+                assertTrue(actualRole.getRole().contains(role), "Expected actual role to contain inherited role: " + role)
+            );
         } finally {
             new Role(adminUserApi, roleName).delete();
         }
+
+        runAsAdmin();
+        PrivilegeManager mgr = new PrivilegeManager(getHubConfig().getManageClient());
+        int roleInheritPrivilegeCount = 0;
+        for (String name : mgr.getAsXml().getListItemNameRefs()) {
+            if (name.startsWith("data-role-inherit-")) {
+                roleInheritPrivilegeCount++;
+            }
+        }
+        assertEquals(customRole.getRole().size(), roleInheritPrivilegeCount, "Verifying that the role we tested with " +
+            "includes the same number of DH/HC roles that are expected to be inheritable by a data-hub-security-admin");
+    }
+
+    @Test
+    public void task5CannotCreateCustomRoleInheritingExistingRole() {
+        List<String> rolesThatCannotBeInherited = Arrays.asList(
+            "data-hub-environment-manager",
+            "data-hub-job-internal",
+            "data-hub-portal-security-admin",
+            "data-hub-security-admin",
+            "data-hub-security-internal",
+            "flow-developer-role"
+        );
+
+        rolesThatCannotBeInherited.forEach(forbiddenRole -> {
+            final String roleName = "test-custom-role2";
+            Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
+            customRole.addRole(forbiddenRole);
+
+            try {
+                customRole.save();
+                fail("The role creation should have failed because the role inherits a role that data-hub-security-admin " +
+                    "doesn't have a privilege to inherit; forbidden role: " + forbiddenRole);
+            } catch (Exception ex) {
+                logger.info("Caught expected exception: " + ex.getMessage());
+            } finally {
+                new Role(adminUserApi, roleName).delete();
+            }
+        });
     }
 
     @Test

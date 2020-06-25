@@ -11,6 +11,8 @@ import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
+import com.marklogic.mgmt.resource.security.RoleManager;
+import com.marklogic.rest.util.ResourcesFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +25,48 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
 
     private HubConfig hubConfig;
     private List<String> groupNames;
+
+    /**
+     * Defines the roles that can be inherited when a data-hub-security-admin creates or edits a custom role.
+     */
+    public final static List<String> ROLES_THAT_CAN_BE_INHERITED = Arrays.asList(
+        "data-hub-admin",
+        "data-hub-developer",
+        "data-hub-monitor",
+        "data-hub-operator",
+        "hub-central-clear-user-data",
+        "hub-central-downloader",
+        "hub-central-entity-exporter",
+        "hub-central-entity-model-reader",
+        "hub-central-entity-model-writer",
+        "hub-central-flow-writer",
+        "hub-central-load-reader",
+        "hub-central-load-writer",
+        "hub-central-mapping-reader",
+        "hub-central-mapping-writer",
+        "hub-central-saved-query-user",
+        "hub-central-step-runner",
+        "hub-central-user",
+        "data-hub-common",
+        "data-hub-common-writer",
+        "data-hub-custom-reader",
+        "data-hub-entity-model-reader",
+        "data-hub-entity-model-writer",
+        "data-hub-flow-reader",
+        "data-hub-flow-writer",
+        "data-hub-ingestion-reader",
+        "data-hub-ingestion-writer",
+        "data-hub-job-reader",
+        "data-hub-mapping-reader",
+        "data-hub-mapping-writer",
+        "data-hub-match-merge-reader",
+        "data-hub-match-merge-writer",
+        "data-hub-module-reader",
+        "data-hub-module-writer",
+        "data-hub-saved-query-user",
+        "data-hub-step-definition-reader",
+        "data-hub-step-definition-writer"
+    );
 
     public CreateGranularPrivilegesCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
@@ -86,6 +130,8 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         mgr.save(p.getJson());
 
         buildScheduledTaskPrivileges().forEach(privilege -> mgr.save(privilege.getJson()));
+
+        addRolePrivilegesToDataHubSecurityAdmin(context.getManageClient());
     }
 
     @Override
@@ -116,6 +162,12 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
             mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-" + groupName + "?kind=execute");
         });
+
+        List<Privilege> privileges = buildPrivilegesForRolesThatCanBeInherited(context.getManageClient());
+        for (Privilege privilege : privileges) {
+            String path = "/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute";
+            mgr.deleteAtPath(path);
+        }
     }
 
     /**
@@ -155,11 +207,10 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
     }
 
     /**
-     *
      * @param client
-     * @param name The name of the privilege to create if a privilege with the given dhsName does not exist. This name
-     *             is not the same as the dhsName, as the initial goal was to have a consistent naming convention for
-     *             all granular privileges, and the DHS privilege names are not consistent with that convention.
+     * @param name                   The name of the privilege to create if a privilege with the given dhsName does not exist. This name
+     *                               is not the same as the dhsName, as the initial goal was to have a consistent naming convention for
+     *                               all granular privileges, and the DHS privilege names are not consistent with that convention.
      * @param action
      * @param dhsName
      * @param existingPrivilegeNames
@@ -204,6 +255,45 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         return (groupNames != null && !groupNames.isEmpty()) ?
             groupNames :
             Arrays.asList(hubConfig.getAppConfig().getGroupName());
+    }
+
+    /**
+     * As an optimization, this first checks to see if a privilege with the given name exists. This is safe to do until
+     * we need to change the definition of these privileges, of course. The optimization is done because deploying the
+     * privileges - whether via RMA or CMA - is a bit slower if the privileges already exist. And since we know we're
+     * not going to be making any updates to the privileges, the optimization check is performed.
+     *
+     * @param manageClient
+     */
+    private void addRolePrivilegesToDataHubSecurityAdmin(ManageClient manageClient) {
+        PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);
+        ResourcesFragment existingPrivileges = privilegeManager.getAsXml();
+        buildPrivilegesForRolesThatCanBeInherited(manageClient).forEach(privilege -> {
+            if (!existingPrivileges.resourceExists(privilege.getPrivilegeName())) {
+                privilegeManager.save(privilege.getJson());
+            }
+        });
+    }
+
+    /**
+     * @param manageClient
+     * @return a list of Privilege objects, one for which each role that can be inherited when a data-hub-security-admin
+     * is creating a role. Each privilege has a name of the form "data-role-inherit-(roleId)"; while that format is not
+     * required, and its the privilege action that matters, this format is the same as what the ML security API uses,
+     * so it's being adopted for consistency
+     */
+    protected List<Privilege> buildPrivilegesForRolesThatCanBeInherited(ManageClient manageClient) {
+        ResourcesFragment existingRoles = new RoleManager(manageClient).getAsXml();
+        List<Privilege> privileges = new ArrayList<>();
+        ROLES_THAT_CAN_BE_INHERITED.forEach(roleName -> {
+            String roleId = existingRoles.getIdForNameOrId(roleName);
+            Privilege p = new Privilege(null, "data-role-inherit-" + roleId);
+            p.setKind("execute");
+            p.setAction("http://marklogic.com/xdmp/privileges/role/inherit/" + roleId);
+            p.addRole("data-hub-security-admin");
+            privileges.add(p);
+        });
+        return privileges;
     }
 
     public List<String> getGroupNames() {

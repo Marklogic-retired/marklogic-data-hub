@@ -1,8 +1,7 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.Role;
@@ -15,18 +14,13 @@ import com.marklogic.rest.util.ResourcesFragment;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class CreateGranularPrivilegesTest extends HubTestBase {
+public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setUp() {
@@ -113,6 +107,9 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
 
     @Test
     void deletePrivilegesOnUndeploy() {
+        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
+        final CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
+
         PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
         ResourcesFragment privileges = mgr.getAsXml();
         assertTrue(privileges.resourceExists("admin-database-clear-data-hub-STAGING"));
@@ -129,8 +126,9 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
         assertTrue(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
         assertTrue(privileges.resourceExists("admin-group-scheduled-task-" + adminHubConfig.getAppConfig().getGroupName()));
 
-        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
-        final CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
+        for (Privilege privilege : command.buildPrivilegesForRolesThatCanBeInherited(adminHubConfig.getManageClient())) {
+            assertTrue(privileges.resourceExists(privilege.getPrivilegeName()));
+        }
 
         try {
             assertEquals(adminHubConfig.getAppConfig().getGroupName(), command.getGroupNamesForScheduledTaskPrivileges().get(0));
@@ -151,6 +149,10 @@ public class CreateGranularPrivilegesTest extends HubTestBase {
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-STAGING"));
             assertFalse(privileges.resourceExists("admin-database-alerts-data-hub-FINAL"));
             assertFalse(privileges.resourceExists("admin-group-scheduled-task-" + adminHubConfig.getAppConfig().getGroupName()));
+
+            for (Privilege privilege : command.buildPrivilegesForRolesThatCanBeInherited(adminHubConfig.getManageClient())) {
+                assertFalse(privileges.resourceExists(privilege.getPrivilegeName()));
+            }
         } finally {
             // Need to deploy these privileges back so the lack of them doesn't impact other tests
             command.execute(context);
