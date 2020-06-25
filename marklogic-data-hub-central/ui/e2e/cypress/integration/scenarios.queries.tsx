@@ -4,7 +4,7 @@ import browsePage from '../support/pages/browse';
 import queryComponent from '../support/components/query/manage-queries-modal'
 import { Application } from '../support/application.config';
 import { toolbar } from '../support/components/common/index';
-
+import 'cypress-wait-until';
 
 describe('save/manage queries scenarios, developer role', () => {
 
@@ -12,14 +12,12 @@ describe('save/manage queries scenarios, developer role', () => {
         cy.visit('/');
         cy.contains(Application.title);
         cy.loginAsDeveloper().withRequest();
-        toolbar.getExploreToolbarIcon().should('exist');
-        toolbar.getExploreToolbarIcon().click();
-        browsePage.getExploreButton().should('exist');
-        browsePage.getExploreButton().click();
+        cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+        cy.wait(200);
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
         cy.wait(200);
         browsePage.getFacetView();
-        browsePage.selectEntity('All Entities');
-
     });
 
     it('apply facet search,open save modal, save new query, edit query details, save a copy of current query', () => {
@@ -140,7 +138,7 @@ describe('save/manage queries scenarios, developer role', () => {
         queryComponent.getEditQueryName().invoke('text').as('qName');
         queryComponent.getEditQueryName().invoke('val').then(
             ($someVal) => {
-                if($someVal === "new-query-2") {
+                if ($someVal === "new-query-2") {
                     queryComponent.getEditQueryName().clear();
                     queryComponent.getEditQueryName().type('new-query');
                     queryComponent.getSubmitButton().click();
@@ -284,6 +282,22 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveModalIcon().should('not.be.visible')
     });
 
+});
+
+
+describe('manage queries modal scenarios, developer role', () => {
+
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains(Application.title);
+        cy.loginAsDeveloper().withRequest();
+        cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+        cy.wait(200);
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        cy.wait(200);
+    });
+
     it('open manage queries, edit query', () => {
         browsePage.getManageQueriesModalOpened();
         queryComponent.getManageQueryModal().should('be.visible');
@@ -305,7 +319,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getManageQueriesModalOpened()
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getDeleteQuery().first().click();
-        queryComponent.getDeleteQueryYesButton().click({force: true});
+        queryComponent.getDeleteQueryYesButton().click({ force: true });
         browsePage.getManageQueryCloseIcon().click();
         queryComponent.getManageQueryModal().should('not.be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
@@ -313,4 +327,3 @@ describe('save/manage queries scenarios, developer role', () => {
     });
 
 });
-

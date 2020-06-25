@@ -6,43 +6,7 @@ import detailPage from '../support/pages/detail';
 import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
 import {toolbar} from "../support/components/common";
-
-
-xdescribe('xml scenario on view entities page', () => {
-
-  //login with valid account
-  beforeEach(() => {
-    cy.visit('/');
-    cy.contains(Application.title);
-    cy.loginAsDeveloper().withRequest();
-    // temporary change as tile is not working
-    homePage.getTitle().click();
-    cy.wait(500);
-    // temporary change end here
-    homePage.getViewEntities().click();
-  });
-
-  it('has total entities and documents', () => {
-    viewPage.getTotalEntities().should('be.equal', 3);
-    viewPage.getTotalDocuments().should('be.greaterThan', 1008);
-  });
-
-  it('has Person entity with properties and attributes', () => {
-    viewPage.expandEntityRow('PersonXML');
-    viewPage.getEntityProperty('id').should('contains', 'id');
-    viewPage.getEntityDataType('id').should('contains', 'string');
-    viewPage.getEntityIndexSettings('id').should('contains', 'Primary Key');
-  });
-
-  it('navigates to /browse on entity name click', () => {
-    viewPage.getEntity('PersonXML')
-        .click()
-        .url()
-        .should('include', '/browse');
-    browsePage.getSelectedEntity().should('contain', 'PersonXML')
-  });
-
-});
+import 'cypress-wait-until';
 
 describe('xml scenario for snippet view on browse documents page', () => {
 
@@ -53,10 +17,10 @@ describe('xml scenario for snippet view on browse documents page', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    toolbar.getExploreToolbarIcon().should('exist');
-    toolbar.getExploreToolbarIcon().click();
-    //browsePage.getExploreButton().should('exist');
-    browsePage.getExploreButton().click();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+    cy.wait(200);
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
     cy.wait(200);
     browsePage.getFacetView();
   });
@@ -165,7 +129,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     browsePage.getDocumentFileType(0).should('be.equal', 'xml')
   });
 
-  it('verify instance view of the document', () => {
+  xit('verify instance view of the document', () => {
     cy.wait(500);
     browsePage.search('Alex');
     browsePage.getTotalDocuments().should('be.equal', 1);
@@ -179,7 +143,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     detailPage.getDocumentTable().should('exist');
   });
 
-  it('verify source view of the document', () => {
+  xit('verify source view of the document', () => {
     cy.wait(500);
     browsePage.search('Alex');
     browsePage.getTotalDocuments().should('be.equal', 1);
@@ -198,11 +162,11 @@ xdescribe('xml scenario for table on browse documents page', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    // temporary change as tile is not working
-    homePage.getTitle().click();
-    cy.wait(500);
-    // temporary change end here
-    homePage.getBrowseEntities().click();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+    toolbar.getExploreToolbarIcon().should('exist');
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.getExploreButton().should('exist');
+    browsePage.getExploreButton().click();
     cy.wait(1000);
     browsePage.getTableView();
     browsePage.selectEntity('All Entities');

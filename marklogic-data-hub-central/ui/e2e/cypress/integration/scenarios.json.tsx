@@ -5,45 +5,9 @@ import browsePage from '../support/pages/browse';
 import detailPage from '../support/pages/detail';
 import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
-import {toolbar} from "../support/components/common";
+import { toolbar } from "../support/components/common";
+import 'cypress-wait-until';
 
-xdescribe('json scenario on view entities page', () => {
-
-  //login with valid account
-  beforeEach(() => {
-    cy.visit('/');
-    cy.contains(Application.title);
-    cy.loginAsDeveloper();
-    cy.wait(1000);
-    // temporary change as tile is not working
-    homePage.getTitle().click();
-    cy.wait(500);
-    // temporary change end here
-    homePage.getViewEntities().click();
-    cy.visit('/view');
-  });
-
-  it('has total entities and documents', () => {
-    viewPage.getTotalEntities().should('be.equal', 3);
-    viewPage.getTotalDocuments().should('be.greaterThan', 1008);
-  });
-
-  it('has Person entity with properties and attributes', () => {
-    viewPage.expandEntityRow('Person');
-    viewPage.getEntityProperty('id').should('contains', 'id');
-    viewPage.getEntityDataType('id').should('contains', 'string');
-    viewPage.getEntityIndexSettings('id').should('contains', 'Primary Key');
-  });
-
-  it('navigates to /browse on entity name click', () => {
-    viewPage.getEntity('Person')
-        .click()
-        .url()
-        .should('include', '/browse');
-    browsePage.getSelectedEntity().should('contain', 'Person')
-  });
-
-});
 
 describe('json scenario for snippet on browse documents page', () => {
 
@@ -54,19 +18,17 @@ describe('json scenario for snippet on browse documents page', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
-    toolbar.getExploreToolbarIcon().should('exist');
-    toolbar.getExploreToolbarIcon().click();
-    browsePage.getExploreButton().should('exist');
-    browsePage.getExploreButton().click();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
     cy.wait(200);
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.getFacetView();
   });
 
   it('select "all entities" verify docs, hub/entity properties', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    cy.wait(200);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', 1008)
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -87,7 +49,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'Person');
     cy.wait(200);
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', 5)
+    browsePage.getTotalDocuments().should('be.greaterThan', 5);
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
       //browsePage.getDocumentId(i).should('exist');
@@ -109,7 +71,6 @@ describe('json scenario for snippet on browse documents page', () => {
     cy.wait(500);
     browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableSnippetView();
-    cy.wait(500);
     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
     browsePage.getShowMoreLink().click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
@@ -126,33 +87,33 @@ describe('json scenario for snippet on browse documents page', () => {
   });
 
   it('apply facet search and clear individual grey facet', () => {
-     browsePage.selectEntity('All Entities');
-     browsePage.getSelectedEntity().should('contain', 'All Entities');
-     cy.wait(500);
-     browsePage.getHubPropertiesExpanded();
-     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
-     browsePage.getShowMoreLink().click();
-     browsePage.getFacetItemCheckbox('collection', 'Person').click();
-     browsePage.getGreySelectedFacets('Person').click();
-     cy.wait(500);
-     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
-    });
+    browsePage.selectEntity('All Entities');
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
+    cy.wait(500);
+    browsePage.getHubPropertiesExpanded();
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+    browsePage.getShowMoreLink().click();
+    browsePage.getFacetItemCheckbox('collection', 'Person').click();
+    browsePage.getGreySelectedFacets('Person').click();
+    cy.wait(500);
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+  });
 
   it('apply facet search and clear all grey facets', () => {
-     browsePage.selectEntity('All Entities');
-     browsePage.getSelectedEntity().should('contain', 'All Entities');
-     cy.wait(500);
-     browsePage.getHubPropertiesExpanded();
-     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
-     browsePage.getShowMoreLink().click();
-     browsePage.getFacetItemCheckbox('collection', 'Person').click();
-     browsePage.getFacetItemCheckbox('collection', 'Customer').click();
-     browsePage.getGreySelectedFacets('Person').should('exist');
-     browsePage.getGreySelectedFacets('Customer').should('exist');
-     browsePage.getClearGreyFacets().click();
-     cy.wait(500);
-     browsePage.getTotalDocuments().should('be.greaterThan', 1008);
-    });
+    browsePage.selectEntity('All Entities');
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
+    cy.wait(500);
+    browsePage.getHubPropertiesExpanded();
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+    browsePage.getShowMoreLink().click();
+    browsePage.getFacetItemCheckbox('collection', 'Person').click();
+    browsePage.getFacetItemCheckbox('collection', 'Customer').click();
+    browsePage.getGreySelectedFacets('Person').should('exist');
+    browsePage.getGreySelectedFacets('Customer').should('exist');
+    browsePage.getClearGreyFacets().click();
+    cy.wait(500);
+    browsePage.getTotalDocuments().should('be.greaterThan', 1008);
+  });
 
   it('search for a simple text/query and verify content', () => {
     cy.wait(500);
@@ -166,7 +127,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getDocumentFileType(0).should('exist')
   });
 
-  it('verify instance view of the document', () => {
+  xit('verify instance view of the document', () => {
     cy.wait(500);
     browsePage.search('Bill');
     browsePage.getTotalDocuments().should('be.equal', 1);
@@ -180,7 +141,7 @@ describe('json scenario for snippet on browse documents page', () => {
     detailPage.getDocumentTable().should('exist');
   });
 
-  it('verify source view of the document', () => {
+  xit('verify source view of the document', () => {
     cy.wait(500);
     browsePage.search('Bill');
     browsePage.getTotalDocuments().should('be.equal', 1);

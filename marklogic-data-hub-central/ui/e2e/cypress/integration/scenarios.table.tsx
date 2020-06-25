@@ -3,6 +3,7 @@
 import browsePage from '../support/pages/browse';
 import homePage from "../support/pages/home";
 import { Application } from '../support/application.config';
+import 'cypress-wait-until';
 
 
 xdescribe('table test scenarios', () => {
@@ -11,6 +12,7 @@ xdescribe('table test scenarios', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
@@ -42,6 +44,7 @@ xdescribe('column selector test scenarios', () => {
     cy.visit('/');
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
     // temporary change as tile is not working
     homePage.getTitle().click();
     cy.wait(500);
