@@ -24,6 +24,7 @@ import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.managers.ModelManager;
+import com.marklogic.hub.central.schemas.ModelDefinitions;
 import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
@@ -112,12 +113,12 @@ public class ModelController extends BaseController {
         return ResponseEntity.ok(newService().getModelReferences(modelName));
     }
 
-    @RequestMapping(value = "/{modelName}/entityTypes", method = RequestMethod.PUT)
-    @ApiImplicitParam(required = true, paramType = "body", dataType = "ModelDefinitions")
+    @RequestMapping(value = "/entityTypes", method = RequestMethod.PUT)
+    @ApiImplicitParam(required = true, paramType = "body", allowMultiple = true, dataType = "UpdateModelInput")
     @Secured("ROLE_writeEntityModel")
-    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes, @PathVariable String modelName) {
+    public ResponseEntity<Void> updateModelEntityTypes(@ApiParam(hidden = true) @RequestBody JsonNode entityTypes) {
         // update the model
-        newService().updateModelEntityTypes(modelName, entityTypes);
+        newService().updateModelEntityTypes(entityTypes);
 
         //deploy updated configs
         deployModelConfigs();
@@ -279,5 +280,10 @@ public class ModelController extends BaseController {
     public static class ModelReferencesInfo {
         public List<String> stepAndMappingNames;
         public List<String> entityNames;
+    }
+
+    public static class UpdateModelInput {
+        public String entityName;
+        public ModelDefinitions modelDefinition;
     }
 }
