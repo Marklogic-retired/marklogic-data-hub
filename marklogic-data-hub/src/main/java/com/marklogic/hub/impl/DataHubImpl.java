@@ -35,6 +35,7 @@ import com.marklogic.client.admin.TransformExtensionsManager;
 import com.marklogic.client.document.DocumentWriteOperation;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -1015,13 +1016,15 @@ public class DataHubImpl implements DataHub, InitializingBean {
             "cts.uris(null, null, " +
             "   cts.collectionQuery(consts.USER_ARTIFACT_COLLECTIONS.concat(consts.HUB_ARTIFACT_COLLECTION).concat('http://marklogic.com/data-hub/mappings'))" +
             ")";
-        hubClientToUse.getStagingClient().newServerEval().javascript(script).eval().iterator().forEachRemaining(item -> {
+        EvalResultIterator resultIterator = hubClientToUse.getStagingClient().newServerEval().javascript(script).eval();
+        resultIterator.iterator().forEachRemaining(item -> {
             final String uri = item.getString();
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             JacksonHandle content = new JacksonHandle();
             mgr.read(uri, metadata, content);
             docs.add(new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE, uri, metadata, content));
         });
+        resultIterator.close();
         return docs;
     }
 

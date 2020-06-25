@@ -253,7 +253,6 @@ public class QueryStepRunner implements StepRunner {
         // Needed to support constrainSourceQueryToJob
         options.put("jobId", jobId);
 
-        Collection<String> uris = null;
         //If current step is the first run step job output isn't disabled, a job doc is created
         if (!disableJobOutput) {
             jobDocManager = new JobDocManager(hubClient.getJobsClient());
@@ -262,6 +261,7 @@ public class QueryStepRunner implements StepRunner {
             jobDocManager = null;
         }
 
+        DiskQueue<String> uris;
         try {
             uris = runCollector(sourceDatabase);
         } catch (Exception e) {
@@ -279,7 +279,15 @@ public class QueryStepRunner implements StepRunner {
             }
             return runStepResponse;
         }
-        return this.runHarmonizer(runStepResponse,uris);
+
+        try {
+            return this.runHarmonizer(runStepResponse, uris);
+        }
+        finally {
+            if (uris != null) {
+                uris.close();
+            }
+        }
     }
 
     @Override
@@ -308,7 +316,7 @@ public class QueryStepRunner implements StepRunner {
         return this.batchSize;
     }
 
-    private Collection<String> runCollector(String sourceDatabase) {
+    private DiskQueue<String> runCollector(String sourceDatabase) {
         Collector c = new CollectorImpl(hubClient, sourceDatabase);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
