@@ -1,17 +1,12 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Progress, Upload, Select } from "antd";
-import React, { useState, useEffect, useContext, CSSProperties } from "react";
+import { Modal, Form, Input, Button, Tooltip, Icon, Select } from "antd";
+import React, { useState, useEffect } from "react";
 import styles from './new-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
-import { UserContext } from '../../../util/user-context';
-import Axios from "axios";
 
 const NewLoadDialog = (props) => {
-  const [fileUploadCount, setFileUploadCount] = useState(0);
-  const { resetSessionTime } = useContext(UserContext);
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
-  const [inputFilePath, setInputFilePath] = useState(props.stepData && props.stepData.inputFilePath ? props.stepData.inputFilePath : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
   const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIPrefix : '');
@@ -19,18 +14,9 @@ const NewLoadDialog = (props) => {
   const [otherSeparator, setOtherSeparator] = useState('');
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
-  const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
-  const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
-  const [isFieldSeparatorTouched, setFieldSeparatorTouched] = useState(false);
-  const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
   const [isValid, setIsValid] = useState(false);
-  const [fileList, setFileList] = useState<any[]>([]);
-
-  const [toDelete, setToDelete] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [displayUploadError, setDisplayUploadError] = useState(false);
-
 
   useEffect(() => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step') {
@@ -48,7 +34,6 @@ const NewLoadDialog = (props) => {
 
       setTgtFormat(props.stepData.targetFormat);
       setOutputUriPrefix(props.stepData.outputURIPrefix);
-      setFileList([]);
       setIsValid(true);
       setTobeDisabled(true);
     } else {
@@ -60,7 +45,6 @@ const NewLoadDialog = (props) => {
       setOtherSeparator('');
       setTgtFormat('json');
       setOutputUriPrefix('');
-      setFileList([]);
       setIsValid(false);
     }
 
@@ -74,88 +58,58 @@ const NewLoadDialog = (props) => {
       setOtherSeparator('');
       setTgtFormat('json');
       setOutputUriPrefix('');
-      setFileList([]);
-      setInputFilePath('');
       setTobeDisabled(false);
-      setDisplayUploadError(false);
     })
 
   }, [props.stepData, props.title, props.newLoad]);
 
   const onCancel = () => {
-
     if(checkDeleteOpenEligibility()) {
       setDeleteDialogVisible(true);
     } else {
       props.setNewLoad(false);
-    setFileList([]);
     }
   }
 
   const checkDeleteOpenEligibility = () => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step'){
-
-      if(stepName === props.stepData.name
-      && description === props.stepData.description
-      && srcFormat === props.stepData.sourceFormat
-      && tgtFormat === props.stepData.targetFormat
-      && outputUriPrefix === props.stepData.outputURIPrefix
-      ) {
-
+      if(stepName === props.stepData.name && description === props.stepData.description
+      && srcFormat === props.stepData.sourceFormat && tgtFormat === props.stepData.targetFormat
+      && outputUriPrefix === props.stepData.outputURIPrefix) {
         if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) ||
-           (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
-           (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')
-           ) {
-             if((props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath) ||
-                (inputFilePath === '')){
-
-              return false;
-             } else {
-              return true;
-             }
-
-        } else {
+         (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
+         (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')) {
+          return false;
+        }
+        else {
           return true;
-         }
-      } else {
-        return true
+        }
       }
-    } else {
-      if(stepName === ''
-        && description === ''
-        && srcFormat === 'json'
-        && tgtFormat === 'json'
-        && outputUriPrefix === ''
-        ) {
-          if(fieldSeparator === ',' && otherSeparator === '')
-              {
-               if(inputFilePath === '' || (props.stepData && props.stepData.inputFilePath && inputFilePath !== props.stepData.inputFilePath)){
-                return false;
-               } else {
-                return true;
-               }
-          } else {
-            return true;
-           }
-        } else {
+      else {
+          return true
+      }
+    }
+    else {
+      if(stepName === '' && description === '' && srcFormat === 'json' && tgtFormat === 'json' && outputUriPrefix === '') {
+        if(fieldSeparator === ',' && otherSeparator === '') {
+            return false;
+        }
+        else {
           return true;
+        }
+      }
+      else {
+        return true;
       }
     }
   }
 
   const onOk = () => {
     props.setNewLoad(false);
-    setToDelete(false);
   }
 
   const onDelOk = () => {
     props.setNewLoad(false);
-    setFileList([]);
-    if(toDelete){
-      deleteUnusedLoadArtifact(stepName);
-      deleteFilesFromDirectory(stepName);
-      setToDelete(false);
-    }
     setDeleteDialogVisible(false)
   }
 
@@ -184,72 +138,31 @@ const NewLoadDialog = (props) => {
     if (event) event.preventDefault();
 
     let dataPayload;
-    if(inputFilePath === ''){
-      if(props.stepData.inputFilePath){
-        dataPayload = {
-          name: stepName,
-          description: description,
-          sourceFormat: srcFormat,
-          separator: null,
-          targetFormat: tgtFormat,
-          outputURIPrefix: outputUriPrefix,
-          inputFilePath: props.stepData.inputFilePath
-        };
-        // cannot set separator unless using the CSV source format
-        if (srcFormat === 'csv') {
-            dataPayload.separator = fieldSeparator === 'Other'? otherSeparator : fieldSeparator;
-        }
-      } else {
-        if(srcFormat === 'csv'){
-          dataPayload = {
-           name: stepName,
-           description: description,
-           sourceFormat: srcFormat,
-           separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-           targetFormat: tgtFormat,
-           outputURIPrefix: outputUriPrefix,
-         }
-       } else {
-          dataPayload = {
-           name: stepName,
-           description: description,
-           sourceFormat: srcFormat,
-           targetFormat: tgtFormat,
-           outputURIPrefix: outputUriPrefix,
-         }
-       }
+    if(srcFormat === 'csv'){
+       dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+        targetFormat: tgtFormat,
+        outputURIPrefix: outputUriPrefix,
       }
-
     } else {
-      if(srcFormat === 'csv'){
-        dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
-         targetFormat: tgtFormat,
-         outputURIPrefix: outputUriPrefix,
-         inputFilePath: inputFilePath
-       }
-     } else {
-        dataPayload = {
-         name: stepName,
-         description: description,
-         sourceFormat: srcFormat,
-         targetFormat: tgtFormat,
-         outputURIPrefix: outputUriPrefix,
-         inputFilePath: inputFilePath
-       }
-     }
-
+       dataPayload = {
+        name: stepName,
+        description: description,
+        sourceFormat: srcFormat,
+        targetFormat: tgtFormat,
+        outputURIPrefix: outputUriPrefix
+      }
+      if(props.stepData.separator){
+        dataPayload.separator = null;
+      }
     }
-
     setIsValid(true);
 
     //Call create data load artifact API function
-
     props.createLoadArtifact(dataPayload);
-
     props.setNewLoad(false);
   }
 
@@ -261,13 +174,6 @@ const NewLoadDialog = (props) => {
       else {
         setStepNameTouched(true);
         setStepName(event.target.value);
-        let dataPayload = {
-          name: event.target.value,
-          description: description,
-          sourceFormat: srcFormat,
-          targetFormat: tgtFormat,
-          outputURIPrefix: outputUriPrefix,
-        };
 
         if (event.target.value.length == 0) {
           setIsValid(false);
@@ -286,46 +192,21 @@ const NewLoadDialog = (props) => {
   const handleOutputUriPrefix = (event) => {
     if (event.target.id === 'outputUriPrefix') {
       setOutputUriPrefix(event.target.value);
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: tgtFormat,
-        outputURIPrefix: event.target.value
-      };
     }
   }
 
   const handleSrcFormat = (value) => {
-
-    if (value === ' ') {
-      setSrcFormatTouched(false);
-    }
-    else {
-      setSrcFormatTouched(true);
+    if (value !== ' ') {
       setSrcFormat(value);
-
       if(value === 'csv'){
         setFieldSeparator(',');
-      }
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: value,
-        targetFormat: tgtFormat,
-        outputURIPrefix: outputUriPrefix,
       }
     }
   }
 
   const handleFieldSeparator = (value) => {
-    if (value === ' ') {
-      setFieldSeparatorTouched(false);
-    }
-    else {
-      setFieldSeparatorTouched(true);
+    if (value !== ' ') {
       setFieldSeparator(value);
-
       if(value === 'Other'){
         setOtherSeparator('');
       }
@@ -334,63 +215,13 @@ const NewLoadDialog = (props) => {
 
   const handleOtherSeparator = (event) => {
     if (event.target.id === 'otherSeparator') {
-      setOtherSeparatorTouched(true);
       setOtherSeparator(event.target.value);
-    }
-    else {
-      setOtherSeparatorTouched(false);
     }
   }
 
   const handleTgtFormat = (value) => {
-
-    if (value === ' ') {
-      setTgtFormatTouched(false);
-    }
-    else {
-      setTgtFormatTouched(true);
+    if (value !== ' ') {
       setTgtFormat(value);
-
-      let dataPayload = {
-        name: stepName,
-        description: description,
-        sourceFormat: srcFormat,
-        targetFormat: value,
-        outputURIPrefix: outputUriPrefix,
-      }
-    }
-  }
-
-  const deleteFilesFromDirectory = async (loadDataName) => {
-    try {
-      let response = await Axios.delete(`/api/artifacts/loadData/${loadDataName}/setData`);
-    } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error while deleting load data artifact.', message);
-    } finally {
-      resetSessionTime();
-    }
-
-  }
-
-  const deleteUnusedLoadArtifact = async (loadDataName) => {
-
-    try {
-      let response = await Axios.delete(`/api/steps/ingestion/${loadDataName}`);
-    } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error while deleting ingestion artifact.', message);
-    }
-  }
-
-  const createDefaultLoadDataArtifact = async (dataPayload) => {
-    try {
-      let response = await Axios.post(`/api/steps/ingestion/${stepName}`, dataPayload);
-    } catch (error) {
-      let message = error.response.data.message;
-      console.error('Error While creating the default Load Data artifact!', message)
-    } finally {
-      resetSessionTime();
     }
   }
 
