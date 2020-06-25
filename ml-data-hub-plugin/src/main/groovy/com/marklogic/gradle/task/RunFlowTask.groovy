@@ -26,45 +26,106 @@ import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.RunFlowResponse
 import org.apache.commons.lang3.tuple.Pair
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 class RunFlowTask extends HubTask {
 
     @Input
+    @Optional
     public String flowName
 
     @Input
+    @Optional
     public Integer batchSize
 
     @Input
+    @Optional
     public Integer threadCount
 
     @Input
+    @Optional
     public String inputFilePath
 
     @Input
+    @Optional
     public String inputFileType
 
     @Input
+    @Optional
     public String outputURIReplacement
 
     @Input
+    @Optional
     public String outputURIPrefix
 
     @Input
+    @Optional
     public String separator
 
     @Input
+    @Optional
     public Boolean showOptions
 
     @Input
+    @Optional
     public Boolean failHard
 
     @Input
+    @Optional
     public List<String> steps
 
     @Input
+    @Optional
     public String jobId
+
+    String getFlowName() {
+        return flowName
+    }
+
+    Integer getBatchSize() {
+        return batchSize
+    }
+
+    Integer getThreadCount() {
+        return threadCount
+    }
+
+    String getInputFilePath() {
+        return inputFilePath
+    }
+
+    String getInputFileType() {
+        return inputFileType
+    }
+
+    String getOutputURIReplacement() {
+        return outputURIReplacement
+    }
+
+    String getOutputURIPrefix() {
+        return outputURIPrefix
+    }
+
+    String getSeparator() {
+        return separator
+    }
+
+    Boolean getShowOptions() {
+        return showOptions
+    }
+
+    Boolean getFailHard() {
+        return failHard
+    }
+
+    List<String> getSteps() {
+        return steps
+    }
+
+    String getJobId() {
+        return jobId
+    }
 
     @TaskAction
     void runFlow() {

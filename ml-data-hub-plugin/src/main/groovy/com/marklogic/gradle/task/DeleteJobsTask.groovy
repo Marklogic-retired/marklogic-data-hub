@@ -20,12 +20,18 @@ package com.marklogic.gradle.task
 import com.marklogic.gradle.exception.JobIdsRequiredException
 import com.marklogic.hub.legacy.job.JobDeleteResponse
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 class DeleteJobsTask extends HubTask {
 
     @Input
+    @Optional
     public String jobIds
+
+    String getJobIds() {
+        return jobIds
+    }
 
     @TaskAction
     void deleteJobs() {

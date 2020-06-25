@@ -24,12 +24,17 @@ import com.marklogic.hub.legacy.flow.DataFormat
 import com.marklogic.hub.legacy.flow.FlowType
 import com.marklogic.hub.scaffold.Scaffolding
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 abstract class CreateLegacyFlowTask extends HubTask {
 
     @Input
+    @Optional
     public Boolean useES
 
+    Boolean getUseES() {
+        return useES
+    }
 
     void createFlow(FlowType flowType) {
         def entityName = project.hasProperty("entityName") ? project.property("entityName") : null
