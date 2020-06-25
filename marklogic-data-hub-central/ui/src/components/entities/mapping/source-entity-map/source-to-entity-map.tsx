@@ -122,7 +122,7 @@ const SourceToEntityMap = (props) => {
     }
 
     const handleSubmitUri = (uri) => {
-        props.getMappingArtifactByMapName();
+        props.getMappingArtifactByMapName(props.mapData.targetEntityType,props.mapData.name);
         props.fetchSrcDocFromUri(uri,props.mapIndex);
         if(isTestClicked) {
             getMapValidationResp(uri);
