@@ -291,6 +291,7 @@ function getPrimaryValue(entityInstance, entityDefinition) {
       let primaryKeyValue = entityInstance[primaryKey];
 
       if (primaryKeyValue === null || String(primaryKeyValue).trim().length === 0) {
+
         return null;
       } else {
         primaryKeyData.propertyPath = primaryKey;
