@@ -28,6 +28,7 @@ expectedStep.provenanceGranularityLevel = "coarse";
 expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
 expectedStep.outputURIReplacement= "abc,'def'";
 expectedStep.batchSize = 100;
+expectedStep.stepDefinitionName = "default-ingestion";
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
@@ -41,10 +42,12 @@ assertions = assertions
 //Remove 'outputURIReplacement' from payload
 info.outputURIPrefix = '/prefix/';
 delete info.outputURIReplacement;
+info.stepDefinitionName = 'custom-ingestion';
 serviceResponse = stepService.saveStep(stepDefinitionType, info);
 
 delete expectedStep.outputURIReplacement;
 expectedStep.outputURIPrefix = '/prefix/';
+expectedStep.stepDefinitionName = 'custom-ingestion';
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);

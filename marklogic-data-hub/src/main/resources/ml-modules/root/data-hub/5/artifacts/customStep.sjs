@@ -21,7 +21,7 @@ const dataHub = DataHubSingleton.instance();
 const collections = ['http://marklogic.com/data-hub/steps/custom', 'http://marklogic.com/data-hub/steps'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_CUSTOM_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_CUSTOM_READ_ROLE, 'read')];
-const requiredProperties = ['name', 'selectedSource', 'stepDefinitionName'];
+const requiredProperties = ['name', 'selectedSource'];
 
 function getNameProperty() {
   return 'name';
