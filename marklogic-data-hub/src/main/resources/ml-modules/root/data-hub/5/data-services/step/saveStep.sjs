@@ -47,16 +47,22 @@ if (existingStep) {
   if("mapping" === stepDefinitionType){
     stepDefinitionName = "entity-services-mapping";
   }
-  else if("ingestion" === stepDefinitionType){
-    stepDefinitionName = "default-ingestion";
-  }
   else {
-    stepDefinitionName = stepProperties.stepDefinitionName;
+    //if 'stepDefinitionName' is not set for ingestion step, it will be set to 'default-ingestion'
+    if("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName){
+      stepDefinitionName = "default-ingestion";
+    }
+    else {
+      stepDefinitionName = stepProperties.stepDefinitionName;
+    }
   }
-
   stepProperties.stepDefinitionName = stepDefinitionName;
   stepProperties.stepDefinitionType = stepDefinitionType;
   stepProperties.stepId = stepName + "-" + stepDefinitionType;
+
+  if(!stepProperties.stepDefinitionName){
+    throw new Error(`Missing required property 'stepDefinitionName' for step: ${stepName}`);
+  }
 
   const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
   if (stepDef != null && stepDef.options != null) {
