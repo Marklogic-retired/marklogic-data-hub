@@ -16,6 +16,8 @@
 'use strict';
 
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const es = require('/MarkLogic/entity-services/entity-services');
+
 // TODO Will move this to /data-hub/5/entities soon
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
@@ -51,7 +53,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
 
     let instance = null;
     try {
-      instance = cts.doc(result.uri).toObject().envelope.instance;
+      instance = getEntityInstance(result.uri);
     } catch (error) {
       console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     }
@@ -211,7 +213,6 @@ function updateSelectedPropertyMetadata(selectedPropertyName, selectedPropertyDe
 function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPropertyDefinitions, granularPropertyMetadata) {
   const selectedPropertyNameArray = selectedPropertyName.split(".");
   const actualSelectedPropertyName = selectedPropertyNameArray.pop();
-  // const parentPropertyName = selectedPropertyNameArray[0];
   let structuredPropertyPath = "";
   let selectedPropertyMetadataBuilder = [];
 
@@ -239,6 +240,15 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
     finalMetadataProperty = currentProperties.length > 0 ? metadataProperty : {};
   });
   return finalMetadataProperty;
+}
+
+function getEntityInstance(docUri) {
+  let doc = cts.doc(docUri);
+  if(doc instanceof Element || doc instanceof XMLDocument) {
+    const builder = new NodeBuilder();
+    return fn.head(es.instanceJsonFromDocument(builder.startDocument().addNode(doc.xpath("/*:envelope/*:instance")).endDocument().toNode())).toObject();
+  }
+  return doc.toObject().envelope.instance;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
@@ -307,5 +317,6 @@ function getPrimaryValue(entityInstance, entityDefinition) {
 
 module.exports = {
   addPropertiesToSearchResponse,
-  buildPropertyMetadata: buildPropertyMetadata
+  buildPropertyMetadata: buildPropertyMetadata,
+  getEntityInstance: getEntityInstance
 };

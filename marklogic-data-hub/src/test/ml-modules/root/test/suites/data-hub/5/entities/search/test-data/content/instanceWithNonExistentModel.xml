@@ -1,0 +1,13 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <info>
+        <title>Customer</title>
+        <version>0.0.1</version>
+    </info>
+    <instance>
+        <TestEntity xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="">
+            <testPropertyId xsi:type="xs:integer">101</testPropertyId>
+            <testPropertyName xsi:type="xs:string">Jane Foster</testPropertyName>
+        </TestEntity>
+    </instance>
+</envelope>

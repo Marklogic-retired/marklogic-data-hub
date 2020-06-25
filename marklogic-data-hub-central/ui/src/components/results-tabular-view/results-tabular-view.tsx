@@ -65,18 +65,8 @@ const ResultsTabularView = (props) => {
         return dataObj;
     }
 
-
-    /* Temporary array to make it work with xml documents */
-    const dataSourceWithoutXml = props.data.filter((item: any) => {
-        if (item.hasOwnProperty('entityProperties') && item.format === 'json') {
-            return item;
-        }
-    });
-
-    const dataSource = dataSourceWithoutXml.map((item) => {
-        //if(item.hasOwnProperty('entityProperties') && item.format === 'json'){
+    const dataSource = props.data.map((item) => {
         return tableDataRender(item.entityProperties);
-        //}
     });
 
     return (
