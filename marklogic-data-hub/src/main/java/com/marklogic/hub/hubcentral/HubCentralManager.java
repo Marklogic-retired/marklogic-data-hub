@@ -17,10 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.util.FileCopyUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.stream.Stream;
@@ -146,23 +143,23 @@ public class HubCentralManager extends LoggingObject {
     protected void extractZipToProject(HubProject hubProject, File zipFile) {
         final File projectDir = hubProject.getProjectDir().toFile();
         logger.info("Extracting zip file into project directory: " + projectDir.getAbsolutePath());
-        try {
-            ZipFile zip = new ZipFile(zipFile);
+        try (ZipFile zip = new ZipFile(zipFile)) {
             Enumeration<?> entries = zip.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
                 int entrySize = (int) entry.getSize();
                 byte[] buffer = new byte[entrySize];
-                zip.getInputStream(entry).read(buffer, 0, entrySize);
                 File outputFile = new File(projectDir, entry.getName());
                 outputFile.getParentFile().mkdirs();
-                logger.info("Writing file: " + outputFile);
-                FileOutputStream fileOut = new FileOutputStream(outputFile);
-                FileCopyUtils.copy(buffer, fileOut);
-                fileOut.close();
+                try (InputStream inputStream = zip.getInputStream(entry);
+                     FileOutputStream fileOut = new FileOutputStream(outputFile)) {
+                    inputStream.read(buffer, 0, entrySize);
+                    logger.info("Writing file: " + outputFile);
+                    FileCopyUtils.copy(buffer, fileOut);
+                }
             }
-            zip.close();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
