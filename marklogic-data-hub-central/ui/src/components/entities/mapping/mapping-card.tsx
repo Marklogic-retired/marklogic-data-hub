@@ -408,7 +408,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 }
 
             } else {
-                if (!/^@xmlns/.test(key)) {
+                if (val && !/^@xmlns/.test(key)) {
                     let finalKey = getNamespace(key, val, parentNamespace);
 
                     sourceTableKeyIndex = sourceTableKeyIndex + 1;
