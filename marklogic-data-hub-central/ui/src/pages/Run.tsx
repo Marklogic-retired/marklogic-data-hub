@@ -175,19 +175,19 @@ const Run = (props) => {
         return stepType[0].toUpperCase() + stepType.substr(1);
     }
 
-    const goToExplorer = (entityName) => {
+    const goToExplorer = (entityName, jobId) => {
         Modal.destroyAll();
-        setViewWithEntity(<Browse/>, false, entityName);
+        setViewWithEntity(<Browse/>, false, entityName, jobId);
     }
 
-    function showSuccess(stepName, stepType, entityName) {
+    function showSuccess(stepName, stepType, entityName, jobId) {
          Modal.success({
               title:<div><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> ran successfully</p></div>,
                okText: 'Close',
                mask: false,
                width:650,
                content: stepType.toLowerCase() === 'mapping' ?
-                   <div onClick={()=> goToExplorer(entityName)} className={styles.exploreCuratedData}>
+                   <div onClick={()=> goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                    <span className={styles.exploreIcon}></span>
                    <span className={styles.exploreText}>Explore Curated Data</span>
                </div> : ''
@@ -222,12 +222,12 @@ const Run = (props) => {
         </span>
     );
 
-    function showErrors(stepName, stepType, errors, response, entityName) {
+    function showErrors(stepName, stepType, errors, response, entityName, jobId) {
          Modal.error({
             title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
             content: (
                 <div id="error-list">
-                    {stepType.toLowerCase() === 'mapping' ? <div onClick={() => goToExplorer(entityName)} className={styles.exploreCuratedData}>
+                    {stepType.toLowerCase() === 'mapping' ? <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
                     </div> : ''}
@@ -343,10 +343,10 @@ const Run = (props) => {
                         }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
                         if (response['jobStatus'] === Statuses.FINISHED) {
-                            showSuccess(stepName, stepType, entityName);
+                            showSuccess(stepName, stepType, entityName, jobId);
                         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
                             let errors = getErrors(response);
-                            showErrors(stepName, stepType, errors, response, entityName);
+                            showErrors(stepName, stepType, errors, response, entityName, jobId);
                         } else if (response['jobStatus'] === Statuses.FAILED) {
                             let errors = getErrors(response);
                             showFailed(stepName, stepType, errors.slice(0,1));

@@ -77,7 +77,10 @@ const TilesView = (props) => {
         setSelection(id);
         setCurrentNode(id); // TODO Handle multiple with nested objects
         setOptions(tiles[id]);
-        setView(views[id]);
+        if(id == 'explore')
+            setView(views[id], true)
+        else
+            setView(views[id])
     }
 
     const location: any = useLocation();
