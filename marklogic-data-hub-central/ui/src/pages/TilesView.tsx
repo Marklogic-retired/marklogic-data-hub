@@ -13,7 +13,7 @@ import Run from './Run';
 import Browse from './Browse';
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 
 export type TileId = 'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
@@ -41,6 +41,9 @@ const TilesView = (props) => {
     const [currentNode, setCurrentNode] = useState<any>(INITIAL_SELECTION);
     const [options, setOptions] = useState<TileItem|null>(null);
 
+    const history: any = useHistory();
+    const location: any = useLocation();
+
     const {
         setZeroState,
         setManageQueryModal,
@@ -57,6 +60,7 @@ const TilesView = (props) => {
         setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
         setOptions(null);
         setView(null);
+        history.push('/tiles');
     }
 
     // For role-based privileges
@@ -72,25 +76,12 @@ const TilesView = (props) => {
     };
     const enabled = Object.keys(enabledViews).filter(key => enabledViews[key]);
 
-    const onSelect = (id) => {
-        id === 'explore' && setZeroState(true)
-        setSelection(id);
-        setCurrentNode(id); // TODO Handle multiple with nested objects
-        setOptions(tiles[id]);
-        if(id == 'explore')
-            setView(views[id], true)
-        else
-            setView(views[id])
-    }
-
-    const location: any = useLocation();
-
     useEffect(() => {
         if (props.id) {
             setSelection(props.id);
             setCurrentNode(props.id); // TODO Handle multiple with nested objects
             setOptions(tiles[props.id]);
-            setView(views[props.id]);
+            setView(views[props.id], true);
         }
         return (() => {
             setSelection(INITIAL_SELECTION);
@@ -100,17 +91,19 @@ const TilesView = (props) => {
         })
     }, [])
 
-    const [newStepToFlowOptions, setNewStepToFlowOptions] = useState(!props.id ? { addingStepToFlow: false } : {
-        addingStepToFlow: true,
-        newStepName: location.state?.stepToAdd,
-        stepDefinitionType: location.state?.stepDefinitionType,
-        existingFlow: location.state?.existingFlow || false,
-        flowsDefaultKey: location.state?.flowsDefaultKey || ['-1']
-    })
+    const getNewStepToFlowOptions = () => {
+        return !props.addingStepToFlow ? { addingStepToFlow: false } : {
+            addingStepToFlow: true,
+            newStepName: location.state?.stepToAdd,
+            stepDefinitionType: location.state?.stepDefinitionType,
+            existingFlow: location.state?.existingFlow || false,
+            flowsDefaultKey: location.state?.flowsDefaultKey || ['-1']
+        }
+    }
 
     return (
         <>
-            <Toolbar tiles={tiles} onClick={onSelect} enabled={enabled}/>
+            <Toolbar tiles={tiles} enabled={enabled}/>
             { (searchOptions.view !== null) ?  (
                 <div className={styles.tilesViewContainer}>
                     { (selection !== '') ?  (
@@ -121,7 +114,7 @@ const TilesView = (props) => {
                         options={options}
                         onMenuClick={onMenuClick}
                         onTileClose={onTileClose}
-                        newStepToFlowOptions={newStepToFlowOptions}
+                        newStepToFlowOptions={getNewStepToFlowOptions()}
                     />
                     ) : null }
                 </div> ) :

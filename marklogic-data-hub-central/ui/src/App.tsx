@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from './util/user-context';
@@ -9,21 +9,15 @@ import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import Load from './pages/Load';
-import Run from './pages/Run';
 import TilesView from './pages/TilesView';
-import NoMatchRedirect from './pages/noMatchRedirect';
-import View from './pages/View';
 import Browse from './pages/Browse';
-
 import Detail from './pages/Detail';
-import Modeling from './pages/Modeling';
+import NoMatchRedirect from './pages/noMatchRedirect';
 
 import './App.scss';
 import { Application } from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
 import axios from 'axios';
-import Curate from './pages/Curate';
 import ModalStatus from './components/modal-status/modal-status';
 import { getEnvironment } from './util/environment';
 
@@ -33,10 +27,8 @@ interface Props extends RouteComponentProps<any> {}
 const App: React.FC<Props> = ({history, location}) => {
   const {
     user,
-    clearRedirect,
     handleError
   } = useContext(UserContext);
-  let environment: any = {};
 
   const PrivateRoute = ({ children, ...rest }) => (
     <Route {...rest} render={ props => (
@@ -49,35 +41,25 @@ const App: React.FC<Props> = ({history, location}) => {
         }}/>
       )
     )}/>
-  )
+  );
 
   useEffect(() => {
     if (user.authenticated){
-      if (user.redirect) {
-        clearRedirect();
+      if (location.pathname === '/') {
+        history.push(user.pageRoute);
+      } else {
+        history.push(location.pathname);
       }
-      if (location.state && !user.redirect && user.error.type === '') {
-        if (location.state.hasOwnProperty('from')) {
-          history.push(location.state['from'].pathname);
-        }
-      }
-      if (user.redirect || location.pathname === '/') {
-        if (location.state && location.state.hasOwnProperty('from')) {
-            history.push(location.state['from'].pathname);
-        } else {
-            history.push('/tiles');
-        }
-      }
-    }
-    if (user.redirect) {
+    } else {
       if (user.error.type !== '') {
-        clearRedirect();
         history.push('/error');
-      } else if (!user.authenticated) {
+      } else {
+        if (location.pathname !== '/') {
+          user.pageRoute = location.pathname;
+        }
         history.push('/');
       }
     }
-
   }, [user]);
 
   useEffect(() => {
@@ -101,45 +83,45 @@ const App: React.FC<Props> = ({history, location}) => {
       <ModalStatus/>
       <main>
         <div className="contentContainer">
-          <Switch>
-            <Route path="/" exact component={Login}/>
-            <PrivateRoute path="/home" exact>
-              <Home/>
+        <Switch>
+          <Route path="/" exact component={Login}/>
+          <PrivateRoute path="/home" exact>
+            <Home/>
+          </PrivateRoute>
+          <SearchProvider>
+            <PrivateRoute path="/browse" exact>
+                <Browse/>
             </PrivateRoute>
-            <PrivateRoute path="/load" exact>
-              <Load/>
+            <PrivateRoute path="/detail/:pk/:uri">
+              <Detail/>
             </PrivateRoute>
-            <PrivateRoute path="/curate" exact>
-              <Curate/>
-            </PrivateRoute>
-            <PrivateRoute path="/run" exact>
-              <Run/>
-            </PrivateRoute>
-            <SearchProvider>
-              <PrivateRoute path="/view" exact>
-                  <View/>
+            <ModelingProvider>
+              <PrivateRoute path="/tiles" exact>
+                <TilesView/>
               </PrivateRoute>
-              <PrivateRoute path="/browse" exact>
-                  <Browse/>
+              <PrivateRoute path="/tiles/load" exact>
+                <TilesView id='load'/>
               </PrivateRoute>
-              <PrivateRoute path="/detail/:pk/:uri">
-                <Detail/>
+              <PrivateRoute path="/tiles/model" exact>
+                <TilesView id='model'/>
               </PrivateRoute>
-              <ModelingProvider>
-                <PrivateRoute path="/model" exact>
-                  <Modeling/>
-                </PrivateRoute>
-                <PrivateRoute path="/tiles" exact>
-                  <TilesView/>
-                </PrivateRoute>
-                <PrivateRoute path="/tiles-run" exact>
-                  <TilesView id='run'/>
-                </PrivateRoute>
-              </ModelingProvider>
-            </SearchProvider>
-            <Route component={NoMatchRedirect}/>
-          </Switch>
-          <Footer pageTheme={pageTheme}/>
+              <PrivateRoute path="/tiles/curate" exact>
+                <TilesView id='curate'/>
+              </PrivateRoute>
+              <PrivateRoute path="/tiles/run" exact>
+                <TilesView id='run'/>
+              </PrivateRoute>
+              <PrivateRoute path="/tiles/run/add" exact>
+                <TilesView id='run' addingStepToFlow='true' />
+              </PrivateRoute>
+              <PrivateRoute path="/tiles/explore" exact>
+                <TilesView id='explore'/>
+              </PrivateRoute>
+            </ModelingProvider>
+          </SearchProvider>
+          <Route component={NoMatchRedirect}/>
+        </Switch>
+        <Footer pageTheme={pageTheme}/>
         </div>
       </main>
     </div>
