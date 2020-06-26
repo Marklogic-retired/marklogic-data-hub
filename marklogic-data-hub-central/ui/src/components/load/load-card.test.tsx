@@ -66,9 +66,9 @@ describe('Load Card component', () => {
     //Click on 'Yes' button
     fireEvent.click(getByTestId('testLoadXML-to-FlowA-Confirm'));
 
-    //Check if the tiles-run route has been called
+    //Check if the /tiles/run/add route has been called
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles-run');
+      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
     //TODO- E2E test to check if the Run tile is loaded or not.
 
@@ -107,7 +107,7 @@ describe('Load Card component', () => {
 
     //Wait for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles-run');
+      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
     //TODO- E2E test to check if the Run tile is loaded or not.
 

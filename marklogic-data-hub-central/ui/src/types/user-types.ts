@@ -1,7 +1,6 @@
 export interface UserContextInterface {
     name: string;
     authenticated: boolean;
-    redirect: boolean;
     error : any;
     pageRoute: string;
     maxSessionTime: number;
@@ -14,7 +13,6 @@ export interface IUserContextInterface {
     userNotAuthenticated: () => void;
     handleError: (error:any) => void;
     clearErrorMessage: () => void;
-    clearRedirect: () => void;
     setPageRoute: (route: string) => void;
     setAlertMessage: (title: string, message: string) => void;
     resetSessionTime: () => void;

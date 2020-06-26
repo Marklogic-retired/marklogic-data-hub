@@ -12,15 +12,13 @@ import { useInterval } from '../hooks/use-interval';
 
 const defaultUserData = {
   name: '',
-  // email: '',
   authenticated: false,
-  redirect: false,
   error : {
     title: '',
     message: '',
     type: ''
   },
-  pageRoute: '/view',
+  pageRoute: '/tiles',
   maxSessionTime: 300
 }
 
@@ -31,7 +29,6 @@ export const UserContext = React.createContext<IUserContextInterface>({
   userNotAuthenticated: () => {},
   handleError: () => {},
   clearErrorMessage: () => {},
-  clearRedirect: () => {},
   setPageRoute: () => {},
   setAlertMessage: () => {},
   resetSessionTime: () => {},
@@ -64,8 +61,8 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        redirect: true,
-        pageRoute: values.pageRoute,
+        // redirect: true,
+        // pageRoute: values.pageRoute,
         maxSessionTime: sessionCount
       });
     } else {
@@ -74,7 +71,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        redirect: true,
+        // redirect: true,
         maxSessionTime: sessionCount
       });
     }
@@ -89,7 +86,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        pageRoute: values.pageRoute,
+        // pageRoute: values.pageRoute,
         maxSessionTime: sessionCount
       });
     } else {
@@ -104,7 +101,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('loginResp','');
     authoritiesService.setAuthorities([]);
     resetEnvironment();
-    setUser({ ...user,name: '', authenticated: false, redirect: true});
+    setUser({ ...user,name: '', authenticated: false}); //, redirect: true});
   };
 
   const handleError = (error) => {
@@ -140,7 +137,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       case 404: {
         setUser({
           ...user,
-          redirect: true,
+          // redirect: true,
           error: {
             title: error.response.data.error,
             message: error.response.data.message || DEFAULT_MESSAGE,
@@ -192,9 +189,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const clearErrorMessage = () => {
     setUser({ ...user, error : { title:'', message: '', type: '' }});
   }
-  const clearRedirect = () => {
-    setUser({ ...user, redirect: false });
-  }
 
   const setPageRoute = (route: string) => {
     updateUserPreferences(user.name, { pageRoute: route });
@@ -243,7 +237,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       userNotAuthenticated,
       handleError,
       clearErrorMessage,
-      clearRedirect,
       setPageRoute,
       setAlertMessage,
       getSessionTime,

@@ -86,39 +86,40 @@ const Tiles: React.FC<Props> = (props) => {
                         <div>
                             <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                    <Tooltip title={'Menu'} placement="top">
-                                        <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
+                                    <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
+                                        <Tooltip title={'Menu'} placement="top">
                                             <FontAwesomeIcon icon={faCog} />
-                                        </i>
-                                    </Tooltip>
+                                        </Tooltip>
+                                    </i> 
                                 </a>
                             </Dropdown>
                         </div>
                     ) : null}
                     {showControl('newTab') ? (
-                        <Tooltip title={'Open in New Tab'} placement="top">
-                            <i className={styles.fa} aria-label={'newTab'} style={{ color: options['color'] }} onClick={onClickNewTab}>
+                        <i className={styles.fa} aria-label={'newTab'} style={{ color: options['color'] }} onClick={onClickNewTab}>
+                            <Tooltip title={'Open in New Tab'} placement="top">
                                 <FontAwesomeIcon icon={faExternalLinkAlt} />
-                            </i>
-                        </Tooltip>) : null}
+                            </Tooltip>
+                        </i>) : null}
                     {showControl('maximize') ? (
-                        <Tooltip title={'Maximize'} placement="top">
-                            <i className={styles.ant} aria-label={'maximize'} style={{ color: options['color'] }} onClick={onClickMaximize}>
+                        <i className={styles.ant} aria-label={'maximize'} style={{ color: options['color'] }} onClick={onClickMaximize}>
+                            <Tooltip title={'Maximize'} placement="top">
                                 <ArrowsAltOutlined />
-                            </i>
-                        </Tooltip>) : null}
+                            </Tooltip>
+                        </i>) : null}
                     {showControl('minimize') ? (
-                        <Tooltip title={'Minimize'} placement="top">
-                            <i className={styles.ant} aria-label={'minimize'} style={{ color: options['color'] }} onClick={onClickMinimize}>
+                        <i className={styles.ant} aria-label={'minimize'} style={{ color: options['color'] }} onClick={onClickMinimize}>
+                            <Tooltip title={'Minimize'} placement="top">
                                 <ShrinkOutlined />
-                            </i>
-                        </Tooltip>) : null}
+                            </Tooltip>
+                        </i>) : null}
                     {showControl('close') ? (
-                        <Tooltip title={'Close'} placement="top">
-                            <i className={styles.close} aria-label={'close'} style={{ color: options['color'] }} onClick={onClickClose}>
+                        <i className={styles.close} aria-label={'close'} style={{ color: options['color'] }} onClick={onClickClose}>
+                            <Tooltip title={'Close'} placement="top">
                                 <CloseOutlined />
-                            </i>
-                        </Tooltip>) : null}
+                            </Tooltip>
+                        </i>
+                        ) : null}
                 </div>
             </div>
         )

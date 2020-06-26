@@ -552,7 +552,7 @@ const MappingCard: React.FC<Props> = (props) => {
         setAddDialogVisible(false);
 
         history.push({
-            pathname: '/tiles-run',
+            pathname: '/tiles/run/add',
             state: {
                 flowName: fName,
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
@@ -614,8 +614,8 @@ const MappingCard: React.FC<Props> = (props) => {
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
                                     <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
-                                    { props.canWriteFlow ? <Link id="tiles-run" to={
-                                    {pathname: '/tiles-run',
+                                    { props.canWriteFlow ? <Link id="tiles-run-add" to={
+                                    {pathname: '/tiles/run/add',
                                     state: {
                                         stepToAdd : elem.name,
                                         stepDefinitionType : 'mapping'

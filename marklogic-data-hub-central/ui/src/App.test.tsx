@@ -1,5 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { Router } from 'react-router'
+import { createMemoryHistory } from 'history'
+const history = createMemoryHistory()
 import { render, fireEvent, waitForElement, cleanup } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import { AuthoritiesContext } from './util/authorities';
@@ -26,7 +28,9 @@ describe('App component', () => {
 
   test('Verify header title links return to overview', async () => {
       const firstTool = Object.keys(tiles)[0];
-      const { getByLabelText, queryByText } = render(<Router>
+      // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
+      history.push('/tiles');
+      const { getByLabelText, queryByText } = render(<Router history = {history}>
           <AuthoritiesContext.Provider value={mockDevRolesService}>
             <UserContext.Provider value={userAuthenticated}><App/></UserContext.Provider>
           </AuthoritiesContext.Provider>

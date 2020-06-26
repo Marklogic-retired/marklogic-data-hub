@@ -126,7 +126,7 @@ const LoadCard: React.FC<Props> = (props) => {
         setAddDialogVisible(false);
 
         history.push({
-            pathname: '/tiles-run',
+            pathname: '/tiles/run/add',
             state: {
                 flowName: fName,
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
@@ -204,8 +204,8 @@ const LoadCard: React.FC<Props> = (props) => {
                             <div className={styles.stepNameStyle}>{getInitialChars(elem.name, 25, '...')}</div>
                             <div className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</div>
                             <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                {props.canWriteFlow ? <Link id="tiles-run" to={
-                                    {pathname: '/tiles-run',
+                                {props.canWriteFlow ? <Link id="tiles-run-add" to={
+                                    {pathname: '/tiles/run/add',
                                     state: {
                                         stepToAdd : elem.name,
                                         stepDefinitionType : 'ingestion',

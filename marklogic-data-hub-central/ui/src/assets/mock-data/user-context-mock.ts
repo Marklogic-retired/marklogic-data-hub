@@ -3,7 +3,6 @@ import { UserContextInterface, IUserContextInterface } from '../../types/user-ty
 const defaultUserData: UserContextInterface = {
   name: '',
   authenticated: false,
-  redirect: false,
   error : {
     title: '',
     message: '',
@@ -20,7 +19,6 @@ const defaultUserContext: IUserContextInterface = {
   userNotAuthenticated: jest.fn(),
   handleError: jest.fn(),
   clearErrorMessage: jest.fn(),
-  clearRedirect: jest.fn(),
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   resetSessionTime: jest.fn(),
@@ -33,7 +31,6 @@ export const userAuthenticated: IUserContextInterface = Object.assign(defaultUse
   user: {
     name: '',
     authenticated: true,
-    redirect: false,
     error : {
       type: ''
     },
@@ -46,7 +43,6 @@ export const userSessionWarning: IUserContextInterface = {
   user: {
     name: '',
     authenticated: true,
-    redirect: false,
     error : {
       title: '',
       message: '',
@@ -57,7 +53,6 @@ export const userSessionWarning: IUserContextInterface = {
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
-  clearRedirect: jest.fn(),
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   userNotAuthenticated: jest.fn(),
@@ -71,7 +66,6 @@ export const userModalError: IUserContextInterface = {
   user: {
     name: '',
     authenticated: false,
-    redirect: false,
     error : {
       title: '500 Internal Server Error',
       message: 'java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011',
@@ -82,7 +76,6 @@ export const userModalError: IUserContextInterface = {
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
-  clearRedirect: jest.fn(),
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   userNotAuthenticated: jest.fn(),
@@ -96,7 +89,6 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
   user: {
     name: '',
     authenticated: false,
-    redirect: false,
     error : {
       title: '',
       message: '',
@@ -107,7 +99,6 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
-  clearRedirect: jest.fn(),
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   userNotAuthenticated: jest.fn(),
@@ -121,7 +112,6 @@ export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   user: {
     name: '',
     authenticated: false,
-    redirect: false,
     error : {
       title: '500 Internal Server Error',
       message: 'java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011',
@@ -132,7 +122,6 @@ export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   },
   loginAuthenticated: jest.fn(),
   sessionAuthenticated: jest.fn(),
-  clearRedirect: jest.fn(),
   setPageRoute: jest.fn(),
   setAlertMessage: jest.fn(),
   userNotAuthenticated: jest.fn(),

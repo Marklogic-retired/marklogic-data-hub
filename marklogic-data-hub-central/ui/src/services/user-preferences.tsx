@@ -6,7 +6,7 @@ interface UserPreferences {
   },
   pageLength: number,
   tableView: boolean,
-  pageRoute: string,
+  // pageRoute: string,
   resultTableColumns: any[],
   selectedQuery: string
 }
@@ -19,7 +19,7 @@ export const defaultUserPreferences = {
   },
   pageLength: 20,
   tableView: true,
-  pageRoute: '/view',
+  // pageRoute: '/view',
   resultTableColumns: [],
   selectedQuery: 'select a query'
 }
