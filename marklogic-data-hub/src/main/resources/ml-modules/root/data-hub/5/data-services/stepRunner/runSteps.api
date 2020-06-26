@@ -1,5 +1,7 @@
 {
     "endpoint": "/data-hub/5/data-services/stepRunner/runSteps.sjs",
+    "functionName": "runSteps",
+    "desc": "This is intended to be used by Bulk IO, but a functionName is required to generate a Java interface",
     "params": [
         {
             "name": "endpointState",

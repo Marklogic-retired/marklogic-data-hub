@@ -67,13 +67,6 @@ public interface StepRunner {
     StepRunner withThreadCount(int threadCount);
 
     /**
-     * Sets the database where flow output data will be persisted to
-     * @param destinationDatabase - the name of the destination database
-     * @return the step runner object
-     */
-    StepRunner withDestinationDatabase(String destinationDatabase);
-
-    /**
      * Sets the options to be passed into the xqy or sjs flow in the $options or options variables of main.
      * @param options - the object map of options as string/object pair
      * @return the step runner object

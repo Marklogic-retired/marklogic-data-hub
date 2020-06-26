@@ -76,39 +76,21 @@ public class StepRunnerFactory {
 
         stepRunner.withThreadCount(threadCount);
 
-        final String stagingDbName = theHubClient.getDbName(DatabaseKind.STAGING);
-
-
-        if (stepRunner instanceof QueryStepRunner) {
-            String sourceDatabase;
-            if(step.getOptions().get("sourceDatabase") != null) {
-                sourceDatabase = ((TextNode)step.getOptions().get("sourceDatabase")).asText();
+        if (stepRunner instanceof WriteStepRunner) {
+            String targetDatabase;
+            if (step.getOptions().get("targetDatabase") != null) {
+                targetDatabase = ((TextNode) step.getOptions().get("targetDatabase")).asText();
+            } else if (stepDef.getOptions().get("targetDatabase") != null) {
+                targetDatabase = ((TextNode) stepDef.getOptions().get("targetDatabase")).asText();
+            } else {
+                if (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
+                    targetDatabase = theHubClient.getDbName(DatabaseKind.STAGING);
+                } else {
+                    targetDatabase = theHubClient.getDbName(DatabaseKind.FINAL);
+                }
             }
-            else if(stepDef.getOptions().get("sourceDatabase") != null) {
-                sourceDatabase = ((TextNode)stepDef.getOptions().get("sourceDatabase")).asText();
-            }
-            else {
-                sourceDatabase = stagingDbName;
-            }
-            ((QueryStepRunner)stepRunner).setSourceDatabase(sourceDatabase);
+            ((WriteStepRunner)stepRunner).withDestinationDatabase(targetDatabase);
         }
-
-        String targetDatabase;
-        if(step.getOptions().get("targetDatabase") != null) {
-            targetDatabase = ((TextNode)step.getOptions().get("targetDatabase")).asText();
-        }
-        else if(stepDef.getOptions().get("targetDatabase") != null) {
-            targetDatabase = ((TextNode)stepDef.getOptions().get("targetDatabase")).asText();
-        }
-        else {
-            if(StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
-                targetDatabase = theHubClient.getDbName(DatabaseKind.STAGING);
-            }
-            else {
-                targetDatabase = theHubClient.getDbName(DatabaseKind.FINAL);
-            }
-        }
-        stepRunner.withDestinationDatabase(targetDatabase);
 
         //For ingest flow, set stepDef.
         if(StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {

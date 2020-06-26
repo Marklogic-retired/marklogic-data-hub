@@ -15,34 +15,27 @@
  */
 package com.marklogic.hub.step.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.client.DatabaseClient;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.datamovement.*;
-import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.collector.Collector;
 import com.marklogic.hub.collector.DiskQueue;
 import com.marklogic.hub.collector.impl.CollectorImpl;
+import com.marklogic.hub.dataservices.StepRunnerService;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.*;
-import com.marklogic.hub.util.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -54,8 +47,6 @@ public class QueryStepRunner implements StepRunner {
     private Flow flow;
     private int batchSize;
     private int threadCount;
-    private String sourceDatabase;
-    private String destinationDatabase;
     private Map<String, Object> options;
     private int previousPercentComplete;
     private boolean stopOnFailure = false;
@@ -80,11 +71,6 @@ public class QueryStepRunner implements StepRunner {
 
     public QueryStepRunner(HubClient hubClient) {
         this.hubClient = hubClient;
-        this.destinationDatabase = hubClient.getDbName(DatabaseKind.FINAL);
-    }
-
-    public void setSourceDatabase(String sourceDatabase) {
-        this.sourceDatabase = sourceDatabase;
     }
 
     public StepRunner withFlow(Flow flow) {
@@ -116,12 +102,6 @@ public class QueryStepRunner implements StepRunner {
     @Override
     public StepRunner withThreadCount(int threadCount) {
         this.threadCount = threadCount;
-        return this;
-    }
-
-    @Override
-    public StepRunner withDestinationDatabase(String destinationDatabase) {
-        this.destinationDatabase = destinationDatabase;
         return this;
     }
 
@@ -239,15 +219,6 @@ public class QueryStepRunner implements StepRunner {
             }
         }
 
-        String sourceDatabase = hubClient.getDbName(DatabaseKind.STAGING);
-        if(options.get("sourceDatabase") != null) {
-            sourceDatabase = StepRunnerUtil.objectToString(options.get("sourceDatabase"));
-        }
-
-        if(options.get("targetDatabase") != null) {
-            this.destinationDatabase = StepRunnerUtil.objectToString(options.get("targetDatabase"));
-        }
-
         options.put("flow", this.flow.getName());
 
         // Needed to support constrainSourceQueryToJob
@@ -263,6 +234,10 @@ public class QueryStepRunner implements StepRunner {
         }
 
         try {
+            final String sourceDatabase = options.get("sourceDatabase") != null ?
+                StepRunnerUtil.objectToString(options.get("sourceDatabase")) :
+                hubClient.getDbName(DatabaseKind.STAGING);
+
             uris = runCollector(sourceDatabase);
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
@@ -373,15 +348,15 @@ public class QueryStepRunner implements StepRunner {
         Vector<String> errorMessages = new Vector<>();
 
         // The client used here doesn't matter, given that a QueryBatcher is going to be constructed based on an
-        // Iterator. It's the construction of the FlowResource that matters, as that makes use of destinationDatabase
-        // to control where outputted documents are written to.
+        // Iterator. It's the step options that determine where documents are written to.
         dataMovementManager = hubClient.getStagingClient().newDataMovementManager();
+
+        final ObjectMapper objectMapper = new ObjectMapper();
 
         double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
-        ConcurrentHashMap<DatabaseClient, FlowResource> databaseClientMap = new ConcurrentHashMap<>();
         Map<String,Object> fullResponse = new HashMap<>();
         queryBatcher = dataMovementManager.newQueryBatcher(uris.iterator())
             .withBatchSize(batchSize)
@@ -389,17 +364,22 @@ public class QueryStepRunner implements StepRunner {
             .withJobId(runStepResponse.getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    FlowResource flowResource;
-                    Map<String,Object> optsMap = new HashMap<>(options);
-                    if (databaseClientMap.containsKey(batch.getClient())) {
-                        flowResource = databaseClientMap.get(batch.getClient());
-                    } else {
-                        flowResource = new FlowResource(batch.getClient(), destinationDatabase, flow);
-                        databaseClientMap.put(batch.getClient(), flowResource);
-                    }
-                    optsMap.put("uris", batch.getItems());
+                    // Create the inputs for the processUris DS
+                    ObjectNode inputs = objectMapper.createObjectNode();
+                    inputs.put("flowName", flow.getName());
+                    inputs.put("stepNumber", step);
+                    inputs.put("jobId", runStepResponse.getJobId());
 
-                    ResponseHolder response = flowResource.run(runStepResponse.getJobId(), step, optsMap);
+                    // Make a copy of the calculated options and then add the items from this batch
+                    Map<String, Object> batchOptions = new HashMap<>(options);
+                    batchOptions.put("uris", batch.getItems());
+                    inputs.set("options", objectMapper.valueToTree(batchOptions));
+
+                    // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
+                    // with the batch to help distribute load, per DHFPROD-1172.
+                    JsonNode jsonResponse = StepRunnerService.on(batch.getClient()).processUris(inputs);
+                    ResponseHolder response = objectMapper.readerFor(ResponseHolder.class).readValue(jsonResponse);
+
                     stepMetrics.getFailedEvents().addAndGet(response.errorCount);
                     stepMetrics.getSuccessfulEvents().addAndGet(response.totalCount - response.errorCount);
                     if (response.errors != null) {
@@ -534,58 +514,5 @@ public class QueryStepRunner implements StepRunner {
 
         runningThread.start();
         return runStepResponse;
-    }
-
-    class FlowResource extends ResourceManager {
-
-        private DatabaseClient srcClient;
-        private String targetDatabase;
-        private Flow flow;
-
-        public FlowResource(DatabaseClient srcClient, String targetDatabase, Flow flow) {
-            super();
-            this.flow = flow;
-            this.srcClient = srcClient;
-            this.targetDatabase = targetDatabase;
-            this.srcClient.init("mlRunFlow" , this);
-        }
-
-
-        public ResponseHolder run(String jobId, String step, Map<String, Object> options) {
-            ResponseHolder resp;
-
-                RequestParameters params = new RequestParameters();
-                params.add("flow-name", flow.getName());
-                params.put("step", step);
-                params.put("job-id", jobId);
-                params.put("target-database", targetDatabase);
-                if (options != null) {
-                    try {
-                        params.put("options", JSONObject.writeValueAsString(options));
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new StringHandle("{}").withFormat(Format.JSON));
-                try {
-                    if (resultItr == null || !resultItr.hasNext()) {
-                        resp = new ResponseHolder();
-                    } else {
-                        ResourceServices.ServiceResult res = resultItr.next();
-                        StringHandle handle = new StringHandle();
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        resp = objectMapper.readValue(res.getContent(handle).get(), ResponseHolder.class);
-                    }
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                } finally {
-                    if (resultItr != null) {
-                        resultItr.close();
-                    }
-                }
-
-            return resp;
-        }
-
     }
 }
