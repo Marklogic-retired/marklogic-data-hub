@@ -47,12 +47,13 @@ const CustomCard: React.FC<Props> = (props) => {
                         className={styles.cardStyle}
                         size="small"
                     >
-                    <span className={styles.customNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                    <div className={styles.formatFileContainer}>
+                        <span className={styles.customNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                    </div>
                     <br />
                     {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
                     <br /><br />
                     <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                    <br /><br />
                     </Card>
                 </Col>
             )) : <span></span> }</Row>

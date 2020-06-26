@@ -21,7 +21,10 @@
     font-size: 13px;
     margin-top: 10px;
 }
-
+.formatFileContainer {
+    position:absolute;
+    width: 310px
+}
 .disabledDeleteIcon {
     font-size: 21px;
     opacity: 0.5;
