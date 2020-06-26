@@ -1,4 +1,4 @@
-import React, { useState, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { MLTable, MLTooltip } from '@marklogic/design-system';
 import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
@@ -6,6 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
 
 import PropertyTable from '../property-table/property-table';
+import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
+import { entityReferences, deleteEntity } from '../../../api/modeling';
+import { ConfirmationType } from '../../../types/modeling-types';
+import { UserContext } from '../../../util/user-context';
 import { queryDateConverter, relativeTimeConverter } from '../../../util/date-conversion';
 import { numberConverter } from '../../../util/number-conversion';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -16,10 +20,18 @@ type Props = {
   canWriteEntityModel: boolean;
   autoExpand: string;
   editEntityTypeDescription: (entityTypeName: string, entityTypeDescription: string) => void;
+  updateEntities: () => void;
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
+  const { handleError, resetSessionTime } = useContext(UserContext);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
+
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.DeleteEntity);
+
   // Disabling all action icons for now
   const [disabled, setDisabled] = useState(true);
 
@@ -28,6 +40,45 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       setExpandedRows([props.autoExpand])
     }
   }, [props.autoExpand]);
+
+  const getEntityReferences = async (entityName: string) => {
+    try {
+      const response = await entityReferences(entityName);
+      if (response['status'] === 200) {
+        let newConfirmType = ConfirmationType.DeleteEntity;
+
+        if (response['data']['stepAndMappingNames'].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityStepWarn;
+        } else if (response['data']['entityNames'].length > 0) {
+          newConfirmType = ConfirmationType.DeleteEntityRelationshipWarn;
+        }
+
+        setConfirmBoldTextArray([entityName]);
+        setStepValuesArray(response['data']['stepAndMappingNames']);
+        setConfirmType(newConfirmType);
+        toggleConfirmModal(true);
+      }
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+    }
+  }
+
+  const deleteEntityFromServer = async () => {
+    try {
+      let entityName = confirmBoldTextArray.length ? confirmBoldTextArray[0] : '';
+      const response = await deleteEntity(entityName);
+      if (response['status'] === 200) {
+        props.updateEntities();
+      } 
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+      toggleConfirmModal(false);
+    }
+  }
 
   const columns = [
     {
@@ -141,7 +192,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()
                 } else {
-                  return '' //TODO - Add functionality for Revert Icon here
+                  // TODO revert icon goes here
                 }
               }}
               size="2x"
@@ -149,13 +200,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           </MLTooltip>
             <FontAwesomeIcon 
               data-testid={text + '-trash-icon'}
-              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconTrashReadOnly : styles.iconTrash} 
+              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} 
               icon={faTrashAlt}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()
                 } else {
-                  return '' //TODO - Add functionality for delete Icon here
+                  getEntityReferences(text);
                 }
               }}
               size="2x" 
@@ -205,18 +256,28 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   });
 
   return (
-    <MLTable
-      rowKey="name"
-      locale={{ emptyText: ' ' }}
-      className={styles.table}
-      columns={columns}
-      expandedRowRender={expandedRowRender}
-      onExpand={onExpand}
-      expandedRowKeys={expandedRows}
-      dataSource={renderTableData}
-      pagination={{ defaultPageSize: 20, size: 'small' }}
-      size="middle"
-    />
+    <>
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={confirmBoldTextArray} 
+        stepValues={stepValuesArray}
+        toggleModal={toggleConfirmModal}
+        confirmAction={deleteEntityFromServer}
+      />
+      <MLTable
+        rowKey="name"
+        locale={{ emptyText: ' ' }}
+        className={styles.table}
+        columns={columns}
+        expandedRowRender={expandedRowRender}
+        onExpand={onExpand}
+        expandedRowKeys={expandedRows}
+        dataSource={renderTableData}
+        pagination={{ defaultPageSize: 20, size: 'small' }}
+        size="middle"
+      />
+    </>
   );
 }
 

@@ -1,16 +1,16 @@
 class EntityTypeTable {
   getEntity(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-span]');
+    return cy.findByTestId(`${entityName}-span`);
   }
 
   getEntityInstanceCount(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-instance-count]').then(function(value){
+    return cy.findByTestId(`${entityName}-instance-count`).then(function(value){
       return parseInt(value.text().replace(',',''));
     });
   }
 
   getEntityLastProcessed(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-last-processed]');
+    return cy.findByTestId(`${entityName}-last-processed`);
   }
 
   expandEntityRow(index: number) {
@@ -27,6 +27,10 @@ class EntityTypeTable {
 
   sortByLastProcessed() {
     return cy.get('th').eq(2).click();
+  }
+
+  getDeleteEntityIcon(entityName: string) {
+    return cy.findByTestId(`${entityName}-trash-icon`);
   }
 }
 

@@ -119,7 +119,7 @@ const ModelingTooltips = {
   revertIcon: 'Discard changes made to this entity type since the last Save operation.',
   identifier: 'Uniquely identifies each instance of this type. Restricted to only one property per entity type.',
   multiple: 'Allows an array of values.',
-  pii: 'Personally identifiable information, or data this is sensitive in that it can identify a particular person and can be used fraudulent purposes.',
+  pii: 'Personally identifiable information, or data that is sensitive in that it can identify a particular person and can be used fraudulent purposes.',
   sort: 'Enables display in ascending or descending order.',
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   wildcard: 'Enables wildcard search.',

@@ -6,7 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";import styles f
 
 import StructuredTypeModal from '../structured-type-modal/structured-type-modal';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
+import { UserContext } from '../../../util/user-context';
 import { ModelingContext } from '../../../util/modeling-context';
+import { entityReferences } from '../../../api/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 
 import { 
@@ -35,6 +37,7 @@ type Props = {
   addPropertyToDefinition: (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => void;
   addStructuredTypeToDefinition: (structuredTypeName: string) => void;
   editPropertyUpdateDefinition: (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => void;
+  deletePropertyFromDefinition: (definitionName: string, propertyName: string) => void;
 };
 
 const ALL_RADIO_DISPLAY_VALUES = [
@@ -113,6 +116,7 @@ const layout = {
 };
 
 const PropertyModal: React.FC<Props> = (props) => {
+  const { handleError, resetSessionTime } = useContext(UserContext);
   const { modelingOptions } = useContext(ModelingContext);
 
   const [modalTitle, setModalTitle] = useState('');
@@ -123,8 +127,10 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [structuredTypeLabel, setStructuredTypeLabel] = useState('');
   const [showStructuredTypeModal, toggleStructuredTypeModal] = useState(false);
 
-  const [showIdentifierModal, toggleIdentifierModal] = useState(false);
-  const [identifierModalBoldTextArray, setIdentifierModalBoldTextArray] = useState<string[]>([]);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.Identifer);
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
 
   const [typeDisplayValue, setTypeDisplayValue] = useState<string[]>([]);
   const [typeErrorMessage, setTypeErrorMessage] = useState('');
@@ -205,6 +211,30 @@ const PropertyModal: React.FC<Props> = (props) => {
       }
     }
   }, [props.isVisible]);
+
+  const getEntityReferences = async () => {
+    try {
+      const response = await entityReferences(props.entityName);
+      if (response['status'] === 200) {
+        let newConfirmType = ConfirmationType.DeletePropertyWarn;
+        let boldText = [name]
+
+        if (response['data']['stepAndMappingNames'].length > 0) {
+          newConfirmType = ConfirmationType.DeletePropertyStepWarn;
+          boldText.push(props.entityName);
+        }
+
+        setConfirmBoldTextArray(boldText);
+        setStepValuesArray(response['data']['stepAndMappingNames']);
+        setConfirmType(newConfirmType);
+        toggleConfirmModal(true);
+      }
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+    }
+  }
 
   const handleInputChange = (event) => {
     if (event.target.id === 'property-name') {
@@ -329,10 +359,21 @@ const PropertyModal: React.FC<Props> = (props) => {
     props.toggleModal(false)
   };
 
-  const updateIdentifier = () => {
-    setSelectedPropertyOptions({ ...selectedPropertyOptions, identifier: 'yes' });
-    setIdentifierModalBoldTextArray([]);
-    toggleIdentifierModal(false);
+  const confirmAction = () => {
+    if (confirmType === ConfirmationType.Identifer) {
+      setSelectedPropertyOptions({ ...selectedPropertyOptions, identifier: 'yes' });
+      setStepValuesArray([]);
+      setConfirmBoldTextArray([]);
+      toggleConfirmModal(false);
+    } else {
+      // Delete Property
+      let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
+      props.deletePropertyFromDefinition(definitionName, name);
+      setStepValuesArray([]);
+      setConfirmBoldTextArray([]);
+      toggleConfirmModal(false);
+      props.toggleModal(false);
+    }
   }
 
   const addStructuredType = (name: string) => {
@@ -480,8 +521,10 @@ const PropertyModal: React.FC<Props> = (props) => {
       let primaryKey = entityDefinition['primaryKey'];
 
       if (primaryKey) {
-        setIdentifierModalBoldTextArray([primaryKey, name]);
-        toggleIdentifierModal(true);
+        setConfirmType(ConfirmationType.Identifer);
+        setConfirmBoldTextArray([primaryKey, name]);
+        setStepValuesArray([]);
+        toggleConfirmModal(true);
       } else {
         setSelectedPropertyOptions({ ...selectedPropertyOptions, [radioName]: event.target.value})
       }
@@ -541,7 +584,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit && 
-      <MLButton type="link" disabled={true}>
+      <MLButton type="link" disabled={true} onClick={getEntityReferences} >
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
     }
@@ -663,11 +706,12 @@ const PropertyModal: React.FC<Props> = (props) => {
         updateStructuredTypesAndHideModal={addStructuredType}
       />
       <ConfirmationModal
-        isVisible={showIdentifierModal}
-        type={ConfirmationType.Identifer}
-        boldTextArray={identifierModalBoldTextArray}  
-        toggleModal={toggleIdentifierModal}
-        confirmAction={updateIdentifier}
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={confirmBoldTextArray}
+        stepValues={stepValuesArray}  
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmAction}
       />
     </Modal>
   )

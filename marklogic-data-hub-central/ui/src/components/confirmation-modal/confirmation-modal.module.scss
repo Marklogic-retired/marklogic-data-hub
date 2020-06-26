@@ -1,0 +1,20 @@
+.alert {
+  margin-bottom: 20px;
+}
+
+.toggleSteps {
+ cursor: pointer; 
+ color: #5B69AF;
+}
+
+.stepList {
+  list-style: none;
+  li {
+    margin-left: 15px; 
+  }
+
+  li::before {
+    content: "- ";
+    margin-left: -15px;
+  }
+}

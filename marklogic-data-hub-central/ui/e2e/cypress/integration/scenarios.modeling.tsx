@@ -10,6 +10,7 @@ import {
 } from '../support/components/model/index'; 
 import { confirmationModal, toolbar, tiles } from '../support/components/common/index';
 import { Application } from '../support/application.config';
+import { ConfirmationType } from '../support/types/modeling-types';
 import 'cypress-wait-until';
 
 describe('Entity Modeling', () => {
@@ -29,7 +30,7 @@ describe('Entity Modeling', () => {
       cy.resetTestUser();
   });
 
-  it('can add a new property to an existing Entity', () => {
+  it('can add a new property to an existing Entity, delete shows step warning', () => {
     entityTypeTable.expandEntityRow(0);
     propertyTable.getAddPropertyButton('PersonXML').click();
 
@@ -45,9 +46,20 @@ describe('Entity Modeling', () => {
     propertyTable.getMultipleIcon('newID').should('exist');
     propertyTable.getPiiIcon('newID').should('exist');
     propertyTable.getWildcardIcon('newID').should('exist');
+
+    entityTypeTable.getDeleteEntityIcon('PersonXML').click();
+    cy.contains('Entity type is used in one or more steps.');
+    cy.contains('Show Steps...');
+
+    confirmationModal.getToggleStepsButton().click();
+    cy.contains('Person-Mapping-XML');
+    cy.contains('Hide Steps...');
+
+    confirmationModal.getCloseButton(ConfirmationType.DeleteEntityStepWarn).click();
+    entityTypeTable.getEntity('PersonXML').should('exist');
   });
 
-  it('can create a new entity, relationship type, and adding identifier confirmation', () => {
+  it('can create a new entity, relationship type, and adding identifier confirmation, and delete entity', () => {
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Product');
     entityTypeModal.newEntityDescription('An entity for Products');
@@ -90,7 +102,7 @@ describe('Entity Modeling', () => {
     propertyModal.getTypeFromDropdown('string').click();    
 
     propertyModal.getYesRadio('identifier').click();
-    confirmationModal.getYesButton().click()
+    confirmationModal.getYesButton(ConfirmationType.Identifer).click()
     propertyModal.getSubmitButton().click();
 
     propertyTable.getIdentifierIcon('newId').should('not.exist');
@@ -114,12 +126,19 @@ describe('Entity Modeling', () => {
     propertyTable.getPiiIcon('user-id').should('not.exist');
     propertyTable.getWildcardIcon('user-id').should('not.exist');
 
+    entityTypeTable.getDeleteEntityIcon('Product').click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    entityTypeTable.getEntity('Product').should('not.exist');
   });
 
-  it('can create a structured type, add properties to structure type, add structure type as property, and edit properties', () => {
-    entityTypeTable.expandEntityRow(1);
-    propertyTable.getAddPropertyButton('Product').click();
 
+  it('can create entity, can create a structured type, and properties to structure type, and add structure type as property, and delete entity', () => {
+    modelPage.getAddEntityButton().click();
+    entityTypeModal.newEntityName('Product');
+    entityTypeModal.newEntityDescription('An entity for Products');
+    entityTypeModal.getAddButton().click();
+
+    propertyTable.getAddPropertyButton('Product').click();
 
     propertyModal.newPropertyName('address');
     propertyModal.openPropertyDropdown();
@@ -257,6 +276,11 @@ describe('Entity Modeling', () => {
     propertyModal.getCascadedTypeFromDropdown('Address').click(); 
     propertyModal.getSubmitButton().click();
     propertyTable.expandNestedPropertyRow('Product-alt_address-Address'); 
-    propertyTable.getProperty('street').should('exist')
-  })
+    propertyTable.getProperty('street').should('exist');
+
+    entityTypeTable.getDeleteEntityIcon('Product').click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    entityTypeTable.getEntity('Product').should('not.exist');
+  });
+
 });
