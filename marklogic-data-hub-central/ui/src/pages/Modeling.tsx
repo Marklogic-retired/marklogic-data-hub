@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import { Tooltip, Alert } from 'antd';
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -125,6 +124,7 @@ const Modeling: React.FC = () => {
         canWriteEntityModel={canWriteEntityModel}
         allEntityTypesData={entityTypes}
         editEntityTypeDescription={editEntityTypeDescription}
+        updateEntities={getPrimaryEntityTypes}
         autoExpand={autoExpand}
       />
     </div>

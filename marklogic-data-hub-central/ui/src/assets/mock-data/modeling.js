@@ -22,6 +22,7 @@ export const createModelErrorResponse = {
 export const getEntityTypes = [
   {
       "entityName": "AnotherModel",
+      "entityTypeId": "http://example.org/AnotherModel-1.0.0/AnotherModel",
       "entityInstanceCount": 0,
       "model": {
           "info": {
@@ -39,13 +40,14 @@ export const getEntityTypes = [
   },
   {
       "entityName": "Order",
+      "entityTypeId": "http://example.org/Order-1.0.0/Order",
       "entityInstanceCount": 2384,
       "model": {
           "info": {
               "title": "Order",
-              "version": "0.0.1",
-              "baseUri": "http://demo51.org/",
-              "description": "inde"
+              "version": "1.0.0",
+              "baseUri": "http://example.org/",
+              "description": "An Order Entity type."
           },
           "definitions": {
               "Order": {
@@ -158,12 +160,13 @@ export const getEntityTypes = [
   },
   {
       "entityName": "Protein",
+      "entityTypeId": "http://example.org/Protein-1.0.0/Protein",
       "entityInstanceCount": 0,
       "model": {
           "info": {
               "title": "Protein",
-              "version": "0.0.1",
-              "baseUri": "http://marklogic.com/data-hub/example/"
+              "version": "1.0.0",
+              "baseUri": "http://example.org/"
           },
           "definitions": {
               "Protein": {
@@ -185,6 +188,9 @@ export const getEntityTypes = [
                       "Type": {
                           "datatype": "string",
                           "collation": "http://marklogic.com/collation/codepoint"
+                      },
+                      order: {
+                        "$ref": "http://example.org/Protein-1.0.0/Order"
                       }
                   }
               }
@@ -193,11 +199,12 @@ export const getEntityTypes = [
   },
   {
       "entityName": "Product",
+      "entityTypeId": "http://example.org/Product-1.0.0/Product",
       "entityInstanceCount": 0,
       "model": {
           "info": {
               "title": "Product",
-              "version": "0.0.1",
+              "version": "1.0.0",
               "baseUri": "http://example.org/",
               "description": "ajx"
           },
@@ -236,7 +243,8 @@ export const getEntityTypes = [
                       "has_accessories": {
                           "datatype": "string",
                           "collation": "http://marklogic.com/collation/codepoint"
-                      }
+                      },
+
                   }
               }
           }
@@ -244,11 +252,12 @@ export const getEntityTypes = [
   },
   {
       "entityName": "Provider",
+      "entityTypeId": "http://example.org/Provider-1.0.0/Provider",
       "entityInstanceCount": 0,
       "model": {
           "info": {
               "title": "Provider",
-              "version": "0.0.1",
+              "version": "1.0.0",
               "baseUri": "http://example.org/"
           },
           "definitions": {
@@ -298,12 +307,13 @@ export const getEntityTypes = [
   },
   {
       "entityName": "TestEntityForMapping",
+      "entityTypeId": "http://example.org/TestEntityForMapping-1.0.0/TestEntityForMapping",
       "entityInstanceCount": 0,
       "model": {
           "info": {
               "title": "TestEntityForMapping",
-              "version": "0.0.1",
-              "baseUri": "http://example.com/",
+              "version": "1.0.0",
+              "baseUri": "http://example.org/",
               "description": "An TestEntityForMapping entity"
           },
           "definitions": {
@@ -321,11 +331,12 @@ export const getEntityTypes = [
   },
   {
       "entityName": "Customer",
+      "entityTypeId": "http://example.org/Customer-1.0.0/Customer",
       "entityInstanceCount": 1000,
       "model": {
           "info": {
               "title": "Customer",
-              "version": "0.0.1",
+              "version": "1.0.0",
               "baseUri": "http://example.org/",
               "description": "cuss"
           },
@@ -811,3 +822,23 @@ export const entityDefinitionsArray = [
     ]
   }
 ]
+
+export const referencePayloadEmpty = {
+  "stepAndMappingNames": [],
+  "entityNames": []
+}
+
+export const referencePayloadSteps = {
+  "stepAndMappingNames": ['Order-Load', 'Order-Map'],
+  "entityNames": []
+}
+
+export const referencePayloadRelationships = {
+  "stepAndMappingNames": [],
+  "entityNames": ['Protein']
+}
+
+export const referencePayloadStepRelationships = {
+  "stepAndMappingNames": ['Order-Load', 'Order-Map'],
+  "entityNames": ['Protein']
+}

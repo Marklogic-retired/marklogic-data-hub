@@ -54,11 +54,33 @@ export interface PropertyOptions {
 }
 
 export enum ConfirmationType {
-  Identifer = 'identifier'
+  Identifer = 'identifier',
+  DeleteEntity = 'deleteEntity',
+  DeleteEntityRelationshipWarn = 'deleteEntityRelationshipWarn',
+  DeleteEntityStepWarn = 'deleteEntityStepWarn',
+  DeletePropertyWarn = 'deletePropertyWarn',
+  DeletePropertyStepWarn = 'deletePropertyStepWarn'
 }
 
 export enum PropertyType {
   Basic = 'basic',
   Structured = 'structured',
   Relationship = 'relationship'
+}
+
+export interface ModelingOptionsInterface {
+  entityTypeNamesArray: any[],
+  isModified: boolean,
+  modifiedEntitiesArray: EntityModified[]
+}
+
+export interface EntityModified {
+  entityName: string,
+  modelDefinition: any
+}
+
+export interface ModelingContextInterface {
+  modelingOptions: ModelingOptionsInterface;
+  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
+  toggleIsModified: (isModified: boolean) => void;
 }

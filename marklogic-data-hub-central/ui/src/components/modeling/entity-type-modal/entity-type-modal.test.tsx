@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import { render, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 

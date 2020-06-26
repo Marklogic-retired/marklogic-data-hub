@@ -1,11 +1,20 @@
+import { ConfirmationType } from '../../types/modeling-types';
+
 class ConfirmationModal {
-  getNoButton() {
-    return cy.get('#confirm-modal-no');
+  getNoButton(type: ConfirmationType) {
+    return cy.findByLabelText(`confirm-${type}-no`);
   }
-  getYesButton() {
-    return cy.get('#confirm-modal-yes');
+  getCloseButton(type: ConfirmationType) {
+    return cy.findByLabelText(`confirm-${type}-close`);
+  }
+  getYesButton(type: ConfirmationType) {
+    return cy.findByLabelText(`confirm-${type}-yes`);
+  }
+  getToggleStepsButton() {
+    return cy.findByLabelText('toggle-steps');
   }
 }
 
 const confirmationModal = new ConfirmationModal();
+
 export default confirmationModal

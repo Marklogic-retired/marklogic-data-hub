@@ -6,6 +6,7 @@ import scrollIntoView from 'scroll-into-view';
 import styles from './property-table.module.scss';
 
 import PropertyModal from '../property-modal/property-modal';
+import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 
 import { 
   Definition,
@@ -13,7 +14,8 @@ import {
   StructuredTypeOptions,
   EditPropertyOptions,
   PropertyOptions,
-  PropertyType
+  PropertyType,
+  ConfirmationType
 } from '../../../types/modeling-types';
 
 import { ModelingContext } from '../../../util/modeling-context';
@@ -70,6 +72,11 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [structuredTypeOptions, setStructuredTypeOptions] = useState<StructuredTypeOptions>(DEFAULT_STRUCTURED_TYPE_OPTIONS);
   const [definitions, setDefinitions] = useState<any>({});
   const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<Definition[]>([]);
+
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.Identifer);
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
 
   const [headerColumns, setHeaderColumns] = useState<any[]>([]);
   const [tableData, setTableData] = useState<any[]>([]);
@@ -497,6 +504,22 @@ const PropertyTable: React.FC<Props> = (props) => {
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
   }
 
+  const deletePropertyFromDefinition = (definitionName: string, propertyName: string) => {
+    // TODO DHFPROD-5284
+    // console.log('definition name', definitionName)
+    // console.log('property name', propertyName)
+
+    // let parseName = definitionName.split(',');
+    // let parseDefinitionName = parseName[parseName.length-1]
+    // let updatedDefinitions = {...definitions};
+    // let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
+
+    // delete entityTypeDefinition['properties'][propertyName];
+
+    // updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
+    // updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+  }
+
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
     let entityTypeDefinition: Definition = entityDefinitionsArray.find( definition => definition.name === props.entityName) || DEFAULT_ENTITY_DEFINITION;
 
@@ -582,6 +605,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   }
 
+  const confirmAction = () => {
+    // TODO DHFPROD-5284
+  }
+
   const addPropertyButton = <MLButton 
       type="primary"
       aria-label={props.entityName +'-add-property'}
@@ -626,6 +653,15 @@ const PropertyTable: React.FC<Props> = (props) => {
         addPropertyToDefinition={addPropertyToDefinition}
         addStructuredTypeToDefinition={addStructuredTypeToDefinition}
         editPropertyUpdateDefinition={editPropertyUpdateDefinition}
+        deletePropertyFromDefinition={deletePropertyFromDefinition}
+      />
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={confirmBoldTextArray}
+        stepValues={stepValuesArray}  
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmAction}
       />
       <MLTable
         rowClassName={(record) => {
