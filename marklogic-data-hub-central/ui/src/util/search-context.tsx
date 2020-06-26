@@ -68,8 +68,8 @@ interface ISearchContextInterface {
   setZeroState: (zeroState: boolean) => void;
   setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
-  setView: (viewId: JSX.Element| null) => void;
-  setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string) => void;
+  setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
+  setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string, vals: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -449,18 +449,24 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
-    const setView = (viewId: JSX.Element|null) => {
-        setSearchOptions({
-            ...searchOptions,
-            view: viewId
-        });
-    }
-
-    const setViewWithEntity = (viewId: JSX.Element, zeroState: boolean, nextEntityType: string) => {
+    const setView = (viewId: JSX.Element|null, zeroState=false) => {
         setSearchOptions({
             ...searchOptions,
             view: viewId,
+            zeroState: zeroState
+        });
+    }
+
+    const setViewWithEntity = (viewId: JSX.Element, zeroState: boolean, nextEntityType: string, vals:string) => {
+        let facets = {};
+        let entityOptions = (nextEntityType === 'All Entities') ? [] : [nextEntityType];
+        facets = { createdByJob: { dataType: "string", stringValues: [vals] } };
+        setSearchOptions({
+            ...searchOptions,
+            selectedFacets: facets,
+            view: viewId,
             zeroState: zeroState,
+            entityTypeIds: entityOptions,
             nextEntityType: nextEntityType
         });
     }
