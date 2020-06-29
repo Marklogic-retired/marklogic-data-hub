@@ -35,7 +35,7 @@ import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
-import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
 import com.marklogic.hub.step.impl.Step;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
@@ -103,7 +103,7 @@ public class FlowMigrator extends LoggingObject {
             return;
         }
 
-        logger.warn("Beginning migration of flows containing ingestion and/or migration steps");
+        logger.warn("Beginning migration of flows containing ingestion, mapping or any of the custom steps");
 
         //Backup flows and mappings
         Path migratedFlowsPath = hubProject.getProjectDir().resolve("migrated-flows");
@@ -119,12 +119,14 @@ public class FlowMigrator extends LoggingObject {
         }
 
         Path stepsDir = hubProject.getProjectDir().resolve("steps");
-        Path ingestionDir = stepsDir.resolve(StepDefinition.StepDefinitionType.INGESTION.toString());
-        Path mappingDir = stepsDir.resolve(StepDefinition.StepDefinitionType.MAPPING.toString());
+        Path ingestionDir = stepsDir.resolve(StepDefinitionType.INGESTION.toString());
+        Path mappingDir = stepsDir.resolve(StepDefinitionType.MAPPING.toString());
+        Path customStepDir = stepsDir.resolve(StepDefinitionType.CUSTOM.toString());
 
         try {
             ingestionDir.toFile().mkdirs();
             mappingDir.toFile().mkdirs();
+            customStepDir.toFile().mkdirs();
         } catch (Exception e) {
             throw new RuntimeException("Couldn't migrate flows as creation of step artifact directories failed : " + e.getMessage(), e);
         }
@@ -138,7 +140,7 @@ public class FlowMigrator extends LoggingObject {
             Map<String, Step> steps = flow.getSteps();
             boolean flowRequiresMigration = flowRequiresMigration(flow);
             logger.warn(flowRequiresMigration(flow) ? format("Migrating flow '%s'", flow.getName()) :
-                format("Flow '%s' does not contain any ingestion or mapping steps and thus will not be migrated", flow.getName()));
+                format("Flow '%s' does not contain ingestion, mapping or any of the custom steps and thus will not be migrated", flow.getName()));
 
             if (flowRequiresMigration) {
                 atLeastOneFlowWasMigrated = true;
@@ -148,11 +150,39 @@ public class FlowMigrator extends LoggingObject {
                 for (Map.Entry<String, Step> entry : steps.entrySet()) {
                     Step step = entry.getValue();
                     if (stepRequiresMigration(step)) {
-                        String stepId = String.join("-", step.getName(), step.getStepDefinitionType().toString());
+                        String stepId;
+                        Path targetDir;
+                        if(StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())){
+                            targetDir = ingestionDir;
+                            stepId= String.join("-", step.getName(), StepDefinitionType.INGESTION.toString());
+                        }
+                        else if (StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())) {
+                            if("entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName()) || getMappingArtifact(flow.getName(), step) != null){
+                                targetDir = mappingDir;
+                                stepId= String.join("-", step.getName(), StepDefinitionType.MAPPING.toString());
+                            }
+                            else{
+                                logger.warn(format("The custom mapping step '%s' will be migrated to a custom step (step with " +
+                                    "step definition type 'custom') as a valid mapping can't be found.", step.getName()));
+                                targetDir = customStepDir;
+                                stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
+                                //Change step definition type to "custom" for custom mapping step without a valid mapping
+                                step.setStepDefinitionType(StepDefinitionType.CUSTOM);
+                            }
+                        }
+                        else {
+                            targetDir = customStepDir;
+                            stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
+                            if(! StepDefinitionType.CUSTOM.equals(step.getStepDefinitionType())){
+                                logger.warn(format("The custom mastering step '%s' will be migrated to a custom step (step with " +
+                                    "step definition type 'custom')", step.getName()));
+                            }
+                            //Change step definition type to "custom" for all other step types(custom mastering, custom steps)
+                            step.setStepDefinitionType(StepDefinitionType.CUSTOM);
+                        }
+                        ObjectNode newStepArtifact = createStepArtifact(flow.getName(), step);
                         newSteps.set(entry.getKey(),
                             nodeFactory.objectNode().put("stepId", stepId));
-                        ObjectNode newStepArtifact = createStepArtifact(flow.getName(), step);
-                        Path targetDir = step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.INGESTION) ? ingestionDir : mappingDir;
                         String stepFileName = new StringBuilder(step.getName()).append(".step.json").toString();
                         File stepFile = targetDir.resolve(stepFileName).toFile();
                         logger.info(format("Creating step artifact '%s'", stepFile.toString()));
@@ -203,9 +233,9 @@ public class FlowMigrator extends LoggingObject {
                 }
             }
             logger.warn("");
-            logger.warn("Finished migrating flows containing ingestion and/or mapping steps.");
+            logger.warn("Finished migrating flows containing any of ingestion, mapping and custom steps.");
             logger.warn("Please examine the migrated flow and step artifact to verify their contents, particularly the collections of each step.");
-            logger.warn("The migration process ensures that ingestion and mapping steps have their step name as a collection, and that a mapping step has its entity name as a collection.");
+            logger.warn("The migration process ensures that ingestion, mapping and custom steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
         } else {
             try {
                 FileUtils.deleteDirectory(migratedFlowsPath.toFile());
@@ -216,20 +246,24 @@ public class FlowMigrator extends LoggingObject {
             logger.warn("No flows required migration, so no project files were modified");
         }
     }
-
+    //It's not expected to have mastering steps with stepDefinitionName "manual-merge-mastering", or "unmerge-mastering",
+    //so don't need to include them for the check.
     protected boolean stepRequiresMigration(Step step) {
-        return (StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType()) && "entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName())) ||
-            (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()));
+        return (StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())) ||
+            (StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()) ||
+            (StepDefinitionType.CUSTOM.equals(step.getStepDefinitionType()) ||
+            (StepDefinitionType.MASTERING.equals(step.getStepDefinitionType())
+            && !"default-mastering".equals(step.getStepDefinitionName()))));
     }
 
     protected boolean flowRequiresMigration(Flow flow) {
         return flow.getSteps().values().stream().anyMatch(step -> stepRequiresMigration(step));
     }
 
-    protected ObjectNode createStepArtifact(String flowName, Step inlineStep) {
+    protected Mapping getMappingArtifact(String flowName, Step inlineStep){
         Mapping mapping = null;
-        if (StepDefinition.StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
-            JsonNode mappingNode = (JsonNode) inlineStep.getOptions().get("mapping");
+        JsonNode mappingNode = (JsonNode) inlineStep.getOptions().get("mapping");
+        if(mappingNode != null){
             if (!mappingNode.has("name")) {
                 logger.warn(format("Unable to migrate mapping in flow '%s' because it does not have a 'name' property"));
             } else {
@@ -252,6 +286,15 @@ public class FlowMigrator extends LoggingObject {
                 }
             }
         }
+        return mapping;
+    }
+
+    protected ObjectNode createStepArtifact(String flowName, Step inlineStep) {
+        Mapping mapping = null;
+        //Obtain mapping for any step whose 'stepDefinitionType' is 'mapping'
+        if (StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
+            mapping = getMappingArtifact(flowName, inlineStep);
+        }
         return buildStepArtifact(inlineStep, mapping, flowName);
     }
 
@@ -271,8 +314,9 @@ public class FlowMigrator extends LoggingObject {
         JsonNode options = mapper.valueToTree(inlineStep.getOptions());
         if (options != null) {
             Set<String> fieldsNotToBeCopied = Set.of("mapping", "sourceCollection");
+            //Don't remove any properties from 'options' for custom steps and migrate them as is
             options.fields().forEachRemaining(kv -> {
-                if (!fieldsNotToBeCopied.contains(kv.getKey())) {
+                if (!fieldsNotToBeCopied.contains(kv.getKey()) || inlineStep.getStepDefinitionType().equals(StepDefinitionType.CUSTOM)) {
                     JsonNode value = kv.getValue();
                     if (value != null) {
                         stepArtifact.set(kv.getKey(), value);
@@ -323,7 +367,7 @@ public class FlowMigrator extends LoggingObject {
         }
 
         // Convert and/or get rid of targetEntity for a mapping step
-        if (StepDefinition.StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
+        if (!StepDefinitionType.INGESTION.equals(inlineStep.getStepDefinitionType())) {
             if (stepArtifact.has("targetEntity")) {
                 if (!stepArtifact.has("targetEntityType")) {
                     stepArtifact.put("targetEntityType", stepArtifact.get("targetEntity").asText());

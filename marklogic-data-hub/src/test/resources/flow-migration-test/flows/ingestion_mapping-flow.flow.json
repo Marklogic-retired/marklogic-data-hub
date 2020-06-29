@@ -89,7 +89,7 @@
         },
         "sourceDatabase": "data-hub-STAGING",
         "collections": [
-          "mapping-flow-mapping-xml", "mapping-step-xml"
+          "mapping-flow-mapping-xml", "mapping-step-xml", "Order"
         ],
         "outputFormat": "xml",
         "customProp": "customValue",
