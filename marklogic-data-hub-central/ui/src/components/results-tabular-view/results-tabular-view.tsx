@@ -262,7 +262,7 @@ const ResultsTabularView = (props) => {
 
         let index: string = '';
         for (let i in parsedPayload.data) {
-            if (parsedPayload.data[i].primaryKey == rowId.primaryKey) {
+            if (parsedPayload.data[i].uri == rowId.uri) {
                 index = i;
             }
         }
