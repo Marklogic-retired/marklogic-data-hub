@@ -7,9 +7,10 @@ import styles from './entity-type-table.module.scss';
 
 import PropertyTable from '../property-table/property-table';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
-import { entityReferences, deleteEntity } from '../../../api/modeling';
+import { entityReferences, deleteEntity, updateEntityModels } from '../../../api/modeling';
 import { ConfirmationType } from '../../../types/modeling-types';
 import { UserContext } from '../../../util/user-context';
+import { ModelingContext } from '../../../util/modeling-context';
 import { queryDateConverter, relativeTimeConverter } from '../../../util/date-conversion';
 import { numberConverter } from '../../../util/number-conversion';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -25,6 +26,7 @@ type Props = {
 
 const EntityTypeTable: React.FC<Props> = (props) => {
   const { handleError, resetSessionTime } = useContext(UserContext);
+  const { modelingOptions, removeEntityModified } = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -80,10 +82,41 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     }
   }
 
+  const saveEntityToServer = async () => {
+    try {
+      let modifiedEntity = modelingOptions.modifiedEntitiesArray.filter( entity => entity.entityName === confirmBoldTextArray[0])
+      const response = await updateEntityModels(modifiedEntity);
+      if (response['status'] === 200) {
+        removeEntityModified(modifiedEntity[0]);
+      } 
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+      toggleConfirmModal(false);
+    }
+  }
+
+  const confirmSaveEntity = (entityName: string) => {
+    setConfirmBoldTextArray([entityName]);
+    setStepValuesArray([]);
+    setConfirmType(ConfirmationType.SaveEntity);
+    toggleConfirmModal(true);
+  }
+
+  const confirmAction = () => {
+    if (confirmType === ConfirmationType.SaveEntity) {
+      saveEntityToServer();
+    } else {
+      deleteEntityFromServer();
+    }
+  }
+
   const columns = [
     {
       title: 'Name',
       dataIndex: 'name',
+      className: styles.tableText,
       width: 400,
       render: text => {
         let parseText = text.split(',');
@@ -139,6 +172,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     {
       title: 'Last Processed',
       dataIndex: 'lastProcessed',
+      className: styles.tableText,
       width: 100,
       render: text => {
         let parseText = text.split(',');
@@ -174,13 +208,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.actions,
       width: 100,
       render: text => {
-        // TODO add functionality to icons
         return (
           <div className={styles.iconContainer}>
           <MLTooltip title={ModelingTooltips.saveIcon}>
             <span
               data-testid={text + '-save-icon'} 
-              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconSaveReadOnly : styles.iconSave}
+              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave}
+              onClick={() => confirmSaveEntity(text)}
             ></span>
           </MLTooltip>
           <MLTooltip title={ModelingTooltips.revertIcon}>
@@ -263,7 +297,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         boldTextArray={confirmBoldTextArray} 
         stepValues={stepValuesArray}
         toggleModal={toggleConfirmModal}
-        confirmAction={deleteEntityFromServer}
+        confirmAction={confirmAction}
       />
       <MLTable
         rowKey="name"

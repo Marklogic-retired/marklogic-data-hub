@@ -20,7 +20,7 @@ export interface Property {
 
 export interface EntityDefinitionPayload {
   [entityName: string]: {
-    primaryKey: string,
+    primaryKey?: string,
     elementRangeIndex: string[],
     pii: string[],
     rangeIndex: string[],
@@ -59,7 +59,8 @@ export enum ConfirmationType {
   DeleteEntityRelationshipWarn = 'deleteEntityRelationshipWarn',
   DeleteEntityStepWarn = 'deleteEntityStepWarn',
   DeletePropertyWarn = 'deletePropertyWarn',
-  DeletePropertyStepWarn = 'deletePropertyStepWarn'
+  DeletePropertyStepWarn = 'deletePropertyStepWarn',
+  SaveEntity = 'saveEntity'
 }
 
 export enum PropertyType {
@@ -77,10 +78,4 @@ export interface ModelingOptionsInterface {
 export interface EntityModified {
   entityName: string,
   modelDefinition: any
-}
-
-export interface ModelingContextInterface {
-  modelingOptions: ModelingOptionsInterface;
-  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
-  toggleIsModified: (isModified: boolean) => void;
 }

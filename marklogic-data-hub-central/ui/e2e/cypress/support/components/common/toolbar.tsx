@@ -1,27 +1,27 @@
 class Toolbar {
 
   getLoadToolbarIcon() {
-    return cy.get('[aria-label=tool-load]');
+    return cy.findByLabelText('tool-load');
   }
 
   getModelToolbarIcon() {
-    return cy.get('[aria-label=tool-model]');
+    return cy.findByLabelText('tool-model');
   }
 
   getCurateToolbarIcon() {
-    return cy.get('[aria-label=tool-curate]');
+    return cy.findByLabelText('tool-curate');
   }
 
   getRunToolbarIcon() {
-    return cy.get('[aria-label=tool-run]');
+    return cy.findByLabelText('tool-run');
   }
 
   getExploreToolbarIcon() {
-    return cy.get('[aria-label=tool-explore]');
+    return cy.findByLabelText('tool-explore');
   }
 
   getToolBarIcon(tile: string) {
-      return cy.get(`[aria-label=tool-${tile.toLowerCase()}]`);
+      return cy.findByLabelText(`tool-${tile.toLowerCase()}`);
   }
 }
 const toolbar = new Toolbar();

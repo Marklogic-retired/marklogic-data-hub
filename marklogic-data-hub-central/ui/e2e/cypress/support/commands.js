@@ -63,11 +63,12 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
         url: '/api/environment/systemInfo'
       }).then(response => {
         window.localStorage.setItem('environment', JSON.stringify(response.body))
+        window.localStorage.setItem('serviceName', response.body.serviceName)
       });
       
       //window.localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(userPreference))
 
-      cy.visit('/')
+      cy.visit('/tiles')
     })
   }
 })

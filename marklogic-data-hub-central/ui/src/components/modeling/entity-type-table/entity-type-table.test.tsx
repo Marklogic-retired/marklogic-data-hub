@@ -7,6 +7,7 @@ import EntityTypeTable from './entity-type-table';
 import { 
   entityReferences,
   deleteEntity,
+  updateEntityModels
 } from '../../../api/modeling';
 
 import { 
@@ -22,6 +23,7 @@ jest.mock('../../../api/modeling');
 
 const mockEntityReferences = entityReferences as jest.Mock;
 const mockDeleteEntity = deleteEntity as jest.Mock;
+const mockUpdateEntityModels = updateEntityModels as jest.Mock;
 
 describe('EntityTypeModal Component', () => {
 
@@ -97,7 +99,7 @@ describe('EntityTypeModal Component', () => {
       </Router>);
 
     // Add back once functionality is added
-    // expect(getByTestId('Order-save-icon')).toHaveClass('iconSave');
+    expect(getByTestId('Order-save-icon')).toHaveClass('iconSave');
     // expect(getByTestId('Order-revert-icon')).toHaveClass('iconRevert');
     expect(getByTestId('Order-trash-icon')).toHaveClass('iconTrash');
 
@@ -161,7 +163,7 @@ describe('EntityTypeModal Component', () => {
       )
       expect(screen.getByText('Existing entity type relationships.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipWarn}-yes`));
-      expect(mockDeleteEntity).toBeCalledTimes(1);
+      expect(mockDeleteEntity).toBeCalledTimes(1)
   });
 
   test('can show confirm modal for delete steps', async () => {
@@ -191,7 +193,31 @@ describe('EntityTypeModal Component', () => {
       )
       expect(screen.getByText('Entity type is used in one or more steps.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityStepWarn}-close`));
-      expect(mockDeleteEntity).toBeCalledTimes(0);
+      expect(mockDeleteEntity).toBeCalledTimes(0)
+  });
+
+  test('Table can mock save an entity', async () => {
+    mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
+
+    const { getByTestId, getByLabelText, getByText, debug } =  render(
+      <Router>
+        <EntityTypeTable 
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=''
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={jest.fn()}
+        />
+      </Router>);
+
+      userEvent.click(getByTestId('Order-save-icon'));
+
+      await wait(() =>
+        expect(screen.getByText('Confirmation')).toBeInTheDocument(),
+      )
+      userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveEntity}-yes`));
+      expect(mockUpdateEntityModels).toBeCalledTimes(1);
   });
 });
 

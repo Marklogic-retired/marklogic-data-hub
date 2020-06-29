@@ -21,6 +21,7 @@ describe('Entity Modeling', () => {
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer").withRequest()    
     cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+    cy.wait(200);
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     tiles.getModelTile().should('exist');
   });
@@ -126,19 +127,25 @@ describe('Entity Modeling', () => {
     propertyTable.getPiiIcon('user-id').should('not.exist');
     propertyTable.getWildcardIcon('user-id').should('not.exist');
 
+    entityTypeTable.getSaveEntityIcon('Product').click();
+    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
+
+    cy.wait(10000);
+
     entityTypeTable.getDeleteEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    cy.wait(2000);
     entityTypeTable.getEntity('Product').should('not.exist');
   });
 
 
   it('can create entity, can create a structured type, and properties to structure type, and add structure type as property, and delete entity', () => {
     modelPage.getAddEntityButton().click();
-    entityTypeModal.newEntityName('Product');
-    entityTypeModal.newEntityDescription('An entity for Products');
+    entityTypeModal.newEntityName('User');
+    entityTypeModal.newEntityDescription('An entity for User');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Product').click();
+    propertyTable.getAddPropertyButton('User').click();
 
     propertyModal.newPropertyName('address');
     propertyModal.openPropertyDropdown();
@@ -229,7 +236,7 @@ describe('Entity Modeling', () => {
     propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
 
-    propertyTable.expandNestedPropertyRow('Product-extra-Zip-Extra');
+    propertyTable.expandNestedPropertyRow('User-extra-Zip-Extra');
     propertyTable.getMultipleIcon('fourDigit').should('not.exist');
     propertyTable.getPiiIcon('fourDigit').should('exist');
     propertyTable.getWildcardIcon('fourDigit').should('exist');
@@ -275,12 +282,17 @@ describe('Entity Modeling', () => {
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('Address').click(); 
     propertyModal.getSubmitButton().click();
-    propertyTable.expandNestedPropertyRow('Product-alt_address-Address'); 
+    propertyTable.expandNestedPropertyRow('User-alt_address-Address'); 
     propertyTable.getProperty('street').should('exist');
 
-    entityTypeTable.getDeleteEntityIcon('Product').click();
+    entityTypeTable.getSaveEntityIcon('User').click();
+    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
+    cy.wait(10000);
+
+    entityTypeTable.getDeleteEntityIcon('User').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    entityTypeTable.getEntity('Product').should('not.exist');
+    cy.wait(2000);
+    entityTypeTable.getEntity('User').should('not.exist');
   });
 
 });
