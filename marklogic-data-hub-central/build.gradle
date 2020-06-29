@@ -36,7 +36,7 @@ ext.junitVintageVersion = '4.12.0-RC3'
 ext.junitPlatformVersion = '1.3.1'
 ext.junitJupiterVersion = '5.3.1'
 
-bootJar {
+bootWar {
     baseName = springBootJarName
 }
 
@@ -203,6 +203,7 @@ publishing {
                 group = "com.marklogic"
                 version = "${version}"
                 from components.web
+                artifact bootWar
             }
         }
     }
