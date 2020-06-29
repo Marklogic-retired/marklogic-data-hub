@@ -72,6 +72,9 @@ dependencies {
     // Main dependency for a Spring Boot web application
     compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 
+    // Dependency to serialize and deserialize XML. The default version for the current springBootVersion is referenced.
+    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+
     // Used for hosting static resources when running as an executable jar/war
     runtime "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
 

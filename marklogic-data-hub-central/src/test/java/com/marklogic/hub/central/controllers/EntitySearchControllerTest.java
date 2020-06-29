@@ -2,6 +2,7 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
@@ -104,6 +105,25 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         verifyRequestIsForbidden(MockMvcRequestBuilders.delete(SAVED_QUERIES_PATH+ "/query").param("id", "some-id"));
     }
 
+    @Test
+    void testGetDocumentByURI() throws Exception {
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+        Customer customer1 = new Customer();
+        customer1.setCustomerId(1);
+        customer1.setName("Jane");
+        customer1.setCustomerNumber(123456789);
+        customer1.setCustomerSince("2012-05-16");
+
+        project.createCustomerInstance(customer1, Format.JSON);
+        project.createCustomerInstance(customer1, Format.XML);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("docUri", "/Customer1.xml");
+        getJson(BASE_URL, params).andExpect(status().isOk());
+        params = new LinkedMultiValueMap<>();
+        params.add("docUri", "/Customer1.json");
+        getJson(BASE_URL, params).andExpect(status().isOk());
+    }
 
     @Test
     void testRowExport() throws Exception {
