@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
@@ -71,9 +72,15 @@ public class FlowMigratorUnitTest {
     @Test
     void sourceCollection() {
         inlineStep.getOptions().put("sourceCollection", "something");
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("sourceCollection"), "sourceCollection is specific to QS and should be removed to avoid confusion, " +
             "as it doesn't impact the source query; step: " + step);
+
+        inlineStep.getOptions().put("sourceCollection", "something");
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.CUSTOM);
+        step = buildStepArtifact();
+        assertTrue(step.has("sourceCollection"), "we don't care about options set in custom step and migrate them as is");
     }
 
     @Test
@@ -92,6 +99,13 @@ public class FlowMigratorUnitTest {
         inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("version"), "a 5.3 mapping step does not include version; step: " + step);
+    }
+
+    @Test
+    void getMappingArtifact() {
+        //Ensure null is returned when step options doesn't have 'mapping'
+        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        assertNull(migrator.getMappingArtifact("dummyFlow", inlineStep));
     }
 
     @Test
@@ -130,8 +144,8 @@ public class FlowMigratorUnitTest {
         inlineStep.getOptions().put("targetEntity", "");
 
         ObjectNode step = buildStepArtifact();
-        assertFalse(step.has("targetEntityType"), "targetEntity should not have been converted to targetEntityType since custom steps are not being migrated yet");
-        assertEquals("", step.get("targetEntity").asText());
+        assertTrue(step.has("targetEntityType"), "targetEntity should have been converted to targetEntityType since custom steps are being migrated");
+        assertEquals("", step.get("targetEntityType").asText());
     }
 
     @Test

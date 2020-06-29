@@ -2,14 +2,25 @@
   "name": "custom_only-flow",
   "steps": {
     "1": {
-      "name": "testStep",
-      "stepDefinitionName": "testStep",
-      "stepDefinitionType": "CUSTOM",
+      "name": "custom-mapping-step",
+      "description": "maps and harmonizes XML docs to data-hub-FINAL",
+      "stepDefinitionName": "custom-mapping",
+      "stepDefinitionType": "MAPPING",
       "options": {
-        "sourceQuery": "cts.collectionQuery('doesnt-matter')",
-        "sourceDatabase": "data-hub-FINAL",
+        "sourceQuery": "cts.collectionQuery('custom-mapping-step-xml')",
+        "mapping": {
+          "name": "nonExistingMapping",
+          "version": 1
+        },
+        "sourceDatabase": "data-hub-STAGING",
+        "outputFormat": "xml",
+        "customProp": "customValue",
         "targetDatabase": "data-hub-FINAL"
-      }
+      },
+      "customHook": null,
+      "retryLimit": 0,
+      "batchSize": 0,
+      "threadCount": 0
     },
     "2": {
       "name": "custom-ingest",
