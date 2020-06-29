@@ -39,11 +39,11 @@ describe('Confirmation Modal Component', () => {
     expect(getByText(/Each entity type is allowed a maximum of one identifier/i)).toBeInTheDocument();
     expect(getByText(/Are you sure you want to change the identifier from/i)).toBeInTheDocument();
 
-    userEvent.click(getByText('Yes'));
-    expect(confirmAction).toBeCalledTimes(1);
-
     userEvent.click(getByText('No'));
     expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
   });
 
   test('can render delete type confirmation', () => {
@@ -75,11 +75,11 @@ describe('Confirmation Modal Component', () => {
     expect(getByText(entityName)).toBeInTheDocument();
     expect(getByText(/Permanently delete/i)).toBeInTheDocument();
 
-    userEvent.click(getByText('Yes'));
-    expect(confirmAction).toBeCalledTimes(1);
-
     userEvent.click(getByText('No'));
     expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
   });
 
   test('can render delete type relationship warn confirmation', () => {
@@ -111,11 +111,11 @@ describe('Confirmation Modal Component', () => {
     expect(getAllByText(entityName)).toHaveLength(3);
     expect(getByText('Existing entity type relationships.')).toBeInTheDocument();
 
-    userEvent.click(getByText('Yes'));
-    expect(confirmAction).toBeCalledTimes(1);
-
     userEvent.click(getByText('No'));
     expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
   });
 
   test('can render delete type step warn confirmation', () => {
@@ -163,6 +163,42 @@ describe('Confirmation Modal Component', () => {
 
     userEvent.click(getByText('Close'));
     expect(toggleModal).toBeCalledTimes(1);
+  });
+
+  test('can render save entity type confirmation', () => {
+    let entityName = 'Product';
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { queryByText, getByText, getAllByText, rerender } =  render(
+      <ConfirmationModal 
+        isVisible={false}
+        type={ConfirmationType.SaveEntity}
+        boldTextArray={[entityName]} 
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByText('Confirmation')).toBeNull();
+
+    rerender(<ConfirmationModal 
+      isVisible={true}
+      type={ConfirmationType.SaveEntity}
+      boldTextArray={[entityName]} 
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getByText('Confirmation')).toBeInTheDocument();
+    expect(getByText(entityName)).toBeInTheDocument();
+    expect(getByText(/Are you sure you want to save changes to /i)).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
   });
 });
 

@@ -28,6 +28,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const [isNameDisabled, toggleIsNameDisabled] = useState(true);
   const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
     if (props.isVisible) {
@@ -41,6 +42,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       }
       setErrorMessage('');
       toggleIsNameDisabled(true);
+      toggleLoading(false);
     }
   }, [props.isVisible]);
 
@@ -105,6 +107,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       if (!NAME_REGEX.test(name)) {
         setErrorMessage(ModelingTooltips.nameRegex)
       } else {
+        toggleLoading(true);
         createEntityType(name, description);
       }
     }
@@ -119,6 +122,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       className={styles.modal}
       visible={props.isVisible}
       closable={true}
+      confirmLoading={props.isEditModal ? false : loading}
       title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
       cancelText="Cancel"
       cancelButtonProps={{ id: 'entity-modal-cancel' }}

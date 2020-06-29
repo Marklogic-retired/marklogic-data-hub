@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import {
   ModelingOptionsInterface,
-  EntityModified,
-  ModelingContextInterface
+  EntityModified
 } from '../types/modeling-types';
 
 const DEFAULT_MODELING_OPTIONS = {
@@ -11,10 +10,20 @@ const DEFAULT_MODELING_OPTIONS = {
   modifiedEntitiesArray: []
 }
 
+export interface ModelingContextInterface {
+  modelingOptions: ModelingOptionsInterface;
+  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
+  toggleIsModified: (isModified: boolean) => void;
+  updateEntityModified: (entityModified: EntityModified) => void;
+  removeEntityModified: (entityModified: EntityModified) => void;
+}
+
 export const ModelingContext = React.createContext<ModelingContextInterface>({
   modelingOptions: DEFAULT_MODELING_OPTIONS,
   setEntityTypeNamesArray: () => {},
   toggleIsModified: () => {},
+  updateEntityModified: () => {},
+  removeEntityModified: () => {}
 });
 
 const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -29,9 +38,24 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     setModelingOptions({ ...modelingOptions, isModified })
   }
 
-  const addPropertyToDefinition = () => {
-    let array = []
-    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [] })
+  const updateEntityModified = (entityModified: EntityModified) => {
+    let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
+    if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
+      let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      newModifiedEntitiesArray[index] = entityModified;
+    } else {
+      newModifiedEntitiesArray.push(entityModified);
+    }
+    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: true })
+  }
+
+  const removeEntityModified = (entityModified: EntityModified) => {
+    let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
+    if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
+      let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
+      newModifiedEntitiesArray.splice(index, 1);
+      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: false })
+    }
   }
 
   return (
@@ -39,6 +63,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
       modelingOptions,
       setEntityTypeNamesArray,
       toggleIsModified,
+      updateEntityModified,
+      removeEntityModified
     }}>
       {children}
     </ModelingContext.Provider>

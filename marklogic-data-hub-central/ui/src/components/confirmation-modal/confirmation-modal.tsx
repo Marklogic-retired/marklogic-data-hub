@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal } from 'antd';
+import { Modal, Icon } from 'antd';
 import { MLAlert, MLButton } from '@marklogic/design-system';
 import styles from './confirmation-modal.module.scss'
 
@@ -17,6 +17,7 @@ type Props = {
 const ConfirmationModal: React.FC<Props> = (props) => {
   const [title, setTitle] = useState('Confirmation');
   const [showSteps, toggleSteps] = useState(false);
+  const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
     if (props.isVisible) {
@@ -27,8 +28,15 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
       setTitle(title);
       toggleSteps(false);
+      toggleLoading(false);
     }
   }, [props.isVisible]);
+
+  const closeModal = () => {
+    if (!loading) {
+      props.toggleModal(false)
+    }
+  }
 
   const renderSteps = props.stepValues?.map((step, index) => <li key={step + index}>{step}</li>);
 
@@ -36,13 +44,17 @@ const ConfirmationModal: React.FC<Props> = (props) => {
     <MLButton
       aria-label={`confirm-${props.type}-no`}
       size="default"
-      onClick={() => props.toggleModal(false)}
+      onClick={closeModal}
     >No</MLButton>
     <MLButton
       aria-label={`confirm-${props.type}-yes`}
       type="primary"
       size="default"
-      onClick={() => props.confirmAction()}
+      loading={loading}
+      onClick={() => {
+        toggleLoading(true);
+        props.confirmAction();
+      }}
     >Yes</MLButton>
   </div>
 
@@ -50,7 +62,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
     aria-label={`confirm-${props.type}-close`}
     type="primary"
     size="default"
-    onClick={() => props.toggleModal(false)}
+    onClick={closeModal}
   >Close</MLButton>
 
   return (
@@ -58,7 +70,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       visible={props.isVisible}
       closable={true}
       title={title}
-      onCancel={() => props.toggleModal(false)}
+      onCancel={closeModal}
       maskClosable={false}
       footer={props.type === ConfirmationType.DeleteEntityStepWarn ? modalFooterClose : modalFooter}
     >
@@ -137,6 +149,16 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             </ul>
           )}
           <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
+        </>
+      )}
+
+      {props.type === ConfirmationType.SaveEntity && (
+        <>
+          <p>Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
+
+          <p>Changes will be saved to the entity model, possible including updating indexes.
+            Any features enabled by the changes will not be available until this is complete.
+          </p>
         </>
       )}
     </Modal>

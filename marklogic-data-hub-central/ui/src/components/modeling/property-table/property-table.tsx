@@ -15,7 +15,8 @@ import {
   EditPropertyOptions,
   PropertyOptions,
   PropertyType,
-  ConfirmationType
+  ConfirmationType,
+  EntityModified
 } from '../../../types/modeling-types';
 
 import { ModelingContext } from '../../../util/modeling-context';
@@ -64,7 +65,7 @@ const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
 }
 
 const PropertyTable: React.FC<Props> = (props) => {
-  const { modelingOptions, toggleIsModified } = useContext(ModelingContext)
+  const { modelingOptions, updateEntityModified } = useContext(ModelingContext)
   const [showPropertyModal, toggleShowPropertyModal] = useState(false);
 
   const [editPropertyOptions, setEditPropertyOptions] = useState<EditPropertyOptions>(DEFAULT_EDIT_PROPERTY_OPTIONS);
@@ -280,7 +281,6 @@ const PropertyTable: React.FC<Props> = (props) => {
   const addStructuredTypeToDefinition = (structuredTypeName: string) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName] : {
-        primaryKey: '',
         elementRangeIndex: [],
         pii: [],
         rangeIndex: [],
@@ -290,6 +290,12 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
     }
     let newDefinitions = {...definitions, ...newStructuredType }
+    let entityModified: EntityModified = {
+      entityName: props.entityName,
+      modelDefinition: newDefinitions
+    }
+
+    updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(newDefinitions);
   }
 
@@ -360,6 +366,8 @@ const PropertyTable: React.FC<Props> = (props) => {
       } else {
         entityTypeDefinition['pii'] = [propertyName]
       }
+    } else if (!entityTypeDefinition.hasOwnProperty('pii')) {
+      entityTypeDefinition['pii'] = []
     }
 
     if (propertyOptions.wildcard) {
@@ -368,6 +376,20 @@ const PropertyTable: React.FC<Props> = (props) => {
       } else {
         entityTypeDefinition['wordLexicon'] = [propertyName]
       }    
+    } else if (!entityTypeDefinition.hasOwnProperty('wordLexicon')) {
+      entityTypeDefinition['wordLexicon'] = []
+    }
+
+    if (!entityTypeDefinition.hasOwnProperty('required')) {
+      entityTypeDefinition['required'] = []
+    }
+
+    if (!entityTypeDefinition.hasOwnProperty('rangeIndex')) {
+      entityTypeDefinition['rangeIndex'] = []
+    }
+
+    if (!entityTypeDefinition.hasOwnProperty('elementRangeIndex')) {
+      entityTypeDefinition['elementRangeIndex'] = []
     }
 
     if (structuredTypeOptions.isStructured) {
@@ -376,9 +398,16 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     entityTypeDefinition['properties'][propertyName] = newProperty;
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
+
+
+    let entityModified: EntityModified = {
+      entityName: props.entityName,
+      modelDefinition: updatedDefinitions
+    }
+
+    updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
     setNewRowKey(newRowKey);
-    toggleIsModified(true);
   }
 
   const editPropertyShowModal = (text: string, record: any) => {
@@ -453,7 +482,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (editPropertyOptions.propertyOptions.identifier === 'yes') {
       entityTypeDefinition.primaryKey = editPropertyOptions.name;
     } else if (entityTypeDefinition.hasOwnProperty('primaryKey') && entityTypeDefinition.primaryKey === propertyName) {
-      entityTypeDefinition.primaryKey = '';
+      delete entityTypeDefinition.primaryKey;
     }
 
     if (editPropertyOptions.propertyOptions.pii === 'yes') {
@@ -501,6 +530,13 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
 
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
+
+    let entityModified: EntityModified = {
+      entityName: props.entityName,
+      modelDefinition: updatedDefinitions
+    }
+
+    updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
   }
 

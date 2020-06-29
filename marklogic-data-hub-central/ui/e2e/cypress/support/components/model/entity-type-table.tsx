@@ -32,6 +32,10 @@ class EntityTypeTable {
   getDeleteEntityIcon(entityName: string) {
     return cy.findByTestId(`${entityName}-trash-icon`);
   }
+
+  getSaveEntityIcon(entityName: string) {
+    return cy.findByTestId(`${entityName}-save-icon`);
+  }
 }
 
 const entityTypeTable = new EntityTypeTable();

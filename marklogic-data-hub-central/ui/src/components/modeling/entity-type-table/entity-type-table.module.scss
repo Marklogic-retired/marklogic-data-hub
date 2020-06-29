@@ -46,11 +46,16 @@ th.actions,
 td.actions {
   text-align: center !important;
 }
-.rightHeader {
+td.rightHeader {
   text-align: right !important;
+}
+
+td.tableText, td.rightHeader {
+  vertical-align: middle!important;
 }
 
 .link {
   color: #5B69AF;
   cursor: pointer;
+  margin-top: 15px;
 }
