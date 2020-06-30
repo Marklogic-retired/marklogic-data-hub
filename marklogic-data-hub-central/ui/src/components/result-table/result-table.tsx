@@ -15,6 +15,8 @@ import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray, 
 import ReactDragListView from 'react-drag-listview'
 import QueryExport from '../../components/query-export/query-export';
 import { AuthoritiesContext } from "../../util/authorities";
+import { MLTooltip } from '@marklogic/design-system';
+
 
 
 const ResizeableTitle = props => {
@@ -172,11 +174,11 @@ const ResultTable: React.FC<Props> = (props) => {
           <div className={styles.redirectIcons}>
             <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance' } }} id={'instance'}
               data-cy='instance'>
-              <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></Tooltip>
+              <MLTooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></MLTooltip>
             </Link>
             <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'source' } }} id={'source'}
               data-cy='source'>
-              <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" /></Tooltip>
+              <MLTooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" /></MLTooltip>
             </Link>
           </div>
 
@@ -184,7 +186,7 @@ const ResultTable: React.FC<Props> = (props) => {
           row =
           {
             key: rowCounter,
-            identifier: <Tooltip title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</Tooltip>,
+            identifier: <MLTooltip title={isUri && item.uri}>{isUri ? '.../' + document : item.primaryKey}</MLTooltip>,
             entity: item.itemEntityName,
             filetype: item.format,
             created: date,
@@ -205,7 +207,7 @@ const ResultTable: React.FC<Props> = (props) => {
 
           for (let propt in item.itemEntityProperties[0]) {
             if (isUri) {
-              row.identifier = <Tooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</Tooltip>
+              row.identifier = <MLTooltip title={isUri ? item.uri : item.primaryKey}>{'.../' + document}</MLTooltip>
             }
             if (parsedPayload.primaryKeys.includes(propt)) {
               row[propt.toLowerCase()] = item.itemEntityProperties[0][propt].toString();
@@ -324,10 +326,10 @@ const ResultTable: React.FC<Props> = (props) => {
             render: (value, row, index) => {
               const obj = {
                 children: (
-                  <Tooltip
+                  <MLTooltip
                     title={value && value.length > 50 && value.substring(0, 301).concat('...\n\n(View document details to see all of this text.)')}>
                     <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
-                  </Tooltip>
+                  </MLTooltip>
                 ),
                 props: {
                   rowSpan: 1,
@@ -437,8 +439,8 @@ const ResultTable: React.FC<Props> = (props) => {
             children: parseJson(obj[i]),
             view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i] } }}
               data-cy='nested-instance'>
-              <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
-                size="sm" /></Tooltip>
+              <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
+                size="sm" /></MLTooltip>
             </Link>
           });
         } else {

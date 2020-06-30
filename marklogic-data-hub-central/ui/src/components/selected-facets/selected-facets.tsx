@@ -6,6 +6,8 @@ import styles from './selected-facets.module.scss';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faCheckSquare, faWindowClose} from '@fortawesome/free-solid-svg-icons'
+import { MLTooltip } from '@marklogic/design-system';
+
 
 
 interface Props {
@@ -222,7 +224,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             }
             return (
               (unCheckRest(item.constraint, item.facet)) &&
-                <Tooltip
+                <MLTooltip
                   key={index + '-' + item.facet}
                   title={'Not yet applied'}
                 >
@@ -237,11 +239,11 @@ const SelectedFacets: React.FC<Props> = (props) => {
                   <Icon type='close'/>
                   {facetName + ': ' + item.facet}
                 </MLButton>
-              </Tooltip>
+              </MLTooltip>
             )
         })}
         {props.showApply &&
-        <Tooltip title={'Apply all changes'}>
+        <MLTooltip title={'Apply all changes'}>
             <FontAwesomeIcon
                 icon={faCheckSquare}
                 onClick={() => applyFacet()}
@@ -250,10 +252,10 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-cy='facet-apply-button'
                 data-testid='facet-apply-button'
             />
-        </Tooltip>
+        </MLTooltip>
         }
         {props.greyFacets.length > 0 &&
-        <Tooltip title={'Discard all changes'}>
+        <MLTooltip title={'Discard all changes'}>
             <FontAwesomeIcon
                 icon={faWindowClose}
                 onClick={clearGreyFacets}
@@ -261,7 +263,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-testid='clear-all-grey-button'
                 className={styles.closeIcon}
                 size="lg" />
-        </Tooltip>
+        </MLTooltip>
         }
     </div>
   );

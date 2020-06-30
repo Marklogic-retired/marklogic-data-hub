@@ -4,6 +4,8 @@ import { SearchContext } from "../../../../util/search-context";
 import styles from './save-query-modal.module.scss';
 import { UserContext } from "../../../../util/user-context";
 import { QueryOptions } from '../../../../types/query-types';
+import { MLButton } from '@marklogic/design-system';
+
 
 interface Props {
     setSaveModalVisibility: () => void;
@@ -181,13 +183,13 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 </Form.Item>}
                 <Form.Item>
                     <div className={styles.submitButtons}>
-                        <Button id='save-query-cancel-button' onClick={() => onCancel()}>Cancel</Button>
+                        <MLButton id='save-query-cancel-button' onClick={() => onCancel()}>Cancel</MLButton>
                         &nbsp;&nbsp;
-                        <Button type="primary"
+                        <MLButton type="primary"
                             htmlType="submit"
                             disabled={queryName.length === 0}
                             onClick={() => onOk()} id='save-query-button'>Save
-                        </Button>
+                        </MLButton>
                     </div>
                 </Form.Item>
             </Form>

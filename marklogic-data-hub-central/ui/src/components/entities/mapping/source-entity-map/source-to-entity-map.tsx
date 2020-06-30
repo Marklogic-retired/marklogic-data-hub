@@ -11,6 +11,8 @@ import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWit
 import SplitPane from 'react-split-pane';
 import Highlighter from 'react-highlight-words';
 import ColumnGroup from "antd/lib/table/ColumnGroup";
+import { MLButton, MLTooltip, MLCheckbox } from '@marklogic/design-system';
+
 
 const SourceToEntityMap = (props) => {
 
@@ -247,15 +249,15 @@ const SourceToEntityMap = (props) => {
     }
 
     const navigationButtons = <span className={styles.navigate_source_uris}>
-        <Button className={styles.navigate_uris_left} data-testid="navigate-uris-left" onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
+        <MLButton className={styles.navigate_uris_left} data-testid="navigate-uris-left" onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
             <Icon type="left" className={styles.navigateIcon} />
-        </Button>
+        </MLButton>
         &nbsp;
         <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
         &nbsp;
-        <Button className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
+        <MLButton className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
             <Icon type="right" className={styles.navigateIcon} />
-        </Button>
+        </MLButton>
     </span>
 
     //Code for navigation buttons ends here
@@ -464,10 +466,10 @@ const SourceToEntityMap = (props) => {
                     onPressEnter={() => handleColSearch(selectedKeys, confirm, dataIndex)}
                     className={styles.searchInput}
                 />
-                <Button data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
+                <MLButton data-testid={`ResetSearch-${dataIndex}`} onClick={() => handleSearchReset(clearFilters, dataIndex)} size="small" className={styles.resetButton}>
                     Reset
-              </Button>
-                <Button
+              </MLButton>
+                <MLButton
                     data-testid={`submitSearch-${dataIndex}`}
                     type="primary"
                     onClick={() => handleColSearch(selectedKeys, confirm, dataIndex)}
@@ -475,7 +477,7 @@ const SourceToEntityMap = (props) => {
                     className={styles.searchSubmitButton}
                 >
                     <Icon type="search" theme="outlined" /> Search
-              </Button>
+              </MLButton>
             </div>
         ),
         filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? 'active' : 'inactive' }  /></i>,
@@ -551,7 +553,7 @@ const SourceToEntityMap = (props) => {
             defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
             render: (text) => {
                 let textToSearchInto = text?.split(':').length > 1 ? text?.split(':')[0]+': '+text?.split(':')[1] : text;
-                let valueToDisplay = <span>{text?.split(':').length > 1 ? <span><Tooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></Tooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
+                let valueToDisplay = <span>{text?.split(':').length > 1 ? <span><MLTooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></MLTooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
                 return getRenderOutput(textToSearchInto,valueToDisplay,'key',searchedSourceColumn,searchSourceText);
             }
         },
@@ -562,7 +564,7 @@ const SourceToEntityMap = (props) => {
             ellipsis: true,
             sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
             width: '40%',
-            render: (text) => <span>{text ? String(text).substr(0, 20) : ''}{text && text.length > 20 ? <Tooltip title={text}><span className={styles.toolTipForValues}>...</span></Tooltip> : ''}</span>
+            render: (text) => <span>{text ? String(text).substr(0, 20) : ''}{text && text.length > 20 ? <MLTooltip title={text}><span className={styles.toolTipForValues}>...</span></MLTooltip> : ''}</span>
         }
     ];
 
@@ -625,7 +627,7 @@ const SourceToEntityMap = (props) => {
                     </Dropdown>
                 </span>
                 &nbsp;&nbsp;
-                <span ><Dropdown overlay={menu} trigger={['click']} disabled={!props.canReadWrite}><Button id="functionIcon" data-testid={`${row.name.split('/').pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</Button></Dropdown></span></div>
+                <span ><Dropdown overlay={menu} trigger={['click']} disabled={!props.canReadWrite}><MLButton id="functionIcon" data-testid={`${row.name.split('/').pop()}-${row.key}-functionIcon`} className={styles.functionIcon} size="small" onClick={(e) => handleFunctionsList(row.name)}>fx</MLButton></Dropdown></span></div>
                 {checkFieldInErrors(row.name) ? <div id="errorInExp" data-testid={row.name+'-expErr'} className={styles.validationErrors}>{displayResp(row.name)}</div> : ''}</div>)
         },
         {
@@ -635,7 +637,7 @@ const SourceToEntityMap = (props) => {
             width: '20%',
             ellipsis: true,
             sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
-            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><Tooltip title={getDataForValueField(row.name)}>{getTextForValueField(row)}</Tooltip></div>)
+            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><MLTooltip title={getDataForValueField(row.name)}>{getTextForValueField(row)}</MLTooltip></div>)
         }
     ]
 
@@ -1000,14 +1002,14 @@ const SourceToEntityMap = (props) => {
             <Menu onClick={handleColOptMenuClick}>
                 {Object.keys(checkedEntityColumns).map(entLabel => (
                     <Menu.Item key={entLabel}
-                    className={styles.DropdownMenuItem}><Checkbox
+                    className={styles.DropdownMenuItem}><MLCheckbox
                         data-testid={`columnOptionsCheckBox-${entLabel}`}
                         key={entLabel}
                         value={entLabel}
                         onChange={handleColOptionsChecked}
                         defaultChecked={true}
                         className={styles.checkBoxItem}
-                    >{columnOptionsLabel[entLabel]}</Checkbox></Menu.Item>
+                    >{columnOptionsLabel[entLabel]}</MLCheckbox></Menu.Item>
                 ))}
             </Menu>
         </div>
@@ -1121,13 +1123,13 @@ const SourceToEntityMap = (props) => {
             </div>
             <br/>
             <span className={styles.btn_icons}>
-                    <Button id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
+                    <MLButton id="Clear-btn" mat-raised-button="true" color="primary" disabled={emptyData} onClick={() => onClear()}>
                         Clear
-                    </Button>
+                    </MLButton>
                 &nbsp;&nbsp;
-                <Button id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
+                <MLButton id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
                         Test
-                    </Button>
+                    </MLButton>
             </span>
             <br/>
             <hr/>
@@ -1170,7 +1172,7 @@ const SourceToEntityMap = (props) => {
                             :
                             <div id="dataPresent">
 
-                                <div className={styles.navigationCollapseButtons}><span><Button data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse' : 'Expand'}</Button></span><span>{navigationButtons}</span></div>
+                                <div className={styles.navigationCollapseButtons}><span><MLButton data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse' : 'Expand'}</MLButton></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
                                         expandIcon={(props) => customExpandIcon(props)}
@@ -1198,7 +1200,7 @@ const SourceToEntityMap = (props) => {
                         </div>
                         <div ref={dummyNode}></div>
                         <div className={styles.columnOptionsSelectorContainer}>
-                            <span><Button data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse' : 'Expand'}</Button></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
+                            <span><MLButton data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse' : 'Expand'}</MLButton></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
                         <Table
                             pagination={false}
                             className={styles.entityTable}

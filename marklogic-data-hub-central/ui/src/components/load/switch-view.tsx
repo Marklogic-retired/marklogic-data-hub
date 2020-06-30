@@ -20,15 +20,6 @@ const SwitchView: React.FC<Props> = (props) => {
     }
     
     return (
-        // <div className={styles.switchView}>
-        //     <Menu mode="horizontal" defaultSelectedKeys={['table']}>
-        //         <Menu.Item key='card' className={styles.cardViewOption} >
-        //             <i><FontAwesomeIcon title='card' icon={faThLarge} onClick={cardsView} className={styles.iconStyle} size="2x" /></i>
-        //         </Menu.Item>
-        //         <Menu.Item key='table' className={styles.tableViewOption}>
-        //             <i><FontAwesomeIcon title='table' icon={faTh} onClick={tableView} className={styles.iconStyle} size="2x" /></i>
-        //         </Menu.Item>
-        //     </Menu>
         <div aria-label="switch-view" className={styles.switchView}>
             <MLRadio.MLGroup
                 buttonStyle="outline"

@@ -5,6 +5,8 @@ import { SearchContext } from '../../util/search-context';
 import Query from '../queries/queries'
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
+import { MLButton } from '@marklogic/design-system';
+
 
 
 const ZeroStateExplorer = (props) => {
@@ -113,14 +115,14 @@ const ZeroStateExplorer = (props) => {
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
                       {props.tableView ?
-                        <Button type="primary" className={styles.button} onClick={() => props.toggleTableView(true)}>Table</Button>
+                        <MLButton type="primary" className={styles.button} onClick={() => props.toggleTableView(true)}>Table</MLButton>
                         :
-                        <Button className={styles.button} onClick={() => props.toggleTableView(true)}>Table</Button>
+                        <MLButton className={styles.button} onClick={() => props.toggleTableView(true)}>Table</MLButton>
                       }
                       {props.tableView ?
-                        <Button className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</Button>
+                        <MLButton className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</MLButton>
                         :
-                        <Button type="primary" className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</Button>
+                        <MLButton type="primary" className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</MLButton>
                       }
                     </div>
                   </Col>
@@ -129,7 +131,7 @@ const ZeroStateExplorer = (props) => {
                   <br />
                   <Col span={12} offset={6}>
                     <div className={styles.viewAs}>
-                      <Button type="primary" data-cy='explore' className={styles.button} onClick={onClickExplore} >Explore</Button>
+                      <MLButton type="primary" data-cy='explore' className={styles.button} onClick={onClickExplore} >Explore</MLButton>
                     </div>
                   </Col>
                 </Row>

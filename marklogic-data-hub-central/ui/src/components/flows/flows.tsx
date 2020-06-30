@@ -7,6 +7,7 @@ import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
 import {RunToolTips} from '../../config/tooltips.config';
 import styles from './flows.module.scss';
+import { MLTooltip, MLSpin, MLUpload } from '@marklogic/design-system';
 
 const { Panel } = Collapse;
 
@@ -153,7 +154,7 @@ const Flows: React.FC<Props> = (props) => {
     const deleteIcon = (name, i) => (
         <span className={styles.deleteFlow}>
             {props.canWriteFlow ?
-                <Tooltip title={'Delete Flow'} placement="bottom">
+                <MLTooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
                         <FontAwesomeIcon
                             icon={faTrashAlt}
@@ -165,8 +166,8 @@ const Flows: React.FC<Props> = (props) => {
                             className={styles.deleteIcon}
                             size="lg"/>
                     </i>
-                </Tooltip> :
-                <Tooltip title={'Delete'} placement="bottom">
+                </MLTooltip> :
+                <MLTooltip title={'Delete'} placement="bottom">
                     <i aria-label={'deleteStep-' + i}>
                         <FontAwesomeIcon
                             icon={faTrashAlt}
@@ -178,16 +179,16 @@ const Flows: React.FC<Props> = (props) => {
                             className={styles.disabledDeleteIcon}
                             size="lg"/>
                     </i>
-                </Tooltip> }
+                </MLTooltip> }
         </span>
     );
 
     const flowHeader = (name, index) => (
-        <Tooltip title={props.canWriteFlow ? 'Edit Flow' : 'Flow Details'} placement="right">
+        <MLTooltip title={props.canWriteFlow ? 'Edit Flow' : 'Flow Details'} placement="right">
             <span className={styles.flowName} onClick={(e) => OpenEditFlowDialog(e, index)}>
                 {name}
             </span>
-        </Tooltip>
+        </MLTooltip>
     );
 
     const OpenEditFlowDialog = (e, index) => {
@@ -258,7 +259,7 @@ const Flows: React.FC<Props> = (props) => {
                             <div className={styles.actions}>
                                 {props.hasOperatorRole ?
                                     step.stepDefinitionType.toLowerCase() === "ingestion" ?
-                                        <Upload id="fileUpload"
+                                        <MLUpload id="fileUpload"
                                                 multiple={true}
                                                 className={styles.upload}
                                                 customRequest={customRequest}
@@ -275,11 +276,11 @@ const Flows: React.FC<Props> = (props) => {
                                                 setRunningFlow(flowName)
                                             }}
                                         >
-                                            <Tooltip title={RunToolTips.ingestionStep} placement="bottom">
+                                            <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
                                                 <Icon type="play-circle" theme="filled" />
-                                            </Tooltip>
+                                            </MLTooltip>
                                         </div>
-                                        </Upload>
+                                        </MLUpload>
                                         :
                                         <div
                                             className={styles.run}
@@ -290,9 +291,9 @@ const Flows: React.FC<Props> = (props) => {
                                             aria-label={'runStep-' + stepNumber}
                                             data-testid={'runStep-' + stepNumber}
                                         >
-                                            <Tooltip title={RunToolTips.otherSteps} placement="bottom">
+                                            <MLTooltip title={RunToolTips.otherSteps} placement="bottom">
                                                 <Icon type="play-circle" theme="filled" />
-                                            </Tooltip>
+                                            </MLTooltip>
                                         </div>
                                     :
                                     <div
@@ -305,12 +306,12 @@ const Flows: React.FC<Props> = (props) => {
                                     </div>
                                 }
                                 {props.canWriteFlow ?
-                                    <Tooltip title={'Delete Step'} placement="bottom">
+                                    <MLTooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.delete} aria-label={'deleteStep-' + stepNumber} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
-                                    </Tooltip> :
-                                    <Tooltip title={'Delete Step'} placement="bottom">
+                                    </MLTooltip> :
+                                    <MLTooltip title={'Delete Step'} placement="bottom">
                                         <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + stepNumber} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
-                                    </Tooltip>
+                                    </MLTooltip>
                                 }
                             </div>
                         }
@@ -326,7 +327,7 @@ const Flows: React.FC<Props> = (props) => {
                             { showUploadError && flowName == runningFlow && stepNumber == runningStep.stepNumber ? props.uploadError : ''}
                         </div>
                         <div className={styles.running} style={{display: isRunning(flowName, stepNumber)  ? 'block' : 'none'}}>
-                            <div><Spin /></div>
+                            <div><MLSpin /></div>
                             <div className={styles.runningLabel}>Running...</div>
                         </div>
                     </Card>

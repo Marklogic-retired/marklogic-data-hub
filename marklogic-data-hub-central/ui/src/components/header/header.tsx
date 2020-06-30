@@ -6,7 +6,7 @@ import { UserContext } from '../../util/user-context';
 import logo from './logo.jpg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
-import { MLButton } from '@marklogic/design-system';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
 import SystemInfo from './system-info';
 
 interface Props extends RouteComponentProps<any> {
@@ -57,17 +57,17 @@ const Header:React.FC<Props> = (props) => {
         </Menu.Item>
         <div className={styles.vertical}></div>
         <Menu.Item>
-          <Tooltip title="Search"><Icon type="search"/></Tooltip>
+          <MLTooltip title="Search"><Icon type="search"/></MLTooltip>
         </Menu.Item>
         <Menu.Item>
-          <Tooltip title="Help"><Icon type="question-circle"/></Tooltip>
+          <MLTooltip title="Help"><Icon type="question-circle"/></MLTooltip>
         </Menu.Item>
         <Menu.Item>
-          <Tooltip title="Settings"><Icon type="setting"/></Tooltip>
+          <MLTooltip title="Settings"><Icon type="setting"/></MLTooltip>
         </Menu.Item>
         <Dropdown overlay={userMenu}>
           <span className="userDropdown">
-            <Tooltip title="User"><Icon type="user"/></Tooltip>
+            <MLTooltip title="User"><Icon type="user"/></MLTooltip>
           </span>
         </Dropdown>
       </Menu>
@@ -82,7 +82,7 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <Tooltip title="Help"><Icon type="question-circle"/></Tooltip>
+          <MLTooltip title="Help"><Icon type="question-circle"/></MLTooltip>
         </Menu.Item>
       </Menu>
     </div>

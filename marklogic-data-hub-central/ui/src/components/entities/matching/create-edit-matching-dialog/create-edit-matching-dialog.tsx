@@ -2,6 +2,8 @@ import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './create-edit-matching-dialog.module.scss';
 import { NewMatchTooltips } from '../../../../config/tooltips.config';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
+
 
 const CreateEditMatchingDialog = (props) => {
 
@@ -109,9 +111,9 @@ const CreateEditMatchingDialog = (props) => {
     <span className={styles.ConfirmationMessage}>Discard changes?</span>
     <br /><br />
     <div >
-      <Button onClick={() => onDelCancel()}>No</Button>
+      <MLButton onClick={() => onDelCancel()}>No</MLButton>
       &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
+            <MLButton type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
     </div>
   </Modal>;
 
@@ -297,9 +299,9 @@ const CreateEditMatchingDialog = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewMatchTooltips.name}>
+          <MLTooltip title={NewMatchTooltips.name}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+      </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:
@@ -313,9 +315,9 @@ const CreateEditMatchingDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewMatchTooltips.description}>
+          <MLTooltip title={NewMatchTooltips.description}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+      </MLTooltip>
         </Form.Item>
 
         <Form.Item label={<span>
@@ -340,26 +342,26 @@ const CreateEditMatchingDialog = (props) => {
             onChange={handleChange}
           >
             {/* {collectionsList} */}
-          </Input>&nbsp;&nbsp;<Tooltip title={NewMatchTooltips.sourceQuery}>
+          </Input>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip></span></div> : <span><TextArea
+          </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter Source Query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<Tooltip title={NewMatchTooltips.sourceQuery}>
+          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery}>
           <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
-        </Tooltip></span>}
+        </MLTooltip></span>}
         </Form.Item>
         <br /><br /><br /><br />
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button onClick={() => onCancel()}>Cancel</Button>
+            <MLButton onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</Button>
+            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
           </div>
         </Form.Item>
       </Form>

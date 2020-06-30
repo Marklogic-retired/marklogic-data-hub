@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faColumns } from '@fortawesome/free-solid-svg-icons'
 import styles from './column-selector.module.scss';
 import { treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey } from '../../util/data-conversion';
-import { MLButton } from '@marklogic/design-system';
+import { MLButton, MLDivider } from '@marklogic/design-system';
 import { SearchContext } from '../../util/search-context';
 
 
@@ -153,7 +153,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
         </Tree>
       </div>
       <footer>
-        <Divider className={styles.divider} />
+        <MLDivider className={styles.divider} />
         <div className={styles.footer}>
           <MLButton size="small" onClick={onClose} >Cancel</MLButton>
           <MLButton size="small" onClick={onApply} >Apply</MLButton>

@@ -12,6 +12,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
 import DateTimeFacet from '../date-time-facet/date-time-facet';
+import { MLTooltip } from '@marklogic/design-system';
+
 
 
 const { Panel } = Collapse;
@@ -501,8 +503,8 @@ const Sidebar: React.FC<Props> = (props) => {
           </Panel>
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{ borderBottom: 'none' }}>
-          <div className={styles.facetName} data-cy='created-on-facet'>Created On<Tooltip title={tooltips.createdOn} placement="topLeft">
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></Tooltip></div>
+          <div className={styles.facetName} data-cy='created-on-facet'>Created On<MLTooltip title={tooltips.createdOn} placement="topLeft">
+            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip></div>
           <div>
             <Select
                 style={{ width: 150 }}

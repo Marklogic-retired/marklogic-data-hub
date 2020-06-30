@@ -9,6 +9,8 @@ import ExpandableTableView from "../expandable-table-view/expandable-table-view"
 import { Icon, Tooltip } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
+import { MLTooltip } from '@marklogic/design-system';
+
 
 interface Props extends RouteComponentProps {
     item: any;
@@ -114,10 +116,10 @@ const SearchResult: React.FC<Props> = (props) => {
                 <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined}/>
                 <div className={styles.redirectIcons}>
                     <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {selectedValue:'instance'}}} id={'instance'} data-cy='instance'>
-                        <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></Tooltip>
+                        <MLTooltip title={'Show detail on a separate page'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></MLTooltip>
                     </Link>
                     <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {selectedValue:'source'}}} id={'source'} data-cy='source'>
-                        <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></Tooltip>
+                        <MLTooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></MLTooltip>
                     </Link>
                 </div>
                 <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>

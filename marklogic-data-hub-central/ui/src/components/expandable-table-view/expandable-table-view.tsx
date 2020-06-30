@@ -4,6 +4,7 @@ import { xmlParser } from "../../util/xml-parser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { MLTooltip } from '@marklogic/design-system';
 
 interface Props {
   item: any;
@@ -39,8 +40,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           property: i,
           children: parseJson(obj[i]),
           view: <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {id:obj[i]}}} data-cy='nested-instance'>
-            <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
-                                                                               size="sm"/></Tooltip>
+            <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
+                                                                               size="sm"/></MLTooltip>
           </Link>
         });
       } else {

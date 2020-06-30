@@ -4,6 +4,8 @@ import { MLButton } from '@marklogic/design-system';
 import styles from './structured-type-modal.module.scss'
 
 import { ModelingTooltips } from '../../../config/tooltips.config';
+import { MLTooltip } from '@marklogic/design-system';
+
 
 type Props = {
   isVisible: boolean;
@@ -108,9 +110,9 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <Tooltip title={ModelingTooltips.nameRegex}>
+          <MLTooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
       </Form>
     </Modal>
