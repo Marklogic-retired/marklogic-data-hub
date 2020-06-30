@@ -50,6 +50,10 @@ public class MlcpRunner extends ProcessRunner {
     private DatabaseClient databaseClient;
     private String database = null;
 
+    public MlcpRunner(String mainClass, HubConfig hubConfig, JsonNode mlcpOptions) {
+        this(null, mainClass, hubConfig, null, null, mlcpOptions, null);
+    }
+
     public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, LegacyFlowStatusListener statusListener) {
         super();
 
@@ -73,26 +77,40 @@ public class MlcpRunner extends ProcessRunner {
     public void run() {
         HubConfig hubConfig = getHubConfig();
 
-        Job job = Job.withFlow(flow)
-            .withJobId(jobId);
-        jobManager.saveJob(job);
+        Job job = null;
+        if (flow != null) {
+            job = Job.withFlow(flow)
+                    .withJobId(jobId);
+            jobManager.saveJob(job);
+        }
 
         try {
             MlcpBean bean = new ObjectMapper().readerFor(MlcpBean.class).readValue(mlcpOptions);
-            bean.setHost(databaseClient.getHost());
-            bean.setPort(databaseClient.getPort());
+            if (databaseClient != null) {
+                bean.setHost(databaseClient.getHost());
+                bean.setPort(databaseClient.getPort());
+            }
             if (database != null) {
                 bean.setDatabase(database);
             }
 
-            // Assume that the HTTP credentials will work for mlcp
-            bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
-            bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
 
-            File file = new File(mlcpOptions.get("input_file_path").asText());
-            String canonicalPath = file.getCanonicalPath();
-            bean.setInput_file_path(canonicalPath);
-            bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
+            if (!"copy".equals(bean.getCommand().toLowerCase())) {
+                // Assume that the HTTP credentials will work for mlcp
+                bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
+                bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
+            }
+
+            if (mlcpOptions.has("input_file_path")) {
+                File file = new File(mlcpOptions.get("input_file_path").asText());
+                String canonicalPath = file.getCanonicalPath();
+                bean.setInput_file_path(canonicalPath);
+            }
+
+            if (job != null) {
+                bean.setTransform_param("\"" + bean.getTransform_param() + ",job-id=" + jobId + "\"");
+            }
+
             bean.setModules_root("/");
 
             if (hubConfig.getIsHostLoadBalancer()) {
@@ -108,28 +126,30 @@ public class MlcpRunner extends ProcessRunner {
             }
 
         } catch (Exception e) {
-            job.withStatus(JobStatus.FAILED)
-                .withEndTime(new Date());
-            jobManager.saveJob(job);
+            if (job != null) {
+                job.withStatus(JobStatus.FAILED)
+                        .withEndTime(new Date());
+                jobManager.saveJob(job);
+            }
             throw new RuntimeException(e);
         } finally {
-            JobStatus status;
-            if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED_WITH_ERRORS;
-            }
-            else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
-                status = JobStatus.FINISHED;
-            }
-            else {
-                status = JobStatus.FAILED;
-            }
+            if (job != null) {
+                JobStatus status;
+                if (failedEvents.get() > 0 && successfulEvents.get() > 0) {
+                    status = JobStatus.FINISHED_WITH_ERRORS;
+                } else if (failedEvents.get() == 0 && successfulEvents.get() > 0) {
+                    status = JobStatus.FINISHED;
+                } else {
+                    status = JobStatus.FAILED;
+                }
 
-            // store the thing in MarkLogic
-            job.withJobOutput(getProcessOutput())
-                .withStatus(status)
-                .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
-                .withEndTime(new Date());
-            jobManager.saveJob(job);
+                // store the thing in MarkLogic
+                job.withJobOutput(getProcessOutput())
+                        .withStatus(status)
+                        .setCounts(successfulEvents.get(), failedEvents.get(), 0, 0)
+                        .withEndTime(new Date());
+                jobManager.saveJob(job);
+            }
         }
     }
 
@@ -152,8 +172,8 @@ public class MlcpRunner extends ProcessRunner {
             "  <logger name=\"com.marklogic.client.impl.DatabaseClientImpl\" level=\"WARN\"/>\n" +
             "  <logger name=\"com.marklogic\" level=\"INFO\"/>\n" +
             "  <logger name=\"com.marklogic.appdeployer\" level=\"INFO\"/>\n" +
-            "  <logger name=\"com.marklogic.hub\" level=\"INFO\"/>\n" +
-            "  <logger name=\"com.marklogic.contentpump\" level=\"INFO\"/>\n" +
+            "  <logger name=\"com.marklogic.hub\" level=\"DEBUG\"/>\n" +
+            "  <logger name=\"com.marklogic.contentpump\" level=\"DEBUG\"/>\n" +
             "  <logger name=\"org.apache.catalina.webresources.Cache\" level=\"ERROR\"/>\n" +
             "  <logger name=\"org.apache.hadoop.util.Shell\" level=\"OFF\"/>\n" +
             "  <logger name=\"org.apache.hadoop.util.NativeCodeLoader\" level=\"ERROR\"/>\n" +
@@ -211,7 +231,8 @@ public class MlcpRunner extends ProcessRunner {
                                     u.contains("guava") ||
                                     u.contains("apache") ||
                                     u.contains("commons") ||
-                                    u.contains("hadoop"))
+                                    u.contains("hadoop") ||
+                                    u.contains("thoughtworks"))
                             ).collect(Collectors.joining(File.pathSeparator));
 
             //logger.warn("Classpath filtered to: " + filteredClasspathEntries);
