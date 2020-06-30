@@ -2,6 +2,8 @@ import { Modal, Form, Input, Button, Tooltip, Icon } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-flow-dialog.module.scss';
 import {NewFlowTooltips} from '../../../config/tooltips.config';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
+
 
 const NewFlowDialog = (props) => {
 
@@ -123,9 +125,9 @@ const NewFlowDialog = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewFlowTooltips.name}>
+          <MLTooltip title={NewFlowTooltips.name}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -138,25 +140,25 @@ const NewFlowDialog = (props) => {
             disabled={!props.canWriteFlow}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewFlowTooltips.description}>
+          <MLTooltip title={NewFlowTooltips.description}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
         <br /><br />
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             {props.canWriteFlow ?
-            <><Button onClick={() => onCancel()}>Cancel</Button>
+            <><MLButton onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <Button 
+            <MLButton 
               type="primary" 
               htmlType="submit" 
               disabled={!flowName}
               onClick={handleSubmit}
             >
               Save
-            </Button></> :
-            <Button onClick={() => onCancel()}>Close</Button>
+            </MLButton></> :
+            <MLButton onClick={() => onCancel()}>Close</MLButton>
             }   
           </div>
         </Form.Item>

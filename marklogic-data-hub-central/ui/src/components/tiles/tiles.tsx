@@ -8,6 +8,8 @@ import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
 import './tiles.scss';
 import Run from '../../pages/Run';
+import { MLTooltip } from '@marklogic/design-system';
+
 
 interface Props {
     id: string;
@@ -87,9 +89,9 @@ const Tiles: React.FC<Props> = (props) => {
                             <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
                                 <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
                                     <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
-                                        <Tooltip title={'Menu'} placement="top">
+                                        <MLTooltip title={'Menu'} placement="top">
                                             <FontAwesomeIcon icon={faCog} />
-                                        </Tooltip>
+                                        </MLTooltip>
                                     </i> 
                                 </a>
                             </Dropdown>
@@ -97,27 +99,27 @@ const Tiles: React.FC<Props> = (props) => {
                     ) : null}
                     {showControl('newTab') ? (
                         <i className={styles.fa} aria-label={'newTab'} style={{ color: options['color'] }} onClick={onClickNewTab}>
-                            <Tooltip title={'Open in New Tab'} placement="top">
+                            <MLTooltip title={'Open in New Tab'} placement="top">
                                 <FontAwesomeIcon icon={faExternalLinkAlt} />
-                            </Tooltip>
+                            </MLTooltip>
                         </i>) : null}
                     {showControl('maximize') ? (
                         <i className={styles.ant} aria-label={'maximize'} style={{ color: options['color'] }} onClick={onClickMaximize}>
-                            <Tooltip title={'Maximize'} placement="top">
+                            <MLTooltip title={'Maximize'} placement="top">
                                 <ArrowsAltOutlined />
-                            </Tooltip>
+                            </MLTooltip>
                         </i>) : null}
                     {showControl('minimize') ? (
                         <i className={styles.ant} aria-label={'minimize'} style={{ color: options['color'] }} onClick={onClickMinimize}>
-                            <Tooltip title={'Minimize'} placement="top">
+                            <MLTooltip title={'Minimize'} placement="top">
                                 <ShrinkOutlined />
-                            </Tooltip>
+                            </MLTooltip>
                         </i>) : null}
                     {showControl('close') ? (
                         <i className={styles.close} aria-label={'close'} style={{ color: options['color'] }} onClick={onClickClose}>
-                            <Tooltip title={'Close'} placement="top">
+                            <MLTooltip title={'Close'} placement="top">
                                 <CloseOutlined />
-                            </Tooltip>
+                            </MLTooltip>
                         </i>
                         ) : null}
                 </div>

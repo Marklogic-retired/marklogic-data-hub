@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import styles from './new-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
 import {NewLoadTooltips} from '../../../config/tooltips.config';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
+
 
 const NewLoadDialog = (props) => {
   const [stepName, setStepName] = useState('');
@@ -128,9 +130,9 @@ const NewLoadDialog = (props) => {
         <span className={styles.ConfirmationMessage}>Discard changes?</span>
         <br/><br/>
         <div >
-            <Button onClick={() => onDelCancel()}>No</Button>
+            <MLButton onClick={() => onDelCancel()}>No</MLButton>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" onClick={onDelOk}>Yes</Button>
+            <MLButton type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
           </div>
     </Modal>;
 
@@ -270,9 +272,9 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
            className={styles.input}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.name}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
@@ -284,9 +286,9 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.description}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip>
+        </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -303,9 +305,9 @@ const NewLoadDialog = (props) => {
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<Tooltip title={NewLoadTooltips.sourceFormat}>
+          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
          {srcFormat === 'csv' ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -329,11 +331,11 @@ const NewLoadDialog = (props) => {
             onChange={handleOtherSeparator}
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
-          />&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip></span> : <span>&nbsp;&nbsp;<Tooltip title={NewLoadTooltips.fieldSeparator}>
+        </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </Tooltip></span>}</span>
+        </MLTooltip></span>}</span>
         </Form.Item> : ''}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -347,9 +349,9 @@ const NewLoadDialog = (props) => {
             style={{width: '95%'}}>
             {toptions}
           </Select>&nbsp;&nbsp;
-              <Tooltip title={NewLoadTooltips.targetFormat}>
+              <MLTooltip title={NewLoadTooltips.targetFormat}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Target URI Prefix:&nbsp;
@@ -362,15 +364,15 @@ const NewLoadDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewLoadTooltips.outputURIPrefix}>
+          <MLTooltip title={NewLoadTooltips.outputURIPrefix}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+      </MLTooltip>
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <Button onClick={() => onCancel()}>Cancel</Button>
+            <MLButton onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <Button type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</Button>
+            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
           </div>
         </Form.Item>
       </Form>

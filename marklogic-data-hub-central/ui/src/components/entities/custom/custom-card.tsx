@@ -7,6 +7,7 @@ import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import {AdvCustomTooltips} from '../../../config/tooltips.config';
 import ViewCustomDialog from "./view-custom-dialog/view-custom-dialog";
+import { MLTooltip } from '@marklogic/design-system';
 
 
 interface Props {
@@ -40,8 +41,8 @@ const CustomCard: React.FC<Props> = (props) => {
                     <Card
                         actions={[
                             <span></span>,
-                            <Tooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-custom button" data-testid={elem.name+'-settings'} onClick={() => OpenCustomSettingsDialog(index)}/></Tooltip>,
-                            <Tooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-custom button" data-testid={elem.name+'-edit'} onClick={() => OpenCustomDialog(index)}/></Tooltip>,
+                            <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-custom button" data-testid={elem.name+'-settings'} onClick={() => OpenCustomSettingsDialog(index)}/></MLTooltip>,
+                            <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-custom button" data-testid={elem.name+'-edit'} onClick={() => OpenCustomDialog(index)}/></MLTooltip>,
                             <i role="disabled-delete-custom button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i>,
                         ]}
                         className={styles.cardStyle}

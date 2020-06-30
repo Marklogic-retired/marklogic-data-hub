@@ -6,6 +6,8 @@ import styles from './entity-type-modal.module.scss'
 import { UserContext } from '../../../util/user-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { updateModelInfo } from "../../../api/modeling";
+import { MLTooltip } from '@marklogic/design-system';
+
 
 type Props = {
   isVisible: boolean;
@@ -156,9 +158,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />}
-          {props.isEditModal ? null : <Tooltip title={ModelingTooltips.nameRegex}>
+          {props.isEditModal ? null : <MLTooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>}
+          </MLTooltip>}
         </Form.Item>
 
         <Form.Item
@@ -175,9 +177,9 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onChange={handleChange}
             onBlur={handleChange}
           />
-          <Tooltip title={ModelingTooltips.entityDescription}>
+          <MLTooltip title={ModelingTooltips.entityDescription}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </Tooltip>
+          </MLTooltip>
         </Form.Item>
       </Form>
     </Modal>

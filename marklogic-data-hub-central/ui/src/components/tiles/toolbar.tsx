@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import styles from './toolbar.module.scss';
 import './toolbar.scss';
+import { MLTooltip } from '@marklogic/design-system';
+
 
 interface Props {
     tiles: any;
@@ -41,18 +43,18 @@ const Toolbar: React.FC<Props>  = (props) => {
                 if (tiles[id]['iconType'] === 'custom') {
                     return (
                         <Link to={ '/tiles/' + id } aria-label={'tool-' + id + '-link'} key={i}>
-                            <Tooltip title={getTooltip(id)} placement="leftTop" key={i}>
+                            <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
                                 <div
                                     className={tiles[id]['icon']}
                                     aria-label={'tool-' + id}
                                     style={getIconStyle(id)}
                                 />
-                            </Tooltip>
+                            </MLTooltip>
                         </Link>
                     )
                 } else {
                     return (
-                        <Tooltip title={getTooltip(id)} placement="leftTop" key={i}>
+                        <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
                             <Link to={ '/tiles/' + id } aria-label={'tool-' + id + '-link'} >
                                 <i
                                     className={styles.tool}
@@ -61,7 +63,7 @@ const Toolbar: React.FC<Props>  = (props) => {
                                 ><FontAwesomeIcon icon={tiles[id]['icon']} size="lg" />
                                 </i>
                             </Link>
-                        </Tooltip>
+                        </MLTooltip>
                     )
                 }
             })}

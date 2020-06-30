@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Tooltip, Alert } from 'antd';
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MLButton } from '@marklogic/design-system';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
 
 import EntityTypeModal from '../components/modeling/entity-type-modal/entity-type-modal';
 import EntityTypeTable from '../components/modeling/entity-type-table/entity-type-table';
@@ -86,16 +86,16 @@ const Modeling: React.FC = () => {
         <h1>Entity Types</h1>
         <div className={styles.buttonContainer}>
           {entityTypes.length == 0 ?
-            <Tooltip title={ModelingTooltips.addNewEntity}>
+            <MLTooltip title={ModelingTooltips.addNewEntity}>
               {addButton}
-            </Tooltip>
+            </MLTooltip>
             : 
             canWriteEntityModel ?
               addButton
               :
-              <Tooltip title={'Add Entity Type: ' + ModelingTooltips.noWriteAccess}>
+              <MLTooltip title={'Add Entity Type: ' + ModelingTooltips.noWriteAccess}>
                 <span>{addButton}</span>
-              </Tooltip>
+              </MLTooltip>
           }
           <MLButton disabled aria-label="save-all">
             <span className={styles.publishIcon}></span>

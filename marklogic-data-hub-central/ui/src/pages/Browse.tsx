@@ -23,6 +23,8 @@ import { fetchQueries } from '../api/queries';
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
+import { MLTooltip, MLSpin } from '@marklogic/design-system';
+
 
 
 interface Props extends RouteComponentProps<any> {
@@ -248,17 +250,17 @@ const Browse: React.FC<Props> = ({ location }) => {
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
                 <div className={styles.spinViews}>
-                  {isLoading && <Spin data-testid="spinner" className={styles.overlay} />}
+                  {isLoading && <MLSpin data-testid="spinner" className={styles.overlay} />}
                   <div className={styles.switchViews}>
                     <div className={!tableView ? styles.toggled : styles.toggleView}
                       data-cy="facet-view" id={'snippetView'}
                       onClick={() => toggleTableView(false)}>
-                      <Tooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></Tooltip>
+                      <MLTooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></MLTooltip>
                     </div>
                     <div className={tableView ? styles.toggled : styles.toggleView}
                       data-cy="table-view" id={'tableView'}
                       onClick={() => toggleTableView(true)}>
-                      <Tooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></Tooltip>
+                      <MLTooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></MLTooltip>
                     </div>
                   </div>
                 </div>

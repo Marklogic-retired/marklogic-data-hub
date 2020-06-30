@@ -2,6 +2,9 @@ import {Modal, Form, Input, Tooltip, Icon, Radio, Button} from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './view-custom-dialog.module.scss';
 import {NewCustomTooltips} from '../../../../config/tooltips.config';
+import { MLTooltip, MLButton } from '@marklogic/design-system';
+
+
 
 const ViewCustomDialog = (props) => {
 
@@ -87,9 +90,9 @@ const ViewCustomDialog = (props) => {
             disabled={!props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewCustomTooltips.name}>
+          <MLTooltip title={NewCustomTooltips.name}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+      </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:
@@ -102,9 +105,9 @@ const ViewCustomDialog = (props) => {
             disabled={!props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <Tooltip title={NewCustomTooltips.description}>
+          <MLTooltip title={NewCustomTooltips.description}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </Tooltip>
+      </MLTooltip>
         </Form.Item>
 
         <Form.Item label={<span>
@@ -127,24 +130,24 @@ const ViewCustomDialog = (props) => {
                 disabled={!props.canReadWrite}
             >
             {/* {collectionsList} */}
-          </Input>&nbsp;&nbsp;<Tooltip title={NewCustomTooltips.sourceQuery}>
+          </Input>&nbsp;&nbsp;<MLTooltip title={NewCustomTooltips.sourceQuery}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </Tooltip></span></div> : <span><TextArea
+          </MLTooltip></span></div> : <span><TextArea
                 id="srcQuery"
                 placeholder="Enter Source Query"
                 value={srcQuery}
                 disabled={!props.canReadWrite}
                 className={styles.input}
-            ></TextArea>&nbsp;&nbsp;<Tooltip title={NewCustomTooltips.sourceQuery}>
+            ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewCustomTooltips.sourceQuery}>
           <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
-        </Tooltip></span>}
+        </MLTooltip></span>}
         </Form.Item>
         <br /><br /><br /><br />
           <Form.Item className={styles.submitButtonsForm}>
               <div className={styles.submitButtons}>
-                  <Button data-testid={`${customName}-cancel`} onClick={() => onCancel()}>Cancel</Button>
+                  <MLButton data-testid={`${customName}-cancel`} onClick={() => onCancel()}>Cancel</MLButton>
                   &nbsp;&nbsp;
-                  <Button type="primary" htmlType="submit" disabled={!props.canReadWrite} >Save</Button>
+                  <MLButton type="primary" htmlType="submit" disabled={!props.canReadWrite} >Save</MLButton>
               </div>
           </Form.Item>
       </Form>

@@ -2,6 +2,7 @@ import React, {useState, useEffect, useContext} from 'react';
 import { Modal, Form, Input, Button } from 'antd';
 import styles from './edit-query-dialog.module.scss';
 import {UserContext} from "../../../../util/user-context";
+import { MLButton } from '@marklogic/design-system';
 
 
 const EditQueryDialog = (props) => {
@@ -143,9 +144,9 @@ const EditQueryDialog = (props) => {
                     <Form.Item
                         className={styles.submitButtonsForm}>
                         <div className={styles.submitButtons}>
-                            <Button id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</Button>
+                            <MLButton id="edit-query-dialog-cancel" onClick={() => onCancel()}>Cancel</MLButton>
                             &nbsp;&nbsp;
-                            <Button type="primary" htmlType="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</Button>
+                            <MLButton type="primary" htmlType="submit" disabled={(!isQueryNameTouched && !isQueryDescriptionTouched) || queryName.length === 0} onClick={handleSubmit}>Save</MLButton>
                         </div>
                     </Form.Item>
                 </Form>

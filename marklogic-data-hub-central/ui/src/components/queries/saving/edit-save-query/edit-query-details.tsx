@@ -4,6 +4,7 @@ import styles from '../save-query-modal/save-query-modal.module.scss';
 import axios from 'axios';
 import {UserContext} from "../../../../util/user-context";
 import {SearchContext} from "../../../../util/search-context";
+import { MLButton } from '@marklogic/design-system';
 
 interface Props {
     setEditQueryDetailVisibility: () => void;
@@ -130,14 +131,14 @@ const EditQueryDetails: React.FC<Props> = (props) => {
                 </Form.Item>
                 <Form.Item>
                     <div className={styles.submitButtons}>
-                        <Button id='edit-query-detail-cancel-button' onClick={() => onCancel()}>Cancel</Button>
+                        <MLButton id='edit-query-detail-cancel-button' onClick={() => onCancel()}>Cancel</MLButton>
                         &nbsp;&nbsp;
-                        <Button type="primary"
+                        <MLButton type="primary"
                                 htmlType="submit"
                                 disabled={queryName.length === 0}
                                 onClick={() => onOk(queryName, queryDescription, props.currentQuery)}
                                 id='edit-query-detail-button'>Save
-                        </Button>
+                        </MLButton>
                     </div>
                 </Form.Item>
             </Form>

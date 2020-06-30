@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Slider, InputNumber, Tooltip } from 'antd';
+import { InputNumber, Tooltip } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import { UserContext } from '../../util/user-context';
 import styles from './numeric-facet.module.scss';
 import { rangeFacet } from '../../api/facets'
+import { MLSlider, MLTooltip } from '@marklogic/design-system';
 
 interface Props {
   name: any;
@@ -144,9 +145,9 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.facetName} >
-      <p className={styles.name}>{<Tooltip title={props.name}>{formatTitle()}</Tooltip>}</p>
+      <p className={styles.name}>{<MLTooltip title={props.name}>{formatTitle()}</MLTooltip>}</p>
       <div className={styles.numericFacet} data-testid='numeric-slider'>
-        <Slider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
+        <MLSlider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
         <InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
         <InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />
       </div>
