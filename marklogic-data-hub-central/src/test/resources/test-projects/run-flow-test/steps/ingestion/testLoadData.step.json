@@ -1,0 +1,11 @@
+{
+  "stepId": "testLoadData-ingestion",
+  "name": "testLoadData",
+  "description": "",
+  "sourceFormat": "json",
+  "separator": null,
+  "targetFormat": "json",
+  "outputURIPrefix": "/data/",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "collections": ["rawData"]
+}

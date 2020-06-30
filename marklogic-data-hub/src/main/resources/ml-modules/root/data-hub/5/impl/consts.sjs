@@ -64,6 +64,8 @@ module.exports = {
   DATA_HUB_MATCHING_WRITE_ROLE: "data-hub-match-merge-writer",
   DATA_HUB_CUSTOM_READ_ROLE: "data-hub-custom-reader",
   DATA_HUB_CUSTOM_WRITE_ROLE: "data-hub-custom-writer",
+  DATA_HUB_STEP_DEFINITION_READ_ROLE: "data-hub-step-definition-reader",
+  DATA_HUB_STEP_DEFINITION_WRITE_ROLE: "data-hub-step-definition-writer",
 
   HUB_ARTIFACT_COLLECTION: "hub-core-artifact",
 

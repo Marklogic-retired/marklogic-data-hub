@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.AbstractMvcTest;
 import com.marklogic.hub.central.controllers.steps.MappingStepControllerTest;
 import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.hub.flow.FlowRunner;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
@@ -99,9 +100,7 @@ public class FlowControllerTest extends AbstractMvcTest {
             });
 
         // Run the step
-        flowController.setFlowRunnerConsumer((flowRunner -> {
-            flowRunner.awaitCompletion();
-        }));
+        flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
         final String[] jobIds = new String[1];
         postJson(flowPath + "/steps/1", "{}")
             .andExpect(status().isOk())
@@ -147,6 +146,45 @@ public class FlowControllerTest extends AbstractMvcTest {
     }
 
     @Test
+    void testCustomStepRun() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/run-flow-test");
+
+        loginAsTestUserWithRoles("hub-central-step-runner");
+
+        final String flowName = "testFlow";
+        final String flowPath = PATH + "/" + flowName;
+
+        // Run the step
+        flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
+        MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+                .file(file1)
+                .file(file2)
+                .session(mockHttpSession))
+                .andExpect(status().isOk());
+
+        final String[] jobIds = new String[1];
+        postJson(flowPath + "/steps/2", "{}")
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode response = parseJsonResponse(result);
+                    assertTrue(response.has("jobId"), "Running a step should result in a response with a jobId so that the " +
+                            "client can then query for job status; response: " + response);
+                    jobIds[0] = response.get("jobId").asText();
+                });
+        // Check on the Job
+        getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode response = parseJsonResponse(result);
+                    assertEquals("finished", response.path("jobStatus").asText(), "The job response should indicate the steps ran successfully: " + response);
+                });
+        assertTrue(getFinalDoc("/data/file1.json").path("processed").asBoolean(false), "Document should have processed attribute set to true");
+    }
+
+    @Test
     void permittedReadRunUser() throws Exception {
         installReferenceModelProject();
 
@@ -185,9 +223,7 @@ public class FlowControllerTest extends AbstractMvcTest {
 
         MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
         MockMultipartFile file2 = new MockMultipartFile("files","file2.json", MediaType.APPLICATION_JSON, "{\"name\": \"John\"}".getBytes(StandardCharsets.UTF_8));
-        flowController.setFlowRunnerConsumer((flowRunner -> {
-            flowRunner.awaitCompletion();
-        }));
+        flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
         mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", "ingestToFinal", "1")
             .file(file1)
             .file(file2)
