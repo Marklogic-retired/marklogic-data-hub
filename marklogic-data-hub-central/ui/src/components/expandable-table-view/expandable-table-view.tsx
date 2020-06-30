@@ -13,11 +13,20 @@ interface Props {
 
 const ExpandableTableView: React.FC<Props> = (props) => {
 
-  let itemEntityName: string[] = [];
-  let itemEntityProperties: any[] = [];
-  let entityDef: any = {};
   let primaryKeyValue: any = '-';
+  let primaryKey: any = '-';
+  let detailPath: any = '-'
   let uri: string = encodeURIComponent(props.item.uri);
+
+  if (Object.keys(props.item.primaryKey).length !== 0) {
+      primaryKeyValue = props.item.primaryKey.propertyValue;
+      primaryKey = props.item.primaryKey.propertyPath;
+  }
+
+  // detailPath is the identifier used to route to detail view
+  if (primaryKey !== "uri") {
+      detailPath = primaryKeyValue
+  }
 
   let data = new Array();
   let counter = 0;
@@ -29,7 +38,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           key: counter++,
           property: i,
           children: parseJson(obj[i]),
-          view: <Link to={{pathname: `/detail/${primaryKeyValue}/${uri}`,state: {id:obj[i]}}} data-cy='nested-instance'>
+          view: <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {id:obj[i]}}} data-cy='nested-instance'>
             <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></Tooltip>
           </Link>
@@ -48,16 +57,6 @@ const ExpandableTableView: React.FC<Props> = (props) => {
 
   if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
     (props.item.extracted.content).forEach(contentObject => {
-      itemEntityName = Object.keys(contentObject);
-      itemEntityProperties = Object.values<any>(contentObject);
-      if (itemEntityName.length && props.entityDefArray.length && !itemEntityName[0].includes('headers')) {
-        entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-        if (itemEntityProperties.length && entityDef.primaryKey) {
-          primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
-        } else {
-          primaryKeyValue = encodeURIComponent(props.item.uri);
-        }
-      }
       Object.values(props.item.extracted.content[1]).forEach((content: any) => {
         data = parseJson(content);
       });
@@ -65,16 +64,6 @@ const ExpandableTableView: React.FC<Props> = (props) => {
   } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
     (props.item.extracted.content).forEach(contentObject => {
       let obj = xmlParser(contentObject);
-      itemEntityName = Object.keys(obj);
-      itemEntityProperties = Object.values<any>(obj);
-      if (itemEntityName.length && props.entityDefArray.length && !itemEntityName[0].includes('headers')) {
-        entityDef = props.entityDefArray.find(entity => entity.name === itemEntityName[0]);
-        if (itemEntityProperties.length && itemEntityProperties[0].hasOwnProperty(entityDef.primaryKey)) {
-          primaryKeyValue = itemEntityProperties[0][entityDef.primaryKey];
-        } else {
-          primaryKeyValue = encodeURIComponent(props.item.uri);
-        }
-      }
       let mappedObj = xmlParser(Object.values(props.item.extracted.content)[1]);
       let propertyValues = Object.values<any>(mappedObj);
       propertyValues.forEach((item: Object) => {

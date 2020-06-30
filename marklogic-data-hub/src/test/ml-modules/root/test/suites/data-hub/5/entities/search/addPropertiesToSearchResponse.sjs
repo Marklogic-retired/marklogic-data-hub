@@ -464,6 +464,32 @@ function verifyPrimaryKeyWithoutDefinedEntities() {
   ];
 }
 
+function verifySimplePropertiesForSingleEntity() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual(true, response.results[0].hasOwnProperty("entityName")),
+    test.assertEqual(true, response.results[0].hasOwnProperty("createdOn")),
+    test.assertEqual("Customer", response.results[0].entityName),
+    test.assertEqual(true, response.results[1].hasOwnProperty("entityName")),
+    test.assertEqual(true, response.results[0].hasOwnProperty("createdOn")),
+    test.assertEqual("Customer", response.results[1].entityName),
+  ];
+}
+
 function verifyPropertiesForAllEntitiesOption() {
   const response = {
     "snippet-format": "snippet",
@@ -480,17 +506,17 @@ function verifyPropertiesForAllEntitiesOption() {
     ]
   };
   const entityName = null; //Indicates that user has chosen 'All Entities' option
-  
+
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
   const allEntitiesProps = response.results[0];
   return([
-  test.assertEqual(true, allEntitiesProps.hasOwnProperty('identifier')),
-  test.assertEqual(true, allEntitiesProps.hasOwnProperty('primaryKey')),
-  test.assertEqual(true, allEntitiesProps.hasOwnProperty('entityName')),
-  test.assertEqual(true, allEntitiesProps.hasOwnProperty('createdOn')),
-  test.assertEqual("identifier", allEntitiesProps.identifier.propertyPath),
-  test.assertEqual(101, allEntitiesProps.identifier.propertyValue),
-  test.assertEqual("Customer", allEntitiesProps.entityName)
+    test.assertEqual(true, allEntitiesProps.hasOwnProperty('identifier')),
+    test.assertEqual(true, allEntitiesProps.hasOwnProperty('primaryKey')),
+    test.assertEqual(true, allEntitiesProps.hasOwnProperty('entityName')),
+    test.assertEqual(true, allEntitiesProps.hasOwnProperty('createdOn')),
+    test.assertEqual("identifier", allEntitiesProps.identifier.propertyPath),
+    test.assertEqual(101, allEntitiesProps.identifier.propertyValue),
+    test.assertEqual("Customer", allEntitiesProps.entityName)
   ]);
 }
 
@@ -528,5 +554,6 @@ function verifyIdentifierWithoutDefinedPrimaryKey() {
   .concat(verifyResultsWithoutSelectedProperties())
   .concat(verifyPrimaryKeyWithDefinedEntities())
   .concat(verifyPrimaryKeyWithoutDefinedEntities())
+  .concat(verifySimplePropertiesForSingleEntity())
   .concat(verifyPropertiesForAllEntitiesOption())
   .concat(verifyIdentifierWithoutDefinedPrimaryKey());
