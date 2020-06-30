@@ -137,11 +137,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     //   getEntityModel();
     // }
     getEntityModel();
-    getSaveQueries();
     return () => {
       componentIsMounted.current = false
     }
-
   }, [])
 
   useEffect(() => {
@@ -209,23 +207,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     setGreyFacets(facets);
   }
 
-  const getSaveQueries = async () => {
-    try {
-      const response = await fetchQueries();
-      if (response.data) {
-        setQueries(response.data);
-      }
-    } catch (error) {
-      handleError(error)
-    } finally {
-      resetSessionTime()
-    }
-  }
-
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
         <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
@@ -277,7 +262,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                     </div>
                   </div>
                 </div>
-                <Query isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} isColumnSelectorTouched={isColumnSelectorTouched}/>
+                <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} isColumnSelectorTouched={isColumnSelectorTouched}/>
               </div>
               <div className={styles.fixedView} >
                 {tableView ?

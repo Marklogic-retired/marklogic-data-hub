@@ -17,7 +17,6 @@ describe('save/manage queries scenarios, developer role', () => {
         cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
         cy.waitUntil(() => browsePage.getExploreButton()).click();
         cy.wait(200);
-        browsePage.getFacetView();
     });
 
     it('apply facet search,open save modal, save new query, edit query details, save a copy of current query', () => {
@@ -311,6 +310,10 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryName().should('be.visible');
         browsePage.getSaveQueryName().type('reset-query');
         browsePage.getSaveQueryButton().click();
+        //verify created query on zero state page
+        browsePage.getQuerySelector().click();
+        browsePage.getQueryByName('reset-query').should('be.visible')
+        browsePage.getQuerySelector().click();
         browsePage.getExploreButton().should('be.visible')
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
