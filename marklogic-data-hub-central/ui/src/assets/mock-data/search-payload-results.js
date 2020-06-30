@@ -46,7 +46,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 876
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:36.479997-07:00"
   },
   {
     "index": 2,
@@ -94,7 +100,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "uri",
+      "propertyValue": "/Users/ban/Documents/Projects/dhf-files/store-data/products/games/92a95902-ee18-49b1-bb16-6c4320b02da5.json"
+    },
+    "entityName": "Product",
+    "createdOn": "2019-10-02T12:11:37.037324-07:00"
   },
   {
     "index": 3,
@@ -143,7 +155,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 209
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:35.318739-07:00"
   },
   {
     "index": 4,
@@ -193,7 +211,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "orderId",
+      "propertyValue": "335"
+    },
+    "entityName": "Order",
+    "createdOn": "2019-10-02T12:11:37.863841-07:00"
   },
   {
     "index": 5,
@@ -243,7 +267,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "orderId",
+      "propertyValue": "544"
+    },
+    "entityName": "Order",
+    "createdOn": "2019-10-02T12:11:38.303424-07:00"
   },
   {
     "index": 6,
@@ -292,7 +322,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 721
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:35.976585-07:00"
   },
   {
     "index": 7,
@@ -342,7 +378,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "orderId",
+      "propertyValue": "417"
+    },
+    "entityName": "Order",
+    "createdOn": "2019-10-02T12:11:37.865345-07:00"
   },
   {
     "index": 8,
@@ -391,7 +433,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 957
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:36.488802-07:00"
   },
   {
     "index": 9,
@@ -440,7 +488,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 36
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:35.320741-07:00"
   },
   {
     "index": 10,
@@ -489,7 +543,13 @@ const searchPayloadResults = [
           }
         }
       ]
-    }
+    },
+    "primaryKey": {
+      "propertyPath": "customerId",
+      "propertyValue": 357
+    },
+    "entityName": "Customer",
+    "createdOn": "2019-10-02T12:11:35.317848-07:00"
   }
 ];
 

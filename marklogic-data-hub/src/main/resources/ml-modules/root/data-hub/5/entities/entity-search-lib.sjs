@@ -301,16 +301,25 @@ function getPrimaryValue(entityInstance, entityDefinition) {
   }
 }
 
-//Helper function to add properties to each result instance under results array in searchReponse
+// Helper function to add properties to each result instance under results array in searchResponse
 function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata) {
   let instance = null;
   let entityTitle = entityInfo.entityName;
+  let createdOnDate = "";
   result.entityProperties = [];
+  result.entityName = "";
+  result.createdOn = "";
 
   try {
     instance = getEntityInstance(result.uri);
   } catch (error) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+  }
+
+  try {
+    createdOnDate = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+  } catch (error) {
+    console.log(`Unable to obtain document with URI '${result.uri}'; will not add createdOn date to its search result`);
   }
 
   if (instance != null) {
@@ -326,6 +335,8 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
       addPrimaryKeyToResult(result, entityInstance, entityDef);
     }
   }
+  result.entityName = entityTitle;
+  result.createdOn = createdOnDate;
 }
 
 function addGenericEntityProperties(result) {
