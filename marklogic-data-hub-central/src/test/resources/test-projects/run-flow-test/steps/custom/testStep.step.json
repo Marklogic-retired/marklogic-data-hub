@@ -1,0 +1,15 @@
+{
+  "lang": "zxx",
+  "name": "testStep",
+  "stepId": "testStep-custom",
+  "stepDefinitionName": "testStep",
+  "stepDefinitionType": "custom",
+  "targetFormat": "json",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['rawData'])",
+  "collections": ["testStep"],
+  "additionalCollections": [],
+  "customValue": "exists"
+}

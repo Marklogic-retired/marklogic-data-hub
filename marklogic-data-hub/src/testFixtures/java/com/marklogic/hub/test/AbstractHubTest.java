@@ -1,6 +1,8 @@
 package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
@@ -27,6 +29,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -282,6 +285,7 @@ public abstract class AbstractHubTest extends TestObject {
 
     protected void installUserModulesAndArtifacts(HubConfig hubConfig, boolean forceLoad, boolean loadQueryOptions) {
         logger.debug("Installing user modules into MarkLogic");
+        resolveAppConfigDirectories(hubConfig);
         List<Command> commands = new ArrayList<>();
 
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
@@ -292,6 +296,7 @@ public abstract class AbstractHubTest extends TestObject {
         SimpleAppDeployer deployer = new SimpleAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager());
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
+        commands.clear();
 
         // Generate function metadata must occur after loading modules
         // and before loading mapping artifacts
@@ -307,7 +312,7 @@ public abstract class AbstractHubTest extends TestObject {
 
         LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
         loadUserArtifactsCommand.setForceLoad(forceLoad);
-        commands.set(0,loadUserArtifactsCommand);
+        commands.add(loadUserArtifactsCommand);
 
         deployer.setCommands(commands);
         deployer.deploy(hubConfig.getAppConfig());
@@ -315,6 +320,24 @@ public abstract class AbstractHubTest extends TestObject {
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
 
+    }
+
+    private void resolveAppConfigDirectories(HubConfig hubConfig) {
+        String baseDirStr = hubConfig.getProjectDir();
+        AppConfig appConfig = hubConfig.getAppConfig();
+        List<ConfigDir> configDirs = appConfig.getConfigDirs();
+        for (ConfigDir configDir:configDirs) {
+            String configPath = configDir.getBaseDir().getPath();
+            if (!configPath.contains(baseDirStr)) {
+                configDir.setBaseDir(Paths.get(baseDirStr, configPath).toFile());
+            }
+        }
+        List<String> modulePaths = appConfig.getModulePaths();
+        for (String modulePath: modulePaths) {
+            if (!modulePath.contains(baseDirStr)) {
+                modulePaths.set(modulePaths.indexOf(modulePath),Paths.get(baseDirStr,modulePath).toString());
+            }
+        }
     }
 
     protected void installUserArtifacts() {

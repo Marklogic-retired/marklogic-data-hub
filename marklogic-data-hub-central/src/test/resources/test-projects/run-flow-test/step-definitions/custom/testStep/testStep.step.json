@@ -1,9 +1,9 @@
 {
   "lang": "zxx",
   "name": "testStep",
-  "type": "CUSTOM",
+  "type": "custom",
   "options": {
     "outputFormat": "json"
   },
-  "modulePath": "/doesnt/matter/yet.sjs"
+  "modulePath": "/custom-modules/custom/testStep/main.sjs"
 }
