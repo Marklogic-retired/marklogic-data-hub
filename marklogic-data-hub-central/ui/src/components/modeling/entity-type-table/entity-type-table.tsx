@@ -28,6 +28,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const { handleError, resetSessionTime } = useContext(UserContext);
   const { modelingOptions, removeEntityModified } = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
@@ -42,6 +43,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       setExpandedRows([props.autoExpand])
     }
   }, [props.autoExpand]);
+
+  useEffect(() => {
+    setAllEntityTypes(props.allEntityTypesData);
+  }, [JSON.stringify(props.allEntityTypesData)]);
 
   const getEntityReferences = async (entityName: string) => {
     try {
@@ -79,6 +84,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     } finally {
       resetSessionTime();
       toggleConfirmModal(false);
+      props.updateEntities();
     }
   }
 
@@ -279,7 +285,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   }
 
-  const renderTableData = props.allEntityTypesData.map((entity) => {
+  const renderTableData = allEntityTypes.map((entity) => {
     return {
       name: entity.entityName + ',' + getEntityTypeDescription(entity),
       instances: entity.entityName + ',' + parseInt(entity.entityInstanceCount),

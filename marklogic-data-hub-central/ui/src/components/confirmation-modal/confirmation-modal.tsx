@@ -68,6 +68,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
   return (
     <Modal
       visible={props.isVisible}
+      destroyOnClose={true}
       closable={true}
       title={title}
       onCancel={closeModal}
@@ -76,14 +77,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
     >
       {props.type === ConfirmationType.Identifer && (
         <>
-          <p>Each entity type is allowed a maximum of one identifier. The current identifier is <b>{props.boldTextArray[0]}</b>.
+          <p id="identifier-text">Each entity type is allowed a maximum of one identifier. The current identifier is <b>{props.boldTextArray[0]}</b>.
           Choosing a different identifier could affect custom applications and other code that uses <b>{props.boldTextArray[0]}</b> for searching.</p>
 
           <p>Are you sure you want to change the identifier from <b>{props.boldTextArray[0]}</b> to <b>{props.boldTextArray[1]}</b>?</p>
         </>
       )}
 
-      {props.type === ConfirmationType.DeleteEntity && <span>Permanently delete <b>{props.boldTextArray[0]}</b>?</span>}
+      {props.type === ConfirmationType.DeleteEntity && <span id="delete-text">Permanently delete <b>{props.boldTextArray[0]}</b>?</span>}
 
       {props.type === ConfirmationType.DeleteEntityRelationshipWarn && (
         <>
@@ -94,7 +95,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             showIcon
             type="warning"
           />
-          <p>The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
+          <p id="delete-relationship-text">The <b>{props.boldTextArray[0]}</b> entity type is related to one or more entity types. Deleting <b>{props.boldTextArray[0]}</b> will cause
           those relationships to be removed from all involved entity types.</p>
           <p>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> entity type?</p>
         </>
@@ -109,7 +110,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             showIcon
             type="warning"
           />
-          <p>Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this property.</p>
+          <p id="delete-step-text">Edit these steps and choose a different entity type before deleting <b>{props.boldTextArray[0]}</b>, to correlate with your changes to this property.</p>
           <p
             aria-label="toggle-steps"
             className={styles.toggleSteps}
@@ -124,7 +125,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         </>
       )}
 
-      {props.type === ConfirmationType.DeletePropertyWarn && <span>Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</span>}
+      {props.type === ConfirmationType.DeletePropertyWarn && <span id="delete-property-text">Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</span>}
 
       {props.type === ConfirmationType.DeletePropertyStepWarn && (
         <>
@@ -135,7 +136,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             showIcon
             type="warning"
           />
-          <p>The <b>{props.boldTextArray[1]}</b> is used in one or more steps,
+          <p id="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> is used in one or more steps,
           so deleting this property may require editing the steps to make sure this deletion dooesn't affect those steps.</p>
           <p
             aria-label="toggle-steps"
@@ -154,9 +155,9 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
       {props.type === ConfirmationType.SaveEntity && (
         <>
-          <p>Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
+          <p id="save-text">Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
 
-          <p>Changes will be saved to the entity model, possible including updating indexes.
+          <p>Changes will be saved to the entity model, possibly including updating indexes.
             Any features enabled by the changes will not be available until this is complete.
           </p>
         </>

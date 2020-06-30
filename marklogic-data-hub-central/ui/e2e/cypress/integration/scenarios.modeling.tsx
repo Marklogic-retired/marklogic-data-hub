@@ -129,12 +129,13 @@ describe('Entity Modeling', () => {
 
     entityTypeTable.getSaveEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-
-    cy.wait(10000);
+    confirmationModal.getSaveEntityText().should('exist');
+    confirmationModal.getSaveEntityText().should('not.exist');
 
     entityTypeTable.getDeleteEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    cy.wait(2000);
+    confirmationModal.getDeleteEntityText().should('exist');
+    confirmationModal.getDeleteEntityText().should('not.exist');
     entityTypeTable.getEntity('Product').should('not.exist');
   });
 
@@ -287,11 +288,13 @@ describe('Entity Modeling', () => {
 
     entityTypeTable.getSaveEntityIcon('User').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-    cy.wait(10000);
+    confirmationModal.getSaveEntityText().should('exist');
+    confirmationModal.getSaveEntityText().should('not.exist');
 
     entityTypeTable.getDeleteEntityIcon('User').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    cy.wait(2000);
+    confirmationModal.getDeleteEntityText().should('exist');
+    confirmationModal.getDeleteEntityText().should('not.exist');
     entityTypeTable.getEntity('User').should('not.exist');
   });
 

@@ -275,7 +275,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           break;
         default:
           newSelectedPropertyOptions.propertyType = PropertyType.Basic;
-          if (props.structuredTypeOptions.isStructured){
+          if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName){
             setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
           } else {
             setRadioValues(ALL_RADIO_DISPLAY_VALUES);
@@ -429,6 +429,17 @@ const PropertyModal: React.FC<Props> = (props) => {
     let entityDefinition = props.entityDefinitionsArray.find( entity => entity.name === props.entityName);
     let structuredDefinitions = props.entityDefinitionsArray.filter( entity => entity.name !== props.entityName);
     let propertyNamesArray = entityDefinition['properties'].map( property => property.name);
+
+    if (props.structuredTypeOptions.isStructured) {
+      let splitName = props.structuredTypeOptions.name.split(',');
+      let structuredTypeName = splitName[splitName.length-1];
+      let structuredTypeDefinition = props.entityDefinitionsArray.find( entity => entity.name === structuredTypeName);
+      if (structuredTypeDefinition && structuredTypeDefinition['properties'].length) {
+        propertyNamesArray = structuredTypeDefinition['properties'].map( property => property.name);
+      } else {
+        propertyNamesArray = []
+      }
+    }
 
     if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length === 0) {
       setDropdownOptions(DEFAULT_DROPDOWN_OPTIONS);
@@ -631,7 +642,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           <span>{props.entityName}</span>
         </Form.Item>
 
-        { props.structuredTypeOptions.isStructured && selectedPropertyOptions.type !== props.structuredTypeOptions.name && (
+        { props.structuredTypeOptions.isStructured 
+          && selectedPropertyOptions.type !== props.structuredTypeOptions.name
+          && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
           <Form.Item
             className={styles.formItemEntityType}
             label={<span>Structured Type:</span>}
