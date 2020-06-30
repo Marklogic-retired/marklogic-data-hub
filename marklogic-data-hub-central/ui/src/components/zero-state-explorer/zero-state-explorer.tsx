@@ -148,7 +148,7 @@ const ZeroStateExplorer = (props) => {
               <Card className={styles.smallCard} bordered={false}>
                 <Row>
                   <Col span={24} >
-                    <div className={styles.query} >
+                    <div id='query-selector' className={styles.query} >
                       <Select
                         style={{ width: 300 }}
                         placeholder="Select a saved query"

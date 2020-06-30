@@ -33,7 +33,6 @@ const Query = (props) => {
     } = useContext(SearchContext);
 
     const [openSaveModal, setOpenSaveModal] = useState(false);
-    const [queries, setQueries] = useState<any>([]);
     const [showApply, toggleApply] = useState(false);
     const [applyClicked, toggleApplyClicked] = useState(false);
     const [openEditDetail, setOpenEditDetail] = useState(false);
@@ -84,7 +83,7 @@ const Query = (props) => {
             const response = await fetchQueries();
 
             if (response.data) {
-               setQueries(response.data);
+               props.setQueries(response.data);
             }
         } catch (error) {
             handleError(error)
@@ -138,14 +137,14 @@ const Query = (props) => {
     }
 
     useEffect(() => {
-        if (queries.length > 0) {
-            for (let key of queries) {
+        if (props.queries.length > 0) {
+            for (let key of props.queries) {
                 if (key.savedQuery.name === currentQueryName) {
                     setCurrentQuery(key);
                 }
             }
         }
-    }, [queries]);
+    }, [props.queries]);
 
     useEffect(() => {
         getSaveQueries();
@@ -226,9 +225,9 @@ const Query = (props) => {
     }
 
     const resetIconClicked = () => {
-        const resetQueryEditedConfirmation = props.isSavedQueryUser && queries.length > 0
+        const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
                                             && searchOptions.selectedQuery !== 'select a query' && isSaveQueryChanged()
-        const resetQueryNewConfirmation = props.isSavedQueryUser && queries.length > 0 &&
+        const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 &&
                                           (props.selectedFacets.length > 0 || searchOptions.query.length > 0)
                                           && searchOptions.selectedQuery === 'select a query'
         if (resetQueryNewConfirmation) {
@@ -286,7 +285,7 @@ const Query = (props) => {
                                 title="save-query"
                                 onClick={() => setOpenSaveModal(true)}
                                 data-testid='save-modal'
-                                style={queries.length > 0 ? {
+                                style={props.queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '170px',
                                     marginBottom: '9px',
@@ -315,7 +314,7 @@ const Query = (props) => {
                                 />}
                         </div>
                     </div>}
-                {props.isSavedQueryUser && showSaveChangesIcon && queries.length > 0 &&
+                {props.isSavedQueryUser && showSaveChangesIcon && props.queries.length > 0 &&
                     <div style={{ marginTop: '-22px' }}>
                         <Tooltip title={'Save changes'}>
                             <FontAwesomeIcon
@@ -323,7 +322,7 @@ const Query = (props) => {
                                 title="save-changes"
                                 onClick={() => setOpenSaveChangesModal(true)}
                                 data-testid='save-changes-modal'
-                                style={queries.length > 0 ? {
+                                style={props.queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '170px',
                                     marginBottom: '9px',
@@ -348,7 +347,7 @@ const Query = (props) => {
                                     setCurrentQueryDescription={(description) => setCurrentQueryDescription(description)}
                                     setCurrentQueryName={(name) => setCurrentQueryName(name)}
                                     nextQueryName = {nextQueryName}
-                                    savedQueryList={queries}
+                                    savedQueryList={props.queries}
                                     setCurrentQueryOnEntityChange = {setCurrentQueryOnEntityChange}
                                     getSaveQueryWithId={(key)=>getSaveQueryWithId(key)}
                                     isSaveQueryChanged={isSaveQueryChanged}
@@ -358,14 +357,14 @@ const Query = (props) => {
                                 />}
                         </div>
                     </div>}
-                {props.isSavedQueryUser && showDiscardIcon && queries.length > 0 &&
+                {props.isSavedQueryUser && showDiscardIcon && props.queries.length > 0 &&
                     <div style={{ marginTop: '-30px', maxWidth: '100px' }}>
                         <Tooltip title={'Discard changes'}>
                             <FontAwesomeIcon
                                 icon={faUndo}
                                 title="discard-changes"
                                 onClick={() => setOpenDiscardChangesModal(true)}
-                                style={queries.length > 0 ? {
+                                style={props.queries.length > 0 ? {
                                     color: '#5b69af',
                                     marginLeft: '192px',
                                     marginBottom: '9px',
@@ -381,16 +380,16 @@ const Query = (props) => {
                             {openDiscardChangesModal &&
                                 <DiscardChangesModal
                                     setDiscardChangesModalVisibility={() => setOpenDiscardChangesModal(false)}
-                                    savedQueryList={queries}
+                                    savedQueryList={props.queries}
                                     toggleApply={(clicked) => toggleApply(clicked)}
                                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
                                 />}
                         </div>
                     </div>}
                 <div className={styles.saveDropdown}>
-                    {queries.length > 0 &&
+                    {props.queries.length > 0 &&
                     <SaveQueriesDropdown
-                        savedQueryList={queries}
+                        savedQueryList={props.queries}
                         setSaveNewIconVisibility={(visibility) =>  toggleSaveNewIcon(visibility)}
                         greyFacets={props.greyFacets}
                         toggleApply={(clicked) => toggleApply(clicked)}
@@ -407,7 +406,7 @@ const Query = (props) => {
                     }
                 </div>
             </div>
-            {props.isSavedQueryUser && queries.length > 0 && <div style={hoverOverDropdown ? { marginLeft: '214px', marginTop: '-66px' } : { marginLeft: '214px' }}>
+            {props.isSavedQueryUser && props.queries.length > 0 && <div style={hoverOverDropdown ? { marginLeft: '214px', marginTop: '-66px' } : { marginLeft: '214px' }}>
                 <Tooltip title={'Edit query details'}>
                     {hoverOverDropdown && <FontAwesomeIcon
                         icon={faPencilAlt}
@@ -428,7 +427,7 @@ const Query = (props) => {
                 />
                 }
             </div>}
-            {props.isSavedQueryUser && queries.length > 0 &&
+            {props.isSavedQueryUser && props.queries.length > 0 &&
                 <div style={{ marginLeft: '234px', marginTop: '-23px' }}>
                     <Tooltip title={'Save a copy'}>
                         {hoverOverDropdown && <FontAwesomeIcon
@@ -453,7 +452,7 @@ const Query = (props) => {
                             resetYesClicked={resetYesClicked}
                         />}
                 </div>}
-            { resetQueryIcon && props.isSavedQueryUser && queries.length > 0 &&
+            { resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
             <div style={searchOptions.selectedQuery !== 'select a query' ? {
                 marginLeft: '256px',
                 marginTop: '-21px',
@@ -514,8 +513,8 @@ const Query = (props) => {
             <QueryModal
                 hasStructured={props.hasStructured}
                 canExportQuery={canExportQuery}
-                queries={queries}
-                setQueries={setQueries}
+                queries={props.queries}
+                setQueries={props.setQueries}
                 columns={props.columns}
                 toggleApply={toggleApply}
                 currentQueryName={currentQueryName}

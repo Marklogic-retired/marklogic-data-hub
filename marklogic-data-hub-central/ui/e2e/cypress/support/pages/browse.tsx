@@ -25,11 +25,11 @@ class BrowsePage {
     // });
   }
 
-  getInstanceViewIcon(){
+  getInstanceViewIcon() {
     return cy.get('[data-cy=instance]');
   }
 
-  getSourceViewIcon(){
+  getSourceViewIcon() {
     return cy.get('[data-cy=source]');
   }
 
@@ -112,7 +112,7 @@ class BrowsePage {
   }
 
   clearFacetSearchSelection(facet: string) {
-    return cy.get('[data-cy=clear-' + facet +']').click();
+    return cy.get('[data-cy=clear-' + facet + ']').click();
   }
 
   getFacetSearchSelectionCount(facet: string) {
@@ -124,24 +124,24 @@ class BrowsePage {
   }
   */
 
-  getSelectedFacets(){
-      return cy.get('[data-cy=selected-facet-block]');
+  getSelectedFacets() {
+    return cy.get('[data-cy=selected-facet-block]');
   }
 
-  getGreySelectedFacets(facet: string){
-    return cy.get('#selected-facets [data-cy=clear-grey-' + facet +']');
+  getGreySelectedFacets(facet: string) {
+    return cy.get('#selected-facets [data-cy=clear-grey-' + facet + ']');
   }
 
-  getAppliedFacets(facet: string){
-    return cy.get('#selected-facets [data-cy=clear-' + facet +']');
+  getAppliedFacets(facet: string) {
+    return cy.get('#selected-facets [data-cy=clear-' + facet + ']');
   }
 
-  getClearGreyFacets(){
+  getClearGreyFacets() {
     return cy.get('[data-cy=clear-all-grey-button]');
   }
 
   getFacetApplyButton() {
-     return cy.get('svg[data-icon="check-square"]')
+    return cy.get('svg[data-icon="check-square"]')
     //return cy.get('#selected-facets [data-cy=facet-apply-button]');
   }
 
@@ -182,7 +182,7 @@ class BrowsePage {
   }
 
   //table
-  getColumnTitle(index:number) {
+  getColumnTitle(index: number) {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');
   }
 
@@ -190,11 +190,11 @@ class BrowsePage {
     return cy.get('.ant-table-row');
   }
 
-  getTableViewInstanceIcon(){
+  getTableViewInstanceIcon() {
     return cy.get('.ant-table-row:last-child [data-cy=instance]');
   }
 
-  getTableViewSourceIcon(){
+  getTableViewSourceIcon() {
     return cy.get('.ant-table-row:last-child [data-cy=source]');
   }
 
@@ -206,47 +206,47 @@ class BrowsePage {
     return cy.get('.ant-table-row-expand-icon-cell');
   }
 
-  getTableColumns(){
+  getTableColumns() {
     return cy.get('.react-resizable');
   }
 
-  getTableCell(rowIndex:number, columnIndex:number) {
+  getTableCell(rowIndex: number, columnIndex: number) {
     return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text')
   }
 
-  getTableUriCell(rowIndex:number) {
+  getTableUriCell(rowIndex: number) {
     return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text')
   }
 
-  getTableTitle(index:number) {
+  getTableTitle(index: number) {
     return cy.get(`.ant-table-thead tr th:nth-child(${index}) .ant-table-column-title`);
   }
 
-  getColumnSelectorIcon(){
+  getColumnSelectorIcon() {
     return cy.get('[data-cy=column-selector] > div > svg');
   }
 
   //popover
-  getColumnSelector(){
+  getColumnSelector() {
     return cy.get('.ant-popover-inner');
   }
 
-  getTreeItems(){
+  getTreeItems() {
     return cy.get('.ant-popover-inner ul > li');
   }
 
-  getTreeItem(index:number){
+  getTreeItem(index: number) {
     return cy.get(`.ant-popover-inner ul > li:nth-child(${index})`);
   }
 
-  getTreeItemTitle(index:number){
+  getTreeItemTitle(index: number) {
     return cy.get(`.ant-popover-inner ul > li:nth-child(${index}) span:last-child`);
   }
-  getTreeItemChecked(index:number){
-     cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('not.have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
+  getTreeItemChecked(index: number) {
+    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('not.have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
   }
 
-  getTreeItemUnchecked(index:number){
+  getTreeItemUnchecked(index: number) {
     cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
   }
 
@@ -257,22 +257,22 @@ class BrowsePage {
   }
 
   getSaveQueryName() {
-      return cy.get('#save-query-name');
+    return cy.get('#save-query-name');
   }
 
-  getSaveQueryDescription(){
+  getSaveQueryDescription() {
     return cy.get('#save-query-description');
   }
 
-  getSaveQueryButton(){
+  getSaveQueryButton() {
     return cy.get('#save-query-button');
   }
 
-  getSaveQueryCancelButton(){
+  getSaveQueryCancelButton() {
     return cy.get('#save-query-cancel-button');
   }
 
-  getSaveQueriesDropdown(){
+  getSaveQueriesDropdown() {
     return cy.get('#dropdownList');
   }
 
@@ -284,68 +284,68 @@ class BrowsePage {
     return cy.get('svg[data-icon="copy"]')
   }
 
-  getEditQueryDetailFormName(){
+  getEditQueryDetailFormName() {
     return cy.get('#edit-query-detail-name');
   }
 
-  getEditQueryDetailDesc(){
+  getEditQueryDetailDesc() {
     return cy.get('#edit-query-detail-description');
   }
 
-  getEditQueryDetailButton(){
-      return cy.get('#edit-query-detail-button');
+  getEditQueryDetailButton() {
+    return cy.get('#edit-query-detail-button');
   }
 
-  getEditQueryDetailCancelButton(){
+  getEditQueryDetailCancelButton() {
     return cy.get('#edit-query-detail-cancel-button');
   }
 
-  getRadioOptionSelected(){
-      return cy.get('[type="radio"]').first().check();
+  getRadioOptionSelected() {
+    return cy.get('[type="radio"]').first().check();
   }
 
-  getEditSaveChangesButton(){
-      return cy.get('#edit-save-changes-button');
+  getEditSaveChangesButton() {
+    return cy.get('#edit-save-changes-button');
   }
 
-  getEditSaveChangesCancelButton(){
-      return cy.get('#edit-save-changes-cancel-button');
+  getEditSaveChangesCancelButton() {
+    return cy.get('#edit-save-changes-cancel-button');
   }
 
-  getEditSaveChangesFormName(){
-      return cy.get('#save-changes-query-name');
+  getEditSaveChangesFormName() {
+    return cy.get('#save-changes-query-name');
   }
 
-  getDiscardChangesIcon(){
-      return cy.get('svg[data-icon="undo"]')
+  getDiscardChangesIcon() {
+    return cy.get('svg[data-icon="undo"]')
   }
 
-  getDiscardYesButton(){
-     return cy.get('#discard-yes-button');
+  getDiscardYesButton() {
+    return cy.get('#discard-yes-button');
   }
 
-  getDiscardNoButton(){
-     return cy.get('#discard-no-button');
+  getDiscardNoButton() {
+    return cy.get('#discard-no-button');
   }
 
   getCloseIcon() {
     return cy.get('svg[data-icon="close"]');
   }
 
-  getManageQueryCloseIcon(){
-      return cy.get('.manage-modal-close-icon');
+  getManageQueryCloseIcon() {
+    return cy.get('.manage-modal-close-icon');
   }
 
-  getResetQueryButton(){
-      return cy.get('#reset-changes')
+  getResetQueryButton() {
+    return cy.get('#reset-changes')
   }
 
-    //temp query icon
-  getManageQueriesIcon(){
+  //temp query icon
+  getManageQueriesIcon() {
     return cy.get('[data-testid=manage-queries-modal-icon]');
   }
 
-  getManageQueriesModalOpened(){
+  getManageQueriesModalOpened() {
     cy.wait(200);
     cy.waitUntil(() => cy.get('.fa-cog')).click();
     cy.wait(200);
@@ -354,7 +354,7 @@ class BrowsePage {
   }
 
   //saved query dropdown
-  getSelectedQuery(){
+  getSelectedQuery() {
     return cy.get('[data-cy=drop-down-list] .ant-select-selection-selected-value').invoke('text');
   }
 
@@ -371,55 +371,65 @@ class BrowsePage {
     });
   }
 
-  getSelectedQueryDescription(){
+  getSelectedQueryDescription() {
     return cy.get('#selected-query-description').invoke('text');
   }
 
   // Switching queries confirmation buttons
 
-  getQueryConfirmationCancelClick(){
+  getQueryConfirmationCancelClick() {
     return cy.get('#query-confirmation-cancel-button');
   }
 
-  getQueryConfirmationNoClick(){
+  getQueryConfirmationNoClick() {
     return cy.get('#query-confirmation-no-button');
   }
 
-  getQueryConfirmationYesClick(){
+  getQueryConfirmationYesClick() {
     return cy.get('#query-confirmation-yes-button');
   }
 
   // Switching entities confirmation buttons
 
-  getEntityConfirmationCancelClick(){
+  getEntityConfirmationCancelClick() {
     return cy.get('#entity-confirmation-cancel-button');
   }
 
-  getEntityConfirmationNoClick(){
+  getEntityConfirmationNoClick() {
     return cy.get('#entity-confirmation-no-button');
   }
 
-  getEntityConfirmationYesClick(){
+  getEntityConfirmationYesClick() {
     return cy.get('#entity-confirmation-yes-button');
   }
 
   // Reset Query Confirmation buttons
-    getResetConfirmationCancelClick(){
-        return cy.get('#reset-confirmation-cancel-button').click();
-    }
+  getResetConfirmationCancelClick() {
+    return cy.get('#reset-confirmation-cancel-button').click();
+  }
 
-    getResetConfirmationNoClick(){
-        return cy.get('#reset-confirmation-no-button').click();
-    }
+  getResetConfirmationNoClick() {
+    return cy.get('#reset-confirmation-no-button').click();
+  }
 
-    getResetConfirmationYesClick(){
-        return cy.get('#reset-confirmation-yes-button').click();
-    }
+  getResetConfirmationYesClick() {
+    return cy.get('#reset-confirmation-yes-button').click();
+  }
 
   // Zero state Explorer
   getExploreButton() {
     return cy.get('[data-cy=explore]');
-}
+  }
+
+  getQuerySelector() {
+    return cy.get('#query-selector');
+  }
+
+  getQueryByName(query:string) {
+    return cy.get(`[data-cy=query-option-${query}]`);
+  }
+
+  
 
 }
 
