@@ -1,0 +1,30 @@
+{
+  "OrderID" : "10257",
+  "CustomerID" : "HILAA",
+  "EmployeeID" : "4",
+  "OrderDate" : "1996-07-16T04:30:55",
+  "RequiredDate" : "1996-08-13T15:50:43",
+  "ShippedDate" : "1996-07-22T09:45:31",
+  "ShipVia" : "3",
+  "Freight" : "81.9100",
+  "ShipName" : "HILARION-Abastos",
+  "ShipAddress" : "Carrera 22 con Ave. Carlos Soublette #8-35",
+  "ShipCity" : "San Cristóbal",
+  "ShipRegion" : [ "region4", "region7", "region9" ],
+  "ShipPostalCode" : "5022",
+  "ShipCountry" : "Venezuela",
+  "OrderDetails" : [
+    {
+      "ProductID" : "87",
+      "UnitPrice" : "80.4000",
+      "Quantity" : "85",
+      "Discount" : "0"
+    },
+    {
+      "ProductID" : "85",
+      "UnitPrice" : "83.4000",
+      "Quantity" : "89",
+      "Discount" : "0"
+    }
+  ]
+}

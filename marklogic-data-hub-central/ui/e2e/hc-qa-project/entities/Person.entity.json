@@ -1,0 +1,55 @@
+{
+  "info": {
+    "title": "Person",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Person": {
+      "primaryKey": "id",
+      "required": [ ],
+      "pii": [
+        "SSN"
+      ],
+      "elementRangeIndex": [
+        "fname",
+        "lname"
+      ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "id": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "fname": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "lname": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "desc": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "SSN": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "ZipCode": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "Address": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "DateOfBirth": {
+          "datatype": "date"
+        }
+      }
+    }
+  }
+}

@@ -139,13 +139,12 @@ const Facet: React.FC<Props> = (props) => {
         onChange={(e) => handleClick(e)}
         checked={checked.includes(facet.value)}
         className={styles.value}
-        data-cy={stringConverter(props.name) + "-facet-item-checkbox"}
-        data-testid={stringConverter(props.name) + "-" + facet + "-facet-item-checkbox"}
+        data-testid={`${stringConverter(props.name)}-${facet.value}-checkbox`}
       >
         <MLTooltip title={facet.value}>{facet.value}</MLTooltip>
       </MLCheckbox>
       <div className={styles.count}
-          data-cy={stringConverter(props.name) + "-facet-item-count"}>{numberConverter(facet.count)}</div>
+          data-cy={`${stringConverter(props.name)}-${facet.value}-count`}>{numberConverter(facet.count)}</div>
     </div>
     );
 

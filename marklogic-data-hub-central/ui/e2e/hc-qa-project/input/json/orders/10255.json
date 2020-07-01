@@ -1,0 +1,30 @@
+{
+  "OrderID" : "10255",
+  "CustomerID" : "RICSU",
+  "EmployeeID" : "9",
+  "OrderDate" : "1996-07-12T00:26:39",
+  "RequiredDate" : "1996-08-09T09:02:47",
+  "ShippedDate" : "1996-07-15T03:58:12",
+  "ShipVia" : "3",
+  "Freight" : "148.3300",
+  "ShipName" : "Richter Supermarkt",
+  "ShipAddress" : "Starenweg 5",
+  "ShipCity" : "Genève",
+  "ShipRegion" : [ "region1", "region4", "region7" ],
+  "ShipPostalCode" : "1204",
+  "ShipCountry" : "Switzerland",
+  "OrderDetails" : [
+    {
+      "ProductID" : "69",
+      "UnitPrice" : "64.0000",
+      "Quantity" : "60",
+      "Discount" : "0"
+    },
+    {
+      "ProductID" : "62",
+      "UnitPrice" : "62.4000",
+      "Quantity" : "66",
+      "Discount" : "0"
+    }
+  ]
+}

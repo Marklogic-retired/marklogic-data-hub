@@ -1,0 +1,30 @@
+{
+  "OrderID" : "10253",
+  "CustomerID" : "AlFKI",
+  "EmployeeID" : "3",
+  "OrderDate" : "1996-07-10T12:27:52",
+  "RequiredDate" : "1996-07-24T09:56:32",
+  "ShippedDate" : "1996-07-16T22:15:30",
+  "ShipVia" : "2",
+  "Freight" : "58.1700",
+  "ShipName" : "Hanari Carnes",
+  "ShipAddress" : "Rua do Paço, 67",
+  "ShipCity" : "Rio de Janeiro",
+  "ShipRegion" : [ "region2", "region4", "region6" ],
+  "ShipPostalCode" : "05454-876",
+  "ShipCountry" : "Brazil",
+  "OrderDetails" : [
+    {
+      "ProductID" : "49",
+      "UnitPrice" : "46.0000",
+      "Quantity" : "40",
+      "Discount" : "0"
+    },
+    {
+      "ProductID" : "42",
+      "UnitPrice" : "45.0000",
+      "Quantity" : "47",
+      "Discount" : "0"
+    }
+  ]
+}

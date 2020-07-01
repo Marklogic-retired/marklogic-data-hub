@@ -1,0 +1,25 @@
+{
+  "lang" : "zxx",
+  "name" : "cusIngTest",
+  "description" : "",
+  "type" : "INGESTION",
+  "version" : 1,
+  "options" : {
+    "sourceQuery" : "cts.collectionQuery([])",
+    "collections" : [ "cusIngTest" ],
+    "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+    "outputFormat" : "json",
+    "targetDatabase" : "data-hub-STAGING"
+  },
+  "customHook" : { },
+  "modulePath" : "/custom-modules/ingestion/customIngestion/main.sjs",
+  "retryLimit" : 0,
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "fileLocations" : {
+    "inputFilePath" : "",
+    "outputURIReplacement" : "",
+    "inputFileType" : ""
+  },
+  "language" : "zxx"
+}

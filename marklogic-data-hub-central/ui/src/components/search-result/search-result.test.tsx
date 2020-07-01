@@ -26,7 +26,7 @@ describe("Search Result component", () => {
     it('should render entity name,primary key,snippet info', () => {
       expect(wrapper.exists('[data-cy="entity-name"]')).toBe(true);
       expect(wrapper.exists('[data-cy="primary-key"]')).toBe(true);
-      expect(wrapper.exists('[data-cy="snipped"]')).toBe(true);
+      expect(wrapper.exists('[data-cy="snippet"]')).toBe(true);
     });
     it('should render meta data', () => {
       expect(wrapper.exists('[data-cy="created-on"]')).toBe(true);

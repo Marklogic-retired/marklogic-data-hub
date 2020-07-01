@@ -45,6 +45,8 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
     output_permissions = "data-hub-common,read,data-hub-common-writer,update"
     output_uri_replace = ".*input,''"
     host = project.findProperty("mlHost")
+    ssl = project.findProperty("hubSsl")
+    port = Integer.parseInt(project.findProperty("mlcpPort"))
 }
 
 hubDeployAsDeveloper.finalizedBy("loadThesaurus")

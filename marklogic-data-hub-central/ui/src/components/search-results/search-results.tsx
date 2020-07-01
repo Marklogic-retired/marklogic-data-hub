@@ -2,7 +2,7 @@ import React from 'react';
 import { List } from 'antd';
 import SearchResult from '../search-result/search-result';
 import styles from './search-results.module.scss';
- 
+
 type Props = {
   data: any[];
   entityDefArray:any[];
@@ -15,8 +15,8 @@ const SearchResults:React.FC<Props> = (props) => {
       <List
         itemLayout="horizontal"
         dataSource={props.data}
-        renderItem={item => (
-          <List.Item data-cy='document-list-item'>
+        renderItem={(item, index) => (
+          <List.Item data-cy={`document-list-item-${index}`}>
             <SearchResult
               item={item}
               entityDefArray={props.entityDefArray}

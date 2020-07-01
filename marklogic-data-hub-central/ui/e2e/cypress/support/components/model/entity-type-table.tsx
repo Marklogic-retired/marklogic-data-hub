@@ -36,6 +36,10 @@ class EntityTypeTable {
   getSaveEntityIcon(entityName: string) {
     return cy.findByTestId(`${entityName}-save-icon`);
   }
+
+  waitForTableToLoad() {
+      cy.waitUntil(() => cy.get('.ant-table-row').should('have.length.gt',0));
+  }
 }
 
 const entityTypeTable = new EntityTypeTable();

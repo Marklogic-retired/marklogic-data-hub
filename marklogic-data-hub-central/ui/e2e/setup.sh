@@ -8,27 +8,29 @@ then
 fi
 DHS=`echo $1 | cut -d'=' -f 2`
 mlHost=`echo $2 | cut -d'=' -f 2`
+env=local
+#credentials='-PmlUsername=hc-developer -PmlPassword=password'
 
-credentials='-PmlUsername=hc-developer -PmlPassword=password'
+cd hc-qa-project
+./gradlew hubInit
 
 if $DHS
 then
-        cd hc-qa-project
-        ./gradlew hubInit
-        ./gradlew hubSaveIndexes -PmlHost=$mlHost --info --stacktrace
-        ./gradlew hubDeployAsDeveloper  --info --stacktrace $credentials -PenvironmentName=dhs -PmlHost=$mlHost
+        env=dhs
+        sed -i '' "s/mlHost=/mlHost=$mlHost/g" gradle-dhs.properties
+        ./gradlew hubSaveIndexes --info --stacktrace
+        ./gradlew hubGeneratePII -PenvironmentName=$env --info --stacktrace
+        ./gradlew hubDeployAsDeveloper  --info --stacktrace -PenvironmentName=$env
 else
-        cd qa-project
-        ./gradlew hubInit
-        ./gradlew hubMigrateProjectFlows -Pconfirm=true
         cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
 
-        ./gradlew mlDeploy -PmlHost=$mlHost --info --stacktrace
-        ./gradlew hubSaveIndexes -PmlHost=$mlHost --info --stacktrace
-        ./gradlew hubDeployAsDeveloper $credentials -PmlHost=$mlHost --info --stacktrace
-
-        ./gradlew hubRunFlow $credentials -PflowName=AdvantageFlow -PentityName=Customer -PbatchSize=100 -PthreadCount=4 -Psteps='1,2' -PmlHost=$mlHost  --info --stacktrace
-        ./gradlew hubRunFlow $credentials -PflowName=PersonFlow -PentityName=Person -PbatchSize=100 -PthreadCount=4 -Psteps='1,2' -PmlHost=$mlHost  --info --stacktrace
-        ./gradlew hubRunFlow $credentials -PflowName=PersonXMLFlow -PentityName=PersonXML -PbatchSize=100 -PthreadCount=4 -Psteps='1,2' -PmlHost=$mlHost  --info --stacktrace
-
+        ./gradlew mlDeploy -PmlUsername=admin -PmlPassword=admin --info --stacktrace
+        ./gradlew hubSaveIndexes --info --stacktrace
+        ./gradlew hubGeneratePII --info --stacktrace
+        ./gradlew hubDeployAsDeveloper --info --stacktrace
 fi
+
+        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
+        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
+        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2' --info --stacktrace
+        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=migratedFlow --info --stacktrace

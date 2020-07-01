@@ -1,0 +1,29 @@
+{
+  "headers": {
+    "sources": [
+      {
+        "name": "loadPersonJSON"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadPersonJSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadPersonJSON",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "inputFilePath": "input/json/persons",
+  "outputURIPrefix": "/json/persons/",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadPersonJSON-ingestion",
+  "targetDatabase": "data-hub-STAGING",
+  "outputFormat": "json",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-06-24T20:39:41.749312-07:00"
+}
