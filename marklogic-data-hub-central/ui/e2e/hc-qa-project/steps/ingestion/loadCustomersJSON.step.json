@@ -9,11 +9,13 @@
   "collections": [
     "loadCustomersJSON"
   ],
-  "inputFilePath": "input/json",
-  "outputURIReplacement": ".*input/json,'/Customer'",
+  "inputFilePath": "input/json/customers",
+  "outputURIReplacement": ".*input,''",
   "sourceDatabase": null,
   "targetDatabase": "data-hub-STAGING",
   "permissions": "data-hub-common,read,data-hub-common-writer,update",
+  "batchSize": 100,
   "provenanceGranularityLevel": "coarse",
-  "lastUpdated": "2020-06-04T23:01:35.540012Z"
+  "lastUpdated": "2020-06-24T21:12:22.492316-07:00",
+  "outputFormat": "json"
 }

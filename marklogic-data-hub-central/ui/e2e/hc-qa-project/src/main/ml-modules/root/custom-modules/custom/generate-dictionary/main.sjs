@@ -18,12 +18,12 @@ const spell = require("/MarkLogic/spell");
 
 function main(content, options) {
 
-  const values = cts.elementValues(xs.QName('name')).toArray();
+  const values = cts.elementValues(xs.QName('fname')).toArray();
 
   const dictionary = spell.makeDictionary(values, "element");
-  const uri = "/dictionary/names.xml";
+  const uri = "/dictionary/first-names.xml";
 
-  console.log("Generating dictionary of " + values.length + " names at URI: " + uri);
+  console.log("Generating dictionary of " + values.length + " first names at URI: " + uri);
 
   xdmp.eval(
     "declareUpdate(); var d, uri; xdmp.documentInsert(uri, d, " +

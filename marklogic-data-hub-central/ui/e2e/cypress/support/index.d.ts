@@ -6,7 +6,7 @@ declare namespace Cypress {
     interface Chainable<Subject = any> {
       /**
        * Custom command to login as a developer
-       * @example 
+       * @example
        * cy.loginAsDeveloper().withRequest()
        * cy.loginAsDeveloper().withUI()
       */
@@ -14,7 +14,7 @@ declare namespace Cypress {
 
       /**
        * Custom command to login as a operator
-       * @example 
+       * @example
        * cy.loginAsOperator().withRequest()
        * cy.loginAsOperator().withUI()
       */
@@ -30,9 +30,9 @@ declare namespace Cypress {
 
       /**
        * Custom command to login as a generic test user "hc-test-user" with additional roles that a test may need.
-       * The roles provided as arguments are added to this user. Every time this function is called the user is 
+       * The roles provided as arguments are added to this user. Every time this function is called the user is
        * updated with roles in the arguments
-       * @example 
+       * @example
        * cy.loginAsTestUserWithRoles("hub-central-mapping-reader", "hub-central-entity-exporter").withRequest()
        * cy.loginAsTestUserWithRoles("hub-central-mapping-reader", "hub-central-entity-exporter").withUI()
       */
@@ -66,5 +66,11 @@ declare namespace Cypress {
        * @example cy.logout()
       */
       logout(): void
+
+      /**
+       * GETs all the saved queries and DELETEs them iteratively using cy.request
+       * @example cy.deleteSavedQueries()
+      */
+      deleteSavedQueries(): Chainable<Element>
     }
   }

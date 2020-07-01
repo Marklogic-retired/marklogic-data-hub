@@ -16,6 +16,8 @@
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
   "permissions": "data-hub-common,read,data-hub-operator,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
   "provenanceGranularityLevel": "coarse",
   "properties": {
     "customerId": {
@@ -23,9 +25,6 @@
     },
     "name": {
       "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
-    },
-    "birthDate": {
-      "sourcedFrom": "birthDate"
     },
     "shipping": {
       "sourcedFrom": "/Address/Shipping",
@@ -82,10 +81,19 @@
       "targetEntityType": "#/definitions/Address"
     },
     "customerSince": {
-      "sourcedFrom": ""
+      "sourcedFrom": "parseDate(Created,'MM/DD/YYYY')"
+    },
+    "email": {
+      "sourcedFrom": "Email"
+    },
+    "pin": {
+      "sourcedFrom": "PIN"
+    },
+    "nicknames": {
+      "sourcedFrom": "nicknames"
     }
   },
-  "lastUpdated": "2020-06-05T00:34:51.96953Z",
+  "lastUpdated": "2020-07-08T16:08:45.508899-07:00",
   "customHook": {
     "module": "",
     "parameters": "{}",

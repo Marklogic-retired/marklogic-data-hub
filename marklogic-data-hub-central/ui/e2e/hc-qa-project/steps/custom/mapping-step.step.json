@@ -1,0 +1,21 @@
+{
+  "name" : "mapping-step",
+  "description" : "This is the default mapping step",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "customMapping",
+  "stepDefinitionType" : "CUSTOM",
+  "sourceQuery" : "cts.collectionQuery('cusIngTest')",
+  "mapping" : {
+    "name" : "mapping-name",
+    "version" : 1
+  },
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "customMapping", "mdm-content", "mapping-step", "Customer" ],
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
+  "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+  "validateEntity" : false,
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "stepId" : "mapping-step-custom"
+}

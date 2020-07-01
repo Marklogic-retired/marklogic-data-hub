@@ -37,7 +37,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     const savedQueryOptions = props.savedQueryList.map((key) => key.savedQuery.name);
 
     const options = savedQueryOptions.map((query, index) =>
-        <Option value={query} key={index+1} data-cy="query-option">{query}</Option>
+        <Option value={query} key={index+1} data-cy={`query-option-${query}`}>{query}</Option>
     );
 
     const checkCurrentQueryChange = (e) => {
@@ -86,7 +86,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
             placeholder={'select a query'}
             className={styles.dropDownStyle}
             onChange={checkCurrentQueryChange}
-            data-cy={'drop-down-list'}
             value={(() => {
                     if(props.currentQueryName !== searchOptions.selectedQuery && props.currentQueryName === 'select a query') {
                         onItemSelect(searchOptions.selectedQuery);

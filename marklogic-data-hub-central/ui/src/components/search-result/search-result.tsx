@@ -123,10 +123,10 @@ const SearchResult: React.FC<Props> = (props) => {
                     </Link>
                 </div>
                 <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
-                {primaryKey && <span className={styles.primaryKey}>{primaryKey}:</span>}
-                <span data-cy='primary-key'> {primaryKeyValue}</span>
+                {primaryKey && <span data-cy='primary-key' className={styles.primaryKey}>{primaryKey}:</span>}
+                <span data-cy='primary-key-value'> {primaryKeyValue}</span>
             </div>
-            <div className={styles.snippet} data-cy='snipped'>
+            <div className={styles.snippet} data-cy='snippet'>
                 {props.item.matches.length >= 1 && snippet}
             </div>
             <div className={styles.metadata}>

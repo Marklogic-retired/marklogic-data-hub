@@ -11,15 +11,18 @@
     "Customer",
     "mapCustomersXML"
   ],
+  "additionalCollections": [ ],
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services",
     "custOrderInfo": "custOrderInfo"
   },
-  "lastUpdated": "2020-06-05T00:36:36.930653Z",
+  "lastUpdated": "2020-07-08T16:36:30.001472-07:00",
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "XML",
   "permissions": "data-hub-common,read,data-hub-operator,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
   "provenanceGranularityLevel": "coarse",
   "properties": {
     "customerId": {
@@ -84,6 +87,12 @@
     },
     "nicknames": {
       "sourcedFrom": "//*:Name/*:FirstName"
+    },
+    "email": {
+      "sourcedFrom": "custOrderInfo:CustOrders/custOrderInfo:Email"
+    },
+    "pin": {
+      "sourcedFrom": "custOrderInfo:CustOrders/custOrderInfo:PIN"
     }
   }
 }

@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cypress:open": "cypress open",
-    "cypress:run": "npm install && cypress run",
-    "cypress:local": "cypress open --config baseUrl=http://localhost:3000"
+    "cy:open": "cypress open",
+    "cy:run": "npm install && cypress run",
+    "cy:run-chrome": "npm install && cypress run --browser chrome --headless",
+    "cy:run-firefox": "npm install && cypress run --browser firefox --headless",
+    "cy:local": "cypress open --config baseUrl=http://localhost:3000"
   },
   "keywords": [],
   "author": "",

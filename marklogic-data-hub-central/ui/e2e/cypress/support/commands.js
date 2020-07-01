@@ -29,6 +29,10 @@ import '@testing-library/cypress/add-commands'
 
 //cy.fixture('users/developer.json').as('developer')
 
+let protocol = 'http';
+if(`${Cypress.env('mlHost')}` !== 'localhost')
+  protocol = 'https';
+
 Cypress.Commands.add('withUI', { prevSubject: 'optional'}, (subject) => {
   if (subject) {
     cy.wrap(subject).then(user => {
@@ -49,26 +53,28 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
       const password = user.password
 
       cy.request({
-      method: 'POST', 
-      url: '/api/login', 
+      method: 'POST',
+      url: '/api/login',
       body: { username, password }
       }).then(response => {
         window.localStorage.setItem('dataHubUser', username)
         window.localStorage.setItem('loginResp', JSON.stringify(response.body))
         window.localStorage.setItem('projectName', response.body.projectName)
       });
-      
+
       cy.request({
-        method: 'GET', 
+        method: 'GET',
         url: '/api/environment/systemInfo'
       }).then(response => {
         window.localStorage.setItem('environment', JSON.stringify(response.body))
         window.localStorage.setItem('serviceName', response.body.serviceName)
       });
-      
+
       //window.localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(userPreference))
 
       cy.visit('/tiles')
+      cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
+      cy.wait(200);
     })
   }
 })
@@ -100,18 +106,40 @@ Cypress.Commands.add('logout', () => {
     url: '/api/logout'
   }).then(response => {
     cy.visit('/')
-  }) 
+  })
+})
+
+function getSavedQueries() {
+  return cy.request({
+    request: 'GET',
+    url: '/api/entitySearch/savedQueries'
+  }).then( response => {
+    return response.body;
+  });
+}
+
+Cypress.Commands.add('deleteSavedQueries', () => {
+  getSavedQueries().each(query => {
+    cy.request({
+      method: 'DELETE',
+      url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
+    }).then(response => {
+      console.log("DELETE RESPONSE: " + JSON.stringify(response.statusText));
+    });
+  })
 })
 
 function setTestUserRoles(roles) {
+  //To get roles within quotes and comma separated
   roles = '"' + roles.join('", "') + '"'
   cy.exec(`curl -X PUT --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
-  -d '{"role": [ "hub-central-user", ${roles} ]}' http://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
+  -d '{"role": [ "hub-central-user", ${roles} ]}' ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
+  cy.wait(500);
 }
 
 function resetTestUser() {
   cy.exec(`curl -X PUT --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
-  -d '{"role": [ "hub-central-user" ]}' http://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
+  -d '{"role": [ "hub-central-user" ]}' ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
 }
 
 Cypress.on('uncaught:exception', (err, runnable) => {

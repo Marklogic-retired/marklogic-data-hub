@@ -1,0 +1,42 @@
+{
+  "collections": [
+    "mapPersonJSON",
+    "Person"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "name": "mapPersonJSON",
+  "targetEntityType": "http://example.org/Person-0.0.1/Person",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPersonJSON'])",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapPersonJSON-mapping",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-06-24T21:06:12.442649-07:00",
+  "properties": {
+    "fname": {
+      "sourcedFrom": "FirstName"
+    },
+    "lname": {
+      "sourcedFrom": "LastName"
+    },
+    "SSN": {
+      "sourcedFrom": "SSN"
+    },
+    "Address": {
+      "sourcedFrom": "Address"
+    },
+    "DateOfBirth": {
+      "sourcedFrom": "DateOfBirth"
+    },
+    "ZipCode": {
+      "sourcedFrom": "ZipCode"
+    }
+  }
+}
