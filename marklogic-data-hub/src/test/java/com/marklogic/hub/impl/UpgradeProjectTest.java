@@ -177,7 +177,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         Assumptions.assumingThat(versions.isVersionCompatibleWithES(), () -> {
             FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
-            project.upgradeFlows();
+            project.updateStepDefinitionTypeForInlineMappingSteps();
             Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
             Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
         });

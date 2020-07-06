@@ -869,6 +869,8 @@ public class DataHubImpl implements DataHub, InitializingBean {
         if (isHubInstalled) {
             final String minUpgradeVersion = "4.3.0";
             final String installedVersion = versions.getInstalledVersion();
+            // Warn is used so this appears when using Gradle without "-i"
+            logger.warn("Currently installed DHF version: " + installedVersion);
             if (Versions.compare(installedVersion, minUpgradeVersion) == -1) {
                 throw new RuntimeException("Cannot upgrade installed Data Hub; its version is " + installedVersion + ", and must be at least version " + minUpgradeVersion + " or higher");
             }
