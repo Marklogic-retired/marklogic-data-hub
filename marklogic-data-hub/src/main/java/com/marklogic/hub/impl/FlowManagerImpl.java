@@ -92,7 +92,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
         Flow flow;
         try {
-            JsonNode jsonFlow = getArtifactService().getArtifact("flow", flowName);
+            JsonNode jsonFlow = getFlowService().getFlow(flowName);
             flow = new FlowImpl().deserialize(jsonFlow);
         } catch (FailedRequestException ex) {
             if (HttpStatus.valueOf(ex.getServerStatusCode()) == HttpStatus.NOT_FOUND) {
@@ -239,7 +239,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
 
         try{
-            getArtifactService().deleteArtifact("flow", flowName);
+            getFlowService().deleteFlow(flowName);
         }
         catch (Exception e){
             throw new RuntimeException("Unable to delete flow; cause: " + e.getMessage(), e);

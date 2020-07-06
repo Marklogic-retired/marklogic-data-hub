@@ -1,10 +1,8 @@
 const test = require("/test/test-helper.xqy");
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 function invokeService(artifactType, artifactName, artifact) {
-  return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
-    {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-  ));
+  return Artifacts.validateArtifact(artifactType, artifactName, artifact);
 }
 
 function validArtifact() {

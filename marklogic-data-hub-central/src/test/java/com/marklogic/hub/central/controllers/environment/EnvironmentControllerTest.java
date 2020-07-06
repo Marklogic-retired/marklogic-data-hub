@@ -1,7 +1,5 @@
 package com.marklogic.hub.central.controllers.environment;
 
-import com.marklogic.hub.ArtifactManager;
-import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.controllers.EnvironmentController;
 import com.marklogic.hub.impl.VersionInfo;
@@ -9,9 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
@@ -20,26 +17,6 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
     @Autowired
     Environment environment;
-
-    @Test
-    public void testManageAdminAndSecurityAuthoritiesForArtifacts() {
-        runAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME, testConstants.ENVIRONMENT_MANAGER_PASSWORD);
-        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubClient()).getArtifactTypeInfoList();
-        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
-            assertTrue(typeInfo.getUserCanUpdate());
-            assertTrue(typeInfo.getUserCanRead());
-        }
-    }
-
-    @Test
-    public void testAdminAuthoritiesForArtifacts() {
-        runAsAdmin();
-        List<ArtifactTypeInfo> listTypeInfo = ArtifactManager.on(getHubClient()).getArtifactTypeInfoList();
-        for (ArtifactTypeInfo typeInfo : listTypeInfo) {
-            assertTrue(typeInfo.getUserCanUpdate());
-            assertFalse(typeInfo.getUserCanRead(), "admin would not allow read but write for deployment!");
-        }
-    }
 
     @Test
     void getSystemInfo() {

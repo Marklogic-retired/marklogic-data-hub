@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;

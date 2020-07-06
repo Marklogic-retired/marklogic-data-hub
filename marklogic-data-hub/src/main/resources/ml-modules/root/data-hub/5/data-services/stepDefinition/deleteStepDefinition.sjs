@@ -15,8 +15,5 @@
  */
 'use strict';
 
-const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-
-var flowName, stepID, artifactType, artifactName, artifactVersion;
-
-Artifacts.linkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion);
+var name;
+require('/data-hub/5/artifacts/core.sjs').deleteArtifact("stepDefinition", name);
