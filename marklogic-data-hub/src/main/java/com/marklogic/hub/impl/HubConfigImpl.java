@@ -1408,6 +1408,9 @@ public class HubConfigImpl implements HubConfig
         }
 
         customTokens.put("%%mlJobPermissions%%", jobPermissions);
+        customTokens.put("%%mlFlowPermissions%%", flowPermissions);
+        customTokens.put("%%mlEntityModelPermissions%%", entityModelPermissions);
+        customTokens.put("%%mlStepDefinitionPermissions%%", stepDefinitionPermissions);
 
         customTokens.put("%%mlCustomForestPath%%", customForestPath);
 
@@ -1684,6 +1687,13 @@ public class HubConfigImpl implements HubConfig
 
         customForestPath = "forests";
 
+        applyDefaultPermissionPropertyValues();
+    }
+
+    /**
+     * This is called by applyDefaultPropertyValues, but is separate for testing purposes.
+     */
+    public void applyDefaultPermissionPropertyValues() {
         modulePermissions = "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute";
         entityModelPermissions = "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update";
         mappingPermissions = "data-hub-mapping-reader,read,data-hub-mapping-writer,update";

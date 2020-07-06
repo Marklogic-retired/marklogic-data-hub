@@ -8,6 +8,5 @@ module.exports = {
   HUBLOGLEVEL: "%%mlHubLogLevel%%",
   FLOWOPERATORROLE: "%%mlFlowOperatorRole%%",
   FLOWDEVELOPERROLE: "%%mlFlowDeveloperRole%%",
-  JOBPERMISSIONS: "%%mlJobPermissions%%",
-  MODELPERMISSIONS: "%%mlEntityModelPermissions%%"
+  JOBPERMISSIONS: "%%mlJobPermissions%%"
 };
