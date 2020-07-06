@@ -43,18 +43,8 @@ import java.io.IOException;
 @TestInstance(Lifecycle.PER_CLASS)
 public class RunMarkLogicUnitTestsTest extends HubTestBase {
 
-    private static boolean databasesHaveBeenReset = false;
     private static boolean initialized = false;
 
-    /**
-     * Some tests clear out the final database, so we have to ensure that hub artifacts are still present. Only need to
-     * do this once though. It does create a need to extend HubTestBase though
-     */
-//    @BeforeEach
-//    public void setup() {
-//        if (!databasesHaveBeenReset) {
-//        }
-//    }
     @BeforeAll
     public void prepareDatabasesBeforeAnyTestsRun() {
         applyDatabasePropertiesForTests(adminHubConfig);

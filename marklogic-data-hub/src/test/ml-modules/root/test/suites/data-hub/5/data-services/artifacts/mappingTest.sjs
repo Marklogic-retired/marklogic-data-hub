@@ -16,10 +16,7 @@ function invokeGetAllService(artifactType) {
 }
 
 function invokeValidateService(artifactType, artifactName, artifact) {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/validateArtifact.sjs",
-        {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-    ));
+  return Artifacts.validateArtifact(artifactType, artifactName, artifact);
 }
 
 function updateMappingConfig(artifactName) {
@@ -59,13 +56,6 @@ function getArtifacts() {
     });
 }
 
-function deleteArtifact(artifactName) {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
-        {artifactType: 'mapping', artifactName: `${artifactName}`}
-    ));
-}
-
 function validArtifact() {
     const result = invokeValidateService('mapping','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
     return [
@@ -96,7 +86,5 @@ function invalidArtifact() {
     .concat(createMappingWithSameNameButDifferentEntityType('TestMapping'))
     .concat(updateMappingConfig('TestMapping2'))
     .concat(getArtifacts())
-    .concat(deleteArtifact('TestMapping'))
-    .concat(deleteArtifact('TestMapping2'))
     .concat(validArtifact())
     .concat(invalidArtifact());

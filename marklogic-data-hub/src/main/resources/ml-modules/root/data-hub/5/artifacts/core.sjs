@@ -38,39 +38,7 @@ const registeredArtifactTypes = {
     custom: CustomStep
 };
 
-function getTypesInfo() {
-    const typesInfo = [];
-    for (const artifactType of Object.keys(registeredArtifactTypes)) {
-        if (registeredArtifactTypes.hasOwnProperty(artifactType)) {
-            const artifactLibrary = registeredArtifactTypes[artifactType];
-            const updateRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'update').map((perm) => String(perm.roleId));
-            const readRoles = artifactLibrary.getPermissions().filter((perm) => perm.capability === 'read').map((perm) => String(perm.roleId));
-            const currentRoles = xdmp.getCurrentRoles().toArray().map(String);
-            const manageAdminRolesMustAllMatched = ['manage-admin', 'security'].map((roleName) => String(xdmp.role(roleName)));
-            const hasManageAdminAndSecurity = manageAdminRolesMustAllMatched.every((role) => currentRoles.indexOf(role) !== -1);
-            let currentRoleNames = currentRoles.map(roleId => xdmp.roleName(roleId));
-            let userCanUpdate = false;
-            if (currentRoleNames.includes('admin') || hasManageAdminAndSecurity) {
-                userCanUpdate = true;
-            } else {
-                userCanUpdate = updateRoles.some((roleId) => currentRoles.includes(roleId));
-            }
-            const userCanRead = readRoles.some((roleId) => currentRoles.includes(roleId));
-            typesInfo.push({
-                type: artifactType,
-                fileExtension: getArtifactFileExtension(artifactType),
-                directory: getArtifactDirectory(artifactType),
-                nameProperty: artifactLibrary.getNameProperty(),
-                versionProperty: artifactLibrary.getVersionProperty(),
-                userCanUpdate: userCanUpdate,
-                userCanRead: userCanRead
-            });
-        }
-    }
-    return typesInfo;
-}
-
-const entityServiceDrivenArtifactTypes = ['mapping', 'matching', 'merging', 'mastering', 'custom'];
+const entityServiceDrivenArtifactTypes = ['mapping', 'custom'];
 
 function getArtifacts(artifactType) {
     const queries = [];
@@ -155,7 +123,6 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
     const artifactKey = generateArtifactKey(artifactType, artifactName, artifactVersion);
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
-    // Currently there is no versioning for loadData artifacts
     const node = getArtifactNode(artifactType, artifactName, artifactVersion);
 
     for (const db of artifactLibrary.getStorageDatabases()) {
@@ -213,74 +180,6 @@ function validateArtifact(artifactType, artifactName, artifact) {
     return validatedArtifact;
 }
 
-function linkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
-    return linkToStepOptionsOperation('addLink', flowName, stepID, artifactType, artifactName, artifactVersion);
-}
-
-function removeLinkToStepOptions(flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
-    return linkToStepOptionsOperation('removeLink', flowName, stepID, artifactType, artifactName, artifactVersion);
-}
-
-function linkToStepOptionsOperation(operation, flowName, stepID, artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    // getting artifact object so 404 will be thrown if artifact isn't found
-    // also, we can have the extension library handle latest version logic, if necessary
-    const artifactObject = getArtifactNode(artifactType, artifactName, artifactVersion).toObject();
-    artifactVersion = artifactLibrary.getVersionProperty() ? artifactObject[artifactLibrary.getVersionProperty()] : artifactVersion;
-
-
-    const flowDatabases =  getArtifactTypeLibrary('flow').getStorageDatabases();
-    const flowNode = getArtifactNode('flow', flowName);
-    const stepName = stepID.substring(0, stepID.lastIndexOf('-'));
-    const stepType = stepID.substring(stepID.lastIndexOf('-') + 1).toLowerCase();
-    const stepOptionsXPath = dataHub.hubUtils.xquerySanitizer`/steps/*[name eq "${stepName}"][lower-case(stepDefinitionType) eq "${stepType}"]/options`;
-    const stepOptionsNode = fn.head(flowNode.xpath(stepOptionsXPath));
-    if (fn.empty(stepOptionsNode)) {
-        returnErrToClient(404, 'NOT FOUND', `Step "${stepID}" options of flow "${flowName}" not found!`);
-    }
-    let stepOptionsObject = stepOptionsNode.toObject();
-    if (operation === 'addLink') {
-        if (artifactLibrary.linkToOptions) {
-            stepOptionsObject = artifactLibrary.linkToOptions(stepOptionsObject, artifactName, artifactVersion);
-        } else {
-            stepOptionsObject = defaultArtifactLinkFunction(artifactType, stepOptionsObject, artifactName, artifactVersion);
-        }
-    } else if (operation === 'removeLink') {
-        if (artifactLibrary.removeLinkToOptions) {
-            stepOptionsObject = artifactLibrary.removeLinkToOptions(stepOptionsObject, artifactName, artifactVersion);
-        } else {
-            stepOptionsObject = defaultRemoveArtifactLinkFunction(artifactType, stepOptionsObject, artifactName, artifactVersion);
-        }
-    }
-    const flowURI = xdmp.nodeUri(flowNode);
-    for (const db of flowDatabases) {
-        dataHub.hubUtils.updateNodePath(flowURI, stepOptionsXPath, stepOptionsObject, db);
-    }
-    // returning the updated flow object so the file can be updated in the project directory
-    const flowObject = flowNode.toObject();
-    const stepNumber = fn.string(fn.nodeName(stepOptionsNode.xpath('..')));
-    flowObject.steps[stepNumber].options = stepOptionsObject;
-    return flowObject;
-}
-
-function defaultArtifactLinkFunction(artifactType, existingOptions, artifactName, artifactVersion) {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    const linkObject = {
-        [artifactLibrary.getNameProperty()]: artifactName
-    };
-    const versionProperty = artifactLibrary.getVersionProperty();
-    if (versionProperty)  {
-        linkObject[versionProperty] = artifactVersion;
-    }
-    existingOptions[artifactType] = linkObject;
-    return existingOptions;
-}
-
-function defaultRemoveArtifactLinkFunction(artifactType, existingOptions, artifactName, artifactVersion) {
-    delete existingOptions[artifactType];
-    return existingOptions;
-}
-
 function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
     const artifactLibrary = getArtifactTypeLibrary(artifactType);
     const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
@@ -315,14 +214,6 @@ function generateArtifactKey(artifactType, artifactName, artifactVersion = 'late
 function returnErrToClient(statusCode, statusMsg, body) {
     fn.error(null, 'RESTAPI-SRVEXERR',
         Sequence.from([statusCode, statusMsg, body]));
-}
-
-function validateArtifactSettings(settings, requiredProperties) {
-    const missingProperties = requiredProperties.filter((propName) => !settings[propName]);
-    if (missingProperties.length) {
-        return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
-    }
-    return settings;
 }
 
 function getFullFlow(flowName, artifactVersion = 'latest') {
@@ -403,7 +294,6 @@ function convertStepReferenceToInlineStep(stepId) {
   });
 
   // Convert targetFormat into outputFormat
-  // TODO Ideally, HC will adopt the term "outputFormat" so that this is not needed
   if (referencedStep.targetFormat) {
     referencedStep.outputFormat = referencedStep.targetFormat;
     delete referencedStep.targetFormat;
@@ -431,14 +321,11 @@ function convertStepReferenceToInlineStep(stepId) {
 }
 
 module.exports = {
-    getTypesInfo,
     getArtifacts,
     deleteArtifact,
     getArtifact,
     setArtifact,
     validateArtifact,
-    linkToStepOptions,
-    removeLinkToStepOptions,
     getFullFlow,
     convertStepReferenceToInlineStep
 };

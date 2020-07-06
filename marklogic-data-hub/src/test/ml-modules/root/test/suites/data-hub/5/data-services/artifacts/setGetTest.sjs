@@ -1,16 +1,10 @@
 const test = require("/test/test-helper.xqy");
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 function invokeSetService(artifactType, artifactName, artifact) {
   return fn.head(xdmp.invoke(
     "/data-hub/5/data-services/artifacts/setArtifact.sjs",
     {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-  ));
-}
-
-function invokeGetService(artifactType, artifactName) {
-  return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/getArtifact.sjs",
-    {artifactType, artifactName}
   ));
 }
 
@@ -25,7 +19,7 @@ function insertValidArtifact() {
 }
 
 function getArtifact() {
-  const result = invokeGetService('ingestion','validArtifact');
+  const result = Artifacts.getArtifact("ingestion", "validArtifact");
   return [
     test.assertEqual("validArtifact", result.name),
     test.assertEqual("xml", result.sourceFormat),
@@ -34,14 +28,6 @@ function getArtifact() {
   ];
 }
 
-function deleteArtifact() {
-  return fn.head(xdmp.invoke(
-    "/data-hub/5/data-services/artifacts/deleteArtifact.sjs",
-    {artifactType: 'ingestion', artifactName: 'validArtifact'}
-  ));
-}
-
 []
   .concat(insertValidArtifact())
-  .concat(getArtifact())
-  .concat(deleteArtifact());
+  .concat(getArtifact());

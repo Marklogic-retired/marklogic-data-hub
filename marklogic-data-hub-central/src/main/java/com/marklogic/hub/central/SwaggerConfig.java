@@ -4,7 +4,6 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.marklogic.hub.central.controllers.EntitySearchController;
 import com.marklogic.hub.central.controllers.MappingController;
-import com.marklogic.hub.central.controllers.MatchingController;
 import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.central.controllers.steps.IngestionStepController;
 import com.marklogic.hub.central.controllers.steps.MappingStepController;
@@ -79,8 +78,6 @@ public class SwaggerConfig {
                 IngestionStepController.IngestionSteps.class,
                 MappingController.MappingArtifact.class,
                 MappingStepController.class,
-                MatchingController.MatchingArtifact.class,
-                MatchingController.MatchingArtifacts.class,
                 MappingStepController.MappingSteps.class,
                 ModelController.CreateModelInput.class,
                 ModelController.LatestJobInfo.class,

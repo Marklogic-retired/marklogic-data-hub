@@ -20,13 +20,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
 import com.marklogic.client.ext.modulesloader.ModulesFinder;
-import com.marklogic.client.ext.modulesloader.impl.BaseModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
@@ -34,9 +32,7 @@ import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ArtifactManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.StepService;
@@ -128,58 +124,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             // Supports pre-5.3 mappings
             loadMappingsViaRestApi(stagingClient);
 
-            ArtifactService artifactService = ArtifactService.on(stagingClient);
-
-            // TODO Can simplify this to just having a method for flows and a method for step definitions once
-            // we're no longer creating matching settings
-            ArtifactManager artifactManager = ArtifactManager.on(hubConfig.newHubClient());
-            for (ArtifactTypeInfo typeInfo: artifactManager.getArtifactTypeInfoList()) {
-                final String artifactType = typeInfo.getType();
-                if ("ingestion".equals(artifactType) || "mapping".equals(artifactType) || "custom".equals(artifactType)) {
-                    continue;
-                }
-                final Path artifactPath = hubConfig.getHubProject().getArtifactTypePath(typeInfo);
-                if (!artifactPath.toFile().exists()) {
-                    logger.debug("Artifact directory '"+ artifactPath + "' does not exist, so will not load any artifacts from it." );
-                    continue;
-                }
-                if (!typeInfo.getUserCanUpdate()) {
-                    logger.warn("User is not permitted to update artifacts of type '" + artifactType+ "', so will not " +
-                        "load any artifacts of that type from directory " + artifactPath);
-                    continue;
-                }
-                logger.info("Loading artifacts of type '" + artifactType + "' from directory " + artifactPath);
-                final String fileExtension = "*" + typeInfo.getFileExtension();
-                BaseModulesFinder modulesFinder = new BaseModulesFinder(){
-                    @Override
-                    protected Modules findModulesWithResolvedBaseDir(String resolvedBaseDir) {
-                        Modules modules = new Modules();
-                        /* First write settings and then the artifact to prevent creation of default artifacts
-                         */
-                        modules.setAssets(findResources(artifactType + " Artifact", resolvedBaseDir, fileExtension));
-                        return modules;
-                    }
-                };
-                /*  All artifacts are present in base dir except stepdef, hence run File.walk
-                    also we shouldn't attempt to reload the previously loaded mappings(using REST) using DS.
-                 */
-                if("stepDefinition".equals(artifactType)){
-                    Files.walkFileTree(artifactPath, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                            if (dir.toFile().isDirectory()) {
-                                loadArtifactsWithDataService(dir, modulesFinder, artifactService, typeInfo);
-                            }
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
-                }
-                else {
-                    loadArtifactsWithDataService(artifactPath, modulesFinder, artifactService, typeInfo);
-                }
-            }
-
-            // Then load steps
+            loadFlows(stagingClient);
+            loadStepDefinitions(stagingClient);
             loadSteps(stagingClient);
         }
         catch (IOException e) {
@@ -283,24 +229,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void loadArtifactsWithDataService(
-        Path dir,
-        ModulesFinder modulesFinder,
-        ArtifactService artifactService,
-        ArtifactTypeInfo artifactTypeInfo
-    ) throws IOException {
-        Modules modules = modulesFinder.findModules(dir.toString());
-        for (Resource r : modules.getAssets()) {
-            JsonNode artifactJson = objectMapper.readTree(r.getFile());
-            artifactService.setArtifact(
-                artifactTypeInfo.getType(),
-                artifactJson.get(artifactTypeInfo.getNameProperty()).asText(),
-                artifactJson
-            );
-            logger.info(String.format("Loaded artifact of type type '%s' file %s", artifactTypeInfo.getType(), r.getFilename()));
-        }
-    }
-
     /**
      * As of 5.2.0, artifact permissions are separate from module permissions. If artifact permissions
      * are not defined, then it falls back to using default permissions.
@@ -362,7 +290,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         if (stepsPath.toFile().exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
             StepService stepService = StepService.on(stagingClient);
-            for (File stepTypeDir : stepsPath.toFile().listFiles(file -> file.isDirectory())) {
+            for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepType = stepTypeDir.getName();
                 for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
                     JsonNode step = objectMapper.readTree(stepFile);
@@ -370,10 +298,52 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                         throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
                     }
                     final String stepName = step.get("name").asText();
-                    if (logger.isInfoEnabled()) {
-                        logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
-                    }
+                    logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
                     stepService.saveStep(stepType, step);
+                }
+            }
+        }
+    }
+
+    private void loadFlows(DatabaseClient stagingClient) throws IOException {
+        final Path flowsPath = hubConfig.getHubProject().getFlowsDir();
+        if (flowsPath.toFile().exists()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArtifactService service = ArtifactService.on(stagingClient);
+            for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
+                JsonNode flow = objectMapper.readTree(file);
+                if (!flow.has("name")) {
+                    throw new RuntimeException("Unable to load flow from file: " + file + "; no 'name' property found");
+                }
+                final String flowName = flow.get("name").asText();
+                logger.info(format("Loading flow with name '%s'", flowName));
+                service.setArtifact("flow", flowName, flow);
+            }
+        }
+    }
+
+    private void loadStepDefinitions(DatabaseClient stagingClient) throws IOException {
+        final Path stepDefsPath = hubConfig.getHubProject().getStepDefinitionsDir();
+        if (stepDefsPath.toFile().exists()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            ArtifactService service = ArtifactService.on(stagingClient);
+            for (File typeDir : stepDefsPath.toFile().listFiles(File::isDirectory)) {
+                final String stepDefType = typeDir.getName();
+                for (File defDir : typeDir.listFiles(File::isDirectory)) {
+                    final String stepDefName = defDir.getName();
+                    File stepDefFile = new File(defDir, stepDefName + ".step.json");
+                    if (stepDefFile.exists()) {
+                        JsonNode stepDef = objectMapper.readTree(stepDefFile);
+                        if (!stepDef.has("name")) {
+                            throw new RuntimeException("Unable to load step definition from file: " + stepDefFile +
+                                "; no 'name' property was found");
+                        }
+                        logger.info(format("Loading step definition with type '%s' and name '%s'", stepDefType, stepDefName));
+                        service.setArtifact("stepDefinition", stepDefName, stepDef);
+                    } else {
+                        logger.warn(format("Found step definition directory '%s', but did not find expected " +
+                            "step definition file: '%s'", defDir.getAbsolutePath(), stepDefFile.getName()));
+                    }
                 }
             }
         }

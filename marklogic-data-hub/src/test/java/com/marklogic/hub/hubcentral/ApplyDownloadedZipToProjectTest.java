@@ -6,10 +6,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.dataservices.ArtifactService;
-import com.marklogic.hub.dataservices.FlowService;
-import com.marklogic.hub.dataservices.ModelsService;
-import com.marklogic.hub.dataservices.StepService;
+import com.marklogic.hub.dataservices.*;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import org.junit.jupiter.api.Test;
@@ -70,7 +67,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         ModelsService.on(stagingClient).deleteModel("Person");
         FlowService.on(stagingClient).deleteFlow("testFlow");
         StepService.on(stagingClient).deleteStep("ingestion", "validArtifact");
-        ArtifactService.on(stagingClient).deleteArtifact("stepDefinition", "testStep");
+        StepDefinitionService.on(stagingClient).deleteStepDefinition("testStep");
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
         AllArtifactsProject project = new AllArtifactsProject(getHubClient());
