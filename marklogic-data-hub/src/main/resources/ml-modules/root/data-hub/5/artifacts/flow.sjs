@@ -18,9 +18,10 @@
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 
+const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
 const collections = ['http://marklogic.com/data-hub/flow'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
-const permissions = [xdmp.permission(dataHub.consts.DATA_HUB_FLOW_WRITE_ROLE, 'update'), xdmp.permission(dataHub.consts.DATA_HUB_FLOW_READ_ROLE, 'read')];
 const requiredProperties = ['name'];
 
 function getNameProperty() {
@@ -40,7 +41,12 @@ function getStorageDatabases() {
 }
 
 function getPermissions() {
-    return permissions;
+  let permsString = "%%mlFlowPermissions%%";
+  // Default to the given string in case the above token has not been replaced
+  permsString = permsString.indexOf("%mlFlowPermissions%") > -1 ?
+    "data-hub-flow-reader,read,data-hub-flow-writer,update" :
+    permsString;
+  return new HubUtils().parsePermissions(permsString);
 }
 
 function getFileExtension() {

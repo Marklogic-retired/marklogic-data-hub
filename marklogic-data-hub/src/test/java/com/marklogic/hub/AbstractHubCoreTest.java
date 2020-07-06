@@ -2,6 +2,7 @@ package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +32,13 @@ public abstract class AbstractHubCoreTest extends HubTestBase {
     void beforeEachHubTest() {
         resetHubProject();
         runAsDataHubDeveloper();
+    }
+
+    protected DocumentMetadataHelper getMetadata(DatabaseClient client, String uri) {
+        return new DocumentMetadataHelper(
+            uri,
+            client.newDocumentManager().readMetadata(uri, new DocumentMetadataHandle())
+        );
     }
 
     protected void verifyJsonNodes(JsonNode expectedNode, JsonNode actualNode) {

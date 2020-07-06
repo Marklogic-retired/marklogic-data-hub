@@ -326,11 +326,10 @@ function writeModel(entityName, model) {
 
   dataHub.hubUtils.replaceLanguageWithLang(model);
 
-  let permsString = dataHub.config.MODELPERMISSIONS;
-  if (!permsString || permsString.startsWith("%%ml")) {
-    // Safeguard, as the token is somehow not being replaced when tests are run in Jenkins
-    permsString = "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update";
-  }
+  let permsString = "%%mlEntityModelPermissions%%";
+  permsString = permsString.indexOf("%mlEntityModelPermissions%") > -1 ?
+    "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update" :
+    permsString;
   const permissions = dataHub.hubUtils.parsePermissions(permsString);
 
   [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE].forEach(db => {
