@@ -492,9 +492,10 @@ public class HubProjectImpl implements HubProject {
                 }
             }
         }
-        upgradeFlows();
+
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
         addPathRangeIndexesToFinalDatabase();
+        updateStepDefinitionTypeForInlineMappingSteps();
     }
 
     private void addPathRangeIndexesToFinalDatabase() {
@@ -633,17 +634,24 @@ public class HubProjectImpl implements HubProject {
         IOUtils.closeQuietly(fin);
     }
 
-    protected void upgradeFlows() {
-        if(versions.isVersionCompatibleWithES()){
-            flowManager.getLocalFlows().forEach(flow ->{
-                flow.getSteps().values().forEach((step) -> {
-                    if((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
-                        step.getStepDefinitionName().equalsIgnoreCase("default-mapping")){
-                        step.setStepDefinitionName("entity-services-mapping");
-                    }
+    protected void updateStepDefinitionTypeForInlineMappingSteps() {
+        try {
+            if (versions.isVersionCompatibleWithES()) {
+                flowManager.getLocalFlows().forEach(flow -> {
+                    flow.getSteps().values().forEach((step) -> {
+                        if ((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
+                            step.getStepDefinitionName().equalsIgnoreCase("default-mapping")) {
+                            step.setStepDefinitionName("entity-services-mapping");
+                        }
+                    });
+                    flowManager.saveLocalFlow(flow);
                 });
-                flowManager.saveLocalFlow(flow);
-            });
+            }
+        } catch (Exception ex) {
+            logger.warn("Error occurred while attempting to upgrade mapping steps to use 'entity-services-mapping' " +
+                "stepDefinitionType instead of 'default-mapping'; error: " + ex.getMessage());
+            logger.warn("If you have any steps in flows with a stepDefinitionType of 'default-mapping', please change these to be " +
+                "'entity-services-mapping' instead, as this is the preferred type for mapping steps as of DHF 5.1.0.");
         }
     }
 

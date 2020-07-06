@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -116,14 +117,40 @@ public class Versions extends LoggingObject {
     public String getInstalledVersion(boolean fallbackToLocalProject) {
         try {
             DatabaseClient stagingClient = hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient();
-            return new HubVersionManager(stagingClient).getHubVersion();
+            return getVersionFromRestEndpoint(stagingClient);
         } catch (Exception ex) {
             if (fallbackToLocalProject) {
-                logger.info("Unable to determine installed version, likely because DH is not yet installed: " + ex.getMessage());
-                logger.info("Will try to determine version from local project");
+                logger.warn("Unable to determine installed version, likely because DH is not yet installed: " + ex.getMessage());
+                logger.warn("Will try to determine version from local project");
                 return getLocalProjectVersion();
             } else {
                 throw ex;
+            }
+        }
+    }
+
+    /**
+     * We have to account for both ml:hubversion (DHF 4.3.x) and mlHubversion (DHF 5) because this method may be used
+     * as part of updating a DHF 4.3.x instance. So in case we fail when using mlHubversion due to that endpoint not
+     * existing, we use ml:hubversion instead.
+     *
+     * Unfortunately, we don't have a way to write an automated test for this without removing mlHubversion and adding
+     * ml:hubversion to the test modules database. So we are relying on manual testing for each new minor release,
+     * which is reasonable as we know we have to support a 4.3.x to 5.x upgrade (at least as of 5.3.0).
+     *
+     * @param stagingClient
+     * @return
+     */
+    private String getVersionFromRestEndpoint(DatabaseClient stagingClient) {
+        try {
+            return new HubVersionManager(stagingClient).getHubVersion();
+        } catch (FailedRequestException fre) {
+            String serverMessage = fre.getServerMessage();
+            if (serverMessage != null && serverMessage.contains("Extension mlHubversion")) {
+                logger.warn("Could not find mlHubversion REST endpoint; will try ml:hubversion REST endpoint to determine installed DHF version");
+                return new LegacyHubVersionManager(stagingClient).getHubVersion();
+            } else {
+                throw fre;
             }
         }
     }
@@ -310,6 +337,16 @@ class HubVersionManager extends ResourceManager {
 
     public HubVersionManager(DatabaseClient client) {
         client.init("mlHubversion", this);
+    }
+
+    public String getHubVersion() {
+        return getServices().get(new RequestParameters(), new StringHandle()).get();
+    }
+}
+
+class LegacyHubVersionManager extends ResourceManager {
+    public LegacyHubVersionManager(DatabaseClient client) {
+        client.init("ml:hubversion", this);
     }
 
     public String getHubVersion() {
