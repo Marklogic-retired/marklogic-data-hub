@@ -2,6 +2,8 @@ xquery version "1.0-ml";
 
 import module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/matcher-impl.xqy";
+import module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
@@ -24,83 +26,79 @@ declare variable $DOCUMENT := document{
   )
 };
 
-declare variable $COMPILED-OPTIONS := map:new((
-  map:entry(
-    "queries",
-    (
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("intProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("strProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("boolProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("dateProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("dateTimeProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("decimalProperty")
-        )
-      ))
-    )
-  )
-));
+declare variable $COMPILED-OPTIONS := opt-impl:compile-match-options(
+    xdmp:unquote('
+    {
+      "matchRulesets": [
+        {
+          "matchRules": [
+            {
+              "documentXPath": "//intProperty",
+              "matchType": "exact"
+            },
+            {
+              "documentXPath": "//strProperty",
+              "matchType": "exact"
+            },
+            {
+              "documentXPath": "//boolProperty",
+              "matchType": "exact"
+            },
+            {
+              "documentXPath": "//dateProperty",
+              "matchType": "exact"
+            },
+            {
+              "documentXPath": "//dateTimeProperty",
+              "matchType": "exact"
+            },
+            {
+              "documentXPath": "//decimalProperty",
+              "matchType": "exact"
+            }
+          ]
+        }
+      ]
+    }
+    '),
+    1
+);
 
 declare variable $EXPECTED-VALUES := map:new((
   map:entry(
-    "boolProperty",
+    "//boolProperty",
     fn:true()
   ),
   map:entry(
-    "decimalProperty",
+    "//decimalProperty",
     xs:decimal(123.456)
   ),
   map:entry(
-    "dateProperty",
+    "//dateProperty",
     "1987-03-17"
   ),
   map:entry(
-    "dateTimeProperty",
+    "//dateTimeProperty",
     "1956-12-09T03:55:14"
   ),
   map:entry(
-    "intProperty",
+    "//intProperty",
     xs:integer(12)
   ),
   map:entry(
-    "strProperty",
+    "//strProperty",
     "Hello"
   )
 ));
 
-test:assert-true(
+let $values-by-property := match-impl:values-by-property-name(
+    $DOCUMENT,
+    $COMPILED-OPTIONS
+)
+return test:assert-true(
   fn:deep-equal(
-    xdmp:to-json(match-impl:values-by-qname(
-      $DOCUMENT,
-      $COMPILED-OPTIONS
-    )),
+    xdmp:to-json($values-by-property),
     xdmp:to-json($EXPECTED-VALUES)
-  )
+  ),
+  "Expected :" || xdmp:to-json-string($EXPECTED-VALUES) || "&#10;" || " Actual: " || xdmp:to-json-string($values-by-property)
 )
