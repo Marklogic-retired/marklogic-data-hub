@@ -26,8 +26,8 @@ export const MORE_STRING_TYPES = {
       value: 'anyURI'
     },
     {
-      label: 'base64binary',
-      value: 'base64binary'
+      label: 'base64Binary',
+      value: 'base64Binary'
     },
     {
       label: 'hexBinary',

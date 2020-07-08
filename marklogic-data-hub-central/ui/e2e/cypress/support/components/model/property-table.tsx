@@ -1,53 +1,53 @@
 class PropertyTable {
 
   getAddPropertyButton(entityName: string) {
-    return cy.get(`[aria-label=${entityName}-add-property]`);
+    return cy.findByLabelText(`${entityName}-add-property`);
   }
 
   getProperty(propertyName: string) {
-    return cy.get('[data-testid=' + propertyName + '-span]');
+    return cy.findByTestId(`${propertyName}-span`);
   }
 
   getEntityInstanceCount(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-instance-count]').then(function(value){
+    return cy.findByTestId(`${entityName}-instance-count`).then(function(value){
       return parseInt(value.text().replace(',',''));
     });
   }
 
   getEntityLastProcessed(entityName: string) {
-    return cy.get('[data-testid=' + entityName + '-last-processed]');
+    return cy.findByTestId(`${entityName}-last-processed`);
   }
 
   getIdentifierIcon(propertyName: string) {
-    return cy.get(`[data-testid=identifier-${propertyName}]`);
+    return cy.findByTestId(`identifier-${propertyName}`);
   }
 
   getMultipleIcon(propertyName: string) {
-    return cy.get(`[data-testid=multiple-${propertyName}]`);
+    return cy.findByTestId(`multiple-${propertyName}`);
   }
 
   getSortIcon(propertyName: string) {
-    return cy.get(`[data-testid=sort-${propertyName}]`);
+    return cy.findByTestId(`sort-${propertyName}`);
   }
 
   getFacetIcon(propertyName: string) {
-    return cy.get(`[data-testid=facet-${propertyName}]`);
+    return cy.findByTestId(`facet-${propertyName}`);
   }
 
   getWildcardIcon(propertyName: string) {
-    return cy.get(`[data-testid=wildcard-${propertyName}]`);
+    return cy.findByTestId(`wildcard-${propertyName}`);
   }
 
   getPiiIcon(propertyName: string) {
-    return cy.get(`[data-testid=pii-${propertyName}]`);
+    return cy.findByTestId(`pii-${propertyName}`);
   }
 
   getAddPropertyToStructureType(structureTypeName: string) {
-    return cy.get(`[data-testid=add-struct-${structureTypeName}]`);
+    return cy.findByTestId(`add-struct-${structureTypeName}`);
   }
 
   editProperty(propertyName: string) {
-    return cy.get('[data-testid=' + propertyName + '-span]').click();
+    return cy.findByTestId(`${propertyName}-span`).click();
   }
 
   //Format: EntityTypeName-PropertyName-Definition-Definition

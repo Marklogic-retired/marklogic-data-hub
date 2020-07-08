@@ -429,7 +429,8 @@ const PropertyModal: React.FC<Props> = (props) => {
   const updateTypeDropdown = () => {
     let entityDefinition = props.entityDefinitionsArray.find( entity => entity.name === props.entityName);
     let structuredDefinitions = props.entityDefinitionsArray.filter( entity => entity.name !== props.entityName);
-    let propertyNamesArray = entityDefinition['properties'].map( property => property.name);
+    let propertyNamesArray = entityDefinition['properties'].map( property => property.name);  
+    let entityNamesArray = props.entityDefinitionsArray.map( entity => entity.name); 
 
     if (props.structuredTypeOptions.isStructured) {
       let splitName = props.structuredTypeOptions.name.split(',');
@@ -501,7 +502,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_DATE_TYPES
       ]);
     }
-    setEntityPropertyNamesArray(propertyNamesArray);
+    setEntityPropertyNamesArray([...propertyNamesArray, ...entityNamesArray]);
   }
 
   const createRelationshipDropdown = () => {

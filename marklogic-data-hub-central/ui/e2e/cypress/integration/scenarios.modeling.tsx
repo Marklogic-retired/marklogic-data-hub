@@ -61,6 +61,7 @@ describe('Entity Modeling', () => {
   });
 
   it('can create a new entity, relationship type, and adding identifier confirmation, and delete entity', () => {
+    modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Product');
     entityTypeModal.newEntityDescription('An entity for Products');
@@ -141,6 +142,7 @@ describe('Entity Modeling', () => {
 
 
   it('can create entity, can create a structured type, and properties to structure type, and add structure type as property, and delete entity', () => {
+    modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('User');
     entityTypeModal.newEntityDescription('An entity for User');
@@ -244,8 +246,16 @@ describe('Entity Modeling', () => {
 
     //Edit Property Structured Property
     propertyTable.editProperty('street');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('Zip');
+    propertyModal.getSubmitButton().click();
+    cy.contains(`A property already exists with a name of Zip`);
+    propertyModal.clearPropertyName();
+
+    propertyModal.newPropertyName('streetAlt');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('integer').click();    
+    propertyModal.getTypeFromDropdown('More string types').click();    
+    propertyModal.getCascadedTypeFromDropdown('base64Binary').click(); 
 
     propertyModal.getYesRadio('idenifier').should('not.exist');
     propertyModal.getYesRadio('multiple').click();
@@ -253,9 +263,9 @@ describe('Entity Modeling', () => {
     propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
 
-    propertyTable.getMultipleIcon('street').should('exist');
-    propertyTable.getPiiIcon('street').should('not.exist');
-    propertyTable.getWildcardIcon('street').should('exist');
+    propertyTable.getMultipleIcon('streetAlt').should('exist');
+    propertyTable.getPiiIcon('streetAlt').should('not.exist');
+    propertyTable.getWildcardIcon('streetAlt').should('exist');
 
     //rename property and change type from structured to relationship
     propertyTable.editProperty('address');
@@ -284,7 +294,7 @@ describe('Entity Modeling', () => {
     propertyModal.getCascadedTypeFromDropdown('Address').click(); 
     propertyModal.getSubmitButton().click();
     propertyTable.expandNestedPropertyRow('User-alt_address-Address'); 
-    propertyTable.getProperty('street').should('exist');
+    propertyTable.getProperty('streetAlt').should('exist');
 
     entityTypeTable.getSaveEntityIcon('User').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
