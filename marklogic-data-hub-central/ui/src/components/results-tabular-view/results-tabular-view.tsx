@@ -65,7 +65,7 @@ const ResultsTabularView = (props) => {
     const {
         searchOptions,
         setSelectedTableProperties,
-      } = useContext(SearchContext);
+    } = useContext(SearchContext);
 
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -108,13 +108,15 @@ const ResultsTabularView = (props) => {
                                 children: values
                             }
                         } else {
-                            return {
-                                children: (
-                                    <MLTooltip
-                                        title={value}>
-                                        <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
-                                    </MLTooltip>
-                                )
+                            if (value) {
+                                return {
+                                    children: (
+                                        <MLTooltip
+                                            title={value}>
+                                            <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
+                                        </MLTooltip>
+                                    )
+                                }
                             }
                         }
                     },
@@ -198,23 +200,26 @@ const ResultsTabularView = (props) => {
     }
 
     const generateTableData = (item, dataObj = {}) => {
-        for (let subItem of item) {
-            if (!Array.isArray(subItem)) {
-                if (!Array.isArray(subItem.propertyValue) || typeof (subItem.propertyValue[0]) === 'string') {
-                    dataObj[subItem.propertyPath] = subItem.propertyValue;
-                } else {
-                    let dataObjArr: any[] = [];
-                    for (let el of subItem.propertyValue) {
-                        dataObjArr.push(generateTableData(el));
+        if (item) {
+            for (let subItem of item) {
+                if (!Array.isArray(subItem)) {
+                    if (!Array.isArray(subItem.propertyValue) || (subItem.propertyValue[0] !== null && typeof (subItem.propertyValue[0]) !== 'object')) {
+                        dataObj[subItem.propertyPath] = subItem.propertyValue;
+                    } else {
+                        let dataObjArr: any[] = [];
+                        for (let el of subItem.propertyValue) {
+                            if (el) {
+                                dataObjArr.push(generateTableData(el));
+                            }
+                        }
+                        dataObj[subItem.propertyPath] = dataObjArr;
                     }
-                    dataObj[subItem.propertyPath] = dataObjArr;
+                } else {
+                    return generateTableData(subItem)
                 }
-            } else {
-                return generateTableData(subItem)
             }
+            return dataObj;
         }
-
-        return dataObj;
     }
 
     const dataSource = props.data.map((item) => {
@@ -288,17 +293,17 @@ const ResultsTabularView = (props) => {
                 {props.selectedEntities?.length !== 0 ? <div className={styles.columnSelector} data-cy="column-selector">
                     <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} />
                 </div> : ''}
-                
+
             </div>
             <div className={styles.tabular}>
-        <MLTable bordered
-           data-testid='result-table'
-           rowKey='uri'
-           dataSource={dataSource}
-           columns={tableHeaders}
-           expandedRowRender={expandedRowRender}
-           pagination={false}
-        />
+                <MLTable bordered
+                    data-testid='result-table'
+                    rowKey='uri'
+                    dataSource={dataSource}
+                    columns={tableHeaders}
+                    expandedRowRender={expandedRowRender}
+                    pagination={false}
+                />
             </div>
         </>
     )
