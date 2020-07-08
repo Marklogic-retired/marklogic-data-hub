@@ -86,9 +86,8 @@
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "default-matching",
       "stepDefinitionType" : "MATCHING"
     },
@@ -158,9 +157,8 @@
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : { },
-      "retryLimit" : null,
-      "batchSize" : null,
-      "threadCount" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
       "stepDefinitionName" : "default-merging",
       "stepDefinitionType" : "MERGING"
     }

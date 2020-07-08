@@ -26,7 +26,6 @@
         "targetDatabase" : "data-hub-STAGING"
       },
       "customHook" : { },
-      "retryLimit" : 0,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-ingestion",
@@ -35,11 +34,8 @@
         "inputFilePath" : "datasets/advantage",
         "inputFileType" : "json",
         "outputURIReplacement" : ".*datasets,''",
-        "separator" : ","
-      },
-      "mappingStep" : false,
-      "customStep" : false,
-      "mappingName" : null
+        "separator" : ""
+      }
     },
     "2" : {
       "name" : "AdvantageEnrich",
@@ -55,15 +51,10 @@
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : null,
-      "retryLimit" : 0,
       "batchSize" : 100,
       "threadCount" : 4,
       "stepDefinitionName" : "AdvantageEnrich",
-      "stepDefinitionType" : "CUSTOM",
-      "modulePath" : "/custom-modules/custom/AdvantageEnrich/main.sjs",
-      "mappingStep" : false,
-      "customStep" : true,
-      "mappingName" : null
+      "stepDefinitionType" : "CUSTOM"
     }
   }
 }
