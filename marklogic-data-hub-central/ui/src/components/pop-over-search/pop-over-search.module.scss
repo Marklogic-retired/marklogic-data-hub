@@ -2,11 +2,13 @@
   height: auto;
   max-height: 400px;
   overflow-y: auto;
+  overflow-x: hidden
 }
 
 .checkIcon {
   display: flex;
   justify-content: flex-end;
+  margin-top: 10px;
 }
 
 .popoverIcons {
