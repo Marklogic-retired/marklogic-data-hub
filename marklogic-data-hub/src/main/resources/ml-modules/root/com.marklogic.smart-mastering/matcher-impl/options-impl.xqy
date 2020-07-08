@@ -11,14 +11,22 @@ xquery version "1.0-ml";
 module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl";
 
 import module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms"
-  at "/com.marklogic.smart-mastering/algorithms/base.xqy";
+  at  "/com.marklogic.smart-mastering/algorithms/base.xqy",
+    "/com.marklogic.smart-mastering/algorithms/standard-reduction.xqy";
+import module namespace coll = "http://marklogic.com/smart-mastering/collections"
+  at "/com.marklogic.smart-mastering/impl/collections.xqy";
 import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
+  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 
+declare namespace es = "http://marklogic.com/entity-services";
 declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
@@ -150,7 +158,7 @@ declare function opt-impl:options-from-json($options-json)
         for $property in $options-root/propertyDefs/(properties|property)
         return
           element matcher:property {
-            attribute namespace {fn:string($property/namespace)},
+            attribute {"namespace"} {fn:string($property/namespace)},
             attribute localname {fn:string($property/localname)},
             attribute name {fn:string($property/name)},
             $property/indexReferences ! cts:reference-parse(.)
@@ -173,7 +181,7 @@ declare function opt-impl:options-from-json($options-json)
               attribute function {fn:string($algorithm/function) }
             else (),
             if (fn:exists($algorithm/namespace)) then
-              attribute namespace { fn:string($algorithm/namespace) }
+              attribute {"namespace"} { fn:string($algorithm/namespace) }
             else (),
             if (fn:exists($algorithm/at)) then
               attribute at { fn:string($algorithm/at) }
@@ -324,3 +332,389 @@ declare function opt-impl:options-to-json($options-xml as element(matcher:option
   else ()
 };
 
+declare variable $_cached-compiled-match-options as map:map := map:map();
+
+declare function opt-impl:handle-option-messages($type as xs:string, $message as xs:string, $messages-output as map:map?) {
+  if (fn:exists($messages-output)) then
+    map:put($messages-output, $type, (map:get($messages-output, $type),$message))
+  else if ($type eq "error") then
+    fn:error((), 'RESTAPI-SRVEXERR', (400, $message))
+  else
+    xdmp:log($message, $type)
+};
+
+declare function opt-impl:compile-match-options(
+  $match-options as item() (: as node()|json:object :),
+  $original-minimum-threshold as xs:double?
+) {
+  opt-impl:compile-match-options(
+    $match-options,
+    $original-minimum-threshold,
+    fn:false()
+  )
+};
+
+(:
+ : Calculate queries once per unique match options in request to reduce repeat logic
+ : @param $match-options  Options specifying how documents will be matched
+ : @param $minimum-threshold  Minimum threshold for search results to meet
+ : @param $only-warn-on-error  boolean indicating if errors should be returned rather than thrown
+ : @return map:map with compiled information about match options
+ :)
+declare function opt-impl:compile-match-options(
+  $match-options as item() (: as node()|json:object :),
+  $original-minimum-threshold as xs:double?,
+  $only-warn-on-error as xs:boolean
+) {
+  let $match-options := if ($match-options instance of json:object) then
+      xdmp:to-json($match-options)/object-node()
+    else if (fn:exists($match-options/(*:options|matchOptions))) then
+      $match-options/(*:options|matchOptions)
+    else
+      $match-options
+  let $cache-id :=
+      xdmp:md5(xdmp:describe($match-options, (), ())) || "|min-threshold:" || $original-minimum-threshold
+  return
+  if (map:contains($_cached-compiled-match-options, $cache-id)) then
+    map:get($_cached-compiled-match-options, $cache-id)
+  else
+    let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "compiling match options: " || xdmp:describe($match-options, (), ()))
+      else
+        ()
+    let $message-output :=
+      if ($only-warn-on-error) then
+        map:map()
+      else ()
+    let $ordered-thresholds :=
+      for $threshold in opt-impl:normalize-thresholds($match-options/*:thresholds, $match-options)
+      order by $threshold/score cast as xs:decimal descending
+      return $threshold
+    let $lowest-threshold-score := fn:head(fn:reverse($ordered-thresholds))/score
+    let $minimum-threshold as xs:double :=
+      if (fn:empty($original-minimum-threshold)) then
+        $lowest-threshold-score
+      else
+        $original-minimum-threshold
+    let $target-entity := $match-options/(*:target-entity|targetEntity|targetEntityType) ! fn:string(.)
+    let $target-entity-def := es-helper:get-entity-def($target-entity)
+    let $match-rulesets := $match-options/(*:scoring|matchRulesets)
+    let $max-property-score := fn:max(($match-rulesets/(@weight|weight) ! fn:number(.)))
+    let $algorithms := algorithms:build-algorithms-map((
+      (: old algorithm format :)
+      $match-options/*:algorithms/*:algorithm,
+      (: new algorithm format :)
+      $match-rulesets/matchRules[matchType eq "custom"]
+    ))
+    let $score-ratio :=
+      if ($max-property-score le 64) then
+        1.0
+      else
+        64.0 div $max-property-score
+    let $xpath-namespaces :=
+      if (fn:exists($match-options/propertyDefs/namespaces)) then
+        $match-options/propertyDefs/namespaces cast as map:map
+      else
+        map:new(
+          for $ns in $match-options/*:property-defs/namespace::node()
+          return map:entry(fn:local-name($ns), fn:string($ns))
+        )
+    let $property-names-to-values := map:map()
+    let $queries :=
+      for $rule-set in $match-rulesets/(*:add|*:expand|*:reduce[fn:empty(parent::matchRulesets)]|self::matchRulesets)
+      let $local-name := fn:local-name-from-QName(fn:node-name($rule-set))
+      let $is-complex-rule := $local-name eq "matchRulesets"
+      let $match-rules :=
+        if ($is-complex-rule) then
+          $rule-set/matchRules
+        else
+          $rule-set
+      let $is-reduce :=  ($is-complex-rule and $rule-set/reduce = fn:true()) or $local-name eq "reduce"
+      let $abs-weight := fn:abs(fn:number($rule-set/(@weight|weight)))
+      let $weight := if ($is-reduce) then -$abs-weight else $abs-weight
+      let $rules-count := fn:count($match-rules)
+      let $match-queries :=
+            for $match-rule in $match-rules
+            let $weight := $weight div $rules-count
+            let $type := if ($is-complex-rule) then
+                fn:string($match-rule/matchType)
+              else
+                $local-name
+            let $full-property-node :=
+                if ($is-complex-rule) then
+                  $match-rule/(entityPropertyPath|documentXPath)
+                else
+                  $match-rule/(@property-name|propertyName|((*:all-match|allMatch)/*:property))
+            let $full-property-name := fn:normalize-space(fn:string-join($full-property-node, ", "))
+            let $match-value-function :=
+              if (map:contains($property-names-to-values, fn:string($full-property-name))) then
+                map:get($property-names-to-values, fn:string($full-property-name))
+              else
+                let $local-name :=
+                  if ($is-complex-rule) then
+                    fn:local-name-from-QName(fn:node-name(fn:head($full-property-node)))
+                  else
+                    $type
+                let $match-value-function :=
+                  switch ($local-name)
+                  case "entityPropertyPath" return
+                    let $property-info := es-helper:get-entity-property-info($target-entity, $full-property-name)
+                    return
+                      if (fn:empty($property-info)) then
+                        opt-impl:handle-option-messages("error", "Property information for '" || $full-property-name || "' in entity <"|| $target-entity ||"> not found!", $message-output)
+                      else
+                        let $xpath := $property-info => map:get("pathExpression")
+                        let $namespaces := $property-info => map:get("namespaces")
+                        return
+                          function($document) {
+                            xdmp:unpath($xpath, $namespaces, $document)
+                          }
+                  case "documentXPath" return
+                    function($document) {
+                      xdmp:unpath($full-property-name, $match-rule/namespaces ! (. cast as map:map), $document)
+                    }
+                  case "reduce" return
+                    function($document) { $document }
+                  default return
+                    let $property-definition := $match-options/(*:property-defs|propertyDefs)/*:property[(@name|name) = $full-property-name]
+                    return
+                      if (fn:exists($property-definition/(@path|path))) then
+                        function($document) {
+                        xdmp:unpath(fn:string($property-definition/(@path|path)), $xpath-namespaces, $document)
+                        }
+                      else if (fn:exists($target-entity-def)) then
+                        function($document) {
+                          if (fn:contains($full-property-name,".")) then
+                            xdmp:unpath("//" || fn:replace("","\.","/"), $xpath-namespaces, $document/*:envelope/*:instance)
+                          else
+                            let $qname := fn:QName($target-entity-def/namespaceUri, $full-property-name)
+                            return $document/*:envelope/*:instance/*/*[fn:node-name(.) eq $qname]
+                        }
+                      else
+                        function($document) {
+                          let $qname := fn:QName(fn:string($property-definition/(@namespace|namespace)), fn:string($property-definition/(@localname|localname)))
+                          return $document/*:envelope/*:instance//*[fn:node-name(.) eq $qname]
+                        }
+                return (
+                  map:put($property-names-to-values, fn:string($full-property-name), $match-value-function),
+                  $match-value-function
+                )
+            let $algorithm-ref := if ($is-complex-rule) then
+                if ($type eq "custom") then
+                  $match-rule/algorithmModulePath || ":" || $match-rule/algorithmFunction
+                else
+                  $type
+              else
+                $match-rule/(@algorithm-ref|algorithmRef)
+            let $base-values-query :=
+              if ($type = ("add","exact")) then
+                function ($values) {
+                  helper-impl:property-name-to-query($match-options, $full-property-name)($values, $weight)
+                }
+              else if ($type = ("expand","custom",$algorithm-ref)) then
+                let $custom-algorithm := map:get($algorithms, $algorithm-ref)
+                let $algorithm := if (fn:empty($custom-algorithm)) then
+                    algorithms:default-function-lookup($type, 3)
+                  else
+                    $custom-algorithm
+                return
+                  if (fn:exists($algorithm)) then
+                    algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
+                  else
+                    opt-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
+              else if ($type eq "reduce") then
+                let $algorithm := $algorithm-ref ! map:get($algorithms, .)
+                return
+                  if (fn:exists($algorithm)) then
+                      algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
+                  else
+                      algorithms:standard-reduction-query(?, $match-rule, $match-options)
+              else
+                opt-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
+            return map:new((
+              map:entry("propertyName",$full-property-name),
+              map:entry("type",$type),
+              map:entry("algorithm", $algorithm-ref),
+              map:entry("weight",$weight),
+              map:entry(
+                "valuesToQueryFunction",
+                $base-values-query
+              )
+            ))
+      order by $weight descending
+      return
+        map:new((
+          map:entry("matchRulesetId", sem:uuid-string()),
+          map:entry("weight",$weight),
+          map:entry("isReduce",$is-reduce),
+          map:entry("name",
+            if ($is-complex-rule and fn:exists($rule-set/name)) then
+              fn:string($rule-set/name)
+            else
+              let $first-match-query := fn:head($match-queries)
+              return
+                map:get($first-match-query, "propertyName") || " - " || map:get($first-match-query, "type")
+          ),
+          map:entry("matchQueries", $match-queries)
+        ))
+    let $positive-queries := $queries[fn:not(map:get(., "isReduce"))]
+    let $negative-queries := $queries[map:get(., "isReduce")]
+    let $minimum-threshold-positive-combinations := opt-impl:minimum-threshold-combinations($positive-queries, $minimum-threshold)
+    let $minimum-threshold-combinations :=
+      if (fn:empty($negative-queries)) then
+        $minimum-threshold-positive-combinations
+      else
+        for $minimum-threshold-positive-combination in $minimum-threshold-positive-combinations
+        let $combo-weight := $minimum-threshold-positive-combination => map:get("weight")
+        (: get the combinations of reduce weights that would push the document below minimum threshold  :)
+        let $negative-combinations := opt-impl:minimum-threshold-combinations($negative-queries, $combo-weight - $minimum-threshold)
+        return
+          $minimum-threshold-positive-combination
+            => map:with("notQueries", $negative-combinations)
+
+    let $compiled-match-options := map:new((
+        map:entry("normalizedOptions", $match-options),
+        map:entry("minimumThreshold", $minimum-threshold),
+        (: Ensure we're using the full IRI in the compiled options :)
+        map:entry("targetEntityType", $target-entity-def/entityIRI ! fn:string(.)),
+        map:entry("scoreRatio", $score-ratio),
+        map:entry("algorithms", $algorithms),
+        map:entry("queries", $queries),
+        map:entry("orderedThresholds", $ordered-thresholds),
+        map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
+        map:entry("propertyNamesToValues", $property-names-to-values),
+        map:entry("baseContentQuery",
+          if (fn:exists($target-entity)) then
+            cts:or-query((
+              cts:json-property-scope-query(
+                "info",
+                cts:json-property-value-query("title", fn:string($target-entity-def/entityTitle), (), 0)
+              ),
+              cts:element-query(
+                xs:QName("es:info"),
+                cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
+              )
+            ))
+          else
+            opt-impl:build-collection-query(coll:content-collections($match-options))
+        )
+      ))
+    let $cache-ids := (
+      $cache-id,
+      if (fn:empty($original-minimum-threshold)) then
+        $cache-id || $minimum-threshold
+      else if ($original-minimum-threshold = $lowest-threshold-score) then
+        fn:replace($cache-id, fn:replace(fn:string($original-minimum-threshold), "\.", "\\.") || "$", "")
+      else ()
+    )
+    return (
+      if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "Compiled match options: " || xdmp:to-json-string($compiled-match-options))
+      else (),
+      $compiled-match-options,
+      for $cache-id in $cache-ids
+      return (
+        if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+          xdmp:trace($const:TRACE-MATCH-RESULTS, "Caching match options with key: " || $cache-id)
+        else (),
+        map:put($_cached-compiled-match-options, $cache-id, $compiled-match-options)
+      )
+    )
+};
+
+declare function opt-impl:normalize-thresholds($thresholds as node()*, $match-options as node()) {
+  if (fn:exists($thresholds[thresholdName])) then
+    $thresholds
+  else
+    for $threshold in $thresholds/*:threshold
+    let $action := fn:string($threshold/(@action|*:action))
+    let $action-details :=
+      if ($action = ("notify", "merge")) then
+        ()
+      else
+        $match-options/*:actions/*:action[(@name|name) = $action]
+    return xdmp:to-json(
+        map:new((
+          map:entry("thresholdName", fn:string($threshold/(@label|*:label))),
+          map:entry("score", fn:number($threshold/(@above|*:above))),
+          if (fn:exists($action-details)) then (
+            map:entry("action", "custom"),
+            map:entry("actionModulePath", fn:string($action-details/(@at|at))),
+            map:entry("actionModuleNamespace", fn:string($action-details/(@namespace|namespace))),
+            map:entry("actionModuleFunction", fn:string($action-details/(@function|function)))
+          ) else (
+            map:entry("action", $action)
+          )
+        ))
+      )/object-node()
+};
+
+declare function opt-impl:build-collection-query($collections as xs:string*)
+{
+  if (fn:empty($collections)) then
+    ()
+  else if (fn:count($collections) > 1) then
+    cts:and-query($collections ! cts:collection-query(.))
+  else
+    cts:collection-query($collections)
+};
+(:
+ : Identify a sequence of queries whose scores add up to the $threshold. A document must match at least one of these
+ : queries in order to be returned as a potential match.
+ :
+ : @param $query-results  a sequence of queries with weights
+ : @param $threshold  minimum weighted-score for a match to be relevant
+ : @return a sequence of queries; a document that matches any of these will have at least $threshold as a score
+ :)
+declare function opt-impl:minimum-threshold-combinations($query-results, $threshold as xs:double)
+  as map:map*
+{
+  (: Each of $queries-ge-threshold has a weight high enough to hit the $threshold :)
+  let $queries-ge-threshold := $query-results[(. => map:get("weight")) ge $threshold]
+  let $queries-lt-threshold := $query-results[(. => map:get("weight")) lt $threshold]
+  return (
+    $queries-ge-threshold ! (map:entry("queries", .) => map:with("weight", map:get(., "weight"))),
+    opt-impl:filter-for-required-queries($queries-lt-threshold, 0, $threshold, ())
+  )
+};
+
+(:
+ : Find combinations of queries whose weights are individually below the threshold, but combined are above it.
+ :
+ : @param $remaining-queries  sequence of queries ordered by their weights, descending
+ : @param $combined-weight
+ : @param $threshold  the target value
+ : @param $accumulated-queries  accumlated sequence, building up to see whether it can hit the $threshold.
+ : @return a sequence of cts:and-queries, one for each required filter
+ : note: return type left off to allow for tail recursion optimization.
+ :)
+declare function opt-impl:filter-for-required-queries(
+  $remaining-queries as map:map*,
+  $combined-weight,
+  $threshold,
+  $accumulated-queries as map:map*
+)
+{
+  if ($threshold eq 0 or $combined-weight ge $threshold) then (
+    if (fn:exists($accumulated-queries)) then
+      map:entry(
+        "queries",
+        $accumulated-queries
+      ) =>
+        map:with("weight", fn:sum($accumulated-queries ! map:get(., "weight")))
+    else
+      ()
+  )
+  else
+    for $query at $pos in $remaining-queries
+    let $query-weight := fn:head(($query => map:get("weight"), 1))
+    let $new-combined-weight := $combined-weight + $query-weight
+    return (
+      opt-impl:filter-for-required-queries(
+        fn:subsequence($remaining-queries, $pos + 1),
+        $new-combined-weight,
+        $threshold,
+        ($accumulated-queries, $query)
+      )
+    )
+};

@@ -1,7 +1,7 @@
 xquery version "1.0-ml";
 
-import module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl"
-  at "/com.marklogic.smart-mastering/matcher-impl/matcher-impl.xqy";
+import module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
@@ -55,7 +55,7 @@ let $state  := map:new((
               ))
 let $remaining-queries := ($given, $family, $number, $postal, $state)
 let $threshold := 15
-let $actual := match-impl:filter-for-required-queries($remaining-queries, 0, $threshold, ())
+let $actual := opt-impl:filter-for-required-queries($remaining-queries, 0, $threshold, ())
 
 let $assertions := (
   (: We should get back four groups of queries :)
