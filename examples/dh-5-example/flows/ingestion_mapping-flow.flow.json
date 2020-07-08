@@ -1,105 +1,95 @@
 {
-  "name": "ingestion_mapping-flow",
-  "description": "This is the default flow containing all of the default steps",
-  "batchSize": 100,
-  "threadCount": 4,
-  "options": {
-    "sourceQuery": null
+  "name" : "ingestion_mapping-flow",
+  "description" : "This is the default flow containing all of the default steps",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : {
+    "sourceQuery" : null
   },
-  "steps": {
-    "1": {
-      "name": "ingest-step-json",
-      "description": "ingests json docs in JSON format to data-hub-STAGING",
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "INGESTION",
-      "options": {
-        "sourceQuery": null,
-        "collections": [
-          "mapping-flow-ingestion-json"
-        ],
-        "permissions": "rest-reader,read,rest-writer,update",
-        "outputFormat": "json",
-        "targetDatabase": "data-hub-FINAL"
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "ingest-step-json",
+      "description" : "ingests json docs in JSON format to data-hub-STAGING",
+      "options" : {
+        "sourceQuery" : null,
+        "collections" : [ "mapping-flow-ingestion-json" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook": {},
-      "retryLimit": 0,
-      "batchSize": 100,
-      "threadCount": 4,
-      "fileLocations": {
-        "inputFilePath": "input",
-        "inputFileType": "json",
-        "outputURIReplacement": ".*input*.,'/mapping-flow/json/'"
+      "customHook" : { },
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input",
+        "inputFileType" : "json",
+        "outputURIReplacement" : ".*input*.,'/mapping-flow/json/'"
       }
     },
-    "2": {
-      "name": "mapping-step-json",
-      "description": "maps and harmonizes JSON docs to data-hub-FINAL",
-      "stepDefinitionName": "entity-services-mapping",
-      "stepDefinitionType": "MAPPING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('mapping-flow-ingestion-json')",
-        "mapping": {
-          "name": "OrderMappingJson",
-          "version": 1
+    "2" : {
+      "name" : "mapping-step-json",
+      "description" : "maps and harmonizes JSON docs to data-hub-FINAL",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('mapping-flow-ingestion-json')",
+        "mapping" : {
+          "name" : "OrderMappingJson",
+          "version" : 1
         },
-        "sourceDatabase": "data-hub-FINAL",
-        "collections": [
-          "mapping-flow-mapping-json"
-        ],
-        "outputFormat": "json",
-        "targetDatabase": "data-hub-FINAL"
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "mapping-flow-mapping-json" ],
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook": null,
-      "retryLimit": 0,
-      "batchSize": 0,
-      "threadCount": 0
+      "customHook" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
     },
-    "3": {
-      "name": "ingest-step-xml",
-      "description": "ingests xml docs in XML format to data-hub-STAGING",
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "INGESTION",
-      "options": {
-        "sourceQuery": null,
-        "collections": [
-          "mapping-flow-ingestion-xml"
-        ],
-        "permissions": "rest-reader,read,rest-writer,update",
-        "outputFormat": "xml",
-        "targetDatabase": "data-hub-STAGING"
+    "3" : {
+      "name" : "ingest-step-xml",
+      "description" : "ingests xml docs in XML format to data-hub-STAGING",
+      "options" : {
+        "sourceQuery" : null,
+        "collections" : [ "mapping-flow-ingestion-xml" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-STAGING"
       },
-      "customHook": {},
-      "retryLimit": 0,
-      "batchSize": 100,
-      "threadCount": 4,
-      "fileLocations": {
-        "inputFilePath": "input",
-        "inputFileType": "xml",
-        "outputURIReplacement": ".*input*.,'/mapping-flow/xml/'"
+      "customHook" : { },
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "input",
+        "inputFileType" : "xml",
+        "outputURIReplacement" : ".*input*.,'/mapping-flow/xml/'"
       }
     },
-    "4": {
-      "name": "mapping-step-xml",
-      "description": "maps and harmonizes XML docs to data-hub-FINAL",
-      "stepDefinitionName": "entity-services-mapping",
-      "stepDefinitionType": "MAPPING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('mapping-flow-ingestion-xml')",
-        "mapping": {
-          "name": "OrderMappingXml",
-          "version": 1
+    "4" : {
+      "name" : "mapping-step-xml",
+      "description" : "maps and harmonizes XML docs to data-hub-FINAL",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('mapping-flow-ingestion-xml')",
+        "mapping" : {
+          "name" : "OrderMappingXml",
+          "version" : 1
         },
-        "sourceDatabase": "data-hub-STAGING",
-        "collections": [
-          "mapping-flow-mapping-xml"
-        ],
-        "outputFormat": "xml",
-        "targetDatabase": "data-hub-FINAL"
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "mapping-flow-mapping-xml" ],
+        "outputFormat" : "xml",
+        "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook": null,
-      "retryLimit": 0,
-      "batchSize": 0,
-      "threadCount": 0
+      "customHook" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
     }
   }
 }

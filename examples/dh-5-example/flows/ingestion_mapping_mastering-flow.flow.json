@@ -1,270 +1,217 @@
 {
-  "name": "ingestion_mapping_mastering-flow",
-  "description": "This is the default flow containing all of the default steps",
-  "batchSize": 100,
-  "threadCount": 4,
-  "options": {
-    "sourceQuery": null
+  "name" : "ingestion_mapping_mastering-flow",
+  "description" : "This is the default flow containing all of the default steps",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stopOnError" : false,
+  "options" : {
+    "sourceQuery" : null
   },
-  "steps": {
-    "1": {
-      "name": "ingest-step-json",
-      "description": "ingests json docs to data-hub-STAGING",
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "INGESTION",
-      "options": {
-        "sourceQuery": null,
-        "collections": [
-          "mastering-flow-ingest-json"
-        ],
-        "permissions": "rest-reader,read,rest-writer,update",
-        "outputFormat": "json",
-        "targetDatabase": "data-hub-STAGING"
+  "version" : 0,
+  "steps" : {
+    "1" : {
+      "name" : "ingest-step-json",
+      "description" : "ingests json docs to data-hub-STAGING",
+      "options" : {
+        "sourceQuery" : null,
+        "collections" : [ "mastering-flow-ingest-json" ],
+        "permissions" : "rest-reader,read,rest-writer,update",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-STAGING"
       },
-      "customHook": {},
-      "retryLimit": 0,
-      "batchSize": 100,
-      "threadCount": 4,
-      "fileLocations": {
-        "inputFilePath": "mastering-input",
-        "inputFileType": "json",
-        "outputURIReplacement": ".*input*.,'/mastering-flow/json/'"
+      "customHook" : { },
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionType" : "INGESTION",
+      "fileLocations" : {
+        "inputFilePath" : "mastering-input",
+        "inputFileType" : "json",
+        "outputURIReplacement" : ".*input*.,'/mastering-flow/json/'"
       }
     },
-    "2": {
-      "name": "mapping-step-json",
-      "description": "maps and harmonizes docs to data-hub-FINAL",
-      "stepDefinitionName": "entity-services-mapping",
-      "stepDefinitionType": "MAPPING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('mastering-flow-ingest-json')",
-        "mapping": {
-          "name": "OrderMappingJson",
-          "version": 1
+    "2" : {
+      "name" : "mapping-step-json",
+      "description" : "maps and harmonizes docs to data-hub-FINAL",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('mastering-flow-ingest-json')",
+        "mapping" : {
+          "name" : "OrderMappingJson",
+          "version" : 1
         },
-        "sourceDatabase": "data-hub-STAGING",
-        "collections": [
-          "mastering-flow-mapping-json"
-        ],
-        "outputFormat": "json",
-        "targetDatabase": "data-hub-FINAL"
+        "sourceDatabase" : "data-hub-STAGING",
+        "collections" : [ "mastering-flow-mapping-json" ],
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook": null,
-      "retryLimit": 0,
-      "batchSize": 0,
-      "threadCount": 0
+      "customHook" : null,
+      "batchSize" : 0,
+      "threadCount" : 0,
+      "stepDefinitionName" : "entity-services-mapping",
+      "stepDefinitionType" : "MAPPING"
     },
-    "3": {
-      "name": "json-matching-step-json",
-      "description": "matches the docs",
-      "stepDefinitionName": "default-matching",
-      "stepDefinitionType": "MATCHING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('mastering-flow-mapping-json')",
-        "acceptsBatch": true,
-        "targetEntity": "Order",
-        "sourceDatabase": "data-hub-FINAL",
-        "collections": [
-          "json-matching-step-json"
-        ],
-        "matchOptions": {
-          "dataFormat": "json",
-          "propertyDefs": {
-            "property": [
-              {
-                "localname": "CustomerID",
-                "name": "CustomerID"
-              },
-              {
-                "localname": "ShipCity",
-                "name": "ShipCity"
-              },
-              {
-                "localname": "ShipAddress",
-                "name": "ShipAddress"
-              }
-            ]
+    "3" : {
+      "name" : "json-matching-step-json",
+      "description" : "matches the docs",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('mastering-flow-mapping-json')",
+        "acceptsBatch" : true,
+        "targetEntity" : "Order",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "json-matching-step-json" ],
+        "matchOptions" : {
+          "dataFormat" : "json",
+          "propertyDefs" : {
+            "property" : [ {
+              "localname" : "CustomerID",
+              "name" : "CustomerID"
+            }, {
+              "localname" : "ShipCity",
+              "name" : "ShipCity"
+            }, {
+              "localname" : "ShipAddress",
+              "name" : "ShipAddress"
+            } ]
           },
-          "algorithms": {
-            "algorithm": [
-            ]
+          "algorithms" : {
+            "algorithm" : [ ]
           },
-          "collections": {
-            "content": []
+          "collections" : {
+            "content" : [ ]
           },
-          "scoring": {
-            "add": [
-              {
-                "propertyName": "CustomerID",
-                "weight": "10"
-              },
-              {
-                "propertyName": "ShipCity",
-                "weight": "5"
-              },
-              {
-                "propertyName": "ShipAddress",
-                "weight": "20"
-              }
-            ],
-            "expand": [],
-            "reduce": []
+          "scoring" : {
+            "add" : [ {
+              "propertyName" : "CustomerID",
+              "weight" : "10"
+            }, {
+              "propertyName" : "ShipCity",
+              "weight" : "5"
+            }, {
+              "propertyName" : "ShipAddress",
+              "weight" : "20"
+            } ],
+            "expand" : [ ],
+            "reduce" : [ ]
           },
-          "actions": {
-            "action": []
+          "actions" : {
+            "action" : [ ]
           },
-          "thresholds": {
-            "threshold": [
-              {
-                "above": "14",
-                "label": "Likely Match",
-                "action": "notify"
-              },
-              {
-                "above": "24",
-                "label": "Definitive Match",
-                "action": "merge"
-              }
-            ]
+          "thresholds" : {
+            "threshold" : [ {
+              "above" : "14",
+              "label" : "Likely Match",
+              "action" : "notify"
+            }, {
+              "above" : "24",
+              "label" : "Definitive Match",
+              "action" : "merge"
+            } ]
           },
-          "tuning": {
-            "maxScan": 200
+          "tuning" : {
+            "maxScan" : 200
           }
         },
-        "targetDatabase": "data-hub-FINAL"
+        "targetDatabase" : "data-hub-FINAL"
       },
-      "customHook": null,
-      "retryLimit": 0,
-      "batchSize": 100,
-      "threadCount": 4
+      "customHook" : null,
+      "batchSize" : 100,
+      "threadCount" : 4,
+      "stepDefinitionName" : "default-matching",
+      "stepDefinitionType" : "MATCHING"
     },
-    "4": {
-      "name": "json-merging-step-json",
-      "description": "merges the docs",
-      "stepDefinitionName": "default-merging",
-      "stepDefinitionType": "MERGING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('json-matching-step-json')",
-        "targetEntity": "Order",
-        "sourceDatabase": "data-hub-FINAL",
-        "collections": [
-          "mastered1"
-        ],
-        "mergeOptions": {
-          "propertyDefs": {
-            "properties": [
-              {
-                "namespace": "",
-                "localname": "CustomerID",
-                "name": "CustomerID"
-              },
-              {
-                "namespace": "",
-                "localname": "ShipAddress",
-                "name": "ShipAddress"
-              },
-              {
-                "namespace": "",
-                "localname": "ShipCity",
-                "name": "ShipCity"
-              }
-            ]
+    "4" : {
+      "name" : "json-merging-step-json",
+      "description" : "merges the docs",
+      "options" : {
+        "sourceQuery" : "cts.collectionQuery('json-matching-step-json')",
+        "targetEntity" : "Order",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ "mastered1" ],
+        "mergeOptions" : {
+          "propertyDefs" : {
+            "properties" : [ {
+              "namespace" : "",
+              "localname" : "CustomerID",
+              "name" : "CustomerID"
+            }, {
+              "namespace" : "",
+              "localname" : "ShipAddress",
+              "name" : "ShipAddress"
+            }, {
+              "namespace" : "",
+              "localname" : "ShipCity",
+              "name" : "ShipCity"
+            } ]
           },
-          "algorithms": {
-            "stdAlgorithm": {
-              "timestamp": {
-                "path": ""
+          "algorithms" : {
+            "stdAlgorithm" : {
+              "timestamp" : {
+                "path" : ""
               }
             },
-            "custom": [],
-            "collections": {
-              "onMerge": {
-                "add": {
-                  "collection": [
-                    "test"
-                  ]
+            "custom" : [ ],
+            "collections" : {
+              "onMerge" : {
+                "add" : {
+                  "collection" : [ "test" ]
                 },
-                "remove": {
-                  "collection": [
-                    ""
-                  ]
+                "remove" : {
+                  "collection" : [ "" ]
                 },
-                "set": {
-                  "collection": [
-                    ""
-                  ]
+                "set" : {
+                  "collection" : [ "" ]
                 }
               },
-              "onNoMatch": {
-                "add": {
-                  "collection": [
-                    ""
-                  ]
+              "onNoMatch" : {
+                "add" : {
+                  "collection" : [ "" ]
                 },
-                "remove": {
-                  "collection": [
-                    ""
-                  ]
+                "remove" : {
+                  "collection" : [ "" ]
                 },
-                "set": {
-                  "collection": [
-                    ""
-                  ]
+                "set" : {
+                  "collection" : [ "" ]
                 }
               },
-              "onNotification": {
-                "add": {
-                  "collection": [
-                    ""
-                  ]
+              "onNotification" : {
+                "add" : {
+                  "collection" : [ "" ]
                 },
-                "remove": {
-                  "collection": [
-                    ""
-                  ]
+                "remove" : {
+                  "collection" : [ "" ]
                 },
-                "set": {
-                  "collection": [
-                    ""
-                  ]
+                "set" : {
+                  "collection" : [ "" ]
                 }
               },
-              "onArchive": {
-                "add": {
-                  "collection": [
-                    ""
-                  ]
+              "onArchive" : {
+                "add" : {
+                  "collection" : [ "" ]
                 },
-                "remove": {
-                  "collection": [
-                    ""
-                  ]
+                "remove" : {
+                  "collection" : [ "" ]
                 },
-                "set": {
-                  "collection": [
-                    ""
-                  ]
+                "set" : {
+                  "collection" : [ "" ]
                 }
               }
             }
           },
-          "mergeStrategies": [],
-          "merging": [
-            {
-              "propertyName": "CustomerID",
-              "sourceWeights": []
-            },
-            {
-              "propertyName": "ShipCity",
-              "sourceWeights": []
-            },
-            {
-              "propertyName": "ShipAddress",
-              "sourceWeights": []
-            }
-          ]
+          "mergeStrategies" : [ ],
+          "merging" : [ {
+            "propertyName" : "CustomerID",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "ShipCity",
+            "sourceWeights" : [ ]
+          }, {
+            "propertyName" : "ShipAddress",
+            "sourceWeights" : [ ]
+          } ]
         }
-      }
+      },
+      "stepDefinitionName" : "default-merging",
+      "stepDefinitionType" : "MERGING"
     }
   }
 }
