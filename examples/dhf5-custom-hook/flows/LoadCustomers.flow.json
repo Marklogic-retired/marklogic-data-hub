@@ -1,0 +1,85 @@
+{
+  "name": "LoadCustomers",
+  "description": "",
+  "batchSize": 100,
+  "threadCount": 4,
+  "stopOnError": false,
+  "options": {},
+  "version": 0,
+  "steps": {
+    "1": {
+      "name": "IngestCustomers",
+      "description": "",
+      "options": {
+        "additionalCollections": [],
+        "headers": {
+          "sources": [
+            {
+              "name": "LoadCustomers"
+            }
+          ],
+          "createdOn": "currentDateTime",
+          "createdBy": "currentUser"
+        },
+        "sourceQuery": "cts.collectionQuery([])",
+        "collections": [
+          "IngestCustomers"
+        ],
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-STAGING"
+      },
+      "customHook": {
+        "module": "",
+        "parameters": {},
+        "user": "",
+        "runBefore": false
+      },
+      "retryLimit": null,
+      "batchSize": 100,
+      "threadCount": 4,
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input/customers",
+        "inputFileType": "csv",
+        "outputURIReplacement": ".*/input,''",
+        "separator": ","
+      }
+    },
+    "2": {
+      "name": "MapCustomers",
+      "description": "",
+      "options": {
+        "additionalCollections": [],
+        "sourceQuery": "cts.collectionQuery([\"IngestCustomers\"])",
+        "mapping": {
+          "name": "LoadCustomers-MapCustomers",
+          "version": 0
+        },
+        "targetEntity": "Customer",
+        "sourceDatabase": "data-hub-STAGING",
+        "collections": [
+          "MapCustomers",
+          "Customer"
+        ],
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "validateEntity": false,
+        "sourceCollection": "IngestCustomers",
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-FINAL"
+      },
+      "customHook": {
+        "module": "/custom-modules/mapping/MapCustomers/custom-uri-hook.sjs",
+        "parameters": {},
+        "user": "flow-operator",
+        "runBefore": false
+      },
+      "retryLimit": 0,
+      "batchSize": 100,
+      "threadCount": 4,
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING"
+    }
+  }
+}

@@ -29,9 +29,17 @@ Next, start up QuickStart and browse to this project folder and login to QuickSt
 
 ## How to test the custom hook
 
+### Orders Custom Hook
+
 Once you're logged into QuickStart, run the "LoadOrders" flow twice. When the flow is run the second time, the order documents 
 created during the first run will be archived - which in this simple example means being written to a different URI in 
 an archive collection.
 
 The custom hook is defined at src/main/ml-modules/root/custom-modules/ingestion/IngestOrders/archive-hook.sjs, and it 
 is associated with the flow via flows/LoadOrders.flow.json.
+
+### Customer Custom Hook
+
+Once you're logged into QuickStart, run the "LoadCustomers" flow. After running the flow you will see the URIs in staging contianing a random UUID that is generated when ingesting the CSV data. The URI in Final will reflect the ID of the person coming from the canonical instance. 
+
+The custom hook is defined at src/main/ml-modules/root/custom-modules/mapping/MapCustomers/custom-uri-hook.sjs, and it is associated with the flow via flows/LoadCustomers.flow.json.
