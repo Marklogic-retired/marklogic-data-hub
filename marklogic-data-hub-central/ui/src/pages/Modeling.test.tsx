@@ -58,6 +58,11 @@ describe("Modeling Page", () => {
     expect(screen.getByText(/Confirmation/i)).toBeInTheDocument();
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveAll}-yes`));
     expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1)
+
+    userEvent.click(getByText('Revert All'));
+    expect(screen.getByText(/Confirmation/i)).toBeInTheDocument();
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
+    expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1);
   });
 
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {

@@ -19,6 +19,14 @@ class ConfirmationModal {
   getSaveAllEntityText() {
     return cy.get('#save-all-text', {timeout: 25000});
   }
+
+  getRevertEntityText() {
+    return cy.get('#revert-text', {timeout: 25000});
+  }
+
+  getRevertAllEntityText() {
+    return cy.get('#revert-all-text', {timeout: 25000});
+  }
   getDeleteEntityText() {
     return cy.get('#delete-text', {timeout: 15000});
   }

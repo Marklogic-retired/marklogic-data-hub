@@ -30,7 +30,36 @@ describe('Entity Modeling', () => {
       cy.resetTestUser();
   });
 
-  it('can add a new property to an existing Entity, delete shows step warning', () => {
+  it('can add new properties to existing Entity, revert the entity, and delete shows step warning', () => {
+    // Adding property to Order entity
+    entityTypeTable.expandEntityRow(0);
+    propertyTable.getAddPropertyButton('Order').click();
+
+    propertyModal.newPropertyName('orderID');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('string').click();
+    propertyModal.getNoRadio('identifier').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getYesRadio('pii').click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('orderID').should('exist');
+    propertyTable.getPiiIcon('orderID').should('exist');
+    propertyTable.getWildcardIcon('orderID').should('exist');
+
+
+    entityTypeTable.getRevertEntityIcon('Order').should('exist');
+    entityTypeTable.getRevertEntityIcon('Order').click();
+    confirmationModal.getYesButton(ConfirmationType.RevertEntity).click();
+    confirmationModal.getRevertEntityText().should('exist');
+    confirmationModal.getRevertEntityText().should('not.exist');
+
+    propertyTable.getMultipleIcon('orderID').should('not.exist');
+    propertyTable.getPiiIcon('orderID').should('not.exist');
+    propertyTable.getWildcardIcon('orderID').should('not.exist');
+
+    // Adding property to Person entity
     entityTypeTable.expandEntityRow(1);
     propertyTable.getAddPropertyButton('Person').click();
 
@@ -344,7 +373,57 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('User').should('not.exist');
   });
 
-  it('can add multiple entities, add properties, delete properties, and save all entities', () => {
+  it('can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, and save all entities', () => {
+    // Adding property to Order entity
+    entityTypeTable.expandEntityRow(0);
+    propertyTable.getAddPropertyButton('Order').click();
+
+    propertyModal.newPropertyName('orderID');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('string').click();
+    propertyModal.getNoRadio('identifier').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getYesRadio('pii').click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('orderID').should('exist');
+    propertyTable.getPiiIcon('orderID').should('exist');
+    propertyTable.getWildcardIcon('orderID').should('exist');
+
+
+    // Adding property to Person entity
+    entityTypeTable.expandEntityRow(1);
+    propertyTable.getAddPropertyButton('Person').click();
+
+    propertyModal.newPropertyName('personID');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('string').click();
+    propertyModal.getNoRadio('identifier').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getYesRadio('pii').click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('personID').should('exist');
+    propertyTable.getPiiIcon('personID').should('exist');
+    propertyTable.getWildcardIcon('personID').should('exist');
+
+
+    modelPage.getRevertAllButton().should('exist');
+    modelPage.getRevertAllButton().click();
+    confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
+    confirmationModal.getRevertAllEntityText().should('exist');
+    confirmationModal.getRevertAllEntityText().should('not.exist');
+
+    propertyTable.getMultipleIcon('personID').should('not.exist');
+    propertyTable.getPiiIcon('personID').should('not.exist');
+    propertyTable.getWildcardIcon('personID').should('not.exist');
+    propertyTable.getMultipleIcon('orderID').should('not.exist');
+    propertyTable.getPiiIcon('orderID').should('not.exist');
+    propertyTable.getWildcardIcon('orderID').should('not.exist');
+
+    // Create first entity
     modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Concept');
