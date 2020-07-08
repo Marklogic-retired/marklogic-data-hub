@@ -24,11 +24,11 @@ class PropertyModal {
   }
 
   getYesRadio(radioValue: string) {
-    return cy.get(`[aria-label="${radioValue}-yes"]`);
+    return cy.findByLabelText(`${radioValue}-yes`);
   }
 
   getNoRadio(radioLabel: string) {
-    return cy.get(`[aria-label="${radioLabel}-no"]`);
+    return cy.findByLabelText(`${radioLabel}-no`);
   }
 
   getCheckbox(checkboxId: string) {
@@ -40,11 +40,11 @@ class PropertyModal {
   }
 
   getCancelButton() {
-    return cy.get('[aria-label="property-modal-submit"');
+    return cy.findByLabelText('property-modal-submit');
   }
 
   getSubmitButton() {
-    return cy.get('[aria-label="property-modal-submit"');
+    return cy.findByLabelText('property-modal-submit');
   }
 
 }
