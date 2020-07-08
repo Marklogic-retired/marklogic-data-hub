@@ -177,6 +177,24 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           </p>
         </>
       )}
+
+      {props.type === ConfirmationType.RevertEntity && (
+        <>
+          <p id="revert-text">Are you sure you want to discard your changes to <b>{props.boldTextArray[0]}</b>?</p>
+
+          <p>The settings from the last saved version of all properties will be restored.</p>
+        </>
+      )}
+
+      {props.type === ConfirmationType.RevertAll && (
+        <>
+          <p id="revert-all-text">Are you sure you want to discard all changes to all entity types?</p>
+
+          <p>The settings from the last saved version of all properties of all
+            entity types will be restored.
+          </p>
+        </>
+      )}
     </Modal>
   )
 }

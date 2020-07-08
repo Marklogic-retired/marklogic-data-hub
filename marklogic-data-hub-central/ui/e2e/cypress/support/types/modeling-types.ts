@@ -6,5 +6,7 @@ export enum ConfirmationType {
   DeletePropertyWarn = 'deletePropertyWarn',
   DeletePropertyStepWarn = 'deletePropertyStepWarn',
   SaveEntity = 'saveEntity',
-  SaveAll = 'saveAllEntity'
+  SaveAll = 'saveAllEntity',
+  RevertEntity = 'revertEntity',
+  RevertAll = 'revertAllEntity'
 }
