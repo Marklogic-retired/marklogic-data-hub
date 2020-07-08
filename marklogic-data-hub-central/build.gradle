@@ -129,7 +129,7 @@ node {
     npmVersion = '6.13.4'
 
     download = true
-    distBaseUrl = 'http://nodejs.org/dist'
+    distBaseUrl = "${disBaseUrl}"
 
     // Set the work directory for unpacking node
     workDir = file("${project.buildDir}/nodejs")
