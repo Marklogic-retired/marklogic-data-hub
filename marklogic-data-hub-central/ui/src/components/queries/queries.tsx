@@ -274,6 +274,7 @@ const Query = (props) => {
         else{
             toggleSaveChangesIcon(false);
             toggleDiscardIcon(false);
+            toggleSaveNewIcon(true);
         }
 
     }, [searchOptions, props.greyFacets, isSaveQueryChanged()])

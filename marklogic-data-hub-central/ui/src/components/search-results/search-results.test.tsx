@@ -12,6 +12,7 @@ describe("Search Results component", () => {
         data={searchResults}
         entityDefArray={[{name: 'Customer', primaryKey:'id'}]}
         tableView={false}
+        columns={[]}
       />);
   });
 

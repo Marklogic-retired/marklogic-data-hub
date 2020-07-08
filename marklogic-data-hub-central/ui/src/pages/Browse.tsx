@@ -222,7 +222,14 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <>
         <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
-        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+        <ZeroStateExplorer
+            entities={entities}
+            setEntity={setEntity}
+            queries={queries}
+            columns={columns}
+            setIsLoading={setIsLoading}
+            tableView={tableView}
+            toggleTableView={toggleTableView} />
       </>
     );
   } else {
@@ -280,7 +287,15 @@ const Browse: React.FC<Props> = ({ location }) => {
                     </div>
                   </div>
                 </div>
-                <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={selectedFacets} greyFacets={greyFacets} isColumnSelectorTouched={isColumnSelectorTouched}/>
+                <Query queries={queries}
+                       setQueries={setQueries}
+                       isSavedQueryUser={isSavedQueryUser}
+                       columns={columns}
+                       setIsLoading={setIsLoading}
+                       entities={entities}
+                       selectedFacets={selectedFacets}
+                       greyFacets={greyFacets}
+                       isColumnSelectorTouched={isColumnSelectorTouched}/>
               </div>
               <div className={styles.fixedView} >
                 {tableView ?
@@ -296,7 +311,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                           tableView={tableView}
                       />
                   </div>
-                  : <SearchResults data={data} entityDefArray={entityDefArray}  tableView={tableView}/>
+                  : <SearchResults data={data} entityDefArray={entityDefArray}  tableView={tableView} columns={columns}/>
                 }
               </div>
               <br />
