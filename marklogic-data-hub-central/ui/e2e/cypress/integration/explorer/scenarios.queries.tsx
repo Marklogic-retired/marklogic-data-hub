@@ -13,7 +13,7 @@ describe('save/manage queries scenarios, developer role', () => {
         cy.contains(Application.title);
         cy.loginAsDeveloper().withRequest();
         cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-        cy.waitUntil(() => browsePage.getExploreButton(), {timeout: 10000}).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.waitForTableToLoad();
     });
@@ -22,10 +22,8 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
-        browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
         browsePage.getSelectedFacets().should('exist');
         browsePage.getGreySelectedFacets('Adams Cole').should('exist');
-        browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('exist');
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().click();
         browsePage.waitForSpinnerToDisappear();
@@ -60,13 +58,11 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
     });
 
-    //TODO: Uncomment once DHFPROD-5342 is fixed
-    xit('save/saveAs/edit more queries with duplicate query name from browse and manage queries view', () => {
+    it('save/saveAs/edit more queries with duplicate query name from browse and manage queries view', () => {
         browsePage.selectQuery("new-query-2");
         browsePage.getSelectedQuery().should('contain', 'new-query-2');
         browsePage.waitForSpinnerToDisappear();
         browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
-
         // clicking on save changes icon
         browsePage.getSaveModalIcon().click();
         browsePage.getEditSaveChangesFormName().invoke('val').should('contain', 'new-query-2');
@@ -232,23 +228,20 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getClearAllButton().should('exist');
     });
 
-    //TODO: Uncomment once DHFPROD-5342 is fixed
-    xit('Switching between entities when making changes to saved query', () => {
+    it('Switching between entities when making changes to saved query', () => {
         browsePage.selectQuery("new-query");
         browsePage.getClearFacetSearchSelection('Adams Cole').click();
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationCancelClick().click();
         browsePage.getSelectedQuery().should('contain', 'new-query');
         browsePage.getSelectedEntity().should('contain', 'Customer');
-        browsePage.getAppliedFacets('adamscole@nutralab.com').should('exist');
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationNoClick().click();
         browsePage.getSelectedEntity().should('contain', 'Person');
         browsePage.selectEntity('Customer');
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.selectQuery('new-query');
-        browsePage.getAppliedFacets('adamscole@nutralab.com').should('exist');
-        browsePage.getClearFacetSearchSelection('adamscole@nutralab.com').click();
+        browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationYesClick().click();
         browsePage.getEditSaveChangesButton().click();
@@ -274,6 +267,8 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('All Entities');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
+        // Should comment below line after DHFPROD-5392 is done
+        browsePage.getHubPropertiesExpanded();
         browsePage.getFacetItemCheckbox('collection', 'Person').click();
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().should('not.be.visible')
@@ -376,7 +371,8 @@ describe('manage queries modal scenarios, developer role', () => {
         cy.contains(Application.title);
         cy.loginAsDeveloper().withRequest();
         cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-        cy.waitUntil(() => browsePage.getExploreButton(), {timeout: 10000}).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        browsePage.waitForSpinnerToDisappear();
         browsePage.waitForTableToLoad();
     });
 
