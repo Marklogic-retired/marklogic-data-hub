@@ -486,9 +486,9 @@ const Query = (props) => {
                         </Button>
                     ]}>
                     {showResetQueryEditedConfirmation &&
-                    <div><p><strong>{searchOptions.selectedQuery}</strong> has been edited since it was last saved.</p>
+                    <div><p>Your unsaved changes in the query <strong>{searchOptions.selectedQuery}</strong> will be lost.</p>
                     <br/>
-                    <p>Would you like to save the changes to <strong>{searchOptions.selectedQuery}</strong> before resetting?</p>
+                    <p>Would you like to save the changes before switching to another query?</p>
                     </div>}
                     {showResetQueryNewConfirmation && (<p>Would you like to save your search before resetting?</p>)}
                 </Modal>
