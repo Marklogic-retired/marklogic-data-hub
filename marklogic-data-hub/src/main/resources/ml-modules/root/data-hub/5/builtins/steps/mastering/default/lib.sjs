@@ -60,24 +60,15 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
   if (!hasRequiredOptions) {
     throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
   }
-  options.matchOptions = options.matchOptions || {};
-  options.mergeOptions = options.mergeOptions || {};
-  // provide default empty array values for collections to simplify later logic
-  options.mergeOptions.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},options.mergeOptions.collections);
-  options.matchOptions.collections = Object.assign({"content": []},options.matchOptions.collections);
-  // sanity check the collections set for the match/merge options
-  if (options.matchOptions.collections.content.length) {
-    options.mergeOptions.collections.content = options.matchOptions.collections.content;
-  } else if (options.mergeOptions.collections.content.length) {
-    options.matchOptions.collections.content = options.mergeOptions.collections.content;
+  const targetEntityType = options.targetEntityType || options.targetEntity;
+  if (options.matchOptions) {
+    setCollectionDefaults(options.matchOptions, targetEntityType);
   }
-
-  if (options.targetEntity) {
-    // set the target entity based off of the step options
-    options.mergeOptions.targetEntity = options.targetEntity;
-    options.matchOptions.targetEntity = options.targetEntity;
-    // Set default collections be entity type
-    options.mergeOptions.collections = getCollectionSettings(options.mergeOptions.collections, options.targetEntity);
+  if (options.mergeOptions) {
+    setCollectionDefaults(options.mergeOptions, targetEntityType);
+  }
+  if (!(options.matchOptions || options.mergeOptions)) {
+    setCollectionDefaults(options, targetEntityType);
   }
 
   if (reqOptProperties.includes('mergeOptions')) {
@@ -88,11 +79,12 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
     });
   }
 
-  const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.content), masteringConsts['CONTENT-COLL']));
-  const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.archived), masteringConsts['ARCHIVED-COLL']));
-  const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.merged), masteringConsts['MERGED-COLL']));
-  const notificationCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.notification), masteringConsts['NOTIFICATION-COLL']));
-  const auditingCollection = fn.head(masteringCollections.getCollections(Sequence.from(options.mergeOptions.collections.auditing), masteringConsts['AUDITING-COLL']));
+  const collections = (options.matchOptions || options.mergeOptions || options).collections;
+  const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.content), masteringConsts['CONTENT-COLL']));
+  const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.archived), masteringConsts['ARCHIVED-COLL']));
+  const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.merged), masteringConsts['MERGED-COLL']));
+  const notificationCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.notification), masteringConsts['NOTIFICATION-COLL']));
+  const auditingCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.auditing), masteringConsts['AUDITING-COLL']));
   let contentHasExpectedContentCollection = true;
   let contentHasTargetEntityCollection = true;
   if (content) {
@@ -124,6 +116,17 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
     }
   }
   return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
+}
+
+function setCollectionDefaults(collectionsParent, targetEntityType) {
+  // provide default empty array values for collections to simplify later logic
+  collectionsParent.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},collectionsParent.collections);
+  if (targetEntityType) {
+    if (!(collectionsParent.targetEntity || collectionsParent.targetEntityType)) {
+      collectionsParent.targetEntityType = targetEntityType;
+    }
+    collectionsParent.collections = getCollectionSettings(collectionsParent.collections, targetEntityType);
+  }
 }
 
 function expectedCollectionEvents(entityType, existingMergeOptions) {

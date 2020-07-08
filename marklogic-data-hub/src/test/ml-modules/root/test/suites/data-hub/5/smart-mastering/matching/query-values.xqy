@@ -2,6 +2,8 @@ xquery version "1.0-ml";
 
 import module namespace match-impl = "http://marklogic.com/smart-mastering/matcher-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/matcher-impl.xqy";
+import module namespace opt-impl = "http://marklogic.com/smart-mastering/options-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
@@ -24,49 +26,43 @@ declare variable $DOCUMENT := document{
   )
 };
 
-declare variable $COMPILED-OPTIONS := map:new((
-  map:entry(
-    "queries",
-    (
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("intProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("strProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("boolProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("dateProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("dateTimeProperty")
-        )
-      )),
-      map:new((
-        map:entry(
-          "qname",
-          xs:QName("decimalProperty")
-        )
-      ))
-    )
-  )
-));
+declare variable $COMPILED-OPTIONS := opt-impl:compile-match-options(
+    xdmp:unquote('
+    {
+      "matchRulesets": [
+        {
+          "matchRules": [
+            {
+              "entityPropertyPath": "intProperty",
+              "matchType": "exact"
+            },
+            {
+              "entityPropertyPath": "strProperty",
+              "matchType": "exact"
+            },
+            {
+              "entityPropertyPath": "boolProperty",
+              "matchType": "exact"
+            },
+            {
+              "entityPropertyPath": "dateProperty",
+              "matchType": "exact"
+            },
+            {
+              "entityPropertyPath": "dateTimeProperty",
+              "matchType": "exact"
+            },
+            {
+              "entityPropertyPath": "decimalProperty",
+              "matchType": "exact"
+            }
+          ]
+        }
+      ]
+    }
+    '),
+    1
+);
 
 declare variable $EXPECTED-VALUES := map:new((
   map:entry(
@@ -97,7 +93,7 @@ declare variable $EXPECTED-VALUES := map:new((
 
 test:assert-true(
   fn:deep-equal(
-    xdmp:to-json(match-impl:values-by-qname(
+    xdmp:to-json(match-impl:values-by-property-name(
       $DOCUMENT,
       $COMPILED-OPTIONS
     )),

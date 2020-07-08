@@ -19,7 +19,7 @@ return (
     test:assert-equal(1, fn:count($def-match/@threshold[. = "Definitive Match"])),
     test:assert-equal(1, fn:count($def-match/@action[. = $constants:MERGE-ACTION])),
     test:assert-exists($def-match/matches),
-    test:assert-equal(7, fn:count($def-match/matches/match))
+    test:assert-equal(8, fn:count($def-match/matches/match), "Wrong count of matches: " || xdmp:describe($def-match, (), ()) )
   ),
 
   let $likely-match := $actual/result[@threshold="Likely Match"]

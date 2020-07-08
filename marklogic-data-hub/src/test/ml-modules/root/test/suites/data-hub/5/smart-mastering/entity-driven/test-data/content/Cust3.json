@@ -1,0 +1,132 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 103,
+        "name": "Adams Cole",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Verona Place"
+              ],
+              "city": "Keyport",
+              "state": "Ohio",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "14391",
+                  "plusFour": "1362"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "One Penn Plaza"
+              ],
+              "city": "New York",
+              "state": "New York",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "10119",
+                  "plusFour": "1435"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Ellery Street"
+            ],
+            "city": "Fillmore",
+            "state": "Missouri",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "85554",
+                "plusFour": "2762"
+              }
+            }
+          }
+        },
+        "status": "Existing Customer",
+        "ssn": "333-33-3333"
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 103,
+          "Name": {
+            "FirstName": "Adams",
+            "LastName": "Cole"
+          },
+          "nicknames": [
+            "ad",
+            "coley"
+          ],
+          "Email": "coleadams39@nutralab.com",
+          "Address": [
+            {
+              "Shipping": {
+                "Street": "Verona Place",
+                "City": "Keyport",
+                "State": "Ohio",
+                "Postal": "14391-1362"
+              }
+            },
+            {
+              "Shipping": {
+                "Street": "One Penn Plaza",
+                "City": "New York",
+                "State": "New York",
+                "Postal": "10119-1435"
+              }
+            },
+            {
+              "Billing": {
+                "Street": "Ellery Street",
+                "City": "Fillmore",
+                "State": "Missouri",
+                "Postal": "85554-2762"
+              }
+            }
+          ],
+          "Phone": "(913) 467-3136",
+          "PIN": 5749,
+          "Created": "04/22/2018",
+          "Status": "Existing Customer",
+          "SSN": "333-33-3333"
+        },
+        "attachments": null
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 105,
+        "name": "Hollan Welles"
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 105,
+          "Name": {
+            "FirstName": "Hollan",
+            "LastName": "Welles"
+          },
+          "Phone": "(555) 867-5309"
+        },
+        "attachments": null
+      }
+    }
+  }
+}

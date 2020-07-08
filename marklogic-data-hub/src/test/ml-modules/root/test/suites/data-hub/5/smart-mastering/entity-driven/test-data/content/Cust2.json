@@ -1,0 +1,132 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 102,
+        "name": "Adams Cole",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Lefferts Place"
+              ],
+              "city": "Marenisco",
+              "state": "Maryland",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "44582",
+                  "plusFour": "8427"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "John Hancock Center"
+              ],
+              "city": "Chicago",
+              "state": "Illinois",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "60611",
+                  "plusFour": "2486"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Varick Avenue"
+            ],
+            "city": "Mooresburg",
+            "state": "Delaware",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "17654",
+                "plusFour": "1292"
+              }
+            }
+          }
+        },
+        "status": "New Customer",
+        "ssn": "222-22-2222"
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 102,
+          "Name": {
+            "FirstName": "Adams",
+            "LastName": "Cole"
+          },
+          "nicknames": [
+            "ad",
+            "coley"
+          ],
+          "Email": "adamscole@nutralab.com",
+          "Address": [
+            {
+              "Shipping": {
+                "Street": "Lefferts Place",
+                "City": "Marenisco",
+                "State": "Maryland",
+                "Postal": "44582-8427"
+              }
+            },
+            {
+              "Shipping": {
+                "Street": "John Hancock Center",
+                "City": "Chicago",
+                "State": "Illinois",
+                "Postal": "60611-2486"
+              }
+            },
+            {
+              "Billing": {
+                "Street": "Varick Avenue",
+                "City": "Mooresburg",
+                "State": "Delaware",
+                "Postal": "17654-1292"
+              }
+            }
+          ],
+          "Phone": "(870) 495-2539",
+          "PIN": 2288,
+          "Created": "01/05/2014",
+          "Status": "New Customer",
+          "SSN": "222-22-2222"
+        },
+        "attachments": null
+      }
+    }
+  }
+}

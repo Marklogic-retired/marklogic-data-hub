@@ -24,19 +24,30 @@ declare option xdmp:mapping "false";
  :)
 declare function algorithms:zip-match(
   $expand-values as xs:string*,
-  $expand-xml as element(matcher:expand),
-  $options-xml as element(matcher:options)
+  $expand as node(),
+  $options as node()
 )
   as cts:query*
 {
-  let $property-name := $expand-xml/@property-name
+  let $property-name := helper-impl:get-property-name($expand)
+  let $weight := $expand/weight
   let $sep := "-"
-  let $origin-5-weight := $expand-xml/matcher:zip[@origin = "5"]/@weight/fn:data()
-  let $origin-9-weight := $expand-xml/matcher:zip[@origin = "9"]/@weight/fn:data()
+  let $origin-5-weight := fn:head(($expand/*:zip[(@origin|origin) = "5"]/(weight|@weight)/fn:data(),$weight))
+  let $origin-9-weight := fn:head(($expand/*:zip[(@origin|origin) = "9"]/(weight|@weight)/fn:data(),$weight))
   for $value in $expand-values
   return
     if (fn:string-length($value) = 5) then
-      helper-impl:property-name-to-query($options-xml, $property-name)($value || $sep || "*", $origin-5-weight)
+      helper-impl:property-name-to-query($options, $property-name)($value || $sep || "*", $origin-5-weight)
     else
-      helper-impl:property-name-to-query($options-xml, $property-name)(fn:substring($value, 1, 5), $origin-9-weight)
+      helper-impl:property-name-to-query($options, $property-name)(fn:substring($value, 1, 5), $origin-9-weight)
+};
+
+(: Allows zip to be used instead of zip-match in the options :)
+declare function algorithms:zip(
+    $expand-values,
+    $expand as node(),
+    $options as node()
+)
+{
+  algorithms:zip-match($expand-values, $expand, $options)
 };

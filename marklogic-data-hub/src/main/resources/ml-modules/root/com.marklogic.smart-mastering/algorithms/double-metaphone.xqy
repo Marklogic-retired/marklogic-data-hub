@@ -38,30 +38,49 @@ declare
   function
   algorithms:double-metaphone(
     $expand-values,
-    $expand-xml as element(match:expand),
-    $options-xml as element(match:options)
+    $expand as node(),
+    $options as node()
   )
 {
-  let $property-name := $expand-xml/@property-name
-  let $dictionary := $expand-xml/*:dictionary
+  if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+    xdmp:trace($const:TRACE-MATCH-RESULTS, "doubleMetaphone algorithm called with " ||
+      xdmp:describe(("$expand-values",$expand-values ! fn:string(.), "$expand", $expand, "$options", $options), (), ())
+    )
+  else (),
+  let $property-name := helper-impl:get-property-name($expand)
+  let $expand-options := fn:head(($expand/options, $expand))
+  let $dictionary := $expand-options/(*:dictionary|dictionaryURI)
   let $spell-options :=
     element spell:options {
       element spell:distance-threshold {
         (
-          $expand-xml/*:distance-threshold[. castable as xs:integer]/fn:string(.),
+          $expand-options/(*:distance-threshold|distanceThreshold)[. castable as xs:integer]/fn:string(.),
           100
         )[1]
       }
     }
+  let $_ := xdmp:trace($const:TRACE-MATCH-RESULTS, "doubleMetaphone algorithm using dictionary '" || $dictionary || "'")
   where fn:exists($dictionary)
   return
+    let $weight := $expand/(weight|@weight)
     let $expanded-values :=
       for $value in $expand-values
       return
-        spell:suggest($dictionary, $value, $spell-options)[fn:not(fn:lower-case(.) = fn:lower-case($value))]
+        spell:suggest($dictionary, $value, $spell-options)
+    let $_ := xdmp:trace($const:TRACE-MATCH-RESULTS, "doubleMetaphone expanded values: " || xdmp:describe($expanded-values, (),()))
     where fn:exists($expanded-values)
     return
-      helper-impl:property-name-to-query($options-xml, $property-name)($expanded-values, $expand-xml/@weight)
+      helper-impl:property-name-to-query($options, $property-name)($expanded-values, $weight)
+};
+
+(: Allows doubleMetaphone to be used instead of double-metaphone in the options :)
+declare function algorithms:doubleMetaphone(
+    $expand-values,
+    $expand as node(),
+    $options as node()
+)
+{
+  algorithms:double-metaphone($expand-values, $expand, $options)
 };
 
 declare variable $dictionaries-inserted-in-transaction as map:map := map:map();

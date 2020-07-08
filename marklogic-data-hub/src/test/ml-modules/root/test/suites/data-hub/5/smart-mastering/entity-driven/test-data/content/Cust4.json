@@ -1,0 +1,129 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ],
+      "createdOn": "2020-08-20T05:27:43.360675Z",
+      "createdBy": "admin"
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "customerId": 104,
+        "name": "Powers Bauer",
+        "shipping": [
+          {
+            "Address": {
+              "street": [
+                "Willow Street"
+              ],
+              "city": "Bedias",
+              "state": "Mississippi",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "94824",
+                  "plusFour": "7938"
+                }
+              }
+            }
+          },
+          {
+            "Address": {
+              "street": [
+                "Bainbridge Street"
+              ],
+              "city": "Retsof",
+              "state": "Vermont",
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "38258",
+                  "plusFour": "4231"
+                }
+              }
+            }
+          }
+        ],
+        "billing": {
+          "Address": {
+            "street": [
+              "Bainbridge Street"
+            ],
+            "city": "Retsof",
+            "state": "Vermont",
+            "zip": {
+              "Zip": {
+                "fiveDigit": "38258",
+                "plusFour": "4231"
+              }
+            }
+          }
+        }
+      }
+    },
+    "attachments": {
+      "envelope": {
+        "headers": {
+          "sources": [
+            {
+              "name": "loadCustomersJSON"
+            }
+          ],
+          "createdOn": "2020-08-20T05:27:43.360675Z",
+          "createdBy": "admin"
+        },
+        "triples": [],
+        "instance": {
+          "CustomerID": 104,
+          "Name": {
+            "FirstName": "Powers",
+            "LastName": "Bauer"
+          },
+          "nicknames": [
+            "power",
+            "Thanos",
+            "bau"
+          ],
+          "Email": "powersbauer@nutralab.com",
+          "Address": [
+            {
+              "Shipping": {
+                "Street": "Willow Street",
+                "City": "Bedias",
+                "State": "Mississippi",
+                "Postal": "94824-7938"
+              }
+            },
+            {
+              "Shipping": {
+                "Street": "Bainbridge Street",
+                "City": "Retsof",
+                "State": "Vermont",
+                "Postal": "38258-4231"
+              }
+            },
+            {
+              "Billing": {
+                "Street": "Bainbridge Street",
+                "City": "Retsof",
+                "State": "Vermont",
+                "Postal": "38258-4231"
+              }
+            }
+          ],
+          "Phone": "(915) 419-3711",
+          "PIN": 1423,
+          "Created": "10/11/2016"
+        },
+        "attachments": null
+      }
+    }
+  }
+}
