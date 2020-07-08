@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>loadCustomersJSON</name>
+        </sources>
+        <createdOn xmlns="">2020-08-20T05:27:43.360675Z</createdOn>
+        <createdBy xmlns="">admin</createdBy>
+    </headers>
+    <triples/>
+    <instance>
+        <info>
+            <title>NamespacedCustomer</title>
+            <version/>
+        </info>
+        <exCustomer:NamespacedCustomer xmlns:exCustomer="http://example.org/customer">
+            <exCustomer:customerId>104</exCustomer:customerId>
+            <exCustomer:name>Powers Bauer</exCustomer:name>
+            <exCustomer:shipping datatype="array">
+                <exAddress:Address xmlns:exAddress="http://example.org/address">
+                    <exAddress:street>Willow Street</exAddress:street>
+                    <exAddress:city>Bedias</exAddress:city>
+                    <exAddress:state>Mississippi</exAddress:state>
+                    <exAddress:zip>
+                        <exZip:Zip xmlns:exZip="http://example.org/zip">
+                            <exZip:fiveDigit>94824</exZip:fiveDigit>
+                            <exZip:plusFour>7938</exZip:plusFour>
+                        </exZip:Zip>
+                    </exAddress:zip>
+                </exAddress:Address>
+            </exCustomer:shipping>
+            <exCustomer:shipping datatype="array">
+                <exAddress:Address xmlns:exAddress="http://example.org/address">
+                    <exAddress:street>Bainbridge Street</exAddress:street>
+                    <exAddress:city>Retsof</exAddress:city>
+                    <exAddress:state>Vermont</exAddress:state>
+                    <exAddress:zip>
+                        <exZip:Zip xmlns:exZip="http://example.org/zip">
+                            <exZip:fiveDigit>38258</exZip:fiveDigit>
+                            <exZip:plusFour>4231</exZip:plusFour>
+                        </exZip:Zip>
+                    </exAddress:zip>
+                </exAddress:Address>
+            </exCustomer:shipping>
+            <exCustomer:billing>
+                <exAddress:Address xmlns:exAddress="http://example.org/address">
+                    <exAddress:street>Bainbridge Street</exAddress:street>
+                    <exAddress:city>Retsof</exAddress:city>
+                    <exAddress:state>Vermont</exAddress:state>
+                    <exAddress:zip>
+                        <exZip:Zip xmlns:exZip="http://example.org/zip">
+                            <exZip:fiveDigit>38258</exZip:fiveDigit>
+                            <exZip:plusFour>4231</exZip:plusFour>
+                        </exZip:Zip>
+                    </exAddress:zip>
+                </exAddress:Address>
+            </exCustomer:billing>
+        </exCustomer:NamespacedCustomer>
+    </instance>
+    <attachments/>
+</envelope>
