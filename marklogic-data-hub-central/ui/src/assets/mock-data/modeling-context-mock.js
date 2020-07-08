@@ -37,6 +37,7 @@ export const isModified = {
     ]
   },
   toggleIsModified: jest.fn(),
+  setEntityTypeNamesArray: jest.fn()
 }
 
 export const notModified = {
@@ -44,6 +45,7 @@ export const notModified = {
     isModified: false
   },
   toggleIsModified: jest.fn(),
+  setEntityTypeNamesArray: jest.fn()
 }
 
 export const entityNamesArray = {

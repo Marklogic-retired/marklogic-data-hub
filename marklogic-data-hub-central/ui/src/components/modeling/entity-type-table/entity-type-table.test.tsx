@@ -41,6 +41,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -59,6 +64,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -95,11 +105,16 @@ describe('EntityTypeModal Component', () => {
           autoExpand='Order'
           editEntityTypeDescription={editMock}
           updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
     // Add back once functionality is added
-    expect(getByTestId('Order-save-icon')).toHaveClass('iconSave');
+    expect(getByTestId('Order-save-icon')).not.toHaveClass('iconSave');
     // expect(getByTestId('Order-revert-icon')).toHaveClass('iconRevert');
     expect(getByTestId('Order-trash-icon')).toHaveClass('iconTrash');
 
@@ -122,6 +137,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -151,6 +171,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -181,6 +206,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={updateMock}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -208,6 +238,11 @@ describe('EntityTypeModal Component', () => {
           autoExpand=''
           editEntityTypeDescription={jest.fn()}
           updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
         />
       </Router>);
 
@@ -218,6 +253,33 @@ describe('EntityTypeModal Component', () => {
       )
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveEntity}-yes`));
       expect(mockUpdateEntityModels).toBeCalledTimes(1);
+  });
+
+  test('Table can mock revert an entity', async () => {
+    mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
+
+    const { getByTestId } =  render(
+      <Router>
+        <EntityTypeTable
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=''
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
+        />
+      </Router>);
+
+    userEvent.click(getByTestId('Order-revert-icon'));
+
+    await wait(() =>
+      expect(screen.getByText('Confirmation')).toBeInTheDocument(),
+    )
   });
 });
 

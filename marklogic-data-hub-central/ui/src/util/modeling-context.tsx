@@ -56,7 +56,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
       let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
       newModifiedEntitiesArray.splice(index, 1);
-      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: false })
+      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0 })
     }
   }
 
