@@ -42,30 +42,39 @@ declare variable $_cached-algorithms-map as map:map := map:map();
  : @param $algorithms-xml the algorithms element from the matcher options
  : @return a map:map of the match algorithm functions
  :)
-declare function algorithms:build-algorithms-map($algorithms-xml as element(matcher:algorithms))
+declare function algorithms:build-algorithms-map($algorithms as node()*)
   as map:map
 {
-  if (map:contains($_cached-algorithms-map, fn:generate-id($algorithms-xml))) then
-    map:get($_cached-algorithms-map, fn:generate-id($algorithms-xml))
-  else
-    let $algorithms-map as map:map :=
-      map:new((
-        for $algorithm-xml in $algorithms-xml/*:algorithm
-        return
-          map:entry(
-            $algorithm-xml/@name,
-            fun-ext:function-lookup(
-              fn:string($algorithm-xml/@function),
-              fn:string($algorithm-xml/@namespace),
-              fn:string($algorithm-xml/@at),
-              algorithms:default-function-lookup(?, 3)
+  let $key := xdmp:md5(xdmp:describe($algorithms, (), ()))
+  return
+    if (map:contains($_cached-algorithms-map, $key)) then
+      map:get($_cached-algorithms-map, $key)
+    else
+      let $algorithms-map as map:map :=
+        map:new((
+          for $algorithm as node() in $algorithms
+          let $name as xs:string? := $algorithm/(@name|name) ! fn:string(.)
+          let $function-name as xs:string := fn:string($algorithm/(@function|function|algorithmFunction))
+          let $module-namespace as xs:string := fn:string($algorithm/(@namespace|namespace|algorithmModuleNamespace))
+          let $module-path as xs:string := fn:string($algorithm/(@at|at|algorithmModulePath))
+          return
+            map:entry(
+              if (fn:exists($name)) then
+                $name
+              else
+                $module-path || ":" || $function-name,
+              fun-ext:function-lookup(
+                $function-name,
+                $module-namespace,
+                $module-path,
+                algorithms:default-function-lookup(?, 3)
+              )
             )
-          )
-      ))
-    return (
-      map:put($_cached-algorithms-map, fn:generate-id($algorithms-xml), $algorithms-map),
-      $algorithms-map
-    )
+        ))
+      return (
+        map:put($_cached-algorithms-map, $key, $algorithms-map),
+        $algorithms-map
+      )
 };
 
 (:~
@@ -90,12 +99,12 @@ declare function algorithms:setup-algorithms($options as element(matcher:options
 };
 
 (:~
- :
+ : Deprecated. If we need to do automation for maintaining a dictionary, for example, we need to a better process.
  :)
 declare function algorithms:setup-map-from-xml($algorithms-xml as element(matcher:algorithms))
 {
   algorithms:setup-map-from-map(
-    algorithms:build-algorithms-map($algorithms-xml)
+    algorithms:build-algorithms-map($algorithms-xml/*:algorithm)
   )
 };
 
