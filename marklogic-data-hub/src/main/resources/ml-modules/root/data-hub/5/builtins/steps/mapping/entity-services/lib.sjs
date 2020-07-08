@@ -249,6 +249,9 @@ function retrieveFunctionImports() {
 function buildEntityTemplate(mapping, model, propertyPath) {
   let entityName = getEntityName(mapping.targetEntityType);
   let entityDefinition = model.definitions[entityName];
+  if (!entityDefinition) {
+    throw Error(`Could not find an entity type with name: ${entityName}`);
+  }
   let namespacePrefix = entityDefinition.namespacePrefix;
   let entityTag = namespacePrefix ? `${namespacePrefix}:${entityName}`: entityName;
   let namespaceNode = `xmlns${namespacePrefix ? `:${namespacePrefix}`: ''}="${entityDefinition.namespace || ''}"`;
