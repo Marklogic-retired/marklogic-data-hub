@@ -18,6 +18,7 @@ subprojects {
     targetCompatibility = "9"
 
     repositories {
+        maven { url 'http://distro.marklogic.com/nexus/repository/dhf-maven-proxy/' }
         mavenCentral()
         mavenLocal()
     }
