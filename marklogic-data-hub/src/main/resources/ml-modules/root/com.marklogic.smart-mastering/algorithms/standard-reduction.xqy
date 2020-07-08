@@ -11,23 +11,24 @@ declare option xdmp:mapping "false";
 
 declare function algorithms:standard-reduction-query(
   $document,
-  $reduce-xml,
-  $options-xml
+  $reduce,
+  $options
 ) as cts:query? {
   cts:and-query((
-    for $property-name at $pos in $reduce-xml/*:all-match/*:property
+    let $reduce-options := fn:head(($reduce/options, $reduce))
+    for $property-name at $pos in $reduce-options/(*:all-match|allMatch)/*:property
     let $weight :=
       if ($pos eq 1) then
-        -fn:abs(fn:number($reduce-xml/@weight))
+        -fn:abs(fn:number($reduce/(@weight|weight)))
       else
         0
     return
-      let $base-query := helper-impl:property-name-to-query($options-xml, $property-name)
+      let $base-query := helper-impl:property-name-to-query($options, $property-name)
       where fn:exists($base-query)
       return
-        let $qname := helper-impl:property-name-to-qname($options-xml, $property-name)
+        let $qname := helper-impl:property-name-to-qname($options, $property-name)
         let $value := $document//*[fn:node-name(.) eq $qname]
         return
-            helper-impl:property-name-to-query($options-xml, $property-name)($value, $weight)
+            helper-impl:property-name-to-query($options, $property-name)($value, $weight)
   ))
 };
