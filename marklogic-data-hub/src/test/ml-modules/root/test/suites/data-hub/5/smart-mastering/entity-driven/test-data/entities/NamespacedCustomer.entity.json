@@ -1,0 +1,98 @@
+{
+  "info": {
+    "title": "NamespacedCustomer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "NamespacedCustomer": {
+      "namespace": "http://example.org/customer",
+      "namespacePrefix": "exCustomer",
+      "required": [
+        "name"
+      ],
+      "primaryKey": "customerId",
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "nicknames": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of simple values",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "shipping": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of structured values",
+          "items": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "billing": {
+          "description": "Example of a single-value structured property",
+          "$ref": "#/definitions/Address"
+        },
+        "birthDate": {
+          "datatype": "date"
+        },
+        "status": {
+          "datatype": "string"
+        },
+        "customerSince": {
+          "datatype": "date"
+        },
+        "orders": {
+          "datatype": "array",
+          "description": "Example of a relationship to another entity type",
+          "items": {
+            "$ref": "http://example.org/Order-0.0.1/Order"
+          }
+        }
+      }
+    },
+    "Address": {
+      "namespace": "http://example.org/address",
+      "namespacePrefix": "exAddress",
+      "properties": {
+        "street": {
+          "datatype": "array",
+          "items": {
+            "datatype": "string",
+            "collation": "http://marklogic.com/collation/codepoint"
+          }
+        },
+        "city": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "state": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "zip": {
+          "$ref": "#/definitions/Zip"
+        }
+      }
+    },
+    "Zip": {
+      "namespace": "http://example.org/zip",
+      "namespacePrefix": "exZip",
+      "properties": {
+        "fiveDigit": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "plusFour": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

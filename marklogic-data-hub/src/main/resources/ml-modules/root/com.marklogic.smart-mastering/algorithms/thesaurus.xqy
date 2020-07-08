@@ -23,31 +23,48 @@ declare option xdmp:mapping "false";
  : https://marklogic-community.github.io/smart-mastering-core/docs/match-algorithms/#thesaurus.
  :)
 declare function algorithms:thesaurus(
-  $expand-values as xs:string*,
-  $expand-xml as element(match:expand),
-  $options-xml as element(match:options)
+  $expand-values as item()*,
+  $expand as node(),
+  $options as node()
 )
 {
-  let $property-name := $expand-xml/@property-name
-  let $thesaurus := $expand-xml/*:thesaurus
+  let $property-name := helper-impl:get-property-name($expand)
+  let $expand-options := fn:head(($expand/options, $expand))
+  let $thesaurus := $expand-options/(*:thesaurus|thesaurusURI)
   where fn:exists($thesaurus)
   return
     for $value in $expand-values
     let $entries := thsr:lookup($thesaurus, fn:lower-case($value))
     where fn:exists($entries)
     return
-      let $query := helper-impl:property-name-to-query($options-xml, $property-name)(fn:lower-case($value), $expand-xml/@weight)
-      return expand-query($query, $entries, $expand-xml)
+      let $weight := $expand/(@weight|weight)
+      let $query := helper-impl:property-name-to-query($options, $property-name)(fn:lower-case($value), $weight)
+      return expand-query($query, $entries, $expand)
+};
+
+(: Allows synonym to be used instead of thesaurus in the options :)
+declare function algorithms:synonym(
+    $expand-values,
+    $expand as node(),
+    $options as node()
+)
+{
+  algorithms:thesaurus($expand-values, $expand, $options)
 };
 
 declare function expand-query(
   $query as cts:query,
   $entries as element(thsr:entry)*,
-  $expand-xml as element(match:expand)
+  $expand as node()
 ) as cts:query
 {
-  let $weight := $expand-xml/@weight
-  let $filters := $expand-xml/*:filter/*
+  let $weight := $expand/(weight|@weight)
+  let $expand-options := fn:head(($expand/options, $expand))
+  let $filters := if (fn:exists($expand-options/*:filter/*)) then
+      $expand-options/*:filter/*
+    else if (fn:exists($expand-options/*:filter[fn:normalize-space(.)])) then
+      xdmp:unquote($expand-options/*:filter)
+    else ()
   return
   (: thsr:expand does not yet work properly on cts:json-property-scope-query, so must run thsr:expand on the child query instead :)
     if ($query instance of cts:json-property-scope-query) then
