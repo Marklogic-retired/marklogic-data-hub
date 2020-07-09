@@ -129,6 +129,7 @@ const QueryExportModal = (props) => {
             {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div>
                 <Collapse bordered={false} className={styles.collapseCustomPanel} style={{ border: '0px', color: 'blue' }}>
                     <Panel id='export-panel' header="Show Preview" key="1" style={{ border: '0px', color: 'blue' }}>
+                        <Alert data-testid='export-data-warning' className={styles.dataWarning} message='Preview may improperly render new lines in property values' type="warning" icon={<Icon icon={exclamationTriangle} color="#CE8406" />} showIcon /><br />
                         <Table data-testid='export-preview-table' className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size='small' scroll={{ x: 500 }} bordered />
                     </Panel>
                 </Collapse>

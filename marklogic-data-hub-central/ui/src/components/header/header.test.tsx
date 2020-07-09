@@ -41,9 +41,9 @@ describe('Header component', () => {
     expect(getByLabelText('header-logo')).toBeInTheDocument();
     expect(getByText(Application.title)).toBeInTheDocument();
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
-    expect(getByLabelText('icon: search')).toBeInTheDocument();
+    // expect(getByLabelText('icon: search')).toBeInTheDocument();
     expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
-    expect(getByLabelText('icon: setting')).toBeInTheDocument();
+    // expect(getByLabelText('icon: setting')).toBeInTheDocument();
     expect(getByLabelText('icon: user')).toBeInTheDocument();
   });
 
