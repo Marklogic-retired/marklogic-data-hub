@@ -255,14 +255,7 @@ public class QueryStepRunner implements StepRunner {
             return runStepResponse;
         }
 
-        try {
-            return this.runHarmonizer(runStepResponse, uris);
-        }
-        finally {
-            if (uris != null) {
-                uris.close();
-            }
-        }
+        return this.runHarmonizer(runStepResponse, uris);
     }
 
     @Override
@@ -470,6 +463,11 @@ public class QueryStepRunner implements StepRunner {
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
+
+            // now that the job has completed we can close the resource
+            if (uris instanceof DiskQueue) {
+                ((DiskQueue<String>)uris).close();
+            }
 
             String stepStatus;
             if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
