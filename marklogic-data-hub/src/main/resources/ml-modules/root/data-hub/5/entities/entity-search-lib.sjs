@@ -356,6 +356,8 @@ function addGenericEntityProperties(result) {
   }
 
   if (instance != null) {
+    let isEntityInstance = instance.hasOwnProperty("info") ? true : (Object.keys(instance).length > 1 ? false : true);
+    if(isEntityInstance) {
     entityTitle = instance.hasOwnProperty("info") ? instance.info.title : Object.keys(instance)[0];
     entityModel = entityLib.findModelByEntityName(entityTitle);
     let entityDef = entityModel.definitions[entityTitle];
@@ -364,6 +366,9 @@ function addGenericEntityProperties(result) {
       console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
     } else {
         addPrimaryKeyToResult(result, entityInstance, entityDef);
+    }
+    } else {
+      console.log(`Unable to obtain a valid entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
     }
   }
   try {
