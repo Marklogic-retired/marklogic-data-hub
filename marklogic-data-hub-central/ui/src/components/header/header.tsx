@@ -56,15 +56,15 @@ const Header:React.FC<Props> = (props) => {
             <i id="service-name" className={styles.serviceName} onClick={handleSystemInfoDisplay}>{props.environment.serviceName}</i>
         </Menu.Item>
         <div className={styles.vertical}></div>
-        <Menu.Item>
+        {/* <Menu.Item>
           <MLTooltip title="Search"><Icon type="search"/></MLTooltip>
-        </Menu.Item>
+        </Menu.Item> */}
         <Menu.Item>
           <MLTooltip title="Help"><Icon type="question-circle"/></MLTooltip>
         </Menu.Item>
-        <Menu.Item>
+        {/* <Menu.Item>
           <MLTooltip title="Settings"><Icon type="setting"/></MLTooltip>
-        </Menu.Item>
+        </Menu.Item> */}
         <Dropdown overlay={userMenu}>
           <span className="userDropdown">
             <MLTooltip title="User"><Icon type="user"/></MLTooltip>
