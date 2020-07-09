@@ -17,7 +17,25 @@
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
-var artifactType, propertiesToReturn, groupByEntityType;
+var propertiesToReturn;
 
-Artifacts.getArtifacts(artifactType);
+const response = {};
+const stepTypes = ['ingestion', 'mapping'];
 
+function removeAllPropertiesExcept(step) {
+    if (fn.exists(propertiesToReturn)) {
+        const stepCopy = {};
+        for (const prop of propertiesToReturn) {
+            stepCopy[prop] = step[prop];
+        }
+        return stepCopy;
+    }
+    return step;
+}
+
+for (const stepType of stepTypes) {
+    const stepsOfType = Artifacts.getArtifacts(stepType, false).map((step) => removeAllPropertiesExcept(step));
+    response[`${stepType}Steps`] = stepsOfType;
+}
+
+response;

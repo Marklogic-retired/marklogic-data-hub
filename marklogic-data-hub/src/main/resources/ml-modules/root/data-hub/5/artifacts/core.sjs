@@ -40,7 +40,7 @@ const registeredArtifactTypes = {
 
 const entityServiceDrivenArtifactTypes = ['mapping', 'custom'];
 
-function getArtifacts(artifactType) {
+function getArtifacts(artifactType, groupByEntityType = entityServiceDrivenArtifactTypes.includes(artifactType)) {
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
@@ -55,10 +55,10 @@ function getArtifacts(artifactType) {
       // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
       queries.push(cts.notQuery(cts.collectionQuery(dataHub.consts.HUB_ARTIFACT_COLLECTION)));
 
-      if (entityServiceDrivenArtifactTypes.includes(artifactType)) {
+      if (groupByEntityType) {
         return getArtifactsGroupByEntity(queries)
       } else {
-        return cts.search(cts.andQuery(queries)).toArray();
+        return cts.search(cts.andQuery(queries)).toArray().map((artifact) => artifact.toObject());
       }
     }
     return [];
