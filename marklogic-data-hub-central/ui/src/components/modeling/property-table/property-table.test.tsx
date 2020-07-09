@@ -1,10 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, wait, getByTestId } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
-import scrollIntoView from 'scroll-into-view';
 
+import { ModelingContext } from '../../../util/modeling-context';
+import { ModelingTooltips } from '../../../config/tooltips.config';
 import { propertyTableEntities } from '../../../assets/mock-data/modeling';
+import { entityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+
 
 describe('Entity Modeling Property Table Component', () => {
   window.scrollTo = jest.fn()
@@ -30,7 +33,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByLabelText('NewEntity-add-property')).toBeDisabled();
   });
 
-  test('Property Table renders with basic datatypes, with writer role', () => {
+  test('Property Table renders with basic datatypes, with writer role & hover text shows', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId, getByLabelText, debug } =  render(
@@ -41,6 +44,24 @@ describe('Entity Modeling Property Table Component', () => {
         definitions={definitions}
       />
     )
+
+    fireEvent.mouseOver(getByLabelText('identifier-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByLabelText('multiple-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.multiple)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByLabelText('sort-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.sort)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByLabelText('facet-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByLabelText('wildcard-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByLabelText('pii-header'));
+    await wait (() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
 
     expect(getByTestId('identifier-concept_name')).toBeInTheDocument();
     expect(getByTestId('multiple-synonyms')).toBeInTheDocument();
@@ -56,7 +77,6 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByText('Entity Type:')).toBeInTheDocument();
     expect(getByText('Add')).toBeInTheDocument();
     expect(getByText('Cancel')).toBeInTheDocument();
-
   });
 
   test('Property Table renders with structured and external datatypes, no writer role', () => {
@@ -79,11 +99,11 @@ describe('Entity Modeling Property Table Component', () => {
 
     expect(getByText('Order')).toBeInTheDocument();
     expect(getByText('integer')).toBeInTheDocument();
-    expect(getByText('date')).toBeInTheDocument();
+    expect(getByText('birthDate')).toBeInTheDocument();
     expect(getByText('billing')).toBeInTheDocument();
     expect(getByText('shipping')).toBeInTheDocument();
 
-    expect(getAllByText('string')).toHaveLength(1);
+    expect(getAllByText('string')).toHaveLength(3);
     expect(getAllByText('Address')).toHaveLength(2);
     
     // Table expansion shipping property -> Address Structure type
@@ -113,10 +133,10 @@ describe('Entity Modeling Property Table Component', () => {
 
     expect(getAllByText('fiveDigit')).toHaveLength(2);
     expect(getAllByText('plusFour')).toHaveLength(2);
-    expect(getAllByText('string')).toHaveLength(11);
+    expect(getAllByText('string')).toHaveLength(13);
   });
 
-  test('can add a Property to the table', async () => {
+  test('can add a Property to the table and then edit it', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId, getByLabelText, debug } =  render(
@@ -136,13 +156,21 @@ describe('Entity Modeling Property Table Component', () => {
 
     fireEvent.submit(screen.getByLabelText('input-name'));
 
-    expect(getByText('conceptDate')).toBeInTheDocument();
+    expect(getByTestId('conceptDate-span')).toBeInTheDocument();
+
+    userEvent.click(screen.getByTestId('conceptDate-span'));
+
+    userEvent.clear(screen.getByLabelText('input-name'));
+    await userEvent.type(screen.getByLabelText('input-name'), 'conception');
+    
+    fireEvent.submit(screen.getByLabelText('input-name'));
+    expect(getByTestId('conception-span')).toBeInTheDocument();
   });
 
-  test('can add a new structured type property to the table', async () => {
+  test('can add a new structured type property to the table and then edit it', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText } =  render(
+    const { getByText, getByTestId } =  render(
       <PropertyTable 
         canReadEntityModel={true}
         canWriteEntityModel={true}
@@ -164,29 +192,41 @@ describe('Entity Modeling Property Table Component', () => {
 
     fireEvent.submit(screen.getByLabelText('input-name'));
 
-    expect(getByText('newStructure')).toBeInTheDocument();
+    expect(getByTestId('newStructure-span')).toBeInTheDocument();
+
+    userEvent.click(screen.getByTestId('newStructure-span'));
+    userEvent.clear(screen.getByLabelText('input-name'));
+    await userEvent.type(screen.getByLabelText('input-name'), 'basicName');
+    userEvent.click(screen.getByLabelText('type-dropdown'));
+    userEvent.click(screen.getByText('More date types'));
+    userEvent.click(screen.getByText('dayTimeDuration'));
+    
+    fireEvent.submit(screen.getByLabelText('input-name'));
+    expect(getByTestId('conception-span')).toBeInTheDocument();
   });
 
-  test('can edit a basic property', async () => {
+  test('can edit a property and change the type from basic to relationship', async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const { getByText, getByTestId, queryByTestId, getAllByTestId } =  render(
-      <PropertyTable 
-        canReadEntityModel={true}
-        canWriteEntityModel={true}
-        entityName={entityName} 
-        definitions={definitions}
-      />
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyTable 
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          entityName={entityName} 
+          definitions={definitions}
+        />
+      </ModelingContext.Provider>
     )
 
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
     expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
 
-    userEvent.click(getByTestId('customerId-span'));
+    userEvent.click(getByTestId('nicknames-span'));
     userEvent.clear(screen.getByLabelText('input-name'));
 
-    await userEvent.type(screen.getByLabelText('input-name'), 'newId');
+    await userEvent.type(screen.getByLabelText('input-name'), 'altName');
 
     const multipleRadio = screen.getByLabelText('multiple-yes');
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
@@ -200,9 +240,27 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     expect(wildcardCheckbox).toBeChecked();
 
-    userEvent.click(screen.getByLabelText('property-modal-submit'));  
+    fireEvent.submit(screen.getByLabelText('input-name'));
+    expect(getByTestId('altName-span')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('altName-span'));
 
-    expect(getByText('newId')).toBeInTheDocument();
+    userEvent.clear(screen.getByLabelText('input-name'));
+    await userEvent.type(screen.getByLabelText('input-name'), 'orderRelationship');
+    userEvent.click(screen.getByLabelText('type-dropdown'));
+    userEvent.click(screen.getByText('Relationship'));
+    userEvent.click(screen.getAllByText('Order')[0]);
+    fireEvent.submit(screen.getByLabelText('input-name'));
+
+    expect(getByTestId('orderRelationship-span')).toBeInTheDocument();
+    userEvent.click(screen.getByTestId('orderRelationship-span'));
+
+    userEvent.clear(screen.getByLabelText('input-name'));
+    await userEvent.type(screen.getByLabelText('input-name'), 'basicID');
+    userEvent.click(screen.getByLabelText('type-dropdown'));
+    userEvent.click(screen.getAllByText('integer')[0]);
+    fireEvent.submit(screen.getByLabelText('input-name'));
+
+    expect(getByTestId('basicID-span')).toBeInTheDocument();
   });
 });
 

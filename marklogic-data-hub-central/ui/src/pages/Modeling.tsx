@@ -1,28 +1,32 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Tooltip, Alert } from 'antd';
 import { faUndo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MLButton, MLTooltip } from '@marklogic/design-system';
+import { MLButton, MLTooltip, MLAlert } from '@marklogic/design-system';
 
+import ConfirmationModal from '../components/confirmation-modal/confirmation-modal';
 import EntityTypeModal from '../components/modeling/entity-type-modal/entity-type-modal';
 import EntityTypeTable from '../components/modeling/entity-type-table/entity-type-table';
 import styles from './Modeling.module.scss';
 
-import { primaryEntityTypes } from '../api/modeling';
+import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
 import { UserContext } from '../util/user-context';
 import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
+import { ConfirmationType } from '../types/modeling-types';
 
 const Modeling: React.FC = () => {
   const { handleError, resetSessionTime } = useContext(UserContext);
-  const { modelingOptions, setEntityTypeNamesArray } = useContext(ModelingContext);
+  const { modelingOptions, setEntityTypeNamesArray, clearEntityModified } = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [autoExpand, setAutoExpand] = useState('');
+
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.SaveAll);
 
   //Role based access
   const authorityService = useContext(AuthoritiesContext);
@@ -49,6 +53,20 @@ const Modeling: React.FC = () => {
     }
   }
 
+  const saveAllEntitiesToServer = async () => {
+    try {
+      const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
+      if (response['status'] === 200) {
+        clearEntityModified();
+      } 
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+      toggleConfirmModal(false);
+    }
+  }
+
   const updateEntityTypesAndHideModal = (entityName: string, description: string) => {
     if (!isEditModal) {
       setAutoExpand(entityName + ',' + description);
@@ -66,6 +84,12 @@ const Modeling: React.FC = () => {
     }
   };
 
+  const confirmAction = () => {
+    if (confirmType === ConfirmationType.SaveAll) {
+      saveAllEntitiesToServer();
+    }
+  }
+
   const addButton = <MLButton 
     type="primary"
     aria-label="add-entity"
@@ -80,7 +104,7 @@ const Modeling: React.FC = () => {
   return (
     <div className={styles.modelContainer}>
       { modelingOptions.isModified && (
-        <Alert type="info" showIcon message={ModelingTooltips.entityEditedAlert}/>
+        <MLAlert type="info" showIcon message={ModelingTooltips.entityEditedAlert}/>
       )}
       <div className={styles.header}>
         <h1>Entity Types</h1>
@@ -97,7 +121,14 @@ const Modeling: React.FC = () => {
                 <span>{addButton}</span>
               </MLTooltip>
           }
-          <MLButton disabled aria-label="save-all">
+          <MLButton 
+            disabled={!modelingOptions.isModified} 
+            aria-label="save-all"
+            onClick={() => {
+              setConfirmType(ConfirmationType.SaveAll);
+              toggleConfirmModal(true);
+            }}
+          >
             <span className={styles.publishIcon}></span>
             Save All
           </MLButton>
@@ -111,6 +142,14 @@ const Modeling: React.FC = () => {
           </MLButton>
         </div>
       </div>
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={[]} 
+        stepValues={[]}
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmAction}
+      />
       <EntityTypeModal
         isVisible={showEntityModal}
         toggleModal={toggleShowEntityModal}

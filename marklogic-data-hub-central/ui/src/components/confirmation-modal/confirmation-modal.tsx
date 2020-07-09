@@ -162,6 +162,16 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           </p>
         </>
       )}
+
+      {props.type === ConfirmationType.SaveAll && (
+        <>
+          <p id="save-all-text">Are you sure you want to save ALL changes to ALL entity types?</p>
+
+          <p>Changes will be saved to the entity model, possibly including updating indexes.
+            Any features enabled by the changes will not be available until this is complete.
+          </p>
+        </>
+      )}
     </Modal>
   )
 }

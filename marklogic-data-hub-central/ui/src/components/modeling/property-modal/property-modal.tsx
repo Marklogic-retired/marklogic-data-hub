@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Form, Input, Tooltip, Icon, Radio, Checkbox, Cascader } from 'antd';
+import { Modal, Form, Input, Icon, Radio, Cascader } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";import styles from './property-modal.module.scss';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from './property-modal.module.scss';
 
 import StructuredTypeModal from '../structured-type-modal/structured-type-modal';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
@@ -621,7 +622,8 @@ const PropertyModal: React.FC<Props> = (props) => {
   return (
     <Modal
       className={styles.modal}
-      visible={props.isVisible} 
+      visible={props.isVisible}
+      destroyOnClose={true} 
       closable={true}
       title={modalTitle}
       maskClosable={false}
