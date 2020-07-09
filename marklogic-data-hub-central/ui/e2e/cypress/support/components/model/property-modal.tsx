@@ -1,10 +1,10 @@
 class PropertyModal {
   newPropertyName(str: string) {
-    cy.get('#property-name').type(str);
+    cy.get('#property-name').focus().type(str);
   }
 
   clearPropertyName() {
-    cy.get('#property-name').clear();
+    cy.get('#property-name').focus().clear();
   }
 
   getStructuredTypeName() {

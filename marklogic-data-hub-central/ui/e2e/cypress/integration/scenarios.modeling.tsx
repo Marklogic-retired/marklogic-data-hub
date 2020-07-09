@@ -140,7 +140,6 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('Product').should('not.exist');
   });
 
-
   it('can create entity, can create a structured type, and properties to structure type, and add structure type as property, and delete entity', () => {
     modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
@@ -308,4 +307,74 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('User').should('not.exist');
   });
 
+  it('can add multiple entities, add properties, and save all entities', () => {
+    modelPage.getAddEntityButton().should('exist');
+    modelPage.getAddEntityButton().click();
+    entityTypeModal.newEntityName('Concept');
+    entityTypeModal.newEntityDescription('A concept entity');
+    entityTypeModal.getAddButton().click();
+
+    propertyTable.getAddPropertyButton('Concept').should('exist').trigger('mouseover');
+    cy.contains(`Click to add properties to this entity type.`);
+    propertyTable.getAddPropertyButton('Concept').click();
+
+    propertyModal.newPropertyName('person');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();    
+    propertyModal.getCascadedTypeFromDropdown('PersonXML').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('person').should('exist');
+
+    //create second Entity
+    modelPage.getAddEntityButton().should('exist');
+    modelPage.getAddEntityButton().click();
+    entityTypeModal.newEntityName('Patient');
+    entityTypeModal.newEntityDescription('An entity for patients');
+    entityTypeModal.getAddButton().click();
+
+    propertyTable.getAddPropertyButton('Patient').should('exist').trigger('mouseover');
+    cy.contains(`Click to add properties to this entity type.`);
+    propertyTable.getAddPropertyButton('Patient').click();
+    propertyModal.newPropertyName('patientID');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('More number types').click();    
+    propertyModal.getCascadedTypeFromDropdown('byte').click(); 
+    propertyModal.getYesRadio('identifier').click();
+    propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getIdentifierIcon('patientID').should('exist');
+    propertyTable.getWildcardIcon('patientID').should('exist');
+
+    propertyTable.getAddPropertyButton('Patient').should('exist');
+    propertyTable.getAddPropertyButton('Patient').click();
+    propertyModal.newPropertyName('conceptType');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();    
+    propertyModal.getCascadedTypeFromDropdown('Concept').click();
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getProperty('conceptType').should('exist');
+
+    modelPage.getSaveAllButton().click();
+    confirmationModal.getYesButton(ConfirmationType.SaveAll).click();
+    confirmationModal.getSaveAllEntityText().should('exist');
+    confirmationModal.getSaveAllEntityText().should('not.exist');
+
+    entityTypeTable.getDeleteEntityIcon('Concept').click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntityRelationshipWarn).click();
+    confirmationModal.getDeleteEntityRelationshipText().should('exist');
+    confirmationModal.getDeleteEntityRelationshipText().should('not.exist');
+    
+    entityTypeTable.getEntity('Concept').should('not.exist');
+    propertyTable.getProperty('conceptType').should('not.exist');
+
+    entityTypeTable.getDeleteEntityIcon('Patient').click();
+    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
+    confirmationModal.getDeleteEntityText().should('exist');
+    confirmationModal.getDeleteEntityText().should('not.exist');
+    entityTypeTable.getEntity('Patient').should('not.exist');
+  });
 });

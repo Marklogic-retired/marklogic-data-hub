@@ -113,7 +113,8 @@ const PropertyTable: React.FC<Props> = (props) => {
         if (props.canWriteEntityModel && props.canReadEntityModel) {
 
           renderText = <span 
-            data-testid={text + '-span'} 
+            data-testid={text + '-span'}
+            aria-label="property-name-header" 
             className={styles.link}
             onClick={() => {
               editPropertyShowModal(text, record);
@@ -132,7 +133,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.identifier}>
-          <span>Identifier</span>
+          <span aria-label="identifier-header">Identifier</span>
         </MLTooltip>
       ),
       dataIndex: 'identifier',
@@ -144,7 +145,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.multiple}>
-          <span>Multiple</span>
+          <span aria-label="multiple-header">Multiple</span>
         </MLTooltip>
       ),
       dataIndex: 'multiple',
@@ -156,7 +157,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.sort}>
-          <span>Sort</span>
+          <span aria-label="sort-header">Sort</span>
         </MLTooltip>
       ),
       dataIndex: 'sort',
@@ -168,7 +169,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.facet}>
-          <span>Facet</span>
+          <span aria-label="facet-header">Facet</span>
         </MLTooltip>
       ),
       dataIndex: 'facet',
@@ -180,7 +181,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.wildcard}>
-          <span>Wildcard Search</span>
+          <span aria-label="wildcard-header">Wildcard Search</span>
         </MLTooltip>
       ),
       dataIndex: 'wildcard',
@@ -192,7 +193,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     {
       title: (
         <MLTooltip title={ModelingTooltips.pii}>
-          <span>PII</span>
+          <span aria-label="pii-header">PII</span>
         </MLTooltip>
       ),
       dataIndex: 'pii',
@@ -206,7 +207,9 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'delete',
       width: 75,
       render: text => {
-        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} icon={faTrashAlt} size="2x"
+        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+        icon={faTrashAlt}
+        size="2x"
         onClick={(event) => {
           if (!props.canWriteEntityModel && props.canReadEntityModel) {
             return event.preventDefault()
@@ -531,7 +534,20 @@ const PropertyTable: React.FC<Props> = (props) => {
         const value = key === propertyName ? newProperty : entityTypeDefinition['properties'][key]
         return { [newKey] : value };
       });
-      entityTypeDefinition['properties'] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b))
+      entityTypeDefinition['properties'] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
+
+      if (entityTypeDefinition.hasOwnProperty('required') && entityTypeDefinition.required.some(value => value ===  propertyName)) {
+        let index = entityTypeDefinition.required.indexOf(propertyName);
+        entityTypeDefinition.required[index] = editPropertyOptions.name;
+      }
+      if (entityTypeDefinition.hasOwnProperty('rangeIndex') && entityTypeDefinition.rangeIndex.some(value => value ===  propertyName)) {
+        let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
+        entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
+      }
+      if (entityTypeDefinition.hasOwnProperty('elementRangeIndex') && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
+        let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
+        entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
+      }
     }
 
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;

@@ -1,7 +1,40 @@
 
 export const isModified = {
   modelingOptions: {
-    isModified: true
+    isModified: true,
+    modifiedEntitiesArray: [
+      {
+        "entityName": "Product",
+        "modelDefinition": {
+          "Product": {
+            "required": [],
+            "pii": [
+              "someProperty"
+            ],
+            "elementRangeIndex": [
+              "someProperty"
+            ],
+            "rangeIndex": [
+              "someOtherProperty"
+            ],
+            "properties": {
+              "someProperty": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "someOtherProperty": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              },
+              "zip": {
+                "datatype": "string",
+                "collation": "http://marklogic.com/collation/codepoint"
+              }
+            }
+          }
+        }
+      }
+    ]
   },
   toggleIsModified: jest.fn(),
 }
@@ -28,8 +61,11 @@ export const entityNamesArray = {
         name: 'Customer',
         entityTypeId: 'http://marklogic.com/example/Customer-0.0.1/Customer'
       }
-    ]
-  }
+    ],
+    isModified: false,
+    modifiedEntitiesArray: [],
+  },
+  updateEntityModified: jest.fn()
 }
 
 export const customerEntityNamesArray = {

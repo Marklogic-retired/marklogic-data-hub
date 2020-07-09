@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Icon, Input, Modal, Tooltip } from 'antd';
+import { Form, Icon, Input, Modal } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import styles from './structured-type-modal.module.scss'
 

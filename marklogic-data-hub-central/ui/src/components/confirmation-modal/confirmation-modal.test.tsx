@@ -200,5 +200,39 @@ describe('Confirmation Modal Component', () => {
     userEvent.click(getByText('Yes'));
     expect(confirmAction).toBeCalledTimes(1);
   });
+
+  test('can render save all entity types confirmation', () => {
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { queryByText, getByText, rerender } =  render(
+      <ConfirmationModal 
+        isVisible={false}
+        type={ConfirmationType.SaveAll}
+        boldTextArray={[]} 
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByText('Confirmation')).toBeNull();
+
+    rerender(<ConfirmationModal 
+      isVisible={true}
+      type={ConfirmationType.SaveAll}
+      boldTextArray={[]} 
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getByText('Confirmation')).toBeInTheDocument();
+    expect(getByText('Are you sure you want to save ALL changes to ALL entity types?')).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
+  });
 });
 

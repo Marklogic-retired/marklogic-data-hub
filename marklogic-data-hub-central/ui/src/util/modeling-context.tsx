@@ -16,6 +16,7 @@ export interface ModelingContextInterface {
   toggleIsModified: (isModified: boolean) => void;
   updateEntityModified: (entityModified: EntityModified) => void;
   removeEntityModified: (entityModified: EntityModified) => void;
+  clearEntityModified: () => void;
 }
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
@@ -23,7 +24,8 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   setEntityTypeNamesArray: () => {},
   toggleIsModified: () => {},
   updateEntityModified: () => {},
-  removeEntityModified: () => {}
+  removeEntityModified: () => {},
+  clearEntityModified: () => {}
 });
 
 const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -58,13 +60,18 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     }
   }
 
+  const clearEntityModified = () => {
+    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [], isModified: false })
+  }
+
   return (
     <ModelingContext.Provider value={{
       modelingOptions,
       setEntityTypeNamesArray,
       toggleIsModified,
       updateEntityModified,
-      removeEntityModified
+      removeEntityModified,
+      clearEntityModified
     }}>
       {children}
     </ModelingContext.Provider>

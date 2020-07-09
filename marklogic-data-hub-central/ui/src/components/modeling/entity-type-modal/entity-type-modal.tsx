@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios'
-import { Form, Icon, Input, Modal, Tooltip } from 'antd';
+import { Form, Icon, Input, Modal } from 'antd';
 import styles from './entity-type-modal.module.scss'
 
 import { UserContext } from '../../../util/user-context';
