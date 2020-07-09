@@ -77,6 +77,30 @@ const ResultsTabularView = (props) => {
 
     let selectedTableColumns = props.selectedPropertyDefinitions;
 
+    const generateTableDataWithSelectedColumns = (item, dataObj = {}) => {
+        if (item) {
+            for (let subItem of item) {
+                if (!Array.isArray(subItem)) {
+                    if (!subItem.hasOwnProperty('properties')) {
+                        dataObj[subItem.propertyPath] = "";
+                    } else {
+                        let dataObjArr: any[] = [];
+                        if(subItem.properties) {
+                            dataObjArr.push(generateTableDataWithSelectedColumns(subItem.properties));
+                        }
+                        
+                        dataObj[subItem.propertyPath] = dataObjArr;
+                    }
+                } else {
+                    return generateTableDataWithSelectedColumns(subItem)
+                }
+            }
+            return dataObj;
+        }
+    }
+    
+    let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
+
     const tableHeaderRender = (selectedTableColumns) => {
         const columns = selectedTableColumns.map((item) => {
             if (!item.hasOwnProperty('properties')) {
@@ -213,7 +237,11 @@ const ResultsTabularView = (props) => {
 
         dataObj = { ...dataObj, ...options };
         if (item?.hasOwnProperty('entityProperties')) {
-            generateTableData(item.entityProperties, dataObj)
+            if(JSON.stringify(item.entityProperties) !== JSON.stringify([])){
+                generateTableData(item.entityProperties, dataObj)
+            } else {
+                dataObj = { ...dataObj, ...dataWithSelectedTableColumns };
+            }
         }
 
         return dataObj;
@@ -299,7 +327,7 @@ const ResultsTabularView = (props) => {
             }
         }
 
-        nestedData = parseJson(parsedPayload.data[index].itemEntityProperties[0]);
+        nestedData = parseJson(parsedPayload.data[index]?.itemEntityProperties[0]);
 
         return <MLTable
             rowKey="key"

@@ -31,6 +31,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState();
   const [xml, setXml] = useState();
+  const [isEntityInstance, setIsEntityInstance] = useState(false);
 
   const componentIsMounted = useRef(true);
 
@@ -51,11 +52,14 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           if (content.indexOf("application/json") !== -1) {
             setContentType('json');
             setData(result.data.content);
+            setEntityInstanceFlag(result.data.content);
           } else if (content.indexOf("application/xml") !== -1) {
             setContentType('xml');
             let decodedXml = xmlDecoder(result.data);
-            setData(xmlParser(decodedXml).Document);
+            let document = xmlParser(decodedXml).Document;
+            setData(document);
             setXml(xmlDecoder(decodedXml));
+            setEntityInstanceFlag(document.content);
           }
           setIsLoading(false);
         }
@@ -86,6 +90,10 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     }
   }, []);
 
+  const setEntityInstanceFlag = (content) => {
+    let instance = content.envelope.instance;
+    setIsEntityInstance(instance.info ? true : (Object.keys(instance).length > 1 ? false : true));
+  }
 
   const handleClick = (event) => {
     setSelected(event.key);
@@ -138,9 +146,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             </div>
               :
               contentType === 'json' ?
-                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} location={location.state ? location.state['id']: {}} />) : (data && <JsonView document={data} />)
+                selected === 'instance' ? (data && <TableView document={isEntityInstance ? data : {}} contentType={contentType} location={location.state ? location.state['id']: {}} />) : (data && <JsonView document={data} />)
                 :
-                selected === 'instance' ? (data && <TableView document={data} contentType={contentType} location={location.state ? location.state['id']: {}}/>) : (data && <XmlView document={xml} />)
+                selected === 'instance' ? (data && <TableView document={isEntityInstance ? data : {}} contentType={contentType} location={location.state ? location.state['id']: {}}/>) : (data  && <XmlView document={xml} />)
           }
         </div>
       </Content>
