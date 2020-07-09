@@ -13,12 +13,12 @@ interface Props {
     enabled: any;
 }
 
-const Toolbar: React.FC<Props>  = (props) => {
+const Toolbar: React.FC<Props> = (props) => {
 
     const tiles = props.tiles; // config/tiles.config.ts
 
     const getTooltip = (id) => {
-        if (props.enabled && props.enabled.includes(id)){
+        if (props.enabled && props.enabled.includes(id)) {
             return tiles[id]['title'];
         } else {
             return `${tiles[id]['title']}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
@@ -42,7 +42,17 @@ const Toolbar: React.FC<Props>  = (props) => {
             {Object.keys(tiles).map((id, i) => {
                 if (tiles[id]['iconType'] === 'custom') {
                     return (
-                        <Link to={ '/tiles/' + id } aria-label={'tool-' + id + '-link'} key={i}>
+                        props.enabled && props.enabled.includes(id) ?
+                            <Link to={'/tiles/' + id} aria-label={'tool-' + id + '-link'} key={i}>
+                                <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
+                                    <div
+                                        className={tiles[id]['icon']}
+                                        aria-label={'tool-' + id}
+                                        style={getIconStyle(id)}
+                                    />
+                                </MLTooltip>
+                            </Link>
+                            :
                             <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
                                 <div
                                     className={tiles[id]['icon']}
@@ -50,19 +60,26 @@ const Toolbar: React.FC<Props>  = (props) => {
                                     style={getIconStyle(id)}
                                 />
                             </MLTooltip>
-                        </Link>
                     )
                 } else {
                     return (
                         <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
-                            <Link to={ '/tiles/' + id } aria-label={'tool-' + id + '-link'} >
+                            {props.enabled && props.enabled.includes(id) ?
+                                <Link to={'/tiles/' + id} aria-label={'tool-' + id + '-link'} >
+                                    <i
+                                        className={styles.tool}
+                                        aria-label={'tool-' + id}
+                                        style={getIconStyle(id)}
+                                    ><FontAwesomeIcon icon={tiles[id]['icon']} size="lg" />
+                                    </i>
+                                </Link>
+                                :
                                 <i
                                     className={styles.tool}
                                     aria-label={'tool-' + id}
                                     style={getIconStyle(id)}
                                 ><FontAwesomeIcon icon={tiles[id]['icon']} size="lg" />
-                                </i>
-                            </Link>
+                                </i>}
                         </MLTooltip>
                     )
                 }
