@@ -40,7 +40,7 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
     database = "data-hub-FINAL"
     input_file_path = "data/thesaurus"
     output_collections = "http://marklogic.com/xdmp/thesaurus,http://marklogic.com/xdmp/documents"
-    output_permissions = "rest-reader,read,rest-writer,update"
+    output_permissions = "data-hub-common,read,data-hub-common,update"
     output_uri_replace = ".*data,''"
 }
 mlPostDeploy.dependsOn loadThesaurus

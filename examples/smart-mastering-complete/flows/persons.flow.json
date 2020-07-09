@@ -1,94 +1,22 @@
 {
   "name" : "persons",
-  "description" : "",
-  "batchSize" : 100,
-  "threadCount" : 4,
-  "stopOnError" : false,
-  "options" : { },
-  "version" : 0,
   "steps" : {
     "1" : {
-      "name" : "ingest-persons",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "headers" : {
-          "sources" : [ {
-            "name" : "persons"
-          } ],
-          "createdOn" : "currentDateTime",
-          "createdBy" : "currentUser"
-        },
-        "sourceQuery" : "cts.collectionQuery([])",
-        "collections" : [ "ingest-persons" ],
-        "permissions" : "rest-reader,read,rest-writer,update",
-        "outputFormat" : "json",
-        "targetDatabase" : "data-hub-STAGING"
-      },
-      "customHook" : { },
-      "retryLimit" : 0,
-      "batchSize" : 0,
-      "threadCount" : 0,
-      "stepDefinitionName" : "default-ingestion",
-      "stepDefinitionType" : "INGESTION",
-      "fileLocations" : {
-        "inputFilePath" : "data/persons",
-        "inputFileType" : "json",
-        "outputURIReplacement" : ".*data,''",
-        "separator" : ""
-      }
+      "stepId" : "ingest-persons-ingestion"
     },
     "2" : {
-      "name" : "map-persons",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "sourceQuery" : "cts.collectionQuery([\"ingest-persons\"])",
-        "mapping" : {
-          "name" : "persons-map-persons",
-          "version" : 0
-        },
-        "targetEntity" : "Person",
-        "sourceDatabase" : "data-hub-STAGING",
-        "collections" : [ "map-persons", "Person" ],
-        "sourceCollection" : "ingest-persons",
-        "outputFormat" : "json",
-        "targetDatabase" : "data-hub-FINAL"
-      },
-      "customHook" : { },
-      "retryLimit" : 0,
-      "batchSize" : 0,
-      "threadCount" : 0,
-      "stepDefinitionName" : "entity-services-mapping",
-      "stepDefinitionType" : "MAPPING"
+      "stepId" : "map-persons-mapping"
     },
     "3" : {
-      "name" : "generate-dictionary",
-      "description" : "",
-      "options" : {
-        "additionalCollections" : [ ],
-        "sourceQuery" : "cts.documentQuery('/flows/persons.flow.json')",
-        "targetEntity" : "",
-        "collections" : [ "generate-dictionary" ],
-        "sourceDatabase" : "data-hub-FINAL",
-        "sourceCollection" : "",
-        "outputFormat" : "json",
-        "targetDatabase" : "data-hub-FINAL"
-      },
-      "customHook" : null,
-      "retryLimit" : 0,
-      "batchSize" : 0,
-      "threadCount" : 0,
-      "stepDefinitionName" : "generate-dictionary",
-      "stepDefinitionType" : "CUSTOM"
+      "stepId" : "generate-dictionary-custom"
     },
     "4" : {
       "name" : "match-persons",
       "description" : "",
       "options" : {
-        "provenanceGranularityLevel": "fine",
         "additionalCollections" : [ ],
         "sourceQuery" : "cts.collectionQuery([\"map-persons\"])",
+        "provenanceGranularityLevel" : "fine",
         "targetEntity" : "Person",
         "sourceDatabase" : "data-hub-FINAL",
         "collections" : [ "match-persons" ],
@@ -217,7 +145,6 @@
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : { },
-      "retryLimit" : 0,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-matching",
@@ -227,9 +154,9 @@
       "name" : "merge-persons",
       "description" : "",
       "options" : {
-        "provenanceGranularityLevel": "fine",
         "additionalCollections" : [ ],
         "sourceQuery" : "cts.collectionQuery([\"match-persons\"])",
+        "provenanceGranularityLevel" : "fine",
         "targetEntity" : "Person",
         "sourceDatabase" : "data-hub-FINAL",
         "collections" : [ "master-persons", "Person" ],
@@ -333,7 +260,6 @@
         "targetDatabase" : "data-hub-FINAL"
       },
       "customHook" : { },
-      "retryLimit" : null,
       "batchSize" : 0,
       "threadCount" : 0,
       "stepDefinitionName" : "default-merging",

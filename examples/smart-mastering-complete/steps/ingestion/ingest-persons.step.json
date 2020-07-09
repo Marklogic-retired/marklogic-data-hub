@@ -1,0 +1,24 @@
+{
+  "name" : "ingest-persons",
+  "description" : "",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "persons"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "ingest-persons" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "data/persons",
+  "outputURIReplacement" : ".*data,''",
+  "separator" : "",
+  "sourceFormat" : "json",
+  "stepId" : "ingest-persons-ingestion"
+}
