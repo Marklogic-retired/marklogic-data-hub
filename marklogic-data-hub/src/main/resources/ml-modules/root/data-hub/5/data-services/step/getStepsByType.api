@@ -1,0 +1,16 @@
+{
+    "functionName": "getStepsByType",
+    "params": [
+        {
+            "name": "propertiesToReturn",
+            "desc": "List of properties to return. Default behavior returns all properties",
+            "datatype": "string",
+            "multiple": true,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

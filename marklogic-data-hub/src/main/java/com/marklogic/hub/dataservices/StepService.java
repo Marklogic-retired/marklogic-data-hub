@@ -2,6 +2,7 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
+import java.util.stream.Stream;
 import com.marklogic.client.io.Format;
 
 
@@ -47,6 +48,7 @@ public interface StepService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getStepsByType;
             private BaseProxy.DBFunctionRequest req_saveStep;
             private BaseProxy.DBFunctionRequest req_deleteStep;
             private BaseProxy.DBFunctionRequest req_getStep;
@@ -55,12 +57,29 @@ public interface StepService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/step/", servDecl);
 
+                this.req_getStepsByType = this.baseProxy.request(
+                    "getStepsByType.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveStep = this.baseProxy.request(
                     "saveStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteStep = this.baseProxy.request(
                     "deleteStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getStep = this.baseProxy.request(
                     "getStep.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getStepsByType(Stream<String> propertiesToReturn) {
+                return getStepsByType(
+                    this.req_getStepsByType.on(this.dbClient), propertiesToReturn
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getStepsByType(BaseProxy.DBFunctionRequest request, Stream<String> propertiesToReturn) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("propertiesToReturn", true, BaseProxy.StringType.fromString(propertiesToReturn))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -112,6 +131,14 @@ public interface StepService {
 
         return new StepServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Invokes the getStepsByType operation on the database server
+   *
+   * @param propertiesToReturn	List of properties to return. Default behavior returns all properties
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getStepsByType(Stream<String> propertiesToReturn);
 
   /**
    * Invokes the saveStep operation on the database server
