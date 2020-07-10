@@ -71,9 +71,9 @@ function testValidateAndRunMappingArrayValues(mapURI = "/mappings/OrdersMapping/
   let result = esMappingLib.validateAndRunMapping(map, uri);
   return [
     test.assertEqual(1, fn.number(result.properties.id.output), `Expected output '1', got '${xdmp.describe(result.properties.id)}'`),
-    test.assertEqual("Voltsillam, Latlux, ... (3 more)", result.properties.items.properties.name.output, `Expected output 'Voltsillam, Latlux, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.name)}'`),
-    test.assertEqual("7, 10, ... (3 more)", result.properties.items.properties.quantity.output, `Expected output '7, 10, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.quantity)}'`),
-    test.assertEqual("2, 7.17, ... (3 more)", result.properties.items.properties.price.output, `Expected output '2, 7.17, ... (3 more)', got '${xdmp.describe(result.properties.items.properties.price)}'`),
+    test.assertEqualJson(["Voltsillam", "Latlux", "Biodex","Fixflex", "Keylex"], result.properties.items.properties.name.output, `Expected output ["Voltsillam", "Latlux", "Biodex","Fixflex", "Keylex"], got '${xdmp.describe(result.properties.items.properties.name)}'`),
+    test.assertEqualJson(["7", "10", "2", "6", "3"], result.properties.items.properties.quantity.output, `Expected output ["7", "10", "2", "6", "3"], got '${xdmp.describe(result.properties.items.properties.quantity)}'`),
+    test.assertEqualJson(["2", "7.17", "5.01", "8.77", "5.57"], result.properties.items.properties.price.output, `Expected output ["2", "7.17", "5.01", "8.77", "5.57"], got '${xdmp.describe(result.properties.items.properties.price)}'`),
   ];
 }
 
