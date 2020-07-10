@@ -1,11 +1,11 @@
 .sideBarContainer {
   overflow-y: auto;
   max-height: 100vh;
-  background-color: #f0f2f5;
+  background-color: #F1F2F5;
 }
 
 .sideBarFacets {
-  background-color: #f0f2f5;
+  background-color: #F1F2F5;
   width: 100%;
   height: 100%;
   padding: 0 0 0 5px;
@@ -13,7 +13,7 @@
 
 .title {
   font-size: 15px;
-  color: #999;
+  color: #979797;
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -52,6 +52,7 @@
 
 .facetName {
   font-size: 15px;
+  color: #777777;
   font-weight: bold;
 }
 

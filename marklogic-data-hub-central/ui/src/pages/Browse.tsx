@@ -218,7 +218,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     );
   } else {
     return (
-      <Layout>
+      <Layout className={styles.layout}>
         <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
           <Sidebar
             facets={facets}
