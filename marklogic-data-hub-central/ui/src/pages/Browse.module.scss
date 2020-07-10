@@ -1,15 +1,17 @@
+.layout {
+  height: 100%;
+}
+
 .content {
   background: #fff;
-  padding: 24px;
+  padding: 20px 24px 34px 36px;
   width: 100%;
-  margin-top: 45px;
-  padding-left: 36px;
   max-height: 100vh;
 }
 
 .sideBarFacets {
-  background: #f3f3f3;
-  margin-top: 61px;
+  background-color: #F1F2F5;
+  margin-top: 4px;
 }
 
 .searchBar {

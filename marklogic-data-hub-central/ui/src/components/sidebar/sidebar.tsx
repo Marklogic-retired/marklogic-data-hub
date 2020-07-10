@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, CSSProperties } from 'react';
 import {Collapse, Icon, DatePicker, Tooltip, Select} from 'antd';
 import moment from 'moment';
 import Facet from '../facet/facet';
@@ -376,6 +376,11 @@ const Sidebar: React.FC<Props> = (props) => {
     return name;
   }
 
+  const facetPanelStyle: CSSProperties = {
+    borderBottom: 'none',
+    backgroundColor: '#F1F2F5'
+  }
+
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <Collapse
@@ -386,7 +391,7 @@ const Sidebar: React.FC<Props> = (props) => {
         bordered={false}
       >
         {props.selectedEntities.length === 1 && (
-          <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={{ borderBottom: 'none' }}>
+          <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={facetPanelStyle}>
             {entityFacets.length ? entityFacets.map((facet, index) => {
               let datatype = '';
               let step;
@@ -502,7 +507,7 @@ const Sidebar: React.FC<Props> = (props) => {
             }
           </Panel>
         )}
-        <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={{ borderBottom: 'none' }}>
+        <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={facetPanelStyle}>
           <div className={styles.facetName} data-cy='created-on-facet'>Created On<MLTooltip title={tooltips.createdOn} placement="topLeft">
             <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip></div>
           <div>
