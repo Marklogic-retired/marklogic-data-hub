@@ -1,4 +1,9 @@
 # Change Log
+# [v5.2.3](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.3) (2020-07-10)
+
+**Fixed Bugs:**
+- [DHFPROD-5305] - Data hub operator should be able to use MLCP to copy data
+
 ## [v5.2.2](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.2) (2020-05-27)
 
 **Fixed Bugs:**
