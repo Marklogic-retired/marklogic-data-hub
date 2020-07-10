@@ -3,29 +3,29 @@
     flex-direction: column;
     min-height: 100%;
   }
-  
+
   .zeroContent {
     flex: 1;
   }
-  
+
   .italicized {
     font-size: 18px;
-    font-family: "helvetica neue";
+    font-family: 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
     font-style: italic;
     color: #333333;
     margin: 10px 10px 30px 30px;
   }
-  
+
   @media all and (max-width: 800px) {
     .italicized {
       font-size: 12px;
-      font-family: "helvetica neue";
+      font-family: 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
       font-style: italic;
       color: #333333;
       margin: 10px 10px 30px 30px;
     }
   }
-  
+
   .graphic {
     width: auto;
     height: 7vh;
@@ -35,22 +35,22 @@
     align-items: center;
     margin: 15px 40px 30px 30px;
   }
-  
+
   .image {
     display: flex;
     justify-content: flex-end;
   }
-  
+
   .p {
     font-size: 2vw;
-    font-family: "helvetica neue";
+    font-family: 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
     color: #333333;
     float: center;
     display: flex;
     justify-content: center;
     margin: auto;
   }
-  
+
   .largeCard {
     background-color: #f8f8f8;
     display: block;
@@ -65,7 +65,7 @@
     align-items: center;
     justify-content: center;
   }
-  
+
   .smallCard {
     background-color: #f8f8f8;
     display: block;
@@ -81,30 +81,30 @@
     justify-content: center;
     margin-bottom: 3vw;
   }
-  
+
   .input {
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  
+
   .viewAs {
     display: flex;
     justify-content: center;
   }
-  
+
   .viewAsLabel {
     margin: 5px 14px 5px 0px;
   }
-  
+
   .query {
     max-width: 50%;
   }
-  
+
   .button {
     width: 80px;
   }
-  
+
   .footer {
     background-color: #e5eded;
     border-top: 1px solid #e7e7e7;
@@ -116,7 +116,7 @@
     height: 30px;
     width: 100%;
   }
-  
+
   .box {
     display: flex;
     justify-content: center;

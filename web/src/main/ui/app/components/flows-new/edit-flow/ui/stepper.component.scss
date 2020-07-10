@@ -2,7 +2,7 @@
 
 .flow-container h2 {
   margin: 0 30px 0 16px;
-  font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
   font-size: 26px;
   font-weight: 500;
   line-height: 40px;
@@ -106,7 +106,7 @@ header {
     position: relative;
     background: white;
     box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
-    font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
     .bar {
       height: 22px;
       border-radius: 4px 4px 0 0;
@@ -185,7 +185,7 @@ header {
     }
     h3.step-name {
       margin: 0 6px;
-      font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+      font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
       font-size: 16px;
       font-weight: 500;
       line-height: 30px;
@@ -267,7 +267,7 @@ mat-icon {
   color: #ccc;
 }
 
-@media (max-width: 1400px) { 
+@media (max-width: 1400px) {
   header {
     .flow-container {
       h2 {
@@ -280,7 +280,7 @@ mat-icon {
   }
 }
 
-@media (max-width: 1200px) { 
+@media (max-width: 1200px) {
   header {
     .flow-container {
       h2 {
