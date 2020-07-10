@@ -254,26 +254,28 @@ public class DataHubImpl implements DataHub, InitializingBean {
                 return false;
             }
             if(serverVersion.isNightly()){
-                //Support all 10.0-nightly on or after 6/20/2019 and 9.0-nightly on or after 7/25/2019
+                //The dates are the nightly servers on the day the least supported server versions (9.0-11, 10.0-2) were released
                 if(serverVersion.getMajor() == 9) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.JULY, 25).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.NOVEMBER, 12).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
                 if(serverVersion.getMajor() == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.JUNE, 20).getTime();
+                    Date minDate = new GregorianCalendar(2019, Calendar.SEPTEMBER, 12).getTime();
                     Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
                     if (date.before(minDate)) {
                         return false;
                     }
                 }
             }
-            //5.1.0 supports server versions 9.x >= 9.0-10 and 10.x >= 10.0.2
+            /*  Using 9.0-11 ensures mapping step always executes "entity-services-mapping" step definition. 9.0-11  server
+                included a bunch of entity services related bugfixes 52810, 53034, 52735, 52772, 52905, 53199 ,53409
+             */
             else {
                 if(serverVersion.getMajor() == 9){
-                    if(serverVersion.getMinor() < 1000) {
+                    if(serverVersion.getMinor() < 1100) {
                         return false;
                     }
                 }
