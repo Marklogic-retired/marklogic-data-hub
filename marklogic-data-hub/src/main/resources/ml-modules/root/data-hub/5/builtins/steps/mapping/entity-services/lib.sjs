@@ -422,11 +422,7 @@ function getCanonicalInstance(mapping, uri, propertyName) {
       resp.output = String(fn.head(output));
     }
     else {
-      let respString = String(arr[0] + ", "+ arr[1] );
-      if (arr.length > 2) {
-        respString = respString + ", ... (" + String(arr.length - 2) + " more)";
-      }
-      resp.output = respString;
+      resp.output = arr.map(String);
     }
   }
   catch(e){
