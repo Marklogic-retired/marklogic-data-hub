@@ -49,7 +49,7 @@ $dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn
 .mat-form-field-outline, .mat-form-field-appearance-outline .mat-form-field-outline-thick, .mat-form-field-appearance-outline .mat-form-field-outline {
   color: rgb(125, 163, 192);
   > .mat-form-field-outline-start, .mat-form-field-outline-gap, .mat-form-field-outline-end {
-    background: #fefefe; 
+    background: #fefefe;
   }
 }
 
@@ -58,7 +58,7 @@ $dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn
    color: rgb(42, 67, 86);
 }
 
-.mat-form-field-label { 
+.mat-form-field-label {
   color: black;
 }
 
@@ -67,7 +67,7 @@ $dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn
   .mat-form-field-outline {
     // color: rgb(125, 163, 192);
     > .mat-form-field-outline-start, .mat-form-field-outline-gap, .mat-form-field-outline-end {
-      background: rgba(217, 217, 217, 0.65);  
+      background: rgba(217, 217, 217, 0.65);
     }
   }
 }
@@ -126,7 +126,7 @@ $dhf-app-theme: mat-light-theme($dhf-app-primary, $dhf-app-accent, $dhf-app-warn
   }
   h3.step-name {
     margin: 0 6px;
-    font-family: "Roboto", "Helvetica Neue", "Arial", sans-serif;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
     font-size: 16px;
     font-weight: 500;
     line-height: 30px;
