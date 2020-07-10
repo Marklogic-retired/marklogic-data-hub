@@ -21,11 +21,13 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,6 +81,7 @@ public class DhsDeployer extends LoggingObject {
         appConfig.setCreateForests(false);
 
         removeHubInternalConfigFromConfigDirs(appConfig);
+        addEntityConfigToConfigDirs(hubConfig.getHubProject(), appConfig);
 
         // 8000 is not available in DHS
         int port = hubConfig.getPort(DatabaseKind.STAGING);
@@ -116,6 +119,22 @@ public class DhsDeployer extends LoggingObject {
             }
         });
         appConfig.setConfigDirs(safeConfigDirs);
+    }
+
+    /**
+     * Because the hub-internal-config directory is excluded, the staging database won't be updated unless the user has
+     * a staging-database.json file in their ml-config directory. That means that the indexes in entity-config won't be
+     * applied. To avoid this, the entity-config directory is added as a configDir.
+     *
+     * @param hubProject
+     * @param appConfig
+     */
+    protected void addEntityConfigToConfigDirs(HubProject hubProject, AppConfig appConfig) {
+        File entityConfigDir = hubProject.getEntityConfigDir().toFile();
+        if (entityConfigDir.exists()) {
+            File f = hubProject.getProjectDir().resolve(entityConfigDir.toString()).normalize().toAbsolutePath().toFile();
+            appConfig.getConfigDirs().add(new ConfigDir(f));
+        }
     }
 
     /**
@@ -170,7 +189,7 @@ public class DhsDeployer extends LoggingObject {
         List<Command> commands = new ArrayList<>();
 
         DeployOtherDatabasesCommand deployOtherDatabasesCommand = new DeployOtherDatabasesCommand();
-        deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
+        deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig, false));
         deployOtherDatabasesCommand.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
         commands.add(deployOtherDatabasesCommand);
 

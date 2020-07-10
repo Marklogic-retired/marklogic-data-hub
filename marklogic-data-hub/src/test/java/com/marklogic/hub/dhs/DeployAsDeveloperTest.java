@@ -17,6 +17,7 @@ import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsComma
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsLSQTCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.ext.SecurityContextType;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
@@ -38,15 +39,14 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class DeployAsDeveloperTest {
+public class DeployAsDeveloperTest extends AbstractHubCoreTest {
 
-    private HubConfigImpl hubConfig;
+    // Use a separate instance of HubConfigImpl so we can fiddle with its settings without breaking other tests
+    private HubConfigImpl testHubConfig;
 
     @BeforeEach
     void setup() {
-        HubProjectImpl project = new HubProjectImpl();
-        project.createProject(HubTestBase.PROJECT_PATH);
-        hubConfig = new HubConfigImpl(project);
+        testHubConfig = new HubConfigImpl(getHubConfig().getHubProject());
     }
 
     @Test
@@ -62,25 +62,26 @@ public class DeployAsDeveloperTest {
         // Enable all CMA usage so we can verify that it's disabled below
         appConfig.setCmaConfig(new CmaConfig(true));
 
-        hubConfig.setAppConfig(appConfig);
+        testHubConfig.setAppConfig(appConfig);
 
-        assertFalse(hubConfig.getIsProvisionedEnvironment());
+        assertFalse(testHubConfig.getIsProvisionedEnvironment());
 
-        new DhsDeployer().prepareAppConfigForDeployingToDhs(hubConfig);
+        new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
-        assertTrue(hubConfig.getIsProvisionedEnvironment(), "When deploying to DHS, this property is assumed to be true, " +
+        assertTrue(testHubConfig.getIsProvisionedEnvironment(), "When deploying to DHS, this property is assumed to be true, " +
             "as it's defined in the DHS portal's gradle properties file. But if someone wants to test this on-premise, it " +
             "likely won't be intuitive to set this to true. But it needs to be set to true so that DHF knows to e.g. " +
             "remove the schema/trigger database properties from database payloads, as a data-hub-developer user is not " +
             "permitted to set those.");
 
-        assertEquals(hubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
+        assertEquals(testHubConfig.getPort(DatabaseKind.STAGING), appConfig.getAppServicesPort(),
             "DHS does not allow access to the default App-Services port - 8000 - so it's set to the staging port instead so " +
                 "that user modules can be loaded into the DHF modules database");
 
         assertFalse(appConfig.isCreateForests(), "DHS handles forest creation");
 
-        assertEquals(2, appConfig.getConfigDirs().size(), "The hub-internal-config dir should have been removed");
+        assertEquals(2, appConfig.getConfigDirs().size(), "The hub-internal-config dir should have been removed; also, " +
+            "since src/main/entity-config does not exist, that config dir should not be included");
         assertEquals("ml-config", appConfig.getConfigDirs().get(0).getBaseDir().getName());
         assertEquals("my-dhs-config", appConfig.getConfigDirs().get(1).getBaseDir().getName(), "A user is still " +
             "permitted to deploy their own resources from multiple configuration directories");
@@ -161,26 +162,26 @@ public class DeployAsDeveloperTest {
         assertNull(appConfig.getAppServicesSslContext(), "App-Services doesn't use SSL by default");
         assertEquals(SecurityContextType.DIGEST, appConfig.getAppServicesSecurityContextType(), "App-Services connection defaults to DIGEST");
 
-        final String originalAuthMethod = hubConfig.getAuthMethod(DatabaseKind.STAGING);
-        final boolean originalSimpleSsl = hubConfig.getSimpleSsl(DatabaseKind.STAGING);
+        final String originalAuthMethod = testHubConfig.getAuthMethod(DatabaseKind.STAGING);
+        final boolean originalSimpleSsl = testHubConfig.getSimpleSsl(DatabaseKind.STAGING);
         try {
-            hubConfig.setAppConfig(appConfig);
-            hubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
-            hubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
+            testHubConfig.setAppConfig(appConfig);
+            testHubConfig.setAuthMethod(DatabaseKind.STAGING, "basic");
+            testHubConfig.setSimpleSsl(DatabaseKind.STAGING, true);
 
-            new DhsDeployer().prepareAppConfigForDeployingToDhs(hubConfig);
+            new DhsDeployer().prepareAppConfigForDeployingToDhs(testHubConfig);
 
             assertNotNull(appConfig.getAppServicesSslContext());
             assertEquals(SecurityContextType.BASIC, appConfig.getAppServicesSecurityContextType());
         } finally {
-            hubConfig.setAuthMethod(DatabaseKind.STAGING, originalAuthMethod);
-            hubConfig.setSimpleSsl(DatabaseKind.STAGING, originalSimpleSsl);
+            testHubConfig.setAuthMethod(DatabaseKind.STAGING, originalAuthMethod);
+            testHubConfig.setSimpleSsl(DatabaseKind.STAGING, originalSimpleSsl);
         }
     }
 
     @Test
     public void buildCommandList() {
-        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(hubConfig);
+        List<Command> commands = new DhsDeployer().buildCommandsForDeveloper(testHubConfig);
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;

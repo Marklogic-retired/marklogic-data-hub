@@ -26,7 +26,6 @@ import com.marklogic.rest.util.JsonNodeUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 /**
  * Extends ml-app-deployer's standard command for deploying a single database and adds DHF-specific functionality.
@@ -36,19 +35,20 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     private HubConfig hubConfig;
     private String databaseFilename;
     private File databaseFile;
+    private boolean mergeEntityConfigFiles = true;
 
     /**
      * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
      * the parent getPayload method is able to find the correct File to read from.
-     *
+     * <p>
      * Otherwise, if this class only has a filename, the parent getPayload method will check every ConfigDir to find a
      * match, with the last one winning. In the case of DHF, that means the user config directory. This can be a problem,
      * as a user is not likely to define schema-database/triggers-database in e.g. a staging-database.json file in the
      * user config directory. That will then cause the ordering of database commands to be incorrect, which will
      * likely cause an error when databases are deployed and they don't yet exist.
      *
-     * @param hubConfig a hubConfig object
-     * @param databaseFile database file object
+     * @param hubConfig        a hubConfig object
+     * @param databaseFile     database file object
      * @param databaseFilename name of the database file
      */
     public DeployHubDatabaseCommand(HubConfig hubConfig, File databaseFile, String databaseFilename) {
@@ -79,7 +79,13 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     protected String preparePayloadBeforeSubmitting(String payload) {
         try {
             ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
-            payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
+
+            // The boolean exists to control whether this is done because when deploying to DHS, the entity-config
+            // directory is added to the list of config dirs, and thus this merging is not needed
+            if (mergeEntityConfigFiles) {
+                payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
+            }
+
             removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
 
             if (payloadNode.has("language") && "zxx".equalsIgnoreCase(payloadNode.get("language").asText())) {
@@ -128,4 +134,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         }
     }
 
+    public void setMergeEntityConfigFiles(boolean mergeEntityConfigFiles) {
+        this.mergeEntityConfigFiles = mergeEntityConfigFiles;
+    }
 }
