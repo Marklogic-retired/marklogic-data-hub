@@ -156,7 +156,7 @@ const ResultsTabularView = (props) => {
         let primaryKeyValue = item.primaryKey?.propertyValue;
         let isUri = item.primaryKey?.propertyPath === 'uri';
         let uri = encodeURIComponent(item.uri);
-        let path = { pathname: `/detail/${isUri ? '-' : primaryKeyValue}/${uri}` };
+        let path = { pathname: `/detail/${isUri ? '-' : encodeURIComponent(primaryKeyValue)}/${uri}` };
         let options = {};
         let detailView =
             <div className={styles.redirectIcons}>

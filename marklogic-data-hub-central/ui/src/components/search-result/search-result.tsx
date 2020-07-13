@@ -107,19 +107,19 @@ const SearchResult: React.FC<Props> = (props) => {
 
     // detailPath is the identifier used to route to detail view
     if (primaryKey !== "uri") {
-        detailPath = primaryKeyValue
+        detailPath = encodeURIComponent(primaryKeyValue)
     }
 
     return (
-        <div style={{width: '100%'}}>
+        <div style={{ width: '100%' }}>
             <div className={styles.title} onClick={() => showTableEntityProperties()}>
-                <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined}/>
+                <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined} />
                 <div className={styles.redirectIcons}>
-                    <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {selectedValue:'instance'}}} id={'instance'} data-cy='instance'>
-                        <MLTooltip title={'Show detail on a separate page'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" /></MLTooltip>
+                    <Link to={{ pathname: `/detail/${detailPath}/${uri}`, state: { selectedValue: 'instance' } }} id={'instance'} data-cy='instance'>
+                        <MLTooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></MLTooltip>
                     </Link>
-                    <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {selectedValue:'source'}}} id={'source'} data-cy='source'>
-                        <MLTooltip title={'Show source on a separate page'}><FontAwesomeIcon  icon={faCode} size="sm" /></MLTooltip>
+                    <Link to={{ pathname: `/detail/${detailPath}/${uri}`, state: { selectedValue: 'source' } }} id={'source'} data-cy='source'>
+                        <MLTooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" /></MLTooltip>
                     </Link>
                 </div>
                 <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
@@ -149,7 +149,7 @@ const SearchResult: React.FC<Props> = (props) => {
                     </div>
                 )}
             </div>
-            <div style={{display: (show) ? 'block' : 'none'}} data-cy='expandable-view'>
+            <div style={{ display: (show) ? 'block' : 'none' }} data-cy='expandable-view'>
                 <ExpandableTableView item={props.item} entityDefArray={props.entityDefArray} />
             </div>
         </div>
