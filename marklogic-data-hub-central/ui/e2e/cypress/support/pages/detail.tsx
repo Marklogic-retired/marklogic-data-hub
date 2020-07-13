@@ -16,6 +16,10 @@ class DetailPage {
         return cy.get('[data-cy=document-id]');
     }
 
+    getDocumentUri() {
+        return cy.get('[data-cy=document-uri]');
+    }
+
     getDocumentTimestamp() {
         return cy.get('[data-cy=document-timestamp]');
     }

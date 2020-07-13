@@ -46,7 +46,7 @@ const DetailHeader: React.FC<Props> = (props) => {
           Object.keys(props.document.envelope.instance).forEach(instance => {
             if (instance !== 'info') {
               Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
-                if (props.primaryKey === props.document.envelope.instance[instance][key]) {
+                if (props.primaryKey.toString() === props.document.envelope.instance[instance][key].toString()) {
                   primaryKey = key;
                   id = props.document.envelope.instance[instance][key]
                 }
@@ -73,7 +73,7 @@ const DetailHeader: React.FC<Props> = (props) => {
           Object.keys(props.document.content.envelope.instance).forEach(instance => {
             if (instance !== 'info') {
               Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
-                if (props.primaryKey == props.document.content.envelope.instance[instance][key]) {
+                if (props.primaryKey.toString() === props.document.content.envelope.instance[instance][key].toString()) {
                   primaryKey = key;
                   id = props.document.content.envelope.instance[instance][key];
                 }
@@ -116,7 +116,6 @@ const DetailHeader: React.FC<Props> = (props) => {
   return (
     <div id='header' className={styles.container}>
       <div id='title' className={styles.title}>
-
         {primaryKey || id ?
           <>
             <Text data-cy="document-title">{title} </Text>
