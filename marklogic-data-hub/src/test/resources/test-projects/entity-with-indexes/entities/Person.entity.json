@@ -13,6 +13,9 @@
       "rangeIndex": [
         "personId"
       ],
+      "pii": [
+        "personId"
+      ],
       "properties": {
         "personId": {
           "datatype": "integer"

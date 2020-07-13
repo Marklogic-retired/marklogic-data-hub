@@ -234,7 +234,27 @@ declare function hent:dump-search-options($entities as json:array, $for-explorer
 declare function hent:dump-pii($entities as json:array)
 {
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  return es:pii-generate($uber-model)
+  let $response := es:pii-generate($uber-model)
+
+  (: DHFPROD-5461 - Fix path expressions to support XML and JSON :)
+  let $json-response := xdmp:from-json($response)
+  let $_ :=
+    let $paths := map:get(map:get($json-response, "config"), "protected-path")
+    where $paths
+    return
+      for $path in json:array-values($paths)
+      let $ex := fn:string(map:get($path, "path-expression"))
+      (: The PiiE2E test is failing because when its entities are passed in, the es:pii-generate function generates a
+      path starting with /es: that uses the correct namespace prefixes. This appears to happen when a namespacePrefix
+      is defined in the entity model. So if the path starts with /es:, we can assume that es:pii-generate generated a
+      correct path that does not need modification. :)
+      where fn:not(fn:starts-with($ex, "/es:"))
+      return
+        let $ex := fn:replace($ex, "/", "/*:")
+        let $ex := fn:replace($ex, "\*:/", "/")
+        return map:put($path, "path-expression", $ex)
+
+  return xdmp:to-json($json-response)
 };
 
 declare function hent:dump-indexes($entities as json:array)
