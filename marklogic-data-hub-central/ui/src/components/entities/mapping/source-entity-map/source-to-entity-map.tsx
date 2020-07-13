@@ -392,6 +392,17 @@ const SourceToEntityMap = (props) => {
         return !checkFieldInErrors(name) ? displayResp(name) : '';
     }
 
+    const getTextForTooltip = (name) => {
+        if(!checkFieldInErrors(name)){
+            let item = displayResp(name);
+            if(Array.isArray(item)){
+                return item.join(', ');
+            }else{
+                return item;
+            }
+        }
+    }
+
     const mapExpressionStyle = (propName) => {
         const mapStyle: CSSProperties = {
             width: '22vw',
@@ -637,25 +648,27 @@ const SourceToEntityMap = (props) => {
             width: '20%',
             ellipsis: true,
             sorter: (a: any, b: any) => getDataForValueField(a.name)?.localeCompare(getDataForValueField(b.name)),
-            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><MLTooltip title={getDataForValueField(row.name)}>{getTextForValueField(row)}</MLTooltip></div>)
+            render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><MLTooltip title={getTextForTooltip(row.name)}>{getTextForValueField(row)}</MLTooltip></div>)
         }
     ]
 
-    //Response from server already has ellipsis for array values , this method uses '... (X more)' as suffix for
+    //Response from server already is an array for multiple values, string for single value
     //truncation in case array values
     const getTextForValueField = (row) =>{
         let respFromServer = getDataForValueField(row.name);
-        let regExp = /(.+),\s(\.\.\.\s\(\d+\smore\))$/g;
-        let match  = regExp.exec(respFromServer);
-        //data type is array and matches pattern '... (X more)'
-        if(match && row.type.includes("[ ]")){
-            if(match[1].length <= 25){
-                return match[1].concat(match[2]);
-            }
-            return getInitialChars(match[1],25, match[2])
-        }
-        else{
-            return getInitialChars(respFromServer,25,'...')
+        //if array of values and more than 2 values
+        if(respFromServer && Array.isArray(respFromServer) && respFromServer.length >= 2){
+            let xMore = '(' + (respFromServer.length - 2) + ' more)';
+            let itemOne = respFromServer[0].length > 23 ? getInitialChars(respFromServer[0], 23, '...\n') : respFromServer[0] + '\n';
+            let itemTwo = respFromServer[1].length > 23 ? getInitialChars(respFromServer[1], 23, '...\n') : respFromServer[1] + '\n';
+            let fullItem = itemOne.concat(itemTwo);            
+            if(respFromServer.length == 2){
+                return <p>{fullItem}</p>;
+            }else{
+                return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
+            } 
+        }else{
+            return getInitialChars(respFromServer,23,'...')
         }
     }
 
@@ -737,7 +750,6 @@ const SourceToEntityMap = (props) => {
         setIsTestClicked(true);
         try {
             let resp = await getMappingValidationResp(props.mapName, savedMappingArt, uri, props.sourceDatabaseName);
-
             if (resp.status === 200) {
                 setMapResp({ ...resp.data });
             }

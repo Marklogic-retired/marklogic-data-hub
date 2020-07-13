@@ -1,5 +1,5 @@
 import React from 'react';
-import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within } from '@testing-library/react';
+import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within, screen, wait, prettyDOM } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
 import data from '../../../../assets/mock-data/common.data';
 import { shallow } from 'enzyme';
@@ -447,7 +447,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Truncation in case of responses for Array datatype', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.truncatedJSONResponse })));
-        const { getByText, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} />)
+        const { getByText, getAllByRole, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} />)
         let propNameExpression = getByText('testNameInExp');
         let propAttributeExpression = getByText('placeholderAttribute')
 
@@ -471,8 +471,16 @@ describe('RTL Source-to-entity map tests', () => {
         //Verify Test button click
         fireEvent.click(getByText('Test'))
         await(waitForElement(() => getByTestId('propName-value')))
-        expect(getByTestId('propName-value')).toHaveTextContent('user1@marklogic.com,user2... (300 more)')
-        expect(getByTestId('propAttribute-value')).toHaveTextContent('u@ml.com,v@ml.com... (30 more)')
+        expect(getByTestId('propName-value')).toHaveTextContent('extremelylongusername@m...')
+        expect(getByTestId('propAttribute-value')).toHaveTextContent('s@ml.com t@ml.com (6 more)')
+
+        // Verify tooltip shows full value when hovering Test values
+        fireEvent.mouseOver(getByText('extremelylongusername@m...'))
+        await waitForElement(() => getByText('extremelylongusername@marklogic.com'));
+
+        //TODO: Verify tooltip shows all values when hovering Test values
+        // fireEvent.mouseOver(getByText())
+        // await waitForElement(() => getByText('s@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com z@ml.com'));
 
     })
 

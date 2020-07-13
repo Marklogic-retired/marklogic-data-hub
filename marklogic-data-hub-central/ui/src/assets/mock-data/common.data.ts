@@ -188,8 +188,8 @@ const testJSONResponse = {
 
 const truncatedJSONResponse = {
   properties: {
-    propName: { output: 'user1@marklogic.com,user2@marklogic.com, ... (300 more)', sourcedFrom: 'proteinId' },
-    propAttribute: { output: 'u@ml.com,v@ml.com, ... (30 more)', sourcedFrom: 'proteinType' },
+    propName: { output: 'extremelylongusername@marklogic.com', sourcedFrom: 'proteinId' },
+    propAttribute: { output: ['s@ml.com', 't@ml.com', 'u@ml.com' , 'v@ml.com' , 'w@ml.com' , 'x@ml.com' , 'y@ml.com', 'z@ml.com'], sourcedFrom: 'proteinType' },
   },
   targetEntityType: 'Person'
 };
