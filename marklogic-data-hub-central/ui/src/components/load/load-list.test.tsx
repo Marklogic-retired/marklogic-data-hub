@@ -6,6 +6,7 @@ import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import loadData from "../../assets/mock-data/ingestion.data";
 import { AdvancedSettingsMessages } from '../../config/messages.config';
+import {MemoryRouter} from "react-router-dom";
 
 jest.mock('axios');
 
@@ -21,7 +22,7 @@ describe('Load data component', () => {
   })
 
   test('Verify Load list view renders correctly with no data', () => {
-    const { getByText } = render(<LoadList {...data.loadData} data={[]} />)
+    const { getByText } = render(<MemoryRouter><LoadList {...data.loadData} data={[]} /></MemoryRouter>)
     const tableColumns = within(getByText('Name').closest('tr'));
 
     expect(getByText('Add New')).toBeInTheDocument();
@@ -35,7 +36,7 @@ describe('Load data component', () => {
   })
 
   test('Verify Load list view renders correctly with data', () => {
-    const { getByText, getAllByLabelText } = render(<LoadList {...data.loadData} />)
+    const { getByText, getAllByLabelText } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
     const dataRow = within(getByText('testLoadXML').closest('tr'));
 
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
@@ -50,7 +51,7 @@ describe('Load data component', () => {
   })
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<LoadList {...data.loadData} />)
+    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
 
     // NOTE see config/advanced-settings.data.ts for test data
     await wait(() => {

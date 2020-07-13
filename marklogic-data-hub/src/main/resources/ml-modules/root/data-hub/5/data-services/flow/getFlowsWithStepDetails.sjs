@@ -68,9 +68,12 @@ flows.map(flow => {
           ds.throwServerError(`Unable to find referenced step with ID ${stepId} in flow ${flow.name}`);
         }
       }
+      stepDetails.stepId = stepId;
       stepDetails.stepName = step.name;
       stepDetails.stepDefinitionType = step.stepDefinitionType;
       stepDetails.sourceFormat = step.sourceFormat;
+      // accommodating targetEntity which is still used by mastering (match/merge) for the time being
+      stepDetails.targetEntityType = step.targetEntityType || step.targetEntity;
     });
   }
   return flowWithStepDetails;

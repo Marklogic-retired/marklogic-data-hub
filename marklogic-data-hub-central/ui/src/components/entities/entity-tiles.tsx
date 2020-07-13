@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext} from 'react';
+import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
 import { UserContext } from '../../util/user-context';
@@ -10,6 +11,9 @@ import CustomCard from "./custom/custom-card";
 const EntityTiles = (props) => {
     const { resetSessionTime } = useContext(UserContext);
     const entityModels = props.entityModels || {};
+    const location = useLocation<any>();
+    const [locationEntityType, setLocationEntityType] = useState<string[]>([]);
+    const [activeEntityTypes, setActiveEntityTypes] = useState<string[]>([]);
     const [viewData, setViewData] = useState<string[]>([]);
     const [mappingArtifacts, setMappingArtifacts] = useState<any[]>([]);
     const [matchingArtifacts, setMatchingArtifacts] = useState<any[]>([]);
@@ -29,18 +33,29 @@ const EntityTiles = (props) => {
 
     useEffect(() =>{
         let view;
-        if(props.canReadMapping){
+        if (location.state && location.state.stepDefinitionType) {
+          if (location.state.stepDefinitionType === 'mapping') {
             view = 'map-';
-        }
-        else if(props.canReadCustom){
+          } else if (location.state.stepDefinitionType === 'custom') {
             view = 'custom-'
+          }
+          const activeLocationEntityTypes = [location.state.targetEntityType || 'No Entity Type'];
+          setLocationEntityType(activeLocationEntityTypes);
+          setActiveEntityTypes(activeLocationEntityTypes);
+        } else {
+          if (props.canReadMapping) {
+            view = 'map-';
+          } else if (props.canReadCustom) {
+            view = 'custom-'
+          }
         }
+
         let tempView: string[] = [];
         Object.keys(props.entityModels).sort().forEach(ent => {
             tempView.push(view + ent);
         })
         setViewData([...tempView])
-    }, [props])
+    }, [props, location])
 
     const updateView = (index, artifactType, entityType) => {
         let tempView : string[] ;
@@ -259,13 +274,15 @@ const EntityTiles = (props) => {
         return output;
     }
 
+    // need special onChange for direct links to entity steps
+    const handleCollapseChange = (keys) => Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
 
     return (
         <div className={styles.entityTilesContainer}>
 
-        <Collapse >
+        <Collapse activeKey={activeEntityTypes} onChange={handleCollapseChange} defaultActiveKey={locationEntityType}>
             { Object.keys(props.entityModels).sort().map((entityType, index) => (
-                <Panel header={entityType} key={entityType}>
+                <Panel header={entityType} key={entityModels[entityType].entityTypeId}>
             <div className={styles.switchMapMaster}>
             <Menu mode="horizontal" defaultSelectedKeys={['map-' + entityType]}>
                 {canReadMapping ? <Menu.Item key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>

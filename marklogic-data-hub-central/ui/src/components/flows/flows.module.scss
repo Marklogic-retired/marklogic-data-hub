@@ -89,6 +89,21 @@
                 display: inline-block;
                 margin-right: 10px;
             }
+            .cardLinks {
+                position: absolute;
+                bottom: 19px;
+                left: 13px;
+                right: 13px;
+                z-index: 999;
+                background-color: rgba(255, 255, 255, 0.6);
+                .cardLink {
+                    color: #3f4692;
+                    background-color: #ecf6fe;
+                    padding: 10px;
+                    font-size: 14px;
+                    cursor: pointer;
+                }
+            }
         }
         .uploadError {
             line-height: normal;
@@ -114,5 +129,4 @@
             color: #3b458f;
         }
     }
-
 }

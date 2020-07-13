@@ -155,9 +155,11 @@ public class FlowController extends BaseController {
 
     public static class StepDetails {
         public String stepNumber;
+        public String stepId;
         public String stepName;
         public String stepDefinitionType;
         public String sourceFormat;
+        public String targetEntityType;
     }
 
     public static class AddStepInfo {

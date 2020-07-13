@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from "react-router-dom";
 import styles from './load-list.module.scss';
 import {Table, Icon, Button, Tooltip, Popover, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +23,9 @@ interface Props {
 
 const LoadList: React.FC<Props> = (props) => {
     const activityType = 'ingestion';
+    const location = useLocation<any>();
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
@@ -30,6 +34,13 @@ const LoadList: React.FC<Props> = (props) => {
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
 
     const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
+
+    useEffect(() => {
+      if (location.state && location.state.stepToView) {
+        const stepIndex = props.data.findIndex((step) => step.stepId === location.state.stepToView);
+        setPage(Math.floor(stepIndex / pageSize) + 1);
+      }
+    }, [location, props.data]);
 
     const OpenAddNewDialog = () => {
         setNewDataLoad(true);
@@ -132,7 +143,12 @@ const LoadList: React.FC<Props> = (props) => {
         }
     ];
 
-   return (
+    // need special handlePagination for direct links to load steps that can be on another page
+    const handlePagination = (page, pageSize) => {
+      setPage(page);
+      setPageSize(pageSize);
+    };
+    return (
     <div id="load-list" aria-label="load-list" className={styles.loadList}>
         <div className={styles.addNewContainer}>
             {props.canReadWrite ? <div>
@@ -140,7 +156,7 @@ const LoadList: React.FC<Props> = (props) => {
             </div> : ''}
         </div>
         <Table
-            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions}}
+            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions, onChange: handlePagination, defaultCurrent: page, current: page}}
             className={styles.loadTable}
             columns={columns}
             dataSource={props.data}
