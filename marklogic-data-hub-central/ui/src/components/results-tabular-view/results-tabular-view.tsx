@@ -91,17 +91,19 @@ const ResultsTabularView = (props) => {
                         }
                     },
                     render: (value) => {
-                        if (Array.isArray(value) && value.length > 1) {
+                        if (Array.isArray(value)) {
                             let values = new Array();
                             value.forEach(item => {
-                                let title = item.toString();
-                                if (item && title && title.length > 0) {
-                                    values.push(
-                                        <MLTooltip
-                                            title={title}>
-                                            <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{item}</div>
-                                        </MLTooltip>
-                                    )
+                                if (item) {
+                                    let title = item.toString();
+                                    if (title && title.length > 0) {
+                                        values.push(
+                                            <MLTooltip
+                                                title={title}>
+                                                <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{item}</div>
+                                            </MLTooltip>
+                                        )
+                                    }
                                 }
                             })
                             return {
@@ -203,7 +205,7 @@ const ResultsTabularView = (props) => {
         if (item) {
             for (let subItem of item) {
                 if (!Array.isArray(subItem)) {
-                    if (!Array.isArray(subItem.propertyValue) || (subItem.propertyValue[0] !== null && typeof (subItem.propertyValue[0]) !== 'object')) {
+                    if (!Array.isArray(subItem.propertyValue) || subItem.propertyValue[0] === null || typeof (subItem.propertyValue[0]) !== 'object') {
                         dataObj[subItem.propertyPath] = subItem.propertyValue;
                     } else {
                         let dataObjArr: any[] = [];
