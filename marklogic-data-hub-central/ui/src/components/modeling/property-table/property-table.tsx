@@ -9,7 +9,7 @@ import styles from './property-table.module.scss';
 import PropertyModal from '../property-modal/property-modal';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 
-import { 
+import {
   Definition,
   EntityDefinitionPayload,
   StructuredTypeOptions,
@@ -42,7 +42,7 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
   properties: []
 };
 
-const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = { 
+const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
   name: '',
   propertyName: ''
@@ -55,7 +55,7 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: '',
   pii: '',
   sort: false,
-  facet: false,
+  facetable: false,
   wildcard: false
 }
 
@@ -112,9 +112,9 @@ const PropertyTable: React.FC<Props> = (props) => {
 
         if (props.canWriteEntityModel && props.canReadEntityModel) {
 
-          renderText = <span 
+          renderText = <span
             data-testid={text + '-span'}
-            aria-label="property-name-header" 
+            aria-label="property-name-header"
             className={styles.link}
             onClick={() => {
               editPropertyShowModal(text, record);
@@ -172,10 +172,10 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="facet-header">Facet</span>
         </MLTooltip>
       ),
-      dataIndex: 'facet',
+      dataIndex: 'facetable',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={'facet-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={'facet-'+ text}/>
       }
     },
     {
@@ -226,12 +226,12 @@ const PropertyTable: React.FC<Props> = (props) => {
       render: text => {
         let textParse = text && text.split(',');
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
-        return ( text && 
+        return ( text &&
           <MLTooltip title={ModelingTooltips.addStructuredProperty}>
-            <FontAwesomeIcon 
+            <FontAwesomeIcon
               data-testid={'add-struct-'+ structuredTypeName}
-              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon} 
-              icon={faPlusSquare} 
+              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon}
+              icon={faPlusSquare}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()
@@ -255,7 +255,6 @@ const PropertyTable: React.FC<Props> = (props) => {
   const updateEntityDefinitionsAndRenderTable = (definitions: Definition) => {
     let entityDefinitionsArray = definitionsParser(definitions);
     let renderTableData = parseDefinitionsToTable(entityDefinitionsArray);
-
     if (entityDefinitionsArray.length === 1) {
       setHeaderColumns(columns.slice(0, 8));
     } else if (entityDefinitionsArray.length > 1) {
@@ -266,7 +265,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       let row = renderTableData.find(row => row.propertyName === structuredTypeOptions.propertyName)
       if (!row) {
         let structuredNames = structuredTypeOptions.name.split(',').slice(1);
-        row = renderTableData.find(row => row.type === structuredNames[0])  
+        row = renderTableData.find(row => row.type === structuredNames[0])
         if (row) {
           let childRow = row['children'].find( childRow => childRow.type === structuredNames[1] );
           if (childRow && childRow.hasOwnProperty('key')) {
@@ -275,7 +274,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             setExpandedRows([row.key])
           }
         }
-       
+
       } else {
         setExpandedRows([row.key]);
       }
@@ -310,6 +309,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
     let parseType = propertyOptions.type.split(',');
     let multiple = propertyOptions.multiple === 'yes' ? true : false;
+    let facetable = propertyOptions.facetable
 
     if (propertyOptions.propertyType === PropertyType.Relationship && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
@@ -321,6 +321,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
       return {
         datatype: 'array',
+        facetable: facetable,
         items: {
           $ref: externalEntity.entityTypeId,
         }
@@ -334,6 +335,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
       return {
         datatype: 'array',
+        facetable: facetable,
         items: {
           $ref: '#/definitions/'+ parseType[parseType.length-1],
         }
@@ -342,6 +344,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     } else if (propertyOptions.propertyType === PropertyType.Basic && multiple) {
       return {
         datatype: 'array',
+        facetable: facetable,
         items: {
           datatype: parseType[parseType.length-1],
           collation: "http://marklogic.com/collation/codepoint",
@@ -350,11 +353,12 @@ const PropertyTable: React.FC<Props> = (props) => {
     } else if (propertyOptions.propertyType === PropertyType.Basic && !multiple) {
       return {
         datatype: parseType[parseType.length-1],
+        facetable: facetable,
         collation: "http://marklogic.com/collation/codepoint"
       }
     }
   }
-  
+
   // Covers both Entity Type and Structured Type
   const addPropertyToDefinition = (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
     let parseName = definitionName.split(',');
@@ -383,7 +387,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         entityTypeDefinition['wordLexicon'].push(propertyName);
       } else {
         entityTypeDefinition['wordLexicon'] = [propertyName]
-      }    
+      }
     } else if (!entityTypeDefinition.hasOwnProperty('wordLexicon')) {
       entityTypeDefinition['wordLexicon'] = []
     }
@@ -454,7 +458,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     } else {
       newStructuredTypes.isStructured = false;
       newStructuredTypes.name = '';
-      newStructuredTypes.propertyName = '';    
+      newStructuredTypes.propertyName = '';
     }
 
     const propertyOptions: PropertyOptions = {
@@ -464,7 +468,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       multiple: record.multiple ? 'yes' : '',
       pii: record.pii ? 'yes' : '',
       sort: record.sort ? true : false,
-      facet: record.facet ? true : false,
+      facetable: record.facetable ? true : false,
       wildcard: record.wildcard ? true : false
     }
 
@@ -579,7 +583,6 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
     let entityTypeDefinition: Definition = entityDefinitionsArray.find( definition => definition.name === props.entityName) || DEFAULT_ENTITY_DEFINITION;
-
     return entityTypeDefinition?.properties.map( (property, index) => {
       let propertyRow: any = {};
       let counter = 0;
@@ -596,34 +599,35 @@ const PropertyTable: React.FC<Props> = (props) => {
                 let parentDefinitionName = structuredType.name;
                 return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName);
               } else {
-                // TODO add functionality to sort, facet, delete
-                return {
+                // TODO add functionality to sort, delete
+                  return {
                   key: property.name + ',' + index + structIndex + counter,
                   structured: structuredType.name,
                   propertyName: structProperty.name,
                   type: structProperty.datatype === 'structured' ? structProperty.ref.split('/').pop() : structProperty.datatype,
                   identifier: entityTypeDefinition?.primaryKey === structProperty.name ? structProperty.name : '',
-                  multiple: structProperty.multiple ? structProperty.name: '',
+                  multiple: structProperty.multiple ? structProperty.name : '',
+                  facetable: structProperty.facetable ? structProperty.name : '',
                   wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
-                  pii: structuredType?.pii.some(value => value ===  structProperty.name) ? structProperty.name : ''
+                  pii: structuredType?.pii.some(value => value === structProperty.name) ? structProperty.name : ''
                 }
               }
             });
 
             let piiValue = entityTypeDefinition?.pii.some(value => value ===  property.name) ? property.name : '';
             let addValue = property.name + ',' + structuredType.name;
-          
+
             if (parentDefinitionName) {
               let parentTypeDefinition: Definition = entityDefinitionsArray.find( definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
               piiValue = parentTypeDefinition?.pii.some(value => value ===  property.name) ? property.name : '';
               addValue = property.name + ',' + parentDefinitionName + ',' + structuredType.name;
             }
-
             return {
               key: property.name + ',' + index + counter,
               structured: structuredType.name,
               propertyName: property.name,
               multiple: property.multiple ? property.name: '',
+              facetable: property.facetable ? property.name : '',
               type: property.ref.split('/').pop(),
               pii: piiValue,
               children: structuredTypeProperties,
@@ -634,13 +638,14 @@ const PropertyTable: React.FC<Props> = (props) => {
         propertyRow = parseStructuredProperty(entityDefinitionsArray, property, '');
         counter++;
       } else {
-        // TODO add functionality to sort, facet, delete
+        // TODO add functionality to sort, delete
         propertyRow = {
           key: property.name + ',' + index,
           propertyName: property.name,
           type: property.datatype,
           identifier: entityTypeDefinition?.primaryKey === property.name ? property.name : '',
           multiple: property.multiple ? property.name : '',
+          facetable: property.facetable ? property.name : '',
           wildcard: entityTypeDefinition?.wordLexicon.some( value => value === property.name) ? property.name : '',
           pii: entityTypeDefinition?.pii.some(value => value === property.name) ? property.name : '',
           add: ''
@@ -666,7 +671,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     // TODO DHFPROD-5284
   }
 
-  const addPropertyButton = <MLButton 
+  const addPropertyButton = <MLButton
       type="primary"
       aria-label={props.entityName +'-add-property'}
       disabled={!props.canWriteEntityModel}
@@ -674,7 +679,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       onClick={()=> {
         toggleShowPropertyModal(true);
         setEditPropertyOptions({...editPropertyOptions, isEdit: false });
-        setStructuredTypeOptions({ 
+        setStructuredTypeOptions({
           ...structuredTypeOptions,
           isStructured: false
         });
@@ -684,14 +689,14 @@ const PropertyTable: React.FC<Props> = (props) => {
   return (
     <div>
       <div className={styles.addButtonContainer}>
-        { props.canWriteEntityModel ? 
+        { props.canWriteEntityModel ?
           Object.keys(props.definitions[props.entityName]['properties']).length === 0 ? (
             <MLTooltip title={ModelingTooltips.addProperty}>
               <span>{addPropertyButton}</span>
             </MLTooltip>
          ) :
           addPropertyButton
-        :  
+        :
         (
           <MLTooltip title={'Add Property: ' + ModelingTooltips.noWriteAccess}>
             <span>{addPropertyButton}</span>
@@ -716,7 +721,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         isVisible={showConfirmModal}
         type={confirmType}
         boldTextArray={confirmBoldTextArray}
-        stepValues={stepValuesArray}  
+        stepValues={stepValuesArray}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
@@ -736,4 +741,4 @@ const PropertyTable: React.FC<Props> = (props) => {
   );
 }
 
-export default PropertyTable; 
+export default PropertyTable;

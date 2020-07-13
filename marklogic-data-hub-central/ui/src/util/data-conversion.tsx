@@ -677,11 +677,13 @@ export const definitionsParser = (definitions: any): Definition[] => {
             description: '',
             ref: '',
             collation: '',
-            multiple: false
+            multiple: false,
+            facetable: false
           }
           property.name = properties;
           property.description = definitions[definition][entityKeys][properties]['description'] || '';
           property.collation = definitions[definition][entityKeys][properties]['collation'] || '';
+          property.facetable = definitions[definition][entityKeys][properties]['facetable'] || '';
 
           if (definitions[definition][entityKeys][properties]['datatype']) {
             property.datatype = definitions[definition][entityKeys][properties]['datatype'];

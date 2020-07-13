@@ -1,4 +1,4 @@
-.icon, .multipleIcon, .wildcardIcon {
+.icon, .multipleIcon, .wildcardIcon, .facetIcon {
   font-size: 20px;
   color: #333;
 }
@@ -9,6 +9,10 @@
 
 .wildcardIcon {
   margin-left: 45px;
+}
+
+.facetIcon {
+  margin-left: 9px;
 }
 
 .identifierIcon {

@@ -19,11 +19,11 @@ describe('Entity Modeling Property Table Component', () => {
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={false}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
-    
+
 
     expect(getByText('Add Property')).toBeInTheDocument();
     expect(getByText('Property Name')).toBeInTheDocument();
@@ -37,10 +37,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId, getByLabelText, debug } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -83,10 +83,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole, getByLabelText, queryByTestId } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={false}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -94,7 +94,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByLabelText('Customer-add-property')).toBeDisabled();
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
-    expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
+    expect(getAllByTestId('add-struct-Address')).toHaveLength(2);
     expect(queryByTestId('customerId-span')).toBeNull();
 
     expect(getByText('Order')).toBeInTheDocument();
@@ -105,7 +105,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     expect(getAllByText('string')).toHaveLength(3);
     expect(getAllByText('Address')).toHaveLength(2);
-    
+
     // Table expansion shipping property -> Address Structure type
     userEvent.click(getAllByRole('img')[0]);
 
@@ -123,7 +123,7 @@ describe('Entity Modeling Property Table Component', () => {
     // Table expansion for billing property, Address structure type
     userEvent.click(getAllByRole('img')[2]);
 
-    expect(getAllByTestId('add-struct-Zip')).toHaveLength(2); 
+    expect(getAllByTestId('add-struct-Zip')).toHaveLength(2);
     expect(getAllByText(/zip/i)).toHaveLength(4);
     expect(getAllByText('street')).toHaveLength(2);
     expect(getAllByText('state')).toHaveLength(2);
@@ -140,10 +140,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId, getByLabelText, debug } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -162,7 +162,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     userEvent.clear(screen.getByLabelText('input-name'));
     await userEvent.type(screen.getByLabelText('input-name'), 'conception');
-    
+
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('conception-span')).toBeInTheDocument();
   });
@@ -171,10 +171,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -200,7 +200,7 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.click(screen.getByLabelText('type-dropdown'));
     userEvent.click(screen.getByText('More date types'));
     userEvent.click(screen.getByText('dayTimeDuration'));
-    
+
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('conception-span')).toBeInTheDocument();
   });
@@ -210,10 +210,10 @@ describe('Entity Modeling Property Table Component', () => {
     let definitions = propertyTableEntities[2].model.definitions;
     const { getByText, getByTestId, queryByTestId, getAllByTestId } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyTable 
+        <PropertyTable
           canReadEntityModel={true}
           canWriteEntityModel={true}
-          entityName={entityName} 
+          entityName={entityName}
           definitions={definitions}
         />
       </ModelingContext.Provider>
@@ -221,7 +221,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
-    expect(getAllByTestId('add-struct-Address')).toHaveLength(2); 
+    expect(getAllByTestId('add-struct-Address')).toHaveLength(2);
 
     userEvent.click(getByTestId('nicknames-span'));
     userEvent.clear(screen.getByLabelText('input-name'));
@@ -239,6 +239,10 @@ describe('Entity Modeling Property Table Component', () => {
     const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
     fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     expect(wildcardCheckbox).toBeChecked();
+
+    const facetableCheckbox = screen.getByLabelText('Facet');
+    fireEvent.change(facetableCheckbox, { target: { checked: true } });
+    expect(facetableCheckbox).toBeChecked();
 
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('altName-span')).toBeInTheDocument();

@@ -78,7 +78,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       const response = await deleteEntity(entityName);
       if (response['status'] === 200) {
         props.updateEntities();
-      } 
+      }
     } catch (error) {
       handleError(error)
     } finally {
@@ -94,7 +94,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       const response = await updateEntityModels(modifiedEntity);
       if (response['status'] === 200) {
         removeEntityModified(modifiedEntity[0]);
-      } 
+      }
     } catch (error) {
       handleError(error)
     } finally {
@@ -218,15 +218,15 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           <div className={styles.iconContainer}>
           <MLTooltip title={ModelingTooltips.saveIcon}>
             <span
-              data-testid={text + '-save-icon'} 
+              data-testid={text + '-save-icon'}
               className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconSaveReadOnly : styles.iconSave}
               onClick={() => confirmSaveEntity(text)}
             ></span>
           </MLTooltip>
           <MLTooltip title={ModelingTooltips.revertIcon}>
-            <FontAwesomeIcon 
-              data-testid={text + '-revert-icon'} 
-              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconRevertReadOnly : styles.iconRevert} 
+            <FontAwesomeIcon
+              data-testid={text + '-revert-icon'}
+              className={!props.canWriteEntityModel && props.canReadEntityModel || disabled ? styles.iconRevertReadOnly : styles.iconRevert}
               icon={faUndo}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
@@ -238,9 +238,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               size="2x"
             />
           </MLTooltip>
-            <FontAwesomeIcon 
+            <FontAwesomeIcon
               data-testid={text + '-trash-icon'}
-              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash} 
+              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
               icon={faTrashAlt}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
@@ -249,7 +249,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   getEntityReferences(text);
                 }
               }}
-              size="2x" 
+              size="2x"
             />
           </div>
         )
@@ -265,10 +265,10 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   };
 
   const expandedRowRender = (entity) => {
-    return <PropertyTable 
-              entityName={entity.name.split(',')[0]} 
+    return <PropertyTable
+              entityName={entity.name.split(',')[0]}
               definitions={entity.definitions}
-              canReadEntityModel={props.canReadEntityModel} 
+              canReadEntityModel={props.canReadEntityModel}
               canWriteEntityModel={props.canWriteEntityModel}
             />
   };
@@ -300,7 +300,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={confirmType}
-        boldTextArray={confirmBoldTextArray} 
+        boldTextArray={confirmBoldTextArray}
         stepValues={stepValuesArray}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}

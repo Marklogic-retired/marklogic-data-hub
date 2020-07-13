@@ -13,7 +13,7 @@ import { entityReferences } from '../../../api/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
 
-import { 
+import {
   ConfirmationType,
   StructuredTypeOptions,
   PropertyOptions,
@@ -21,12 +21,12 @@ import {
   PropertyType
 } from '../../../types/modeling-types';
 
-import { 
+import {
   COMMON_PROPERTY_TYPES,
   MORE_STRING_TYPES,
   MORE_NUMBER_TYPES,
   MORE_DATE_TYPES,
-  DROPDOWN_PLACEHOLDER 
+  DROPDOWN_PLACEHOLDER
 } from '../../../config/modeling.config';
 
 type Props = {
@@ -68,8 +68,8 @@ const ALL_CHECKBOX_DISPLAY_VALUES = [
   },
   {
     label: 'Facet',
-    value: 'facet',
-    tooltip: ModelingTooltips.multiple
+    value: 'facetable',
+    tooltip: ModelingTooltips.facet
   },
   {
     label: 'Wildcard Search',
@@ -106,7 +106,7 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: '',
   pii: '',
   sort: false,
-  facet: false,
+  facetable: false,
   wildcard: false
 }
 
@@ -136,7 +136,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const [typeDisplayValue, setTypeDisplayValue] = useState<string[]>([]);
   const [typeErrorMessage, setTypeErrorMessage] = useState('');
-  
+
   const [dropdownOptions, setDropdownOptions] = useState<any[]>(DEFAULT_DROPDOWN_OPTIONS);
   const [radioValues, setRadioValues] = useState<any[]>([]);
   const [showConfigurationOptions, toggleShowConfigurationOptions] = useState(false);
@@ -181,7 +181,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           showConfigOptions = false;
           structuredLabel = props.structuredTypeOptions.name;
         }
-        
+
         if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
           structuredLabel = props.structuredTypeOptions.name;
           newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
@@ -338,14 +338,14 @@ const PropertyModal: React.FC<Props> = (props) => {
         }
 
       } else {
-        // Add Property 
+        // Add Property
         if (entityPropertyNamesArray.includes(name)){
           setErrorMessage(`A property already exists with a name of ${name}`)
         } else if (selectedPropertyOptions.type === '') {
           setTypeErrorMessage('Type is required');
         } else {
           let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
-          props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions); 
+          props.addPropertyToDefinition(definitionName, name, selectedPropertyOptions);
           setErrorMessage('');
           setTypeErrorMessage('');
           props.toggleModal(false);
@@ -430,8 +430,8 @@ const PropertyModal: React.FC<Props> = (props) => {
   const updateTypeDropdown = () => {
     let entityDefinition = props.entityDefinitionsArray.find( entity => entity.name === props.entityName);
     let structuredDefinitions = props.entityDefinitionsArray.filter( entity => entity.name !== props.entityName);
-    let propertyNamesArray = entityDefinition['properties'].map( property => property.name);  
-    let entityNamesArray = props.entityDefinitionsArray.map( entity => entity.name); 
+    let propertyNamesArray = entityDefinition['properties'].map( property => property.name);
+    let entityNamesArray = props.entityDefinitionsArray.map( entity => entity.name);
 
     if (props.structuredTypeOptions.isStructured) {
       let splitName = props.structuredTypeOptions.name.split(',');
@@ -473,7 +473,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_NUMBER_TYPES,
         MORE_DATE_TYPES
       ]);
-    } else if ( props.editPropertyOptions.isEdit && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured 
+    } else if ( props.editPropertyOptions.isEdit && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured
       || modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured
       ) {
         let structuredDropdown = createStructuredDropdown(structuredDefinitions);
@@ -523,7 +523,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       .sort((a, b) => a.name.localeCompare(b.name))
       .map( definition => { return { label: definition.name, value: definition.name }});
 
-    return { 
+    return {
       ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
       children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS['children'], ...structuredTypes]
     }
@@ -558,10 +558,10 @@ const PropertyModal: React.FC<Props> = (props) => {
         key={index}
         label={radio.label}
         labelAlign="left"
-        className={styles.formItem} 
+        className={styles.formItem}
       >
         <Radio.Group
-          onChange={(event) => onRadioChange(event, radio.value)} 
+          onChange={(event) => onRadioChange(event, radio.value)}
           value={selectedPropertyOptions[radio.value]}
         >
           <Radio aria-label={radio.value + '-yes'} value={'yes'}>Yes</Radio>
@@ -576,7 +576,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const renderCheckboxes = ALL_CHECKBOX_DISPLAY_VALUES.map((checkbox, index) => {
     return (
-      <Form.Item 
+      <Form.Item
         key={index}
         className={styles.formItemCheckbox}
         label={" "}
@@ -585,7 +585,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       >
         <MLCheckbox
           id={checkbox.value}
-          disabled={checkbox.value === 'wildcard' ? false : true}
+          disabled={checkbox.value === 'sort' ? true : false}
           checked={selectedPropertyOptions[checkbox.value]}
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
         >{checkbox.label}</MLCheckbox>
@@ -597,7 +597,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   });
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
-    { props.editPropertyOptions.isEdit && 
+    { props.editPropertyOptions.isEdit &&
       <MLButton type="link" disabled={true} onClick={getEntityReferences} >
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
@@ -608,7 +608,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         size="default"
         onClick={onCancel}
       >Cancel</MLButton>
-      <MLButton 
+      <MLButton
         aria-label="property-modal-submit"
         form="property-form"
         type="primary"
@@ -623,7 +623,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     <Modal
       className={styles.modal}
       visible={props.isVisible}
-      destroyOnClose={true} 
+      destroyOnClose={true}
       closable={true}
       title={modalTitle}
       maskClosable={false}
@@ -646,7 +646,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           <span>{props.entityName}</span>
         </Form.Item>
 
-        { props.structuredTypeOptions.isStructured 
+        { props.structuredTypeOptions.isStructured
           && selectedPropertyOptions.type !== props.structuredTypeOptions.name
           && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name && (
           <Form.Item
@@ -681,10 +681,10 @@ const PropertyModal: React.FC<Props> = (props) => {
           />
           <MLTooltip title={ModelingTooltips.nameRegex}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip> 
+          </MLTooltip>
         </Form.Item>
 
-        <Form.Item 
+        <Form.Item
           className={styles.formItem}
           label={<span>
             Type:&nbsp;<span className={styles.asterisk}>*</span>
@@ -726,7 +726,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         isVisible={showConfirmModal}
         type={confirmType}
         boldTextArray={confirmBoldTextArray}
-        stepValues={stepValuesArray}  
+        stepValues={stepValuesArray}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />

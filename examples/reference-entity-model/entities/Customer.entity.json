@@ -37,10 +37,12 @@
           "$ref": "#/definitions/Address"
         },
         "birthDate": {
-          "datatype": "date"
+          "datatype": "date",
+          "facetable": true
         },
         "status": {
-          "datatype": "string"
+          "datatype": "string",
+          "facetable": true
         },
         "customerSince": {
           "datatype": "date"
