@@ -1,5 +1,5 @@
-import React, { useState, CSSProperties, useEffect } from 'react';
-import { Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message } from 'antd';
+import React, {useState, CSSProperties, useEffect, useContext} from 'react';
+import {Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MLButton } from '@marklogic/design-system';
@@ -8,6 +8,8 @@ import sourceFormatOptions from '../../config/formats.config';
 import {RunToolTips} from '../../config/tooltips.config';
 import styles from './flows.module.scss';
 import { MLTooltip, MLSpin, MLUpload } from '@marklogic/design-system';
+import { AuthoritiesContext } from "../../util/authorities";
+import {Link} from "react-router-dom";
 
 const { Panel } = Collapse;
 
@@ -59,12 +61,21 @@ const Flows: React.FC<Props> = (props) => {
     const [showUploadError, setShowUploadError] = useState(false);
     const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
     const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ['-1']);
+    const [showLinks, setShowLinks] = useState('');
 
     useEffect(() => {
         if (JSON.stringify(props.flowsDefaultActiveKey) !== JSON.stringify([])) {
             setActiveKeys([...props.flowsDefaultActiveKey]);
         }
     }, [props.flows])
+
+    // For role-based privileges
+    const authorityService = useContext(AuthoritiesContext);
+    const authorityByStepType = {
+        ingestion: authorityService.canReadLoad(),
+        mapping: authorityService.canReadMapping(),
+        custom: authorityService.canReadCustom()
+    };
 
     const OpenAddNewDialog = () => {
         setTitle('New Flow');
@@ -168,7 +179,7 @@ const Flows: React.FC<Props> = (props) => {
                     </i>
                 </MLTooltip> :
                 <MLTooltip title={'Delete'} placement="bottom">
-                    <i aria-label={'deleteStep-' + i}>
+                    <i aria-label={'deleteFlow-' + i}>
                         <FontAwesomeIcon
                             icon={faTrashAlt}
                             onClick={(event) => {
@@ -242,6 +253,10 @@ const Flows: React.FC<Props> = (props) => {
         return result !== undefined;
     }
 
+    function handleMouseOver(e, name) {
+        setShowLinks(name);
+    }
+
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
@@ -249,11 +264,14 @@ const Flows: React.FC<Props> = (props) => {
             let cards = flow.steps.map(step => {
                 let sourceFormat = step.sourceFormat;
                 let stepNumber = step.stepNumber;
+                let viewStepId = `${flowName}-${stepNumber}`
+                let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase():'';
+                let stepDefinitionTypeTitle = StepDefinitionTypeTitles[stepDefinitionType];
                 return (
+                  <div key={viewStepId}>
                     <Card
                         style={{ width: 300, marginRight: 20 }}
                         title={StepDefToTitle(step.stepDefinitionType)}
-                        key={stepNumber}
                         size="small"
                         extra={
                             <div className={styles.actions}>
@@ -307,22 +325,32 @@ const Flows: React.FC<Props> = (props) => {
                                 }
                                 {props.canWriteFlow ?
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} aria-label={'deleteStep-' + stepNumber} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
+                                        <div className={styles.delete} aria-label={'deleteStep-' + viewStepId} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
                                     </MLTooltip> :
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + stepNumber} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
+                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + viewStepId} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
                                     </MLTooltip>
                                 }
                             </div>
                         }
                     >
-                        <div className={styles.cardContent}>
+                        <div  aria-label={viewStepId + '-content'} className={styles.cardContent}
+                             onMouseOver={(e) => handleMouseOver(e, viewStepId)}
+                             onMouseLeave={(e) => setShowLinks('')} >
                             { sourceFormat ?
                                 <div className={styles.format} style={sourceFormatStyle(sourceFormat)}>{sourceFormat.toUpperCase()}</div>
                                 : null }
                             <div className={styles.name}>{step.stepName}</div>
+                            <div className={styles.cardLinks} style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType]  ? 'block' : 'none'}}>
+                                 <Link id={'tiles-step-view-'+viewStepId} to={
+                                    {pathname: `/tiles/${stepDefinitionType === 'ingestion' ? 'load': 'curate'}`,
+                                        state: {
+                                            stepToView : step.stepId,
+                                            stepDefinitionType : stepDefinitionType,
+                                            targetEntityType: step.targetEntityType
+                                        }}}><div className={styles.cardLink} data-testid={`${viewStepId}-viewStep`}>View {stepDefinitionTypeTitle} steps</div></Link>
+                            </div>
                         </div>
-
                         <div className = {styles.uploadError}>
                             { showUploadError && flowName == runningFlow && stepNumber == runningStep.stepNumber ? props.uploadError : ''}
                         </div>
@@ -331,6 +359,7 @@ const Flows: React.FC<Props> = (props) => {
                             <div className={styles.runningLabel}>Running...</div>
                         </div>
                     </Card>
+                  </div>
                 )
             });
             return (

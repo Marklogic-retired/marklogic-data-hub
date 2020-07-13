@@ -5,6 +5,8 @@ import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import Load from "./Load";
+import LoadList from "../components/load/load-list";
+import {MemoryRouter} from "react-router-dom";
 
 jest.mock('axios');
 jest.setTimeout(30000);
@@ -27,7 +29,7 @@ describe('Load component', () => {
         authorityService.setAuthorities(['readIngestion']);
 
         const { getByText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = render(
-            <AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>
+          <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
@@ -89,7 +91,7 @@ describe('Load component', () => {
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
         const { getByText, getAllByText, getByLabelText, getByTestId, queryAllByText } = render(
-            <AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>
+          <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();
@@ -181,7 +183,7 @@ describe('Load component', () => {
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
         const { getByText, getAllByText, getByLabelText } = render(
-            <AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider>
+          <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
         expect(await(waitForElement(() => getByLabelText('switch-view-list')))).toBeInTheDocument();

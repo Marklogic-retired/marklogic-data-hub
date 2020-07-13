@@ -32,6 +32,7 @@ const flow = flows[0];
   test.assertEqual(mappingName, flow.steps[1].stepName),
   test.assertEqual("mapping", flow.steps[1].stepDefinitionType),
   test.assertEqual(undefined, flow.steps[1].sourceFormat),
+  test.assertEqual("http://example.org/Customer-0.0.1/Customer", flow.steps[1].targetEntityType),
 
   test.assertEqual("3", flow.steps[2].stepNumber),
   test.assertEqual(ingestionName, flow.steps[2].stepName),

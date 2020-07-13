@@ -352,36 +352,46 @@ const flows = {
     "description": "",
       "steps": [
           {
+              "stepId": "failedIngest-ingestion",
               "stepName": "failedIngest",
               "stepDefinitionType": "ingestion",
               "stepNumber": "1",
               "sourceFormat": "json"
           },
           {
+            "stepId": "Mapping1-mapping",
             "stepName": "Mapping1",
             "stepDefinitionType": "mapping",
             "stepNumber": "2",
-            "targetFormat": "json"
+            "targetFormat": "json",
+            "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
           },
           {
+            "stepId": "custom1-custom",
             "stepName": "custom1",
             "stepDefinitionType": "custom",
             "stepNumber": "3",
           },
           {
               "stepNumber":	"4",
+              "stepId": "match-customer-matching",
               "stepName": "match-customer",
-              "stepDefinitionType":	"matching"
+              "stepDefinitionType":	"matching",
+              "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
           },
           {
               "stepNumber": "5",
+              "stepId": "merge-customer-merging",
               "stepName": "merge-customer",
-              "stepDefinitionType": "merging"
+              "stepDefinitionType": "merging",
+              "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
           },
           {
               "stepNumber": "6",
+              "stepId": "master-customer-mastering",
               "stepName": "master-customer",
-              "stepDefinitionType": "mastering"
+              "stepDefinitionType": "mastering",
+              "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
           }
       ]
   }]
