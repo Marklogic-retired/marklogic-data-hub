@@ -57,9 +57,9 @@ public class AllArtifactsProject extends TestObject {
 
         // Verify PII stuff
         verifyEntryExists("/src/main/ml-config/security/protected-paths/1-pii-protected-paths.json",
-            "path-expression", "/envelope//instance//Order/orderID");
+            "path-expression", "/*:envelope//*:instance//*:Order/*:orderID");
         verifyEntryExists("/src/main/ml-config/security/protected-paths/2-pii-protected-paths.json",
-            "path-expression", "/envelope//instance//Order/orderName");
+            "path-expression", "/*:envelope//*:instance//*:Order/*:orderName");
         assertEquals("pii-reader", zipEntries.get("/src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
 
         // Verify search options
