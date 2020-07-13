@@ -15,7 +15,8 @@ export interface Property {
   datatype: string,
   ref: string,
   collation: string,
-  multiple: boolean
+  multiple: boolean,
+  facetable: boolean
 }
 
 export interface EntityDefinitionPayload {
@@ -49,7 +50,7 @@ export interface PropertyOptions {
   multiple: string,
   pii: string,
   sort: boolean,
-  facet: boolean,
+  facetable: boolean,
   wildcard: boolean
 }
 

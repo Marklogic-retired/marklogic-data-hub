@@ -41,11 +41,13 @@ describe('Entity Modeling', () => {
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
     propertyModal.clickCheckbox('wildcard');
+    propertyModal.clickCheckbox('facetable');
     propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('newID').should('exist');
     propertyTable.getPiiIcon('newID').should('exist');
     propertyTable.getWildcardIcon('newID').should('exist');
+    propertyTable.getFacetIcon('newID').should('exist');
 
     entityTypeTable.getDeleteEntityIcon('Person').click();
     cy.contains('Entity type is used in one or more steps.');
