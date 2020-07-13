@@ -204,8 +204,8 @@ hr {
 
 .mapValue {
     margin-top: -6px;
-    margin-bottom: -8px;
-    white-space: nowrap;
+    margin-bottom: -20px;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: normal;
