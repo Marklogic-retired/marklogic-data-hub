@@ -46,7 +46,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     resetSearchOptions,
     setEntity,
     applySaveQuery,
-    setSelectedTableProperties,
+    setZeroState,
+    setPageWithEntity,
+    setPage
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -120,6 +122,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     } catch (error) {
+        console.log('error', error)
       handleError(error);
     } finally {
       setIsLoading(false);
@@ -133,6 +136,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
     if (location.state && location.state['jobId']) {
       setLatestJobFacet(location.state['jobId'], location.state['entityName']);
+      setZeroState(location.state['zeroState']);
     }
     // Removed error handling since it's not in one ui
     // if (!user.error.type) {
@@ -144,6 +148,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [])
 
+
   useEffect(() => {
     // if (entities.length && !user.error.type) {
     //   getSearchResults(entities);
@@ -153,8 +158,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   }, [searchOptions, entities, user.error.type]);
 
+
   useEffect(() => {
-    if (searchOptions.zeroState === true) {
+    if (searchOptions.zeroState === true ) {
       let options: QueryOptions = {
         searchText: '',
         entityTypeIds: [],
@@ -165,6 +171,14 @@ const Browse: React.FC<Props> = ({ location }) => {
         manageQueryModal: false,
       }
       applySaveQuery(options);
+    }
+    if(location.state && !location.state['zeroState']){
+        setPageWithEntity(location.state['entity'],
+            location.state['pageNumber'],
+            location.state['start'],
+            location.state['searchFacets'],
+            location.state['query'])
+        location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
   }, [searchOptions.zeroState]);
 
@@ -219,7 +233,12 @@ const Browse: React.FC<Props> = ({ location }) => {
   } else {
     return (
       <Layout className={styles.layout}>
-        <Sider className={styles.sideBarFacets} collapsedWidth={0} collapsible onCollapse={onCollapse} width={'20vw'}>
+        <Sider className={styles.sideBarFacets}
+               collapsedWidth={0}
+               collapsible
+               onCollapse={onCollapse}
+               width={'20vw'}
+        >
           <Sidebar
             facets={facets}
             selectedEntities={searchOptions.entityTypeIds}
@@ -242,6 +261,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   length={searchOptions.pageLength}
                   pageSize={searchOptions.pageSize}
                 />
+                <div id="top-search-pagination-bar">
                 <SearchPagination
                   total={totalDocuments}
                   pageNumber={searchOptions.pageNumber}
@@ -249,6 +269,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   pageLength={searchOptions.pageLength}
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
+                </div>
                 <div className={styles.spinViews}>
                   {isLoading && <MLSpin data-testid="spinner" className={styles.overlay} />}
                   <div className={styles.switchViews}>
@@ -277,9 +298,10 @@ const Browse: React.FC<Props> = ({ location }) => {
                           columns={columns}
                           selectedEntities={searchOptions.entityTypeIds}
                           setColumnSelectorTouched={setColumnSelectorTouched}
+                          tableView={tableView}
                       />
                   </div>
-                  : <SearchResults data={data} entityDefArray={entityDefArray} />
+                  : <SearchResults data={data} entityDefArray={entityDefArray}  tableView={tableView}/>
                 }
               </div>
               <br />

@@ -9,6 +9,11 @@
   width: 85%;
 }
 
+.title {
+  color: #5B69AF;
+  cursor: pointer;
+}
+
 .menu {
   width: 15%;
   display: flex;
@@ -20,7 +25,6 @@
 .detailContent {
   background: #fff;
   padding: 18px 36px;
-  margin-top: 65px;
 }
 
 .subMenu {

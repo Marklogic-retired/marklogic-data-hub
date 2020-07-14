@@ -8,9 +8,10 @@ describe("Search Results component", () => {
 
   beforeAll(() => {
     wrapper = shallow(
-      <SearchResults 
-        data={searchResults} 
+      <SearchResults
+        data={searchResults}
         entityDefArray={[{name: 'Customer', primaryKey:'id'}]}
+        tableView={false}
       />);
   });
 

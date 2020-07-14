@@ -44,6 +44,10 @@ class DetailPage {
         return cy.get('[data-cy=xml-document]');
     }
 
+    clickBackButton() {
+        return cy.get('#back-button').click();
+    }
+
 }
 
 const detailPage = new DetailPage();

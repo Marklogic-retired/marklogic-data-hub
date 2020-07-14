@@ -11,6 +11,7 @@ import Modeling from './Modeling';
 import Curate from './Curate';
 import Run from './Run';
 import Browse from './Browse';
+import Detail from "./Detail";
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -26,14 +27,6 @@ interface TileItem {
     border: string;
 }
 
-const views: Record<TileId, JSX.Element> = {
-    load: <Load />,
-    model: <Modeling />,
-    curate: <Curate />,
-    run: <Run />,
-    explore: <Browse />,
-};
-
 const INITIAL_SELECTION = ''; // '' for no tile initially
 
 const TilesView = (props) => {
@@ -44,8 +37,15 @@ const TilesView = (props) => {
     const history: any = useHistory();
     const location: any = useLocation();
 
+    const views: Record<TileId, JSX.Element> = {
+        load: <Load />,
+        model: <Modeling />,
+        curate: <Curate />,
+        run: <Run />,
+        explore: location.pathname.startsWith('/tiles/explore/detail') ? <Detail /> : <Browse/>,
+    };
+
     const {
-        setZeroState,
         setManageQueryModal,
         setView,
         searchOptions

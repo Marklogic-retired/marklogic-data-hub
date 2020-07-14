@@ -6,6 +6,7 @@ import styles from './search-results.module.scss';
 type Props = {
   data: any[];
   entityDefArray:any[];
+  tableView: boolean;
 };
 
 const SearchResults:React.FC<Props> = (props) => {
@@ -20,6 +21,7 @@ const SearchResults:React.FC<Props> = (props) => {
             <SearchResult
               item={item}
               entityDefArray={props.entityDefArray}
+              tableView={props.tableView}
             />
           </List.Item>
         )}

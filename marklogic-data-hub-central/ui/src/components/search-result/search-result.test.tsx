@@ -18,6 +18,7 @@ describe("Search Result component", () => {
           <SearchResult
             entityDefArray={entityDefArray}
             item={searchPayloadResults[0]}
+            tableView={false}
           />
         </Router>
       )
