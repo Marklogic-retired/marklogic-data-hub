@@ -244,7 +244,7 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByTestId('runStep-1')).toBeInTheDocument();
     });
 
-    test('Verify run tile cannot edit or run with only readFlow authority', async () => {
+    test('Verify Run tile cannot edit or run with only readFlow authority', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readFlow']);
         const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
@@ -284,7 +284,7 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByTestId('runStepDisabled-3')).toBeInTheDocument();
     });
 
-    test('Verify run tile can read/run with readFlow and runStep authority', async () => {
+    test('Verify Run tile can read/run with readFlow and runStep authority', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readFlow','runStep']);
         const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
@@ -313,7 +313,7 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByTestId('runStep-6')).toBeInTheDocument();
     });
 
-    test('Verify run tile does not load from toolbar without readFlow authority', async () => {
+    test('Verify Run tile does not load from toolbar without readFlow authority', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities([]);
         const {getByLabelText, queryByLabelText, queryByText} = render(<Router history={history}>
