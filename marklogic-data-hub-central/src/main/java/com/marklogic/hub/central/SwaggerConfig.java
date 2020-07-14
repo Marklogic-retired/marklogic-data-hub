@@ -8,6 +8,7 @@ import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.central.controllers.steps.IngestionStepController;
 import com.marklogic.hub.central.controllers.steps.MappingStepController;
 import com.marklogic.hub.central.schemas.*;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -32,6 +33,10 @@ import java.util.stream.Stream;
 @EnableSwagger2
 @Profile("dev")
 public class SwaggerConfig {
+
+    public SwaggerConfig() {
+        LoggerFactory.getLogger(getClass()).info("SwaggerConfig is enabled; can access docs at /swagger-ui.html");
+    }
 
     @Bean
     public Docket swaggerUiConfiguration(TypeResolver typeResolver) {
