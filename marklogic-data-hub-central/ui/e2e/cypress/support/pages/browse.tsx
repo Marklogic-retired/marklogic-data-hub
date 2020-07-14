@@ -32,6 +32,14 @@ class BrowsePage {
     });
   }
 
+  clickPaginationItem(index: number) {
+    return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click();
+  }
+
+  getSelectedPaginationNumber(){
+      return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text')
+  }
+
   getInstanceViewIcon() {
     return cy.get('[data-cy=instance]');
   }
@@ -157,6 +165,10 @@ class BrowsePage {
     this.waitForTableToLoad();
   }
 
+  getSearchText(){
+     return cy.get('[data-cy=search-bar]');
+  }
+
   getShowMoreLink() {
     return cy.get('div[data-cy="show-more"][style="display: block;"]');
   }
@@ -174,6 +186,14 @@ class BrowsePage {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
     return cy.get('[data-cy=facet-view]').click();
+  }
+
+  getFacetView(){
+    return cy.get('[data-cy=facet-view]');
+  }
+
+  getTableView(){
+    return cy.get('[data-cy=table-view]');
   }
 
   clickTableView() {

@@ -19,6 +19,7 @@ interface Props {
     selectedPropertyDefinitions: any[];
     columns: any;
     hasStructured: boolean;
+    tableView: boolean;
 }
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -60,6 +61,8 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 ];
 
 const ResultsTabularView = (props) => {
+
+
     const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
 
     const {
@@ -156,15 +159,30 @@ const ResultsTabularView = (props) => {
         let primaryKeyValue = item.primaryKey?.propertyValue;
         let isUri = item.primaryKey?.propertyPath === 'uri';
         let uri = encodeURIComponent(item.uri);
-        let path = { pathname: `/detail/${isUri ? '-' : encodeURIComponent(primaryKeyValue)}/${uri}` };
+        let path = { pathname: `/tiles/explore/detail/${isUri ? '-' : encodeURIComponent(primaryKeyValue)}/${uri}` };
         let options = {};
         let detailView =
             <div className={styles.redirectIcons}>
-                <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance' } }} id={'instance'}
+                <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance',
+                        entity : searchOptions.entityTypeIds ,
+                        pageNumber : searchOptions.pageNumber,
+                        start : searchOptions.start,
+                        searchFacets : searchOptions.selectedFacets,
+                        query: searchOptions.query,
+                        tableView: props.tableView
+                    }}} id={'instance'}
                     data-cy='instance'>
                     <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
                 </Link>
-                <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'source' } }} id={'source'}
+                <Link to={{ pathname: `${path.pathname}`,
+                    state: { selectedValue: 'source',
+                        entity : searchOptions.entityTypeIds ,
+                        pageNumber : searchOptions.pageNumber,
+                        start : searchOptions.start,
+                        searchFacets : searchOptions.selectedFacets,
+                        query: searchOptions.query,
+                        tableView: props.tableView
+                    } }} id={'source'}
                     data-cy='source'>
                     <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
                 </Link>
@@ -250,7 +268,13 @@ const ResultsTabularView = (props) => {
                         key: counter++,
                         property: i,
                         children: parseJson(obj[i]),
-                        view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i] } }}
+                        view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i],
+                                entity : searchOptions.entityTypeIds,
+                                pageNumber : searchOptions.pageNumber,
+                                start : searchOptions.start,
+                                searchFacets : searchOptions.selectedFacets,
+                                query: searchOptions.query,
+                                tableView: props.tableView} }}
                             data-cy='nested-instance'>
                             <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                 size="sm" /></Tooltip>

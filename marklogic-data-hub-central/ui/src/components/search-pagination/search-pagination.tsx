@@ -47,9 +47,9 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   return (
       <div className={styles.searchPaginationContainer}>
-          <Pagination 
+          <Pagination
             size="small"
-            total={props.total} 
+            total={props.total}
             showSizeChanger
             onChange={onPageChange}
             onShowSizeChange={onPageSizeChange}
@@ -57,7 +57,7 @@ const SearchPagination: React.FC<Props> = (props) => {
             pageSize={props.pageSize}
             pageSizeOptions={pageSizeOptions}
           />
-      </div>  
+      </div>
   )
 }
 

@@ -98,9 +98,9 @@ const App: React.FC<Props> = ({history, location}) => {
             <PrivateRoute path="/browse" exact>
                 <Browse/>
             </PrivateRoute>
-            <PrivateRoute path="/detail/:pk/:uri">
+            {/*<PrivateRoute path="/detail/:pk/:uri">
               <Detail/>
-            </PrivateRoute>
+            </PrivateRoute>*/}
             <ModelingProvider>
               <PrivateRoute path="/tiles" exact>
                 <TilesView/>
@@ -122,6 +122,9 @@ const App: React.FC<Props> = ({history, location}) => {
               </PrivateRoute>
               <PrivateRoute path="/tiles/explore" exact>
                 <TilesView id='explore'/>
+              </PrivateRoute>
+              <PrivateRoute path="/tiles/explore/detail/:pk/:uri" exact>
+                 <TilesView id='explore'/>
               </PrivateRoute>
             </ModelingProvider>
           </SearchProvider>

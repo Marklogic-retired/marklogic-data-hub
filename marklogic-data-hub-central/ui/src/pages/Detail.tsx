@@ -12,6 +12,7 @@ import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
+import {SearchContext} from "../util/search-context";
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -21,7 +22,7 @@ const { Content } = Layout;
 const Detail: React.FC<Props> = ({ history, location }) => {
 
   const { user, handleError, resetSessionTime } = useContext(UserContext);
-  const uriSplit = location.pathname.replace('/detail/', '');
+  const uriSplit = location.pathname.replace('/tiles/explore/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");
   const docUri = uri.replace(/%25/g, "%");
@@ -76,6 +77,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   }, []);
 
+
   useEffect(() => {
     location.state && location.state.hasOwnProperty('selectedValue') && location.state['selectedValue'] === 'source' ?
       setSelected('full') : setSelected('instance');
@@ -89,11 +91,28 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     setSelected(event.key);
   }
 
+  const selectedSearchOptions = {
+      pathname: "/tiles/explore",
+      state: {
+         zeroState: false,
+         entity: location.state ? location.state['entity'] : '',
+         pageNumber: location.state ? location.state['pageNumber'] : 1,
+         start: location.state ? location.state['start'] : 1,
+         searchFacets: location.state ? location.state['searchFacets'] : {},
+         query: location.state ? location.state['query'] : '',
+         tableView: location.state ? location.state['tableView'] : true
+        }
+   }
+
   return (
     <Layout>
       <Content className={styles.detailContent}>
-        <div id='back-button' style={{ marginLeft: '-23px' }}>
-          <PageHeader onBack={() => history.push('/browse')} title={<Link to={{ pathname: "/browse" }} data-cy="back-button">Back</Link>} />
+        <div id='back-button' style={{ marginLeft: '-23px' }}  onClick={() => history.push(selectedSearchOptions)}>
+         <PageHeader
+              title={<span className={styles.title}>Back</span>}
+              data-cy="back-button"
+              onBack={() => history.push(selectedSearchOptions)}
+          />
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>

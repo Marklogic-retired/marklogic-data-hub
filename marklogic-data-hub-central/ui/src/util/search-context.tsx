@@ -70,6 +70,7 @@ interface ISearchContextInterface {
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
   setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string, vals: string) => void;
+  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -102,7 +103,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setManageQueryModal: () => { },
   setSelectedTableProperties: () => { },
   setView: () => { },
-  setViewWithEntity: () => { }
+  setViewWithEntity: () => { },
+  setPageWithEntity: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -112,7 +114,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const { user } = useContext(UserContext);
 
   const setSearchFromUserPref = (username: string) => {
-    let userPreferences = getUserPreferences(username);
+
+      let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       let values = JSON.parse(userPreferences);
       setSearchOptions({
@@ -149,7 +152,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       ...searchOptions,
       start,
       pageNumber,
-      pageLength
+      pageLength,
     });
   }
 
@@ -159,7 +162,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       start: 1,
       pageNumber: 1,
       pageLength: pageSize,
-      pageSize
+      pageSize,
     });
   }
 
@@ -185,6 +188,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({
       ...searchOptions,
       start: 1,
+      pageNumber: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
       pageLength: searchOptions.pageSize,
@@ -194,6 +198,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setGreyedOptions({
       ...greyedOptions,
       start: 1,
+      pageNumber: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
       pageLength: greyedOptions.pageSize
@@ -315,7 +320,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
 
   const resetSearchOptions = () => {
-    setSearchOptions({ ...defaultSearchOptions });
+      setSearchOptions({ ...defaultSearchOptions });
   }
 
   const setAllSearchFacets = (facets: any) => {
@@ -417,16 +422,14 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   }
 
   const setSelectedTableProperties = (propertiesToDisplay: string[]) => {
-    setSearchOptions({
+      setSearchOptions({
       ...searchOptions,
-      start: 1,
-      pageNumber: 1,
       selectedTableProperties: propertiesToDisplay
     });
   }
 
   const setSelectedQuery = (query: string) => {
-    setSearchOptions({
+      setSearchOptions({
       ...searchOptions,
       start: 1,
       pageNumber: 1,
@@ -438,7 +441,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const setZeroState = (zeroState: boolean) => {
     setSearchOptions({
       ...searchOptions,
-      zeroState: zeroState
+      zeroState: zeroState,
     });
   }
 
@@ -468,6 +471,18 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
             zeroState: zeroState,
             entityTypeIds: entityOptions,
             nextEntityType: nextEntityType
+        });
+    }
+
+    const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string  ) => {
+      setSearchOptions({
+            ...searchOptions,
+           entityTypeIds: option,
+           selectedFacets: facets,
+           query: searchString,
+           start: start,
+           pageNumber : pageNumber,
+           zeroState: false
         });
     }
 
@@ -508,7 +523,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setManageQueryModal,
       setSelectedTableProperties,
       setView,
-      setViewWithEntity
+      setViewWithEntity,
+      setPageWithEntity
     }}>
       {children}
     </SearchContext.Provider>

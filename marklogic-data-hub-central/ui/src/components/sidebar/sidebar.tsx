@@ -158,7 +158,7 @@ const Sidebar: React.FC<Props> = (props) => {
           }
       } else {
           if (Object.entries(searchOptions.selectedFacets).length === 0) {
-              setAllSearchFacets({});
+              //setAllSearchFacets({});
               setAllSelectedFacets({});
           } else{
               setAllSelectedFacets(searchOptions.selectedFacets);

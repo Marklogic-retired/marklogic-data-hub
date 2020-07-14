@@ -21,6 +21,8 @@ describe('json scenario for snippet on browse documents page', () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
   });
 
   it('select "all entities" verify docs, hub/entity properties', () => {
@@ -36,11 +38,22 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
     })
-
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
     })
+      //Verify page number persists when navigating back from detail view
+     browsePage.clickPaginationItem(2);
+     browsePage.search('10256');
+     browsePage.getTotalDocuments().should('be.equal', 1);
+     browsePage.getInstanceViewIcon().click();
+     detailPage.getInstanceView().should('exist');
+     detailPage.getDocumentTable().should('exist');
+     detailPage.clickBackButton();
+     browsePage.getSelectedEntity().should('contain', 'All Entities');
+     browsePage.getSelectedPaginationNumber().should('contain', '1');
+     browsePage.getSearchText().should('have.value', '10256')
+     browsePage.getFacetView().should('have.css', 'background-color', 'rgb(68, 73, 156)')
   });
 
   it('select Person entity and verify entity, docs, hub/entity properties', () => {
@@ -57,7 +70,6 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
     })
-
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
@@ -119,32 +131,31 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getDocumentFileType(0).should('exist')
   });
 
-  it('verify instance view of the document with uri', () => {
-    cy.wait(500);
-    browsePage.search('1990 Taylor St	');
+  it('verify instance view of the document with pk', () => {
+    browsePage.search('Powers');
+    browsePage.getTotalDocuments().should('be.equal', 1);
+    browsePage.getInstanceViewIcon().click();
+    detailPage.getInstanceView().should('exist');
+    detailPage.getDocumentTimestamp().should('exist');
+    detailPage.getDocumentID().should('contain', '104');
+    detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
+    detailPage.getDocumentFileType().should('contain', 'json');
+    detailPage.getDocumentTable().should('exist');
+    detailPage.getDocumentEntity().should('contain', 'Customer');
+
+  });
+
+  it('verify instance view of the document without pk', () => {
+    browsePage.search('1990 Taylor St');
     browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getInstanceViewIcon().click();
     detailPage.getInstanceView().should('exist');
     detailPage.getDocumentEntity().should('contain', 'Person');
-    detailPage.getDocumentUri().should('contain', '/json/persons/last-name-dob-custom1.json');
     detailPage.getDocumentTimestamp().should('exist');
     detailPage.getDocumentSource().should('contain', 'loadPersonJSON');
     detailPage.getDocumentFileType().should('contain', 'json');
     detailPage.getDocumentTable().should('exist');
-  });
-
-  it('verify instance view of the document with pk', () => {
-    cy.wait(500);
-    browsePage.search('10248');
-    browsePage.getTotalDocuments().should('be.equal', 1);
-    browsePage.getInstanceViewIcon().click();
-    detailPage.getInstanceView().should('exist');
-    detailPage.getDocumentEntity().should('contain', 'Order');
-    detailPage.getDocumentID().should('contain', '10248');
-    detailPage.getDocumentTimestamp().should('exist');
-    detailPage.getDocumentSource().should('contain', 'ingest-orders');
-    detailPage.getDocumentFileType().should('contain', 'json');
-    detailPage.getDocumentTable().should('exist');
+    detailPage.getDocumentUri().should('contain', '/json/persons/last-name-dob-custom1.json');
   });
 
   it('verify source view of the document', () => {
@@ -169,11 +180,12 @@ describe('json scenario for table on browse documents page', () => {
     cy.loginAsDeveloper().withRequest();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
   });
 
-  xit('select "all entities" and verify table default columns', () => {
+  it('select "all entities" and verify table default columns', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableTableView();
     browsePage.getTotalDocuments().should('be.greaterThan', 25)
@@ -188,54 +200,40 @@ describe('json scenario for table on browse documents page', () => {
     })
   });
 
-  xit('select "all entities" and verify table', () => {
+  it('select "all entities" and verify table', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25)
     //check table rows
     browsePage.getTableRows().should('have.length', 20);
     //check table columns
     browsePage.getTableColumns().should('have.length', 5);
-    //check cells data
-    for (let i = 2; i <= 10; i++) {
-      for (let j = 2; j <= 4; j++) {
-        browsePage.getTableCell(i, j).should('not.be.empty')
-      }
-    }
-    for (let i = 1; i <= 10; i++) {
-      browsePage.getTableUriCell(i).should('not.be.empty')
-    }
   });
 
-  xit('select Person entity and verify table', () => {
+  it('select Person entity and verify table', () => {
     browsePage.selectEntity('Person');
     browsePage.getSelectedEntity().should('contain', 'Person');
-    cy.wait(2000);
     browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 5)
     //check table rows
     browsePage.getTableRows().should('have.length', 14);
     //check table columns
-    browsePage.getTableColumns().should('have.length', 5);
-    //check cells data
-    for (let i = 1; i <= 5; i++) {
-      for (let j = 2; j <= 5; j++) {
-        browsePage.getTableCell(i, j).should('not.be.empty')
-      }
-    }
+    browsePage.getTableColumns().should('to.have.length.of.at.most', 6);
   });
 
-  xit('search for a simple text/query and verify content', () => {
-    cy.wait(500);
-    browsePage.search('Bill');
+
+  it('search for a simple text/query and verify content', () => {
+    browsePage.search('Alice');
     browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getTableRows().should('have.length', 1);
   });
 
-  it('verify instance view of the document with uri', () => {
-    cy.wait(500);
-    browsePage.search('1990 Taylor St	');
+  it('verify instance view of the document without pk', () => {
+    browsePage.selectEntity('Person');
+    browsePage.search('Alice');
+    browsePage.getFacetItemCheckbox('fname', 'Alice').click();
+    browsePage.getGreySelectedFacets('Alice').should('exist');
+    browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getTableViewInstanceIcon().click();
     detailPage.getInstanceView().should('exist');
@@ -245,10 +243,15 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.getDocumentSource().should('contain', 'loadPersonJSON');
     detailPage.getDocumentFileType().should('contain', 'json');
     detailPage.getDocumentTable().should('exist');
+    //Verify navigating back from detail view should persist search options
+    detailPage.clickBackButton();
+    browsePage.getSelectedEntity().should('contain', 'Person');
+    browsePage.getClearFacetSearchSelection('Alice').should('exist');
+    browsePage.getSearchText().should('have.value', 'Alice')
+    browsePage.getTableView().should('have.css', 'background-color', 'rgb(68, 73, 156)')
   });
 
   it('verify instance view of the document with pk', () => {
-    cy.wait(500);
     browsePage.search('10248');
     browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getTableViewInstanceIcon().click();
@@ -261,35 +264,43 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.getDocumentTable().should('exist');
   });
 
-  xit('verify source view of the document', () => {
-    cy.wait(500);
-    browsePage.search('Bill');
-    browsePage.getTotalDocuments().should('be.equal', 1);
+  it('verify source view of the document', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.search('Adams Cole');
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').click();
+    browsePage.getGreySelectedFacets('loadCustomersJSON').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getTotalDocuments().should('be.equal', 2);
     browsePage.getTableViewSourceIcon().click();
     detailPage.getSourceView().click();
     detailPage.getDocumentJSON().should('exist');
+    detailPage.getDocumentEntity().should('contain', 'Customer');
+    detailPage.getDocumentTimestamp().should('exist');
+    detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
+    detailPage.getDocumentFileType().should('contain', 'json');
+    //Verify navigating back from detail view should persist search options
+    detailPage.clickBackButton();
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getClearFacetSearchSelection('loadCustomersJSON').should('exist');
+    browsePage.getSearchText().should('have.value', 'Adams Cole');
+    browsePage.getTableView().should('have.css', 'background-color', 'rgb(68, 73, 156)');
   });
 
-  xit('search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query', () => {
+  it('search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query', () => {
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    cy.wait(500);
-    browsePage.getFacetItemCheckbox('firstname', 'Kelley').click();
-    browsePage.getFacetItemCheckbox('lastname', 'Oneal').click();
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getSelectedFacets().should('exist');
-    browsePage.getGreySelectedFacets('Kelley').should('exist');
+    browsePage.getGreySelectedFacets('Adams Cole').should('exist');
     browsePage.getFacetApplyButton().click();
-    cy.get('[data-testid="spinner"]').should('not.exist')
     browsePage.clickFacetView();
-    cy.wait(500);
-    browsePage.getClearFacetSearchSelection('Kelley').should('contain', 'firstname: Kelley');
-    browsePage.getClearFacetSearchSelection('Oneal').should('exist');
-    browsePage.getTotalDocuments().should('be.equal', 0);
-    browsePage.clearFacetSearchSelection('Kelley')
-    cy.wait(500);
+    browsePage.getClearFacetSearchSelection('Adams Cole').should('contain', 'name: Adams Cole');
+    browsePage.getClearFacetSearchSelection('adamscole@nutralab.com').should('exist');
+    browsePage.getTotalDocuments().should('be.equal', 1);
+    browsePage.clearFacetSearchSelection('adamscole@nutralab.com')
     browsePage.clickTableView();
-    cy.wait(200);
-    browsePage.getClearFacetSearchSelection('Oneal').should('exist');
+    browsePage.getClearFacetSearchSelection('Adams Cole').should('exist');
     browsePage.getTotalDocuments().should('be.equal', 2);
   });
 

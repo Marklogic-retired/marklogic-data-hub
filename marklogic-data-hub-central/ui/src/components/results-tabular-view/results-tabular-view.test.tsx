@@ -38,7 +38,7 @@ describe("Results Table view component", () => {
         expect(getByText('Ellerslie2')).toBeInTheDocument();
         expect(getByTestId('101-detailOnSeparatePage')).toBeInTheDocument();
         expect(getByTestId('101-sourceOnSeparatePage')).toBeInTheDocument();
-        
+
         //Check if the tooltip on 'Detail on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
         await(waitForElement(() => (getByText('Show detail on a separate page'))))
@@ -46,9 +46,6 @@ describe("Results Table view component", () => {
         //Check if the tooltip on 'source on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
         await(waitForElement(() => (getByText('Show source on a separate page'))))
-
-        //Validation of routing to detail page needs to be done in e2e tests
-
     });
 
     test('Result table with no data renders', () => {
@@ -123,7 +120,7 @@ describe("Results Table view component", () => {
         expect(getByText('2020-06-21 23:44')).toBeInTheDocument();
         expect(getByTestId('101-detailOnSeparatePage')).toBeInTheDocument();
         expect(getByTestId('101-sourceOnSeparatePage')).toBeInTheDocument();
-        
+
         //Check if the tooltip on 'Detail on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
         await(waitForElement(() => (getByText('Show detail on a separate page'))))
@@ -131,8 +128,6 @@ describe("Results Table view component", () => {
         //Check if the tooltip on 'source on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
         await(waitForElement(() => (getByText('Show source on a separate page'))))
-
-        //Validation of routing to detail page needs to be done in e2e tests
 
     });
 })

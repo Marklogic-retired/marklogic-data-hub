@@ -1,18 +1,24 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Table, Tooltip } from 'antd';
 import { xmlParser } from "../../util/xml-parser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { MLTooltip } from '@marklogic/design-system';
+import {SearchContext} from "../../util/search-context";
 
 interface Props {
   item: any;
   entityDefArray: any[];
+  tableView: boolean;
 };
 
 
 const ExpandableTableView: React.FC<Props> = (props) => {
+
+  const {
+      searchOptions,
+  } = useContext(SearchContext);
 
   let primaryKeyValue: any = '-';
   let primaryKey: any = '-';
@@ -39,7 +45,14 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           key: counter++,
           property: i,
           children: parseJson(obj[i]),
-          view: <Link to={{pathname: `/detail/${detailPath}/${uri}`,state: {id:obj[i]}}} data-cy='nested-instance'>
+          view: <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {id:obj[i],
+                  entity : searchOptions.entityTypeIds,
+                  pageNumber : searchOptions.pageNumber,
+                  start : searchOptions.start,
+                  searchFacets : searchOptions.selectedFacets,
+                  query: searchOptions.query,
+                  tableView: props.tableView
+              }}} data-cy='nested-instance'>
             <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></MLTooltip>
           </Link>
