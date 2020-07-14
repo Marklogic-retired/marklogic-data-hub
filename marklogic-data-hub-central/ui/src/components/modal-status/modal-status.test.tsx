@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { render, wait } from '@testing-library/react';
+import { createMemoryHistory } from 'history'
+const history = createMemoryHistory()
+import { render, wait, waitForElement } from '@testing-library/react';
 import axiosMock from 'axios'
 import userEvent from "@testing-library/user-event";
 
@@ -13,8 +15,17 @@ import {
   userNoErrorNoSessionWarning,
   userHasModalErrorHasSessionWarning
 } from '../../assets/mock-data/user-context-mock';
+import mocks from '../../api/__mocks__/mocks.data';
 
 jest.mock('axios');
+
+const mockHistoryPush = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+}));
 
 describe('Modal Status Component', () => {
   afterEach(() => {
@@ -58,6 +69,7 @@ describe('Modal Status Component', () => {
   });
 
   test('Modal can render 500 error and can click OK', async () => {
+    mocks.systemInfoAPI(axiosMock);
     const { getByText } = render(
       <Router>
         <UserContext.Provider value={userModalError}>
@@ -65,7 +77,7 @@ describe('Modal Status Component', () => {
         </UserContext.Provider>
       </Router>);
 
-      expect(getByText('500 Internal Server Error')).toBeInTheDocument();
+      await waitForElement(() => getByText("500 Internal Server Error"));
       expect(getByText('java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011')).toBeInTheDocument();
 
       await wait(() => {
@@ -75,6 +87,7 @@ describe('Modal Status Component', () => {
   });
 
   test('Modal can render 500 error and can click Cancel', async () => {
+    mocks.systemInfoAPI(axiosMock);
     const { getByText } = render(
       <Router>
         <UserContext.Provider value={userModalError}>
@@ -83,13 +96,12 @@ describe('Modal Status Component', () => {
         </UserContext.Provider>
       </Router>);
 
-      expect(getByText('500 Internal Server Error')).toBeInTheDocument();
+      await waitForElement(() => getByText("500 Internal Server Error"));
       expect(getByText('java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011')).toBeInTheDocument();
 
       await wait(() => {
         userEvent.click(getByText('Cancel'));
       });
-
       expect(getByText('Sorry, the page you visited does not exist.')).toBeInTheDocument();
 
   });
@@ -106,17 +118,33 @@ describe('Modal Status Component', () => {
   });
 
   test('Error message is rendered over session warning', async () => {
-    const { getByText, queryByText } = render(
+    mocks.systemInfoAPI(axiosMock);
+    const { getByText, queryByText, debug } = render(
       <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus/>
         </UserContext.Provider>
       </Router>);
 
-    expect(getByText('500 Internal Server Error')).toBeInTheDocument();
+    await waitForElement(() => getByText("500 Internal Server Error"));
     expect(getByText('java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011')).toBeInTheDocument();
     expect(queryByText('Due to Inactivity, you will be logged out in')).toBeNull();
   });
+
+  test('No response (middle tier crash) handled', async () => {
+    mocks.noResponseAPI(axiosMock);
+    const { getByText } = render(
+      <Router history={history}>
+        <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
+          <ModalStatus/>
+        </UserContext.Provider>
+      </Router>);
+
+    await waitForElement(() => getByText("Session Timeout"));
+    expect(mockHistoryPush.mock.calls.length).toBe(1);
+    expect(mockHistoryPush.mock.calls[0][0]).toBe('/noresponse');
+  });
+
 });
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter, useLocation, useHistory } from 'react-router-dom';
 import { Modal } from 'antd';
 import axios from "axios";
 
@@ -34,18 +34,32 @@ const ModalStatus: React.FC<Props> = (props) => {
   const [title, setTitle] = useState('Session Timeout');
   const [buttonText, setButtonText] = useState(SESSION_BTN_TEXT);
   const [sessionWarning, setSessionWarning] = useState(false);
+  const location = useLocation();
+  const history = useHistory();
   let sessionCount;
 
   useEffect(() => {
     if (user.error.type === 'MODAL') {
-        setTitle(user.error.title);
-        setButtonText(ERROR_BTN_TEXT);
-        toggleModal(true);
-    } else if (sessionWarning) {
+      axios.get('/api/environment/systemInfo')
+        .then(res => {
+          setTitle(user.error.title);
+          setButtonText(ERROR_BTN_TEXT);
+          toggleModal(true);
+        })
+        .catch(err => {
+          if (err.response) {
+            handleError(err);
+          } else {
+            toggleModal(true); // For testing
+            history.push('/noresponse');
+          }
+        })
+    } else if (sessionWarning && 
+               // Ignore session warning if in no-response state
+               location.pathname !== '/noresponse') { 
         setTitle('Session Timeout');
         setButtonText(SESSION_BTN_TEXT);
         toggleModal(true);
-
     } else {
         toggleModal(false);
     }
@@ -76,7 +90,11 @@ const ModalStatus: React.FC<Props> = (props) => {
       try {
         await axios.get('/api/environment/systemInfo');
       } catch (error) {
-        handleError(error);
+        if (error.response) {
+          handleError(error);
+        } else {
+          history.push('/noresponse');
+        }
       } finally {
         resetSessionTime();
         setSessionTime(SESSION_WARNING_COUNTDOWN);
@@ -97,7 +115,11 @@ const ModalStatus: React.FC<Props> = (props) => {
           userNotAuthenticated();
         }
       } catch (error) {
-        handleError(error);
+        if (error.response) {
+          handleError(error);
+        } else {
+          history.push('/noresponse');
+        }
       } finally {
         setSessionTime(SESSION_WARNING_COUNTDOWN);
         setSessionWarning(false);
