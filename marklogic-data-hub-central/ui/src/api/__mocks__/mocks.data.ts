@@ -2,6 +2,7 @@ import loadData from "../../assets/mock-data/ingestion.data";
 import curateData from "../../assets/mock-data/flows.data";
 import advancedData from "../../assets/mock-data/advanced-settings.data";
 import commonData from "../../assets/mock-data/common.data";
+import systemInfoData from "../../assets/mock-data/system-info.data";
 
 const loadAPI = (axiosMock) => {
   axiosMock.delete['mockImplementation']((url) => {
@@ -199,6 +200,28 @@ const advancedAPI = (axiosMock) => {
   })
 };
 
+const systemInfoAPI = (axiosMock) => {
+  return axiosMock.get['mockImplementation']((url) => {
+    switch (url) {
+      case '/api/environment/systemInfo':
+        return Promise.resolve(systemInfoData.environment);
+      default:
+        return Promise.reject(new Error('not found'));
+    }
+  })
+};
+
+const noResponseAPI = (axiosMock) => {
+  return axiosMock.get['mockImplementation']((url) => {
+    switch (url) {
+      case '/api/environment/systemInfo':
+        return Promise.reject(new Error());
+      default:
+        return Promise.reject(new Error('not found'));
+    }
+  })
+};
+
 const mocks = {
   loadAPI: loadAPI,
   curateAPI: curateAPI,
@@ -208,6 +231,8 @@ const mocks = {
   runFailedAPI: runFailedAPI,
   runXMLAPI: runXMLAPI,
   advancedAPI: advancedAPI,
+  systemInfoAPI: systemInfoAPI,
+  noResponseAPI: noResponseAPI,
 };
 
 export default mocks;

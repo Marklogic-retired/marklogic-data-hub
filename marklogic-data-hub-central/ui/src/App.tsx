@@ -13,6 +13,7 @@ import TilesView from './pages/TilesView';
 import Browse from './pages/Browse';
 import Detail from './pages/Detail';
 import NoMatchRedirect from './pages/noMatchRedirect';
+import NoResponse from './pages/NoResponse';
 
 import './App.scss';
 import { Application } from './config/application.config';
@@ -54,7 +55,7 @@ const App: React.FC<Props> = ({history, location}) => {
       if (user.error.type !== '') {
         history.push('/error');
       } else {
-        if (location.pathname !== '/') {
+        if (location.pathname !== '/' && location.pathname !== '/noresponse') {
           user.pageRoute = location.pathname;
         }
         history.push('/');
@@ -68,7 +69,11 @@ const App: React.FC<Props> = ({history, location}) => {
         .then(res => {})
         // Timeouts throw 401s and are caught here
         .catch(err => {
-            handleError(err);
+            if (err.response) {
+              handleError(err);
+            } else {
+              history.push('/noresponse');
+            }
         })
   }, [location.pathname]);
 
@@ -85,6 +90,7 @@ const App: React.FC<Props> = ({history, location}) => {
         <div className="contentContainer">
         <Switch>
           <Route path="/" exact component={Login}/>
+          <Route path="/noresponse" exact component={NoResponse} />
           <PrivateRoute path="/home" exact>
             <Home/>
           </PrivateRoute>

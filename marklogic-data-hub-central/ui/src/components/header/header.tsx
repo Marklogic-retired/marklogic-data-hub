@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import { UserContext } from '../../util/user-context';
@@ -16,10 +16,10 @@ interface Props extends RouteComponentProps<any> {
 const Header:React.FC<Props> = (props) => {
   const { user, userNotAuthenticated, handleError } = useContext(UserContext);
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
+  const history = useHistory();
 
   const handleLogout = async () => {
     try {
-      console.log('logging out');
       let response = await axios(`/api/logout`);
       if (response.status === 200 ) {
         userNotAuthenticated();
@@ -30,7 +30,18 @@ const Header:React.FC<Props> = (props) => {
   };
 
   const handleSystemInfoDisplay = () => {
-    setSystemInfoVisible(true);
+    axios.get('/api/environment/systemInfo')
+        .then(res => {
+          setSystemInfoVisible(true);
+        })
+        // Timeouts throw 401s and are caught here
+        .catch(err => {
+            if (err.response) {
+              handleError(err);
+            } else {
+              history.push('/noresponse');
+            }
+        })
   }
 
   let userMenu = <div className={styles.userMenu}>
