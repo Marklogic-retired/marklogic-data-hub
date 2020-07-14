@@ -64,6 +64,8 @@ const curateAPI = (axiosMock) => {
     switch (url) {
       case '/api/flows':
         return Promise.resolve(curateData.flows);
+      case '/api/steps':
+        return Promise.resolve(curateData.steps);
       case '/api/models/primaryEntityTypes':
         return Promise.resolve(curateData.primaryEntityTypes);
       case '/api/steps/ingestion':
@@ -90,13 +92,17 @@ const runAPI = (axiosMock) => {
   return axiosMock.get['mockImplementation']((url) => {
     switch (url) {
       case '/api/flows':
-        return Promise.resolve(curateData.flows)
+        return Promise.resolve(curateData.flows);
+      case '/api/steps':
+        return Promise.resolve(curateData.steps);
+      case '/api/flows/testFlow/latestJobInfo':
+        return Promise.resolve({});
       case '/api/steps/ingestion':
         return Promise.resolve(curateData.loads);
       case '/api/steps/mapping':
         return Promise.resolve(curateData.mappings);
       case '/api/jobs/e4590649-8c4b-419c-b6a1-473069186592':
-        return Promise.resolve(curateData.jobRespSuccess)
+        return Promise.resolve(curateData.jobRespSuccess);
       default:
         return Promise.reject(new Error('not found'));
     }
@@ -133,11 +139,26 @@ const runAPI = (axiosMock) => {
     })
   };
 
+  const runAddStepAPI = (axiosMock) => {
+    // call Run API for the GET operations
+    runAPI(axiosMock);
+    axiosMock.post['mockImplementation']((url) => {
+      switch (url) {
+        case `/api/flows/${curateData.flows.data[0].name}/steps`:
+          return Promise.resolve({status: 200, data: {}});
+        default:
+          return Promise.reject(new Error('not found'));
+      }
+    })
+  };
+
   const runErrorsAPI = (axiosMock) => {
     return axiosMock.get['mockImplementation']((url) => {
       switch (url) {
         case '/api/flows':
-          return Promise.resolve(curateData.flows)
+          return Promise.resolve(curateData.flows);
+        case '/api/steps':
+          return Promise.resolve(curateData.steps);
         case '/api/steps/ingestion':
           return Promise.resolve(curateData.loads);
         case '/api/steps/mapping':
@@ -154,7 +175,9 @@ const runFailedAPI = (axiosMock) => {
   return axiosMock.get['mockImplementation']((url) => {
     switch (url) {
       case '/api/flows':
-        return Promise.resolve(curateData.flows)
+        return Promise.resolve(curateData.flows);
+      case '/api/steps':
+        return Promise.resolve(curateData.steps);
       case '/api/steps/ingestion':
         return Promise.resolve(curateData.loads);
       case '/api/steps/mapping':
@@ -173,8 +196,10 @@ const runXMLAPI = (axiosMock) => {
       case '/api/flows':
         return Promise.resolve(curateData.flowsXML);
       case '/api/flows/testFlow/latestJobInfo':
-          console.log(curateData.flowsXMLLatestJob)
+        console.log(curateData.flowsXMLLatestJob)
         return Promise.resolve(curateData.flowsXMLLatestJob);
+      case '/api/steps':
+        return Promise.resolve(curateData.steps);
       case '/api/steps/ingestion':
         return Promise.resolve(curateData.loadsXML);
       case '/api/steps/mapping':
@@ -231,6 +256,7 @@ const mocks = {
   loadAPI: loadAPI,
   curateAPI: curateAPI,
   runAPI: runAPI,
+  runAddStepAPI: runAddStepAPI,
   runCrudAPI: runCrudAPI,
   runErrorsAPI: runErrorsAPI,
   runFailedAPI: runFailedAPI,

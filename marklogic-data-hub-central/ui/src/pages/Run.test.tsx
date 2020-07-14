@@ -641,3 +641,56 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         //TODO- E2E test to check if the explore tile is loaded or not.*/
     });
 });
+
+describe('Verify Add Step function', () => {
+
+    afterEach(() => {
+        jest.clearAllMocks();
+        cleanup();
+    });
+
+    test('Verify a user with developer privileges can add a step to a flow', async () => {
+        mocks.runAddStepAPI(axiosMock);
+        const { getByText, getByLabelText } = await render(<MemoryRouter>
+            <AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>
+        </MemoryRouter>);
+
+        // Click disclosure icon
+        fireEvent.click(getByLabelText("icon: right"));
+        expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
+
+        // Click to open Add Step menu and click a step
+        let addStep = getByText('Add Step');
+        fireEvent.click(addStep);
+        let step = getByText(data.steps.data['ingestionSteps'][0].name);
+        fireEvent.click(step);
+
+        // Click to confirm the add in the dialog
+        expect(getByText(`Are you sure you want to add step "${data.steps.data['ingestionSteps'][0].name}" to flow "${data.flows.data[0].name}"?`)).toBeInTheDocument();
+        let confirm = getByLabelText('Yes');
+        fireEvent.click(confirm);
+        await wait(() => {
+            expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data['ingestionSteps'][0].name});
+        })
+
+    })
+
+    test('Verify a user with operator privileges cannot add a step to a flow', async () => {
+        mocks.runAddStepAPI(axiosMock);
+        const { getByText, getByLabelText, queryByText } = await render(<MemoryRouter>
+            <AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>
+        </MemoryRouter>);
+
+        // Click disclosure icon
+        fireEvent.click(getByLabelText("icon: right"));
+        expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
+
+        // Click Add Step menu
+        expect(getByLabelText('addStepDisabled-0')).toBeInTheDocument();
+        let addStep = getByText('Add Step');
+        fireEvent.click(addStep);
+        expect(queryByText(data.steps.data['ingestionSteps'][0].name)).not.toBeInTheDocument();
+
+    })
+
+});
