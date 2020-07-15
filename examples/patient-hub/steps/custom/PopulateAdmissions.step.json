@@ -1,0 +1,17 @@
+{
+  "name" : "PopulateAdmissions",
+  "description" : "",
+  "batchSize" : 5,
+  "threadCount" : 5,
+  "stepDefinitionName" : "PopulateAdmissions",
+  "stepDefinitionType" : "CUSTOM",
+  "additionalCollections" : [ "Patient" ],
+  "sourceQuery" : "cts.collectionQuery([\"Patient-Core\"])",
+  "collections" : [ "PopulateAdmissions", "Patient", "" ],
+  "sourceDatabase" : "data-hub-STAGING",
+  "sourceCollection" : "Patient-Core",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "",
+  "stepId" : "PopulateAdmissions-custom"
+}

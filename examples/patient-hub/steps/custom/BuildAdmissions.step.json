@@ -1,0 +1,15 @@
+{
+  "name" : "BuildAdmissions",
+  "description" : "",
+  "batchSize" : 5,
+  "threadCount" : 12,
+  "stepDefinitionName" : "BuildAdmissions",
+  "stepDefinitionType" : "CUSTOM",
+  "sourceQuery" : "cts.collectionQuery([\"AdmissionsCore\"])",
+  "collections" : [ "BuildAdmissions", "CompletedAdmissions", "Admissions" ],
+  "sourceDatabase" : "data-hub-STAGING",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "targetEntityType" : "Admissions",
+  "stepId" : "BuildAdmissions-custom"
+}

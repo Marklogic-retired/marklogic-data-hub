@@ -1,0 +1,24 @@
+{
+  "name" : "Patient-Core",
+  "description" : "",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "Patients"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "Patient-Core" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "datasets/patients-core",
+  "outputURIReplacement" : ".*datasets,'/datasets'",
+  "separator" : "\\t",
+  "sourceFormat" : "csv",
+  "stepId" : "Patient-Core-ingestion"
+}
