@@ -8,10 +8,10 @@
     "Order": {
       "required": [],
       "pii": ["orderID", "orderName"],
-      "rangeIndex": ["orderID"],
       "properties": {
         "orderID": {
-          "datatype": "string"
+          "datatype": "string",
+          "facetable": true
         },
         "orderName": {
           "datatype": "string"

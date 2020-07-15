@@ -10,15 +10,13 @@
         "name"
       ],
       "primaryKey": "personId",
-      "rangeIndex": [
-        "personId"
-      ],
       "pii": [
         "personId"
       ],
       "properties": {
         "personId": {
-          "datatype": "integer"
+          "datatype": "integer",
+          "facetable": true
         },
         "name": {
           "datatype": "string",

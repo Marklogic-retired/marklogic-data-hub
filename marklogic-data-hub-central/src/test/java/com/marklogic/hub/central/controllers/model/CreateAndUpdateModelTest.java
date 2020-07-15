@@ -105,9 +105,6 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
                 "        \"elementRangeIndex\": [\n" +
                 "          \"" + ENTITY_PROPERTY_1 + "\"\n" +
                 "        ],\n" +
-                "        \"rangeIndex\": [\n" +
-                "          \"" + ENTITY_PROPERTY_2 + "\"\n" +
-                "        ],\n" +
                 "        \"properties\": {\n" +
                 "          \"" + ENTITY_PROPERTY_1 + "\": {\n" +
                 "            \"datatype\": \"string\",\n" +
@@ -115,6 +112,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
                 "          },\n" +
                 "          \"" + ENTITY_PROPERTY_2 + "\": {\n" +
                 "            \"datatype\": \"string\",\n" +
+                "            \"facetable\": true,\n" +
                 "            \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
                 "          }\n" +
                 "        }\n" +

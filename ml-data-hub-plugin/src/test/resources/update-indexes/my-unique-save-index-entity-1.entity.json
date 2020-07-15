@@ -10,12 +10,12 @@
       "required" : [ ],
       "pii" : [ ],
       "elementRangeIndex" : [ "saveIndexID1" ],
-      "rangeIndex" : [ "saveIndexID1" ],
       "wordLexicon" : [ ],
       "properties" : {
         "saveIndexID1" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable": true
         },
         "price" : {
           "datatype" : "decimal"

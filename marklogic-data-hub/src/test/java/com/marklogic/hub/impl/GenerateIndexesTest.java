@@ -8,6 +8,7 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.entity.DefinitionType;
 import com.marklogic.hub.entity.DefinitionsType;
 import com.marklogic.hub.entity.HubEntity;
+import com.marklogic.hub.entity.InfoType;
 import com.marklogic.hub.entity.PropertyType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,6 +63,11 @@ public class GenerateIndexesTest extends HubTestBase {
         }
 
         HubEntity entity = new HubEntity();
+
+        InfoType info = new InfoType();
+        info.setTitle("title");
+        entity.setInfo(info);
+
         DefinitionsType definitions = new DefinitionsType();
         definitions.addDefinition(entityName, defType);
         entity.setDefinitions(definitions);

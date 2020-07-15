@@ -223,6 +223,7 @@ declare %private function hent:fix-options-exp($nodes as node()*)
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
+  let $entities := hent:add-indexes-for-entity-properties($entities)
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return if ($for-explorer = fn:true())
     then
@@ -259,6 +260,7 @@ declare function hent:dump-pii($entities as json:array)
 
 declare function hent:dump-indexes($entities as json:array)
 {
+  let $entities := hent:add-indexes-for-entity-properties($entities)
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
 
   let $database-config := xdmp:from-json(es:database-properties-generate($uber-model))
@@ -522,4 +524,47 @@ declare function hent:json-schema-generate($entity-title as xs:string, $uber-mod
     $uber-model => map:put("properties", map:entry($entity-title, map:entry("$ref", "#/definitions/"||$entity-title)))
   )
   return xdmp:to-json($uber-model)
+};
+
+(:
+  this function finds the first level facetable entityType properties and constrcuts and adds the rangeIndex array to
+  the entityModel. All the structured properties are ignored for now even if a property is modeled as facetable as per
+  https://project.marklogic.com/jira/browse/DHFPROD-5018
+:)
+declare %private function hent:add-indexes-for-entity-properties($entities as json:array) {
+  let $models := json:array-values($entities) ! xdmp:to-json(.)/object-node()
+  let $updated-models := json:array()
+
+  let $_ :=
+    for $model as map:map in $models
+      let $entity-type := map:get($model, "definitions")=>map:get(map:get($model, "info")=>map:get("title"))
+      let $entity-type-properties :=
+        let $empty-map := map:map()
+          return
+            if (fn:empty($entity-type)) then
+              let $_ := xdmp:log("Could not find entity definition with name: " || map:get($model, "info")=>map:get("title"))
+              return $empty-map
+            else
+              let $_ :=
+                if (fn:empty(map:get($entity-type, "rangeIndex"))) then map:put($entity-type, "rangeIndex", json:array())
+                else ()
+              return map:get($entity-type, "properties")
+
+      let $_ :=
+        for $entity-type-property in map:keys($entity-type-properties)
+          let $ref := map:get($entity-type-properties, $entity-type-property)=>map:get("$ref")
+          where fn:empty($ref)
+          return
+            let $is-facetable :=
+              let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
+              return
+                if(fn:empty($items)) then
+                  map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
+                else
+                  fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
+                  map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
+            where $is-facetable
+            return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
+      return json:array-push($updated-models, $model)
+  return $updated-models
 };

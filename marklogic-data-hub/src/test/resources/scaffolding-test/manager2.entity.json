@@ -8,7 +8,6 @@
     "Manager" : {
       "required" : [ ],
       "primaryKey": "id",
-      "rangeIndex" : [ "title" ],
       "wordLexicon" : [ ],
       "properties" : {
         "id": {
@@ -17,7 +16,8 @@
         },
         "title" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
         }
       }
     }
