@@ -32,9 +32,11 @@ public class DeleteModelTest extends AbstractModelTest {
         runAsTestUserWithRoles("hub-central-entity-model-writer");
         verifyEntity2BasedArtifactsExist();
         getModelReferences();
-        deleteModel();
+        deleteEntity2Model();
         verifyEntity2BasedArtifactsDontExist();
         verifyReferencesToEntity2DontExistInEntity1();
+
+        deleteEntity1Model();
     }
 
     private void getModelReferences() {
@@ -47,7 +49,7 @@ public class DeleteModelTest extends AbstractModelTest {
         assertTrue(jsonNode.get("entityNames").toString().contains("Entity1"));
     }
 
-    private void deleteModel() {
+    private void deleteEntity2Model() {
         assertThrows(FailedRequestException.class, () -> controller.deleteModel("Entity2"), "Should throw an exception since the entity is referenced in steps.");
 
         runAsDataHubDeveloper();
@@ -63,12 +65,7 @@ public class DeleteModelTest extends AbstractModelTest {
     }
 
     private void removeReferencesToEntity() {
-        DatabaseClient stagingDatabaseClient = getHubClient().getStagingClient();
-        DatabaseClient finalDatabaseClient = getHubClient().getFinalClient();
-        Stream.of(stagingDatabaseClient, finalDatabaseClient)
-                .forEach(databaseClient -> databaseClient
-                        .newDocumentManager()
-                        .delete("/flows/testFlow.flow.json", "/steps/mapping/testMap2.step.json"));
+        removeDocuments("/flows/testFlow.flow.json", "/steps/mapping/testMap2.step.json");
     }
 
     private void verifyReferencesToEntity2DontExistInEntity1() {
@@ -95,5 +92,23 @@ public class DeleteModelTest extends AbstractModelTest {
             assertion.accept(documentManager.exists("/entities/Entity2.entity.xsd"));
             assertion.accept(documentManager.exists("/tde/Entity2-1.0.0.tdex"));
         });
+    }
+
+    private void deleteEntity1Model() {
+        runAsDataHubDeveloper();
+        removeDocuments("/steps/mapping/testMap1.step.json");
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
+
+        assertDoesNotThrow(() -> controller.deleteModel("Entity1"), "Should be ok since we deleted the references" +
+                " to Entity1 and we generate and deploy search options even if there are no entities present.");
+    }
+
+    private void removeDocuments(String... uris) {
+        DatabaseClient stagingDatabaseClient = getHubClient().getStagingClient();
+        DatabaseClient finalDatabaseClient = getHubClient().getFinalClient();
+        Stream.of(stagingDatabaseClient, finalDatabaseClient)
+                .forEach(databaseClient -> databaseClient
+                        .newDocumentManager()
+                        .delete(uris));
     }
 }

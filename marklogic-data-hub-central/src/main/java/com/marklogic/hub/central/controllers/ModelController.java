@@ -192,15 +192,32 @@ public class ModelController extends BaseController {
         DatabaseClient finalDatabaseClient = hubClientProvider.getHubClient().getFinalClient();
         DatabaseClient stagingDatabaseClient = hubClientProvider.getHubClient().getStagingClient();
 
-        String explorerOptions = modelConfigNode.get("searchOptions").get("explorer").asText();
-        String defaultOptions = modelConfigNode.get("searchOptions").get("default").asText();
+        String explorerOptions = Optional.of(modelConfigNode)
+                .map(node -> node.get("searchOptions"))
+                .map(node -> node.get("explorer"))
+                .map(JsonNode::asText)
+                .orElse(null);
+        String defaultOptions = Optional.of(modelConfigNode)
+                .map(node -> node.get("searchOptions"))
+                .map(node -> node.get("default"))
+                .map(JsonNode::asText)
+                .orElse(null);
+
+        if (explorerOptions == null && defaultOptions == null) {
+            return;
+        }
+
         Map<String, DatabaseClient> clientMap = new HashMap<>();
         clientMap.put("staging", stagingDatabaseClient);
         clientMap.put("final", finalDatabaseClient);
         clientMap.forEach((databaseKind, databaseClient) -> {
             QueryOptionsManager queryOptionsManager = databaseClient.newServerConfigManager().newQueryOptionsManager();
-            writeOptions(databaseKind, queryOptionsManager, "exp-" + databaseKind + "-entity-options", explorerOptions);
-            writeOptions(databaseKind, queryOptionsManager, databaseKind + "-entity-options", defaultOptions);
+            if (explorerOptions != null) {
+                writeOptions(databaseKind, queryOptionsManager, "exp-" + databaseKind + "-entity-options", explorerOptions);
+            }
+            if (defaultOptions != null) {
+                writeOptions(databaseKind, queryOptionsManager, databaseKind + "-entity-options", defaultOptions);
+            }
         });
     }
 
