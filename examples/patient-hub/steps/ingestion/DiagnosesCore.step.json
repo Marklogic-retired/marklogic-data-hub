@@ -1,0 +1,24 @@
+{
+  "name" : "DiagnosesCore",
+  "description" : "",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "Diagnoses"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "DiagnosesCore" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "datasets/diagnoses-core",
+  "outputURIReplacement" : ".*datasets,'/datasets'",
+  "separator" : "\\t",
+  "sourceFormat" : "csv",
+  "stepId" : "DiagnosesCore-ingestion"
+}

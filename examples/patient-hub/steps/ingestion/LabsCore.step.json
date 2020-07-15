@@ -1,0 +1,24 @@
+{
+  "name" : "LabsCore",
+  "description" : "",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "Labs"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "LabsCore" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "datasets/labs-core",
+  "outputURIReplacement" : ".*datasets,'/datasets'",
+  "separator" : "\\t",
+  "sourceFormat" : "csv",
+  "stepId" : "LabsCore-ingestion"
+}

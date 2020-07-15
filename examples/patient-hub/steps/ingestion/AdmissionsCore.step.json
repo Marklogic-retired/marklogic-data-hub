@@ -1,0 +1,24 @@
+{
+  "name" : "AdmissionsCore",
+  "description" : "",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "Admissions"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "AdmissionsCore" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "datasets/admissions-core",
+  "outputURIReplacement" : ".*datasets,'/datasets'",
+  "separator" : "\\t",
+  "sourceFormat" : "csv",
+  "stepId" : "AdmissionsCore-ingestion"
+}
