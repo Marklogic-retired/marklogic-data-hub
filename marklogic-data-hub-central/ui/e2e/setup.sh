@@ -17,7 +17,7 @@ cd hc-qa-project
 if $DHS
 then
         env=dhs
-        sed -i '' "s/mlHost=/mlHost=$mlHost/g" gradle-dhs.properties
+        perl -i -pe"s/mlHost=/mlHost=$mlHost/g" gradle-dhs.properties
         ./gradlew hubSaveIndexes --info --stacktrace
         ./gradlew hubGeneratePII -PenvironmentName=$env --info --stacktrace
         ./gradlew hubDeployAsDeveloper  --info --stacktrace -PenvironmentName=$env
