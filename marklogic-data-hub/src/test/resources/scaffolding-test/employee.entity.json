@@ -8,7 +8,6 @@
     "Employee" : {
       "required" : [ ],
       "primaryKey": "id",
-      "rangeIndex" : [ "name" ],
       "elementRangeIndex": ["salary"],
       "wordLexicon" : [ ],
       "pii": [ "salary" ],
@@ -19,7 +18,8 @@
         },
         "name" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
         },
         "salary": {
           "datatype": "decimal"

@@ -8,10 +8,10 @@
     "Person": {
       "required": [],
       "pii": [],
-      "rangeIndex": ["personID"],
       "properties": {
         "personID": {
-          "datatype": "string"
+          "datatype": "string",
+          "facetable": true
         }
       }
     }
