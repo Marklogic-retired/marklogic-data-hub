@@ -40,13 +40,14 @@ if (entityModels.length > 0) {
     }
   }
 
-  // Add search options
-  result.searchOptions["default"] = hent.dumpSearchOptions(entityModels, false);
-  result.searchOptions["explorer"] = hent.dumpSearchOptions(entityModels, true);
-
   // Add indexes
   const dbProps = hent.dumpIndexes(entityModels);
   result.indexConfig = dbProps.toObject();
 }
+
+// Add search options
+// Even if there are no entity models we still want to generate the search options
+result.searchOptions["default"] = hent.dumpSearchOptions(entityModels, false);
+result.searchOptions["explorer"] = hent.dumpSearchOptions(entityModels, true);
 
 result;
