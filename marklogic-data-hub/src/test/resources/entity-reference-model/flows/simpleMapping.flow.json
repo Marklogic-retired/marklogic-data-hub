@@ -1,0 +1,23 @@
+{
+  "name": "simpleMapping",
+  "steps": {
+    "1": {
+      "name": "simpleMapper",
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": [
+          "Customer"
+        ],
+        "permissions": "data-hub-common,read,data-hub-common,update",
+        "mapping": {
+          "name": "SimpleCustomerMapping",
+          "version": 1
+        }
+      }
+    }
+  }
+}

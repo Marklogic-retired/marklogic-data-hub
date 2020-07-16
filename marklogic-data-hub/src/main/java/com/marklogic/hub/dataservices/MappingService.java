@@ -48,6 +48,7 @@ public interface MappingService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_testMapping;
+            private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
 
             private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -56,6 +57,8 @@ public interface MappingService {
 
                 this.req_testMapping = this.baseProxy.request(
                     "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_generateMappingTransforms = this.baseProxy.request(
+                    "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
             }
@@ -75,6 +78,16 @@ public interface MappingService {
                           BaseProxy.documentParam("jsonMapping", false, BaseProxy.JsonDocumentType.fromJsonNode(jsonMapping))
                           ).responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void generateMappingTransforms() {
+                generateMappingTransforms(
+                    this.req_generateMappingTransforms.on(this.dbClient)
+                    );
+            }
+            private void generateMappingTransforms(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
             }
 
             @Override
@@ -102,6 +115,14 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
+
+  /**
+   * Generates a transform in the modules database for each legacy mapping or mapping step
+   *
+   * 
+   * 
+   */
+    void generateMappingTransforms();
 
   /**
    * Invokes the getMappingFunctions operation on the database server

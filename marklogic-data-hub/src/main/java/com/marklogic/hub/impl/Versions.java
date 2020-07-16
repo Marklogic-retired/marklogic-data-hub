@@ -17,7 +17,6 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -42,8 +41,6 @@ import java.util.GregorianCalendar;
 
 @Component
 public class Versions extends LoggingObject {
-
-    private AppConfig appConfig;
 
     @Autowired
     private HubConfig hubConfig;
@@ -81,22 +78,8 @@ public class Versions extends LoggingObject {
         }
     }
 
-    /**
-     * Needed for the Gradle tasks.
-     *
-     * @param hubConfig HubConfig
-     */
     public Versions(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-    }
-
-    /**
-     * Needed for the Gradle tasks.
-     *
-     * @param appConfig AppConfig
-     */
-    public Versions(AppConfig appConfig) {
-        this.appConfig = appConfig;
     }
 
     /**
@@ -109,7 +92,6 @@ public class Versions extends LoggingObject {
     }
 
     /**
-     *
      * @param fallbackToLocalProject if true, and the version cannot be determined from the installed DH, will try to
      *                               determine the version of the local project
      * @return
@@ -133,7 +115,7 @@ public class Versions extends LoggingObject {
      * We have to account for both ml:hubversion (DHF 4.3.x) and mlHubversion (DHF 5) because this method may be used
      * as part of updating a DHF 4.3.x instance. So in case we fail when using mlHubversion due to that endpoint not
      * existing, we use ml:hubversion instead.
-     *
+     * <p>
      * Unfortunately, we don't have a way to write an automated test for this without removing mlHubversion and adding
      * ml:hubversion to the test modules database. So we are relying on manual testing for each new minor release,
      * which is reasonable as we know we have to support a 4.3.x to 5.x upgrade (at least as of 5.3.0).
@@ -202,7 +184,7 @@ public class Versions extends LoggingObject {
         // this call specifically needs to access marklogic without a known database
         DatabaseClient client = hubClient != null ?
             hubClient.getStagingClient() :
-            getAppConfig().newAppServicesDatabaseClient(null);
+            hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
         ServerEvaluationCall eval = client.newServerEval();
         String xqy = "xdmp:version()";
         try (EvalResultIterator result = eval.xquery(xqy).eval()) {
@@ -323,13 +305,6 @@ public class Versions extends LoggingObject {
             }
         }
         return 0;
-    }
-
-    private AppConfig getAppConfig() {
-        if (this.appConfig == null && this.hubConfig != null) {
-            this.appConfig = this.hubConfig.getAppConfig();
-        }
-        return this.appConfig;
     }
 }
 

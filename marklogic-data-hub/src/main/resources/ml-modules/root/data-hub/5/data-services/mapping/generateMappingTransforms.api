@@ -1,0 +1,4 @@
+{
+    "functionName": "generateMappingTransforms",
+    "desc": "Generates a transform in the modules database for each legacy mapping or mapping step"
+}

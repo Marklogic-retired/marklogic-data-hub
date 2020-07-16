@@ -185,11 +185,13 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         Collections.sort(commands, Comparator.comparing(Command::getExecuteSortOrder));
 
         int index = 0;
+        System.out.println(commands);
         assertTrue(commands.get(index++) instanceof DeployHubQueryRolesetsCommand);
         assertTrue(commands.get(index++) instanceof DeployOtherDatabasesCommand);
         assertTrue(commands.get(index++) instanceof DeployDatabaseFieldCommand);
         assertTrue(commands.get(index++) instanceof LoadSchemasCommand);
         assertTrue(commands.get(index++) instanceof LoadUserModulesCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof LoadUserArtifactsCommand);
         assertTrue(commands.get(index++) instanceof DeployTemporalAxesCommand);
@@ -199,7 +201,6 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         assertTrue(commands.get(index++) instanceof DeployAlertConfigsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertActionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAlertRulesCommand);
-        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof DeployProtectedPathsCommand);
 
         assertEquals(16, commands.size(), "Per DHFPROD-5037, DeployDatabaseFieldsCommand now exists");

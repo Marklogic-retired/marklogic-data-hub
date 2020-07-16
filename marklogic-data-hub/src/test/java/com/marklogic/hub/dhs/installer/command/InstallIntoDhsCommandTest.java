@@ -106,11 +106,11 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
         assertTrue(commands.get(index++) instanceof UpdateDhsModulesPermissionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
+        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
-        assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
         assertEquals(14, commands.size());
 
