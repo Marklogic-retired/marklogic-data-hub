@@ -3,7 +3,7 @@ import { render, fireEvent, screen, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import PropertyModal from './property-modal';
-import { 
+import {
   StructuredTypeOptions,
   EditPropertyOptions,
   PropertyType,
@@ -22,7 +22,7 @@ jest.mock('../../../api/modeling');
 
 const mockEntityReferences = entityReferences as jest.Mock;
 
-const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = { 
+const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
   name: '',
   propertyName: ''
@@ -34,7 +34,7 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   identifier: '',
   multiple: '',
   pii: '',
-  sort: false,
+  sortable: false,
   facetable: false,
   wildcard: false
 }
@@ -52,10 +52,10 @@ describe('Property Modal Component', () => {
 
   test('Modal is not visible', () => {
     const { queryByText } =  render(
-    <PropertyModal 
+    <PropertyModal
       entityName=''
       entityDefinitionsArray={[]}
-      isVisible={false} 
+      isVisible={false}
       editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
       structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
       toggleModal={jest.fn()}
@@ -75,12 +75,12 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByPlaceholderText, getByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
           structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
-          isVisible={true} 
+          isVisible={true}
           toggleModal={jest.fn()}
           addPropertyToDefinition={mockAdd}
           addStructuredTypeToDefinition={jest.fn()}
@@ -99,7 +99,7 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
-    
+
     const identifierRadio = screen.getByLabelText('identifier-yes')
     fireEvent.change(identifierRadio, { target: { value: "yes" } });
     expect(identifierRadio['value']).toBe('yes');
@@ -116,6 +116,14 @@ describe('Property Modal Component', () => {
     fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     expect(wildcardCheckbox).toBeChecked();
 
+    const facetableCheckbox = screen.getByLabelText('Facet');
+    fireEvent.change(facetableCheckbox, { target: { checked: true } });
+    expect(facetableCheckbox).toBeChecked();
+
+    const sortableCheckbox = screen.getByLabelText('Sort');
+    fireEvent.change(sortableCheckbox, { target: { checked: true } });
+    expect(sortableCheckbox).toBeChecked();
+
     userEvent.click(getByText('Add'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
@@ -127,10 +135,10 @@ describe('Property Modal Component', () => {
 
     const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          isVisible={true} 
+          isVisible={true}
           editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
           structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
@@ -153,7 +161,7 @@ describe('Property Modal Component', () => {
     expect(screen.queryByLabelText('Sort')).toBeNull();
     expect(screen.queryByLabelText('Facet')).toBeNull();
     expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
-  
+
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
@@ -168,12 +176,12 @@ describe('Property Modal Component', () => {
     let mockAdd = jest.fn();
 
     const { getByLabelText, getByText, getByPlaceholderText } =  render(
-      <PropertyModal 
+      <PropertyModal
         entityName={entityType?.entityName}
         entityDefinitionsArray={entityDefninitionsArray}
         editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
         structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
-        isVisible={true} 
+        isVisible={true}
         toggleModal={jest.fn()}
         addPropertyToDefinition={mockAdd}
         addStructuredTypeToDefinition={jest.fn()}
@@ -205,10 +213,10 @@ describe('Property Modal Component', () => {
 
     const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={customerEntityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
-          isVisible={true} 
+          isVisible={true}
           editPropertyOptions={DEFAULT_EDIT_PROPERTY_OPTIONS}
           structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
           toggleModal={jest.fn()}
@@ -228,7 +236,7 @@ describe('Property Modal Component', () => {
 
     expect(screen.queryByText('Relationship')).toBeNull();
     expect(screen.queryByLabelText('identifier-yes')).toBeNull();
-  
+
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
@@ -244,7 +252,7 @@ describe('Property Modal Component', () => {
 
     const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -291,7 +299,7 @@ describe('Property Modal Component', () => {
 
     const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -338,7 +346,7 @@ describe('Property Modal Component', () => {
 
     const { getByPlaceholderText, getByText, getByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -378,11 +386,11 @@ describe('Property Modal Component', () => {
       identifier: 'yes',
       multiple: '',
       pii: 'yes',
-      sort: false,
+      sortable: false,
       facetable: false,
       wildcard: true
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'customerId',
       isEdit: true,
@@ -391,7 +399,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -409,11 +417,11 @@ describe('Property Modal Component', () => {
 
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
     expect(mockEntityReferences).toBeCalledTimes(1);
-    
+
     await wait(() =>
       expect(getByText('Show Steps...')).toBeInTheDocument()
     )
-    
+
     expect(queryByText('Hide Steps...')).toBeNull();
     userEvent.click(getByLabelText('toggle-steps'));
     expect(getByText('Hide Steps...')).toBeInTheDocument();
@@ -455,11 +463,11 @@ describe('Property Modal Component', () => {
       identifier: 'no',
       multiple: 'yes',
       pii: 'no',
-      sort: false,
-      facet: false,
+      sortable: false,
+      facetable: false,
       wildcard: false
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'order',
       isEdit: true,
@@ -468,7 +476,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, queryByTestId, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -514,18 +522,18 @@ describe('Property Modal Component', () => {
       identifier: 'no',
       multiple: 'yes',
       pii: 'no',
-      sort: false,
-      facet: false,
+      sortable: false,
+      facetable: false,
       wildcard: false
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'shipping',
       isEdit: true,
       propertyOptions: structuredPropertyOptions
     }
 
-    const structuredOptions: StructuredTypeOptions = { 
+    const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'shipping'
@@ -533,7 +541,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -553,7 +561,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(getByText('Show Steps...')).toBeInTheDocument()
-    )    
+    )
 
     expect(queryByText('Hide Steps...')).toBeNull();
     userEvent.click(getByLabelText('toggle-steps'));
@@ -594,18 +602,18 @@ describe('Property Modal Component', () => {
       identifier: 'no',
       multiple: 'no',
       pii: 'yes',
-      sort: false,
-      facet: false,
+      sortable: false,
+      facetable: false,
       wildcard: true
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'state',
       isEdit: true,
       propertyOptions: structuredPropertyOptions
     }
 
-    const structuredOptions: StructuredTypeOptions = { 
+    const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'address'
@@ -613,7 +621,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -669,11 +677,11 @@ describe('Property Modal Component', () => {
       identifier: 'yes',
       multiple: '',
       pii: 'yes',
-      sort: false,
+      sortable: false,
       facetable: false,
       wildcard: true
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'customerId',
       isEdit: true,
@@ -682,7 +690,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -723,11 +731,11 @@ describe('Property Modal Component', () => {
       identifier: 'no',
       multiple: 'yes',
       pii: 'no',
-      sort: false,
+      sortable: false,
       facetable: false,
       wildcard: false
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'street',
       isEdit: true,
@@ -735,7 +743,7 @@ describe('Property Modal Component', () => {
     }
 
 
-    const structuredOptions: StructuredTypeOptions = { 
+    const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'address'
@@ -743,7 +751,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}
@@ -784,11 +792,11 @@ describe('Property Modal Component', () => {
       identifier: 'no',
       multiple: 'yes',
       pii: 'no',
-      sort: false,
-      facet: false,
+      sortable: false,
+      facetable: false,
       wildcard: false
     }
-    
+
     const editPropertyOptions: EditPropertyOptions = {
       name: 'orders',
       isEdit: true,
@@ -797,7 +805,7 @@ describe('Property Modal Component', () => {
 
     const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
-        <PropertyModal 
+        <PropertyModal
           entityName={entityType?.entityName}
           entityDefinitionsArray={entityDefninitionsArray}
           isVisible={true}

@@ -56,8 +56,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   identifier: '',
   multiple: '',
   pii: '',
-  sort: false,
   facetable: false,
+  sortable: false,
   wildcard: false
 }
 
@@ -164,10 +164,10 @@ const PropertyTable: React.FC<Props> = (props) => {
           <span aria-label="sort-header">Sort</span>
         </MLTooltip>
       ),
-      dataIndex: 'sort',
+      dataIndex: 'sortable',
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={'sort-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={'sort-'+ text}/>
       }
     },
     {
@@ -330,7 +330,8 @@ const PropertyTable: React.FC<Props> = (props) => {
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
     let parseType = propertyOptions.type.split(',');
     let multiple = propertyOptions.multiple === 'yes' ? true : false;
-    let facetable = propertyOptions.facetable
+    let facetable = propertyOptions.facetable;
+    let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.Relationship && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
@@ -343,6 +344,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       return {
         datatype: 'array',
         facetable: facetable,
+        sortable: sortable,
         items: {
           $ref: externalEntity.entityTypeId,
         }
@@ -357,6 +359,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       return {
         datatype: 'array',
         facetable: facetable,
+        sortable: sortable,
         items: {
           $ref: '#/definitions/'+ parseType[parseType.length-1],
         }
@@ -366,6 +369,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       return {
         datatype: 'array',
         facetable: facetable,
+        sortable: sortable,
         items: {
           datatype: parseType[parseType.length-1],
           collation: "http://marklogic.com/collation/codepoint",
@@ -375,6 +379,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       return {
         datatype: parseType[parseType.length-1],
         facetable: facetable,
+        sortable: sortable,
         collation: "http://marklogic.com/collation/codepoint"
       }
     }
@@ -488,8 +493,8 @@ const PropertyTable: React.FC<Props> = (props) => {
       identifier: record.identifier ? 'yes' : '',
       multiple: record.multiple ? 'yes' : '',
       pii: record.pii ? 'yes' : '',
-      sort: record.sort ? true : false,
       facetable: record.facetable ? true : false,
+      sortable: record.sortable ? true : false,
       wildcard: record.wildcard ? true : false
     }
 
@@ -672,7 +677,6 @@ const PropertyTable: React.FC<Props> = (props) => {
                 let parentDefinitionName = structuredType.name;
                 return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName);
               } else {
-                // TODO add functionality to sort
                 return {
                   key: property.name + ',' + index + structIndex + counter,
                   structured: structuredType.name,
@@ -681,6 +685,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   identifier: entityTypeDefinition?.primaryKey === structProperty.name ? structProperty.name : '',
                   multiple: structProperty.multiple ? structProperty.name : '',
                   facetable: structProperty.facetable ? structProperty.name : '',
+                  sortable: structProperty.sortable ? structProperty.name : '',
                   wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   pii: structuredType?.pii.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   delete: entityTypeDefinition.name
@@ -702,6 +707,7 @@ const PropertyTable: React.FC<Props> = (props) => {
               propertyName: property.name,
               multiple: property.multiple ? property.name: '',
               facetable: property.facetable ? property.name : '',
+              sortable: property.sortable ? property.name : '',
               type: property.ref.split('/').pop(),
               pii: piiValue,
               children: structuredTypeProperties,
@@ -713,7 +719,6 @@ const PropertyTable: React.FC<Props> = (props) => {
         propertyRow = parseStructuredProperty(entityDefinitionsArray, property, '');
         counter++;
       } else {
-        // TODO add functionality to sort
         propertyRow = {
           key: property.name + ',' + index,
           propertyName: property.name,
@@ -721,6 +726,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           identifier: entityTypeDefinition?.primaryKey === property.name ? property.name : '',
           multiple: property.multiple ? property.name : '',
           facetable: property.facetable ? property.name : '',
+          sortable: property.sortable ? property.name : '',
           wildcard: entityTypeDefinition?.wordLexicon.some( value => value === property.name) ? property.name : '',
           pii: entityTypeDefinition?.pii.some(value => value === property.name) ? property.name : '',
           add: '',

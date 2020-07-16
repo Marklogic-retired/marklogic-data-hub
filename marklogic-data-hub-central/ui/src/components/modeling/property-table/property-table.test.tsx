@@ -143,6 +143,45 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('string')).toHaveLength(13);
   });
 
+  test('can add sortable and facetable Property to the table', async () => {
+      let entityName = propertyTableEntities[2].entityName;
+      let definitions = propertyTableEntities[2].model.definitions;
+      const { getByTestId, getByLabelText } =  render(
+          <ModelingContext.Provider value={entityNamesArray}>
+              <PropertyTable
+                  canReadEntityModel={true}
+                  canWriteEntityModel={true}
+                  entityName={entityName}
+                  definitions={definitions}
+              />
+          </ModelingContext.Provider>
+      )
+
+      // Verify facet & sort checkmarks render in the table
+      expect(getByTestId('sort-customerId')).toBeInTheDocument();
+      expect(getByTestId('facet-birthDate')).toBeInTheDocument();
+      expect(getByTestId('sort-birthDate')).toBeInTheDocument();
+      expect(getByTestId('facet-status')).toBeInTheDocument();
+
+      userEvent.click(getByLabelText('Customer-add-property'));
+      userEvent.clear(screen.getByLabelText('input-name'));
+      await userEvent.type(screen.getByLabelText('input-name'), 'altName');
+
+      userEvent.click(screen.getByPlaceholderText('Select the property type'));
+      userEvent.click(screen.getByText('dateTime'));
+
+      const facetableCheckbox = screen.getByLabelText('Facet');
+      fireEvent.change(facetableCheckbox, { target: { checked: true } });
+      expect(facetableCheckbox).toBeChecked();
+
+      const sortableCheckbox = screen.getByLabelText('Sort');
+      fireEvent.change(sortableCheckbox, { target: { checked: true } });
+      expect(sortableCheckbox).toBeChecked();
+
+      fireEvent.submit(screen.getByLabelText('input-name'));
+      expect(getByTestId('altName-span')).toBeInTheDocument();
+  });
+
   test('can add a Property to the table and then edit it', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
@@ -247,10 +286,6 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     expect(wildcardCheckbox).toBeChecked();
 
-    const facetableCheckbox = screen.getByLabelText('Facet');
-    fireEvent.change(facetableCheckbox, { target: { checked: true } });
-    expect(facetableCheckbox).toBeChecked();
-
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('altName-span')).toBeInTheDocument();
     userEvent.click(screen.getByTestId('altName-span'));
@@ -280,10 +315,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -305,10 +340,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[1].entityName;
     let definitions = propertyTableEntities[1].model.definitions;
     const { getByText, getByTestId } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )
@@ -329,10 +364,10 @@ describe('Entity Modeling Property Table Component', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const { getAllByRole, getByTestId } =  render(
-      <PropertyTable 
+      <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
-        entityName={entityName} 
+        entityName={entityName}
         definitions={definitions}
       />
     )

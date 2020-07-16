@@ -678,12 +678,14 @@ export const definitionsParser = (definitions: any): Definition[] => {
             ref: '',
             collation: '',
             multiple: false,
-            facetable: false
+            facetable: false,
+            sortable: false
           }
           property.name = properties;
           property.description = definitions[definition][entityKeys][properties]['description'] || '';
           property.collation = definitions[definition][entityKeys][properties]['collation'] || '';
           property.facetable = definitions[definition][entityKeys][properties]['facetable'] || '';
+          property.sortable = definitions[definition][entityKeys][properties]['sortable'] || '';
 
           if (definitions[definition][entityKeys][properties]['datatype']) {
             property.datatype = definitions[definition][entityKeys][properties]['datatype'];

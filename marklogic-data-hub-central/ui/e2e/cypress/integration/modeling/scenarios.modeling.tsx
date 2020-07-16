@@ -42,12 +42,14 @@ describe('Entity Modeling', () => {
     propertyModal.getYesRadio('pii').click();
     propertyModal.clickCheckbox('wildcard');
     propertyModal.clickCheckbox('facetable');
+    propertyModal.clickCheckbox('sortable');
     propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('newID').should('exist');
     propertyTable.getPiiIcon('newID').should('exist');
     propertyTable.getWildcardIcon('newID').should('exist');
     propertyTable.getFacetIcon('newID').should('exist');
+    propertyTable.getSortIcon('newID').should('exist');
 
     propertyTable.editProperty('lname');
     propertyModal.getDeleteIcon('lname').click();

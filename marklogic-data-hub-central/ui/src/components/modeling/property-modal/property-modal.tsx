@@ -63,7 +63,7 @@ const ALL_RADIO_DISPLAY_VALUES = [
 const ALL_CHECKBOX_DISPLAY_VALUES = [
   {
     label: 'Sort',
-    value: 'sort',
+    value: 'sortable',
     tooltip: ModelingTooltips.sort
   },
   {
@@ -105,8 +105,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   identifier: '',
   multiple: '',
   pii: '',
-  sort: false,
   facetable: false,
+  sortable: false,
   wildcard: false
 }
 
@@ -589,7 +589,6 @@ const PropertyModal: React.FC<Props> = (props) => {
       >
         <MLCheckbox
           id={checkbox.value}
-          disabled={checkbox.value === 'sort' ? true : false}
           checked={selectedPropertyOptions[checkbox.value]}
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
         >{checkbox.label}</MLCheckbox>
@@ -603,7 +602,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
-    { props.editPropertyOptions.isEdit && 
+    { props.editPropertyOptions.isEdit &&
       <MLButton type="link" onClick={() => toggleConfirmModal(true)} >
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
@@ -638,7 +637,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       onCancel={onCancel}
       footer={modalFooter}
     >
-      {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 && 
+      {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 &&
         <div className={styles.warningContainer}>
           <MLAlert
             className={styles.alert}
