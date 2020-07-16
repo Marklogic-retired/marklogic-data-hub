@@ -21,7 +21,6 @@ describe("Sidebar createdOn face time window dropdown", () => {
             facetRender = {jest.fn()}
             checkFacetRender = {jest.fn()}
         />);
-        userEvent.click(getByText('Hub Properties'));
         expect(getByText("Select time")).toBeInTheDocument();
     });
 
@@ -35,12 +34,44 @@ describe("Sidebar createdOn face time window dropdown", () => {
             facetRender = {jest.fn()}
             checkFacetRender = {jest.fn()}
         />);
-        userEvent.click(getByText('Hub Properties'));
         expect(getByText("Select time")).toBeInTheDocument();
         userEvent.click(getByText('select time'));
         expect(getByText("Custom")).toBeInTheDocument();
         fireEvent.click(getByText("Custom"));
         expect(getByPlaceholderText("Start date")).toBeInTheDocument();
         expect(getByPlaceholderText("End date")).toBeInTheDocument();
+    });
+
+    test('Verify that hub properties is expanded by default', () => {
+        const parsedModelData = entityFromJSON(modelResponse);
+        const entityDefArray = entityParser(parsedModelData);
+        const { getByText,querySelector } = render(<Sidebar
+            entityDefArray={entityDefArray}
+            facets={searchPayloadFacets}
+            selectedEntities={[]}
+            facetRender = {jest.fn()}
+            checkFacetRender = {jest.fn()}
+        />);
+        expect(document.querySelector('#hub-properties div')).toHaveAttribute('aria-expanded','true');
+        userEvent.click(getByText('Hub Properties'));
+        expect(document.querySelector('#hub-properties div')).toHaveAttribute('aria-expanded','false');
+    });
+
+    test('Verify that entity properties is expanded when entity is selected', () => {
+        const parsedModelData = entityFromJSON(modelResponse);
+        const entityDefArray = entityParser(parsedModelData);
+        const { getByText,querySelector } = render(<Sidebar
+            entityDefArray={entityDefArray}
+            facets={searchPayloadFacets}
+            selectedEntities={['Customer']}
+            facetRender = {jest.fn()}
+            checkFacetRender = {jest.fn()}
+        />);
+        expect(document.querySelector('#entity-properties div')).toHaveAttribute('aria-expanded','true');
+        expect(document.querySelector('#hub-properties div')).toHaveAttribute('aria-expanded','false');
+        userEvent.click(getByText('Entity Properties'));
+        userEvent.click(getByText('Hub Properties'));
+        expect(document.querySelector('#entity-properties div')).toHaveAttribute('aria-expanded','false');
+        expect(document.querySelector('#hub-properties div')).toHaveAttribute('aria-expanded','true');
     });
 });

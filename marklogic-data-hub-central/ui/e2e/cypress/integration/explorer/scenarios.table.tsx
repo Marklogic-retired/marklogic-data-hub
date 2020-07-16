@@ -21,7 +21,6 @@ describe('table test scenarios', () => {
 
   it('has table and expandable rows', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25)
     browsePage.getTableRows().should('have.length', 20);
     browsePage.getTableColumns().should('be.visible');
