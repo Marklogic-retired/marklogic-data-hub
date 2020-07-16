@@ -616,7 +616,8 @@ export const propertyTableEntities = [
               "primaryKey": "customerId",
               "properties": {
                 "customerId": {
-                  "datatype": "integer"
+                  "datatype": "integer",
+                  "sortable": true
                 },
                 "name": {
                   "datatype": "string",
@@ -641,10 +642,13 @@ export const propertyTableEntities = [
                   "$ref": "#/definitions/Address"
                 },
                 "birthDate": {
-                  "datatype": "date"
+                  "datatype": "date",
+                  "facetable": true,
+                  "sortable": true
                 },
                 "status": {
-                  "datatype": "string"
+                  "datatype": "string",
+                  "facetable": true
                 },
                 "customerSince": {
                   "datatype": "date"
