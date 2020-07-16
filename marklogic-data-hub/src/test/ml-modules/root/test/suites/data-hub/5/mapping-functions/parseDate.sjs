@@ -19,6 +19,7 @@ function testMoreParseDate() {
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16,1996", "Mon DD, YYYY")),
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16, 1996", "Mon DD,YYYY")),
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("Jul 16,1996", "Mon DD,YYYY")),
+    test.assertEqual(xs.date("1996-07-16"), core.parseDate("1996.07.16", "yyyy.MM.dd")),
 
     test.assertEqual(null, core.parseDate("07.16.1996", "Mon DD,YYYY")),
     test.assertEqual(null, core.parseDate("notADate", "Mon DD,YYYY"))
@@ -35,7 +36,7 @@ function testInvalidDateFormat() {
 
   return [
     test.assertTrue(error != null, "An error should have been thrown due to an invalid date format"),
-    test.assertEqual("The given date pattern (Mon YYYY DD) is not supported.", fn.string(error.name))
+    test.assertEqual("The pattern 'Mon YYYY DD' cannot be applied to the value '01-01-2019'", fn.string(error.name))
   ];
 }
 

@@ -10,5 +10,6 @@ let expectedDateTime = xs.dateTime(`2014-01-06T18:13:50${serverTimezone}`);
   test.assertTrue(expectedDateTime.eq(core.parseDateTime("20140106T181350", "YYYYMMDDThhmmss"))),
   test.assertTrue(expectedDateTime.eq(core.parseDateTime("2014/01/06-18:13:50", "YYYY/MM/DD-hh:mm:ss"))),
   test.assertTrue(expectedDateTime.eq(core.parseDateTime("2014/01/06 18:13:50", "YYYY/MM/DD hh:mm:ss"))),
+  test.assertTrue(expectedDateTime.eq(core.parseDateTime("2014.01.06 AD at 18:13:50", "yyyy.MM.dd G 'at' HH:mm:ss"))),
   test.assertThrowsError(xdmp.function(xs.QName("dt.parseDateTime")), "2014/01/06T18:13:50", "YYYY/MM/DDThh:mm:ss", null)
 ];

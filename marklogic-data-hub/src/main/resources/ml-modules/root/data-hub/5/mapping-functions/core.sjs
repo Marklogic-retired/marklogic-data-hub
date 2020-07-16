@@ -85,7 +85,8 @@ function parseDate(value, pattern) {
   let standardFormats = ["MM/DD/YYYY", "DD/MM/YYYY", "MM-DD-YYYY", "MM.DD.YYYY", "DD.MM.YYYY", "YYYYMMDD", "YYYY/MM/DD"];
   let nonStandardFormats = ["Mon DD,YYYY", "DD Mon YYYY", "DD-Mon-YYYY" ];
   let response;
-
+  let errorMsg = `The pattern '${pattern}' cannot be applied to the value '${value}'`;
+  const originalPattern = pattern;
   // Normalize both the picture and value a bit per DHFPROD-3121
   if (pattern != null) {
     pattern = pattern.toString().replace(", ", ",");
@@ -100,7 +101,7 @@ function parseDate(value, pattern) {
       response = xs.date(standardizedDate);
     }
     catch (ex) {
-      fn.error(null, "Given value doesn't match with the specified pattern (" + pattern + "," + value + ") for parsing date string.");
+      fn.error(null, errorMsg);
     }
   }
   else if (nonStandardFormats.includes(pattern.trim())) {
@@ -126,7 +127,7 @@ function parseDate(value, pattern) {
       let day = date.getDate();
       let month = date.getMonth() + 1;
       if(isNaN(date) || isNaN(day) || isNaN(month)) {
-        fn.error(null, "Given value (" + value + ") for date string is invalid.");
+        fn.error(null, errorMsg);
       }
       else {
         let year = date.getFullYear();
@@ -137,7 +138,11 @@ function parseDate(value, pattern) {
     }
   }
   else {
-    fn.error(null, "The given date pattern (" + pattern + ") is not supported.");
+    try {
+      response = xs.date(xdmp.parseYymmdd(originalPattern, value));
+    } catch(e) {
+      fn.error(null, errorMsg);
+    }
   }
   return response;
 }
@@ -145,16 +150,21 @@ function parseDate(value, pattern) {
 function parseDateTime(value, pattern) {
   let supportedFormats = ["YYYYMMDDThhmmss", "DD/MM/YYYY-hh:mm:ss", "DD/MM/YYYY hh:mm:ss", "YYYY/MM/DD-hh:mm:ss" , "YYYY/MM/DD hh:mm:ss"];
   let response;
+  let errorMsg = `The pattern '${pattern}' cannot be applied to the value '${value}'`;
   if(supportedFormats.includes(pattern.trim())){
     try {
       response = xdmp.parseYymmdd(pattern.replace("YYYY","yyyy").replace("DD","dd"), value);
     }
     catch(ex){
-      fn.error(null, ex.message);
+      fn.error(null, errorMsg);
     }
   }
   else{
-    fn.error(null, "The given dateTime pattern (" + pattern + ") is not supported.");
+    try {
+      response = xdmp.parseYymmdd(pattern, value);
+    } catch(e) {
+      fn.error(null, errorMsg);
+    }
   }
   return response;
 }
