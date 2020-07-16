@@ -147,11 +147,18 @@ class BrowsePage {
 
   getFacetApplyButton() {
     return cy.get('svg[data-icon="check-square"]')
-    //return cy.get('#selected-facets [data-cy=facet-apply-button]');
   }
 
   getClearAllButton() {
     return cy.get('[data-cy=clear-all-button]');
+  }
+
+  getGreyRangeFacet(lowerBound: number){
+    return cy.get('#selected-facets [data-cy="clear-grey-'+ lowerBound +'"]');
+  }
+
+  getRangeFacet(lowerBound: number){
+   return cy.get('#selected-facets [data-cy="clear-'+ lowerBound +'"]');
   }
 
   applyDatePickerSelection(facet: string) {
@@ -163,6 +170,10 @@ class BrowsePage {
     cy.get('[data-cy=search-bar]').type(str);
     cy.get('.ant-input-search-button').click();
     this.waitForTableToLoad();
+  }
+
+  changeNumericSlider(val: string){
+   cy.get('#min-numeric-value .ant-input-number input').clear().type(val)
   }
 
   getSearchText(){

@@ -305,3 +305,34 @@ describe('json scenario for table on browse documents page', () => {
   });
 
 });
+
+
+describe('Verify numeric facet can be applied', () => {
+    //login with valid account and go to /browse page
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains(Application.title);
+        cy.loginAsTestUserWithRoles("pii-reader").withRequest();
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.waitForTableToLoad();
+    });
+
+    it('Apply numeric facet values multiple times, clears the previous values and applies the new one', () => {
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.changeNumericSlider('2273');
+        browsePage.getGreyRangeFacet(2273).should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getRangeFacet(2273).should('exist');
+        browsePage.getClearAllButton().should('exist');
+        browsePage.changeNumericSlider('3024');
+        browsePage.getGreyRangeFacet(3024).should('exist');
+        browsePage.getFacetApplyButton().should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getRangeFacet(3024).should('exist');
+        browsePage.getClearAllButton().should('exist');
+    });
+
+});
