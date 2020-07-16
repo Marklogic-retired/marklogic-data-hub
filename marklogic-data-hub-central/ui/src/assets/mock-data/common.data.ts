@@ -194,6 +194,11 @@ const truncatedJSONResponse = {
   targetEntityType: 'Person'
 };
 
+const JSONSourceDataToTruncate = [
+  { rowKey: 1, key: 'proteinId', val: 'extremelylongusername@marklogic.com' },
+  { rowKey: 2, key: 'proteinType', val: 's@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'}
+];
+
 const truncatedEntityProps = [
   { key: 1, name: 'propId', type: 'int' },
   { key: 2, name: 'propName', type: 'string [ ]' },
@@ -380,6 +385,7 @@ const data = {
   entityTypePropertiesMultipleSiblings: entityTypePropertiesMultipleSiblings,
   jsonSourceDataMultipleSiblings: jsonSourceDataMultipleSiblings,
   truncatedJSONResponse: truncatedJSONResponse,
+  JSONSourceDataToTruncate: JSONSourceDataToTruncate,
   truncatedEntityProps: truncatedEntityProps,
   customData: customData,
   viewCustom: viewCustom

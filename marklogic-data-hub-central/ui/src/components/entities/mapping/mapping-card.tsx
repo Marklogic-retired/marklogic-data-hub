@@ -367,32 +367,31 @@ const MappingCard: React.FC<Props> = (props) => {
                         parentNamespace = tempNS;
                     }
                 } else if (val.constructor.name === "Array") {
-                    val.forEach(obj => {
-                        if(obj){
-                            if (obj.constructor.name == "String") {
-                                sourceTableKeyIndex = sourceTableKeyIndex + 1;
-                                let propty = {
-                                    rowKey: sourceTableKeyIndex,
-                                    key: key,
-                                    val: obj
-                                };
-                                nestedDoc.push(propty);
-                            } else {
-                                let tempNS = parentNamespace;
-                                if(obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')){
-                                    parentNamespace = updateParentNamespace(obj);
-                                }
-                                let finalKey = getNamespace(key, obj, parentNamespace);
-                                let propty = getPropertyObject(finalKey, obj);
-
-                                generateNestedDataSource(obj, propty.children, parentNamespace);
-                                nestedDoc.push(propty);
-                                if(parentNamespace !== tempNS){
-                                    parentNamespace = tempNS;
-                                }
+                    if (val[0].constructor.name == "String") {
+                            let stringValues = val.join(', ')
+                            sourceTableKeyIndex = sourceTableKeyIndex + 1;
+                            let propty = {
+                                rowKey: sourceTableKeyIndex,
+                                key: key,
+                                val: stringValues
+                            };
+                            nestedDoc.push(propty);
+                    } else {
+                        val.forEach(obj => {
+                            let tempNS = parentNamespace;
+                            if(obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')){
+                                parentNamespace = updateParentNamespace(obj);
                             }
-                        }
-                    });
+                            let finalKey = getNamespace(key, obj, parentNamespace);
+                            let propty = getPropertyObject(finalKey, obj);
+
+                            generateNestedDataSource(obj, propty.children, parentNamespace);
+                            nestedDoc.push(propty);
+                            if(parentNamespace !== tempNS){
+                                parentNamespace = tempNS;
+                            }
+                        });
+                    };
 
                 } else {
 
