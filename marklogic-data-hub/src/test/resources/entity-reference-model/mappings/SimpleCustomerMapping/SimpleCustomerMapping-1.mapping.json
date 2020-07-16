@@ -8,6 +8,9 @@
   "properties" : {
     "customerId" : {
       "sourcedFrom" : "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "echo(name)"
     }
   }
 }

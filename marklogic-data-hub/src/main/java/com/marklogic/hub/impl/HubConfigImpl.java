@@ -236,9 +236,12 @@ public class HubConfigImpl implements HubConfig
      */
     public HubConfigImpl(String host, String mlUsername, String mlPassword) {
         this();
-        setHost(host);
-        setMlUsername(mlUsername);
-        setMlPassword(mlPassword);
+
+        Properties props = new Properties();
+        props.setProperty("mlHost", host);
+        props.setProperty("mlUsername", mlUsername);
+        props.setProperty("mlPassword", mlPassword);
+        applyProperties(new SimplePropertySource(props));
     }
 
     /**

@@ -2,55 +2,34 @@ package com.marklogic.hub.deploy.commands;
 
 
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.Versions;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.IOException;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class GenerateFunctionMetadataCommandTest extends HubTestBase {
+public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
 
     @Autowired
-    private HubConfigImpl hubConfig;
+    Versions versions;
 
     @Autowired
-    private Versions versions;
-
-    @Autowired
-    private GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
-
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
+    GenerateFunctionMetadataCommand generateFunctionMetadataCommand;
 
     @BeforeEach
-    public void setupEach() throws IOException {
-        basicSetup();
-        getDataHubAdminConfig();
+    public void writeTestMappingFunctionLibraryToModulesDatabase() {
         DocumentWriteSet writeSet = modMgr.newWriteSet();
         StringHandle handle = new StringHandle("'use strict';\n" +
             "\n" +
@@ -63,14 +42,9 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
             "};");
         handle.setFormat(Format.TEXT);
         DocumentMetadataHandle permissions = new DocumentMetadataHandle()
-            .withPermission(getDataHubAdminConfig().getFlowDeveloperRoleName(), DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
+            .withPermission("data-hub-module-reader", DocumentMetadataHandle.Capability.EXECUTE, UPDATE, READ);
         writeSet.add("/custom-modules/mapping-functions/testModule.sjs", permissions, handle);
         modMgr.write(writeSet);
-    }
-
-    @AfterAll
-    public static void cleanUp() {
-        new Installer().deleteProjectDir();
     }
 
     @Test
@@ -82,18 +56,39 @@ public class GenerateFunctionMetadataCommandTest extends HubTestBase {
     }
 
     @Test
-    public void testMetaDataGeneration() {
+    void testMetaDataGeneration() {
         if (versions.isVersionCompatibleWithES()) {
+            HubConfig hubConfig = getHubConfig();
             CommandContext context = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
             generateFunctionMetadataCommand.execute(context);
+
             String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();
             BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
-            Assertions.assertNotEquals(0, handle.get().length);
+            assertNotEquals(0, handle.get().length);
             DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-            Assertions.assertTrue(permissions.get("data-hub-module-reader").contains(READ));
-            Assertions.assertTrue(permissions.get("data-hub-module-reader").contains(EXECUTE));
-            Assertions.assertTrue(permissions.get("data-hub-module-writer").contains(UPDATE));
+            assertTrue(permissions.get("data-hub-module-reader").contains(READ));
+            assertTrue(permissions.get("data-hub-module-reader").contains(EXECUTE));
+            assertTrue(permissions.get("data-hub-module-writer").contains(UPDATE));
+        }
+    }
+
+    @Test
+    void updateModule() {
+        if (versions.isVersionCompatibleWithES()) {
+            ReferenceModelProject project = installReferenceModelProject();
+            project.createRawCustomer(2, "CustomerTwo");
+
+            // Run the flow first to make sure it succeeds
+            RunFlowResponse response = project.runFlow(new FlowInputs("simpleMapping", "1"));
+            assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
+
+            // Now generate function metadata. If the mapping transforms aren't re-generated as well, then
+            // the flow will fail. So we'll then run the flow to make sure it still succeeds.
+            new GenerateFunctionMetadataCommand(getHubConfig(), true).generateFunctionMetadata();
+            response = project.runFlow(new FlowInputs("simpleMapping", "1"));
+            assertEquals("finished", response.getJobStatus());
+            assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
         }
     }
 }

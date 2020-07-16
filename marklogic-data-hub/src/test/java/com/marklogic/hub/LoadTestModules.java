@@ -5,6 +5,7 @@ import com.marklogic.appdeployer.DefaultAppConfigFactory;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.util.SimplePropertySource;
 
@@ -18,13 +19,9 @@ import java.util.Properties;
 public class LoadTestModules {
 
     public static void loadTestModules(String host, int finalPort, String username, String password, String modulesDatabaseName, String modulePermissions) {
-        Properties props = new Properties();
-        props.setProperty("mlUsername", username);
-        props.setProperty("mlPassword", password);
-        props.setProperty("mlHost", host);
-        props.setProperty("mlRestPort", finalPort + "");
-
-        AppConfig config = new DefaultAppConfigFactory(new SimplePropertySource(props)).newAppConfig();
+        HubConfigImpl hubConfig = new HubConfigImpl(host, username, password);
+        AppConfig config = hubConfig.getAppConfig();
+        config.setRestPort(finalPort);
         config.setModuleTimestampsPath(null);
         config.setModulesDatabaseName(modulesDatabaseName);
         config.setModulePermissions(modulePermissions);
@@ -54,7 +51,7 @@ public class LoadTestModules {
         // core mapping functions and custom functions under src/test/ml-modules/root/custom-modules.
         new SimpleAppDeployer(
             new LoadModulesCommand(),
-            new GenerateFunctionMetadataCommand(config.newAppServicesDatabaseClient("data-hub-MODULES"), new Versions(config))
+            new GenerateFunctionMetadataCommand(hubConfig)
         ).deploy(config);
     }
 }
