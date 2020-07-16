@@ -575,7 +575,7 @@ const SourceToEntityMap = (props) => {
             ellipsis: true,
             sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
             width: '40%',
-            render: (text) => <span>{text ? String(text).substr(0, 20) : ''}{text && text.length > 20 ? <MLTooltip title={text}><span className={styles.toolTipForValues}>...</span></MLTooltip> : ''}</span>
+            render: (text, row) => (<div data-testid = {row.key +'-srcValue'} className = {styles.sourceValue}>{text ? <MLTooltip title={text}>{getTextforSourceValue(text)}</MLTooltip> : ''}</div>)
         }
     ];
 
@@ -651,6 +651,23 @@ const SourceToEntityMap = (props) => {
             render: (text, row) => (<div data-testid={row.name.split('/').pop()+'-value'} className={styles.mapValue}><MLTooltip title={getTextForTooltip(row.name)}>{getTextForValueField(row)}</MLTooltip></div>)
         }
     ]
+
+    const getTextforSourceValue = (text) => {
+        let arr = text.split(', ')
+        if (arr.length >= 2){
+            let xMore = '(' + (arr.length - 2) + ' more)';
+            let itemOne = arr[0].length > 16 ? getInitialChars(arr[0], 16, '...\n') : arr[0] + '\n';
+            let itemTwo = arr[1].length > 16 ? getInitialChars(arr[1], 16, '...\n') : arr[1] + '\n';
+            let fullItem = itemOne.concat(itemTwo);            
+            if(arr.length == 2){
+                return <p>{fullItem}</p>;
+            }else{
+                return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
+            } 
+        }else{
+            return getInitialChars(arr[0],16,'...')
+        }           
+    }
 
     //Response from server already is an array for multiple values, string for single value
     //truncation in case array values

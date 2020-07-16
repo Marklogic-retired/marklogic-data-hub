@@ -244,6 +244,15 @@ hr {
     color: #7F86B5;
 }
 
+.sourceValue{
+    margin-top: -6px;
+    margin-bottom: -20px;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: normal;
+}
+
 .namespace{
     color: #5B69AF;
     cursor: pointer;
