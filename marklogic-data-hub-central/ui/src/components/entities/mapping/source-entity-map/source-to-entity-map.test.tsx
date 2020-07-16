@@ -447,7 +447,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Truncation in case of responses for Array datatype', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.truncatedJSONResponse })));
-        const { getByText, getAllByRole, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} />)
+        const { getByText, getAllByRole, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} entityTypeProperties={data.truncatedEntityProps} sourceData = {data.JSONSourceDataToTruncate}/>)
         let propNameExpression = getByText('testNameInExp');
         let propAttributeExpression = getByText('placeholderAttribute')
 
@@ -465,10 +465,23 @@ describe('RTL Source-to-entity map tests', () => {
             await (waitForElementToBeRemoved(() => (queryByTestId('successMessage'))))
         }
 
+        //Verify truncated text in Source table
+        await(waitForElement(() => getByTestId('proteinId-srcValue')))
+        expect(getByTestId('proteinId-srcValue')).toHaveTextContent('extremelylonguse...')
+        expect(getByTestId('proteinType-srcValue')).toHaveTextContent('s@ml.com t@ml.com (6 more)')
+
+        //Verify tooltip shows full value when hovering Source values
+        fireEvent.mouseOver(getByText('extremelylonguse...'))
+        await waitForElement(() => getByText('extremelylongusername@marklogic.com'));
+
+        //Verify tooltip shows all values in a list when hovering values with multiple items
+        fireEvent.mouseOver(getByText((_, node) => node.textContent == '(6 more)'))
+        await waitForElement(() => getByText('s@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'));
+
         // Test button should be enabled after mapping expression is saved
         expect(document.querySelector('#Test-btn')).toBeEnabled()
 
-        //Verify Test button click
+        //Verify Test button click and truncated text in Entity table
         fireEvent.click(getByText('Test'))
         await(waitForElement(() => getByTestId('propName-value')))
         expect(getByTestId('propName-value')).toHaveTextContent('extremelylongusername@m...')
@@ -477,11 +490,6 @@ describe('RTL Source-to-entity map tests', () => {
         // Verify tooltip shows full value when hovering Test values
         fireEvent.mouseOver(getByText('extremelylongusername@m...'))
         await waitForElement(() => getByText('extremelylongusername@marklogic.com'));
-
-        //TODO: Verify tooltip shows all values when hovering Test values
-        // fireEvent.mouseOver(getByText())
-        // await waitForElement(() => getByText('s@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com z@ml.com'));
-
     })
 
     test('Verify evaluation of valid expression for mapping reader user', async () => {
