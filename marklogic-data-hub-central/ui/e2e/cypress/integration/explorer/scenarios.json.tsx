@@ -27,7 +27,6 @@ describe('json scenario for snippet on browse documents page', () => {
 
   it('select "all entities" verify docs, hub/entity properties', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getDocuments().each(function (item, i) {
       browsePage.getDocumentEntityName(i).should('exist');
@@ -79,7 +78,6 @@ describe('json scenario for snippet on browse documents page', () => {
   it('apply facet search and verify docs, hub/entity properties', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableSnippetView();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getShowMoreLink().first().click();
@@ -98,7 +96,6 @@ describe('json scenario for snippet on browse documents page', () => {
   it('apply facet search and clear individual grey facet', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
@@ -109,7 +106,6 @@ describe('json scenario for snippet on browse documents page', () => {
   it('apply facet search and clear all grey facets', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
@@ -186,7 +182,6 @@ describe('json scenario for table on browse documents page', () => {
 
   it('select "all entities" and verify table default columns', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getExpandableTableView();
     browsePage.getTotalDocuments().should('be.greaterThan', 25)
     browsePage.getColumnTitle(2).should('contain', 'Identifier');
@@ -202,7 +197,6 @@ describe('json scenario for table on browse documents page', () => {
 
   it('select "all entities" and verify table', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getTotalDocuments().should('be.greaterThan', 25)
     //check table rows
     browsePage.getTableRows().should('have.length', 20);
