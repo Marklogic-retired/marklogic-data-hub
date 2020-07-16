@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -230,7 +229,7 @@ public class MappingTest extends HubTestBase {
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "The given date pattern (YYYY.MM.DD) is not supported.";
+        String expected = "The pattern 'YYYY.MM.DD' cannot be applied to the value";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date pattern");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
@@ -249,7 +248,7 @@ public class MappingTest extends HubTestBase {
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Given value doesn't match with the specified pattern (YYYYMMDD,01/08/1996) for parsing date string.";
+        String expected = "The pattern 'YYYYMMDD' cannot be applied to the value '01/08/1996'";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid standard formats");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
@@ -268,7 +267,7 @@ public class MappingTest extends HubTestBase {
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "The given dateTime pattern (YYYYMMDD Thhmmss) is not supported.";
+        String expected = "The pattern 'YYYYMMDD Thhmmss' cannot be applied to the value";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date time pattern");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
@@ -287,7 +286,7 @@ public class MappingTest extends HubTestBase {
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
 
         String output = outputToJson(mappingJob.stepOutput, 0, "message").toString();
-        String expected = "Given value doesn't match with the specified pattern for parsing dateTime string.";
+        String expected = "The pattern 'YYYYMMDDThhmmss' cannot be applied to the value";
 
         assertFalse(mappingJob.isSuccess(), "Mapping job should fail for invalid date time pattern");
         assertTrue(output.contains(expected),"Expected "+expected+" to be a substring of "+output);
