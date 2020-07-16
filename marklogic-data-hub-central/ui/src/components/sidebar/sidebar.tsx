@@ -44,9 +44,11 @@ const Sidebar: React.FC<Props> = (props) => {
   let integers = ['int', 'integer', 'short', 'long'];
   let decimals = ['decimal', 'double', 'float'];
   const dateRangeOptions = ['Today', 'This Week', 'This Month', 'Custom'];
+  const [activeKey, setActiveKey] = useState<any[]>([]);
 
   useEffect(() => {
     if (props.facets) {
+      props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
@@ -380,15 +382,18 @@ const Sidebar: React.FC<Props> = (props) => {
     borderBottom: 'none',
     backgroundColor: '#F1F2F5'
   }
-
+     const setActive = (key) => {
+         setActiveKey(key);
+     }
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <Collapse
         className={styles.sideBarFacets}
-        defaultActiveKey={['entityProperties']}
+        activeKey={activeKey}
         expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 0 : 180} />}
         expandIconPosition="right"
         bordered={false}
+        onChange={setActive}
       >
         {props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={facetPanelStyle}>

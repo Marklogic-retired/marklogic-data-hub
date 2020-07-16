@@ -273,7 +273,6 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('All Entities');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
-        browsePage.getHubPropertiesExpanded();
         browsePage.getFacetItemCheckbox('collection', 'Person').click();
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().should('not.be.visible')
