@@ -14,7 +14,7 @@
       ],
       "primaryKey": "customerId",
       "elementRangeIndex": [
-        "name", "email"
+        "name", "email","pin"
       ],
       "properties": {
         "customerId": {

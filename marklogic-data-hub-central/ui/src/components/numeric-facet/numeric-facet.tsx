@@ -148,8 +148,8 @@ const NumericFacet: React.FC<Props> = (props) => {
       <p className={styles.name}>{<MLTooltip title={props.name}>{formatTitle()}</MLTooltip>}</p>
       <div className={styles.numericFacet} data-testid='numeric-slider'>
         <MLSlider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
-        <InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} />
-        <InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} />
+        <div id={"min-numeric-value"}><InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
+        <div id={"max-numeric-value"}><InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
       </div>
     </div>
   )

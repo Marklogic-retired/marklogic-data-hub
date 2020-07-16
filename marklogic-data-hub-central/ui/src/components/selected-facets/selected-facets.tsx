@@ -48,6 +48,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
         let facets = {...greyedOptions.selectedFacets};
         for (let constraint in searchOptions.selectedFacets) {
             if (facets.hasOwnProperty(constraint)) {
+                if(searchOptions.selectedFacets[constraint].hasOwnProperty('rangeValues'))
+                    continue;
                 for (let sValue of searchOptions.selectedFacets[constraint].stringValues) {
                     if (facets[constraint].stringValues.indexOf(sValue) == -1)
                         facets[constraint].stringValues.push(sValue);
@@ -68,11 +70,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
     }
 
 
-  const unCheckRest = (constraint, facet) => {
+  const unCheckRest = (constraint, facet, rangeValues:any = {}) => {
     if (props.selectedFacets.length == 0)
         return true;
     for (let item of props.selectedFacets) {
-        if (item.constraint === constraint && item.facet === facet)
+        if(item.rangeValues && JSON.stringify(rangeValues) == JSON.stringify(item.rangeValues))
+            return false;
+        if(item.constraint === constraint && item.facet !== undefined && item.facet === facet)
             return false;
     }
     return true;
@@ -132,6 +136,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 className={styles.dateFacet}
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
+                data-cy={`clear-${item.rangeValues.lowerBound}`}
               >
                 <Icon type='close'/>
                 {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
@@ -144,7 +149,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 className={styles.facetButton}
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
-                data-cy='clear-range-facet'
+                data-cy={`clear-${item.rangeValues.lowerBound}`}
                 data-testid='clear-range-facet'
               >
                 <Icon type='close'/>
@@ -195,12 +200,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
                     let dateValues: any = [];
                     dateValues.push(item.rangeValues.lowerBound, item.rangeValues.upperBound);
-                    return ((unCheckRest(item.constraint, item.facet)) &&
+                    return ((unCheckRest(item.constraint, item.facet, item.rangeValues)) &&
                         <MLButton
                             size="small"
                             className={styles.facetGreyButton}
                             key={index}
                             onClick={() => clearGreyRangeFacet(item.constraint)}
+                            data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
                         >
                             <Icon type='close'/>
                             {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
