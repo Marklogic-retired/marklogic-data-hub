@@ -150,7 +150,7 @@ const Query = (props) => {
 
     useEffect(() => {
         getSaveQueries();
-    }, [searchOptions.entityTypeIds]);
+    }, [searchOptions.zeroState]);
 
     useEffect(() => {
             if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
