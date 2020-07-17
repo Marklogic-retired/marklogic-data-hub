@@ -76,7 +76,25 @@
                 cursor: not-allowed;
             }
         }
-
+        .successfulRun {
+            display: inline-block;
+            color: #008000;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .unSuccessfulRun {
+            display: inline-block;
+            color: #DB4f59;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .stepResponse {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            padding-right: 15px;
+            padding-left: 1px;
+            float: right;
+        }
         .cardContent {
             border: solid 1px #ddd;
             padding: 10px;
@@ -91,7 +109,7 @@
             }
             .cardLinks {
                 position: absolute;
-                bottom: 19px;
+                bottom: 52.5px;
                 left: 13px;
                 right: 13px;
                 z-index: 999;
@@ -130,3 +148,21 @@
         }
     }
 }
+
+.cardStyle{
+    width: 300px;
+    margin-right: 20px;
+    ul {
+        border-top: 0px;
+        background: #ffffff;
+    }
+
+    li:last-child{
+        margin: 0px;
+        padding-bottom: 8px;
+        height: 33.3px;
+    }
+}
+
+
+

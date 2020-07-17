@@ -1,0 +1,13 @@
+{
+    "functionName": "getFlowWithLatestJobInfo",
+    "params": [
+        {
+            "name": "name",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

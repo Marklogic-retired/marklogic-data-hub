@@ -1,6 +1,4 @@
 const flowService = require("../lib/flowService.sjs");
-const hubTest = require("/test/data-hub-test-helper.xqy");
-const hubJsTest = require("/test/data-hub-test-helper.sjs");
 const stepService = require("../lib/stepService.sjs");
 const test = require("/test/test-helper.xqy");
 
@@ -14,31 +12,29 @@ flowService.addStepToFlow(flowName, "mapping", mappingName);
 stepService.createDefaultIngestionStep(ingestionName);
 flowService.addStepToFlow(flowName, "ingestion", ingestionName);
 
-const flows = flowService.getFlowsWithStepDetails();
-const flow = flows[0];
+const flow = flowService.getFlowWithLatestJobInfo(flowName);
 
 [
-  test.assertEqual(1, flows.length, "Expecting just the single flow"),
   test.assertEqual(flowName, flow.name),
-  test.assertFalse(flow.hasOwnProperty("description"), "Descripton isn't present because the flow doesn't have one"),
-
   test.assertEqual(3, flow.steps.length, "Expecting the inline ingestion and referenced mapping and ingestion steps"),
-
   test.assertEqual("1", flow.steps[0].stepNumber),
   test.assertEqual("ingestData", flow.steps[0].stepName),
   test.assertEqual("INGESTION", flow.steps[0].stepDefinitionType),
-  test.assertEqual(undefined, flow.steps[0].stepId),
+  test.assertEqual("completed step 1", flow.steps[0].lastRunStatus),
+  test.assertEqual("293c638e-21e9-45b6-98cc-223d834f9222", flow.steps[0].jobId),
+  test.assertEqual("2020-06-26T23:11:27.462273Z", flow.steps[0].stepEndTime),
 
   test.assertEqual("2", flow.steps[1].stepNumber),
   test.assertEqual(mappingName, flow.steps[1].stepName),
   test.assertEqual("mapping", flow.steps[1].stepDefinitionType),
-  test.assertEqual(undefined, flow.steps[1].sourceFormat),
-  test.assertEqual("http://example.org/Customer-0.0.1/Customer", flow.steps[1].targetEntityType),
-  test.assertEqual(mappingName + "-mapping", flow.steps[1].stepId),
+  test.assertEqual("completed with errors step 2", flow.steps[1].lastRunStatus),
+  test.assertEqual("293c638e-21e9-45b6-98cc-223d834f9222", flow.steps[1].jobId),
+  test.assertEqual("2020-06-26T23:11:32.836606Z", flow.steps[1].stepEndTime),
 
   test.assertEqual("3", flow.steps[2].stepNumber),
   test.assertEqual(ingestionName, flow.steps[2].stepName),
   test.assertEqual("ingestion", flow.steps[2].stepDefinitionType),
-  test.assertEqual("json", flow.steps[2].sourceFormat),
-  test.assertEqual(ingestionName + "-ingestion", flow.steps[2].stepId)
+  test.assertEqual(undefined, flow.steps[2].lastRunStatus),
+  test.assertEqual(undefined, flow.steps[2].jobId),
+  test.assertEqual(undefined, flow.steps[2].stepEndTime)
 ];

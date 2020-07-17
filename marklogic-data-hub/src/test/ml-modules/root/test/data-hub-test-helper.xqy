@@ -24,6 +24,30 @@ declare function load-artifacts($caller-path as xs:string) as xs:string*
   map:keys($TYPE-TO-COLLECTION-MAP) ! load-artifacts(., $caller-path)
 };
 
+
+declare function load-jobs($caller-path as xs:string) as xs:string*
+{
+  load-jobs("jobs", $caller-path, "/", ("Job", "Jobs")),
+  load-jobs("batches", $caller-path, "/jobs/", ("Batch", "Jobs"))
+};
+
+declare private function load-jobs(
+  $doc-type as xs:string,
+  $caller-path as xs:string,
+  $uri-prefix as xs:string,
+  $collections as item()*
+) as xs:string*
+{
+  let $test-data-path := get-test-data-path($caller-path)
+  for $uri in get-artifact-uris($doc-type, $test-data-path)
+  let $path := fn:replace($uri, $test-data-path, "")
+  let $content := test:get-test-file($path)
+  let $_ := invoke-in-db(function() {
+    xdmp:document-insert($uri-prefix || $path, $content, xdmp:default-permissions(), $collections)
+  },"data-hub-JOBS" )
+  return ()
+};
+
 (:
 A suite setup module may need to load entities in one transaction, then all other artifacts in a separate
 transaction so that e.g. mappings validate properly. Thus, this function and load-non-entities can be used for the
