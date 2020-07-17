@@ -40,13 +40,15 @@ class PropertyModal {
   }
 
   getCancelButton() {
-    return cy.findByLabelText('property-modal-submit');
+    return cy.findByLabelText('property-modal-cancel');
   }
 
   getSubmitButton() {
     return cy.findByLabelText('property-modal-submit');
   }
-
+  getDeleteIcon(propertyName: string) {
+    return cy.findByTestId(`delete-${propertyName}`);
+  }
 }
 
 const propertyModal = new PropertyModal();

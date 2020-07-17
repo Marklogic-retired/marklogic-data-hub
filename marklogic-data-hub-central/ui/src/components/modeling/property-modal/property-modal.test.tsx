@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import PropertyModal from './property-modal';
@@ -7,13 +7,11 @@ import {
   StructuredTypeOptions,
   EditPropertyOptions,
   PropertyType,
-  PropertyOptions
+  PropertyOptions,
+  ConfirmationType
 } from '../../../types/modeling-types';
 
-import { 
-  entityReferences,
-} from '../../../api/modeling';
-
+import { entityReferences } from '../../../api/modeling';
 import { definitionsParser } from '../../../util/data-conversion';
 import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -609,122 +607,173 @@ describe('Property Modal Component', () => {
     expect(editMock).toHaveBeenCalledTimes(1);
   });
 
-  // Add back once delete property is enabled
-  // test('can delete a property', async () => {
-  //   mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+  test('can delete a property', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
-  //   let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
-  //   let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
-  //   let deleteMock = jest.fn();
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let deleteMock = jest.fn();
 
-  //   const basicPropertyOptions: PropertyOptions = {
-  //     propertyType: PropertyType.Basic,
-  //     type: 'integer',
-  //     identifier: 'yes',
-  //     multiple: '',
-  //     pii: 'yes',
-  //     sort: false,
-  //     facet: false,
-  //     wildcard: true
-  //   }
+    const basicPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Basic,
+      type: 'integer',
+      identifier: 'yes',
+      multiple: '',
+      pii: 'yes',
+      sort: false,
+      facet: false,
+      wildcard: true
+    }
     
-  //   const editPropertyOptions: EditPropertyOptions = {
-  //     name: 'customerId',
-  //     isEdit: true,
-  //     propertyOptions: basicPropertyOptions
-  //   }
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'customerId',
+      isEdit: true,
+      propertyOptions: basicPropertyOptions
+    }
 
-  //   const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
-  //     <ModelingContext.Provider value={entityNamesArray}>
-  //       <PropertyModal 
-  //         entityName={entityType?.entityName}
-  //         entityDefinitionsArray={entityDefninitionsArray}
-  //         isVisible={true}
-  //         editPropertyOptions={editPropertyOptions}
-  //         structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
-  //         toggleModal={jest.fn()}
-  //         addPropertyToDefinition={jest.fn()}
-  //         addStructuredTypeToDefinition={jest.fn()}
-  //         editPropertyUpdateDefinition={jest.fn()}
-  //         deletePropertyFromDefinition={deleteMock}
-  //       />
-  //     </ModelingContext.Provider>
-  //   );
+    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
+          deletePropertyFromDefinition={deleteMock}
+        />
+      </ModelingContext.Provider>
+    );
 
-  //   expect(getByText('Edit Property')).toBeInTheDocument();
+    expect(getByText('Edit Property')).toBeInTheDocument();
 
-  //   userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
-  //   expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
-  //   expect(mockEntityReferences).toBeCalledTimes(1);
+    userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
 
-  //   await wait(() =>
-  //     expect(screen.getByText('Confirmation')).toBeInTheDocument(),
-  //   )
-  //   expect(screen.getByText('Are you sure you want to delete the')).toBeInTheDocument();
-  //   userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
-  //   expect(deleteMock).toBeCalledTimes(1);
-  // });
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
+    expect(deleteMock).toBeCalledTimes(1);
+  });
 
-  // test('can delete a structured property with step warning', async () => {
-  //   mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
+  test('can delete a structured property with step warning', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
 
-  //   let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
-  //   let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
-  //   let deleteMock = jest.fn();
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let deleteMock = jest.fn();
 
-  //   const basicPropertyOptions: PropertyOptions = {
-  //     propertyType: PropertyType.Basic,
-  //     type: 'short',
-  //     identifier: 'no',
-  //     multiple: 'yes',
-  //     pii: 'no',
-  //     sort: false,
-  //     facet: false,
-  //     wildcard: false
-  //   }
+    const basicPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Basic,
+      type: 'short',
+      identifier: 'no',
+      multiple: 'yes',
+      pii: 'no',
+      sort: false,
+      facet: false,
+      wildcard: false
+    }
     
-  //   const editPropertyOptions: EditPropertyOptions = {
-  //     name: 'street',
-  //     isEdit: true,
-  //     propertyOptions: basicPropertyOptions
-  //   }
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'street',
+      isEdit: true,
+      propertyOptions: basicPropertyOptions
+    }
 
 
-  //   const structuredOptions: StructuredTypeOptions = { 
-  //     isStructured: true,
-  //     name: 'Address',
-  //     propertyName: 'address'
-  //   }
+    const structuredOptions: StructuredTypeOptions = { 
+      isStructured: true,
+      name: 'Address',
+      propertyName: 'address'
+    }
 
-  //   const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
-  //     <ModelingContext.Provider value={entityNamesArray}>
-  //       <PropertyModal 
-  //         entityName={entityType?.entityName}
-  //         entityDefinitionsArray={entityDefninitionsArray}
-  //         isVisible={true}
-  //         editPropertyOptions={editPropertyOptions}
-  //         structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
-  //         toggleModal={jest.fn()}
-  //         addPropertyToDefinition={jest.fn()}
-  //         addStructuredTypeToDefinition={jest.fn()}
-  //         editPropertyUpdateDefinition={jest.fn()}
-  //         deletePropertyFromDefinition={deleteMock}
-  //       />
-  //     </ModelingContext.Provider>
-  //   );
+    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={structuredOptions}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
+          deletePropertyFromDefinition={deleteMock}
+        />
+      </ModelingContext.Provider>
+    );
 
-  //   expect(getByText('Edit Property')).toBeInTheDocument();
+    expect(getByText('Edit Property')).toBeInTheDocument();
 
-  //   userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
-  //   expect(mockEntityReferences).toBeCalledWith(structuredOptions.name);
-  //   expect(mockEntityReferences).toBeCalledTimes(1);
+    userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
 
-  //   await wait(() =>
-  //     expect(screen.getByText('Confirmation')).toBeInTheDocument(),
-  //   )
-  //   expect(screen.getByText('Delete may affect some steps.')).toBeInTheDocument();
-  //   userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
-  //   expect(deleteMock).toBeCalledTimes(1);
-  // });
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-step-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
+    expect(deleteMock).toBeCalledTimes(1);
+  });
+
+  test('can delete a relationship type property with step warning', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+
+    let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
+    let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
+    let deleteMock = jest.fn();
+
+    const relationshipPropertyOptions: PropertyOptions = {
+      propertyType: PropertyType.Relationship,
+      type: 'Order',
+      identifier: 'no',
+      multiple: 'yes',
+      pii: 'no',
+      sort: false,
+      facet: false,
+      wildcard: false
+    }
+    
+    const editPropertyOptions: EditPropertyOptions = {
+      name: 'orders',
+      isEdit: true,
+      propertyOptions: relationshipPropertyOptions
+    }
+
+    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+      <ModelingContext.Provider value={entityNamesArray}>
+        <PropertyModal 
+          entityName={entityType?.entityName}
+          entityDefinitionsArray={entityDefninitionsArray}
+          isVisible={true}
+          editPropertyOptions={editPropertyOptions}
+          structuredTypeOptions={DEFAULT_STRUCTURED_TYPE_OPTIONS}
+          toggleModal={jest.fn()}
+          addPropertyToDefinition={jest.fn()}
+          addStructuredTypeToDefinition={jest.fn()}
+          editPropertyUpdateDefinition={jest.fn()}
+          deletePropertyFromDefinition={deleteMock}
+        />
+      </ModelingContext.Provider>
+    );
+
+    expect(getByText('Edit Property')).toBeInTheDocument();
+
+    userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
+    expect(deleteMock).toBeCalledTimes(1);
+  });
 });
 

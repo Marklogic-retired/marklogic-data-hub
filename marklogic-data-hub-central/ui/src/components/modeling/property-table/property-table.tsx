@@ -20,6 +20,8 @@ import {
   EntityModified
 } from '../../../types/modeling-types';
 
+import { entityReferences } from '../../../api/modeling';
+import { UserContext } from '../../../util/user-context';
 import { ModelingContext } from '../../../util/modeling-context';
 import { definitionsParser } from '../../../util/data-conversion';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -66,10 +68,12 @@ const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
 }
 
 const PropertyTable: React.FC<Props> = (props) => {
+  const { handleError, resetSessionTime } = useContext(UserContext);
   const { modelingOptions, updateEntityModified } = useContext(ModelingContext)
   const [showPropertyModal, toggleShowPropertyModal] = useState(false);
 
   const [editPropertyOptions, setEditPropertyOptions] = useState<EditPropertyOptions>(DEFAULT_EDIT_PROPERTY_OPTIONS);
+  const [deletePropertyOptions, setDeletePropertyOptions] = useState({ definitionName: '', propertyName: ''});
 
   const [structuredTypeOptions, setStructuredTypeOptions] = useState<StructuredTypeOptions>(DEFAULT_STRUCTURED_TYPE_OPTIONS);
   const [definitions, setDefinitions] = useState<any>({});
@@ -206,15 +210,32 @@ const PropertyTable: React.FC<Props> = (props) => {
       title: 'Delete',
       dataIndex: 'delete',
       width: 75,
-      render: text => {
+      render: (text, record) => {
+        let definitionName = record.delete;
+
+        if (record.hasOwnProperty('structured')) {
+          if (record.structured === record.type) {
+            let addArray = record.add.split(',');
+            addArray = addArray.filter(item => item !== record.structured);
+            addArray = addArray.filter(item => item !== record.propertyName);
+            if (addArray.length > 0) {
+              definitionName = addArray[0];
+            }
+          } else {
+            definitionName = record.structured;
+          }
+        }
+        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${record.propertyName}`
+
         return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
         icon={faTrashAlt}
         size="2x"
+        data-testid={id}
         onClick={(event) => {
           if (!props.canWriteEntityModel && props.canReadEntityModel) {
             return event.preventDefault()
           } else {
-            return '' //TODO - Functionality for Delete Icon can be added here
+            deletePropertyShowModal(text, record, definitionName);
           }
         }}/>
       }
@@ -256,7 +277,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     let entityDefinitionsArray = definitionsParser(definitions);
     let renderTableData = parseDefinitionsToTable(entityDefinitionsArray);
     if (entityDefinitionsArray.length === 1) {
-      setHeaderColumns(columns.slice(0, 8));
+      setHeaderColumns(columns.slice(0, 9));
     } else if (entityDefinitionsArray.length > 1) {
       setHeaderColumns(columns);
     }
@@ -565,20 +586,72 @@ const PropertyTable: React.FC<Props> = (props) => {
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
   }
 
+  const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
+    try {
+      const response = await entityReferences(text);
+      if (response['status'] === 200) {
+        //let definitionName = record.delete;
+        let newConfirmType = ConfirmationType.DeletePropertyWarn;
+        let boldText: string[] = [record.propertyName]
+
+        if (response['data']['stepAndMappingNames'].length > 0) {
+          newConfirmType = ConfirmationType.DeletePropertyStepWarn;
+          boldText.push(text);
+        }
+
+        setDeletePropertyOptions({ definitionName: definitionName, propertyName: record.propertyName });
+        setConfirmBoldTextArray(boldText);
+        setStepValuesArray(response['data']['stepAndMappingNames']);
+        setConfirmType(newConfirmType);
+        toggleConfirmModal(true);
+      }
+    } catch (error) {
+      handleError(error)
+    } finally {
+      resetSessionTime();
+    }
+  }
+
   const deletePropertyFromDefinition = (definitionName: string, propertyName: string) => {
-    // TODO DHFPROD-5284
-    // console.log('definition name', definitionName)
-    // console.log('property name', propertyName)
+    let parseName = definitionName.split(',');
+    let parseDefinitionName = parseName[parseName.length-1]
+    let updatedDefinitions = {...definitions};
+    let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
 
-    // let parseName = definitionName.split(',');
-    // let parseDefinitionName = parseName[parseName.length-1]
-    // let updatedDefinitions = {...definitions};
-    // let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
+    if (entityTypeDefinition.hasOwnProperty('primaryKey') && entityTypeDefinition.primaryKey === propertyName) {
+      delete entityTypeDefinition.primaryKey;
+    }
+    if (entityTypeDefinition.hasOwnProperty('wordLexicon') && entityTypeDefinition.wordLexicon.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
+      entityTypeDefinition.wordLexicon.splice(index, 1);
+    }
+    if (entityTypeDefinition.hasOwnProperty('pii') && entityTypeDefinition.pii.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.pii.indexOf(propertyName);
+      entityTypeDefinition.pii.splice(index, 1);
+    }
+    if (entityTypeDefinition.hasOwnProperty('required') && entityTypeDefinition.required.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.required.indexOf(propertyName);
+      entityTypeDefinition.required.splice(index, 1);
+    }
+    if (entityTypeDefinition.hasOwnProperty('rangeIndex') && entityTypeDefinition.rangeIndex.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
+      entityTypeDefinition.rangeIndex.splice(index, 1);
+    }
+    if (entityTypeDefinition.hasOwnProperty('elementRangeIndex') && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
+      entityTypeDefinition.elementRangeIndex.splice(index, 1);
+    }
 
-    // delete entityTypeDefinition['properties'][propertyName];
+    delete entityTypeDefinition['properties'][propertyName];
+    updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
 
-    // updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
-    // updateEntityDefinitionsAndRenderTable(updatedDefinitions);
+    let entityModified: EntityModified = {
+      entityName: props.entityName,
+      modelDefinition: updatedDefinitions
+    }
+
+    updateEntityModified(entityModified);
+    updateEntityDefinitionsAndRenderTable(updatedDefinitions);
   }
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
@@ -599,8 +672,8 @@ const PropertyTable: React.FC<Props> = (props) => {
                 let parentDefinitionName = structuredType.name;
                 return parseStructuredProperty(entityDefinitionsArray, structProperty, parentDefinitionName);
               } else {
-                // TODO add functionality to sort, delete
-                  return {
+                // TODO add functionality to sort
+                return {
                   key: property.name + ',' + index + structIndex + counter,
                   structured: structuredType.name,
                   propertyName: structProperty.name,
@@ -609,7 +682,8 @@ const PropertyTable: React.FC<Props> = (props) => {
                   multiple: structProperty.multiple ? structProperty.name : '',
                   facetable: structProperty.facetable ? structProperty.name : '',
                   wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
-                  pii: structuredType?.pii.some(value => value === structProperty.name) ? structProperty.name : ''
+                  pii: structuredType?.pii.some(value => value ===  structProperty.name) ? structProperty.name : '',
+                  delete: entityTypeDefinition.name
                 }
               }
             });
@@ -631,14 +705,15 @@ const PropertyTable: React.FC<Props> = (props) => {
               type: property.ref.split('/').pop(),
               pii: piiValue,
               children: structuredTypeProperties,
-              add: addValue
+              add: addValue,
+              delete: entityTypeDefinition.name
             }
           }
         }
         propertyRow = parseStructuredProperty(entityDefinitionsArray, property, '');
         counter++;
       } else {
-        // TODO add functionality to sort, delete
+        // TODO add functionality to sort
         propertyRow = {
           key: property.name + ',' + index,
           propertyName: property.name,
@@ -648,7 +723,8 @@ const PropertyTable: React.FC<Props> = (props) => {
           facetable: property.facetable ? property.name : '',
           wildcard: entityTypeDefinition?.wordLexicon.some( value => value === property.name) ? property.name : '',
           pii: entityTypeDefinition?.pii.some(value => value === property.name) ? property.name : '',
-          add: ''
+          add: '',
+          delete: entityTypeDefinition.name
         }
       }
       return propertyRow;
@@ -668,7 +744,11 @@ const PropertyTable: React.FC<Props> = (props) => {
   }
 
   const confirmAction = () => {
-    // TODO DHFPROD-5284
+    if (confirmType === ConfirmationType.DeletePropertyWarn || confirmType === ConfirmationType.DeletePropertyStepWarn) {
+      deletePropertyFromDefinition(deletePropertyOptions.definitionName, deletePropertyOptions.propertyName);
+      toggleConfirmModal(false);
+      setDeletePropertyOptions({ definitionName: '', propertyName: '' });
+    }
   }
 
   const addPropertyButton = <MLButton

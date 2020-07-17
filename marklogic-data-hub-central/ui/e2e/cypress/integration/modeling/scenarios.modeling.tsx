@@ -49,6 +49,13 @@ describe('Entity Modeling', () => {
     propertyTable.getWildcardIcon('newID').should('exist');
     propertyTable.getFacetIcon('newID').should('exist');
 
+    propertyTable.editProperty('lname');
+    propertyModal.getDeleteIcon('lname').click();
+    confirmationModal.getDeletePropertyStepWarnText().should('exist');
+    confirmationModal.getNoButton(ConfirmationType.DeletePropertyStepWarn).click();
+    propertyModal.getCancelButton().click();
+    propertyTable.getProperty('lname').should('exist');
+
     entityTypeTable.getDeleteEntityIcon('Person').click();
     cy.contains('Entity type is used in one or more steps.');
     cy.contains('Show Steps...');
@@ -61,7 +68,7 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('Person').should('exist');
   });
 
-  it('can create a new entity, relationship type, and adding identifier confirmation, and delete entity', () => {
+  it('can create a new entity, add relationship type, and add identifier confirmation, delete property from modal, and delete entity', () => {
     modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Product');
@@ -129,6 +136,12 @@ describe('Entity Modeling', () => {
     propertyTable.getPiiIcon('user-id').should('not.exist');
     propertyTable.getWildcardIcon('user-id').should('not.exist');
 
+    propertyTable.editProperty('newId');
+    propertyModal.getDeleteIcon('newId').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('newId').should('not.exist');
+
     entityTypeTable.getSaveEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
@@ -141,9 +154,8 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('Product').should('not.exist');
   });
 
-  it('can create entity, can create a structured type, and properties to structure type, and add structure type as property, and delete entity', () => {
-    modelPage.getAddEntityButton().should('exist');
-    modelPage.getAddEntityButton().click();
+  it('can create entity, can create a structured type, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
+    modelPage.getAddEntityButton().should('exist').click();
     entityTypeModal.newEntityName('User');
     entityTypeModal.newEntityDescription('An entity for User');
     entityTypeModal.getAddButton().click();
@@ -296,6 +308,17 @@ describe('Entity Modeling', () => {
     propertyTable.expandNestedPropertyRow('User-alt_address-Address');
     propertyTable.getProperty('streetAlt').should('exist');
 
+    // delete structured property
+    propertyTable.getDeleteStructuredPropertyIcon('User', 'Address', 'streetAlt').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('streetAlt').should('not.exist');
+
+    propertyTable.getDeletePropertyIcon('User', 'alt_address').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('alt_address').should('not.exist');
+
     entityTypeTable.getSaveEntityIcon('User').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
@@ -308,7 +331,7 @@ describe('Entity Modeling', () => {
     entityTypeTable.getEntity('User').should('not.exist');
   });
 
-  it('can add multiple entities, add properties, and save all entities', () => {
+  it('can add multiple entities, add properties, delete properties, and save all entities', () => {
     modelPage.getAddEntityButton().should('exist');
     modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Concept');
@@ -328,9 +351,22 @@ describe('Entity Modeling', () => {
 
     propertyTable.getMultipleIcon('order').should('exist');
 
+    propertyTable.getAddPropertyButton('Concept').click();
+    propertyModal.newPropertyName('testing');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('More date types').click();    
+    propertyModal.getCascadedTypeFromDropdown('gDat').click();
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getDeletePropertyIcon('Concept','testing').should('exist');
+    propertyTable.getDeletePropertyIcon('Concept','testing').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('testing').should('not.exist');
+
     //create second Entity
-    modelPage.getAddEntityButton().should('exist');
-    modelPage.getAddEntityButton().click();
+    modelPage.getAddEntityButton().should('exist').click();
+    //modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Patient');
     entityTypeModal.newEntityDescription('An entity for patients');
     entityTypeModal.getAddButton().click();
@@ -358,6 +394,20 @@ describe('Entity Modeling', () => {
     propertyModal.getSubmitButton().click();
 
     propertyTable.getProperty('conceptType').should('exist');
+
+    // add second property and delete it
+    propertyTable.getAddPropertyButton('Patient').click();
+    propertyModal.newPropertyName('patientId');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('More number types').click();    
+    propertyModal.getCascadedTypeFromDropdown('byte').click();
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.editProperty('patientId');
+    propertyModal.getDeleteIcon('patientId').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('patientId').should('not.exist');
 
     modelPage.getSaveAllButton().click();
     confirmationModal.getYesButton(ConfirmationType.SaveAll).click();

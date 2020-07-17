@@ -54,6 +54,14 @@ class PropertyTable {
   expandNestedPropertyRow(nestedStructureClass: string) {
     return cy.get(`.${nestedStructureClass}`).find('td > div > [role=img]').eq(0).click();
   }
+
+  getDeletePropertyIcon(entityName: string, propertyName: string) {
+    return cy.findByTestId(`delete-${entityName}-${propertyName}`);
+  }
+
+  getDeleteStructuredPropertyIcon(entityName: string, structuredTypeName: string, propertyName: string) {
+    return cy.findByTestId(`delete-${entityName}-${structuredTypeName}-${propertyName}`);
+  }
 }
 
 const propertyTable = new PropertyTable();
