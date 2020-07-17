@@ -69,12 +69,13 @@ public class DeployEntityIndexesTest extends AbstractHubCoreTest {
 
             ArrayNode indexes = (ArrayNode) db.get("range-path-index");
             if (databaseKind.equals(DatabaseKind.STAGING)) {
-                assertEquals(1, indexes.size());
+                assertEquals(2, indexes.size());
             } else {
-                assertEquals(3, indexes.size(), "Expecting the Person/personId index and then two path range indexes " +
-                    "that are added to Final for mastering purposes");
+                assertEquals(4, indexes.size(), "Expecting the Person/personId, Person/name indexes and " +
+                        "then two path range indexes that are added to Final for mastering purposes");
             }
             assertEquals("//*:instance/Person/personId", indexes.get(0).get("path-expression").asText());
+            assertEquals("//*:instance/Person/name", indexes.get(1).get("path-expression").asText());
         });
     }
 }

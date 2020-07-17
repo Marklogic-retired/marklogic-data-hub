@@ -12,7 +12,8 @@
       "primaryKey": "customerId",
       "properties": {
         "customerId": {
-          "datatype": "integer"
+          "datatype": "integer",
+          "sortable": true
         },
         "name": {
           "datatype": "string",
@@ -38,7 +39,8 @@
         },
         "birthDate": {
           "datatype": "date",
-          "facetable": true
+          "facetable": true,
+          "sortable": true
         },
         "status": {
           "datatype": "string",
