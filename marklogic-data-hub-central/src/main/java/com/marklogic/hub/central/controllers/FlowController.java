@@ -51,6 +51,14 @@ public class FlowController extends BaseController {
         return ResponseEntity.ok(newFlowService().getFlowsWithStepDetails());
     }
 
+    @RequestMapping(value = "/{flowName}/latestJobInfo",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Get latest job details for the flow", response = FlowWithLatestJobDetails.class)
+    @Secured("ROLE_readFlow")
+    public ResponseEntity<JsonNode> getLatestJobInfo(@PathVariable String flowName) {
+        return ResponseEntity.ok(newFlowService().getFlowWithLatestJobInfo(flowName));
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     @ApiOperation(value = "Create a flow", response = FlowInfo.class)
@@ -160,6 +168,20 @@ public class FlowController extends BaseController {
         public String stepDefinitionType;
         public String sourceFormat;
         public String targetEntityType;
+    }
+
+    public static class FlowWithLatestJobDetails extends FlowInfo {
+        public List<StepWithLatestJobDetails> steps;
+    }
+
+    public static class StepWithLatestJobDetails {
+        public String stepId;
+        public String stepNumber;
+        public String stepName;
+        public String stepDefinitionType;
+        public String jobId;
+        public String lastRunStatus;
+        public String stepEndTime;
     }
 
     public static class AddStepInfo {

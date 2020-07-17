@@ -51,6 +51,7 @@ public interface FlowService {
             private BaseProxy.DBFunctionRequest req_deleteFlow;
             private BaseProxy.DBFunctionRequest req_addStepToFlow;
             private BaseProxy.DBFunctionRequest req_getFlowsWithStepDetails;
+            private BaseProxy.DBFunctionRequest req_getFlowWithLatestJobInfo;
             private BaseProxy.DBFunctionRequest req_removeStepFromFlow;
             private BaseProxy.DBFunctionRequest req_updateFlowInfo;
             private BaseProxy.DBFunctionRequest req_createFlow;
@@ -68,6 +69,8 @@ public interface FlowService {
                     "addStepToFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getFlowsWithStepDetails = this.baseProxy.request(
                     "getFlowsWithStepDetails.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_getFlowWithLatestJobInfo = this.baseProxy.request(
+                    "getFlowWithLatestJobInfo.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_removeStepFromFlow = this.baseProxy.request(
                     "removeStepFromFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_updateFlowInfo = this.baseProxy.request(
@@ -132,6 +135,21 @@ public interface FlowService {
             private com.fasterxml.jackson.databind.JsonNode getFlowsWithStepDetails(BaseProxy.DBFunctionRequest request) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request.responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getFlowWithLatestJobInfo(String name) {
+                return getFlowWithLatestJobInfo(
+                    this.req_getFlowWithLatestJobInfo.on(this.dbClient), name
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getFlowWithLatestJobInfo(BaseProxy.DBFunctionRequest request, String name) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
 
@@ -235,6 +253,14 @@ public interface FlowService {
    * @return	Return an array of flow documents, where each step has a few identifying data points and abstracts whether it's inline or referenced
    */
     com.fasterxml.jackson.databind.JsonNode getFlowsWithStepDetails();
+
+  /**
+   * Invokes the getFlowWithLatestJobInfo operation on the database server
+   *
+   * @param name	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getFlowWithLatestJobInfo(String name);
 
   /**
    * Invokes the removeStepFromFlow operation on the database server

@@ -83,8 +83,6 @@ const Run = (props) => {
             }
         } catch (error) {
             console.error('********* ERROR', error);
-            let message = error.response.data.message;
-            console.error('Error getting flows', message);
         } finally {
           resetSessionTime();
         }
@@ -180,13 +178,25 @@ const Run = (props) => {
         setViewWithEntity(<Browse/>, false, entityName, jobId);
     }
 
+    function showStepRunResponse(stepName, stepType, entityName, jobId, response){
+        if (response['jobStatus'] === Statuses.FINISHED) {
+            showSuccess(stepName, stepType, entityName, jobId);
+        } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
+            let errors = getErrors(response);
+            showErrors(stepName, stepType, errors, response, entityName, jobId);
+        } else if (response['jobStatus'] === Statuses.FAILED) {
+            let errors = getErrors(response);
+            showFailed(stepName, stepType, errors.slice(0,1));
+        }
+    }
+
     function showSuccess(stepName, stepType, entityName, jobId) {
          Modal.success({
               title:<div><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> ran successfully</p></div>,
                okText: 'Close',
                mask: false,
                width:650,
-               content: stepType.toLowerCase() === 'mapping' ?
+               content: stepType.toLowerCase() === 'mapping' && entityName ?
                    <div onClick={()=> goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                    <span className={styles.exploreIcon}></span>
                    <span className={styles.exploreText}>Explore Curated Data</span>
@@ -227,7 +237,7 @@ const Run = (props) => {
             title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
             content: (
                 <div id="error-list">
-                    {stepType.toLowerCase() === 'mapping' ? <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
+                    {stepType.toLowerCase() === 'mapping' && entityName ? <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
                     </div> : ''}
@@ -342,15 +352,7 @@ const Run = (props) => {
                           entityName = splitTargetEntity[splitTargetEntity.length-1];
                         }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
-                        if (response['jobStatus'] === Statuses.FINISHED) {
-                            showSuccess(stepName, stepType, entityName, jobId);
-                        } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
-                            let errors = getErrors(response);
-                            showErrors(stepName, stepType, errors, response, entityName, jobId);
-                        } else if (response['jobStatus'] === Statuses.FAILED) {
-                            let errors = getErrors(response);
-                            showFailed(stepName, stepType, errors.slice(0,1));
-                        }
+                        showStepRunResponse(stepName, stepType, entityName, jobId, response);
                         setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);
@@ -402,6 +404,8 @@ const Run = (props) => {
                 newStepToFlowOptions={props.newStepToFlowOptions}
                 addStepToFlow={addStepToFlow}
                 flowsDefaultActiveKey={flowsDefaultActiveKey}
+                showStepRunResponse={showStepRunResponse}
+                runEnded={runEnded}
             />
         </div>
     </div>

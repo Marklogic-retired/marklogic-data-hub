@@ -1,5 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext} from 'react';
-import {Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message, Select} from 'antd';
+import { Collapse, Icon, Card, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MLButton } from '@marklogic/design-system';
@@ -10,6 +10,8 @@ import styles from './flows.module.scss';
 import { MLTooltip, MLSpin, MLUpload } from '@marklogic/design-system';
 import { AuthoritiesContext } from "../../util/authorities";
 import {Link} from "react-router-dom";
+import axios from "axios";
+import {UserContext} from "../../util/user-context";
 
 const { Panel } = Collapse;
 
@@ -28,6 +30,8 @@ interface Props {
     newStepToFlowOptions: any;
     addStepToFlow: any;
     flowsDefaultActiveKey: any;
+    showStepRunResponse: any;
+    runEnded:any;
 }
 
 const StepDefinitionTypeTitles = {
@@ -46,6 +50,7 @@ const StepDefinitionTypeTitles = {
 }
 
 const Flows: React.FC<Props> = (props) => {
+    const { handleError, resetSessionTime } = useContext(UserContext);
     const [newFlow, setNewFlow] = useState(false);
     const [title, setTitle] = useState('');
     const [flowData, setFlowData] = useState({});
@@ -62,12 +67,31 @@ const Flows: React.FC<Props> = (props) => {
     const [openNewFlow, setOpenNewFlow] = useState(props.newStepToFlowOptions?.addingStepToFlow && !props.newStepToFlowOptions?.existingFlow);
     const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ['-1']);
     const [showLinks, setShowLinks] = useState('');
+    const [latestJobData, setLatestJobData] = useState<any>({});
+
 
     useEffect(() => {
         if (JSON.stringify(props.flowsDefaultActiveKey) !== JSON.stringify([])) {
             setActiveKeys([...props.flowsDefaultActiveKey]);
         }
+        // Get the latest job info when a step is added to an existing flow from Curate or Load Tile
+        if(JSON.stringify(props.flows) !== JSON.stringify([])){
+            if(props.newStepToFlowOptions && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey != -1){
+                getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
+            }
+        }
     }, [props.flows])
+
+    useEffect(() => {
+    }, [latestJobData])
+
+    // Get the latest job info after a step (in a flow) run
+    useEffect(()=>{
+        let num = props.flows.findIndex((flow) => flow.name === props.runEnded.flowId);
+        if(num >= 0){
+            getFlowWithJobInfo(num);
+        }
+    },[props.runEnded])
 
     // For role-based privileges
     const authorityService = useContext(AuthoritiesContext);
@@ -256,12 +280,78 @@ const Flows: React.FC<Props> = (props) => {
     function handleMouseOver(e, name) {
         setShowLinks(name);
     }
+    const showStepRunResponse = async (step) =>{
+        try{
+            let response = await axios.get('/api/jobs/' + step.jobId)
+            if(response.status === 200){
+                props.showStepRunResponse(step.stepName, step.stepDefinitionType, "", step.jobId, response.data);
+            }
+        }
+        catch(error){
+            handleError(error);
+        }finally {
+            resetSessionTime();
+        }
+    }
+
+    const lastRunResponse = (step) => {
+        let stepEndTime, tooltipText;
+        if(step.stepEndTime){
+            stepEndTime = new Date(step.stepEndTime).toLocaleString();
+        }
+        if(!step.lastRunStatus){
+            return ;
+        }
+        else if (step.lastRunStatus === "completed step " + step.stepNumber) {
+            tooltipText = "Step last ran successfully on "+ stepEndTime;
+            return(
+                <MLTooltip overlayStyle={{maxWidth: '200px'}} title= {tooltipText} placement="bottom"  >
+                    <Icon type="check-circle" theme="filled" className={styles.successfulRun} />
+                </MLTooltip>
+            );
+
+        }
+        else if (step.lastRunStatus === "completed with errors step " + step.stepNumber) {
+            tooltipText = "Step last ran with errors on "+ stepEndTime;
+            return(
+                <MLTooltip overlayStyle={{maxWidth: '190px'}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
+                    <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+                </MLTooltip>
+            );
+        }
+        else {
+            tooltipText = "Step last failed on "+ stepEndTime;
+            return(
+                <MLTooltip overlayStyle={{maxWidth: '175px'}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
+                    <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+                </MLTooltip>
+            );
+        }
+    }
+
+    const getFlowWithJobInfo = async (flowNum) => {
+        let currentFlow = props.flows[flowNum];
+        if (currentFlow['steps'].length > 0) {
+            try {
+                let response = await axios.get('/api/flows/' + currentFlow.name + "/latestJobInfo");
+                if (response.status === 200 && response.data) {
+                    let currentFlowJobInfo = {}
+                    currentFlowJobInfo[currentFlow["name"]] = response.data["steps"];
+                    setLatestJobData({...latestJobData, ...currentFlowJobInfo});
+                }
+            } catch (error) {
+                console.error('Error getting latest job info ', error);
+            }finally {
+                resetSessionTime();
+            }
+        }
+    }
 
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
             let flowName = flow.name;
-            let cards = flow.steps.map(step => {
+            let cards = flow.steps.map((step, index) => {
                 let sourceFormat = step.sourceFormat;
                 let stepNumber = step.stepNumber;
                 let viewStepId = `${flowName}-${stepNumber}`
@@ -270,9 +360,14 @@ const Flows: React.FC<Props> = (props) => {
                 return (
                   <div key={viewStepId}>
                     <Card
-                        style={{ width: 300, marginRight: 20 }}
+                        className={styles.cardStyle}
                         title={StepDefToTitle(step.stepDefinitionType)}
                         size="small"
+                        actions={[
+                            <span className={styles.stepResponse}>
+                                {latestJobData && latestJobData[flowName] ? lastRunResponse(latestJobData[flowName][index]): ''}
+                            </span>
+                        ]}
                         extra={
                             <div className={styles.actions}>
                                 {props.hasOperatorRole ?
@@ -374,6 +469,11 @@ const Flows: React.FC<Props> = (props) => {
 
     //Update activeKeys on Collapse Panel interactions
     const handlePanelInteraction = (key) => {
+        /* Request to get latest job info for the flow will be made when someone opens the pane for the first time
+        or opens a new pane. Closing the pane shouldn't send any requests*/
+        if(!activeKeys || (key.length > activeKeys.length && key.length > 0)) {
+            getFlowWithJobInfo(key[key.length - 1]);
+        }
         setActiveKeys([...key])
     }
 
