@@ -55,6 +55,16 @@ describe('Entity Modeling', () => {
     confirmationModal.getNoButton(ConfirmationType.DeletePropertyStepWarn).click();
     propertyModal.getCancelButton().click();
     propertyTable.getProperty('lname').should('exist');
+    propertyTable.editProperty('fname');
+    cy.waitUntil(() => propertyModal.getToggleStepsButton().should('exist')).click();
+    cy.contains('mapPersonJSON');
+    cy.contains('match-person');
+    cy.contains('merge-person');
+    cy.contains('master-person');
+    cy.contains('Hide Steps...');
+    propertyModal.getToggleStepsButton().click();
+    cy.contains('Show Steps...');
+    propertyModal.getCancelButton().click();
 
     entityTypeTable.getDeleteEntityIcon('Person').click();
     cy.contains('Entity type is used in one or more steps.');
@@ -120,6 +130,7 @@ describe('Entity Modeling', () => {
 
     // edit property and change type to relationship
     propertyTable.editProperty('product-id');
+    propertyModal.getToggleStepsButton().should('not.exist')
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('user-id');
     propertyModal.openPropertyDropdown();
@@ -258,6 +269,7 @@ describe('Entity Modeling', () => {
 
     //Edit Property Structured Property
     propertyTable.editProperty('street');
+    propertyModal.getToggleStepsButton().should('not.exist')
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('Zip');
     propertyModal.getSubmitButton().click();
@@ -301,6 +313,7 @@ describe('Entity Modeling', () => {
 
     // change relationship property to structured
     propertyTable.editProperty('alt_address');
+    propertyModal.getToggleStepsButton().should('not.exist')
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('Address').click();
