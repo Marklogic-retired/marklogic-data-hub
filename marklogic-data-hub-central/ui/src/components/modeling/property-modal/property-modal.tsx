@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Modal, Form, Input, Icon, Radio, Cascader } from 'antd';
-import { MLButton } from '@marklogic/design-system';
+import { MLButton, MLAlert } from '@marklogic/design-system';
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './property-modal.module.scss';
@@ -133,6 +133,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [stepValuesArray, setStepValuesArray] = useState<string[]>([]);
+  const [showSteps, toggleSteps] = useState(false);
 
   const [typeDisplayValue, setTypeDisplayValue] = useState<string[]>([]);
   const [typeErrorMessage, setTypeErrorMessage] = useState('');
@@ -153,6 +154,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         let isCommonType = COMMON_PROPERTY_TYPES.some( property => property.value === props.editPropertyOptions.propertyOptions.type);
         let showConfigOptions = true;
         let newRadioValues = ALL_RADIO_DISPLAY_VALUES;
+        getEntityReferences();
 
         if (!isCommonType && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
           let type = '';
@@ -225,11 +227,9 @@ const PropertyModal: React.FC<Props> = (props) => {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
           boldText.push(props.entityName);
         }
-
         setConfirmBoldTextArray(boldText);
-        setStepValuesArray(response['data']['stepAndMappingNames']);
         setConfirmType(newConfirmType);
-        toggleConfirmModal(true);
+        setStepValuesArray(response['data']['stepAndMappingNames']);
       }
     } catch (error) {
       handleError(error)
@@ -369,7 +369,11 @@ const PropertyModal: React.FC<Props> = (props) => {
       toggleConfirmModal(false);
     } else {
       // Delete Property
-      let definitionName = props.structuredTypeOptions.isStructured ? props.structuredTypeOptions.name : props.entityName;
+      let definitionName = props.entityName;
+      if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.type !== props.structuredTypeOptions.name) {
+        definitionName = props.structuredTypeOptions.name;
+      }
+
       props.deletePropertyFromDefinition(definitionName, name);
       setStepValuesArray([]);
       setConfirmBoldTextArray([]);
@@ -596,9 +600,11 @@ const PropertyModal: React.FC<Props> = (props) => {
     )
   });
 
+  const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
+
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit && 
-      <MLButton type="link" onClick={getEntityReferences} >
+      <MLButton type="link" onClick={() => toggleConfirmModal(true)} >
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
     }
@@ -632,6 +638,32 @@ const PropertyModal: React.FC<Props> = (props) => {
       onCancel={onCancel}
       footer={modalFooter}
     >
+      {props.editPropertyOptions.isEdit && stepValuesArray.length > 0 && 
+        <div className={styles.warningContainer}>
+          <MLAlert
+            className={styles.alert}
+            closable={false}
+            description={"Entity type is used in one or more steps."}
+            showIcon
+            type="warning"
+          />
+          <p className={styles.stepWarning}>
+            The <b>{props.entityName}</b> entity type is in use in some steps. If that usage is affected by this property,
+            you may need to modify these steps to correlate with your changes to this property.
+          </p>
+          <p
+            aria-label="toggle-steps"
+            className={styles.toggleSteps}
+            onClick={() => toggleSteps(!showSteps)}
+          >{showSteps ? 'Hide Steps...' : 'Show Steps...'}</p>
+
+          {showSteps && (
+            <ul className={styles.stepList}>
+              {renderSteps}
+            </ul>
+          )}
+        </div>
+      }
       <Form
         {...layout}
         id='property-form'

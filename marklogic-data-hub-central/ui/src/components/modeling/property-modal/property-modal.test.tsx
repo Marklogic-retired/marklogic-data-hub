@@ -13,7 +13,7 @@ import {
 
 import { entityReferences } from '../../../api/modeling';
 import { definitionsParser } from '../../../util/data-conversion';
-import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling';
+import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadStepRelationships } from '../../../assets/mock-data/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { ModelingContext } from '../../../util/modeling-context';
 import { entityNamesArray, customerEntityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
@@ -35,7 +35,7 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: '',
   pii: '',
   sort: false,
-  facet: false,
+  facetable: false,
   wildcard: false
 }
 
@@ -365,7 +365,9 @@ describe('Property Modal Component', () => {
     expect(addMock).toHaveBeenCalledTimes(1);
   });
 
-  test('can edit a basic property, but cancel changes', async () => {
+  test('can edit a basic property with step warning, but cancel changes', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadStepRelationships });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let editMock = jest.fn();
@@ -377,7 +379,7 @@ describe('Property Modal Component', () => {
       multiple: '',
       pii: 'yes',
       sort: false,
-      facet: false,
+      facetable: false,
       wildcard: true
     }
     
@@ -387,7 +389,7 @@ describe('Property Modal Component', () => {
       propertyOptions: basicPropertyOptions
     }
 
-    const { getByLabelText, getByText, queryByTestId } =  render(
+    const { getByLabelText, getByText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
@@ -403,6 +405,21 @@ describe('Property Modal Component', () => {
         />
       </ModelingContext.Provider>
     );
+
+
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
+    
+    await wait(() =>
+      expect(getByText('Show Steps...')).toBeInTheDocument()
+    )
+    
+    expect(queryByText('Hide Steps...')).toBeNull();
+    userEvent.click(getByLabelText('toggle-steps'));
+    expect(getByText('Hide Steps...')).toBeInTheDocument();
+    expect(queryByText('Show Steps...')).toBeNull();
+    expect(getByText('Order-Load')).toBeInTheDocument();
+    expect(getByText('Order-Map')).toBeInTheDocument();
 
     expect(getByText('Edit Property')).toBeInTheDocument();
 
@@ -426,6 +443,8 @@ describe('Property Modal Component', () => {
   });
 
   test('can edit a relationship property', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let editMock = jest.fn();
@@ -447,7 +466,7 @@ describe('Property Modal Component', () => {
       propertyOptions: relationshipPropertyOptions
     }
 
-    const { getByLabelText, getByText, queryByTestId, getByPlaceholderText } =  render(
+    const { getByLabelText, getByText, queryByTestId, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
@@ -464,6 +483,12 @@ describe('Property Modal Component', () => {
       </ModelingContext.Provider>
     );
 
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    expect(queryByText('Show Steps...')).toBeNull();
+    expect(queryByText('Hide Steps...')).toBeNull();
+
     expect(getByText('Edit Property')).toBeInTheDocument();
 
     const multipleRadio = screen.getByLabelText('multiple-yes')
@@ -477,6 +502,8 @@ describe('Property Modal Component', () => {
   });
 
   test('can edit a structured type property and change property name', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let editMock = jest.fn();
@@ -504,7 +531,7 @@ describe('Property Modal Component', () => {
       propertyName: 'shipping'
     }
 
-    const { getByLabelText, getByText, getByPlaceholderText } =  render(
+    const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
@@ -520,6 +547,20 @@ describe('Property Modal Component', () => {
         />
       </ModelingContext.Provider>
     );
+
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    await wait(() =>
+      expect(getByText('Show Steps...')).toBeInTheDocument()
+    )    
+
+    expect(queryByText('Hide Steps...')).toBeNull();
+    userEvent.click(getByLabelText('toggle-steps'));
+    expect(getByText('Hide Steps...')).toBeInTheDocument();
+    expect(queryByText('Show Steps...')).toBeNull();
+    expect(getByText('Order-Load')).toBeInTheDocument();
+    expect(getByText('Order-Map')).toBeInTheDocument();
 
     expect(getByText('Edit Property')).toBeInTheDocument();
 
@@ -541,6 +582,8 @@ describe('Property Modal Component', () => {
   });
 
   test('can edit a basic property from a structured type', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let editMock = jest.fn();
@@ -568,7 +611,7 @@ describe('Property Modal Component', () => {
       propertyName: 'address'
     }
 
-    const { getByLabelText, getByText, getByPlaceholderText } =  render(
+    const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal 
           entityName={entityType?.entityName}
@@ -584,6 +627,12 @@ describe('Property Modal Component', () => {
         />
       </ModelingContext.Provider>
     );
+
+    expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    expect(queryByText('Show Steps...')).toBeNull();
+    expect(queryByText('Hide Steps...')).toBeNull();
 
     expect(getByText('Edit Property')).toBeInTheDocument();
     expect(getByText('Structured Type:')).toBeInTheDocument();
@@ -621,7 +670,7 @@ describe('Property Modal Component', () => {
       multiple: '',
       pii: 'yes',
       sort: false,
-      facet: false,
+      facetable: false,
       wildcard: true
     }
     
@@ -675,7 +724,7 @@ describe('Property Modal Component', () => {
       multiple: 'yes',
       pii: 'no',
       sort: false,
-      facet: false,
+      facetable: false,
       wildcard: false
     }
     

@@ -49,6 +49,9 @@ class PropertyModal {
   getDeleteIcon(propertyName: string) {
     return cy.findByTestId(`delete-${propertyName}`);
   }
+  getToggleStepsButton() {
+    return cy.findByLabelText('toggle-steps');
+  }
 }
 
 const propertyModal = new PropertyModal();

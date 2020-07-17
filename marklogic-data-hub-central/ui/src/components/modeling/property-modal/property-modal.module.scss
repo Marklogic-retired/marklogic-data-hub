@@ -51,3 +51,30 @@
   display: flex;
   justify-content: flex-end; 
 }
+
+.warningContainer {
+  width: 98%;
+  margin: auto;
+}
+
+.stepWarning {
+  margin-top: 10px; 
+}
+
+.toggleSteps {
+  cursor: pointer; 
+  color: #5B69AF;
+ }
+ 
+ .stepList {
+   list-style: none;
+   li {
+     margin-left: 15px; 
+   }
+ 
+   li::before {
+     content: "- ";
+     margin-left: -15px;
+   }
+ }
+ 
