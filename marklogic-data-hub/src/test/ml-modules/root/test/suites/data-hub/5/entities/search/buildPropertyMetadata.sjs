@@ -24,7 +24,9 @@ function verifySimpleProperty() {
       "Customer": {
         "properties": {
           "customerId": {
-            "datatype": "integer"
+            "datatype": "integer",
+            "facetable": true,
+            "sortable": true
           }
         }
       }
@@ -37,7 +39,9 @@ function verifySimpleProperty() {
     test.assertEqual("customerId", metadata[0].propertyPath),
     test.assertEqual("customerId", metadata[0].propertyLabel),
     test.assertEqual("integer", metadata[0].datatype),
-    test.assertEqual(false, metadata[0].multiple)
+    test.assertEqual(false, metadata[0].multiple),
+    test.assertEqual(true, metadata[0].facetable),
+    test.assertEqual(true, metadata[0].sortable)
   ];
 }
 
@@ -48,6 +52,7 @@ function verifySimpleArrayProperty() {
         "properties": {
           "nicknames": {
             "datatype": "array",
+            "facetable": true,
             "items": {
               "datatype": "string"
             }
@@ -63,7 +68,9 @@ function verifySimpleArrayProperty() {
     test.assertEqual("nicknames", metadata[0].propertyPath),
     test.assertEqual("nicknames", metadata[0].propertyLabel),
     test.assertEqual("string", metadata[0].datatype),
-    test.assertEqual(true, metadata[0].multiple)
+    test.assertEqual(true, metadata[0].multiple),
+    test.assertEqual(true, metadata[0].facetable),
+    test.assertEqual(undefined, metadata[0].sortable)
   ];
 }
 
@@ -73,8 +80,10 @@ function verifyStructuredProperty() {
       "Customer": {
         "properties": {
           "shipping": {
-            "$ref": "#/definitions/Address"
-          }
+            "$ref": "#/definitions/Address",
+            "facetable": true,
+            "sortable": true
+          },
         }
       },
       "Address": {
@@ -100,6 +109,8 @@ function verifyStructuredProperty() {
     test.assertEqual("shipping", metadata[0].propertyLabel),
     test.assertEqual("object", metadata[0].datatype),
     test.assertEqual(false, metadata[0].multiple),
+    test.assertEqual(undefined, metadata[0].facetable),
+    test.assertEqual(undefined, metadata[0].sortable),
 
     test.assertEqual(2, metadata[0].properties.length),
 
@@ -122,6 +133,8 @@ function verifyStructuredArrayProperty() {
         "properties": {
           "shipping": {
             "datatype": "array",
+            "facetable": true,
+            "sortable": true,
             "items": {
               "$ref": "#/definitions/Address"
             }
@@ -156,6 +169,8 @@ function verifyStructuredArrayProperty() {
     test.assertEqual("shipping", metadata[0].propertyLabel),
     test.assertEqual("object", metadata[0].datatype),
     test.assertEqual(true, metadata[0].multiple),
+    test.assertEqual(undefined, metadata[0].facetable),
+    test.assertEqual(undefined, metadata[0].sortable),
 
     test.assertEqual(1, metadata[0].properties.length),
 

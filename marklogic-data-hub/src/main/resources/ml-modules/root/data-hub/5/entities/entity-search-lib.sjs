@@ -104,6 +104,16 @@ function buildAllMetadata(parentPropertyName, entityModel, entityName) {
     propertyMetadata["multiple"] = (isSimpleArrayProperty || isStructuredArrayProperty) ? true : false;
     propertyMetadataObject["multiple"] = propertyMetadata["multiple"];
 
+    if(property.sortable && !(isStructuredProperty || isStructuredArrayProperty)) {
+      propertyMetadata["sortable"] =  property.sortable;
+      propertyMetadataObject["sortable"] = property.sortable;
+    }
+
+    if(property.facetable && !(isStructuredProperty || isStructuredArrayProperty)) {
+      propertyMetadata["facetable"] =  property.facetable;
+      propertyMetadataObject["facetable"] = property.facetable;
+    }
+
     if (isStructuredProperty || isStructuredArrayProperty) {
       let referenceInfo = isStructuredProperty ? property["$ref"].split("/") : property["items"]["$ref"].split("/");
       if (referenceInfo[0] !== "#") {
