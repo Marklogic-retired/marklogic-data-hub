@@ -1,16 +1,24 @@
 import React from 'react';
-import { render, screen, fireEvent, wait, getByTestId } from '@testing-library/react';
+import { render, screen, fireEvent, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
 
+import { entityReferences } from '../../../api/modeling';
+import { ConfirmationType } from '../../../types/modeling-types';
 import { ModelingContext } from '../../../util/modeling-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
-import { propertyTableEntities } from '../../../assets/mock-data/modeling';
+import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling';
 import { entityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
 
+jest.mock('../../../api/modeling');
+
+const mockEntityReferences = entityReferences as jest.Mock;
 
 describe('Entity Modeling Property Table Component', () => {
-  window.scrollTo = jest.fn()
+  window.scrollTo = jest.fn();
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   test('Property Table renders an Entity with no properties, no writer role', () => {
     let entityName = 'NewEntity';
@@ -23,7 +31,6 @@ describe('Entity Modeling Property Table Component', () => {
         definitions={definitions}
       />
     )
-
 
     expect(getByText('Add Property')).toBeInTheDocument();
     expect(getByText('Property Name')).toBeInTheDocument();
@@ -265,6 +272,80 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.submit(screen.getByLabelText('input-name'));
 
     expect(getByTestId('basicID-span')).toBeInTheDocument();
+  });
+
+  test('can delete a basic property from the table', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+
+    let entityName = propertyTableEntities[0].entityName;
+    let definitions = propertyTableEntities[0].model.definitions;
+    const { getByText, getByTestId } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    userEvent.click(screen.getByTestId('delete-Concept-domain'));
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
+    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.queryByTestId('domain-span')).toBeNull()
+  });
+
+
+  test('can delete a property that is type structured from the table', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+
+    let entityName = propertyTableEntities[1].entityName;
+    let definitions = propertyTableEntities[1].model.definitions;
+    const { getByText, getByTestId } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    userEvent.click(getByTestId('delete-Order-address'));
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
+    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.queryByTestId('address-span')).toBeNull()
+  });
+
+  test('can delete a property from a structured type from the table', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
+
+    let entityName = propertyTableEntities[2].entityName;
+    let definitions = propertyTableEntities[2].model.definitions;
+    const { getAllByRole, getByTestId } =  render(
+      <PropertyTable 
+        canReadEntityModel={true}
+        canWriteEntityModel={true}
+        entityName={entityName} 
+        definitions={definitions}
+      />
+    )
+
+    userEvent.click(getAllByRole('img')[0]);
+    userEvent.click(getByTestId('delete-Customer-Address-city'));
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-property-step-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
+    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.queryByTestId('city-span')).toBeNull();
   });
 });
 

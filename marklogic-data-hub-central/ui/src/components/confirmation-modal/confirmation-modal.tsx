@@ -125,7 +125,12 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         </>
       )}
 
-      {props.type === ConfirmationType.DeletePropertyWarn && <span id="delete-property-text">Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</span>}
+      {props.type === ConfirmationType.DeletePropertyWarn && 
+        <span 
+          id="delete-property-text"
+          aria-label="delete-property-text"
+        >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</span>
+      }
 
       {props.type === ConfirmationType.DeletePropertyStepWarn && (
         <>
@@ -136,8 +141,8 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             showIcon
             type="warning"
           />
-          <p id="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> is used in one or more steps,
-          so deleting this property may require editing the steps to make sure this deletion dooesn't affect those steps.</p>
+          <p id="delete-property-step-text" aria-label="delete-property-step-text">The <b>{props.boldTextArray[1]}</b> entity type is used in one or more steps,
+          so deleting this property may require editing the steps to make sure this deletion doesn't affect those steps.</p>
           <p
             aria-label="toggle-steps"
             className={styles.toggleSteps}

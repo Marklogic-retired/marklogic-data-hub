@@ -28,6 +28,12 @@ class ConfirmationModal {
   getDeleteEntityStepText() {
     return cy.get('#delete-step-text', {timeout: 15000});
   }
+  getDeletePropertyWarnText() {
+    return cy.get('#delete-property-text', {timeout: 15000});
+  }
+  getDeletePropertyStepWarnText() {
+    return cy.get('#delete-property-step-text', {timeout: 15000});
+  }
 }
 
 const confirmationModal = new ConfirmationModal();

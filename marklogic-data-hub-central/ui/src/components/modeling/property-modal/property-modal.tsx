@@ -597,8 +597,8 @@ const PropertyModal: React.FC<Props> = (props) => {
   });
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
-    { props.editPropertyOptions.isEdit &&
-      <MLButton type="link" disabled={true} onClick={getEntityReferences} >
+    { props.editPropertyOptions.isEdit && 
+      <MLButton type="link" onClick={getEntityReferences} >
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
     }
