@@ -145,7 +145,7 @@ declare %private function hent:fix-options($nodes as node()*)
       default return $n
 };
 
-declare %private function hent:fix-options-exp($nodes as node()*)
+declare %private function hent:fix-options-exp($nodes as node()*, $sortable-properties as map:map)
 {
   for $n in $nodes
   return
@@ -192,7 +192,21 @@ declare %private function hent:fix-options-exp($nodes as node()*)
               <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
-          hent:fix-options-exp($n/node())
+          hent:fix-options-exp($n/node(), $sortable-properties)
+        }
+      case element(search:constraint) return
+        element { fn:node-name($n) } {
+          $n/@*,
+          let $constraint-name := $n/attribute()[(name()='name')]
+          let $search-range-node := $n/search:range
+          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, xs:string($constraint-name)))) then
+            hent:fix-options-exp($n/node(), $sortable-properties)
+            else
+              element {fn:node-name($search-range-node)} {
+                $search-range-node/attribute()[not(name()='facet')],
+                attribute facet {"false"},
+                hent:fix-options-exp($search-range-node, $sortable-properties)/node()
+              }
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
@@ -200,14 +214,14 @@ declare %private function hent:fix-options-exp($nodes as node()*)
         element { fn:node-name($n) } {
          $n/namespace::node(),
          $n/@*,
-         hent:fix-options-exp($n/node()),
+         hent:fix-options-exp($n/node(), $sortable-properties),
          <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>}
       case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-options-exp($n/node()),
+          hent:fix-options-exp($n/node(), $sortable-properties),
 
           let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
           where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
@@ -223,11 +237,12 @@ declare %private function hent:fix-options-exp($nodes as node()*)
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
-  let $entities := hent:add-indexes-for-entity-properties($entities)
+  let $sortable-properties := map:get(hent:add-indexes-for-entity-properties($entities), "sortable-properties")
+  let $entities := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return if ($for-explorer = fn:true())
     then
-        hent:fix-options-exp(es:search-options-generate($uber-model))
+        hent:fix-options-exp(es:search-options-generate($uber-model), $sortable-properties)
     else (
         hent:fix-options(es:search-options-generate($uber-model)))
 };
@@ -260,7 +275,7 @@ declare function hent:dump-pii($entities as json:array)
 
 declare function hent:dump-indexes($entities as json:array)
 {
-  let $entities := hent:add-indexes-for-entity-properties($entities)
+  let $entities := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
 
   let $database-config := xdmp:from-json(es:database-properties-generate($uber-model))
@@ -534,15 +549,18 @@ declare function hent:json-schema-generate($entity-title as xs:string, $uber-mod
 declare %private function hent:add-indexes-for-entity-properties($entities as json:array) {
   let $models := json:array-values($entities) ! xdmp:to-json(.)/object-node()
   let $updated-models := json:array()
+  let $sortable-properties := map:map()
+  let $result-map := map:map()
 
   let $_ :=
     for $model as map:map in $models
-      let $entity-type := map:get($model, "definitions")=>map:get(map:get($model, "info")=>map:get("title"))
+      let $entity-title := map:get($model, "info")=>map:get("title")
+      let $entity-type := map:get($model, "definitions")=>map:get($entity-title)
       let $entity-type-properties :=
         let $empty-map := map:map()
           return
             if (fn:empty($entity-type)) then
-              let $_ := xdmp:log("Could not find entity definition with name: " || map:get($model, "info")=>map:get("title"))
+              let $_ := xdmp:log("Could not find entity definition with name: " || $entity-title)
               return $empty-map
             else
               let $_ :=
@@ -563,8 +581,22 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                 else
                   fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
                   map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
-            where $is-facetable
+            let $is-sortable :=
+              let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
+              return
+                if(fn:empty($items)) then
+                  map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+                else
+                  fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
+                  map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+            let $_ :=
+                let $title-property := fn:concat($entity-title, ".", $entity-type-property)
+                where $is-sortable and fn:not($is-facetable)
+                return map:put($sortable-properties, $title-property, "")
+            where $is-facetable or $is-sortable
             return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
       return json:array-push($updated-models, $model)
-  return $updated-models
+  let $_ := map:put($result-map, "updated-models", $updated-models)
+  let $_ := map:put($result-map, "sortable-properties", $sortable-properties)
+  return $result-map
 };

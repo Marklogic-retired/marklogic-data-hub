@@ -247,6 +247,34 @@ function generateIndexConfigWithStructuredProperties() {
   ];
 }
 
+function generateIndexConfigWithSortableProperties() {
+  const indexes = generateRangeIndexConfig([
+    {
+      "info": {
+        "title": "Book"
+      },
+      "definitions": {
+        "Book": {
+          "properties": {
+            "title": {"datatype": "string", "facetable": true, "collation": "http://marklogic.com/collation/"},
+            "authors": {"datatype": "array", "sortable": true, "items": {"datatype": "string"}},
+            "rating": {"datatype": "integer", "facetable": true, "sortable": true, "items": {"datatype": "string"}},
+            "id": {"datatype": "string", "collation": "http://marklogic.com/collation/"},
+            "customer": {"datatype": "array", "items": {"$ref": "#/definitions/Address"}, "sortable": true},
+            "address": {"$ref": "#/definitions/Address", "facetable": true}
+          }
+        }
+      }
+    }
+  ]);
+  return [
+    test.assertEqual(3, indexes.length),
+    test.assertEqual("//*:instance/Book/title", indexes[0]["path-expression"]),
+    test.assertEqual("//*:instance/Book/authors", indexes[1]["path-expression"]),
+    test.assertEqual("//*:instance/Book/rating", indexes[2]["path-expression"])
+  ];
+}
+
 []
   .concat(sharedPropertyWithNullNamespace())
   .concat(sharedPropertyWithSameNamespaces())
