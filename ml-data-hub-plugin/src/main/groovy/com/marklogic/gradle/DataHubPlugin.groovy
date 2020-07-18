@@ -34,6 +34,7 @@ import com.marklogic.hub.gradle.task.MigrateProjectFlowsTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
+import com.marklogic.hub.gradle.task.PullConfigurationFilesTask
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import com.marklogic.mgmt.ManageClient
@@ -109,6 +110,10 @@ class DataHubPlugin implements Plugin<Project> {
                 "all user files that can be managed with Hub Central, which are: entity models, flows, step definitions, and steps. " +
                 "The contents of the project zip, specified via -Pfile=/path/to/datahub-project.zip, " +
                 "will then be extracted into the project directory.")
+        project.task("hubPullConfigurationFiles", group: deployGroup, type: PullConfigurationFilesTask,
+            description: "Download the Hub Central artifacts and apply the project zip to this project. " +
+                "This will first download the artifacts (entity models, flows, step definitions, and steps) , then delete all user files in the project directory"+
+                " and the contents of the downloaded zip will then be extracted into the project directory.")
 
         String flowMigrationGroup = "Data Hub Flow Migration"
         project.task("hubDeleteInstalledLegacyMappings", group: flowMigrationGroup, type: DeleteInstalledLegacyMappingsTask,
