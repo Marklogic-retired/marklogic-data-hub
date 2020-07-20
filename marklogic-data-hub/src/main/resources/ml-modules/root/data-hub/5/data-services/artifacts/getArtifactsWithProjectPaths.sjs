@@ -37,7 +37,8 @@ const userArtifactQuery = cts.andQuery([
 ]);
 
 cts.search(userArtifactQuery).toArray().forEach(artifact => {
-  artifactsWithProjectPaths.push({"path": xdmp.nodeUri(artifact), "json": artifact});
+  // The path starts with "/" will not work with windows winzip. So removing "/" from the nodeUri path
+  artifactsWithProjectPaths.push({"path": xdmp.nodeUri(artifact).substr(1), "json": artifact});
 });
 
 const entityModels = cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION)).toArray();
@@ -51,13 +52,13 @@ if (entityModels.length > 0) {
       // This name is intended to be consistent with what's defined in HubConfig.PII_PROTECTED_PATHS_FILE, although
       // it is not doing leading zero-padding
       artifactsWithProjectPaths.push({
-        path: "/src/main/ml-config/security/protected-paths/" + (index + 1) + "-pii-protected-paths.json",
+        path: "src/main/ml-config/security/protected-paths/" + (index + 1) + "-pii-protected-paths.json",
         json: path
       });
     });
     if (securityConfig.config["query-roleset"]) {
       artifactsWithProjectPaths.push({
-        path: "/src/main/ml-config/security/query-rolesets/pii-reader.json",
+        path: "src/main/ml-config/security/query-rolesets/pii-reader.json",
         json: securityConfig.config["query-roleset"]
       });
     }
@@ -68,11 +69,11 @@ if (entityModels.length > 0) {
   const explorerSearchOptions = hent.dumpSearchOptions(entityModels, true);
   ["staging", "final"].forEach(db => {
     artifactsWithProjectPaths.push({
-      path: "/src/main/entity-config/" + db + "-entity-options.xml",
+      path: "src/main/entity-config/" + db + "-entity-options.xml",
       xml: xdmp.quote(searchOptions)
     });
     artifactsWithProjectPaths.push({
-      path: "/src/main/entity-config/exp-" + db + "-entity-options.xml",
+      path: "src/main/entity-config/exp-" + db + "-entity-options.xml",
       xml: xdmp.quote(explorerSearchOptions)
     });
   });
@@ -84,11 +85,11 @@ if (entityModels.length > 0) {
   const finalProps = dbProps.toObject();
   finalProps["database-name"] = config.FINALDATABASE;
   artifactsWithProjectPaths.push({
-    path: "/src/main/entity-config/databases/staging-database.json",
+    path: "src/main/entity-config/databases/staging-database.json",
     json: stagingProps
   });
   artifactsWithProjectPaths.push({
-    path: "/src/main/entity-config/databases/final-database.json",
+    path: "src/main/entity-config/databases/final-database.json",
     json: finalProps
   });
 }
