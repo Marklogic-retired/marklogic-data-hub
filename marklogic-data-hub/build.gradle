@@ -4,7 +4,7 @@ plugins {
     id 'java-test-fixtures'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
-    id 'com.marklogic.ml-gradle' version '4.0.3'
+    id 'com.marklogic.ml-gradle' version '4.0.4'
     //id 'com.moowork.node' version '1.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
     id 'org.springframework.boot' version '2.1.15.RELEASE'
@@ -51,7 +51,7 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
     }
 
-    compile('com.marklogic:ml-app-deployer:4.0.2'){
+    compile('com.marklogic:ml-app-deployer:4.0.3'){
         exclude group: 'org.springframework', module: 'http'
         // prefer the version declared above
         exclude group: 'com.marklogic', module: 'marklogic-client-api'
