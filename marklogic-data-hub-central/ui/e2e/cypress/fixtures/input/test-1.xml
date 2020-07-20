@@ -1,0 +1,25 @@
+<CustOrders xmlns="custOrderInfo">
+  <CustomerID>201</CustomerID>
+  <Name type="preferred">
+    <FirstName>Randolph</FirstName>
+    <LastName>Gonzales</LastName>
+  </Name>
+  <Email>randolphgonzales@nutralab.com</Email>
+  <Address>
+    <Shipping>
+      <Street>Village Road</Street>
+      <City>Genoa</City>
+      <State>Connecticut</State>
+      <Postal>56150-3633</Postal>
+    </Shipping>
+    <Billing>
+      <Street>Mermaid Avenue</Street>
+      <City>Glenshaw</City>
+      <State>Northern Mariana Islands</State>
+      <Postal>37125-7458</Postal>
+    </Billing>
+  </Address>
+  <Phone>(973) 559-3861</Phone>
+  <PIN>5427</PIN>
+  <Created>2015-01-02T15:49:17</Created>
+</CustOrders>

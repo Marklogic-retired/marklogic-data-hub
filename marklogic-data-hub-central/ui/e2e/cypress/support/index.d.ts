@@ -72,5 +72,27 @@ declare namespace Cypress {
        * @example cy.deleteSavedQueries()
       */
       deleteSavedQueries(): Chainable<Element>
+
+      deleteFlows(...flowNames: any[]): Chainable<Element>
+
+      deleteSteps(stepType: string, ...stepNames: any[]): Chainable<Element>
+
+      waitForModalToDisappear(): void
+
+      verifyStepAddedToFlow(stepType: string, stepName: string): Chainable<Element>
+
+      /**
+       * Custom command to upload files for running a load step.
+       * @param filePath - a list of input file path
+      */
+      uploadFile(filePath: string): Chainable<Element>
+
+      /**
+       * Custom command to verify status of a step when run in a flow
+       * @param jobStatus - success, failed or failed_with_error
+       * @param stepType - Ingestion, Mapping, Matching, Merging, Mastering or Custom
+       * @param stepName - name of the step
+       */
+      verifyStepRunResult(jobStatus: string, stepType: string, stepName: string): Chainable<Element>
     }
   }

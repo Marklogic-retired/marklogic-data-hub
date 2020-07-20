@@ -148,18 +148,19 @@ const NewFlowDialog = (props) => {
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             {props.canWriteFlow ?
-            <><MLButton onClick={() => onCancel()}>Cancel</MLButton>
+            <><MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton 
-              type="primary" 
-              htmlType="submit" 
+            <MLButton
+              aria-label="Save"
+              type="primary"
+              htmlType="submit"
               disabled={!flowName}
               onClick={handleSubmit}
             >
               Save
             </MLButton></> :
             <MLButton onClick={() => onCancel()}>Close</MLButton>
-            }   
+            }
           </div>
         </Form.Item>
       </Form>

@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "stepName": "e2eTest"
+    }
+  ],
+  "createdOn": "currentDateTime",
+  "createdBy": "currentUser"
+}
