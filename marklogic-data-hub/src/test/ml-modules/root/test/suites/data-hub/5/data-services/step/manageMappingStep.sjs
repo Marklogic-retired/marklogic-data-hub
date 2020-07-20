@@ -21,20 +21,34 @@ let info = {
   description: "optional",
   selectedSource: "collection",
   sourceQuery: "cts.collectionQuery('customer-input')",
-  targetEntityType: "http://example.org/Customer-0.0.1/Customer"
+  targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+  headers:"",
+  customHook:"",
+  processors: ""
 };
-
-// Will use this for assertions on service responses
-let expectedStep = Object.assign({}, info);
 
 // Create a step and verify the response
 let serviceResponse = stepService.saveStep(stepDefinitionType, info);
+
+//Remove 'headers', 'customHook' and 'processors' from 'info' before assigning to 'expectedStep' as they are json objects
+delete info.headers;
+delete info.customHook;
+delete info.processors;
+
+// Will use this for assertions on service responses
+let expectedStep = Object.assign({}, info);
 expectedStep.sourceDatabase = "data-hub-STAGING";
 expectedStep.targetDatabase = "data-hub-FINAL";
 expectedStep.collections = [stepName, "Customer"];
 expectedStep.validateEntity = "doNotValidate";
 expectedStep.provenanceGranularityLevel = "coarse";
 expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
+
+assertions.push(
+  test.assertEqual("{}", JSON.stringify(serviceResponse.headers)),
+  test.assertEqual("{}", JSON.stringify(serviceResponse.customHook)),
+  test.assertEqual("[]", JSON.stringify(serviceResponse.processors))
+);
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
@@ -73,6 +87,11 @@ assertions.push(
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepName), assertions);
 
+assertions.push(
+  test.assertEqual("{}", JSON.stringify(serviceResponse.headers)),
+  test.assertEqual("{}", JSON.stringify(serviceResponse.customHook)),
+  test.assertEqual("[]", JSON.stringify(serviceResponse.processors))
+);
 
 // Create a flow and add the step to it
 const flowName = "myFlow";
