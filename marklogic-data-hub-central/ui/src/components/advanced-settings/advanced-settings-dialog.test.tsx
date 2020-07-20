@@ -149,7 +149,7 @@ describe('Advanced Step Settings dialog', () => {
   });
 
   test('Verify form fields can be input/selected', async () => {
-    let getByText, getAllByText, getByLabelText, getAllByTestId, getByPlaceholderText, debug;
+    let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText, debug;
     await act(async () => {
       const renderResults = render(
         <AdvancedSettingsDialog {...data.advancedMapping} />
@@ -157,22 +157,23 @@ describe('Advanced Step Settings dialog', () => {
       getByText = renderResults.getByText;
       getAllByText = renderResults.getAllByText;
       getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
       getAllByTestId = renderResults.getAllByTestId;
       getByPlaceholderText = renderResults.getByPlaceholderText;
       debug = renderResults.debug;
     });
 
     fireEvent.click(getByLabelText('sourceDatabase-select'));
-    const sourceDbOptions = getAllByTestId('sourceDbOptions').map(li => li);
-    expect(sourceDbOptions.map(li => li.textContent).toString()).toEqual('data-hub-STAGING,data-hub-FINAL');
+    expect(getByTestId('sourceDbOptions-data-hub-STAGING')).toBeInTheDocument();
+    expect(getByTestId('sourceDbOptions-data-hub-FINAL')).toBeInTheDocument();
 
-    fireEvent.select(sourceDbOptions[1]);
+    fireEvent.select(getByTestId('sourceDbOptions-data-hub-FINAL'));
     expect(getAllByText('data-hub-FINAL').length === 2);
 
     fireEvent.click(getByLabelText('targetDatabase-select'));
-    const targetDbOptions = getAllByTestId('targetDbOptions').map(li => li);
-    expect(targetDbOptions.map(li => li.textContent).toString()).toEqual('data-hub-STAGING,data-hub-FINAL');
-    fireEvent.select(targetDbOptions[0]);
+    expect(getByTestId('targetDbOptions-data-hub-STAGING')).toBeInTheDocument();
+    expect(getByTestId('targetDbOptions-data-hub-FINAL')).toBeInTheDocument();
+    fireEvent.select(getByTestId('targetDbOptions-data-hub-STAGING'));
     expect(getAllByText('data-hub-STAGING').length === 1);
 
     fireEvent.change(getByPlaceholderText('Please enter batch size'), { target: { value: '50' }});
@@ -180,16 +181,16 @@ describe('Advanced Step Settings dialog', () => {
 
     //Verifying provenance options select field
     fireEvent.click(getByText('Coarse-grained'));
-    const provOptions = getAllByTestId('provOptions').map(li => li);
-    expect(provOptions.map(li => li.textContent).toString()).toEqual('Coarse-grained,Off');
-    fireEvent.select(provOptions[1]);
+    expect(getByTestId('provOptions-Coarse-grained')).toBeInTheDocument();
+    expect(getByTestId('provOptions-Off')).toBeInTheDocument();
+    fireEvent.select(getByTestId('provOptions-Off'));
     expect(getByText('Off')).toBeInTheDocument();
 
     //Verifying entity validation options select field
     fireEvent.click(getByText('Do not validate'));
     const entValOptions = getAllByTestId('entityValOpts').map(li => li);
     expect(entValOptions.map(li => li.textContent).toString()).toEqual('Do not validate,Store validation errors in entity headers,Skip documents with validation  errors');
-    fireEvent.select(provOptions[1]);
+    fireEvent.select(entValOptions[1]);
     expect(getByText('Store validation errors in entity headers')).toBeInTheDocument();
 
     //Not able to send input to Additional collections. Test via e2e

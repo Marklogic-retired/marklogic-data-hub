@@ -230,7 +230,7 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByText('Create Flow')).toBeInTheDocument();
         expect(getByText('testFlow')).toBeInTheDocument();
         // delete should work
-        fireEvent.click(getByTestId('deleteFlow-0'));
+        fireEvent.click(getByTestId('deleteFlow-testFlow'));
         // testing that confirmation modal appears
         expect(queryByText('Yes')).toBeInTheDocument();
         fireEvent.click(getByText('No'));
@@ -269,7 +269,7 @@ describe('Tiles View component tests for Developer user', () => {
         // create flow shouldn't be provided
         expect(queryByText('Create Flow')).toBeDisabled();
         // delete should not work
-        fireEvent.click(getByTestId('deleteFlow-0'));
+        fireEvent.click(getByTestId('deleteFlow-testFlow'));
         // testing that confirmation modal didn't appear
         expect(queryByText('Yes')).not.toBeInTheDocument();
         // test description

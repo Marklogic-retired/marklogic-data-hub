@@ -126,13 +126,14 @@ const NewLoadDialog = (props) => {
         maskClosable={false}
         closable={false}
         footer={null}
+        destroyOnClose={true}
     >
         <span className={styles.ConfirmationMessage}>Discard changes?</span>
         <br/><br/>
         <div >
-            <MLButton onClick={() => onDelCancel()}>No</MLButton>
+            <MLButton aria-label="No" onClick={() => onDelCancel()}>No</MLButton>
             &nbsp;&nbsp;
-            <MLButton type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
+            <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
           </div>
     </Modal>;
 
@@ -251,7 +252,8 @@ const NewLoadDialog = (props) => {
     okText="Save"
     className={styles.modal}
     footer={null}
-    maskClosable={false}>
+    maskClosable={false}
+    destroyOnClose={true}>
 
     <p className={styles.title}>{props.title}</p>
     <br/>
@@ -370,9 +372,9 @@ const NewLoadDialog = (props) => {
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton onClick={() => onCancel()}>Cancel</MLButton>
+            <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
+            <MLButton aria-label="Save" type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
           </div>
         </Form.Item>
       </Form>

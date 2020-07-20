@@ -19,6 +19,22 @@ class Tiles {
   getExploreTile() {
     return cy.get('.mosaic-container-explore');
   }
+
+  waitForTableToLoad() {
+    cy.waitUntil(() => cy.get('.ant-table-row').should('have.length.gt',0));
+  }
+
+  itemRowInTable(item: string) {
+      return cy.waitUntil(() => cy.get(`[data-row-key="${item}"]`));
+  }
+
+  closeTile() {
+      return cy.get('i[aria-label="close"]');
+  }
+
+  closeRunMessage() {
+      return cy.get('div.ant-modal-confirm-btns button');
+  }
 }
 
 const tiles = new Tiles();
