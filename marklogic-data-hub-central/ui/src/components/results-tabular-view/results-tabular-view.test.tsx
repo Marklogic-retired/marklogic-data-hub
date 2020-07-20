@@ -4,6 +4,7 @@ import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, en
 import ResultsTabularView from "./results-tabular-view";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router } from 'react-router-dom';
+import { validateExplorerResultsTableRow } from '../../util/test-utils';
 
 describe("Results Table view component", () => {
     test('Results table with data renders', async () => {
@@ -128,6 +129,66 @@ describe("Results Table view component", () => {
         //Check if the tooltip on 'source on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
         await(waitForElement(() => (getByText('Show source on a separate page'))))
+
+    });
+
+    test('Sorting in results table with data renders properly', async () => {
+        const { getByText, getByTestId } = render(
+            <Router>
+                <ResultsTabularView
+                    data={entitySearch.results}
+                    entityPropertyDefinitions={entityPropertyDefinitions}
+                    selectedPropertyDefinitions={selectedPropertyDefinitions}
+                    entityDefArray={entityDefArray}
+                    columns={[]}
+                    hasStructured={false}
+                    selectedEntities={['Customer']}
+                />
+            </Router>
+        )
+
+        // Check table column headers are rendered
+        expect(getByText('customerId')).toBeInTheDocument();
+        expect(getByText('name')).toBeInTheDocument();
+        expect(getByText('nicknames')).toBeInTheDocument();
+        expect(getByText('shipping')).toBeInTheDocument();
+        expect(getByText('billing')).toBeInTheDocument();
+        expect(getByText('Detail View')).toBeInTheDocument();
+
+        const customerIdColumnSort = getByTestId('resultsTableColumn-customerId'); // For name column sorting
+        const nameColumnSort = getByTestId('resultsTableColumn-name'); // For value column sorting
+
+        //Sorted document uris based on name and customerId columns to be used later
+        const urisDefault = ['/Customer/Cust1.json', '/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust4.json','/Customer/Cust5.json'];
+        const urisBasedOnDescendingCustomerId = ['/Customer/Cust5.json', '/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust4.json','/Customer/Cust5.json'];
+        const urisBasedOnAscendingName = ['/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust1.json', '/Customer/Cust5.json','/Customer/Cust4.json'];
+        const urisBasedOnDescendingName = ['/Customer/Cust4.json', '/Customer/Cust5.json', '/Customer/Cust1.json', '/Customer/Cust3.json','/Customer/Cust2.json'];
+        
+        /* Validate sorting on name column in results*/
+        //Check the sort order of Name column rows before enforcing sort order
+        let resultsTable: any = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisDefault);
+
+        //Click on the Name column to sort the rows by Ascending order
+        fireEvent.click(nameColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisBasedOnAscendingName);
+
+        //Click on the Name column to sort the rows by Descending order
+        fireEvent.click(nameColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingName);
+
+        /* Validate sorting on customerId column in results*/
+        //Click on the CustomerId column to sort the rows by Ascending order
+        fireEvent.click(customerIdColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisDefault);
+
+        //Click on the CustomerId column to sort the rows by Descending order
+        fireEvent.click(customerIdColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingCustomerId);
 
     });
 })

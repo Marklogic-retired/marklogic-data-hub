@@ -66,6 +66,7 @@ const ZeroStateExplorer = (props) => {
           propertiesToDisplay: query.savedQuery.propertiesToDisplay,
           zeroState: false,
           manageQueryModal: false,
+          sortOrder: query.savedQuery.sortOrder
         }
         applySaveQuery(options);
       }

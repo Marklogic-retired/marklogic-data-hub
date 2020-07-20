@@ -114,6 +114,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                         propertiesToDisplay: searchOptions.selectedTableProperties,
                         zeroState: searchOptions.zeroState,
                         manageQueryModal: searchOptions.manageQueryModal,
+                        sortOrder: searchOptions?.sortOrder || []
                     }
                     applySaveQuery(options);
                 }
@@ -140,6 +141,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                         propertiesToDisplay: [],
                         zeroState: true,
                         manageQueryModal: false,
+                        sortOrder: []
                     }
                     applySaveQuery(options);
                 }

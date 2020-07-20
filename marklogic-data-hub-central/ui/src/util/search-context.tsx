@@ -17,7 +17,8 @@ type SearchContextInterface = {
   zeroState: boolean,
   manageQueryModal: boolean,
   selectedTableProperties: any,
-  view: JSX.Element|null
+  view: JSX.Element|null,
+  sortOrder: any
 }
 
 const defaultSearchOptions = {
@@ -34,7 +35,8 @@ const defaultSearchOptions = {
   zeroState: true,
   manageQueryModal: false,
   selectedTableProperties: [],
-  view: null
+  view: null,
+  sortOrder: []
 }
 
 
@@ -70,7 +72,8 @@ interface ISearchContextInterface {
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
   setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string, vals: string) => void;
-  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void
+  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void;
+  setSortOrder: (propertyName: string, datatype, sortOrder) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -104,7 +107,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSelectedTableProperties: () => { },
   setView: () => { },
   setViewWithEntity: () => { },
-  setPageWithEntity: () => { }
+  setPageWithEntity: () => { },
+  setSortOrder: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -418,6 +422,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
       manageQueryModal: query.manageQueryModal,
+      sortOrder: query.sortOrder
     });
   }
 
@@ -486,6 +491,37 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         });
     }
 
+  const setSortOrder = (propertyName: string, datatype, sortOrder: string) => {
+    let sortingOrder: any = [];
+    switch (sortOrder) {
+      case 'ascend':
+        sortingOrder = [{
+          name: propertyName,
+          dataType: datatype,
+          ascending: true
+        }];
+        break;
+      case 'descend':
+        sortingOrder = [{
+          name: propertyName,
+          dataType: datatype,
+          ascending: false
+        }];
+        break;
+      default:
+        sortingOrder = [{
+          name: propertyName,
+          dataType: datatype
+        }];
+        break;
+    }
+
+    setSearchOptions({
+      ...searchOptions,
+      sortOrder: sortingOrder
+    });
+  }
+
     useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -524,7 +560,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setSelectedTableProperties,
       setView,
       setViewWithEntity,
-      setPageWithEntity
+      setPageWithEntity,
+      setSortOrder
     }}>
       {children}
     </SearchContext.Provider>
