@@ -83,7 +83,7 @@
       "targetEntityType": "#/definitions/Address"
     },
     "name": {
-      "sourcedFrom": "string-join(//*:Name/node(), \"\")"
+      "sourcedFrom": "string-join((//*:Name/*:FirstName/text(), //*:Name/*:LastName/text()), \" \")"
     },
     "nicknames": {
       "sourcedFrom": "//*:Name/*:FirstName"
