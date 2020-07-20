@@ -10,6 +10,7 @@ describe('zero state explorer component', () => {
 
     test('Verify Zero State components renders', () => {
         const { getByTestId, getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
+        expect(getByText('All Entities')).toBeInTheDocument();
         expect(getByText('Search through loaded data and curated data')).toBeInTheDocument();
         expect(getByText('What do you want to Explore?')).toBeInTheDocument();
         expect(getByText('- OR -')).toBeInTheDocument();
