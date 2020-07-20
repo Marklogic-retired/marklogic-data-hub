@@ -139,6 +139,7 @@ const ModalStatus: React.FC<Props> = (props) => {
       okText={buttonText.ok}
       onOk={() => onOk()}
       maskClosable={sessionWarning ? false : true }
+      destroyOnClose={true}
     >
       {sessionWarning && user.error.type !== 'MODAL' && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
       {user.error.type === 'MODAL' && <p>{user.error.message}</p>}

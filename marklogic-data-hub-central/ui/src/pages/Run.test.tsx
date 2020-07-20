@@ -139,7 +139,7 @@ describe('Verify load step failures in a flow', () => {
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
-        let runButton = await getByLabelText("runStep-1");
+        let runButton = await getByLabelText("runStep-failedIngest");
         fireEvent.mouseOver(getAllByLabelText("icon: play-circle")[0]);
         await waitForElement(() => getByText(RunToolTips.ingestionStep));
 
@@ -195,7 +195,7 @@ describe('Verify load step failures in a flow', () => {
         });
         fireEvent.change(upload);
 
-        fireEvent.click(getByLabelText("runStep-1"));
+        fireEvent.click(getByLabelText("runStep-failedIngest"));
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,"Ingestion step failedIngest failed")
         })))).toBeInTheDocument();
@@ -230,7 +230,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         //Run mapping step
-        runButton = await getByLabelText(`runStep-${steps[1].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
 
@@ -247,7 +247,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run match step
-        runButton = await getByLabelText(`runStep-${steps[3].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -256,7 +256,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run merge step
-        runButton = await getByLabelText(`runStep-${steps[4].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -265,7 +265,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run master step
-        runButton = await getByLabelText(`runStep-${steps[5].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -286,7 +286,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         //Run mapping step
-        runButton = await getByLabelText(`runStep-${steps[1].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -302,7 +302,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run match step
-        runButton = await getByLabelText(`runStep-${steps[3].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[3].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -311,7 +311,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run merge step
-        runButton = await getByLabelText(`runStep-${steps[4].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[4].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -320,7 +320,7 @@ describe('Verify step running', () => {
         fireEvent.click(getByText('Close'));
 
         //Run master step
-        runButton = await getByLabelText(`runStep-${steps[5].stepNumber}`);
+        runButton = await getByLabelText(`runStep-${steps[5].stepName}`);
         fireEvent.click(runButton);
         expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
         expect(await(waitForElement(() => getByText((content, node) => {
@@ -438,7 +438,7 @@ describe('Verify Run CRUD operations', () => {
         const existingFlowName = data.flows.data[0].name;
         const updateFlowURL = `/api/flows/${existingFlowName}`;
 
-        fireEvent.click(getByTestId('deleteFlow-0'));
+        fireEvent.click(getByTestId(`deleteFlow-${existingFlowName}`));
         fireEvent.click(getByText('Yes'));
 
         expect(axiosMock.delete).toHaveBeenNthCalledWith(1, updateFlowURL);
@@ -456,7 +456,7 @@ describe('Verify Run CRUD operations', () => {
         // create flow shouldn't be provided
         expect(queryByText('Create Flow')).toBeDisabled();
         // delete should not work
-        fireEvent.click(getByTestId('deleteFlow-0'));
+        fireEvent.click(getByTestId(`deleteFlow-${existingFlowName}`));
         // testing that confirmation modal didn't appear
         expect(queryByText('Yes')).not.toBeInTheDocument();
         // test description
@@ -487,7 +487,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         //Mapping step failed error
-        fireEvent.click(getByLabelText(`runStep-${steps[1].stepNumber}`));
+        fireEvent.click(getByLabelText(`runStep-${steps[1].stepName}`));
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Mapping step ${steps[1].stepName} failed`)
         })))).toBeInTheDocument();
@@ -496,7 +496,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         //Matching step failed error
-        fireEvent.click(getByLabelText(`runStep-${steps[3].stepNumber}`));
+        fireEvent.click(getByLabelText(`runStep-${steps[3].stepName}`));
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Matching step ${steps[3].stepName} failed`)
         })))).toBeInTheDocument();
@@ -505,7 +505,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         //Merging step failed error
-        fireEvent.click(getByLabelText(`runStep-${steps[4].stepNumber}`));
+        fireEvent.click(getByLabelText(`runStep-${steps[4].stepName}`));
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Merging step ${steps[4].stepName} failed`)
         })))).toBeInTheDocument();
@@ -514,7 +514,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         //Mastering step failed error
-        fireEvent.click(getByLabelText(`runStep-${steps[5].stepNumber}`));
+        fireEvent.click(getByLabelText(`runStep-${steps[5].stepName}`));
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Mastering step ${steps[5].stepName} failed`)
         })))).toBeInTheDocument();
@@ -533,7 +533,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByLabelText("icon: right"));
 
         //Mapping step error
-        fireEvent.click(await getByLabelText(`runStep-${steps[1].stepNumber}`));
+        fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
         // New Modal with Error message, uri and details is opened
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Mapping step ${steps[1].stepName} completed with errors`)
@@ -555,7 +555,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         //Matching step error
-        fireEvent.click(await getByLabelText(`runStep-${steps[3].stepNumber}`));
+        fireEvent.click(await getByLabelText(`runStep-${steps[3].stepName}`));
         // New Modal with Error message, uri and details is opened
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Matching step ${steps[3].stepName} completed with errors`)
@@ -570,7 +570,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         //Merging step error
-        fireEvent.click(await getByLabelText(`runStep-${steps[4].stepNumber}`));
+        fireEvent.click(await getByLabelText(`runStep-${steps[4].stepName}`));
         // New Modal with Error message, uri and details is opened
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Merging step ${steps[4].stepName} completed with errors`)
@@ -584,7 +584,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         fireEvent.click(getByText('Close'))
 
         // //Mastering step error
-        fireEvent.click(await getByLabelText(`runStep-${steps[5].stepNumber}`));
+        fireEvent.click(await getByLabelText(`runStep-${steps[5].stepName}`));
         // New Modal with Error message, uri and details is opened
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,`Mastering step ${steps[5].stepName} completed with errors`)
@@ -618,7 +618,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
         //Mapping step error
-        fireEvent.click(await getByLabelText(`runStep-${steps[1].stepNumber}`));
+        fireEvent.click(await getByLabelText(`runStep-${steps[1].stepName}`));
 
         // New Modal with Error message, uri and details is opened
         expect(await(waitForElement(() => getByText((content, node) => {

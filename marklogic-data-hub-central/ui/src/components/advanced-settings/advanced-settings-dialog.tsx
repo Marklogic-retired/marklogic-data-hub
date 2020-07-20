@@ -283,13 +283,14 @@ const AdvancedSettingsDialog = (props) => {
       bodyStyle={{textAlign: 'center'}}
       width={250}
       maskClosable={false}
+      destroyOnClose={true}
       closable={false}
       footer={null}
   >
       <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
       <div >
-          <MLButton onClick={() => onDelCancel()}>No</MLButton>&nbsp;&nbsp;
-          <MLButton type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
+          <MLButton aria-label="No" onClick={() => onDelCancel()}>No</MLButton>&nbsp;&nbsp;
+          <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
         </div>
   </Modal>;
 
@@ -475,11 +476,11 @@ const AdvancedSettingsDialog = (props) => {
     },
   };
 
-  const sourceDbOptions = databaseOptions.map(d => <Option data-testid='sourceDbOptions' key={d}>{d}</Option>);
-  const targetDbOptions = databaseOptions.map(d => <Option data-testid='targetDbOptions' key={d}>{d}</Option>);
+  const sourceDbOptions = databaseOptions.map(d => <Option data-testid={`sourceDbOptions-${d}`} key={d}>{d}</Option>);
+  const targetDbOptions = databaseOptions.map(d => <Option data-testid={`targetDbOptions-${d}`} key={d}>{d}</Option>);
 
-  const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid='provOptions' key={provGranularityOptions[d]}>{d}</Option>);
-  const valEntityOpts = Object.keys(validateEntityOptions).map(d => <Option data-testid='entityValOpts' key={validateEntityOptions[d]}>{d}</Option>);
+  const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid={`provOptions-${d}`} key={provGranularityOptions[d]}>{d}</Option>);
+  const valEntityOpts = Object.keys(validateEntityOptions).map(d => <Option data-testid={'entityValOpts'} key={validateEntityOptions[d]}>{d}</Option>);
   return <Modal
     visible={props.openAdvancedSettings}
     title={null}
@@ -490,6 +491,7 @@ const AdvancedSettingsDialog = (props) => {
     className={styles.SettingsModal}
     footer={null}
     maskClosable={false}
+    destroyOnClose={true}
   >
     <p className={styles.title}>Advanced Step Settings</p>
     <p className={styles.stepName}>{props.stepData.name}</p><br/>

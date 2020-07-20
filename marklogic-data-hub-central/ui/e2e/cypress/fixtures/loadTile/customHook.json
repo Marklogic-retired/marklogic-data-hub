@@ -1,0 +1,8 @@
+{
+  "module" : "/custom-modules/ingestion/IngestOrders/archive-hook.sjs",
+  "parameters" : {
+    "archiveCollection" : "Archive"
+  },
+  "user" : "hc-operator",
+  "runBefore" : false
+}

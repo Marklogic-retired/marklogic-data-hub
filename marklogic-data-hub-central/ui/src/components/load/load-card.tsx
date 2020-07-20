@@ -145,12 +145,13 @@ const LoadCard: React.FC<Props> = (props) => {
     const deleteConfirmation = (
         <Modal
             visible={dialogVisible}
-            okText='Yes'
-            cancelText='No'
+            okText={<div aria-label="Yes">Yes</div>}
+            cancelText={<div aria-label="No">No</div>}
             onOk={() => onDeleteOk(loadArtifactName)}
             onCancel={() => onCancel()}
             width={350}
             maskClosable={false}
+            destroyOnClose={true}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>
                 Are you sure you want to delete "{loadArtifactName}"?
@@ -161,12 +162,13 @@ const LoadCard: React.FC<Props> = (props) => {
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
-            okText={<div data-testid={`${loadArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
-            cancelText='No'
+            okText={<div aria-label="Yes" data-testid={`${loadArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
+            cancelText={<div aria-label="No">No</div>}
             onOk={() => onAddOk(loadArtifactName, flowName)}
             onCancel={() => onCancel()}
             width={350}
             maskClosable={false}
+            destroyOnClose={true}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>
                 Are you sure you want to add "{loadArtifactName}" to flow "{flowName}"?
@@ -225,7 +227,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                             disabled={!props.canWriteFlow}
                                         >
                                             { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                                                <Option value={f.name} key={i}>{f.name}</Option>
+                                                <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
                                             )) : null}
                                         </Select>
                                     </div>

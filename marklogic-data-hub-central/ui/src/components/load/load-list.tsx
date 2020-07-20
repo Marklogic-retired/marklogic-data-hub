@@ -74,12 +74,13 @@ const LoadList: React.FC<Props> = (props) => {
 
     const deleteConfirmation = <Modal
         visible={dialogVisible}
-        okText='Yes'
-        cancelText='No'
+        okText={<div aria-label="Yes">Yes</div>}
+        cancelText={<div aria-label="No">No</div>}
         onOk={() => onOk(loadArtifactName)}
         onCancel={() => onCancel()}
         width={350}
         maskClosable={false}
+        destroyOnClose={true}
     >
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete this?</span>
     </Modal>;

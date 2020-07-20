@@ -26,6 +26,9 @@
 //import { defaultUserPreferences as userPreference } from "../../../src/services/user-preferences"
 import loginPage from '../support/pages/login';
 import '@testing-library/cypress/add-commands'
+import 'cypress-file-upload';
+import 'cypress-wait-until';
+require('cypress-plugin-tab');
 
 //cy.fixture('users/developer.json').as('developer')
 
@@ -109,6 +112,33 @@ Cypress.Commands.add('logout', () => {
   })
 })
 
+Cypress.Commands.add('verifyStepAddedToFlow', (stepType, stepName) => {
+    cy.waitForModalToDisappear();
+    cy.findAllByText(stepType).last().should('be.visible');
+    cy.findAllByText(stepName).last().should('be.visible');
+})
+
+Cypress.Commands.add('waitForModalToDisappear', () => {
+    cy.waitUntil(() => cy.get('.ant-modal-body').should('not.be.visible'));
+})
+
+Cypress.Commands.add('uploadFile', (filePath) => {
+  cy.get('#fileUpload').attachFile(filePath,{ subjectType: 'input', force: true });
+  cy.waitUntil(() => cy.findByTestId('spinner').should('be.visible'));
+  cy.waitUntil(() => cy.findByTestId('spinner').should('not.be.visible'));
+})
+
+Cypress.Commands.add('verifyStepRunResult', (jobStatus, stepType, stepName) => {
+  if(jobStatus === 'success') {
+    cy.waitUntil(() => cy.get('[data-icon="check-circle"]').should('be.visible'));
+    cy.get('span p').should('contain.text',`${stepType} step ${stepName} ran successfully`);
+  } else {
+    cy.waitUntil(() => cy.get('[data-icon="close-circle"]').should('be.visible'));
+    cy.get('span p').should('contain.text',`${stepType} step ${stepName} failed`);
+    cy.get('#error-list').should('contain.text', "Message:");
+  }
+})
+
 function getSavedQueries() {
   return cy.request({
     request: 'GET',
@@ -124,7 +154,29 @@ Cypress.Commands.add('deleteSavedQueries', () => {
       method: 'DELETE',
       url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`,
     }).then(response => {
-      console.log("DELETE RESPONSE: " + JSON.stringify(response.statusText));
+      console.log("DELETE SAVED QUERY: " + JSON.stringify(response.statusText));
+    });
+  })
+})
+
+Cypress.Commands.add('deleteFlows', (...flowNames) => {
+  flowNames.forEach(flow => {
+    cy.request({
+      method: 'DELETE',
+      url: `/api/flows/${flow}`
+    }).then(response => {
+      console.log(`DELETE FLOW ${flow}: ${JSON.stringify(response.statusText)}`);
+    });
+  })
+})
+
+Cypress.Commands.add('deleteSteps', (stepType, ...stepNames) => {
+  stepNames.forEach(step => {
+    cy.request({
+      method: 'DELETE',
+      url: `/api/steps/${stepType}/${step}`
+    }).then(response => {
+      console.log(`DELETE ${stepType} STEP ${step}: ${JSON.stringify(response.statusText)}`);
     });
   })
 })

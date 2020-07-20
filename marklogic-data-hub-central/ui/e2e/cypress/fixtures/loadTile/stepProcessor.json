@@ -1,0 +1,13 @@
+[
+  {
+    "path": "/custom-modules/step-processors/addHeaders.sjs",
+    "when": "beforeContentPersisted",
+    "vars": {
+      "exampleVariable": "testValue"
+    }
+  },
+  {
+    "path": "/org.example/addPermissions.sjs",
+    "when": "beforeContentPersisted"
+  }
+]

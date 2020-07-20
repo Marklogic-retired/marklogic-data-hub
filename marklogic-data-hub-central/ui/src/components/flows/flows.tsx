@@ -161,9 +161,9 @@ const Flows: React.FC<Props> = (props) => {
     const deleteConfirmation = (
         <Modal
             visible={dialogVisible}
-            okText='Yes'
+            okText={<div aria-label="Yes">Yes</div>}
             okType='primary'
-            cancelText='No'
+            cancelText={<div aria-label="No">No</div>}
             onOk={() => onOk(flowName)}
             onCancel={() => onCancel()}
             width={350}
@@ -175,9 +175,9 @@ const Flows: React.FC<Props> = (props) => {
     const deleteStepConfirmation = (
         <Modal
             visible={stepDialogVisible}
-            okText='Yes'
+            okText={<div aria-label="Yes">Yes</div>}
             okType='primary'
-            cancelText='No'
+            cancelText={<div aria-label="No">No</div>}
             onOk={() => onStepOk(flowName, stepNumber)}
             onCancel={() => onCancel()}
             width={350}
@@ -197,12 +197,12 @@ const Flows: React.FC<Props> = (props) => {
                                 event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
-                            data-testid={'deleteFlow-' + i}
+                            data-testid={`deleteFlow-${name}`}
                             className={styles.deleteIcon}
                             size="lg"/>
                     </i>
                 </MLTooltip> :
-                <MLTooltip title={'Delete'} placement="bottom">
+                <MLTooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
                         <FontAwesomeIcon
                             icon={faTrashAlt}
@@ -210,7 +210,7 @@ const Flows: React.FC<Props> = (props) => {
                                 event.stopPropagation();
                                 event.preventDefault();
                             }}
-                            data-testid={'deleteFlow-' + i}
+                            data-testid={`deleteFlow-${name}`}
                             className={styles.disabledDeleteIcon}
                             size="lg"/>
                     </i>
@@ -381,7 +381,7 @@ const Flows: React.FC<Props> = (props) => {
                                         >
                                         <div
                                             className={styles.run}
-                                            aria-label={'runStep-' + stepNumber}
+                                            aria-label={`runStep-${step.stepName}`}
                                             data-testid={'runStep-' + stepNumber}
                                             onClick={()=>{
                                                 setShowUploadError(false);
@@ -401,7 +401,7 @@ const Flows: React.FC<Props> = (props) => {
                                                 setShowUploadError(false);
                                                 props.runStep(flowName, step)
                                             }}
-                                            aria-label={'runStep-' + stepNumber}
+                                            aria-label={`runStep-${step.stepName}`}
                                             data-testid={'runStep-' + stepNumber}
                                         >
                                             <MLTooltip title={RunToolTips.otherSteps} placement="bottom">
@@ -412,7 +412,7 @@ const Flows: React.FC<Props> = (props) => {
                                     <div
                                         className={styles.disabledRun}
                                         onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}
-                                        aria-label={'runStepDisabled-' + stepNumber}
+                                        aria-label={'runStepDisabled-' + step.stepName}
                                         data-testid={'runStepDisabled-' + stepNumber}
                                     >
                                         <Icon type="play-circle" theme="filled" />
@@ -420,10 +420,10 @@ const Flows: React.FC<Props> = (props) => {
                                 }
                                 {props.canWriteFlow ?
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} aria-label={'deleteStep-' + viewStepId} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
+                                        <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
                                     </MLTooltip> :
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.disabledDelete} aria-label={'deleteStepDisabled-' + viewStepId} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
+                                        <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
                                     </MLTooltip>
                                 }
                             </div>
@@ -450,7 +450,7 @@ const Flows: React.FC<Props> = (props) => {
                             { showUploadError && flowName == runningFlow && stepNumber == runningStep.stepNumber ? props.uploadError : ''}
                         </div>
                         <div className={styles.running} style={{display: isRunning(flowName, stepNumber)  ? 'block' : 'none'}}>
-                            <div><MLSpin /></div>
+                            <div><MLSpin data-testid="spinner"/></div>
                             <div className={styles.runningLabel}>Running...</div>
                         </div>
                     </Card>
