@@ -7,7 +7,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 //This is a smoke test to ensure the tasks run fine
 
-class MigrateProjectFlowsTaskTest extends BaseTest {
+class MigrateProjectForHubCentralTaskTest extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
@@ -21,7 +21,7 @@ class MigrateProjectFlowsTaskTest extends BaseTest {
     def "run without confirm"() {
         when:
         def result
-        result = runFailTask("hubMigrateProjectFlows")
+        result = runFailTask("hubMigrateForHubCentral")
 
         then:
         notThrown(UnexpectedBuildSuccess)
@@ -31,21 +31,21 @@ class MigrateProjectFlowsTaskTest extends BaseTest {
     def "run with confirm"() {
         when:
         def result
-        result = runTask("hubMigrateProjectFlows", '-Pconfirm=true')
+        result = runTask("hubMigrateForHubCentral", '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubMigrateProjectFlows").outcome == SUCCESS
+        result.task(":hubMigrateForHubCentral").outcome == SUCCESS
     }
 
     def "run should not throw NPE"() {
         when:
         def result
-        runTask("hubMigrateProjectFlows", '-Pconfirm=true')
-        result = runTask("hubMigrateProjectFlows", '-Pconfirm=true')
+        runTask("hubMigrateForHubCentral", '-Pconfirm=true')
+        result = runTask("hubMigrateForHubCentral", '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubMigrateProjectFlows").outcome == SUCCESS
+        result.task(":hubMigrateForHubCentral").outcome == SUCCESS
     }
 }

@@ -1,0 +1,11 @@
+{
+  "info": {
+    "title": "NoPropertiesEntity",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "NoPropertiesEntity": {
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "definitions": {
+    "NoInfo": {
+      "elementRangeIndex": ["nicknames", "status"],
+      "rangeIndex": ["name", "birthDate"],
+      "pathRangeIndex": ["birthDate", "status"],
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "nicknames": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of simple values",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "birthDate": {
+          "datatype": "date"
+        },
+        "status": {
+          "datatype": "string"
+        },
+        "customerSince": {
+          "datatype": "date"
+        },
+        "customerNumber": {
+          "datatype": "integer"
+        }
+      }
+    }
+  }
+}
