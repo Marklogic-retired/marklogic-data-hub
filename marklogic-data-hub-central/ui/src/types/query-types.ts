@@ -6,4 +6,5 @@ export interface QueryOptions {
     propertiesToDisplay: string[];
     zeroState: boolean;
     manageQueryModal: boolean;
+    sortOrder: any[];
   }

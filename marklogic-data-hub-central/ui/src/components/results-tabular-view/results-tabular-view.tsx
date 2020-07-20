@@ -68,6 +68,7 @@ const ResultsTabularView = (props) => {
     const {
         searchOptions,
         setSelectedTableProperties,
+        setSortOrder
     } = useContext(SearchContext);
 
     const authorityService = useContext(AuthoritiesContext);
@@ -101,13 +102,14 @@ const ResultsTabularView = (props) => {
     
     let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
 
+    let sortingOrder = false;
     const tableHeaderRender = (selectedTableColumns) => {
         const columns = selectedTableColumns.map((item) => {
             if (!item.hasOwnProperty('properties')) {
                 return {
                     dataIndex: item.propertyPath,
                     key: item.propertyPath,
-                    title: item.propertyLabel,
+                    title: <span data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>,
                     type: item.datatype,
                     onCell: () => {
                         return {
@@ -117,6 +119,7 @@ const ResultsTabularView = (props) => {
                             }
                         }
                     },
+                    ...setSortOptions(item),
                     render: (value) => {
                         if (Array.isArray(value)) {
                             let values = new Array();
@@ -154,14 +157,27 @@ const ResultsTabularView = (props) => {
                 return {
                     dataIndex: item.propertyPath,
                     key: item.propertyPath,
-                    title: item.propertyLabel,
+                    title: <span data-testid={`resultsTableColumn-${item.propertyLabel}`}>{item.propertyLabel}</span>,
                     type: item.datatype,
+                    ...setSortOptions(item),
                     columns: tableHeaderRender(item.properties)
                 }
             }
         })
         return columns;
     }
+
+    const setSortOptions = (item) => (
+        item.sortable ?
+        {
+        sorter: (a: any, b: any, sortOrder) => {
+            if(!sortingOrder) {
+                setSortOrder(item.propertyLabel,item.datatype,sortOrder)
+                sortingOrder = true;
+            }
+            return getTableSortValue(a,b,item);
+        }
+    } : "")
 
 
     const updatedTableHeader = () => {
@@ -177,6 +193,22 @@ const ResultsTabularView = (props) => {
 
     const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
 
+    const getTableSortValue = (a,b,item) => {
+        let sortValue = item.datatype !== 'string' ? getValueToCompare(a,item.propertyPath)?.length - getValueToCompare(b,item.propertyPath)?.length : getValueToCompare(a,item.propertyPath)?.localeCompare(getValueToCompare(b,item.propertyPath));
+        return sortValue;
+    }
+
+    const getValueToCompare = (prop,propertyPath) => {
+        
+        if (!prop[propertyPath]) {
+            return "";
+        } else if(Array.isArray(prop[propertyPath]) && (JSON.stringify(prop[propertyPath]) === JSON.stringify([]))) {
+            return "";
+        } else {
+            return prop[propertyPath];
+        }
+        
+    }
 
     const tableDataRender = (item) => {
         let dataObj = {};
