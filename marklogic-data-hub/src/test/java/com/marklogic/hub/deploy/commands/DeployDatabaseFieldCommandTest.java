@@ -3,7 +3,6 @@ package com.marklogic.hub.deploy.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -74,9 +73,7 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
     }
 
     private void whenTheDatabaseFieldCommandIsExecuted() {
-        CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(),
-            adminHubConfig.getAdminManager());
-        new DeployDatabaseFieldCommand().execute(context);
+        new DeployDatabaseFieldCommand().execute(newCommandContext());
     }
 
     private void thenTheCustomFieldAndIndexesStillExist() {

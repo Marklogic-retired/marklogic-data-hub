@@ -71,7 +71,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -103,8 +102,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     public static final String PROJECT_PATH = "ye-olde-project";
-    @Autowired
-    protected ApplicationContext context;
 
     /**
      * This is a misleading name; it's really "the current HubConfig being used by tests". It's actually rarely a user

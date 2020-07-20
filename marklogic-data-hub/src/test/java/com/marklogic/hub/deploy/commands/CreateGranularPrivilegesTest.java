@@ -154,7 +154,7 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
     @Test
     void deletePrivilegesOnUndeploy() {
         final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
-        final CommandContext context = new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null);
+        final CommandContext context = newCommandContext();
 
         PrivilegeManager privilegeManager = new PrivilegeManager(context.getManageClient());
         ResourcesFragment existingPrivileges = privilegeManager.getAsXml();

@@ -1,6 +1,5 @@
 package com.marklogic.hub.dhs;
 
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
@@ -70,6 +69,6 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
         db.save();
 
         // Then run the command to deploy the OOTB fields/indexes
-        new DeployDatabaseFieldCommand().execute(new CommandContext(adminHubConfig.getAppConfig(), adminHubConfig.getManageClient(), null));
+        new DeployDatabaseFieldCommand().execute(newCommandContext());
     }
 }

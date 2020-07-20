@@ -53,7 +53,9 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
      */
     protected List<Command> buildCommandsForDhs(Options options) {
         DeployOtherDatabasesCommand dbCommand = new DeployOtherDatabasesCommand();
-        dbCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig));
+        HubDeployDatabaseCommandFactory dbCommandFactory = new HubDeployDatabaseCommandFactory(hubConfig);
+        dbCommandFactory.setMergeExistingArrayProperties(true);
+        dbCommand.setDeployDatabaseCommandFactory(dbCommandFactory);
 
         List<String> groupNames = Arrays.asList(options.getGroupNames().split(","));
 
