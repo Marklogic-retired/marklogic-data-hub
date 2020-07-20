@@ -31,6 +31,7 @@ import org.springframework.util.Assert;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Properties;
 
 /**
  * Processes an authentication form submission. Called
@@ -105,15 +106,16 @@ public class ConnectionAuthenticationFilter extends
         }
 
         username = username.trim();
-
-        hubConfig.setMlUsername(username);
-        hubConfig.setMlPassword(password);
-        hubConfig.withPropertiesFromEnvironment(loginInfo.environment);
+        // Apply default properties to 'hubConfig' to reset it, set selected environment, load properties from gradle
+        // with username and password provided in the form.
         hubConfig.applyDefaultPropertyValues();
-        hubConfig.refreshProject();
+        hubConfig.withPropertiesFromEnvironment(loginInfo.environment);
 
-        hubConfig.getAppConfig().setAppServicesUsername(username);
-        hubConfig.getAppConfig().setAppServicesPassword(password);
+        Properties props = new Properties();
+        props.setProperty("mlUsername", username);
+        props.setProperty("mlPassword", password);
+
+        hubConfig.loadConfigurationFromProperties(props, true);
 
         pm.setLastProject(loginInfo.projectId);
         environmentConfig.setEnvironment(loginInfo.environment);
