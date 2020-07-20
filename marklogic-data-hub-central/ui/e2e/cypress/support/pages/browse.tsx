@@ -3,7 +3,7 @@ import 'cypress-wait-until';
 class BrowsePage {
 
   getSelectedEntity() {
-    return cy.get('.ant-select-selection-selected-value').invoke('text')
+    return cy.get('#entity-select').invoke('text')
   }
 
   getSpinner() {
