@@ -48,7 +48,7 @@ public class GenerateProtectedPathForXmlEntitiesTest extends AbstractHubCoreTest
 
     private void deployProtectedPathsAndQueryRolesets() {
         AppConfig appConfig = getHubConfig().getAppConfig();
-        CommandContext context = new CommandContext(appConfig, getHubConfig().getManageClient(), null);
+        CommandContext context = newCommandContext();
         boolean originalCmaSetting = appConfig.getCmaConfig().isCombineRequests();
         try {
             appConfig.getCmaConfig().setCombineRequests(false);

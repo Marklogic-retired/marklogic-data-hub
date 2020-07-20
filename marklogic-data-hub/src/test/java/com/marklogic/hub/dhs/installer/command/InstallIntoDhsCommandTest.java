@@ -154,7 +154,7 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
     public void testUpdateDhsResourcePermissions() {
         try {
             HubConfigImpl adminConfig = runAsUser("admin", "admin");
-            new UpdateDhsModulesPermissionsCommand(adminConfig).execute(new CommandContext(adminConfig.getAppConfig(), adminConfig.getManageClient(), adminConfig.getAdminManager()));
+            new UpdateDhsModulesPermissionsCommand(adminConfig).execute(newCommandContext(adminConfig));
 
             DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
             modMgr.readMetadata("/marklogic.rest.resource/mlDbConfigs/assets/metadata.xml", metadataHandle);

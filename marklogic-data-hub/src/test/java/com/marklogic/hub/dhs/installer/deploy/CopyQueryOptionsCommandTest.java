@@ -2,7 +2,6 @@ package com.marklogic.hub.dhs.installer.deploy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubTestBase;
@@ -39,7 +38,7 @@ public class CopyQueryOptionsCommandTest extends HubTestBase {
                 jobsServerName
             );
 
-            command.execute(new CommandContext(adminHubConfig.getAppConfig(), null, null));
+            command.execute(newCommandContext());
             ArrayNode uris = (ArrayNode) new ObjectMapper().readTree(command.getScriptResponse());
             // Adding uris to a list so we can check for them in a way that isn't order dependent. Even with URIs sorted, the dynamic group name can change order.
             List<String> urisList = new ArrayList<>();

@@ -28,9 +28,9 @@ import com.marklogic.hub.central.schemas.ModelDefinitions;
 import com.marklogic.hub.central.schemas.ModelDescriptor;
 import com.marklogic.hub.central.schemas.PrimaryEntityType;
 import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.deploy.util.ResourceUtil;
 import com.marklogic.hub.util.QueryRolesetUtil;
 import com.marklogic.mgmt.ManageClient;
-import com.marklogic.rest.util.JsonNodeUtil;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -155,7 +155,7 @@ public class ModelController extends BaseController {
             for (String databaseName : Arrays.asList(getHubClient().getDbName(DatabaseKind.STAGING), getHubClient().getDbName(DatabaseKind.FINAL))) {
                 final ObjectNode modelBasedProperties = (ObjectNode)modelConfigNode.get("indexConfig");
                 final ObjectNode existingProperties = (ObjectNode)new ObjectMapper().readTree(manageClient.getJson("/manage/v2/databases/" + databaseName + "/properties"));
-                JsonNode mergedProperties = mergeDatabaseProperties(existingProperties, modelBasedProperties);
+                JsonNode mergedProperties = ResourceUtil.mergeExistingArrayProperties(modelBasedProperties, existingProperties);
                 manageClient.putJson("/manage/v2/databases/" + databaseName + "/properties", mergedProperties.toString());
             }
         } catch (Exception e) {
@@ -226,42 +226,6 @@ public class ModelController extends BaseController {
             queryOptionsManager.writeOptionsAs(optionName, Format.XML, options);
         } catch (Exception e) {
             throw new RuntimeException("Unable to deploy search options file " + optionName + " to " + databaseKind + " database after updating entity models; cause: " + e.getMessage(), e);
-        }
-    }
-
-    /**
-     * @param existingProperties
-     * @param modelBasedProperties
-     * @return the results of merging the model-based properties into the existing properties, after first removing
-     * properties from the existing properties object that are not found in the model-based properties object
-     */
-    protected JsonNode mergeDatabaseProperties(ObjectNode existingProperties, ObjectNode modelBasedProperties) {
-        removeUnaffectedPropertiesFromExistingProperties(existingProperties, modelBasedProperties);
-
-        // Merge the model-based properties into the existing properties so that merges occur, model-based properties "win",
-        // and nothing is removed from the existing properties
-        return JsonNodeUtil.mergeObjectNodes(modelBasedProperties, existingProperties);
-    }
-
-    /**
-     * Removes "unaffected" properties - i.e. those that are not present in modelBasedProperties and thus don't need
-     * to be overwritten or merged together. This allows us to submit a payload containing only the results of merging
-     * the new database properties into the existing database properties.
-     *
-     * @param existingProperties
-     * @param modelBasedProperties
-     * @return
-     */
-    private void removeUnaffectedPropertiesFromExistingProperties(ObjectNode existingProperties, ObjectNode modelBasedProperties) {
-        Set<String> fieldNameSet = new HashSet<>();
-        modelBasedProperties.fieldNames().forEachRemaining(fieldNameSet::add);
-
-        Iterator<String> iterator = existingProperties.fieldNames();
-        while (iterator.hasNext()) {
-            String fieldName = iterator.next();
-            if (!fieldNameSet.contains(fieldName)) {
-                iterator.remove();
-            }
         }
     }
 

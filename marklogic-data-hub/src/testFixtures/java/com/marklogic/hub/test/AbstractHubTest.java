@@ -423,4 +423,12 @@ public abstract class AbstractHubTest extends TestObject {
             throw new RuntimeException("Unable to deploy test indexes", ioe);
         }
     }
+
+    protected CommandContext newCommandContext() {
+        return newCommandContext(getHubConfig());
+    }
+
+    protected CommandContext newCommandContext(HubConfig hubConfig) {
+        return new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
+    }
 }

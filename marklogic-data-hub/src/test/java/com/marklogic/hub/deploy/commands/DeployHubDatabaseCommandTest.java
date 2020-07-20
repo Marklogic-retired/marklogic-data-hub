@@ -24,7 +24,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
     void payloadHasValidLanguageProperty() {
         payload.put("language", "en");
 
-        ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString()));
+        ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString(), getHubConfig().getManageClient()));
         assertEquals("test", updatedPayload.get("database-name").asText());
         assertTrue(updatedPayload.has("language"), "language should still be present since it's a valid database property");
     }
@@ -33,7 +33,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
     void payloadHasLanguageOfZxx() {
         payload.put("language", "zxx");
 
-        ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString()));
+        ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString(), getHubConfig().getManageClient()));
         assertEquals("test", updatedPayload.get("database-name").asText());
         assertFalse(updatedPayload.has("language"), "A language with a value of 'zxx' should have been removed; this " +
             "should be very unusual, as it likely was not added by a user (who in theory would have selected a valid " +
@@ -49,7 +49,7 @@ public class DeployHubDatabaseCommandTest extends AbstractHubCoreTest {
             payload.put("schema-database", "test1");
             payload.put("triggers-database", "test2");
 
-            ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString()));
+            ObjectNode updatedPayload = readJsonObject(command.preparePayloadBeforeSubmitting(payload.toString(), getHubConfig().getManageClient()));
             assertEquals("test", updatedPayload.get("database-name").asText());
             assertFalse(updatedPayload.has("schema-database"));
             assertFalse(updatedPayload.has("triggers-database"));
