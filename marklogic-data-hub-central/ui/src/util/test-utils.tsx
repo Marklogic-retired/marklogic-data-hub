@@ -34,10 +34,21 @@ const onClosestTableBody:any = command => command.closest('tbody');
 const onClosestTable:any = command => command.closest('table');
 const onClosestDiv:any = command => command.closest('div');
 
+const validateExplorerResultsTableRow = (dataTable, uris) => {
+    let rowKey = 0;
+    
+    dataTable.forEach(item => {
+        let att: any = item.getAttribute('data-row-key') ? item.getAttribute('data-row-key') : '';    
+        expect(att).toBe(uris[rowKey])
+        rowKey++;
+    });
+}
+
 export {
     validateMappingTableRow,
     onClosestTableRow,
     onClosestTableBody,
     onClosestTable,
-    onClosestDiv
+    onClosestDiv,
+    validateExplorerResultsTableRow
 }

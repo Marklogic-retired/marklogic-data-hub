@@ -91,6 +91,7 @@ const QueryModal = (props) => {
             propertiesToDisplay: [],
             zeroState: searchOptions.zeroState,
             manageQueryModal: true,
+            sortOrder: []
         }
         applySaveQuery(options);
         props.setCurrentQueryDescription('');
@@ -111,6 +112,7 @@ const QueryModal = (props) => {
                     propertiesToDisplay: query.savedQuery.propertiesToDisplay,  
                     zeroState: query.zeroState,
                     manageQueryModal: query.manageQueryModal,
+                    sortOrder: query.savedQuery.sortOrder
                 }
                 applySaveQuery(options);
                 props.setCurrentQueryDescription(query['savedQuery']['description']);
