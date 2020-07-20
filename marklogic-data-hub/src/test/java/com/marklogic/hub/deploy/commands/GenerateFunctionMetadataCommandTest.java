@@ -1,14 +1,12 @@
 package com.marklogic.hub.deploy.commands;
 
 
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.Versions;
@@ -58,9 +56,7 @@ public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
     @Test
     void testMetaDataGeneration() {
         if (versions.isVersionCompatibleWithES()) {
-            HubConfig hubConfig = getHubConfig();
-            CommandContext context = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
-            generateFunctionMetadataCommand.execute(context);
+            generateFunctionMetadataCommand.execute(newCommandContext());
 
             String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
             DocumentMetadataHandle metadata = new DocumentMetadataHandle();

@@ -189,7 +189,9 @@ public class DhsDeployer extends LoggingObject {
         List<Command> commands = new ArrayList<>();
 
         DeployOtherDatabasesCommand deployOtherDatabasesCommand = new DeployOtherDatabasesCommand();
-        deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(hubConfig, false));
+        HubDeployDatabaseCommandFactory dbCommandFactory = new HubDeployDatabaseCommandFactory(hubConfig);
+        dbCommandFactory.setMergeEntityConfigFiles(false);
+        deployOtherDatabasesCommand.setDeployDatabaseCommandFactory(dbCommandFactory);
         deployOtherDatabasesCommand.setResourceFilenamesIncludePattern(buildPatternForDatabasesToUpdateIndexesFor());
         commands.add(deployOtherDatabasesCommand);
 

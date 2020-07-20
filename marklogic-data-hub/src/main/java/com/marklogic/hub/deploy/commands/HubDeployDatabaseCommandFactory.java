@@ -28,15 +28,11 @@ import java.io.File;
 public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFactory {
 
     private HubConfig hubConfig;
-    private boolean mergeEntityConfigFiles;
+    private boolean mergeEntityConfigFiles = true;
+    private boolean mergeExistingArrayProperties = false;
 
     public HubDeployDatabaseCommandFactory(HubConfig hubConfig) {
-        this(hubConfig, true);
-    }
-
-    public HubDeployDatabaseCommandFactory(HubConfig hubConfig, boolean mergeEntityConfigFiles) {
         this.hubConfig = hubConfig;
-        this.mergeEntityConfigFiles = mergeEntityConfigFiles;
     }
 
     @Override
@@ -45,6 +41,15 @@ public class HubDeployDatabaseCommandFactory implements DeployDatabaseCommandFac
         DeployHubDatabaseCommand c = new DeployHubDatabaseCommand(hubConfig, databaseFile, filename);
         c.setDeployDatabaseCommandFactory(this);
         c.setMergeEntityConfigFiles(this.mergeEntityConfigFiles);
+        c.setMergeExistingArrayProperties(this.mergeExistingArrayProperties);
         return c;
+    }
+
+    public void setMergeEntityConfigFiles(boolean mergeEntityConfigFiles) {
+        this.mergeEntityConfigFiles = mergeEntityConfigFiles;
+    }
+
+    public void setMergeExistingArrayProperties(boolean mergeExistingArrayProperties) {
+        this.mergeExistingArrayProperties = mergeExistingArrayProperties;
     }
 }

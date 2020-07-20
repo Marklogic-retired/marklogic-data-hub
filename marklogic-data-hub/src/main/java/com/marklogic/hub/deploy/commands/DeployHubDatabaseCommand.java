@@ -20,7 +20,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.databases.DeployDatabaseCommand;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.util.ResourceUtil;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.rest.util.JsonNodeUtil;
 
@@ -36,6 +39,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     private String databaseFilename;
     private File databaseFile;
     private boolean mergeEntityConfigFiles = true;
+    private boolean mergeExistingArrayProperties = false;
 
     /**
      * In order for sorting to work correctly via DeployDatabaseCommandComparator, must call setDatabaseFile so that
@@ -73,10 +77,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     @Override
     protected String getPayload(CommandContext context) {
         String payload = super.getPayload(context);
-        return payload != null ? preparePayloadBeforeSubmitting(payload) : null;
+        return payload != null ? preparePayloadBeforeSubmitting(payload, context.getManageClient()) : null;
     }
 
-    protected String preparePayloadBeforeSubmitting(String payload) {
+    protected String preparePayloadBeforeSubmitting(String payload, ManageClient manageClient) {
         try {
             ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
 
@@ -84,6 +88,10 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
             // directory is added to the list of config dirs, and thus this merging is not needed
             if (mergeEntityConfigFiles) {
                 payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
+            }
+
+            if (mergeExistingArrayProperties) {
+                payloadNode = mergeExistingArrayProperties(payloadNode, manageClient);
             }
 
             removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
@@ -96,6 +104,23 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
             return payloadNode.toString();
         } catch (IOException e) {
             throw new DataHubConfigurationException(e);
+        }
+    }
+
+    private ObjectNode mergeExistingArrayProperties(ObjectNode propertiesToSave, ManageClient manageClient) {
+        if (!propertiesToSave.has("database-name")) {
+            logger.warn("Database payload unexpectedly does not have 'database-name' property; will not merge existing array properties: " + propertiesToSave);
+            return propertiesToSave;
+        }
+        final String dbName = propertiesToSave.get("database-name").asText();
+        try {
+            String json = new DatabaseManager(manageClient).getPropertiesAsJson(dbName);
+            ObjectNode existingProperties = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(json);
+            return ResourceUtil.mergeExistingArrayProperties(propertiesToSave, existingProperties);
+        } catch (Exception ex) {
+            throw new RuntimeException(
+                format("Unexpected error when trying to merge existing array properties for database '%s'; cause: " + ex.getMessage(), dbName), ex
+            );
         }
     }
 
@@ -136,5 +161,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     public void setMergeEntityConfigFiles(boolean mergeEntityConfigFiles) {
         this.mergeEntityConfigFiles = mergeEntityConfigFiles;
+    }
+
+    public void setMergeExistingArrayProperties(boolean mergeExistingArrayProperties) {
+        this.mergeExistingArrayProperties = mergeExistingArrayProperties;
     }
 }
