@@ -11,7 +11,7 @@ import { MLButton } from '@marklogic/design-system';
 
 const ZeroStateExplorer = (props) => {
 
-  const [dropDownValue, setDropdownValue] = useState<string>();
+  const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
   const { Option } = Select;
   const dropdownOptions = ['All Entities', ...props.entities];
 
@@ -38,8 +38,8 @@ const ZeroStateExplorer = (props) => {
 
   const entityMenu = (
     <Select
+      defaultValue='All Entities'
       style={{ width: 150 }}
-      placeholder="Select the data"
       id="entity-select"
       data-testid="entity-select"
       value={dropDownValue}
