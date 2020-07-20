@@ -117,9 +117,9 @@ const AdvancedSettingsDialog = (props) => {
       setProvGranularity(defaultprovGranularity);
       setValidateEntity(defaultValidateEntity);
       setBatchSize(defaultBatchSize);
-      setHeaders('');
-      setProcessors('');
-      setCustomHook('');
+      setHeaders('{}');
+      setProcessors('[]');
+      setCustomHook('{}');
       setAdditionalSettings('');
 
       setProcessorsExpanded(false);
@@ -225,9 +225,9 @@ const AdvancedSettingsDialog = (props) => {
         setProvGranularity(defaultprovGranularity);
         setValidateEntity(defaultValidateEntity);
         setBatchSize(defaultBatchSize);
-        setHeaders('');
-        setProcessors('');
-        setCustomHook('');
+        setHeaders('{}');
+        setProcessors('[]');
+        setCustomHook('{}');
         setStepDefinitionName('');
         setIsCustomIngestion(false);
         setAdditionalSettings('');
@@ -304,12 +304,12 @@ const AdvancedSettingsDialog = (props) => {
         targetDatabase: targetDatabase,
         targetFormat: targetFormat,
         permissions: targetPermissions,
-        headers: parseJSON(headers),
-        processors: parseJSON(processors),
+        headers: isEmptyString(headers) ? {} : parseJSON(headers),
+        processors: isEmptyString(processors) ? [] : parseJSON(processors),
         provenanceGranularityLevel: provGranularity,
         validateEntity: validateEntity,
         batchSize: batchSize,
-        customHook: parseJSON(customHook),
+        customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
       }
     if (isPermissionsValid()) {
         createSettingsArtifact(dataPayload);
@@ -348,6 +348,13 @@ const AdvancedSettingsDialog = (props) => {
     } catch (error) {
       return json.trim() === '';
     }
+  }
+
+  const isEmptyString = (json) => {
+      if(json !== undefined && json.trim().length === 0 ){
+          return true;
+      }
+      return false;
   }
 
   const handleChange = (event) => {

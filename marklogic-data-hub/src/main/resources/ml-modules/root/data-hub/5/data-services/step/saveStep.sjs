@@ -74,6 +74,21 @@ if (existingStep) {
       }
     });
   }
-
+  if(isEmptyString(stepProperties.customHook)){
+    stepProperties.customHook = {};
+  }
+  if(isEmptyString(stepProperties.headers)){
+    stepProperties.headers = {};
+  }
+  if(isEmptyString(stepProperties.processors)){
+    stepProperties.processors = [];
+  }
   Artifacts.setArtifact(stepDefinitionType, stepName, stepProperties);
+}
+
+function isEmptyString(property) {
+  if(property !== undefined && typeof property === 'string' && property.trim().length === 0){
+    return true;
+  }
+  return false;
 }
