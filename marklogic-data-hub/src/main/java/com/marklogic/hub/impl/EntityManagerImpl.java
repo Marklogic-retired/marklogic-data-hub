@@ -64,7 +64,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
-    private static final String ENTITY_FILE_EXTENSION = ".entity.json";
+    public static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
     private HubConfig hubConfig;
@@ -250,16 +250,16 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
         if (entityDefs != null) {
             ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                for (File entityDef : entityDefs) {
+            for (File entityDef : entityDefs) {
+                try {
                     FileInputStream fileInputStream = new FileInputStream(entityDef);
                     entities.add(objectMapper.readTree(fileInputStream));
                     fileInputStream.close();
+                } catch (IOException e) {
+                    logger.warn(format("Ignoring %s entity model as malformed JSON content is found", entityDef.getName()));
+                    logger.error(e.getMessage());
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-
         }
         return entities;
     }

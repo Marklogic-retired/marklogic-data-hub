@@ -1,4 +1,4 @@
-package com.marklogic.hub.flow.impl;
+package com.marklogic.hub.hubcentral.migration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

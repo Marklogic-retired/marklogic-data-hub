@@ -30,7 +30,7 @@ import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
 import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteInstalledLegacyMappingsTask
-import com.marklogic.hub.gradle.task.MigrateProjectFlowsTask
+import com.marklogic.hub.gradle.task.MigrateProjectForHubCentralTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
@@ -115,14 +115,14 @@ class DataHubPlugin implements Plugin<Project> {
                 "This will first download the artifacts (entity models, flows, step definitions, and steps) , then delete all user files in the project directory"+
                 " and the contents of the downloaded zip will then be extracted into the project directory.")
 
-        String flowMigrationGroup = "Data Hub Flow Migration"
-        project.task("hubDeleteInstalledLegacyMappings", group: flowMigrationGroup, type: DeleteInstalledLegacyMappingsTask,
+        String hubMigrationGroup = "Data Hub Migration"
+        project.task("hubDeleteInstalledLegacyMappings", group: hubMigrationGroup, type: DeleteInstalledLegacyMappingsTask,
             description: "Delete installed legacy mappings, which are mappings that have not been converted into the format required by Hub Central"
         ).mustRunAfter("hubDeployUserArtifacts")
-        project.task("hubMigrateProjectFlows", group: flowMigrationGroup, type: MigrateProjectFlowsTask,
-            description: "Migrate flows and mappings in the local project that were created before version 5.3.0 into the new format required for usage within Hub Central"
-        )
-        project.task("hubMigrateInstalledFlows", group: flowMigrationGroup, type: DeleteInstalledLegacyMappingsTask,
+        project.task("hubMigrateForHubCentral", group: hubMigrationGroup, type: MigrateProjectForHubCentralTask,
+            description: "Migrate flows, mappings and entity models in the local project that were created before version 5.3.0 into the new format required for usage within Hub Central"
+        ).finalizedBy(["hubSaveIndexes"])
+        project.task("hubMigrateInstalledFlows", group: hubMigrationGroup, type: DeleteInstalledLegacyMappingsTask,
             dependsOn: ["hubDeployUserArtifacts", "hubDeleteInstalledLegacyMappings"],
             description: "Deploys user artifacts and then deletes installed legacy mappings"
         )
