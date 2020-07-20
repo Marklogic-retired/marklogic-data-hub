@@ -12,7 +12,7 @@
 
   <appender name="RollingFile"
             class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_PATH}/oneui.log</file>
+    <file>${LOG_PATH}/hub-central.log</file>
     <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
     </encoder>
@@ -20,7 +20,7 @@
     <rollingPolicy
       class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
       <!-- rollover daily and when the file reaches 10 MegaBytes -->
-      <fileNamePattern>${LOG_PATH}/archived/oneui-%d{yyyy-MM-dd}.%i.log
+      <fileNamePattern>${LOG_PATH}/archived/hub-central-%d{yyyy-MM-dd}.%i.log
       </fileNamePattern>
       <timeBasedFileNamingAndTriggeringPolicy
         class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
