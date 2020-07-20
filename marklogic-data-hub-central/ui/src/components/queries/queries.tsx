@@ -72,6 +72,7 @@ const Query = (props) => {
                     selectedFacets: facets,
                 },
                 propertiesToDisplay: searchOptions.selectedTableProperties,
+                sortOrder: searchOptions.sortOrder
             }
         }
         props.setIsLoading(true);
@@ -106,6 +107,7 @@ const Query = (props) => {
                 propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
                 zeroState: searchOptions.zeroState,
                 manageQueryModal: searchOptions.manageQueryModal,
+                sortOrder: response.data.savedQuery.sortOrder
             }
             applySaveQuery(options);
             setCurrentQuery(response.data);
@@ -220,6 +222,7 @@ const Query = (props) => {
             propertiesToDisplay: [],
             zeroState: true,
             manageQueryModal: false,
+            sortOrder: []
         }
         applySaveQuery(options);
         toggleResetQueryEditedConfirmation(false);
@@ -246,6 +249,7 @@ const Query = (props) => {
                 propertiesToDisplay: [],
                 zeroState: true,
                 manageQueryModal: false,
+                sortOrder: []
             }
             applySaveQuery(options);
         }

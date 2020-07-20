@@ -103,6 +103,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           propertiesToDisplay: searchOptions.selectedTableProperties,
           start: searchOptions.start,
           pageLength: searchOptions.pageLength,
+          sortOrder: searchOptions.sortOrder
         }
       });
       if (componentIsMounted.current) {
@@ -169,6 +170,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         propertiesToDisplay: [],
         zeroState: true,
         manageQueryModal: false,
+        sortOrder: []
       }
       applySaveQuery(options);
     }
