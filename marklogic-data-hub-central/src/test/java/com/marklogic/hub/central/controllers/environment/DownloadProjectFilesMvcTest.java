@@ -44,8 +44,8 @@ public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
                         zipStream.closeEntry();
                     }
                 }
-                assertTrue(entryNames.contains("/entities/Order.entity.json"));
-                assertTrue(entryNames.contains("/entities/Customer.entity.json"));
+                assertTrue(entryNames.contains("entities/Order.entity.json"));
+                assertTrue(entryNames.contains("entities/Customer.entity.json"));
             });
     }
 

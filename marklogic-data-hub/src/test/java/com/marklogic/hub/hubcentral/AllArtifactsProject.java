@@ -45,35 +45,40 @@ public class AllArtifactsProject extends TestObject {
         }
     }
 
+    // The path for the artifacts should not start "/" as it will not be picked up by Windows Winzip tool.
+    // The path should also always be relative path and not absolute path
     public void verifyZipEntries() {
         // Verify artifact files
-        verifyEntryExists("/flows/testFlow.flow.json", "testFlow");
+        verifyEntryExists("flows/testFlow.flow.json", "testFlow");
 
-        verifyEntryExists("/steps/mapping/TestOrderMapping1.step.json", "TestOrderMapping1");
-        verifyEntryExists("/steps/mapping/OrderMappingJson.step.json", "OrderMappingJson");
-        verifyEntryExists("/steps/ingestion/validArtifact.step.json", "validArtifact");
+        verifyEntryExists("steps/mapping/TestOrderMapping1.step.json", "TestOrderMapping1");
+        verifyEntryExists("steps/mapping/OrderMappingJson.step.json", "OrderMappingJson");
+        verifyEntryExists("steps/ingestion/validArtifact.step.json", "validArtifact");
 
-        assertEquals("Order", zipEntries.get("/entities/Order.entity.json").get("info").get("title").asText());
+        // Verify path doesn't start with "/"
+        verifyArtifactPathsDontStartWithSlash();
+
+        assertEquals("Order", zipEntries.get("entities/Order.entity.json").get("info").get("title").asText());
 
         // Verify PII stuff
-        verifyEntryExists("/src/main/ml-config/security/protected-paths/1-pii-protected-paths.json",
+        verifyEntryExists("src/main/ml-config/security/protected-paths/1-pii-protected-paths.json",
             "path-expression", "/*:envelope//*:instance//*:Order/*:orderID");
-        verifyEntryExists("/src/main/ml-config/security/protected-paths/2-pii-protected-paths.json",
+        verifyEntryExists("src/main/ml-config/security/protected-paths/2-pii-protected-paths.json",
             "path-expression", "/*:envelope//*:instance//*:Order/*:orderName");
-        assertEquals("pii-reader", zipEntries.get("/src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
+        assertEquals("pii-reader", zipEntries.get("src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
 
         // Verify search options
         Stream.of("staging", "final").forEach(db -> {
-            assertTrue(zipEntries.containsKey("/src/main/entity-config/" + db + "-entity-options.xml"));
-            assertTrue(zipEntries.containsKey("/src/main/entity-config/exp-" + db + "-entity-options.xml"));
+            assertTrue(zipEntries.containsKey("src/main/entity-config/" + db + "-entity-options.xml"));
+            assertTrue(zipEntries.containsKey("src/main/entity-config/exp-" + db + "-entity-options.xml"));
         });
 
         // Verify db props
         final String expectedPathIndex = "//*:instance/Order/orderID";
-        JsonNode dbProps = verifyEntryExists("/src/main/entity-config/databases/staging-database.json", "database-name",
+        JsonNode dbProps = verifyEntryExists("src/main/entity-config/databases/staging-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.STAGING));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
-        dbProps = verifyEntryExists("/src/main/entity-config/databases/final-database.json", "database-name",
+        dbProps = verifyEntryExists("src/main/entity-config/databases/final-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
 
@@ -88,6 +93,10 @@ public class AllArtifactsProject extends TestObject {
             "2 database properties files; " +
             "Note that step definitions are not included because as of 5.3.0, a user cannot create/modify/delete them " +
             "via Hub Central");
+    }
+
+    private void verifyArtifactPathsDontStartWithSlash() {
+        zipEntries.keySet().forEach( path -> assertFalse(path.startsWith("/"), format("The path %s starts with '/'", path)));
     }
 
     private JsonNode verifyEntryExists(String path, String name) {
