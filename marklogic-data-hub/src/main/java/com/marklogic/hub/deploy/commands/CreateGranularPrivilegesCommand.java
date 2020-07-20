@@ -4,24 +4,30 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
 import com.marklogic.appdeployer.command.UndoableCommand;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
+import com.marklogic.mgmt.mapper.ResourceMapper;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.groups.GroupManager;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.rest.util.ResourcesFragment;
+import org.jdom2.Namespace;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Command for creating granular privileges after the resources that these privileges depend on have been created.
+ * <p>
+ * See the comments on saveGranularPrivileges for important information about how this class attempts to avoid causing
+ * an error by trying to create a privilege with the same action as an existing one.
  */
-public class CreateGranularPrivilegesCommand implements Command, UndoableCommand {
+public class CreateGranularPrivilegesCommand extends LoggingObject implements Command, UndoableCommand {
 
     private HubConfig hubConfig;
     private List<String> groupNames;
@@ -68,6 +74,7 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
         "data-hub-step-definition-writer"
     );
 
+
     public CreateGranularPrivilegesCommand(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
@@ -95,160 +102,196 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
 
     @Override
     public void execute(CommandContext context) {
-        final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
-        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
-        final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
-        final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
-
-        PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
-        buildPrivilegesThatDhsMayHaveCreated(context.getManageClient()).forEach(p -> mgr.save(p.getJson()));
-
-        Privilege p = new Privilege(null, "admin-database-triggers-" + stagingTriggersDbName);
-        p.setKind("execute");
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName + ")");
-        p.addRole("data-hub-developer");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-triggers-" + finalTriggersDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + finalTriggersDbName + ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-temporal-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + stagingDbName + ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-temporal-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + finalDbName + ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-alerts-" + stagingDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + stagingDbName + ")");
-        mgr.save(p.getJson());
-
-        p.setPrivilegeName("admin-database-alerts-" + finalDbName);
-        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName + ")");
-        mgr.save(p.getJson());
-
-        buildScheduledTaskPrivileges().forEach(privilege -> mgr.save(privilege.getJson()));
-
-        addRolePrivilegesToDataHubSecurityAdmin(context.getManageClient());
-    }
-
-    @Override
-    public void undo(CommandContext context) {
-        final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
-        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
-        final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
-        final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
-        final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
-
-        PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + finalDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + stagingDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-clear-" + jobsDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + finalDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + stagingDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-index-" + jobsDbName + "?kind=execute");
-
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + finalTriggersDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-triggers-" + stagingTriggersDbName + "?kind=execute");
-
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-temporal-" + finalDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-temporal-" + stagingDbName + "?kind=execute");
-
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + finalDbName + "?kind=execute");
-        mgr.deleteAtPath("/manage/v2/privileges/admin-database-alerts-" + stagingDbName + "?kind=execute");
-
-        getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
-            mgr.deleteAtPath("/manage/v2/privileges/admin-group-scheduled-task-" + groupName + "?kind=execute");
-        });
-
-        List<Privilege> privileges = buildPrivilegesForRolesThatCanBeInherited(context.getManageClient());
-        for (Privilege privilege : privileges) {
-            String path = "/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute";
-            mgr.deleteAtPath(path);
-        }
+        Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
+        saveGranularPrivileges(context.getManageClient(), granularPrivileges);
     }
 
     /**
-     * Some of the privileges that need to be created may already exist in DHS. If so, then a role is added to that
-     * privilege instead of creating a duplicate one with the same action, which ML does not allow.
+     * Delete every granular privilege. Not to be used in a DHS environment of course.
      *
-     * @param client
-     * @return
+     * @param context
      */
-    protected List<Privilege> buildPrivilegesThatDhsMayHaveCreated(ManageClient client) {
-        final List<String> existingPrivilegeNames = new PrivilegeManager(client).getAsXml().getListItemNameRefs();
-        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
+    @Override
+    public void undo(CommandContext context) {
+        Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
+        PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
+        granularPrivileges.values().forEach(privilege -> {
+            mgr.deleteAtPath("/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute");
+        });
+    }
+
+    /**
+     * @param manageClient
+     * @return a map of privilege action, containing an ID, and a Privilege object to be saved. The key must be an
+     * action with an ID so that we can determine if a privilege with the same action already exists.
+     */
+    protected Map<String, Privilege> buildGranularPrivileges(ManageClient manageClient) {
         final String finalDbName = hubConfig.getDbName(DatabaseKind.FINAL);
+        final String stagingDbName = hubConfig.getDbName(DatabaseKind.STAGING);
         final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
+        final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
+        final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
+
+        DatabaseManager dbMgr = new DatabaseManager(manageClient);
+        ResourcesFragment databases = dbMgr.getAsXml();
+        final String finalDbId = databases.getIdForNameOrId(finalDbName);
+        final String stagingDbId = databases.getIdForNameOrId(stagingDbName);
+        final String jobsDbId = databases.getIdForNameOrId(jobsDbName);
+        final String finalTriggersDbId = databases.getIdForNameOrId(finalTriggersDbName);
+        final String stagingTriggersDbId = databases.getIdForNameOrId(stagingTriggersDbName);
 
         final String adminRole = "data-hub-admin";
         final String clearUserDataRole = "hub-central-clear-user-data";
         final String developerRole = "data-hub-developer";
         final String hubCentralEntityModelWriterRole = "hub-central-entity-model-writer";
 
-        List<Privilege> list = new ArrayList<>();
-        list.add(buildPrivilege(client, "admin-database-clear-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")",
-            "clear-data-hub-STAGING", existingPrivilegeNames, adminRole, clearUserDataRole));
-        list.add(buildPrivilege(client, "admin-database-clear-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")",
-            "clear-data-hub-FINAL", existingPrivilegeNames, adminRole, clearUserDataRole));
-        list.add(buildPrivilege(client, "admin-database-clear-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + jobsDbName + ")",
-            "clear-data-hub-JOBS", existingPrivilegeNames, adminRole, clearUserDataRole));
+        final Map<String, Privilege> granularPrivilegeMap = new LinkedHashMap<>();
 
-        list.add(buildPrivilege(client, "admin-database-index-" + stagingDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")",
-            "STAGING-index-editor", existingPrivilegeNames, developerRole, hubCentralEntityModelWriterRole));
-        list.add(buildPrivilege(client, "admin-database-index-" + finalDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")",
-            "FINAL-index-editor", existingPrivilegeNames, developerRole, hubCentralEntityModelWriterRole));
-        list.add(buildPrivilege(client, "admin-database-index-" + jobsDbName, "http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + jobsDbName + ")",
-            "JOBS-index-editor", existingPrivilegeNames, developerRole));
+        Privilege p = newPrivilege("admin-database-clear-" + stagingDbName, adminRole, clearUserDataRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + stagingDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/clear/" + stagingDbId, p);
 
-        return list;
-    }
+        p = newPrivilege("admin-database-clear-" + finalDbName, adminRole, clearUserDataRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + finalDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/clear/" + finalDbId, p);
 
-    /**
-     * @param client
-     * @param name                   The name of the privilege to create if a privilege with the given dhsName does not exist. This name
-     *                               is not the same as the dhsName, as the initial goal was to have a consistent naming convention for
-     *                               all granular privileges, and the DHS privilege names are not consistent with that convention.
-     * @param action
-     * @param dhsName
-     * @param existingPrivilegeNames
-     * @param rolesToAdd
-     * @return
-     */
-    protected Privilege buildPrivilege(ManageClient client, String name, String action, String dhsName, List<String> existingPrivilegeNames, String... rolesToAdd) {
-        Privilege p;
-        if (existingPrivilegeNames.contains(dhsName)) {
-            final String json = new PrivilegeManager(client).getAsJson(dhsName, "kind", "execute");
-            p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
-        } else {
-            p = new Privilege(null, name);
-            p.setKind("execute");
-            p.setAction(action);
-        }
-        for (String role : rolesToAdd) {
-            p.addRole(role);
-        }
-        return p;
-    }
+        p = newPrivilege("admin-database-clear-" + jobsDbName, adminRole, clearUserDataRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/clear/$$database-id(" + jobsDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/clear/" + jobsDbId, p);
 
-    /**
-     * Builds a list of privileges to create based on the groupNames configured on this object. If none have been
-     * configured, then the groupName in AppConfig is used.
-     *
-     * @return
-     */
-    protected List<Privilege> buildScheduledTaskPrivileges() {
-        List<Privilege> privileges = new ArrayList<>();
+        p = newPrivilege("admin-database-index-" + stagingDbName, developerRole, hubCentralEntityModelWriterRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + stagingDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId, p);
+
+        p = newPrivilege("admin-database-index-" + finalDbName, developerRole, hubCentralEntityModelWriterRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + finalDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId, p);
+
+        p = newPrivilege("admin-database-index-" + jobsDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/index/$$database-id(" + jobsDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/index/" + jobsDbId, p);
+
+        p = newPrivilege("admin-database-triggers-" + stagingTriggersDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + stagingTriggersDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/triggers/" + stagingTriggersDbId, p);
+
+        p = newPrivilege("admin-database-triggers-" + finalTriggersDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/triggers/$$database-id(" + finalTriggersDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/triggers/" + finalTriggersDbId, p);
+
+        p = newPrivilege("admin-database-temporal-" + stagingDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + stagingDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/temporal/" + stagingDbId, p);
+
+        p = newPrivilege("admin-database-temporal-" + finalDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/temporal/$$database-id(" + finalDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/temporal/" + finalDbId, p);
+
+        p = newPrivilege("admin-database-alerts-" + stagingDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + stagingDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + stagingDbId, p);
+
+        p = newPrivilege("admin-database-alerts-" + finalDbName, developerRole);
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + finalDbId, p);
+
+        final ResourcesFragment existingGroups = new GroupManager(manageClient).getAsXml();
         getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
-            Privilege p = new Privilege(null, "admin-group-scheduled-task-" + groupName);
-            p.setKind("execute");
-            p.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
-            p.addRole("data-hub-developer");
-            privileges.add(p);
+            // Check for a value ID, as user may have a typo in a group name
+            final String groupId = existingGroups.getIdForNameOrId(groupName);
+            if (groupId == null) {
+                logger.warn(format("Unable to find group ID for group name '%s'; will not create scheduled tasks privilege for the group"));
+            } else {
+                Privilege priv = newPrivilege("admin-group-scheduled-task-" + groupName, developerRole);
+                priv.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
+                granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, priv);
+            }
         });
-        return privileges;
+
+        final ResourcesFragment existingRoles = new RoleManager(manageClient).getAsXml();
+        ROLES_THAT_CAN_BE_INHERITED.forEach(roleName -> {
+            // We expect each role to translate to a role; otherwise, an error should be thrown
+            String roleId = existingRoles.getIdForNameOrId(roleName);
+            Privilege priv = newPrivilege("data-role-inherit-" + roleId, "data-hub-security-admin");
+            priv.setAction("http://marklogic.com/xdmp/privileges/role/inherit/" + roleId);
+            granularPrivilegeMap.put(priv.getAction(), priv);
+        });
+
+        return granularPrivilegeMap;
+    }
+
+    /**
+     * Save each of the given privileges. For each key in the map - where the key is expected to be an action with a
+     * resource ID in it - we check to see if an existing privilege has the same action. If so, then the roles in the
+     * granular privilege are added to that existing privilege. This ensures we never cause an error by trying to create
+     * a privilege with the same action as an existing one. This is crucial for DHS, as the DHS config will create some
+     * of the same granular privileges that DHF needs to create (but with a different name).
+     *
+     * @param manageClient
+     * @param granularPrivileges
+     */
+    protected void saveGranularPrivileges(ManageClient manageClient, Map<String, Privilege> granularPrivileges) {
+        final PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);
+        final API manageApi = new API(manageClient);
+
+        // For performance, grab all the privileges and build a map of them with action as the key
+        final Map<String, String> actionToNameMap = buildExistingPrivilegeActionToNameMap(manageClient);
+        final ResourceMapper resourceMapper = new DefaultResourceMapper(manageApi);
+
+        granularPrivileges.keySet().forEach(actionWithId -> {
+            Privilege granularPrivilege = granularPrivileges.get(actionWithId);
+            granularPrivilege.setAction(actionWithId);
+            final String granularPrivilegeName = granularPrivilege.getPrivilegeName();
+            if (actionToNameMap.containsKey(actionWithId)) {
+                final String existingPrivilegeName = actionToNameMap.get(actionWithId);
+                String json = privilegeManager.getAsJson(existingPrivilegeName, "kind", "execute");
+                Privilege existingPrivilege = resourceMapper.readResource(json, Privilege.class);
+                List<String> existingRoles = existingPrivilege.getRole();
+                if (existingRoles != null) {
+                    boolean needsToBeSaved = false;
+                    for (String role : granularPrivilege.getRole()) {
+                        if (!existingRoles.contains(role)) {
+                            existingRoles.add(role);
+                            needsToBeSaved = true;
+                        }
+                    }
+                    if (needsToBeSaved) {
+                        logger.info(format("For granular privilege '%s', adding roles %s to existing privilege '%s'",
+                            granularPrivilegeName, granularPrivilege.getRole(), existingPrivilegeName));
+                        existingPrivilege.save();
+                    } else {
+                        logger.info(format("Not updating privilege '%s', it already has roles %s",
+                            existingPrivilegeName, granularPrivilege.getRole()));
+                    }
+                } else {
+                    granularPrivilege.getRole().forEach(role -> existingPrivilege.addRole(role));
+                    logger.info(format("For granular privilege '%s', adding roles %s to existing privilege '%s'",
+                        granularPrivilegeName, granularPrivilege.getRole(), existingPrivilegeName));
+                    existingPrivilege.save();
+                }
+            } else {
+                logger.info(format("Creating new granular privilege '%s'", granularPrivilegeName));
+                granularPrivilege.setApi(manageApi);
+                granularPrivilege.save();
+            }
+        });
+    }
+
+    /**
+     * @param manageClient
+     * @return a map of action to name for existing privileges. This is then used to determine if the action of a
+     * granular privilege that we want to save already exists
+     */
+    private Map<String, String> buildExistingPrivilegeActionToNameMap(ManageClient manageClient) {
+        ResourcesFragment allPrivileges = new PrivilegeManager(manageClient).getAsXml();
+        final Map<String, String> actionToNameMap = new HashMap<>();
+        Namespace securityNamespace = Namespace.getNamespace("http://marklogic.com/manage/security");
+        allPrivileges.getListItems().forEach(privilege -> {
+            String action = privilege.getChildText("action", securityNamespace);
+            String name = privilege.getChildText("nameref", securityNamespace);
+            actionToNameMap.put(action, name);
+        });
+        return actionToNameMap;
     }
 
     protected List<String> getGroupNamesForScheduledTaskPrivileges() {
@@ -257,43 +300,13 @@ public class CreateGranularPrivilegesCommand implements Command, UndoableCommand
             Arrays.asList(hubConfig.getAppConfig().getGroupName());
     }
 
-    /**
-     * As an optimization, this first checks to see if a privilege with the given name exists. This is safe to do until
-     * we need to change the definition of these privileges, of course. The optimization is done because deploying the
-     * privileges - whether via RMA or CMA - is a bit slower if the privileges already exist. And since we know we're
-     * not going to be making any updates to the privileges, the optimization check is performed.
-     *
-     * @param manageClient
-     */
-    private void addRolePrivilegesToDataHubSecurityAdmin(ManageClient manageClient) {
-        PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);
-        ResourcesFragment existingPrivileges = privilegeManager.getAsXml();
-        buildPrivilegesForRolesThatCanBeInherited(manageClient).forEach(privilege -> {
-            if (!existingPrivileges.resourceExists(privilege.getPrivilegeName())) {
-                privilegeManager.save(privilege.getJson());
-            }
-        });
-    }
-
-    /**
-     * @param manageClient
-     * @return a list of Privilege objects, one for which each role that can be inherited when a data-hub-security-admin
-     * is creating a role. Each privilege has a name of the form "data-role-inherit-(roleId)"; while that format is not
-     * required, and its the privilege action that matters, this format is the same as what the ML security API uses,
-     * so it's being adopted for consistency
-     */
-    protected List<Privilege> buildPrivilegesForRolesThatCanBeInherited(ManageClient manageClient) {
-        ResourcesFragment existingRoles = new RoleManager(manageClient).getAsXml();
-        List<Privilege> privileges = new ArrayList<>();
-        ROLES_THAT_CAN_BE_INHERITED.forEach(roleName -> {
-            String roleId = existingRoles.getIdForNameOrId(roleName);
-            Privilege p = new Privilege(null, "data-role-inherit-" + roleId);
-            p.setKind("execute");
-            p.setAction("http://marklogic.com/xdmp/privileges/role/inherit/" + roleId);
-            p.addRole("data-hub-security-admin");
-            privileges.add(p);
-        });
-        return privileges;
+    private Privilege newPrivilege(String name, String... roles) {
+        Privilege p = new Privilege(null, name);
+        p.setKind("execute");
+        for (String role : roles) {
+            p.addRole(role);
+        }
+        return p;
     }
 
     public List<String> getGroupNames() {

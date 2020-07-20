@@ -20,6 +20,11 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+  <!-- Quieting this down as it logs frequently at "info" with stuff that's rarely relevant to tests -->
+  <logger name="com.marklogic.hub.impl.HubConfigImpl" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
   <!-- Helps verifies that test modules are loaded correctly -->
   <logger name="com.marklogic.client.ext" level="INFO" additivity="false">
     <appender-ref ref="STDOUT" />
