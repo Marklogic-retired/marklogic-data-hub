@@ -11,7 +11,7 @@ import {MemoryRouter} from "react-router-dom";
 jest.mock('axios');
 jest.setTimeout(30000);
 
-const DEFAULT_VIEW = 'list';
+const DEFAULT_VIEW = 'card';
 
 describe('Load component', () => {
 

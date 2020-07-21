@@ -45,6 +45,24 @@
     font-size: 19px;
 }
 
+.stepLink{
+    color: #44499C;
+}
+
+.stepLinkExisting{
+    color: rgba(0, 0, 0, 0.65);
+}
+
+
+.stepLinkSelect{
+    margin-top: 5px;
+}
+
+.disabledStepLink{
+    color: #999;
+    cursor: not-allowed;
+}
+
 .deleteIcon {
     color: #B32424;
     font-size: 21px;

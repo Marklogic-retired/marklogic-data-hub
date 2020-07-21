@@ -353,11 +353,11 @@ describe('Tiles View component tests for Developer user', () => {
         // Load tile shown after click
         await wait(() => expect(getByLabelText("icon-load")).toBeInTheDocument());
         expect(getByLabelText("title-load")).toBeInTheDocument();
-        // Default list view
+        // Default Card view
         expect(getByLabelText("switch-view")).toBeInTheDocument();
         expect(getByLabelText("switch-view-card")).toBeInTheDocument();
         expect(getByLabelText("switch-view-list")).toBeInTheDocument();
-        expect(getByLabelText("add-new-list")).toBeInTheDocument();
+        expect(getByLabelText("add-new-card")).toBeInTheDocument();
     });
 
 });

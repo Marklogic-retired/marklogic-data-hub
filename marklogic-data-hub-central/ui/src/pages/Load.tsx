@@ -10,7 +10,7 @@ import { AuthoritiesContext } from "../util/authorities";
 
 export type ViewType =  'card' | 'list';
 
-const INITIAL_VIEW: ViewType = 'list';
+const INITIAL_VIEW: ViewType = 'card';
 
 const Load: React.FC = () => {
   let [view, setView] = useState(INITIAL_VIEW);
@@ -157,18 +157,22 @@ const Load: React.FC = () => {
   //Setting the value of switch view output
   let output;
 
-  if (view === 'list') {
-    output = <LoadList
+  if (view === 'card') {
+    output = <LoadCard
       data={loadArtifacts}
+      flows={flows}
       deleteLoadArtifact={deleteLoadArtifact}
       createLoadArtifact={createLoadArtifact}
       canReadWrite={canReadWrite}
       canReadOnly={canReadOnly}
+      canWriteFlow={canWriteFlow}
+      addStepToFlow={addStepToFlow}
+      addStepToNew={addStepToNew}
     />
   }
   else {
     output = <div className={styles.cardView}>
-      <LoadCard
+      <LoadList
         data={loadArtifacts}
         flows={flows}
         deleteLoadArtifact={deleteLoadArtifact}

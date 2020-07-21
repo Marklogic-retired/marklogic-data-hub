@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'AddToFlowIcon';
+    src: url(../../fonts/ML_IconFont2.ttf)  format('truetype');
+}
+
+.AddToFlowIcon::before{ 
+    content: "\61";
+    font-family: AddToFlowIcon;
+    font-size: 24px; 
+    position: relative;
+    color: #44499C;
+    padding-right: 6px;
+    top: 4px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.disabledAddToFlowIcon::before{ 
+    content: "\61";
+    font-family: AddToFlowIcon;
+    font-size: 24px; 
+    position: relative;
+    color: rgba(0, 0, 0, 0.35);
+    padding-right: 6px;
+    top: 4px;
+    display: inline-block;
+    cursor: not-allowed;
+}
