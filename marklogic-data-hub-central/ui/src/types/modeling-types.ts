@@ -51,8 +51,8 @@ export interface PropertyOptions {
   multiple: string,
   pii: string,
   facetable: boolean,
-  sortable: boolean,
-  wildcard: boolean
+  sortable: boolean
+  //wildcard: boolean
 }
 
 export enum ConfirmationType {

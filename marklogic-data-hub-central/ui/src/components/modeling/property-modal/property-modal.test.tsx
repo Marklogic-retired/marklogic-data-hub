@@ -112,9 +112,9 @@ describe('Property Modal Component', () => {
     fireEvent.change(piiRadio, { target: { value: "no" } });
     expect(piiRadio['value']).toBe('no');
 
-    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
-    expect(wildcardCheckbox).toBeChecked();
+    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    // expect(wildcardCheckbox).toBeChecked();
 
     const facetableCheckbox = screen.getByLabelText('Facet');
     fireEvent.change(facetableCheckbox, { target: { checked: true } });
@@ -160,8 +160,8 @@ describe('Property Modal Component', () => {
     expect(screen.queryByLabelText('pii-yes')).toBeNull();
     expect(screen.queryByLabelText('Sort')).toBeNull();
     expect(screen.queryByLabelText('Facet')).toBeNull();
-    expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
-
+    //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
+  
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
@@ -284,9 +284,9 @@ describe('Property Modal Component', () => {
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
-    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
-    expect(wildcardCheckbox).toBeChecked();
+    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    // expect(wildcardCheckbox).toBeChecked();
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
@@ -437,14 +437,14 @@ describe('Property Modal Component', () => {
     const piiRadio = screen.getByLabelText('pii-yes')
     expect(piiRadio['value']).toBe('yes');
 
-    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    expect(wildcardCheckbox).toBeChecked();
+    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    // expect(wildcardCheckbox).toBeChecked();
 
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
-    fireEvent.change(wildcardCheckbox, { target: { checked: false } });
-    expect(wildcardCheckbox).toHaveProperty("checked", false);
+    // fireEvent.change(wildcardCheckbox, { target: { checked: false } });
+    // expect(wildcardCheckbox).toHaveProperty("checked", false);
 
     userEvent.click(getByLabelText('property-modal-cancel'));
     expect(editMock).toHaveBeenCalledTimes(0);
@@ -464,8 +464,8 @@ describe('Property Modal Component', () => {
       multiple: 'yes',
       pii: 'no',
       sortable: false,
-      facetable: false,
-      wildcard: false
+      facetable: false
+      //wildcard: false
     }
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -523,8 +523,8 @@ describe('Property Modal Component', () => {
       multiple: 'yes',
       pii: 'no',
       sortable: false,
-      facetable: false,
-      wildcard: false
+      facetable: false
+      //wildcard: false
     }
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -603,8 +603,8 @@ describe('Property Modal Component', () => {
       multiple: 'no',
       pii: 'yes',
       sortable: false,
-      facetable: false,
-      wildcard: true
+      facetable: false
+      //wildcard: true
     }
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -651,14 +651,14 @@ describe('Property Modal Component', () => {
     const piiRadio = screen.getByLabelText('pii-yes')
     expect(piiRadio['value']).toBe('yes');
 
-    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    expect(wildcardCheckbox).toBeChecked();
+    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    // expect(wildcardCheckbox).toBeChecked();
 
     fireEvent.change(piiRadio, { target: { value: "no" } });
     expect(piiRadio['value']).toBe('no');
 
-    fireEvent.change(wildcardCheckbox, { target: { checked: false } });
-    expect(wildcardCheckbox).toHaveProperty("checked", false);
+    // fireEvent.change(wildcardCheckbox, { target: { checked: false } });
+    // expect(wildcardCheckbox).toHaveProperty("checked", false);
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(editMock).toHaveBeenCalledTimes(1);
@@ -678,8 +678,8 @@ describe('Property Modal Component', () => {
       multiple: '',
       pii: 'yes',
       sortable: false,
-      facetable: false,
-      wildcard: true
+      facetable: false
+      //wildcard: true
     }
 
     const editPropertyOptions: EditPropertyOptions = {
@@ -732,8 +732,8 @@ describe('Property Modal Component', () => {
       multiple: 'yes',
       pii: 'no',
       sortable: false,
-      facetable: false,
-      wildcard: false
+      facetable: false
+      //wildcard: false
     }
 
     const editPropertyOptions: EditPropertyOptions = {
