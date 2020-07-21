@@ -97,7 +97,16 @@ function generateExplorerWithFacetableAndSortableProperties() {
           "rating": {"datatype": "integer", "sortable": true, "items": {"datatype": "string"}},
           "bookId": {"datatype": "string", "collation": "http://marklogic.com/collation/"},
           "completedDate": {"datatype": "dateTime", "facetable": true},
-          "publishedDate": {"datatype": "date", "sortable": true}
+          "publishedDate": {"datatype": "date", "sortable": true},
+          "publishedAtAddress": {"$ref": "#/definitions/Address"}
+        }
+      },
+      "Address": {
+        "elementRangeIndex": [ "city" ],
+        "rangeIndex": [ "street" ],
+        "properties": {
+          "street": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"},
+          "city": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"}
         }
       }
     }
@@ -106,20 +115,23 @@ function generateExplorerWithFacetableAndSortableProperties() {
   const expOptions = hent.dumpSearchOptions(input, true);
 
   return [
-    test.assertEqual("limit=25", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.title']/*:range/*:facet-option/text()"))),
+    test.assertEqual("limit=25", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'title')]/*:range/*:facet-option/text()"))),
         "To avoid displaying large numbers of values in facets in QuickStart, range constraints default to a max of 25 values"
     ),
-    test.assertEqual("//*:instance/Book/title", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.title']/*:range/*:path-index/text()")))),
-    test.assertEqual("//*:instance/Book/authors", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.authors']/*:range/*:path-index/text()")))),
-    test.assertEqual("//*:instance/Book/rating", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.rating']/*:range/*:path-index/text()")))),
-    test.assertEqual("//*:instance/Book/completedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.completedDate']/*:range/*:path-index/text()")))),
-    test.assertEqual("//*:instance/Book/publishedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.publishedDate']/*:range/*:path-index/text()")))),
-    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.title']/*:range/@facet")))),
-    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.authors']/*:range/@facet")))),
-    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.rating']/*:range/@facet")))),
-    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.completedDate']/*:range/@facet")))),
-    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[@name = 'Book.publishedDate']/*:range/@facet")))),
-    test.assertNotExists(expOptions.xpath("/*:constraint[@name = 'Book.bookId']"))
+    test.assertEqual("//*:instance/Book/title", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'title')]/*:range/*:path-index/text()")))),
+    test.assertEqual("//*:instance/Book/authors", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'authors')]/*:range/*:path-index/text()")))),
+    test.assertEqual("//*:instance/Book/rating", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'rating')]/*:range/*:path-index/text()")))),
+    test.assertEqual("//*:instance/Book/completedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'completedDate')]/*:range/*:path-index/text()")))),
+    test.assertEqual("//*:instance/Book/publishedDate", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedDate')]/*:range/*:path-index/text()")))),
+    test.assertEqual("//*:instance/Address/street", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'street')]/*:range/*:path-index/text()")))),
+    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'title')]/*:range/@facet")))),
+    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'authors')]/*:range/@facet")))),
+    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'rating')]/*:range/@facet")))),
+    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'completedDate')]/*:range/@facet")))),
+    test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'publishedDate')]/*:range/@facet")))),
+    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'street')]/*:range/@facet")))),
+    test.assertEqual("true", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'city')]/*:range/@facet")))),
+    test.assertNotExists(expOptions.xpath("/*:constraint[contains(@name, 'bookId')]/*:range/*:path-index"))
   ];
 }
 
