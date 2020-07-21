@@ -1,5 +1,7 @@
 declareUpdate();
 
+const defaultPermissions = xdmp.defaultPermissions().concat([xdmp.permission('data-hub-common','read')]);
+
 // Inserting documents into final database
 xdmp.documentInsert("/exp/doc1",
     {
@@ -56,13 +58,14 @@ xdmp.documentInsert("/exp/doc1",
               }
             ],
             "searchEntityProp2": "doc1SrchEntyProp2",
-            "searchEntityProp1": "doc1SrchEntyProp1"
+            "searchEntityProp1": "doc1SrchEntyProp1",
+            "hyphenated-property": "doc1HyphenatedProp"
           }
         }
       }
     },
     {
-      permissions: xdmp.defaultPermissions(),
+      permissions: defaultPermissions,
       collections: "doc1",
       metadata: {
         "datahubCreatedInFlow": "my-flow-1",
@@ -125,13 +128,14 @@ xdmp.documentInsert("/exp/doc2",
               }
             ],
             "searchEntityProp2": "doc2SrchEntyProp2",
-            "searchEntityProp1": "doc2SrchEntyProp1"
+            "searchEntityProp1": "doc2SrchEntyProp1",
+            "hyphenated-property": "doc2HyphenatedProp"
           }
         }
       }
     },
     {
-      permissions: xdmp.defaultPermissions(),
+      permissions: defaultPermissions,
       collections: "doc2",
       metadata: {
         "datahubCreatedInFlow": "my-flow-2",
@@ -182,7 +186,7 @@ xdmp.documentInsert("/entities/NumericEntity.entity.json",
       }
     },
     {
-      permissions: xdmp.defaultPermissions(),
+      permissions: defaultPermissions,
       collections: "http://marklogic.com/entity-services/models"
     });
 
@@ -256,7 +260,7 @@ xdmp.documentInsert("/entities/NumericStringEntity.entity.json",
       }
     },
     {
-      permissions: xdmp.defaultPermissions(),
+      permissions: defaultPermissions,
       collections: "http://marklogic.com/entity-services/models"
     });
 
@@ -284,6 +288,10 @@ xdmp.documentInsert("/entities/EntitySearchEntity.entity.json",
               "collation": "http://marklogic.com/collation/codepoint"
             },
             "searchEntityProp2": {
+              "datatype": "string",
+              "collation": "http://marklogic.com/collation/codepoint"
+            },
+            "hyphenated-property": {
               "datatype": "string",
               "collation": "http://marklogic.com/collation/codepoint"
             },
@@ -357,6 +365,6 @@ xdmp.documentInsert("/entities/EntitySearchEntity.entity.json",
       }
     },
     {
-      permissions: xdmp.defaultPermissions(),
+      permissions: defaultPermissions,
       collections: "http://marklogic.com/entity-services/models"
     });

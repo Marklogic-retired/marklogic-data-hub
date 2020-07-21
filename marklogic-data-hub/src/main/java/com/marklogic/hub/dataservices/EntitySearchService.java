@@ -2,14 +2,12 @@ package com.marklogic.hub.dataservices;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.util.stream.Stream;
-
-
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.impl.BaseProxy;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.marker.JSONWriteHandle;
 
-import com.marklogic.client.impl.BaseProxy;
+import java.util.stream.Stream;
 
 /**
  * Provides a set of operations on the database server
@@ -65,7 +63,7 @@ public interface EntitySearchService {
                 this.req_getSavedQuery = this.baseProxy.request(
                     "getSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getOpticPlan = this.baseProxy.request(
-                    "getOpticPlan.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                    "getOpticPlan.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
                 this.req_deleteSavedQuery = this.baseProxy.request(
                     "deleteSavedQuery.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_saveSavedQuery = this.baseProxy.request(
@@ -107,12 +105,12 @@ public interface EntitySearchService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getOpticPlan(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, Stream<String> columns) {
+            public com.fasterxml.jackson.databind.JsonNode getOpticPlan(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, com.fasterxml.jackson.databind.node.ArrayNode sortOrder, Stream<String> columns) {
                 return getOpticPlan(
-                    this.req_getOpticPlan.on(this.dbClient), structuredQuery, searchText, queryOptions, schemaName, viewName, limit, columns
+                    this.req_getOpticPlan.on(this.dbClient), structuredQuery, searchText, queryOptions, schemaName, viewName, limit, sortOrder, columns
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getOpticPlan(BaseProxy.DBFunctionRequest request, String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, Stream<String> columns) {
+            private com.fasterxml.jackson.databind.JsonNode getOpticPlan(BaseProxy.DBFunctionRequest request, String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, com.fasterxml.jackson.databind.node.ArrayNode sortOrder, Stream<String> columns) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
@@ -122,6 +120,7 @@ public interface EntitySearchService {
                           BaseProxy.atomicParam("schemaName", false, BaseProxy.StringType.fromString(schemaName)),
                           BaseProxy.atomicParam("viewName", false, BaseProxy.StringType.fromString(viewName)),
                           BaseProxy.atomicParam("limit", true, BaseProxy.LongType.fromLong(limit)),
+                          BaseProxy.documentParam("sortOrder", false, BaseProxy.ArrayType.fromArrayNode(sortOrder)),
                           BaseProxy.atomicParam("columns", false, BaseProxy.StringType.fromString(columns))
                           ).responseSingle(false, Format.JSON)
                 );
@@ -211,10 +210,11 @@ public interface EntitySearchService {
    * @param schemaName	provides input
    * @param viewName	provides input
    * @param limit	provides input
+   * @param sortOrder	provides input
    * @param columns	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getOpticPlan(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, Stream<String> columns);
+    com.fasterxml.jackson.databind.JsonNode getOpticPlan(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, com.fasterxml.jackson.databind.node.ArrayNode sortOrder, Stream<String> columns);
 
   /**
    * Invokes the deleteSavedQuery operation on the database server
