@@ -10,11 +10,11 @@ Boot up HC application from `marklogic-data-hub-central` directory either via bo
  
     For DHS –
         * ./gradlew bootRun -PmlHost=<curationEndpoint>
-        * java -jar <HC.war> --mlHost=<curationEndpoint>
+        * java -jar <HC.war> --mlHost=<curationEndpoint> --spring.profiles.active=dev
         
     For local - 
         * ./gradlew bootRun -PhubUseLocalDefaults=true
-        * java -jar <HC.war> --hubUseLocalDefaults=true
+        * java -jar <HC.war> --hubUseLocalDefaults=true --spring.profiles.active=dev
 
  
 Then run the Cypress tests. Use appropriate run scripts defined in package.json to run on different browsers:
