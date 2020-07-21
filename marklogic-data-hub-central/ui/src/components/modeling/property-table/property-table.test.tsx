@@ -36,7 +36,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByText('Property Name')).toBeInTheDocument();
     expect(getByText('Multiple')).toBeInTheDocument();
     expect(getByText('Sort')).toBeInTheDocument();
-    expect(getByText('Wildcard Search')).toBeInTheDocument();
+    //expect(getByText('Wildcard Search')).toBeInTheDocument();
     expect(getByLabelText('NewEntity-add-property')).toBeDisabled();
   });
 
@@ -64,8 +64,8 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.mouseOver(getByLabelText('facet-header'));
     await wait (() => expect(screen.getByText(ModelingTooltips.facet)).toBeInTheDocument());
 
-    fireEvent.mouseOver(getByLabelText('wildcard-header'));
-    await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
+    // fireEvent.mouseOver(getByLabelText('wildcard-header'));
+    // await wait (() => expect(screen.getByText(ModelingTooltips.wildcard)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByLabelText('pii-header'));
     await wait (() => expect(screen.getByText(ModelingTooltips.pii)).toBeInTheDocument());
@@ -73,7 +73,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('identifier-concept_name')).toBeInTheDocument();
     expect(getByTestId('multiple-synonyms')).toBeInTheDocument();
     expect(getByTestId('pii-source_concept_code')).toBeInTheDocument();
-    expect(getByTestId('wildcard-vocabulary')).toBeInTheDocument();
+    // expect(getByTestId('wildcard-vocabulary')).toBeInTheDocument();
 
     expect(getByText('invalid_reason')).toBeInTheDocument();
     expect(getByText('vocabulary')).toBeInTheDocument();
@@ -82,8 +82,8 @@ describe('Entity Modeling Property Table Component', () => {
 
     userEvent.click(getByLabelText('Concept-add-property'));
     expect(getByText('Entity Type:')).toBeInTheDocument();
-    expect(getByText('Add')).toBeInTheDocument();
-    expect(getByText('Cancel')).toBeInTheDocument();
+    expect(getByLabelText('property-modal-submit')).toBeInTheDocument();
+    expect(getByLabelText('property-modal-cancel')).toBeInTheDocument();
   });
 
   test('Property Table renders with structured and external datatypes, no writer role', () => {
@@ -282,9 +282,13 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
-    const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
-    fireEvent.change(wildcardCheckbox, { target: { checked: true } });
-    expect(wildcardCheckbox).toBeChecked();
+    // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
+    // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
+    // expect(wildcardCheckbox).toBeChecked();
+
+    const facetableCheckbox = screen.getByLabelText('Facet');
+    fireEvent.change(facetableCheckbox, { target: { checked: true } });
+    expect(facetableCheckbox).toBeChecked();
 
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('altName-span')).toBeInTheDocument();
