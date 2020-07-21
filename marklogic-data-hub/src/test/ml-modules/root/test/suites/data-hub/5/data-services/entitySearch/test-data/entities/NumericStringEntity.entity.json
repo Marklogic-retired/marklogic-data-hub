@@ -1,0 +1,68 @@
+{
+  "info": {
+    "title": "NumericStringEntity",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "NumericEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "decimalProp",
+        "floatProp",
+        "doubleProp"
+      ],
+      "rangeIndex": [
+        "intProp",
+        "longProp"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "intProp": {
+          "datatype": "int"
+        },
+        "longProp": {
+          "datatype": "long"
+        },
+        "decimalProp": {
+          "datatype": "decimal"
+        },
+        "floatProp": {
+          "datatype": "float"
+        },
+        "doubleProp": {
+          "datatype": "double"
+        }
+      }
+    },
+    "NumericStringEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "stringNameProp"
+      ],
+      "rangeIndex": [
+        "stringCityProp",
+        "intProp"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "stringNameProp": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "stringCityProp": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "intProp": {
+          "datatype": "int"
+        },
+        "numericEntityProp": {
+          "$ref": "#/definitions/NumericEntity"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "info": {
+    "title": "NumericEntity",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "NumericEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "decimalProp",
+        "floatProp",
+        "doubleProp"
+      ],
+      "rangeIndex": [
+        "intProp",
+        "longProp"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "intProp": {
+          "datatype": "int"
+        },
+        "longProp": {
+          "datatype": "long"
+        },
+        "decimalProp": {
+          "datatype": "decimal"
+        },
+        "floatProp": {
+          "datatype": "float"
+        },
+        "doubleProp": {
+          "datatype": "double"
+        }
+      }
+    }
+  }
+}

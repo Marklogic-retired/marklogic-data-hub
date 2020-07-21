@@ -76,7 +76,8 @@ var limit;
 var structuredQuery;
 var searchText;
 var queryOptions;
-var columns = xdmp.getRequestField('columns');
+var sortOrder;
+var columns;
 
 structuredQuery = fn.head(xdmp.unquote(structuredQuery)).root;
 searchText = searchText || '';
@@ -87,7 +88,7 @@ queryOptions = fn.head(xdmp.unquote(queryOptions)).root;
  * Also replacing hyphen with underscore for column names (entity property names), schema names and view names since TDE's do the same.
  */
 const simplePropertySet = filterObjectAndArrayTypeProperties(schemaName);
-columns = columns.filter(column => simplePropertySet.has(column)).map(column => replaceHyphenWithUnderscore(column));
+columns = columns.toArray().filter(column => simplePropertySet.has(column)).map(column => replaceHyphenWithUnderscore(column));
 viewName = replaceHyphenWithUnderscore(viewName);
 schemaName = replaceHyphenWithUnderscore(schemaName);
 
@@ -101,12 +102,26 @@ const qryTxt = cts.query(fn.head(searchTxtResponse));
 
 const ctsQry = cts.andQuery([qry, qryTxt]);
 
+let orderDefinitions = [];
+if (sortOrder) {
+  // convert ArrayNode to Array with .toObject()
+  for (let sort of sortOrder.toObject()) {
+    const col =  op.col(replaceHyphenWithUnderscore(sort.name));
+    if (sort.ascending) {
+      orderDefinitions.push(op.asc(col));
+    } else {
+      orderDefinitions.push(op.desc(col));
+    }
+  }
+}
+const columnIdentifiers = columns.map((colName) => op.col(colName));
 // Workaround since there's a bug in the bridge between v8 and ML builtin functions
 const qryString = xdmp.describe(ctsQry, null, null);
 const opticPlan = eval(`op.fromView(schemaName, viewName)
   .where(${qryString})
+  ${orderDefinitions.length ? '.orderBy(orderDefinitions)': ''}
   .limit(limit)
-  .select(columns)
+  .select(columnIdentifiers)
   .export()`);
 
 opticPlan;
