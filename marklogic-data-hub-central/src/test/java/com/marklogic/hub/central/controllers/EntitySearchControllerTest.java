@@ -168,6 +168,12 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             "            \"customerNumber\",\n" +
             "            \"shipping\",\n" +
             "            \"orders\"\n" +
+            "        ],\n" +
+            "        \"sortOrder\": [\n" +
+            "          { \"name\":  \"customerId\",\n" +
+            "            \"ascending\": false,\n" +
+            "            \"dataType\": \"integer\"\n"+
+            "          }\n" +
             "        ]\n" +
             "    }\n" +
             "}";
@@ -236,7 +242,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
                 String response = result.getResponse().getContentAsString();
                 Set<Integer> actualRowSet = calculateHash(response);
                 assertRowsAndColumns(newLimit, totalColumns, response);
-                assertTrue(actualRowSet.contains(getHashCode(customer1Info)) || actualRowSet.contains(getHashCode(customer2Info)));
+                assertTrue(actualRowSet.contains(getHashCode(customer2Info)), "Sort order should guarantee that customer 2 is returned as the one result. Result: " + response);
             });
     }
 

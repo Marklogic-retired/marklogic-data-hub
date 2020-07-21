@@ -28,6 +28,11 @@
             "nullable" : true
         },
         {
+            "name": "sortOrder",
+            "datatype": "array",
+            "$javaClass": "com.fasterxml.jackson.databind.node.ArrayNode"
+        },
+        {
             "name": "columns",
             "datatype": "string",
             "multiple" : true

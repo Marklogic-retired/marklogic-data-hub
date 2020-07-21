@@ -1,0 +1,99 @@
+{
+  "info": {
+    "title": "EntitySearchEntity",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/"
+  },
+  "definitions": {
+    "EntitySearchEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "searchEntityProp1"
+      ],
+      "rangeIndex": [
+        "searchEntityProp2"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "searchEntityProp1": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "searchEntityProp2": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "hyphenated-property": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "numericStringEntityProp": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/NumericStringEntity"
+          }
+        }
+      }
+    },
+    "NumericEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "decimalProp",
+        "floatProp",
+        "doubleProp"
+      ],
+      "rangeIndex": [
+        "intProp",
+        "longProp"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "intProp": {
+          "datatype": "int"
+        },
+        "longProp": {
+          "datatype": "long"
+        },
+        "decimalProp": {
+          "datatype": "decimal"
+        },
+        "floatProp": {
+          "datatype": "float"
+        },
+        "doubleProp": {
+          "datatype": "double"
+        }
+      }
+    },
+    "NumericStringEntity": {
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [
+        "stringNameProp"
+      ],
+      "rangeIndex": [
+        "stringCityProp",
+        "intProp"
+      ],
+      "wordLexicon": [],
+      "properties": {
+        "stringNameProp": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "stringCityProp": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "intProp": {
+          "datatype": "int"
+        },
+        "numericEntityProp": {
+          "$ref": "#/definitions/NumericEntity"
+        }
+      }
+    }
+  }
+}

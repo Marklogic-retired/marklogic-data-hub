@@ -19,6 +19,8 @@ package com.marklogic.hub.central.entities.search;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
@@ -268,8 +270,11 @@ public class EntitySearchManager {
         String queryOptions = getQueryOptions(QUERY_OPTIONS);
         String entityTypeId = getEntityTypeIdForRowExport(queryDocument);
         List<String> columns = getColumnNamesForRowExport(queryDocument);
+        List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
+        ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
 
-        JsonNode opticPlanNode = EntitySearchService.on(finalDatabaseClient).getOpticPlan(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, columns.stream());
+
+        JsonNode opticPlanNode = EntitySearchService.on(finalDatabaseClient).getOpticPlan(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
         StringHandle stringHandle = new StringHandle(opticPlanNode.toString());
         RowManager rowManager = finalDatabaseClient.newRowManager();
         try (ReaderHandle readerHandle = new ReaderHandle()) {
@@ -285,7 +290,7 @@ public class EntitySearchManager {
     }
 
     protected SearchQuery transformToSearchQuery(JsonNode queryDocument) {
-        return Optional.of(queryDocument)
+        SearchQuery searchQuery = Optional.of(queryDocument)
                 .map(node -> node.get("savedQuery"))
                 .map(node -> node.get("query"))
                 .map(node -> {
@@ -302,6 +307,10 @@ public class EntitySearchManager {
                     return query;
                 })
                 .orElseThrow(() -> new DataHubException("Valid query required"));
+        List<SearchQuery.SortOrder> sortOrderList = getSortOrderListForRowExport(queryDocument);
+        searchQuery.setSortOrder(sortOrderList);
+
+        return searchQuery;
     }
 
     protected String getEntityTypeIdForRowExport(JsonNode queryDocument) {
@@ -323,6 +332,22 @@ public class EntitySearchManager {
         return columns;
     }
 
+    protected List<SearchQuery.SortOrder> getSortOrderListForRowExport(JsonNode queryDocument) {
+        List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Optional.of(queryDocument)
+                .map(node -> node.get("savedQuery"))
+                .map(node -> node.get("sortOrder"))
+                .ifPresent(node -> node.forEach(colNode -> {
+                    try {
+                        sortOrderList.add(objectMapper.treeToValue(colNode, SearchQuery.SortOrder.class));
+                    }
+                    catch (JsonProcessingException e) {
+                        throw new DataHubException("Invalid query");
+                    }
+                }));
+        return sortOrderList;
+    }
     /*
      * Returns null when 'name' is missing or blank ("")
      */
@@ -398,5 +423,18 @@ public class EntitySearchManager {
             });
             sb.append("</options>");
         });
+    }
+
+    private ArrayNode sortOrderToArrayNode(List<SearchQuery.SortOrder> sortOrderList) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ArrayNode arrayNode = objectMapper.createArrayNode();
+        for (SearchQuery.SortOrder sortOrder: sortOrderList) {
+            ObjectNode objectNode = objectMapper.createObjectNode();
+            objectNode.put("name", sortOrder.getName());
+            objectNode.put("dataType", sortOrder.getDataType());
+            objectNode.put("ascending", sortOrder.isAscending());
+            arrayNode.add(objectNode);
+        }
+        return arrayNode;
     }
 }
