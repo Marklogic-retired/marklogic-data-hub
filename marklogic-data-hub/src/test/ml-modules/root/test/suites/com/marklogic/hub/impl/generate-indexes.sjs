@@ -263,15 +263,23 @@ function generateIndexConfigWithSortableProperties() {
             "customer": {"datatype": "array", "items": {"$ref": "#/definitions/Address"}, "sortable": true},
             "address": {"$ref": "#/definitions/Address", "facetable": true}
           }
+        },
+        "Address": {
+          "rangeIndex": [ "street" ],
+          "properties": {
+            "street": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"},
+            "city": {"datatype": "string", "collation": "http://marklogic.com/collation/codepoint"}
+          }
         }
       }
     }
   ]);
   return [
-    test.assertEqual(3, indexes.length),
-    test.assertEqual("//*:instance/Book/title", indexes[0]["path-expression"]),
-    test.assertEqual("//*:instance/Book/authors", indexes[1]["path-expression"]),
-    test.assertEqual("//*:instance/Book/rating", indexes[2]["path-expression"])
+    test.assertEqual(4, indexes.length),
+    test.assertEqual("//*:instance/Address/street", indexes[0]["path-expression"]),
+    test.assertEqual("//*:instance/Book/title", indexes[1]["path-expression"]),
+    test.assertEqual("//*:instance/Book/authors", indexes[2]["path-expression"]),
+    test.assertEqual("//*:instance/Book/rating", indexes[3]["path-expression"])
   ];
 }
 
@@ -282,5 +290,6 @@ function generateIndexConfigWithSortableProperties() {
   .concat(differentPropertyNames())
   .concat(generateIndexConfigForFacetableProperties())
   .concat(generateIndexConfigForMissingModelDefinition())
-  .concat(generateIndexConfigWithNoEntityTypeProperties()
-  .concat(generateIndexConfigWithStructuredProperties()));
+  .concat(generateIndexConfigWithNoEntityTypeProperties())
+  .concat(generateIndexConfigWithStructuredProperties())
+  .concat(generateIndexConfigWithSortableProperties());

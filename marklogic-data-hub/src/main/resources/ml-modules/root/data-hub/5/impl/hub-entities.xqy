@@ -197,9 +197,9 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
       case element(search:constraint) return
         element { fn:node-name($n) } {
           $n/@*,
-          let $constraint-name := $n/attribute()[(name()='name')]
+          let $constraint-path := $n/search:range/search:path-index/text()
           let $search-range-node := $n/search:range
-          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, xs:string($constraint-name)))) then
+          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, fn:string($constraint-path)))) then
             hent:fix-options-exp($n/node(), $sortable-properties)
             else
               element {fn:node-name($search-range-node)} {
@@ -590,9 +590,9 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                   fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
                   map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
             let $_ :=
-                let $title-property := fn:concat($entity-title, ".", $entity-type-property)
+                let $title-property-path := fn:concat("//es:instance", "/", $entity-title, "/", $entity-type-property)
                 where $is-sortable and fn:not($is-facetable)
-                return map:put($sortable-properties, $title-property, "")
+                return map:put($sortable-properties, $title-property-path, "")
             where $is-facetable or $is-sortable
             return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
       return json:array-push($updated-models, $model)
