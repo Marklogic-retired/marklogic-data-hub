@@ -71,11 +71,11 @@ const ALL_CHECKBOX_DISPLAY_VALUES = [
     value: 'facetable',
     tooltip: ModelingTooltips.facet
   },
-  {
-    label: 'Wildcard Search',
-    value: 'wildcard',
-    tooltip: ModelingTooltips.wildcard
-  }
+  // {
+  //   label: 'Wildcard Search',
+  //   value: 'wildcard',
+  //   tooltip: ModelingTooltips.wildcard
+  // }
 ];
 
 const DEFAULT_STRUCTURED_DROPDOWN_OPTIONS = {
@@ -106,8 +106,8 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   multiple: '',
   pii: '',
   facetable: false,
-  sortable: false,
-  wildcard: false
+  sortable: false
+  //wildcard: false
 }
 
 const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
@@ -259,7 +259,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           newSelectedPropertyOptions.propertyType = PropertyType.Relationship;
           newSelectedPropertyOptions.identifier = '';
           newSelectedPropertyOptions.pii = '';
-          newSelectedPropertyOptions.wildcard = false;
+          //newSelectedPropertyOptions.wildcard = false;
 
           setRadioValues([ALL_RADIO_DISPLAY_VALUES[1]]);
           toggleShowConfigurationOptions(false);
@@ -267,7 +267,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         case 'structured':
           newSelectedPropertyOptions.propertyType = PropertyType.Structured;
           newSelectedPropertyOptions.identifier = '';
-          newSelectedPropertyOptions.wildcard = false;
+          //newSelectedPropertyOptions.wildcard = false;
           if (value[1] === 'newPropertyType') {
             toggleStructuredTypeModal(true);
           } else {

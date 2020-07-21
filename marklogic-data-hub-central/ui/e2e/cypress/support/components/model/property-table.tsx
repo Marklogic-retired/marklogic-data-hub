@@ -34,9 +34,9 @@ class PropertyTable {
     return cy.findByTestId(`facet-${propertyName}`);
   }
 
-  getWildcardIcon(propertyName: string) {
-    return cy.findByTestId(`wildcard-${propertyName}`);
-  }
+  // getWildcardIcon(propertyName: string) {
+  //   return cy.findByTestId(`wildcard-${propertyName}`);
+  // }
 
   getPiiIcon(propertyName: string) {
     return cy.findByTestId(`pii-${propertyName}`);
