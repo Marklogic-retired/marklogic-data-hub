@@ -84,13 +84,15 @@ one or more tests at once.
 If you wish to make changes to or try out the latest code in the Data Hub Java library (marklogic-data-hub-(version).jar), follow 
 these instructions:
 
-1. Publish the library to your local Maven repository (defaults to ~/.m2/repository).
+1. Publish the Data Hub library and Data Hub Gradle plugin to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  cd marklogic-data-hub
-  ./gradlew publishToMavenLocal
+  ./gradlew publishToMavenLocal -PskipWeb= 
   ```
- 
+
+The "skipWeb" property is used to skip compilation of the UI code in the ./marklogic-data-hub-central and ./web subprojects. 
+Typically, this is not needed for testing out the Data Hub library or Gradle plugin.
+
 2. In the build.gradle file for the project that will use the library, add your local Maven repository as a repository if it's not alreaded included:
 
   ```bash
@@ -109,7 +111,7 @@ these instructions:
 The version is defined in gradle.properties in the marklogic-data-hub root project directory. You can override this if 
 desired when publishing to your local Maven repository - e.g.
 
-    ./gradlew publishToMavenLocal -Pversion=myVersion
+    ./gradlew publishToMavenLocal -PskipWeb= -Pversion=myVersion
 
 
 ### Testing changes to the Data Hub Gradle plugin 
@@ -118,11 +120,10 @@ The source code for the Data Hub library is in the ./ml-data-hub-plugin subproje
 and it's possible to add your own, you may also want to publish a local copy of the Data Hub plugin and test it in 
 another project. To do so, follow the steps below. 
 
-1. Publish the plugin to your local Maven repository (defaults to ~/.m2/repository).
+1. Publish the Data Hub library and Gradle plugin to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  cd ml-data-hub-plugin
-  ./gradlew publishToMavenLocal
+  ./gradlew publishToMavenLocal -PskipWeb=
   ```
 
 2. Then add the following to the build.gradle file of the project where you'd like to test your just-published Data Hub 
