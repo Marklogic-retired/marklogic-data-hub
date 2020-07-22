@@ -16,7 +16,6 @@
 
 package com.marklogic.hub;
 
-import com.marklogic.hub.artifact.ArtifactTypeInfo;
 import com.marklogic.hub.step.StepDefinition;
 
 import java.io.File;
@@ -285,14 +284,6 @@ public interface HubProject {
      * @return the project's directory as a Path
      */
     Path getProjectDir();
-
-    /**
-     * Returns the directory for a given artifact
-     *
-     * @param artifactTypeInfo Class describing an artifact type
-     * @return the project's directory as a Path
-     */
-    Path getArtifactTypePath(ArtifactTypeInfo artifactTypeInfo);
 
     void createProject(String projectDirString);
 
