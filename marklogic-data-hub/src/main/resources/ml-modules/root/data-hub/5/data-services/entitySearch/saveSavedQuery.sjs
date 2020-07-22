@@ -18,7 +18,6 @@
 declareUpdate();
 
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
-const Security = require("/data-hub/5/impl/security.sjs");
 
 var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];

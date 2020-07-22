@@ -29,16 +29,7 @@ class PullConfigurationFilesTaskTest extends BaseTest {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         runTask('hubDeployUserArtifacts')
     }
-
-    def "running with forbidden user 'flow-developer'"() {
-
-        when:
-        def result = runFailTask('hubPullConfigurationFiles')
-
-        then:
-        result.task(":hubPullConfigurationFiles").outcome == FAILED
-    }
-
+    
     def "running with user having hub-central-downloader role"() {
         long flowModifiedTime = flowFile.lastModified()
         long entitiesModifiedTime = entityFile.lastModified()
@@ -57,5 +48,16 @@ class PullConfigurationFilesTaskTest extends BaseTest {
         entitiesModifiedTime < entityFile.lastModified()
         //'lastUpdated' property present in the downloaded file and not in original flow file
         jsonSlurper.parse(flowFile).lastUpdated != null
+    }
+
+    def "running with forbidden user"() {
+        given:
+        propertiesFile << """mlUsername=test-data-hub-operator"""
+
+        when:
+        def result = runFailTask('hubPullConfigurationFiles')
+
+        then:
+        result.task(":hubPullConfigurationFiles").outcome == FAILED
     }
 }

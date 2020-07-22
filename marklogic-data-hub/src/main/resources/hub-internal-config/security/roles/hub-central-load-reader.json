@@ -4,12 +4,5 @@
   "role": [
     "hub-central-user",
     "data-hub-ingestion-reader"
-  ],
-  "privilege": [
-    {
-      "privilege-name": "hub-central:readIngestion",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-ingestion",
-      "kind": "execute"
-    }
   ]
 }

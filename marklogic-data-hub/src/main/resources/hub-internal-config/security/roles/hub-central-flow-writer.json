@@ -4,12 +4,5 @@
   "role": [
     "hub-central-step-runner",
     "data-hub-flow-writer"
-  ],
-  "privilege": [
-    {
-      "privilege-name": "hub-central:writeFlow",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-flow",
-      "kind": "execute"
-    }
   ]
 }

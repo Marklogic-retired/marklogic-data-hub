@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central-save-entity-query",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/save-entity-query",
+  "kind": "execute"
+}
