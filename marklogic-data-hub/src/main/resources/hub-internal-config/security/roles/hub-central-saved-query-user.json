@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:savedQueryUser",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/saved-query-user",
+      "privilege-name": "hub-central-save-entity-query",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/save-entity-query",
       "kind": "execute"
     }
   ]

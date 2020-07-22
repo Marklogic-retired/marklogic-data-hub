@@ -10,6 +10,11 @@
       "privilege-name": "any-uri",
       "action": "http://marklogic.com/xdmp/privileges/any-uri",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "data-hub-write-mapping",
+      "action": "http://marklogic.com/data-hub/privileges/write-mapping",
+      "kind": "execute"
     }
   ]
 }

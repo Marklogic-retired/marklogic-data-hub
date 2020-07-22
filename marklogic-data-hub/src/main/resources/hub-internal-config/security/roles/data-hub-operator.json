@@ -20,6 +20,11 @@
   ],
   "privilege": [
     {
+      "privilege-name": "data-hub-run-step",
+      "action": "http://marklogic.com/data-hub/privileges/run-step",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:set-server-field",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-set-server-field",
       "kind": "execute"

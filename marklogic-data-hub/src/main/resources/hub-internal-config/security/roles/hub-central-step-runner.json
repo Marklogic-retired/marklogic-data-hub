@@ -15,13 +15,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:runStep",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/run-step",
-      "kind": "execute"
-    },
-    {
-      "privilege-name": "hub-central:readFlow",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-flow",
+      "privilege-name": "data-hub-run-step",
+      "action": "http://marklogic.com/data-hub/privileges/run-step",
       "kind": "execute"
     },
     {

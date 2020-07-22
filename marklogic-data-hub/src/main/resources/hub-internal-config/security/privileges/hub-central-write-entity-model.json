@@ -1,5 +1,0 @@
-{
-  "privilege-name": "hub-central:writeEntityModel",
-  "action": "http://marklogic.com/data-hub/hub-central/privileges/write-entity-model",
-  "kind": "execute"
-}

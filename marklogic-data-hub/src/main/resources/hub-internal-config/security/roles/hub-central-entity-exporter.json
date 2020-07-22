@@ -8,8 +8,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:exportEntityInstances",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/export-entity-instances",
+      "privilege-name": "hub-central-export-entities",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/export-entities",
       "kind": "execute"
     },
     {

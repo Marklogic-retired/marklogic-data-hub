@@ -1,4 +1,11 @@
 {
   "role-name": "data-hub-mapping-reader",
-  "description": "Permits reading mapping documents"
+  "description": "Permits reading mapping documents",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-mapping",
+      "action": "http://marklogic.com/data-hub/privileges/read-mapping",
+      "kind": "execute"
+    }
+  ]
 }

@@ -1,0 +1,5 @@
+{
+  "privilege-name": "hub-central-export-entities",
+  "action": "http://marklogic.com/data-hub/hub-central/privileges/export-entities",
+  "kind": "execute"
+}

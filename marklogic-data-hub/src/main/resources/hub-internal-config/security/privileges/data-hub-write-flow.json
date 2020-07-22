@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-write-flow",
+  "action": "http://marklogic.com/data-hub/privileges/write-flow",
+  "kind": "execute"
+}

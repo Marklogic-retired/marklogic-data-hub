@@ -4,5 +4,12 @@
   "role": [
     "data-hub-flow-reader",
     "data-hub-common-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-write-flow",
+      "action": "http://marklogic.com/data-hub/privileges/write-flow",
+      "kind": "execute"
+    }
   ]
 }

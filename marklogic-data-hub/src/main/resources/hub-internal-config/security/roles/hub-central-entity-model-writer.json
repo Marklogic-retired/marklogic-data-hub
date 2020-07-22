@@ -10,11 +10,6 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:writeEntityModel",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/write-entity-model",
-      "kind": "execute"
-    },
-    {
       "privilege-name": "rest-admin",
       "action": "http://marklogic.com/xdmp/privileges/rest-admin",
       "kind": "execute"
