@@ -269,7 +269,7 @@ describe('Tiles View component tests for Developer user', () => {
         // create flow shouldn't be provided
         expect(queryByText('Create Flow')).toBeDisabled();
         // delete should not work
-        fireEvent.click(getByTestId('deleteFlow-testFlow'));
+        fireEvent.click(getByLabelText('deleteFlowDisabled-testFlow'));
         // testing that confirmation modal didn't appear
         expect(queryByText('Yes')).not.toBeInTheDocument();
         // test description

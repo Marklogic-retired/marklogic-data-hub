@@ -3,6 +3,7 @@
     "video": true,
     "viewportWidth": 1680,
     "viewportHeight": 1050,
+    "defaultCommandTimeout": 10000,
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",

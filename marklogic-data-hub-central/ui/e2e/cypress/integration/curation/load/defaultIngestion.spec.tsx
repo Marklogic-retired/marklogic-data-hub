@@ -1,6 +1,7 @@
 import {Application} from "../../../support/application.config";
 import {tiles, toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
+import runPage from "../../../support/pages/run";
 
 describe('Default ingestion ', () => {
 
@@ -18,8 +19,8 @@ describe('Default ingestion ', () => {
 
     after(() => {
         cy.loginAsDeveloper().withRequest();
-        cy.deleteSteps('ingestion', 'cyZIPTest');//'cyCSVTest', 'cyXMTest',
-        cy.deleteFlows( 'zipE2eFlow');//'csvE2eFlow', 'xmlE2eFlow',
+        cy.deleteSteps('ingestion', 'cyZIPTest', 'cyCSVTest', 'cyXMTest');//'cyCSVTest', 'cyXMTest',
+        cy.deleteFlows( 'zipE2eFlow', 'csvE2eFlow', 'xmlE2eFlow');//'csvE2eFlow', 'xmlE2eFlow',
     })
 
     it('Verifies CRUD functionality from list view', () => {
@@ -164,24 +165,24 @@ describe('Default ingestion ', () => {
         //Verify Add to New Flow
         loadPage.addStepToNewFlow(stepName);
         cy.findByText('New Flow').should('be.visible');
-        cy.findByPlaceholderText('Enter name').type(flowName);
-        cy.findByPlaceholderText('Enter description').type(`${flowName} description`);
+        runPage.setFlowName(flowName);
+        runPage.setFlowDescription(`${flowName} description`);
         loadPage.confirmationOptions('Save').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 
         //Run the flow with invalid input
-        cy.findByLabelText(`runStep-${stepName}`).click();
+        runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1');
         cy.verifyStepRunResult('failed','Ingestion', stepName)
             .should('contain.text', 'Document is not JSON');
         tiles.closeRunMessage().click();
 
         //Run the flow with JSON input
-        cy.findByLabelText(`runStep-${stepName}`).click();
+        runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
-        cy.findByLabelText(`deleteStep-${stepName}`).click();
+        runPage.deleteStep(stepName).click();
         loadPage.confirmationOptions('Yes').click();
 
         //Verify Add to Existing Flow after changing source/target format to TEXT
@@ -194,19 +195,19 @@ describe('Default ingestion ', () => {
         loadPage.saveButton().click();
         loadPage.stepName(stepName).should('be.visible');
         loadPage.addStepToExistingFlow(stepName, flowName);
-        cy.findByText(`Are you sure you want to add "${stepName}" to flow "${flowName}"?`).should('be.visible');
+        loadPage.addStepToFlowConfirmationMessage(stepName, flowName).should('be.visible');
         loadPage.confirmationOptions('Yes').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 
         //Run the flow with TEXT input
-        cy.findAllByLabelText(`runStep-${stepName}`).last().click();
+        runPage.runLastStepInAFlow(stepName).last().click();
         cy.uploadFile('input/test-1.txt');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
 
         //Delete the flow
-        cy.findByTestId(`deleteFlow-${flowName}`).click();
-        cy.findByText(`Are you sure you want to delete flow "${flowName}"?`).should('be.visible');
+        runPage.deleteFlow(flowName).click();
+        runPage.deleteFlowConfirmationMessage(flowName).should('be.visible');
         loadPage.confirmationOptions('Yes').click();
 
         //Verify Delete step
@@ -220,8 +221,7 @@ describe('Default ingestion ', () => {
         loadPage.stepName(stepName).should('not.be.visible');
     })
 
-    //TODO: Uncommnt after DHFPROD-5520 is fixed
-    xit('Verify ingestion for csv filetype', () => {
+    it('Verify ingestion for csv filetype', () => {
         let stepName = 'cyCSVTest';
         let flowName= 'csvE2eFlow';
         loadPage.loadView('th-large').click();
@@ -236,12 +236,12 @@ describe('Default ingestion ', () => {
 
         loadPage.addStepToNewFlow(stepName);
         cy.findByText('New Flow').should('be.visible');
-        cy.findByPlaceholderText('Enter name').type(flowName);
-        cy.findByPlaceholderText('Enter description').type(`${flowName} description`);
+        runPage.setFlowName(flowName);
+        runPage.setFlowDescription(`${flowName} description`);
         loadPage.confirmationOptions('Save').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 
-        cy.findByLabelText(`runStep-${stepName}`).click();
+        runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.csv');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
@@ -262,19 +262,18 @@ describe('Default ingestion ', () => {
 
         loadPage.addStepToNewFlow(stepName);
         cy.findByText('New Flow').should('be.visible');
-        cy.findByPlaceholderText('Enter name').type(flowName);
-        cy.findByPlaceholderText('Enter description').type(`${flowName} description`);
+        runPage.setFlowName(flowName);
+        runPage.setFlowDescription(`${flowName} description`);
         loadPage.confirmationOptions('Save').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 
-        cy.findByLabelText(`runStep-${stepName}`).click();
+        runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.zip');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
     })
 
-    //TODO: Uncommnt after DHFPROD-5520 is fixed
-    xit('Verify ingestion for xml filetype', () => {
+    it('Verify ingestion for xml filetype', () => {
         let stepName = 'cyXMTest';
         let flowName= 'xmlE2eFlow';
         loadPage.loadView('th-large').click();
@@ -289,12 +288,12 @@ describe('Default ingestion ', () => {
 
         loadPage.addStepToNewFlow(stepName);
         cy.findByText('New Flow').should('be.visible');
-        cy.findByPlaceholderText('Enter name').type(flowName);
-        cy.findByPlaceholderText('Enter description').type(`${flowName} description`);
+        runPage.setFlowName(flowName);
+        runPage.setFlowDescription(`${flowName} description`);
         loadPage.confirmationOptions('Save').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 
-        cy.findByLabelText(`runStep-${stepName}`).click();
+        runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.xml');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();

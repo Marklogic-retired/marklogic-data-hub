@@ -4,11 +4,19 @@ import loginPage from '../../support/pages/login';
 import { Application } from '../../support/application.config';
 import { toolbar, tiles, projectInfo } from '../../support/components/common/index';
 import 'cypress-wait-until';
+import loadPage from "../../support/pages/load";
+import modelPage from "../../support/pages/model";
+import runPage from "../../support/pages/run";
+import curatePage from "../../support/pages/curate";
 
 describe('login', () => {
 
   before(() => {
     cy.visit('/');
+  });
+
+  afterEach(() => {
+      cy.logout();
   });
 
   after(() => {
@@ -48,136 +56,146 @@ describe('login', () => {
 
   });
 
-  xit('should verify auto logout after inactivity', () => {
-      cy.loginAsDeveloper().withUI();
-      toolbar.getCurateToolbarIcon().click();
-      tiles.getCurateTile().should('exist');
-      //Verify warning appears before automatic logout
-      cy.findByText('Customer').click();
-      cy.findByText('Mapping').should('exist');
-
-
-
-      //Timeout pop up doesnt close an open modal
-
-      //Verify user is logged out after inactivity
-  });
-
-  xit('should verify download of an HC project', () => {
-      cy.loginAsTestUserWithRoles('hub-central-downloader').withUI();
-      projectInfo.getAboutProject();
-      projectInfo.getDownloadButton().click();
-
-  });
-
-  it('should display appropriate tiles for hub-central-user', () => {
-      cy.loginAsTestUser().withUI()
+  it('should only enable Explorer tile for hub-central-user', () => {
+      cy.loginAsTestUserWithRoles('hub-central-saved-query-user').withUI()
           .url().should('include', '/tiles');
         //All tiles but Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
       });
 
       toolbar.getExploreToolbarIcon().trigger('mouseover');
       cy.contains('Explore');
-      projectInfo.getAboutProject().should('exist');
       toolbar.getExploreToolbarIcon().click();
-      cy.waitUntil(() => cy.findByText('Search through loaded data and curated data'));
+      cy.findByText('Search through loaded data and curated data');
       tiles.getExploreTile().should('exist');
+      projectInfo.getAboutProject().click();
+      projectInfo.waitForInfoPageToLoad();
+      projectInfo.getDownloadButton().should('be.disabled');
+      projectInfo.getClearButton().should('be.disabled');
   });
 
-  it('should display appropriate tiles for hub-central-entity-model-reader', () => {
-      cy.loginAsTestUserWithRoles('hub-central-entity-model-reader').withUI()
+  it('should only enable Model and Explorer tile for hub-central-entity-model-reader', () => {
+      cy.loginAsTestUserWithRoles('hub-central-entity-model-reader', 'hub-central-saved-query-user').withUI()
           .url().should('include', '/tile');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
       });
 
-      ['Model', 'Explore'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}`);
-          cy.waitUntil(() => cy.contains(`${tile}`))
-      });
-
-      //Modeling tests will verify that a valid user is able to access Model tile and its features
+      toolbar.getModelToolbarIcon().click();
+      tiles.getModelTile().should('exist');
+      modelPage.getAddEntityButton().should('be.disabled');
   });
 
-  it('should display appropriate tiles for hub-central-load-reader', () => {
-      cy.loginAsTestUserWithRoles('hub-central-load-reader').withUI()
+  it('should only enable Load and Explorer tile for hub-central-load-reader', () => {
+      let stepName = 'loadCustomersJSON';
+      let flowName= 'personJSON'
+      cy.loginAsTestUserWithRoles('hub-central-load-reader').withRequest()
           .url().should('include', '/tile');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Model', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
       });
 
-      ['Load', 'Explore'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}`);
-          cy.waitUntil(() => cy.contains(`${tile}`))
-      });
+      toolbar.getLoadToolbarIcon().click();
+      loadPage.loadView('th-large').should('be.visible');
+      loadPage.addNewButton('card').should('not.be.visible');
+      loadPage.stepSettings(stepName).click();
+      loadPage.stepNameInSettings().should('have.text', stepName);
+      loadPage.saveSettings(stepName).should('be.disabled');
+      loadPage.cancelSettings(stepName).click();
+      loadPage.editStepInCardView(stepName).click();
+      loadPage.saveButton().should('be.disabled');
+      loadPage.cancelButton().click();
+      loadPage.deleteStepDisabled(stepName).should('exist');
+      loadPage.stepName(stepName).trigger('mouseover');
+      loadPage.addToNewFlow(stepName).click();
+      runPage.newFlowModal().should('not.be.visible');
+      loadPage.existingFlowsList(stepName).click();
+      loadPage.existingFlowsList(flowName).should('not.be.visible');
 
-      //Load Data tests will verify that a valid user is able to access Load tile and its features
+      loadPage.loadView('table').click();
+      tiles.waitForTableToLoad();
+      loadPage.addToFlowDisabled(stepName).should('exist');
+      loadPage.stepSettings(stepName).click();
+      loadPage.saveSettings(stepName).should('be.disabled');
+      loadPage.cancelSettings(stepName).click();
+      loadPage.stepName(stepName).click();
+      loadPage.saveButton().should('be.disabled');
+      loadPage.cancelButton().click();
+      loadPage.deleteStepDisabled(stepName).should('exist');
   });
 
-  it('should display appropriate tiles for hub-central-mapping-reader', () => {
-      cy.loginAsTestUserWithRoles('hub-central-mapping-reader').withUI()
+  it('should only enable Curate and Explorer tile for hub-central-mapping-reader', () => {
+      let entityTypeId = 'Customer'
+      let mapStepName = 'mapCustomersXML'
+      cy.loginAsTestUserWithRoles('hub-central-mapping-reader').withRequest()
           .url().should('include', '/tile');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
       });
 
-      ['Curate', 'Explore'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}`);
-          cy.waitUntil(() => cy.contains(`${tile}`))
-      });
-
-      //Mapping tests will verify that a valid user is able to access Curate tile and its features
+      toolbar.getCurateToolbarIcon().click();
+      curatePage.toggleEntityTypeId(entityTypeId);
+      curatePage.verifyTabs(entityTypeId, 'be.visible', 'not.exist');
+      curatePage.addNewMapStep().should('not.be.visible');
+      curatePage.stepSettings(mapStepName).click();
+      curatePage.saveSettings(mapStepName).should('be.disabled');
+      curatePage.cancelSettings(mapStepName).click();
+      curatePage.editStep(mapStepName).click();
+      curatePage.verifyStepNameIsVisible(mapStepName);
+      curatePage.saveEdit(mapStepName).should('be.disabled');
+      curatePage.cancelEdit(mapStepName).click();
+      curatePage.deleteDisabled().should('exist');
+      curatePage.noEntityType().should('not.exist');
   });
 
-  it('should display appropriate tiles for hub-central-step-runner', () => {
-      cy.loginAsTestUserWithRoles('hub-central-step-runner').withUI()
+  it('should only enable Run and Explorer tile for hub-central-step-runner', () => {
+      const flowName = 'personJSON';
+      const stepName = 'loadPersonJSON';
+      cy.loginAsTestUserWithRoles('hub-central-step-runner').withRequest()
           .url().should('include', '/tile');
-      //All tiles but TBD, should show a tooltip that says contact your administrator
+      //All tiles but Run and Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`);
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
       });
 
-      ['Run', 'Explore'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}`);
-          cy.waitUntil(() => cy.contains(`${tile}`))
-      });
-
-      //Run steps tests will verify that a valid user is able to access Run tile and its features
+      toolbar.getRunToolbarIcon().click();
+      runPage.createFlowButton().should('be.disabled');
+      cy.findByText(flowName).should('be.visible');
+      runPage.deleteFlowDisabled(flowName).should('exist');
+      runPage.toggleFlowConfig(flowName);
+      runPage.deleteStepDisabled(stepName).should('exist');
   });
 
-  xit('should display appropriate tiles for hub-central-flow-writer', () => {
-      cy.loginAsTestUserWithRoles('hub-central-flow-writer').withUI()
+  it('should only enable Run and Explorer tile for hub-central-flow-writer', () => {
+      const flowName = 'personJSON';
+      const stepName = 'loadPersonJSON';
+      cy.loginAsTestUserWithRoles('hub-central-flow-writer').withRequest()
           .url().should('include', '/tile');
-      //All tiles but TBD, should show a tooltip that says contact your administrator
-      ['TBD'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-          cy.waitUntil(() => cy.contains(`${tile}: Contact your security administrator to get the roles and permissions required to access this functionality.`))
+      //All tiles but Run and Explore, should show a tooltip that says contact your administrator
+      ['Load', 'Model', 'Curate'].forEach((tile) => {
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
         });
 
-      ['TBD'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).trigger('mouseover');
-        //   cy.contains(`${tile}`);
-          cy.waitUntil(() => cy.contains(`${tile}`))
-      });
-
-      //Run flow tests will verify that a valid user is able to access Run tile and its features
+      toolbar.getRunToolbarIcon().click();
+      runPage.createFlowButton().should('be.enabled');
+      cy.findByText(flowName).should('be.visible');
+      runPage.deleteFlow(flowName).should('exist');
+      runPage.deleteFlowDisabled(flowName).should('not.exist');
+      runPage.toggleFlowConfig(flowName);
+      runPage.deleteStep(stepName).click();
+      runPage.deleteStepConfirmationMessage(stepName, flowName).should('be.visible');
+      cy.findByLabelText('No').click();
   });
+
+  it('should verify download of an HC project', () => {
+      cy.loginAsTestUserWithRoles('hub-central-downloader').withUI();
+      projectInfo.getAboutProject().click();
+      projectInfo.waitForInfoPageToLoad();
+      projectInfo.getDownloadButton().click();
+  });
+
 });

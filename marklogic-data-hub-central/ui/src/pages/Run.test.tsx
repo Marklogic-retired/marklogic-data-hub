@@ -4,7 +4,7 @@ import {
     fireEvent,
     waitForElement,
     cleanup,
-    wait
+    wait, getByLabelText
 } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import axiosMock from 'axios';
@@ -452,7 +452,7 @@ describe('Verify Run CRUD operations', () => {
     test('Verify a user with readFlow authority only cannot create/update/delete', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readFlow']);
-        const { getByPlaceholderText, getByText, getByTestId, queryByText } = await render(<MemoryRouter><AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
+        const { getByPlaceholderText, getByText, getByLabelText, getByTestId, queryByText } = await render(<MemoryRouter><AuthoritiesContext.Provider value={ authorityService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
         const existingFlowName = data.flows.data[0].name;
 
@@ -460,7 +460,7 @@ describe('Verify Run CRUD operations', () => {
         // create flow shouldn't be provided
         expect(queryByText('Create Flow')).toBeDisabled();
         // delete should not work
-        fireEvent.click(getByTestId(`deleteFlow-${existingFlowName}`));
+        fireEvent.click(getByLabelText(`deleteFlowDisabled-${existingFlowName}`));
         // testing that confirmation modal didn't appear
         expect(queryByText('Yes')).not.toBeInTheDocument();
         // test description

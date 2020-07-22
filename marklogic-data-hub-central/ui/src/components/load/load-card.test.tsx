@@ -3,6 +3,7 @@ import { render, fireEvent, wait, cleanup, waitForElement } from '@testing-libra
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
 import data from '../../assets/mock-data/common.data';
+import ingestionData from '../../assets/mock-data/ingestion.data';
 import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
@@ -35,7 +36,7 @@ describe('Load Card component', () => {
     const { getByText, getByLabelText, getByTestId } = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <LoadCard 
+          <LoadCard
             {...data.loadData}
             flows={data.flows}
             canWriteFlow={true}
@@ -58,11 +59,11 @@ describe('Load Card component', () => {
     expect(getByTestId('testLoadXML-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('testLoadXML-flowsList')); 
+    fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
     //Choose FlowA from the dropdown
     fireEvent.click(getByText('FlowA'));
-    
+
     //Click on 'Yes' button
     fireEvent.click(getByTestId('testLoadXML-to-FlowA-Confirm'));
 
@@ -80,7 +81,7 @@ describe('Load Card component', () => {
     const { getByText, getByLabelText, getByTestId } = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <LoadCard 
+          <LoadCard
             {...data.loadData}
             flows={data.flows}
             canWriteFlow={true}
@@ -103,7 +104,7 @@ describe('Load Card component', () => {
     expect(getByTestId('testLoadXML-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('testLoadXML-toNewFlow')); 
+    fireEvent.click(getByTestId('testLoadXML-toNewFlow'));
 
     //Wait for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
@@ -150,19 +151,9 @@ describe('Load Card component', () => {
   test('Verify Load card does not allow a step to be added to flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion','readFlow']);
-    const mockAddStepToFlow = jest.fn();
-    const mockAddStepToNew = jest.fn();
-    const mockCreateLoadArtifact = jest.fn();
-    const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, queryByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={mockAddStepToNew}
-      canReadOnly={authorityService.canReadLoad()}
-      canReadWrite={authorityService.canWriteLoad()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      createLoadArtifact={mockCreateLoadArtifact}
+    const {getByText, queryByTestId, getByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+      {...ingestionData.loadCardProps}
       data={data.loadData.data}
-      deleteLoadArtifact={mockDeleteLoadArtifact}
       flows={data.flows}/>
     </AuthoritiesContext.Provider></MemoryRouter>);
 
@@ -177,7 +168,10 @@ describe('Load Card component', () => {
     expect(queryByText(data.flows[0].name)).not.toBeInTheDocument();
 
     // test adding to new flow
-    expect(queryByTestId(`${loadStepName}-toNewFlow`)).not.toBeInTheDocument();
-    expect(queryByTestId(`${loadStepName}-disabledToNewFlow`)).toBeInTheDocument();
+    fireEvent.mouseOver(getByText(loadStepName))
+    fireEvent.click(getByTestId(`${loadStepName}-toNewFlow`));
+    await wait(() => {
+        expect(mockHistoryPush).not.toHaveBeenCalledWith('/tiles/run/add');
+    })
   });
 });

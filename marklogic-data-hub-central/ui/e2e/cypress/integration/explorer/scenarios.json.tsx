@@ -25,6 +25,10 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.waitForTableToLoad();
   });
 
+  afterEach(() => {
+    cy.resetTestUser();
+  })
+
   it('select "all entities" verify docs, hub/entity properties', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getTotalDocuments().should('be.greaterThan', 25);

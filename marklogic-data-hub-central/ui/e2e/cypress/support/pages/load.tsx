@@ -1,7 +1,3 @@
-import {FileLocation} from "ts-loader/dist/types/interfaces";
-import {Simulate} from "react-dom/test-utils";
-import mouseOver = Simulate.mouseOver;
-
 class LoadPage {
 
     //Load tile list view page objects
@@ -9,7 +5,7 @@ class LoadPage {
      * @param type - accepts `table` for list-view or `th-large` for card-view
      */
     loadView(type: string) {
-        return cy.get(`[data-icon="${type}"`);
+        return cy.get(`[data-icon="${type}"]`);
     }
 
     /**
@@ -47,6 +43,18 @@ class LoadPage {
         return cy.get('[aria-label="icon: close"]')
     }
 
+    /**
+     * add to flow icon in load table view
+     * @param stepName
+     */
+    addToFlow(stepName: string) {
+        return cy.findByLabelText(`${stepName}-add-icon`);
+    }
+
+    addToFlowDisabled(stepName: string) {
+        return cy.findByLabelText(`${stepName}-disabled-add-icon`);
+    }
+
     stepSettings(stepName: string) {
         return cy.findByTestId(`${stepName}-settings`);
     }
@@ -55,10 +63,21 @@ class LoadPage {
         return cy.findByTestId(`${stepName}-delete`);
     }
 
+    deleteStepDisabled(stepName: string) {
+        return cy.findByTestId(`${stepName}-disabled-delete`);
+    }
+
     deleteConfirmation(option: string) {
         return cy.findByLabelText(option);
     }
 
+    deleteStepConfirmationMessage(stepName: string) {
+        return cy.findByText(`Are you sure you want to delete "${stepName}"`);
+    }
+
+    addStepToFlowConfirmationMessage(stepName: string, flowName: string) {
+        return cy.findByText(`Are you sure you want to add "${stepName}" to flow "${flowName}"?`)
+    }
     pagination() {
 
     }
@@ -213,14 +232,22 @@ class LoadPage {
         return cy.findByTestId(`${stepName}-edit`);
     }
 
+    addToNewFlow(stepName: string) {
+        return cy.findByTestId(`${stepName}-toNewFlow`);
+    }
+
     addStepToNewFlow(stepName: string) {
         this.stepName(stepName).trigger('mouseover');
-        cy.findByTestId(`${stepName}-toNewFlow`).click();
+        this.addToNewFlow(stepName).click();
+    }
+
+    existingFlowsList(stepName: string) {
+        return cy.findByTestId(`${stepName}-flowsList`);
     }
 
     addStepToExistingFlow(stepName: string, flowName: string) {
         this.stepName(stepName).trigger('mouseover');
-        cy.findByTestId(`${stepName}-flowsList`).click();
+        this.existingFlowsList(stepName).click();
         cy.findByLabelText(flowName).click();
     }
 
