@@ -17,4 +17,8 @@
 
 const Security = require("/data-hub/5/impl/security.sjs");
 
-new Security().getRolesAndAuthorities();
+const response = {
+  "authorities": Security.getAuthorities()
+};
+
+response

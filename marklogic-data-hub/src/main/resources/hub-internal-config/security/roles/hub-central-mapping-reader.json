@@ -8,11 +8,6 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:readMapping",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-mapping",
-      "kind": "execute"
-    },
-    {
       "privilege-name": "xdmp:eval",
       "action": "http://marklogic.com/xdmp/privileges/xdmp-eval",
       "kind": "execute"

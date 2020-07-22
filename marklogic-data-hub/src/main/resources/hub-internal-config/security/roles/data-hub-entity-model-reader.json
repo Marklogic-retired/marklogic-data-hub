@@ -1,4 +1,11 @@
 {
   "role-name": "data-hub-entity-model-reader",
-  "description": "Permits reading entity model documents"
+  "description": "Permits reading entity model documents",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-entity-model",
+      "action": "http://marklogic.com/data-hub/privileges/read-entity-model",
+      "kind": "execute"
+    }
+  ]
 }

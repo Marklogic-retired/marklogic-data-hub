@@ -4,5 +4,12 @@
   "role": [
     "data-hub-step-definition-reader",
     "data-hub-common-writer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-write-ingestion",
+      "action": "http://marklogic.com/data-hub/privileges/write-ingestion",
+      "kind": "execute"
+    }
   ]
 }

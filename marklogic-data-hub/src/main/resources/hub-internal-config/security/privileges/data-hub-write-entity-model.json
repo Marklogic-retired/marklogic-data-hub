@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-write-entity-model",
+  "action": "http://marklogic.com/data-hub/privileges/write-entity-model",
+  "kind": "execute"
+}

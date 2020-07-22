@@ -5,12 +5,5 @@
     "hub-central-user",
     "data-hub-custom-reader",
     "data-hub-step-definition-reader"
-  ],
-  "privilege": [
-    {
-      "privilege-name": "hub-central:readCustom",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/read-custom",
-      "kind": "execute"
-    }
   ]
 }

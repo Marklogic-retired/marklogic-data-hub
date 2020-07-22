@@ -7,8 +7,8 @@
   ],
   "privilege": [
     {
-      "privilege-name": "hub-central:loginToHubCentral",
-      "action": "http://marklogic.com/data-hub/hub-central/privileges/login-to-hub-central",
+      "privilege-name": "hub-central-login",
+      "action": "http://marklogic.com/data-hub/hub-central/privileges/login",
       "kind": "execute"
     }
   ]

@@ -1,4 +1,11 @@
 {
   "role-name": "data-hub-flow-reader",
-  "description": "Permits reading flow documents"
+  "description": "Permits reading flow documents",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-flow",
+      "action": "http://marklogic.com/data-hub/privileges/read-flow",
+      "kind": "execute"
+    }
+  ]
 }

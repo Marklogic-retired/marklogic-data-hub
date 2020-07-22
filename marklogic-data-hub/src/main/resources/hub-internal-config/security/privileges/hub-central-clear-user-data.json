@@ -1,5 +1,0 @@
-{
-  "privilege-name": "hub-central:clearUserData",
-  "action": "http://marklogic.com/data-hub/hub-central/privileges/clear-user-data",
-  "kind": "execute"
-}
