@@ -33,7 +33,7 @@ This section describes how to build and test new features and fixes in Data Hub.
 You need:
 
 - MarkLogic Server (see [Version Compatibility](https://docs.marklogic.com/datahub/refs/version-compatibility.html) for the correct version)
-- Java JDK 9 or later
+- Java JDK 9, 10 or 11
 - Gradle 5.x or later
 
 ### Testing changes to the Data Hub library
