@@ -89,30 +89,47 @@ describe('Entity Modeling', () => {
 
     propertyTable.editProperty('fname');
     cy.waitUntil(() => propertyModal.getToggleStepsButton().should('exist')).click();
-    cy.contains('mapPersonJSON');
-    cy.contains('match-person');
-    cy.contains('merge-person');
-    cy.contains('master-person');
-    cy.contains('Hide Steps...');
+    cy.contains('mapPersonJSON').should('be.visible');
+    cy.contains('match-person').should('be.visible');
+    cy.contains('merge-person').should('be.visible');
+    cy.contains('master-person').should('be.visible');
+    cy.contains('Hide Steps...').should('be.visible');
+
+    cy.contains('Show Steps...').should('not.be.visible');
+
     propertyModal.getToggleStepsButton().click();
-    cy.contains('Show Steps...');
+
+    cy.contains('Show Steps...').should('be.visible');
+
+    cy.contains('mapPersonJSON').should('not.be.visible');
+    cy.contains('match-person').should('not.be.visible');
+    cy.contains('merge-person').should('not.be.visible');
+    cy.contains('master-person').should('not.be.visible');
+    cy.contains('Hide Steps...').should('not.be.visible');
     propertyModal.getCancelButton().click();
 
     entityTypeTable.getDeleteEntityIcon('Person').click();
-    cy.contains('Entity type is used in one or more steps.');
-    cy.contains('Show Steps...');
+    cy.contains('Entity type is used in one or more steps.').should('be.visible');
+    cy.contains('Show Steps...').should('be.visible');
+    cy.contains('Hide Steps...').should('not.be.visible');
 
     confirmationModal.getToggleStepsButton().click();
-    cy.contains('mapPersonJSON');
-    cy.contains('Hide Steps...');
+    cy.contains('mapPersonJSON').should('be.visible');
+    cy.contains('Hide Steps...').should('be.visible');
+    cy.contains('Show Steps...').should('not.be.visible');
 
     confirmationModal.getCloseButton(ConfirmationType.DeleteEntityStepWarn).click();
     entityTypeTable.getEntity('Person').should('exist');
   });
 
-  it('can create a new entity, add relationship type, and add identifier confirmation, delete property from modal, and delete entity', () => {
-    modelPage.getAddEntityButton().should('exist');
-    modelPage.getAddEntityButton().click();
+  it('can check for duplicate entity, create a new entity, add relationship type, and add identifier confirmation, delete property from modal, and delete entity', () => {
+    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    entityTypeModal.newEntityName('Person');
+    entityTypeModal.getAddButton().click();
+    cy.contains('An entity type already exists with a name of Person').should('be.visible');
+    entityTypeModal.getAddButton().should('not.be.disabled');
+
+    entityTypeModal.clearEntityName();
     entityTypeModal.newEntityName('Product');
     entityTypeModal.newEntityDescription('An entity for Products');
     entityTypeModal.getAddButton().click();
@@ -198,7 +215,7 @@ describe('Entity Modeling', () => {
   });
 
   it('can create entity, can create a structured type, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
-    modelPage.getAddEntityButton().should('exist').click();
+    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName('User');
     entityTypeModal.newEntityDescription('An entity for User');
     entityTypeModal.getAddButton().click();
