@@ -2,7 +2,6 @@ package com.marklogic.hub.dhs.installer.command;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.Command;
-import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.ResourceFilenameFilter;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
@@ -10,9 +9,8 @@ import com.marklogic.appdeployer.command.security.DeployPrivilegesCommand;
 import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.command.triggers.DeployTriggersCommand;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.dhs.installer.deploy.CopyQueryOptionsCommand;
@@ -22,9 +20,6 @@ import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.util.Collections;
@@ -34,9 +29,7 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class InstallIntoDhsCommandTest extends HubTestBase {
+public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
 
     @Test
     public void buildDefaultProjectProperties() {
@@ -128,6 +121,12 @@ public class InstallIntoDhsCommandTest extends HubTestBase {
         assertEquals("Evaluator", names.get(0));
         assertEquals("Curator", names.get(1));
         assertEquals(2, names.size());
+
+        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = (GenerateFunctionMetadataCommand) commands.get(8);
+        assertTrue(generateFunctionMetadataCommand.isCatchExceptionsForUserModules(), "Per DHFPROD-5496, this command " +
+            "should be configured to catch exceptions from user modules, as we don't want those to cause errors when " +
+            "installing DHF into DHS. The expectation is that the user will fix their errors later and then run e.g. " +
+            "hubDeploy to regenerate function metadata");
     }
 
     private void verifyDefaultProperties(Properties props) {

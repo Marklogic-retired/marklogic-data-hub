@@ -7,7 +7,6 @@ import com.marklogic.client.datamovement.ApplyTransformListener;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.QueryBatcher;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.MappingService;
@@ -25,7 +24,11 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
     @Autowired
     private HubConfig hubConfig;
 
+    private final static String DH_FUNCTION_MODULE_PATH = "/data-hub/5/mapping-functions/";
+    private final static String USER_FUNCTION_MODULE_PATH = "/custom-modules/mapping-functions/";
+
     private boolean isCompatibleWithES;
+    private boolean catchExceptionsForUserModules = false;
 
     // Need no-arg constructor for Spring
     public GenerateFunctionMetadataCommand() {
@@ -62,19 +65,30 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
             DataMovementManager dataMovementManager = modulesClient.newDataMovementManager();
             final List<Throwable> caughtExceptions = new ArrayList<>();
 
-            StructuredQueryBuilder sb = modulesClient.newQueryManager().newStructuredQueryBuilder();
-            ServerTransform serverTransform = new ServerTransform("mlGenerateFunctionMetadata");
             ApplyTransformListener transformListener = new ApplyTransformListener()
-                .withTransform(serverTransform)
+                .withTransform(new ServerTransform("mlGenerateFunctionMetadata"))
                 .withApplyResult(ApplyTransformListener.ApplyResult.IGNORE)
                 .onFailure((batch, throwable) -> {
-                    logger.error("Caught error while generating function metadata: " + throwable.getMessage());
-                    caughtExceptions.add(throwable);
+                    boolean throwException = true;
+                    if (this.catchExceptionsForUserModules && batch.getItems().length > 0) {
+                        final String moduleUri = batch.getItems()[0];
+                        if (moduleUri != null && moduleUri.startsWith(USER_FUNCTION_MODULE_PATH)) {
+                            logger.info("Caught error while generating function metadata for user module: " + throwable.getMessage()
+                                + "; will not rethrow this as the user is expected to fix this themselves and then regenerate " +
+                                "function metadata once the error is resolved.");
+                            throwException = false;
+                        }
+                    }
+
+                    if (throwException) {
+                        logger.error("Caught error while generating function metadata: " + throwable.getMessage());
+                        caughtExceptions.add(throwable);
+                    }
                 });
 
-            // Query for uris "/data-hub/5/mapping-functions/" and "/custom-modules/mapping-functions/" which are reserved for mapping functions
             QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(
-                new StructuredQueryBuilder().or(sb.directory(true, "/data-hub/5/mapping-functions/"), sb.directory(true, "/custom-modules/mapping-functions/")))
+                modulesClient.newQueryManager().newStructuredQueryBuilder().directory(true, DH_FUNCTION_MODULE_PATH, USER_FUNCTION_MODULE_PATH)
+            )
                 .withBatchSize(1)
                 .withThreadCount(4)
                 .onUrisReady(transformListener);
@@ -108,5 +122,13 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
 
     public void setHubConfig(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
+    }
+
+    public void setCatchExceptionsForUserModules(boolean catchExceptionsForUserModules) {
+        this.catchExceptionsForUserModules = catchExceptionsForUserModules;
+    }
+
+    public boolean isCatchExceptionsForUserModules() {
+        return catchExceptionsForUserModules;
     }
 }
