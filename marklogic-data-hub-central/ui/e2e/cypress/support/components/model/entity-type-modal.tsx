@@ -1,6 +1,10 @@
 class EntityTypeModal {
   newEntityName(str: string) {
-    cy.get('#name').type(str);
+    cy.get('#entity-name').type(str);
+  }
+
+  clearEntityName() {
+    cy.get('#entity-name').focus().clear();
   }
 
   newEntityDescription(str: string) {
@@ -12,7 +16,7 @@ class EntityTypeModal {
   }
 
   getAddButton() {
-    return cy.get('#entity-modal-add');
+    return cy.get('#entity-modal-add', {timeout: 10000});
   }
 
 }

@@ -49,7 +49,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   }, [props.isVisible]);
 
   const handleChange = (event) => {
-    if (event.target.id === 'name') {
+    if (event.target.id === 'entity-name') {
       if (event.target.value === '') {
         toggleIsNameDisabled(true);
       } else {
@@ -96,6 +96,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       } else {
         handleError(error);
       }
+      toggleLoading(false);
     } finally {
       resetSessionTime();
     }
@@ -151,7 +152,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           help={errorMessage}
         >
           {props.isEditModal ? <span>{name}</span> : <Input
-            id="name"
+            id="entity-name"
             placeholder="Enter name"
             className={styles.input}
             value={name}
