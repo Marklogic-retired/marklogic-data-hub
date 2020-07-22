@@ -100,6 +100,7 @@ const SystemInfo = (props) => {
                                     <div className={styles.buttonContainer}>
                                         <MLButton
                                             type="primary"
+                                            aria-label="Download"
                                             disabled = {! authorityService.canDownloadProjectFiles()}
                                             onClick={download}
                                         >Download</MLButton>
@@ -117,6 +118,7 @@ const SystemInfo = (props) => {
                                     <div className={styles.buttonContainer}>
                                         <MLButton
                                             type="primary"
+                                            aria-label="Clear"
                                             disabled = {! authorityService.canClearUserData()}
                                             onClick={clear}
                                         >Clear</MLButton>

@@ -190,6 +190,7 @@ const Flows: React.FC<Props> = (props) => {
             onOk={() => onOk(flowName)}
             onCancel={() => onCancel()}
             width={350}
+            destroyOnClose={true}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete flow "{flowName}"?</div>
         </Modal>
@@ -204,6 +205,7 @@ const Flows: React.FC<Props> = (props) => {
             onOk={() => onStepOk(flowName, stepNumber)}
             onCancel={() => onCancel()}
             width={350}
+            destroyOnClose={true}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete step "{stepName}" from flow "{flowName}"?</div>
         </Modal>
@@ -228,7 +230,7 @@ const Flows: React.FC<Props> = (props) => {
             <Menu.ItemGroup title="Load">
             { props.steps && props.steps['ingestionSteps'] && props.steps['ingestionSteps'].length > 0 ? props.steps['ingestionSteps'].map((elem,index) => (
                 <Menu.Item key={index}>
-                    <div 
+                    <div
                         onClick={() => { handleStepAdd(elem.name, flowName, 'ingestion'); }}
                     >{elem.name}</div>
                 </Menu.Item>
@@ -237,7 +239,7 @@ const Flows: React.FC<Props> = (props) => {
             <Menu.ItemGroup title="Map">
             { props.steps && props.steps['mappingSteps'] && props.steps['mappingSteps'].length > 0 ? props.steps['mappingSteps'].map((elem,index) => (
                 <Menu.Item key={index}>
-                    <div 
+                    <div
                         onClick={() => { handleStepAdd(elem.name, flowName, 'mapping'); }}
                     >{elem.name}</div>
                 </Menu.Item>
@@ -247,21 +249,21 @@ const Flows: React.FC<Props> = (props) => {
     )};
 
     const panelActions = (name, i) => (
-        <div 
-            id="panelActions" 
+        <div
+            id="panelActions"
             onClick={event => {
                 event.stopPropagation(); // Do not trigger collapse
                 event.preventDefault();
             }}
         >
-            <Dropdown 
-                overlay={stepMenu(name)} 
-                trigger={['click']} 
+            <Dropdown
+                overlay={stepMenu(name)}
+                trigger={['click']}
                 disabled={!props.canWriteFlow}
                 overlayClassName='stepMenu'
-            > 
+            >
                 <MLButton
-                    className={styles.addStep} 
+                    className={styles.addStep}
                     size="default"
                     aria-label={props.canWriteFlow ? 'addStep-'+i : 'addStepDisabled-'+i}
                     type="primary"
@@ -436,7 +438,7 @@ const Flows: React.FC<Props> = (props) => {
                         size="small"
                         actions={[
                             <span className={styles.stepResponse}>
-                                {latestJobData && latestJobData[flowName] && latestJobData[flowName][index] ? 
+                                {latestJobData && latestJobData[flowName] && latestJobData[flowName][index] ?
                                     lastRunResponse(latestJobData[flowName][index]): ''}
                             </span>
                         ]}

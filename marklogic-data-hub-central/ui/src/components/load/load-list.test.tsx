@@ -126,7 +126,7 @@ describe('Load data component', () => {
     const { getByText, getByLabelText, getByTestId } = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <LoadList 
+          <LoadList
             {...data.loadData}
             flows={data.flows}
             canWriteFlow={true}
@@ -146,11 +146,11 @@ describe('Load data component', () => {
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('testLoadXML-flowsList')); 
+    fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
     //Choose FlowA from the dropdown
     fireEvent.click(getByText('FlowA'));
-    
+
     //Click on 'Yes' button
     fireEvent.click(getByLabelText('Yes'));
 
@@ -168,7 +168,7 @@ describe('Load data component', () => {
     const { getByText, getByLabelText, getByTestId } = render(
       <MemoryRouter>
         <AuthoritiesContext.Provider value={authorityService}>
-          <LoadList 
+          <LoadList
             {...data.loadData}
             flows={data.flows}
             canWriteFlow={true}
@@ -188,7 +188,7 @@ describe('Load data component', () => {
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('testLoadXML-toNewFlow')); 
+    fireEvent.click(getByTestId('testLoadXML-toNewFlow'));
 
     //Check if the /tiles/run/add route has been called
     wait(() => {

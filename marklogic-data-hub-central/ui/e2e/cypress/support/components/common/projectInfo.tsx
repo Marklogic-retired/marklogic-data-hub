@@ -5,7 +5,15 @@ class ProjectInfo {
     }
 
     getDownloadButton() {
-        return cy.findByText('Download');
+        return cy.findByLabelText('Download');
+    }
+
+    getClearButton() {
+        return cy.findByLabelText('Clear');
+    }
+
+    waitForInfoPageToLoad() {
+        cy.waitUntil(() => cy.findByText('Download Configuration Files').should('be.visible'));
     }
 }
 

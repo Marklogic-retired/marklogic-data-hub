@@ -266,16 +266,16 @@ const EntityTiles = (props) => {
 
         <Collapse activeKey={activeEntityTypes} onChange={handleCollapseChange} defaultActiveKey={locationEntityType}>
             { Object.keys(props.entityModels).sort().map((entityType, index) => (
-                <Panel header={entityType} key={entityModels[entityType].entityTypeId}>
+                <Panel header={<span data-testid={entityType}>{entityType}</span>} key={entityModels[entityType].entityTypeId}>
             <div className={styles.switchMapMaster}>
             <Menu mode="horizontal" defaultSelectedKeys={['map-' + entityType]}>
-                {canReadMapping ? <Menu.Item key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
+                {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
                     Map
                 </Menu.Item>: null}
-                {props.canReadCustom ? <Menu.Item key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
+                {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
                     Custom
                 </Menu.Item>: null}
-               {props.canReadMatchMerge  ? <Menu.Item key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
+               {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
                     Match
                 </Menu.Item>: null}
             </Menu>
@@ -284,7 +284,7 @@ const EntityTiles = (props) => {
             </Panel>
             ))}
             {requiresNoEntityTypeTile  ?
-            <Panel header="No Entity Type" key="No Entity Type">
+                <Panel header={<span data-testid={"noEntityType"}>No Entity Type</span>} key="No Entity Type">
                 <Menu mode="horizontal" defaultSelectedKeys={['custom-NoEntityType']}>
                 {props.canReadCustom ? <Menu.Item key='custom-NoEntityType' >
                     Custom

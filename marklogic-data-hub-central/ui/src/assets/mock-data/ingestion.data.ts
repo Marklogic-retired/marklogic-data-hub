@@ -77,7 +77,19 @@ const genericSuccess = {
   status: 200
 };
 
+const loadCardProps = {
+    addStepToFlow: jest.fn(),
+    addStepToNew: jest.fn(),
+    canReadOnly: true,
+    canReadWrite: false,
+    canWriteFlow: false,
+    createLoadArtifact: jest.fn(),
+    data: {},
+    deleteLoadArtifact: jest.fn(),
+    flows: {}
+}
 const data = {
+    loadCardProps,
     genericSuccess: genericSuccess,
     headerContentDefault: headerContentDefault,
     flows: flows,
