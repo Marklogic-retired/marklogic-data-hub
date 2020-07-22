@@ -215,5 +215,9 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         assertEquals(Integer.MAX_VALUE, pathsCommand.getExecuteSortOrder(),
             "The PPs command is executed last to avoid the timing issue that occurs when a user without the 'security' " +
                 "role deploys PPs and then QRs immediately afterwards");
+
+        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = (GenerateFunctionMetadataCommand) commands.get(5);
+        assertFalse(generateFunctionMetadataCommand.isCatchExceptionsForUserModules(), "When a user runs this command, " +
+            "we want errors to be thrown for DHF and user function module libraries");
     }
 }
