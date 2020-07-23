@@ -379,29 +379,19 @@ describe('manage queries modal scenarios, developer role', () => {
         browsePage.waitForTableToLoad();
     });
 
-    after(() => {
-        //clearing all the saved queries
-        cy.deleteSavedQueries();
-    })
-
-    it('open manage queries, edit query', () => {
+    it('manage queries, edit, apply, delete query', () => {
+        //edit query
         browsePage.getManageQueriesModalOpened();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getEditQuery().click();
         queryComponent.getEditQueryName().clear();
         queryComponent.getEditQueryName().type('edited-query');
         queryComponent.getSubmitButton().click();
-    });
-
-    it('open manage queries, apply query', () => {
-        browsePage.getManageQueriesModalOpened();
-        queryComponent.getManageQueryModal().should('be.visible');
+        //apply query
         queryComponent.getQueryByName('edited-query').click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSelectedQuery().should('contain', 'edited-query');
-    });
-
-    it('open manage queries, delete query', () => {
+        //remove query
         browsePage.getManageQueriesModalOpened()
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getDeleteQuery().first().click();
@@ -411,5 +401,43 @@ describe('manage queries modal scenarios, developer role', () => {
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.getSelectedQueryDescription().should('contain', '');
     });
+});
 
+
+describe('manage queries modal scenarios on zero sate page, developer role', () => {
+
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains(Application.title);
+        cy.loginAsDeveloper().withRequest();
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    });
+
+    after(() => {
+        //clearing all the saved queries
+        cy.deleteSavedQueries();
+    })
+
+    it('manage queries, edit, apply, delete query', () => {
+        //edit query
+        browsePage.getManageQueriesModalOpened();
+        queryComponent.getManageQueryModal().should('be.visible');
+        queryComponent.getEditQuery().click();
+        queryComponent.getEditQueryName().clear();
+        queryComponent.getEditQueryName().type('edited-query');
+        queryComponent.getSubmitButton().click();
+        //apply query
+        queryComponent.getQueryByName('edited-query').click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getSelectedQuery().should('contain', 'edited-query');
+        //remove query
+        browsePage.getResetQueryButton().click();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getManageQueriesModalOpened()
+        queryComponent.getManageQueryModal().should('be.visible');
+        queryComponent.getDeleteQuery().first().click();
+        queryComponent.getDeleteQueryYesButton().click({ force: true });
+        browsePage.getManageQueryCloseIcon().click();
+        queryComponent.getManageQueryModal().should('not.be.visible');
+    });
 });

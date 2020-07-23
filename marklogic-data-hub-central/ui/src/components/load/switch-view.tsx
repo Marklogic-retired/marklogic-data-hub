@@ -18,7 +18,7 @@ const SwitchView: React.FC<Props> = (props) => {
         setView(val);
         props.handleSelection(val);
     }
-    
+
     return (
         <div aria-label="switch-view" className={styles.switchView}>
             <MLRadio.MLGroup
@@ -27,16 +27,17 @@ const SwitchView: React.FC<Props> = (props) => {
                 name="radiogroup"
                 onChange={e => onChange(e.target.value)}
                 size="large"
+                style={{ color: '#CCC' }}
             >
                 <MLRadio.MLButton aria-label="switch-view-card" value={'card'}>
-                    <i><FontAwesomeIcon icon={faThLarge} className={styles.iconStyle} /></i>
+                    <i>{view !== 'card' ? <FontAwesomeIcon icon={faThLarge} style={{ color: '#CCC' }} /> : <FontAwesomeIcon icon={faThLarge} />}</i>
                 </MLRadio.MLButton>
                 <MLRadio.MLButton aria-label="switch-view-list" value={'list'}>
-                    <i><FontAwesomeIcon icon={faTable} className={styles.iconStyle} /></i>
+                    <i>{view !== 'list' ? <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} /> : <FontAwesomeIcon icon={faTable} />}</i>
                 </MLRadio.MLButton>
             </MLRadio.MLGroup>
         </div>
-        
+
     );
 }
 

@@ -62,7 +62,6 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 
 const ResultsTabularView = (props) => {
 
-
     const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
 
     const {
@@ -179,7 +178,6 @@ const ResultsTabularView = (props) => {
         }
     } : "")
 
-
     const updatedTableHeader = () => {
         let header = tableHeaderRender(selectedTableColumns);
         let detailView = {
@@ -187,7 +185,7 @@ const ResultsTabularView = (props) => {
             dataIndex: 'detailView',
             key: '0-d'
         }
-        header.push(detailView);
+        header.length > 0 && header.push(detailView);
         return header;
     }
 
@@ -311,6 +309,7 @@ const ResultsTabularView = (props) => {
             setSelectedTableProperties(props.columns)
         }
     }, [props.columns])
+
     const expandedRowRender = (rowId) => {
 
         const nestedColumns = [
@@ -382,14 +381,14 @@ const ResultsTabularView = (props) => {
 
             </div>
             <div className={styles.tabular}>
-                <MLTable bordered
+             <MLTable bordered
                     data-testid='result-table'
                     rowKey='uri'
                     dataSource={dataSource}
                     columns={tableHeaders}
-                    expandedRowRender={expandedRowRender}
+                    expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : null}
                     pagination={false}
-                />
+            />
             </div>
         </>
     )
