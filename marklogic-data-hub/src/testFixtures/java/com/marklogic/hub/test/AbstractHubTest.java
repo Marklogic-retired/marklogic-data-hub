@@ -388,11 +388,7 @@ public abstract class AbstractHubTest extends TestObject {
     }
 
     protected boolean isVersionCompatibleWith520Roles() {
-        Versions.MarkLogicVersion serverVersion = new Versions(getHubClient()).getMLVersion();
-        if (serverVersion.isNightly()) {
-            return (serverVersion.getMajor() == 10);
-        }
-        return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
+        return new Versions(getHubClient()).isVersionCompatibleWith520Roles();
     }
 
     protected JsonNode getStagingDoc(String uri) {
