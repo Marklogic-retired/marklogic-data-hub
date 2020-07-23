@@ -83,6 +83,19 @@ public class Versions extends LoggingObject {
     }
 
     /**
+     * The DHF 5.2.0 roles depend on granular privileges that are first available in ML 10.0-3.
+     *
+     * @return
+     */
+    public boolean isVersionCompatibleWith520Roles() {
+        Versions.MarkLogicVersion serverVersion = getMLVersion();
+        if (serverVersion.isNightly()) {
+            return (serverVersion.getMajor() == 10);
+        }
+        return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
+    }
+
+    /**
      * Depends on being able to obtain the version from an installed DH.
      *
      * @return
