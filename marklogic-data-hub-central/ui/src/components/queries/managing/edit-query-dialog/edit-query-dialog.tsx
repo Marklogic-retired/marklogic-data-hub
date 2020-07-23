@@ -75,7 +75,6 @@ const EditQueryDialog = (props) => {
         query.savedQuery.description = queryDescription;
         try {
             let status = await props.editQuery(query);
-
             if (status && status.code === 200) {
                 props.setEditModalVisibility(false);
             }

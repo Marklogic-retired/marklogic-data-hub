@@ -1,12 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { Row, Col, Card, Select, Input, Button } from 'antd';
+import { Row, Col, Card, Select, Input } from 'antd';
 import styles from './zero-state-explorer.module.scss';
 import { SearchContext } from '../../util/search-context';
-import Query from '../queries/queries'
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
-import { MLButton } from '@marklogic/design-system';
-
+import { MLButton, MLRadio } from '@marklogic/design-system';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 
 
 const ZeroStateExplorer = (props) => {
@@ -14,9 +14,9 @@ const ZeroStateExplorer = (props) => {
   const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
   const { Option } = Select;
   const dropdownOptions = ['All Entities', ...props.entities];
+  let [view, setView] = useState(props.tableView ? 'table' : 'snippet');
 
   const {
-    searchOptions,
     setQuery,
     applySaveQuery,
     setZeroState,
@@ -39,7 +39,7 @@ const ZeroStateExplorer = (props) => {
   const entityMenu = (
     <Select
       defaultValue='All Entities'
-      style={{ width: 150 }}
+      style={{ width: 250 }}
       id="entity-select"
       data-testid="entity-select"
       value={dropDownValue}
@@ -73,6 +73,11 @@ const ZeroStateExplorer = (props) => {
     })
   };
 
+  const onViewChange = (val) => {
+    setView(val);
+    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false)
+}
+
   return (
     <div className={styles.container} >
       <div className={styles.zeroContent}>
@@ -88,7 +93,7 @@ const ZeroStateExplorer = (props) => {
         </Row>
         <Row gutter={[0, 28]}>
           <Col span={12} offset={6}>
-            <p className={styles.p}>What do you want to Explore?</p>
+            <p className={styles.p}>What do you want to explore?</p>
           </Col>
         </Row>
         <Row>
@@ -99,7 +104,7 @@ const ZeroStateExplorer = (props) => {
                   <Col span={24}>
                     <div className={styles.input}>
                       <Input
-                        style={{ width: 500 }}
+                        style={{ width: 700 }}
                         placeholder="Search for text"
                         addonBefore={entityMenu}
                         onChange={onChange}
@@ -112,26 +117,31 @@ const ZeroStateExplorer = (props) => {
                 </Row>
                 <Row>
                   <br />
-                  <Col span={12} offset={6}>
+                  <Col span={24}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
-                      {props.tableView ?
-                        <MLButton type="primary" className={styles.button} onClick={() => props.toggleTableView(true)}>Table</MLButton>
-                        :
-                        <MLButton className={styles.button} onClick={() => props.toggleTableView(true)}>Table</MLButton>
-                      }
-                      {props.tableView ?
-                        <MLButton className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</MLButton>
-                        :
-                        <MLButton type="primary" className={styles.button} onClick={() => props.toggleTableView(false)}>Snippet</MLButton>
-                      }
+                      <MLRadio.MLGroup
+                      style={{ }}
+                        buttonStyle="solid"
+                        defaultValue={view}
+                        name="radiogroup"
+                        onChange={e => onViewChange(e.target.value)}
+                        size="medium"
+                      >
+                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} style={{ height: '30px', fontSize: '14px'}}>
+                          <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faTable} /></i>Table
+                      </MLRadio.MLButton>
+                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} style={{ height: '30px', fontSize: '14px'}}>
+                          <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faStream} /></i>Snippet
+                      </MLRadio.MLButton>
+                      </MLRadio.MLGroup>
                     </div>
                   </Col>
                 </Row>
                 <Row>
                   <br />
-                  <Col span={12} offset={6}>
-                    <div className={styles.viewAs}>
+                  <Col span={24}>
+                    <div className={styles.exploreButton}>
                       <MLButton type="primary" data-cy='explore' className={styles.button} onClick={onClickExplore} >Explore</MLButton>
                     </div>
                   </Col>
@@ -142,7 +152,7 @@ const ZeroStateExplorer = (props) => {
         </Row>
         <Row gutter={[0, 28]}>
           <Col span={24}>
-            <p className={styles.p}>- OR -</p>
+            <p className={styles.p}>- or -</p>
           </Col>
         </Row>
         <Row >
@@ -158,7 +168,7 @@ const ZeroStateExplorer = (props) => {
                         onChange={onItemSelect}
                         data-testid="query-select"
                       >
-                        {props.queries.map((key) => key.savedQuery.name).map((query, index) =>
+                        {props.queries && props.queries.length && props.queries.map((key) => key.savedQuery.name).map((query, index) =>
                           <Option value={query} key={index + 1} data-cy={`query-option-${query}`}>{query}</Option>
                         )}
                       </Select>

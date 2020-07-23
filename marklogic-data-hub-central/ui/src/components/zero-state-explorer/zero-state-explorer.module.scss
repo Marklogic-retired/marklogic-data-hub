@@ -56,7 +56,7 @@
     display: block;
     width: 760px;
     max-width: 48vw;
-    min-width: 520px;
+    min-width: 750px;
     height: 180px;
     max-height: 15vw;
     min-height: 160px;
@@ -71,7 +71,7 @@
     display: block;
     width: 760px;
     max-width: 48vw;
-    min-width: 520px;
+    min-width: 750px;
     height: 100px;
     max-height: 7vw;
     min-height: 60px;
@@ -90,6 +90,12 @@
 
   .viewAs {
     display: flex;
+    justify-content: left;
+    padding-left: 5px;
+  }
+
+  .exploreButton {
+    display: flex;
     justify-content: center;
   }
 
@@ -102,6 +108,7 @@
   }
 
   .button {
+    height: 30px;
     width: 80px;
   }
 
