@@ -77,21 +77,21 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
     @Override
     protected String getPayload(CommandContext context) {
         String payload = super.getPayload(context);
-        return payload != null ? preparePayloadBeforeSubmitting(payload, context.getManageClient()) : null;
+        return payload != null ? preparePayloadBeforeSubmitting(context, payload) : null;
     }
 
-    protected String preparePayloadBeforeSubmitting(String payload, ManageClient manageClient) {
+    protected String preparePayloadBeforeSubmitting(CommandContext context, String payload) {
         try {
             ObjectNode payloadNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(payload);
 
             // The boolean exists to control whether this is done because when deploying to DHS, the entity-config
             // directory is added to the list of config dirs, and thus this merging is not needed
             if (mergeEntityConfigFiles) {
-                payloadNode = mergePayloadWithEntityConfigFileIfItExists(payloadNode);
+                payloadNode = mergePayloadWithEntityConfigFileIfItExists(context, payloadNode);
             }
 
             if (mergeExistingArrayProperties) {
-                payloadNode = mergeExistingArrayProperties(payloadNode, manageClient);
+                payloadNode = mergeExistingArrayProperties(context, payloadNode);
             }
 
             removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(payloadNode);
@@ -107,14 +107,14 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         }
     }
 
-    private ObjectNode mergeExistingArrayProperties(ObjectNode propertiesToSave, ManageClient manageClient) {
+    private ObjectNode mergeExistingArrayProperties(CommandContext context, ObjectNode propertiesToSave) {
         if (!propertiesToSave.has("database-name")) {
             logger.warn("Database payload unexpectedly does not have 'database-name' property; will not merge existing array properties: " + propertiesToSave);
             return propertiesToSave;
         }
         final String dbName = propertiesToSave.get("database-name").asText();
         try {
-            String json = new DatabaseManager(manageClient).getPropertiesAsJson(dbName);
+            String json = new DatabaseManager(context.getManageClient()).getPropertiesAsJson(dbName);
             ObjectNode existingProperties = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(json);
             return ResourceUtil.mergeExistingArrayProperties(propertiesToSave, existingProperties);
         } catch (Exception ex) {
@@ -134,7 +134,7 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
      * @return
      * @throws IOException
      */
-    private ObjectNode mergePayloadWithEntityConfigFileIfItExists(ObjectNode payloadNode) throws IOException {
+    protected ObjectNode mergePayloadWithEntityConfigFileIfItExists(CommandContext context, ObjectNode payloadNode) throws IOException {
         if (hubConfig.getEntityDatabaseDir() != null && this.databaseFilename != null) {
             File entityDatabaseDir = hubConfig.getEntityDatabaseDir().toFile();
             if (entityDatabaseDir != null) {
@@ -143,7 +143,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Merging in file: " + entityDatabaseFile.getAbsolutePath());
                     }
-                    ObjectNode entityConfigNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(entityDatabaseFile);
+                    // Ensure that tokens are replaced in the entity-config file
+                    String entityConfigPayload = readResourceFromFile(context, entityDatabaseFile);
+                    ObjectNode entityConfigNode = (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(entityConfigPayload);
                     return JsonNodeUtil.mergeObjectNodes(payloadNode, entityConfigNode);
                 }
             }
