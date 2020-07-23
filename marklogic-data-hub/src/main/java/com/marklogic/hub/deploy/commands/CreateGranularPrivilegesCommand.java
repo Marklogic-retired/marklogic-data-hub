@@ -7,6 +7,7 @@ import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
@@ -102,8 +103,12 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
 
     @Override
     public void execute(CommandContext context) {
-        Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
-        saveGranularPrivileges(context.getManageClient(), granularPrivileges);
+        if (new Versions(hubConfig).isVersionCompatibleWith520Roles()) {
+            Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
+            saveGranularPrivileges(context.getManageClient(), granularPrivileges);
+        } else {
+            logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
+        }
     }
 
     /**
@@ -113,11 +118,15 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
      */
     @Override
     public void undo(CommandContext context) {
-        Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
-        PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
-        granularPrivileges.values().forEach(privilege -> {
-            mgr.deleteAtPath("/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute");
-        });
+        if (new Versions(hubConfig).isVersionCompatibleWith520Roles()) {
+            Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
+            PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
+            granularPrivileges.values().forEach(privilege -> {
+                mgr.deleteAtPath("/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute");
+            });
+        } else {
+            logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
+        }
     }
 
     /**
