@@ -41,7 +41,7 @@ public class Options {
 
     @Parameter(
         names = {"--disableSsl"},
-        description = "Set to true to disable SSL usage when connecting to MarkLogic"
+        description = "Include this argument to disable SSL usage when connecting to MarkLogic (do not include a value for it)"
     )
     private boolean disableSsl;
 
