@@ -95,9 +95,10 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         return Integer.MAX_VALUE;
     }
 
+    // Granular privileges should be removed before dbs as the 'granularPrivileges' map's key uses db id
     @Override
     public Integer getUndoSortOrder() {
-        return SortOrderConstants.DELETE_PRIVILEGES;
+        return SortOrderConstants.DELETE_OTHER_DATABASES - 1;
     }
 
     @Override
