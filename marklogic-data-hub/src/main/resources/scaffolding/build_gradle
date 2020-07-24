@@ -19,7 +19,7 @@ plugins {
 
     // This gradle plugin extends the ml-gradle plugin with
     // commands that make Data Hub do its magic
-    id 'com.marklogic.ml-data-hub' version '5.3-SNAPSHOT'
+    id 'com.marklogic.ml-data-hub' version '5.4-SNAPSHOT'
 }
 
 repositories {
@@ -30,7 +30,7 @@ repositories {
 dependencies {
     // this allows you to write custom java code that depends
     // on the Data Hub library
-    compile 'com.marklogic:marklogic-data-hub:5.3-SNAPSHOT'
+    compile 'com.marklogic:marklogic-data-hub:5.4-SNAPSHOT'
     compile 'com.marklogic:marklogic-xcc:9.0.7'
 }
 
