@@ -1,6 +1,6 @@
 {
   "role-name": "data-hub-admin",
-  "description": "5.3-SNAPSHOT: Permits developing and operating a Data Hub application, along with clearing databases",
+  "description": "5.4-SNAPSHOT: Permits developing and operating a Data Hub application, along with clearing databases",
   "role": [
     "data-hub-developer"
   ]
