@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -91,6 +92,7 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
             )
                 .withBatchSize(1)
                 .withThreadCount(4)
+                .onUrisReady(batch -> logger.info("Processing: " + Arrays.asList(batch.getItems())))
                 .onUrisReady(transformListener);
 
             dataMovementManager.startJob(queryBatcher);
