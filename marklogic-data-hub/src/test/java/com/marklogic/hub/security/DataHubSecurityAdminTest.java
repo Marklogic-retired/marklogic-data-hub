@@ -92,6 +92,7 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
      */
     @Test
     void createCustomRoleInheritingCertainDataHubRoles() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         final String roleName = "test-custom-role";
         Role customRole = new Role(userWithRoleBeingTestedApi, roleName);
         customRole.setRole(CreateGranularPrivilegesCommand.ROLES_THAT_CAN_BE_INHERITED);
