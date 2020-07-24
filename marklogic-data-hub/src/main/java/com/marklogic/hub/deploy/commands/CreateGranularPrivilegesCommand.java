@@ -210,7 +210,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
             // Check for a value ID, as user may have a typo in a group name
             final String groupId = existingGroups.getIdForNameOrId(groupName);
             if (groupId == null) {
-                logger.warn(format("Unable to find group ID for group name '%s'; will not create scheduled tasks privilege for the group"));
+                logger.warn(format("Unable to find group ID for group name '%s'; will not create scheduled tasks privilege for the group", groupName));
             } else {
                 Privilege priv = newPrivilege("admin-group-scheduled-task-" + groupName, developerRole);
                 priv.setAction("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/$$group-id(" + groupName + ")");
