@@ -7,7 +7,7 @@
   "options" : {
     "sourceQuery" : "cts.collectionQuery([])",
     "collections" : [ "customIngestion" ],
-    "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+    "permissions" : "data-hub-common,read,data-hub-common,update",
     "outputFormat" : "json",
     "targetDatabase" : "data-hub-STAGING"
   },

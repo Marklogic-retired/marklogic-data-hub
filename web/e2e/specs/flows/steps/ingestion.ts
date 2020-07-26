@@ -57,7 +57,7 @@ export default function (qaProjectDir) {
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("json");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-input_file_type \"documents\"");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_collections \"json-ingestion\"");
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-operator,read,data-hub-operator,update\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-common,read,data-hub-common,update\"");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("document_type \"json\"");
       await expect(ingestStepPage.mlcpCommand.getText()).toContain("-transform_param \"flow-name=TestFlow1,step=1\"");
     });
@@ -285,11 +285,11 @@ export default function (qaProjectDir) {
     });
 
     it('Should verify target permissions', async function () {
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-operator,read,data-hub-operator,update\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-common,read,data-hub-common,update\"");
       await ingestStepPage.targetPermissions.clear();
-      await ingestStepPage.targetPermissions.sendKeys("data-hub-operator,read,data-hub-operator,update,user1,execute");
+      await ingestStepPage.targetPermissions.sendKeys("data-hub-common,read,data-hub-common,update,user1,execute");
       await ingestStepPage.targetPermissions.sendKeys(protractor.Key.ENTER);
-      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-operator,read,data-hub-operator,update,user1,execute\"");
+      await expect(ingestStepPage.mlcpCommand.getText()).toContain("-output_permissions \"data-hub-common,read,data-hub-common,update,user1,execute\"");
     });
 
     it('Should verify target uri replacement', async function () {

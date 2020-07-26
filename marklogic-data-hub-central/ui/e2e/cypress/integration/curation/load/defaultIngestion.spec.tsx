@@ -63,7 +63,7 @@ describe('Default ingestion ', () => {
         loadPage.targetCollectionInput().type('e2eTestCollection{enter}test1{enter}test2{enter}');
         cy.findByText('Default Collections').click();
         loadPage.defaultCollections(stepName).should('be.visible');
-        loadPage.appendTargetPermissions('data-hub-common-writer,update');
+        loadPage.appendTargetPermissions('data-hub-common,update');
         loadPage.selectProvGranularity('Off');
         loadPage.setBatchSize('200');
         //Verify JSON error
@@ -137,7 +137,7 @@ describe('Default ingestion ', () => {
         loadPage.targetCollectionInput().type('e2eTestCollection{enter}test1{enter}test2{enter}');
         cy.findByText('Default Collections').click();
         loadPage.defaultCollections(stepName).should('be.visible');
-        loadPage.setTargetPermissions('data-hub-common,read,data-hub-common-writer,update');
+        loadPage.setTargetPermissions('data-hub-common,read,data-hub-common,update');
         loadPage.selectProvGranularity('Off');
         loadPage.setBatchSize('200');
         //Verify JSON error

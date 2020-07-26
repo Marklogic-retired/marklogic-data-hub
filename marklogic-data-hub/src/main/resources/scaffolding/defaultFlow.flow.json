@@ -18,7 +18,7 @@
       },
       "options": {
         "targetDatabase": "%%mlStagingDbName%%",
-        "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "permissions": "data-hub-common,read,data-hub-common,update",
         "outputFormat": "json",
         "collections": [
           "default-ingestion"
@@ -41,7 +41,7 @@
         "sourceDatabase": "%%mlStagingDbName%%",
         "targetDatabase": "%%mlFinalDbName%%",
         "sourceQuery": "cts.collectionQuery('default-ingestion')",
-        "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "permissions": "data-hub-common,read,data-hub-common,update",
         "outputFormat": "json",
         "collections": [
           "default-mapping",
@@ -70,7 +70,7 @@
         "collections": [
           "mastering-summary"
         ],
-        "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "permissions": "data-hub-common,read,data-hub-common,update",
         "outputFormat": "json",
         "matchOptions" : {
           "dataFormat": "json",
@@ -115,7 +115,7 @@
         "collections": [
           "default-merging","mastered"
         ],
-        "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "permissions": "data-hub-common,read,data-hub-common,update",
         "outputFormat": "json",
         "mergeOptions" : {
           "propertyDefs" : {

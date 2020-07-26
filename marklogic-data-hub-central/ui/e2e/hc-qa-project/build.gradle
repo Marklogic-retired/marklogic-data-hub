@@ -42,7 +42,7 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
     database = "data-hub-FINAL"
     input_file_path = "input/thesaurus"
     output_collections = "http://marklogic.com/xdmp/thesaurus,http://marklogic.com/xdmp/documents"
-    output_permissions = "data-hub-common,read,data-hub-common-writer,update"
+    output_permissions = "data-hub-common,read,data-hub-common,update"
     output_uri_replace = ".*input,''"
     host = project.findProperty("mlHost")
     ssl = project.findProperty("hubSsl")

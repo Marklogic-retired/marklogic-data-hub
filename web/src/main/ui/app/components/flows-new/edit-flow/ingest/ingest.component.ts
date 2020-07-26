@@ -61,7 +61,7 @@ export class IngestComponent implements OnInit {
     const options = {
       additionalCollections: additionalCollections || [],
       collections: collections || [`${this.step.name}`],
-      permissions: permissions || "data-hub-operator,read,data-hub-operator,update",
+      permissions: permissions || "data-hub-common,read,data-hub-common,update",
       outputFormat: outputFormat || 'json',
       sourceQuery: sourceQuery || '',
       targetDatabase: targetDatabase || '',
@@ -77,7 +77,7 @@ export class IngestComponent implements OnInit {
   }
   cmdCopied(): void {
     this.snackbar.open('MLCP command copied to the clipboard.', "", {
-        panelClass: ['snackbar'], 
+        panelClass: ['snackbar'],
         duration: 1200
       });
   }

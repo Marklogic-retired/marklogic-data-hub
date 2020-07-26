@@ -61,7 +61,7 @@ export class Step {
     };
     step.fileLocations = fileLocations;
     step.options = new IngestionOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -76,7 +76,7 @@ export class Step {
   static createMappingStep(): Step {
     const step = new Step();
     step.options = new MappingOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -91,7 +91,7 @@ export class Step {
   static createMatchingStep(): Step {
     const step = new Step();
     step.options = new MatchingOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -106,7 +106,7 @@ export class Step {
   static createMergingStep(): Step {
     const step = new Step();
     step.options = new MergingOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -121,7 +121,7 @@ export class Step {
   static createMasteringStep(): Step {
     const step = new Step();
     step.options = new MasteringOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -137,7 +137,7 @@ export class Step {
     const step = new Step();
     step.modulePath = '';
     step.options = new CustomOptions();
-    step.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    step.options.permissions = 'data-hub-common,read,data-hub-common,update';
     step.options.outputFormat = 'json';
     step.customHook = {"module" : "",
     "parameters" : {},
@@ -148,7 +148,7 @@ export class Step {
     step.threadCount = 4;
     return step;
   }
-  
+
   static updateCustomStep(step: Step,customStepType: String,filePath: string) : Step {
     if(customStepType === StepType.INGESTION){
       const fileLocations = {
@@ -169,7 +169,7 @@ export class Step {
     }
     if (json.name) {
       newStep.name = json.name;
-    } 
+    }
     if (json.selectedSource) {
       newStep.selectedSource = json.selectedSource;
     }
@@ -203,7 +203,7 @@ export class Step {
     if (json.threadCount && isNumber(parseInt(json.threadCount))) {
       newStep.threadCount = json.threadCount;
     }
- 
+
     // Check options
     if (json.options) {
       // set defaults for each step type
@@ -254,7 +254,7 @@ export class Step {
             newStep.fileLocations = fileLocations;
           }
         }
-        
+
         newStep.options = new CustomOptions();
         newStep.options.sourceDatabase = databases.staging;
         newStep.options.targetDatabase = databases.final;
@@ -262,7 +262,7 @@ export class Step {
       const newOptions = Object.assign(newStep.options, json.options);
       newStep.options = newOptions;
     }
-    newStep.options.permissions = 'data-hub-operator,read,data-hub-operator,update';
+    newStep.options.permissions = 'data-hub-common,read,data-hub-common,update';
     return newStep;
   }
 }
