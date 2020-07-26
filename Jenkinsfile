@@ -618,7 +618,7 @@ pipeline{
         	            }
         	            }
         }
-        agent {label 'dhmaster'}
+        agent {label 'dhfLinuxAgent'}
         steps{
             build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
         }
@@ -870,11 +870,11 @@ pipeline{
                                 	        ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                                bat 'cd data-hub & gradlew.bat clean'
-                                bat 'cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
-                                bat 'cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-                                bat 'cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                                bat 'cd data-hub & gradlew.bat web:test || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat clean'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
                                 junit '**/TEST-*.xml'
                             }
         			}
