@@ -89,7 +89,7 @@ const settings = {
   outputPermissions: {
     label: 'Target Permissions',
     description: 'A comma separated list of (role,capability) pairs to apply to loaded documents.\nDefault: The default permissions associated with the user inserting the document.\n\nExample: role1,read,role2,update',
-    value: 'data-hub-operator,read,data-hub-operator,update',
+    value: 'data-hub-common,read,data-hub-common,update',
   },
   outputURIReplacement: {
     label: 'Target URI Replacement',

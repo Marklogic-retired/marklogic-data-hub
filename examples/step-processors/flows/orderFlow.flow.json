@@ -9,7 +9,7 @@
         "collections": [
           "order-input"
         ],
-        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "permissions": "data-hub-common,read,data-hub-common,update",
         "outputFormat": "json",
         "targetDatabase": "data-hub-STAGING"
       },

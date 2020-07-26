@@ -353,10 +353,10 @@ public class MappingTest extends HubTestBase {
         BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
         Assertions.assertNotEquals(0, handle.get().length);
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.READ));
+        Assertions.assertTrue(permissions.get("data-hub-common").contains(DocumentMetadataHandle.Capability.READ));
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.READ));
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.EXECUTE));
-        Assertions.assertTrue(permissions.get("data-hub-operator").contains(DocumentMetadataHandle.Capability.EXECUTE));
+        Assertions.assertTrue(permissions.get("data-hub-common").contains(DocumentMetadataHandle.Capability.EXECUTE));
     }
 
     private void installProject() throws IOException {

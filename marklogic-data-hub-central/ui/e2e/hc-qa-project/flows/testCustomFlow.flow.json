@@ -15,7 +15,7 @@
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-FINAL",
         "collections" : [ "customMatching" ],
-        "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+        "permissions" : "data-hub-common,read,data-hub-common,update",
         "matchOptions" : {
           "dataFormat" : "json",
           "propertyDefs" : {
@@ -58,7 +58,7 @@
         "targetEntity" : "Customer",
         "sourceDatabase" : "data-hub-FINAL",
         "collections" : [ "customMerging", "mastered" ],
-        "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+        "permissions" : "data-hub-common,read,data-hub-common,update",
         "mergeOptions" : {
           "propertyDefs" : {
             "properties" : [ ],

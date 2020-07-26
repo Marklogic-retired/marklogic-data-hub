@@ -32,7 +32,7 @@
       "capability": "update"
     },
     {
-      "role-name": "data-hub-operator",
+      "role-name": "data-hub-common",
       "capability": "read"
     }
   ]

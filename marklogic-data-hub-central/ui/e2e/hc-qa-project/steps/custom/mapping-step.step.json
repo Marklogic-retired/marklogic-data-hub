@@ -13,7 +13,7 @@
   "sourceDatabase" : "data-hub-STAGING",
   "collections" : [ "customMapping", "mdm-content", "mapping-step", "Customer" ],
   "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
-  "permissions" : "data-hub-common,read,data-hub-common-writer,update",
+  "permissions" : "data-hub-common,read,data-hub-common,update",
   "validateEntity" : false,
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",

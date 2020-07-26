@@ -64,7 +64,7 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         stepDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "custom", "my-test-step", "my-test-step.step.json").toFile());
-        data.options.permissions == "data-hub-common,read,data-hub-common-writer,update";
+        data.options.permissions == "data-hub-common,read,data-hub-common,update";
     }
 
     def "create step with valid name and type"() {
@@ -87,7 +87,7 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         stepDir.isDirectory()
         def jsonSlurper = new JsonSlurper()
         def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "step-definitions", "ingestion", "my-new-step", "my-new-step.step.json").toFile());
-        data.options.permissions == "data-hub-common,read,data-hub-common-writer,update";
+        data.options.permissions == "data-hub-common,read,data-hub-common,update";
     }
 
     /**
