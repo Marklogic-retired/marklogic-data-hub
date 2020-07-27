@@ -126,6 +126,7 @@ Cypress.Commands.add('uploadFile', (filePath) => {
   cy.get('#fileUpload').attachFile(filePath,{ subjectType: 'input', force: true });
   cy.waitUntil(() => cy.findByTestId('spinner').should('be.visible'));
   cy.waitUntil(() => cy.findByTestId('spinner').should('not.be.visible'));
+  cy.waitUntil(() => cy.get('span p'));
 })
 
 Cypress.Commands.add('verifyStepRunResult', (jobStatus, stepType, stepName) => {
@@ -182,16 +183,19 @@ Cypress.Commands.add('deleteSteps', (stepType, ...stepNames) => {
 })
 
 function setTestUserRoles(roles) {
-  //To get roles within quotes and comma separated
-  roles = '"' + roles.join('", "') + '"'
+  let role = roles.concat("hub-central-user");
+  cy.writeFile("cypress/support/body.json", {"role": role})
+  cy.readFile("cypress/support/body.json").then(content => {
+    expect(content.role).deep.equals(role);
+  });
   cy.exec(`curl -X PUT --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
-  -d '{"role": [ "hub-central-user", ${roles} ]}' ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
+  -d @cypress/support/body.json ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
   cy.wait(500);
 }
 
 function resetTestUser() {
   cy.exec(`curl -X PUT --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
-  -d '{"role": [ "hub-central-user" ]}' ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
+  -d @cypress/support/resetUser.json ${protocol}://${Cypress.env('mlHost')}:8002/manage/v2/users/hc-test-user/properties`)
 }
 
 Cypress.on('uncaught:exception', (err, runnable) => {
