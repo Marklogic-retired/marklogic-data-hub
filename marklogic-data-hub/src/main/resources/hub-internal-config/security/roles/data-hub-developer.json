@@ -28,11 +28,6 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "data-hub-clear-user-data",
-      "action": "http://marklogic.com/data-hub/privileges/clear-user-data",
-      "kind": "execute"
-    },
-    {
       "privilege-name": "data-hub-download-project-files",
       "action": "http://marklogic.com/data-hub/privileges/download-project-files",
       "kind": "execute"

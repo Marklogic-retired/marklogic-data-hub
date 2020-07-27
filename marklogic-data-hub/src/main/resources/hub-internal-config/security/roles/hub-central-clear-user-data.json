@@ -10,12 +10,5 @@
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
     "data-hub-step-definition-reader"
-  ],
-  "privilege": [
-    {
-      "privilege-name": "data-hub-clear-user-data",
-      "action": "http://marklogic.com/data-hub/privileges/clear-user-data",
-      "kind": "execute"
-    }
   ]
 }
