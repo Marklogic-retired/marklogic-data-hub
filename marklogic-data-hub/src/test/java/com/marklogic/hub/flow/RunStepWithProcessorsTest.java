@@ -6,10 +6,12 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +46,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void test() {
+    void twoProcessorsOnAStep() {
         RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "1"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
@@ -70,7 +72,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     @Test
     void missingProcessorModule() {
         RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "2"));
-        assertEquals(JobStatus.FAILED.toString(), response.getJobStatus(),
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(),
             "The job should have failed because step 2 references an invalid path");
 
         String stepOutput = response.getStepResponses().get("2").getStepOutput().get(0);
@@ -90,5 +92,18 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
             assertFalse(customer.get("envelope").get("headers").has("hello"),
                 "Because the processor doesn't have a 'when' property, the processor will be ignored (as opposed to throwing an error).");
         });
+    }
+
+    @Test
+    void stopOnErrorIsTrue() {
+        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "5", "1"));
+
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(), "The job should have stopped after " +
+            "running step 5, as the processor for that step throws an error, and the flow has stopOnError=true");
+
+        Map<String, RunStepResponse> stepResponses = response.getStepResponses();
+        assertEquals(1, stepResponses.keySet().size(), "Should only have a step response for step 5, which is the one " +
+            "that failed before the job was stopped");
+        assertEquals("5", stepResponses.keySet().iterator().next());
     }
 }

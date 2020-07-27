@@ -1,5 +1,6 @@
 {
   "name": "stepProcessors",
+  "stopOnError": true,
   "steps": {
     "1": {
       "name": "stepOne",
@@ -70,6 +71,20 @@
       "processors": [
         {
           "path": "/custom-modules/step-processors/onIngest.sjs",
+          "when": "beforeContentPersisted"
+        }
+      ]
+    },
+    "5": {
+      "name": "processorModuleThrowsError",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')"
+      },
+      "processors": [
+        {
+          "path": "/custom-modules/step-processors/moduleThrowsError.sjs",
           "when": "beforeContentPersisted"
         }
       ]
