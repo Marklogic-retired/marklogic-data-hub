@@ -738,7 +738,7 @@ export const getTableProperties = (object: Array<Object>) => {
       if (obj[i] !== null && (obj[i]).hasOwnProperty('properties')) {
         getProperties(obj[i].properties)
       } else {
-        labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath)
+          labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath)
       }
     }
     return labels;

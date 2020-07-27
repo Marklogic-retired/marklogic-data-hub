@@ -259,6 +259,10 @@ class BrowsePage {
     return cy.get('[data-cy=column-selector] > div > svg');
   }
 
+  getDataExportIcon() {
+    return cy.get('[data-cy=query-export] > div > svg');
+  }
+
   getColumnSelectorCancel() {
       return cy.get('button span').contains('Cancel');
   }
@@ -461,6 +465,10 @@ class BrowsePage {
   }
 
 
+  //data export modal
+  getStructuredDataWarning() {
+    return cy.findByTestId('export-warning');
+  }
 
 }
 

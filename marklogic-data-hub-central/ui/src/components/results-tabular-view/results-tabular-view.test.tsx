@@ -32,7 +32,6 @@ describe("Results Table view component", () => {
         //check table data is rendered correctly
         expect(getByText('101')).toBeInTheDocument();
         expect(getByText('Carmella Hardin')).toBeInTheDocument();
-        userEvent.click(getByText('shipping'));
         expect(getByText('Whitwell Place')).toBeInTheDocument();
         expect(getByText('Whitwell Place2')).toBeInTheDocument();
         expect(getByText('Ellerslie')).toBeInTheDocument();
@@ -76,6 +75,7 @@ describe("Results Table view component", () => {
                     columns={[]}
                     hasStructured={false}
                     selectedEntities={['Customer']}
+                    entityDefArray={entityDefArray}
                 />
             </Router>
         )
