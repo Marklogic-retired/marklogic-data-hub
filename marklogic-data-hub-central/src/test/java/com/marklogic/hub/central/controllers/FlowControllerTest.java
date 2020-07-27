@@ -185,6 +185,38 @@ public class FlowControllerTest extends AbstractMvcTest {
     }
 
     @Test
+    void testLoadCsvAsXmlRun() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/run-flow-test");
+
+        loginAsTestUserWithRoles("hub-central-step-runner");
+
+        final String flowName = "testCsvFlow";
+
+        // Run the step
+        flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
+        final String[] jobIds = new String[1];
+        MockMultipartFile file1 = new MockMultipartFile("files","file1.csv", MediaType.TEXT_PLAIN, "name\nJoe".getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+                .file(file1)
+                .session(mockHttpSession))
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode response = parseJsonResponse(result);
+                    assertTrue(response.has("jobId"), "Running a step should result in a response with a jobId so that the " +
+                            "client can then query for job status; response: " + response);
+                    jobIds[0] = response.get("jobId").asText();
+                });
+        // Check on the Job
+        getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    JsonNode response = parseJsonResponse(result);
+                    assertEquals("finished", response.path("jobStatus").asText(), "The job response should indicate the steps ran successfully: " + response);
+                });
+    }
+
+    @Test
     void permittedReadRunUser() throws Exception {
         installReferenceModelProject();
 

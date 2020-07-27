@@ -1,0 +1,8 @@
+{
+  "name": "testCsvFlow",
+  "steps": {
+    "1": {
+      "stepId": "testLoadCsvAsXml-ingestion"
+    }
+  }
+}

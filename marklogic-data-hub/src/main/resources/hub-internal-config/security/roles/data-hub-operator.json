@@ -70,11 +70,6 @@
       "kind": "execute"
     },
     {
-      "privilege-name": "xdmp:value",
-      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
-      "kind": "execute"
-    },
-    {
       "privilege-name": "sem:sparql",
       "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
       "kind": "execute"
