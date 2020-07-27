@@ -298,6 +298,23 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 2);
   });
 
+  it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getShowMoreLink().first().click();
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').click();
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').click();
+    browsePage.getGreySelectedFacets('loadCustomersJSON').should('exist');
+    browsePage.getGreySelectedFacets('loadCustomersXML').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.getClearGreyFacets().click();
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('not.be.checked');
+  });
 });
 
 

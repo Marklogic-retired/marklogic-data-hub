@@ -74,6 +74,8 @@ const Facet: React.FC<Props> = (props) => {
     useEffect(() => {
         if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             setCheckedOptions(greyedOptions)
+        } else if (Object.entries(greyedOptions.selectedFacets).length === 0 && Object.entries(searchOptions.selectedFacets).length !== 0) {
+            setCheckedOptions(searchOptions);
         } else if ((Object.entries(searchOptions.selectedFacets).length === 0 || (!searchOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
             setChecked([]);
         }
