@@ -9,7 +9,7 @@ describe('Default ingestion ', () => {
         cy.contains(Application.title);
         cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
         cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-        tiles.waitForTableToLoad();
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
     });
 
     afterEach(() => {
@@ -23,7 +23,7 @@ describe('Default ingestion ', () => {
     })
 
     it('Verifies CRUD functionality from list view', () => {
-        let stepName = 'cyTestName';
+        let stepName = 'cyListView';
         //Verify Cancel
         loadPage.loadView('table').click();
         loadPage.addNewButton('list').click();
@@ -98,7 +98,7 @@ describe('Default ingestion ', () => {
     })
 
     it('Verifies CRUD functionality from card view and run in a flow', () => {
-        let stepName = 'cyTestName';
+        let stepName = 'cyCardView';
         let flowName= 'newE2eFlow';
         //Verify Cancel
         loadPage.loadView('th-large').click();
@@ -186,7 +186,7 @@ describe('Default ingestion ', () => {
 
         //Verify Add to Existing Flow after changing source/target format to TEXT
         cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-        tiles.waitForTableToLoad();
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
         loadPage.loadView('th-large').click();
         loadPage.editStepInCardView(stepName).click();
         loadPage.selectSourceFormat('TEXT');
@@ -211,7 +211,7 @@ describe('Default ingestion ', () => {
 
         //Verify Delete step
         cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-        tiles.waitForTableToLoad();
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
         loadPage.deleteStep(stepName).click();
         loadPage.confirmationOptions("No").click();
         loadPage.stepName(stepName).should('be.visible');

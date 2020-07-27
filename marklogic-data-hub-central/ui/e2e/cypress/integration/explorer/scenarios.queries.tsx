@@ -14,6 +14,7 @@ describe('save/manage queries scenarios, developer role', () => {
         cy.loginAsDeveloper().withRequest();
         cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
         cy.waitUntil(() => browsePage.getExploreButton(), {timeout: 10000}).click();
+        browsePage.waitForSpinnerToDisappear();
         browsePage.waitForTableToLoad();
     });
 

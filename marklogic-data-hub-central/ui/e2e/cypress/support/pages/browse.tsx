@@ -170,6 +170,7 @@ class BrowsePage {
     cy.get('[data-cy=search-bar]').type(str);
     cy.get('.ant-input-search-button').click();
     this.waitForTableToLoad();
+    this.waitForSpinnerToDisappear();
   }
 
   changeNumericSlider(val: string){
