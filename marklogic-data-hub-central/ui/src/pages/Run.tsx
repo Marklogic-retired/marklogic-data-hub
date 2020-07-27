@@ -100,8 +100,11 @@ const Run = (props) => {
             }
         }
         catch (error) {
-            console.error('Error posting flow', error)
+            console.error('Error posting flow', error);
             setIsLoading(false);
+            Modal.error({
+              content: error.response.data.message,
+            });
         }
     }
 

@@ -17,6 +17,15 @@ let serviceResponse = flowService.createFlow(flowName, "description");
 hubJsTest.verifyJson(expectedFlow, serviceResponse, assertions);
 hubJsTest.verifyJson(expectedFlow, flowService.getFlow(flowName), assertions);
 
+// attempting to create another flow with the same name should fail
+try {
+  flowService.createFlow(flowName, "another description");
+  test.assertFalse(fn.true(), "Exception should have been thrown for creating a flow with the same name.");
+} catch (e) {
+  test.assertEqual("400", e.data[0], "Exception should throw status code 400.");
+  test.assertTrue(fn.contains(e.data[1], 'already exists'), "Exception should thrown due to already existing flow.");
+}
+
 // Update the description and verify
 serviceResponse = flowService.updateFlowInfo(flowName, "modified");
 expectedFlow.description = "modified";

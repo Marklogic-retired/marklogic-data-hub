@@ -51,7 +51,8 @@ public class FlowControllerTest extends AbstractMvcTest {
                 assertEquals(info.name, response.get("name").asText());
                 assertEquals(info.description, response.get("description").asText());
             });
-
+        // Try a second POST and verify it isn't allowed.
+        postJson(PATH, info).andExpect(status().isBadRequest());
         // Get flows and verify
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {

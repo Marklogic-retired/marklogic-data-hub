@@ -16,10 +16,20 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 var name;
 var description;
 
+let existingFlow = null;
+try {
+  existingFlow = Artifacts.getArtifact('flow', name);
+} catch (e) {
+  // swallowing error, as we don't want there to be an existing flow with the given name.
+}
+if (existingFlow) {
+  ds.throwBadRequest(`Cannot create flow; flow with the name '${name}' already exists`);
+}
 const flow = {
   name: name,
   steps: {}
