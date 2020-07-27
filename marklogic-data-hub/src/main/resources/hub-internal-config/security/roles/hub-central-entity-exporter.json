@@ -16,11 +16,6 @@
       "privilege-name": "xdmp:xslt-eval",
       "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
       "kind": "execute"
-    },
-    {
-      "privilege-name": "xdmp:value",
-      "action": "http://marklogic.com/xdmp/privileges/xdmp-value",
-      "kind": "execute"
     }
   ]
 }

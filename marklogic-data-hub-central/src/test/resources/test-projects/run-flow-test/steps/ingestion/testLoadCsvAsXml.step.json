@@ -1,0 +1,11 @@
+{
+  "stepId": "testLoadCsvAsXml-ingestion",
+  "name": "testLoadCsvAsXml",
+  "description": "",
+  "sourceFormat": "csv",
+  "separator": ",",
+  "targetFormat": "xml",
+  "outputURIPrefix": "/data/",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "collections": ["rawData"]
+}
