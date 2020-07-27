@@ -1,0 +1,13 @@
+[Unit]
+Description=MarkLogic Data Hub Central Application Service
+After=syslog.target
+
+[Service]
+User=hc-runner
+ExecStart=/opt/hub-central/hub-central.war
+SuccessExitStatus=143
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

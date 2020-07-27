@@ -13,6 +13,7 @@ buildscript {
 plugins {
     id "net.saliman.properties" version "1.5.1"
     id "java"
+    id "nebula.ospackage" version "8.4.1"
 }
 
 apply plugin: "org.springframework.boot"
@@ -21,6 +22,7 @@ apply plugin: "io.spring.dependency-management"
 apply plugin: "war"
 apply plugin: "com.github.node-gradle.node"
 apply plugin: "jsonschema2pojo"
+apply from: 'build-rpm.gradle'
 
 mainClassName = "com.marklogic.hub.central.Application"
 
@@ -38,6 +40,10 @@ ext.junitJupiterVersion = '5.3.1'
 
 bootWar {
     baseName = springBootJarName
+    // Used for running hub-central as a system service
+    // Also allows us to customize options like JAVA_HOME using a config file
+    // https://docs.spring.io/spring-boot/docs/current/reference/html/deployment.html#deployment-script-customization-when-it-runs
+    launchScript()
 }
 
 // To pass Gradle properties for HubCentral to Spring Boot, copy them into the JVM environment
@@ -186,6 +192,7 @@ test {
 	useJUnitPlatform()
 }
 
+tasks.buildRpm.dependsOn(buildUi, copyUiFiles, bootWar)
 
 task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     description = "Runs the UI unit tests"

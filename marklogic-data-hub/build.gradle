@@ -236,6 +236,7 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("generatefilesfordataservices") ||
         // Added for Hub Central
         gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("buildrpm") ||
         project.hasProperty('skipui')
 )
 ) {
