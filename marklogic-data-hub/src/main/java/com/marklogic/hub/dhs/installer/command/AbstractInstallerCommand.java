@@ -1,10 +1,14 @@
 package com.marklogic.hub.dhs.installer.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.dhs.installer.InstallerCommand;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.impl.Versions.MarkLogicVersion;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
@@ -80,5 +84,38 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
             logger.warn("Will use 9 as a fallback");
             return "9";
         }
+    }
+
+    protected ObjectNode canInstallDhs(){
+        Versions versions = new Versions(hubConfig);
+        String installedHubVersion = null;
+        try{
+            installedHubVersion = versions.getInstalledVersion();
+        }
+        catch (Exception e){
+            logger.info("Data Hub is not installed yet");
+        }
+
+        MarkLogicVersion mlVersion = versions.getMLVersion(serverVersion);
+        return canInstallDhs(installedHubVersion, mlVersion);
+    }
+
+    protected ObjectNode canInstallDhs(String installedHubVersion, MarkLogicVersion mlVersion){
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        if(installedHubVersion != null && Character.getNumericValue(installedHubVersion.charAt(0)) < 5){
+            node.put("canBeInstalled", false);
+            node.put("message", "DHF cannot be upgraded when the major version of the existing DHF instance is 4");
+        }
+        else {
+            if(mlVersion.getMajor() > 10 || (mlVersion.getMajor().equals(10) && mlVersion.getMinor() >= 300)){
+                node.put("canBeInstalled", true);
+            }
+            else {
+                node.put("canBeInstalled", false);
+                node.put("message", "DHF 5.3.0 and higher require MarkLogic 10.0-3 or higher for the use of granular privileges");
+            }
+        }
+        return node;
     }
 }

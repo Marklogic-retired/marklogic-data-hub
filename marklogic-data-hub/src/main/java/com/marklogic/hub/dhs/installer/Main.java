@@ -3,6 +3,7 @@ package com.marklogic.hub.dhs.installer;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.dhs.installer.command.CanInstallDhsCommand;
 import com.marklogic.hub.dhs.installer.command.InstallIntoDhsCommand;
 import com.marklogic.hub.dhs.installer.command.VerifyDhfInDhsCommand;
 import org.springframework.boot.Banner;
@@ -52,6 +53,7 @@ public class Main {
             .addObject(options)
             .addCommand("dhsInstall", new InstallIntoDhsCommand())
             .addCommand("dhsVerify", new VerifyDhfInDhsCommand())
+            .addCommand("dhsCanInstall", new CanInstallDhsCommand())
             .build();
 
         commander.setProgramName("java -jar <name of jar>");
