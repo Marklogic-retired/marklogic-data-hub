@@ -1,6 +1,7 @@
 package com.marklogic.hub.dhs.installer.command;
 
 import com.beust.jcommander.Parameters;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
@@ -29,22 +30,30 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
     public void run(ApplicationContext context, Options options) {
         initializeProject(context, options, buildDefaultProjectProperties(options));
 
-        logger.info("Installing DHF version " + hubConfig.getJarVersion());
+        ObjectNode canInstall = canInstallDhs();
+        if(canInstall.get("canBeInstalled").asBoolean()){
+            logger.info("Installing DHF version " + hubConfig.getJarVersion());
 
-        HubAppDeployer deployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
+            HubAppDeployer deployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
 
-        String groupName = "Evaluator";
-        modifyHubConfigForDhs(groupName);
-        deployer.setCommands(buildCommandsForDhs(options));
-        deployer.deploy(hubConfig.getAppConfig());
+            String groupName = "Evaluator";
+            modifyHubConfigForDhs(groupName);
+            deployer.setCommands(buildCommandsForDhs(options));
+            deployer.deploy(hubConfig.getAppConfig());
 
-        // Update the servers in the Curator group
-        groupName = "Curator";
-        modifyHubConfigForDhs(groupName);
-        DhsDeployServersCommand dhsDeployServersCommand = new DhsDeployServersCommand();
-        dhsDeployServersCommand.setServerVersion(serverVersion);
-        deployer.setCommands(Arrays.asList(dhsDeployServersCommand));
-        deployer.deploy(hubConfig.getAppConfig());
+            // Update the servers in the Curator group
+            groupName = "Curator";
+            modifyHubConfigForDhs(groupName);
+            DhsDeployServersCommand dhsDeployServersCommand = new DhsDeployServersCommand();
+            dhsDeployServersCommand.setServerVersion(serverVersion);
+            deployer.setCommands(Arrays.asList(dhsDeployServersCommand));
+            deployer.deploy(hubConfig.getAppConfig());
+        }
+        else {
+            logger.error("Unable to install DHF version " + hubConfig.getJarVersion());
+            System.err.println(canInstall.get("message").asText());
+            System.exit(1);
+        }
     }
 
     /**
