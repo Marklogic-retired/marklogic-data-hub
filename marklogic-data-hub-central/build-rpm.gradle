@@ -1,0 +1,59 @@
+ospackage {
+    packageName = 'hub-central'
+    version = "${project.version}"
+    release = 1
+    os = LINUX
+    type = BINARY
+    arch = NOARCH
+    summary = 'Hub Central Application Server'
+    url = 'http://marklogic.com/'
+    vendor = 'MarkLogic Corporation'
+
+    preInstall file('src/rpm/scripts/pre-install.sh')
+    postInstall file('src/rpm/scripts/post-install.sh')
+    preUninstall file('src/rpm/scripts/pre-uninstall.sh')
+    postUninstall file('src/rpm/scripts/post-uninstall.sh')
+
+    requires('systemd')
+
+    user 'hc-runner'
+    permissionGroup 'hc-runner'
+
+    from(war.outputs.files) {
+        rename { String fileName ->
+            fileName.replace("marklogic-data-hub-central-${project.version}", "hub-central")
+        }
+        fileMode 0755
+        into '/opt/hub-central'
+    }
+
+    from('src/rpm/services/hub-central.service') {
+        addParentDirs(false)
+        fileMode 0755
+        into '/etc/systemd/system'
+    }
+
+    from('src/rpm/configs/hub-central.conf') {
+        fileType CONFIG | NOREPLACE
+        fileMode 0644
+        into '/opt/hub-central'
+    }
+
+    from('src/rpm/configs/hub-central.properties') {
+        addParentDirs(false)
+        fileType CONFIG | NOREPLACE
+        fileMode 0644
+        into '/etc/opt/hub-central'
+    }
+}
+
+buildRpm {
+    user 'hc-runner'
+    permissionGroup 'hc-runner'
+
+    directory('/var/log/hub-central', 0755)
+
+    doLast {
+        println "RPM file written to './build/distributions'"
+    }
+}
