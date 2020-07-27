@@ -214,7 +214,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           <MLTooltip title={ModelingTooltips.instanceNumber}>
             <Link
               to={{
-                pathname: "/browse",
+                pathname: "/tiles/explore",
                 state: { entity: parseText[0] }
               }}
               data-testid={parseText[0] + '-instance-count'}
@@ -248,7 +248,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
             <MLTooltip title={queryDateConverter(parseText[2]) + "\n" + ModelingTooltips.lastProcessed}>
               <Link
                 to={{
-                  pathname: "/browse",
+                  pathname: "/tiles/explore",
                   state: { entityName: parseText[0], jobId: parseText[1] }
                 }}
                 data-testid={parseText[0]+ '-last-processed'}

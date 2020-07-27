@@ -4,6 +4,10 @@ class EntityTypeTable {
   }
 
   getEntityInstanceCount(entityName: string) {
+    return cy.findByTestId(`${entityName}-instance-count`);
+  }
+
+  getEntityInstanceCountValue(entityName: string) {
     return cy.findByTestId(`${entityName}-instance-count`).then(function(value){
       return parseInt(value.text().replace(',',''));
     });
