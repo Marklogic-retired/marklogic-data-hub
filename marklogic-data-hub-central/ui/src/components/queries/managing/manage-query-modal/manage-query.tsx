@@ -109,7 +109,7 @@ const QueryModal = (props) => {
                     entityTypeIds: query['savedQuery']['query']['entityTypeIds'],
                     selectedFacets: query['savedQuery']['query']['selectedFacets'],
                     selectedQuery: query['savedQuery']['name'],
-                    propertiesToDisplay: query.savedQuery.propertiesToDisplay,  
+                    propertiesToDisplay: query.savedQuery.propertiesToDisplay,
                     zeroState: query.zeroState,
                     manageQueryModal: query.manageQueryModal,
                     sortOrder: query.savedQuery.sortOrder
@@ -170,14 +170,15 @@ const QueryModal = (props) => {
         width: 75
     };
 
-    const linkObj = {
-        title: 'Link',
-        dataIndex: 'link',
-        key: 'link',
-        align: 'center' as 'center',
-        width: 75,
-        render: text => <a data-testid={'link'}>{text}</a>
-    };
+    // TODO: Uncomment once link for query is implemented
+    // const linkObj = {
+    //     title: 'Link',
+    //     dataIndex: 'link',
+    //     key: 'link',
+    //     align: 'center' as 'center',
+    //     width: 75,
+    //     render: text => <a data-testid={'link'}>{text}</a>
+    // };
 
     const deleteObj = {
         title: 'Delete',
@@ -213,7 +214,8 @@ const QueryModal = (props) => {
     }
 
     if (props.isSavedQueryUser) {
-        columns.push(linkObj);
+        // TODO: Uncomment once link for query is implemented
+        // columns.push(linkObj);
         columns.push(deleteObj);
     }
 
@@ -226,7 +228,8 @@ const QueryModal = (props) => {
                 edited: queryDateConverter(query['savedQuery']['systemMetadata']['lastUpdatedDateTime']),
                 edit: <FontAwesomeIcon icon={faPencilAlt} color='#5B69AF' size='lg' />,
                 export: <FontAwesomeIcon icon={faFileExport} color='#5B69AF' size='lg' />,
-                link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
+                // TODO: Uncomment once link for query is implemented
+                // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
                 delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg' />
             }
         )
