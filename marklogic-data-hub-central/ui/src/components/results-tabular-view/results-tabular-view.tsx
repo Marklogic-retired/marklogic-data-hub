@@ -20,6 +20,7 @@ interface Props {
     columns: any;
     hasStructured: boolean;
     tableView: boolean;
+    entityDefArray: any[];
 }
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -63,6 +64,8 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
 const ResultsTabularView = (props) => {
 
     const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
+    const [primaryKey, setPrimaryKey] = useState<string>('');
+
 
     const {
         searchOptions,
@@ -85,7 +88,7 @@ const ResultsTabularView = (props) => {
                         dataObj[subItem.propertyPath] = "";
                     } else {
                         let dataObjArr: any[] = [];
-                        if(subItem.properties) {
+                        if (subItem.properties) {
                             dataObjArr.push(generateTableDataWithSelectedColumns(subItem.properties));
                         }
 
@@ -168,15 +171,15 @@ const ResultsTabularView = (props) => {
 
     const setSortOptions = (item) => (
         item.sortable ?
-        {
-        sorter: (a: any, b: any, sortOrder) => {
-            if(!sortingOrder) {
-                setSortOrder(item.propertyLabel,item.datatype,sortOrder)
-                sortingOrder = true;
-            }
-            return getTableSortValue(a,b,item);
-        }
-    } : "")
+            {
+                sorter: (a: any, b: any, sortOrder) => {
+                    if (!sortingOrder) {
+                        setSortOrder(item.propertyLabel, item.datatype, sortOrder)
+                        sortingOrder = true;
+                    }
+                    return getTableSortValue(a, b, item);
+                }
+            } : "")
 
     const updatedTableHeader = () => {
         let header = tableHeaderRender(selectedTableColumns);
@@ -191,16 +194,16 @@ const ResultsTabularView = (props) => {
 
     const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
 
-    const getTableSortValue = (a,b,item) => {
-        let sortValue = item.datatype !== 'string' ? getValueToCompare(a,item.propertyPath)?.length - getValueToCompare(b,item.propertyPath)?.length : getValueToCompare(a,item.propertyPath)?.localeCompare(getValueToCompare(b,item.propertyPath));
+    const getTableSortValue = (a, b, item) => {
+        let sortValue = item.datatype !== 'string' ? getValueToCompare(a, item.propertyPath)?.length - getValueToCompare(b, item.propertyPath)?.length : getValueToCompare(a, item.propertyPath)?.localeCompare(getValueToCompare(b, item.propertyPath));
         return sortValue;
     }
 
-    const getValueToCompare = (prop,propertyPath) => {
+    const getValueToCompare = (prop, propertyPath) => {
 
         if (!prop[propertyPath]) {
             return "";
-        } else if(Array.isArray(prop[propertyPath]) && (JSON.stringify(prop[propertyPath]) === JSON.stringify([]))) {
+        } else if (Array.isArray(prop[propertyPath]) && (JSON.stringify(prop[propertyPath]) === JSON.stringify([]))) {
             return "";
         } else {
             return prop[propertyPath];
@@ -217,26 +220,32 @@ const ResultsTabularView = (props) => {
         let options = {};
         let detailView =
             <div className={styles.redirectIcons}>
-                <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance',
-                        entity : searchOptions.entityTypeIds ,
-                        pageNumber : searchOptions.pageNumber,
-                        start : searchOptions.start,
-                        searchFacets : searchOptions.selectedFacets,
+                <Link to={{
+                    pathname: `${path.pathname}`, state: {
+                        selectedValue: 'instance',
+                        entity: searchOptions.entityTypeIds,
+                        pageNumber: searchOptions.pageNumber,
+                        start: searchOptions.start,
+                        searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
                         tableView: props.tableView
-                    }}} id={'instance'}
+                    }
+                }} id={'instance'}
                     data-cy='instance'>
                     <Tooltip title={'Show the processed data'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
                 </Link>
-                <Link to={{ pathname: `${path.pathname}`,
-                    state: { selectedValue: 'source',
-                        entity : searchOptions.entityTypeIds ,
-                        pageNumber : searchOptions.pageNumber,
-                        start : searchOptions.start,
-                        searchFacets : searchOptions.selectedFacets,
+                <Link to={{
+                    pathname: `${path.pathname}`,
+                    state: {
+                        selectedValue: 'source',
+                        entity: searchOptions.entityTypeIds,
+                        pageNumber: searchOptions.pageNumber,
+                        start: searchOptions.start,
+                        searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
                         tableView: props.tableView
-                    } }} id={'source'}
+                    }
+                }} id={'source'}
                     data-cy='source'>
                     <Tooltip title={'Show the complete ' + item.format.toUpperCase()}><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
                 </Link>
@@ -267,7 +276,7 @@ const ResultsTabularView = (props) => {
 
         dataObj = { ...dataObj, ...options };
         if (item?.hasOwnProperty('entityProperties')) {
-            if(JSON.stringify(item.entityProperties) !== JSON.stringify([])){
+            if (JSON.stringify(item.entityProperties) !== JSON.stringify([])) {
                 generateTableData(item.entityProperties, dataObj)
             } else {
                 dataObj = { ...dataObj, ...dataWithSelectedTableColumns };
@@ -310,6 +319,14 @@ const ResultsTabularView = (props) => {
         }
     }, [props.columns])
 
+    useEffect(() => {
+        props.selectedEntities && props.selectedEntities.length && props.entityDefArray && props.entityDefArray.forEach((entity => {
+            if (entity.name === props.selectedEntities[0]) {
+                entity.primaryKey && setPrimaryKey(entity.primaryKey);
+            }
+        }))
+    }, [props.selectedEntities])
+
     const expandedRowRender = (rowId) => {
 
         const nestedColumns = [
@@ -327,13 +344,17 @@ const ResultsTabularView = (props) => {
                         key: counter++,
                         property: i,
                         children: parseJson(obj[i]),
-                        view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i],
-                                entity : searchOptions.entityTypeIds,
-                                pageNumber : searchOptions.pageNumber,
-                                start : searchOptions.start,
-                                searchFacets : searchOptions.selectedFacets,
+                        view: <Link to={{
+                            pathname: `${rowId.primaryKeyPath.pathname}`, state: {
+                                id: obj[i],
+                                entity: searchOptions.entityTypeIds,
+                                pageNumber: searchOptions.pageNumber,
+                                start: searchOptions.start,
+                                searchFacets: searchOptions.selectedFacets,
                                 query: searchOptions.query,
-                                tableView: props.tableView} }}
+                                tableView: props.tableView
+                            }
+                        }}
                             data-cy='nested-instance'>
                             <Tooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                 size="sm" /></Tooltip>
@@ -372,23 +393,24 @@ const ResultsTabularView = (props) => {
     return (
         <>
             <div className={styles.icon}>
-                <div className={styles.queryExport}>
-                    {canExportQuery && <QueryExport hasStructured={props.hasStructured} columns={props.columns} />}
+                <div className={styles.queryExport} data-cy="query-export">
+                    {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
                 </div>
                 {props.selectedEntities?.length !== 0 ? <div className={styles.columnSelector} data-cy="column-selector">
-                    <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} />
+                    <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
                 </div> : ''}
 
             </div>
             <div className={styles.tabular}>
-             <MLTable bordered
+                <MLTable bordered
                     data-testid='result-table'
                     rowKey='uri'
                     dataSource={dataSource}
                     columns={tableHeaders}
                     expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : null}
                     pagination={false}
-            />
+                    defaultShowEmbeddedTableBodies={true}
+                />
             </div>
         </>
     )

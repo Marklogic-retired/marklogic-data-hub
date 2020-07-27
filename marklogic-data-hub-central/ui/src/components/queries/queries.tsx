@@ -530,6 +530,7 @@ const Query = (props) => {
                 setCurrentQueryDescription={setCurrentQueryDescription}
                 isSavedQueryUser={props.isSavedQueryUser}
                 modalVisibility={searchOptions.manageQueryModal}
+                entityDefArray={props.entityDefArray}
             />
             <Modal
                 visible={showEntityConfirmation}

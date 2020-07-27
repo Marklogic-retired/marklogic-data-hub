@@ -10,12 +10,11 @@ import { getExportQueryPreview } from '../../api/queries'
 import { MLTooltip } from '@marklogic/design-system';
 
 
-
 const QueryExport = (props) => {
     const [tableColumns, setTableColumns] = useState<Object[]>([]);
     const [tableData, setTableData] = useState<Object[]>();
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
-    const [hasStructured, setStructured] = useState<boolean>(false);
+    const [hasStructured, setStructured] = useState<boolean>();
     const {
         handleError,
         resetSessionTime
@@ -26,13 +25,14 @@ const QueryExport = (props) => {
     } = useContext(SearchContext);
 
     const displayModal = () => {
-        props.hasStructured && getPreview();
-        let isStructured = props.columns && props.columns.some(column => column.includes('.'));
-        setStructured(isStructured);
-        isStructured && getPreview();
+        if (props.selectedPropertyDefinitions.some(prop => (prop.hasOwnProperty('properties') || prop.multiple === true))) {
+            getPreview();
+            setStructured(true);
+        } else {
+            setStructured(false)
+        }
         setExportModalVisibility(true);
     };
-
 
     const getPreview = async () => {
         let query = {
@@ -66,17 +66,14 @@ const QueryExport = (props) => {
         } finally {
             resetSessionTime();
         }
-
     }
 
     return (
         <div>
             <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
-            {searchOptions.entityTypeIds.length > 0 &&
-                <MLTooltip title='export this query to CSV'>
-                    <FontAwesomeIcon style={{ cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} />
-                </MLTooltip>
-            }
+            <MLTooltip title='Export results with the displayed columns to CSV.'>
+                <FontAwesomeIcon style={{ cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} data-testid='query-export' />
+            </MLTooltip>
         </div>
     )
 }

@@ -361,6 +361,12 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getExploreButton().click();
     })
 
+    it('verify export array/structured data warning', () => {
+        browsePage.selectEntity('Order');
+        browsePage.getSelectedEntity().should('contain', 'Order');
+        browsePage.getDataExportIcon().click();
+        browsePage.getStructuredDataWarning().should('be.visible');
+    });
 });
 
 
@@ -437,4 +443,6 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
         browsePage.getManageQueryCloseIcon().click();
         queryComponent.getManageQueryModal().should('not.be.visible');
     });
+
+    
 });

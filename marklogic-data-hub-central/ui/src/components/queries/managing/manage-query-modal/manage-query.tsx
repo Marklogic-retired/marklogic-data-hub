@@ -14,7 +14,6 @@ import ExportQueryModal from '../../../query-export/query-export-modal/query-exp
 import { getExportPreview } from '../../../query-export/export-preview/export-preview'
 import { QueryOptions } from '../../../../types/query-types';
 
-
 const QueryModal = (props) => {
     const {
         applySaveQuery,
@@ -129,9 +128,22 @@ const QueryModal = (props) => {
                 query = selectedQuery;
             }
         })
+
+        let arrayProperties = new Array();
+        props.entityDefArray && props.entityDefArray.forEach(entity => {
+            if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
+                entity.properties && entity.properties.forEach(prop => {
+                    if (prop.ref.length === 0 && prop.datatype === 'array') {
+                        arrayProperties.push(prop.name)
+                    }
+                });
+            }
+        })
+
+        let hasArray = query.savedQuery.propertiesToDisplay.length > 0 && arrayProperties.length > 0 && query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)))
         let isStructured = query && query.savedQuery.propertiesToDisplay && query.savedQuery.propertiesToDisplay.some(column => column.includes('.'));
-        setStructured(isStructured);
-        isStructured && getPreview(id);
+        setStructured(hasArray || isStructured);
+        (hasArray || isStructured) && getPreview(id);
         setExportModalVisibility(true);
     };
 

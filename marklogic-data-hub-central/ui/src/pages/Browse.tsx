@@ -123,7 +123,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     } catch (error) {
-        console.log('error', error)
+      console.log('error', error)
       handleError(error);
     } finally {
       setIsLoading(false);
@@ -147,7 +147,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
 
   useEffect(() => {
-    if (searchOptions.zeroState === true ) {
+    if (searchOptions.zeroState === true) {
       let options: QueryOptions = {
         searchText: '',
         entityTypeIds: [],
@@ -160,22 +160,20 @@ const Browse: React.FC<Props> = ({ location }) => {
       }
       applySaveQuery(options);
     }
-    if(location.state && location.hasOwnProperty('zeroState') && !location.state['zeroState']){
-        setPageWithEntity(location.state['entity'],
-            location.state['pageNumber'],
-            location.state['start'],
-            location.state['searchFacets'],
-            location.state['query'])
-        location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
+
+    if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
+      setPageWithEntity(location.state['entity'],
+        location.state['pageNumber'],
+        location.state['start'],
+        location.state['searchFacets'],
+        location.state['query'])
+      location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
-    if(location.state && location.state['entityName'] && location.state['jobId']){
-        setLatestJobFacet(location.state['jobId'], location.state['entityName']);
-    }
-    if (location.state && location.state['entity']) {
-      setEntityClearQuery(location.state['entity']);
-    }
-    if (location.state && location.state['jobId']) {
+    else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
       setLatestJobFacet(location.state['jobId'], location.state['entityName']);
+    }
+    else if (location.state && location.state.hasOwnProperty('entity')) {
+      setEntityClearQuery(location.state['entity']);
     }
   }, [searchOptions.zeroState]);
 
@@ -223,25 +221,18 @@ const Browse: React.FC<Props> = ({ location }) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} />
-        <ZeroStateExplorer
-            entities={entities}
-            setEntity={setEntity}
-            queries={queries}
-            columns={columns}
-            setIsLoading={setIsLoading}
-            tableView={tableView}
-            toggleTableView={toggleTableView} />
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} />
+        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
   } else {
     return (
       <Layout className={styles.layout}>
         <Sider className={styles.sideBarFacets}
-               collapsedWidth={0}
-               collapsible
-               onCollapse={onCollapse}
-               width={'20vw'}
+          collapsedWidth={0}
+          collapsible
+          onCollapse={onCollapse}
+          width={'20vw'}
         >
           <Sidebar
             facets={facets}
@@ -266,13 +257,13 @@ const Browse: React.FC<Props> = ({ location }) => {
                   pageSize={searchOptions.pageSize}
                 />
                 <div id="top-search-pagination-bar">
-                <SearchPagination
-                  total={totalDocuments}
-                  pageNumber={searchOptions.pageNumber}
-                  pageSize={searchOptions.pageSize}
-                  pageLength={searchOptions.pageLength}
-                  maxRowsPerPage={searchOptions.maxRowsPerPage}
-                />
+                  <SearchPagination
+                    total={totalDocuments}
+                    pageNumber={searchOptions.pageNumber}
+                    pageSize={searchOptions.pageSize}
+                    pageLength={searchOptions.pageLength}
+                    maxRowsPerPage={searchOptions.maxRowsPerPage}
+                  />
                 </div>
                 <div className={styles.spinViews}>
                   {isLoading && <MLSpin data-testid="spinner" className={styles.overlay} />}
@@ -290,30 +281,32 @@ const Browse: React.FC<Props> = ({ location }) => {
                   </div>
                 </div>
                 <Query queries={queries}
-                       setQueries={setQueries}
-                       isSavedQueryUser={isSavedQueryUser}
-                       columns={columns}
-                       setIsLoading={setIsLoading}
-                       entities={entities}
-                       selectedFacets={selectedFacets}
-                       greyFacets={greyFacets}
-                       isColumnSelectorTouched={isColumnSelectorTouched}/>
+                  setQueries={setQueries}
+                  isSavedQueryUser={isSavedQueryUser}
+                  columns={columns}
+                  setIsLoading={setIsLoading}
+                  entities={entities}
+                  selectedFacets={selectedFacets}
+                  greyFacets={greyFacets}
+                  isColumnSelectorTouched={isColumnSelectorTouched}
+                  entityDefArray={entityDefArray}
+                />
               </div>
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
-                      <ResultsTabularView
-                          data={data}
-                          entityPropertyDefinitions = {entityPropertyDefinitions}
-                          selectedPropertyDefinitions = {selectedPropertyDefinitions}
-                          entityDefArray={entityDefArray}
-                          columns={columns}
-                          selectedEntities={searchOptions.entityTypeIds}
-                          setColumnSelectorTouched={setColumnSelectorTouched}
-                          tableView={tableView}
-                      />
+                    <ResultsTabularView
+                      data={data}
+                      entityPropertyDefinitions={entityPropertyDefinitions}
+                      selectedPropertyDefinitions={selectedPropertyDefinitions}
+                      entityDefArray={entityDefArray}
+                      columns={columns}
+                      selectedEntities={searchOptions.entityTypeIds}
+                      setColumnSelectorTouched={setColumnSelectorTouched}
+                      tableView={tableView}
+                    />
                   </div>
-                  : <SearchResults data={data} entityDefArray={entityDefArray}  tableView={tableView} columns={columns}/>
+                  : <SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} />
                 }
               </div>
               <br />
