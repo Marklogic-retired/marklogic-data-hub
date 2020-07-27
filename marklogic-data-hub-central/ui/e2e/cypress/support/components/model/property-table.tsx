@@ -1,7 +1,7 @@
 class PropertyTable {
 
   getAddPropertyButton(entityName: string) {
-    return cy.findByLabelText(`${entityName}-add-property`);
+    return cy.findByLabelText(`${entityName}-add-property`, { timeout: 15000 });
   }
 
   getProperty(propertyName: string) {

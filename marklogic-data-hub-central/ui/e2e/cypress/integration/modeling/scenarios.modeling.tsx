@@ -11,6 +11,7 @@ import {
 import { confirmationModal, toolbar, tiles } from '../../support/components/common/index';
 import { Application } from '../../support/application.config';
 import { ConfirmationType } from '../../support/types/modeling-types';
+import browsePage from '../../support/pages/browse'
 import 'cypress-wait-until';
 
 describe('Entity Modeling', () => {
@@ -30,6 +31,21 @@ describe('Entity Modeling', () => {
       cy.resetTestUser();
   });
 
+  it('can navigate between explore and model tile by clicking instance count and last processed', () => {
+    cy.waitUntil(() => entityTypeTable.getEntityLastProcessed('Person')).click();
+    tiles.getExploreTile().should('exist');
+    cy.waitUntil(() => browsePage.getSelectedEntity()).should('eq', 'Person');
+    browsePage.getClearAllButton().should('exist');
+    
+    toolbar.getModelToolbarIcon().click();
+    tiles.getModelTile().should('exist');
+
+    cy.waitUntil(() => entityTypeTable.getEntityInstanceCount('Order')).click();
+    tiles.getExploreTile().should('exist');
+    cy.waitUntil(() => browsePage.getSelectedEntity().should('eq', 'Order'));
+    browsePage.getClearAllButton().should('not.exist');
+  });
+
   it('can add new properties to existing Entity, revert the entity, and delete shows step warning', () => {
     // Adding property to Order entity
     entityTypeTable.expandEntityRow(0);
@@ -47,7 +63,6 @@ describe('Entity Modeling', () => {
     propertyTable.getMultipleIcon('orderID').should('exist');
     propertyTable.getPiiIcon('orderID').should('exist');
     //propertyTable.getWildcardIcon('orderID').should('exist');
-
 
     entityTypeTable.getRevertEntityIcon('Order').should('exist');
     entityTypeTable.getRevertEntityIcon('Order').click();
@@ -134,8 +149,8 @@ describe('Entity Modeling', () => {
     entityTypeModal.newEntityDescription('An entity for Products');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Product').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties to this entity type.`);
+    propertyTable.getAddPropertyButton('Product').trigger('mouseover');
+    cy.contains(`Click to add properties to this entity type.`).should('be.visible');
     propertyTable.getAddPropertyButton('Product').click();
 
     propertyModal.newPropertyName('user');
@@ -221,7 +236,6 @@ describe('Entity Modeling', () => {
     entityTypeModal.getAddButton().click();
 
     propertyTable.getAddPropertyButton('User').click();
-
     propertyModal.newPropertyName('address');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
@@ -237,7 +251,7 @@ describe('Entity Modeling', () => {
 
     // add basic property to structured type
     propertyTable.getAddPropertyToStructureType('Address').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties within this structured property.`);
+    cy.contains(`Click to add properties within this structured property.`).should('be.visible');
     propertyTable.getAddPropertyToStructureType('Address').click({ force: true });
     propertyModal.getStructuredTypeName().should('have.text', 'Address');
     propertyModal.newPropertyName('street');
@@ -274,7 +288,7 @@ describe('Entity Modeling', () => {
 
     // add properties to nested structured type
     propertyTable.getAddPropertyToStructureType('Zip').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties within this structured property.`);
+    cy.contains(`Click to add properties within this structured property.`).should('be.visible');
     propertyTable.getAddPropertyToStructureType('Zip').click({ force: true });
 
     propertyModal.getStructuredTypeName().should('have.text', 'Address.Zip');
@@ -301,7 +315,7 @@ describe('Entity Modeling', () => {
     propertyModal.getSubmitButton().click();
 
     propertyTable.getAddPropertyToStructureType('Extra').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties within this structured property.`);
+    cy.contains(`Click to add properties within this structured property.`).should('be.visible');
     propertyTable.getAddPropertyToStructureType('Extra').click({ force: true });
 
     propertyModal.newPropertyName('fourDigit')
@@ -322,7 +336,7 @@ describe('Entity Modeling', () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('Zip');
     propertyModal.getSubmitButton().click();
-    cy.contains(`A property already exists with a name of Zip`);
+    cy.contains(`A property already exists with a name of Zip`).should('be.visible');
     propertyModal.clearPropertyName();
 
     propertyModal.newPropertyName('streetAlt');
@@ -451,7 +465,7 @@ describe('Entity Modeling', () => {
     entityTypeModal.getAddButton().click();
 
     propertyTable.getAddPropertyButton('Concept').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties to this entity type.`);
+    cy.contains(`Click to add properties to this entity type.`).should('be.visible');
     propertyTable.getAddPropertyButton('Concept').click();
 
     propertyModal.newPropertyName('order');
@@ -484,7 +498,7 @@ describe('Entity Modeling', () => {
     entityTypeModal.getAddButton().click();
 
     propertyTable.getAddPropertyButton('Patient').should('exist').trigger('mouseover');
-    cy.contains(`Click to add properties to this entity type.`);
+    cy.contains(`Click to add properties to this entity type.`).should('be.visible');
     propertyTable.getAddPropertyButton('Patient').click();
     propertyModal.newPropertyName('patientID');
     propertyModal.openPropertyDropdown();

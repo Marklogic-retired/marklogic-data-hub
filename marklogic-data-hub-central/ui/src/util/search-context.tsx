@@ -223,12 +223,12 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   const setEntityClearQuery = (option: string) => {
     setSearchOptions({
       ...searchOptions,
-      query: '',
-      start: 1,
       selectedFacets: {},
+      start: 1,
       entityTypeIds: [option],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
+      zeroState: false
     });
   }
 
@@ -241,7 +241,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedFacets: facets,
       entityTypeIds: [option],
       pageNumber: 1,
-      pageLength: searchOptions.pageSize
+      pageLength: searchOptions.pageSize,
+      zeroState: false
     });
   }
 

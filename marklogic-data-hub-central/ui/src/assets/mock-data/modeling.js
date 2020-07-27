@@ -613,6 +613,10 @@ export const propertyTableEntities = [
               "required": [
                 "name"
               ],
+              "pathRangeIndex": [
+                "birthDate",
+                "nicknames"
+              ],
               "primaryKey": "customerId",
               "properties": {
                 "customerId": {

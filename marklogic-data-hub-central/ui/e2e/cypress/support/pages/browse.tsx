@@ -150,7 +150,7 @@ class BrowsePage {
   }
 
   getClearAllButton() {
-    return cy.get('[data-cy=clear-all-button]');
+    return cy.get('[data-cy=clear-all-button]', { timeout: 10000 });
   }
 
   getGreyRangeFacet(lowerBound: number){

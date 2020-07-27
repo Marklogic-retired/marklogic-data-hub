@@ -574,11 +574,15 @@ const PropertyTable: React.FC<Props> = (props) => {
         let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
         entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
       }
+      if (entityTypeDefinition.hasOwnProperty('pathRangeIndex') && entityTypeDefinition.pathRangeIndex.some(value => value ===  propertyName)) {
+        let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
+        entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
+      }
       if (entityTypeDefinition.hasOwnProperty('elementRangeIndex') && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
         let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
         entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty('wordLexicon') && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty('wordLexicon') && entityTypeDefinition.wordLexicon.some(value => value ===  propertyName)) {
         let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
         entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
       }
@@ -645,6 +649,10 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (entityTypeDefinition.hasOwnProperty('rangeIndex') && entityTypeDefinition.rangeIndex.some(value => value ===  propertyName)) {
       let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
       entityTypeDefinition.rangeIndex.splice(index, 1);
+    }
+    if (entityTypeDefinition.hasOwnProperty('pathRangeIndex') && entityTypeDefinition.pathRangeIndex.some(value => value ===  propertyName)) {
+      let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
+      entityTypeDefinition.pathRangeIndex.splice(index, 1);
     }
     if (entityTypeDefinition.hasOwnProperty('elementRangeIndex') && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
       let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);

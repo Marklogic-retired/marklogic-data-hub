@@ -132,17 +132,6 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   useEffect(() => {
-    if (location.state && location.state['entity']) {
-      setEntityClearQuery(location.state['entity']);
-    }
-    if (location.state && location.state['jobId']) {
-      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
-      setZeroState(location.state['zeroState']);
-    }
-    // Removed error handling since it's not in one ui
-    // if (!user.error.type) {
-    //   getEntityModel();
-    // }
     getEntityModel();
     return () => {
       componentIsMounted.current = false
@@ -151,9 +140,6 @@ const Browse: React.FC<Props> = ({ location }) => {
 
 
   useEffect(() => {
-    // if (entities.length && !user.error.type) {
-    //   getSearchResults(entities);
-    // }
     if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
       getSearchResults(entities);
     }
@@ -174,13 +160,20 @@ const Browse: React.FC<Props> = ({ location }) => {
       }
       applySaveQuery(options);
     }
-    if(location.state && !location.state['zeroState']){
+    if(location.state && location.hasOwnProperty('zeroState') && !location.state['zeroState']){
         setPageWithEntity(location.state['entity'],
             location.state['pageNumber'],
             location.state['start'],
             location.state['searchFacets'],
             location.state['query'])
         location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
+    }
+
+    if (location.state && location.state['entity']) {
+      setEntityClearQuery(location.state['entity']);
+    }
+    if (location.state && location.state['jobId']) {
+      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
     }
   }, [searchOptions.zeroState]);
 
