@@ -8,7 +8,7 @@ const Footer = (props) => {
   const linkStyle = (props.pageTheme && props.pageTheme['footerLink']) ? props.pageTheme['footerLink'] : null;
 
   return (
-    <Layout.Footer>
+    <Layout.Footer data-testid='footer'>
       <div className={styles.content} style={footerStyle}>
         <span>Copyright @ 2020 MarkLogic Corporation. All Rights Reserved.</span>
         |

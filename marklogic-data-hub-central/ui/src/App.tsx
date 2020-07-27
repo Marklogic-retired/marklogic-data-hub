@@ -130,10 +130,11 @@ const App: React.FC<Props> = ({history, location}) => {
           </SearchProvider>
           <Route component={NoMatchRedirect}/>
         </Switch>
-        <Footer pageTheme={pageTheme}/>
         </div>
+          <Footer pageTheme={pageTheme}/>
       </main>
     </div>
+
   );
 }
 

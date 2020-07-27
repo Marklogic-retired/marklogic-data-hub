@@ -55,4 +55,20 @@ describe('App component', () => {
 
   });
 
+    test('Verify that footer is present', async () => {
+        const { getByTestId } = render(<Router history={history}>
+            <AuthoritiesContext.Provider value={mockDevRolesService}>
+                <UserContext.Provider value={userAuthenticated}><App/></UserContext.Provider>
+            </AuthoritiesContext.Provider>
+        </Router>);
+        history.push('/');
+        expect(getByTestId("footer")).toBeInTheDocument();
+        history.push('/tiles');
+        expect(getByTestId("footer")).toBeInTheDocument();
+        history.push('/tiles/noresponse');
+        expect(getByTestId("footer")).toBeInTheDocument();
+        history.push('/error');
+        expect(getByTestId("footer")).toBeInTheDocument();
+    });
+
 });
