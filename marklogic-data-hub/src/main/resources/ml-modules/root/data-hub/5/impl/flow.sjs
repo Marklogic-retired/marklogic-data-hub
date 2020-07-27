@@ -347,7 +347,13 @@ class Flow {
     }
     flowInstance.globalContext.uri = null;
 
-    this.applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
+    try {
+      this.applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
+    } catch (e) {
+      // If a processor throws an error, we don't know if it was specific to a particular item or not. So we assume that
+      // all items failed; this is analogous to the behavior of acceptsBatch=true
+      this.handleStepError(flowInstance, e, items);
+    }
 
     // Add everything to the writeQueue
     contentArray.forEach(content => {

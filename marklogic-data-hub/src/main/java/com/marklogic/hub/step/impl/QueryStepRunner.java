@@ -238,6 +238,7 @@ public class QueryStepRunner implements StepRunner {
                 StepRunnerUtil.objectToString(options.get("sourceDatabase")) :
                 hubClient.getDbName(DatabaseKind.STAGING);
 
+            logger.info(String.format("Collecting items for step '%s' in flow '%s'", this.step, this.flow.getName()));
             uris = runCollector(sourceDatabase);
         } catch (Exception e) {
             runStepResponse.setCounts(0,0, 0, 0, 0)
@@ -457,12 +458,14 @@ public class QueryStepRunner implements StepRunner {
             });
 
         if(! isStopped.get()) {
+            logger.info(String.format("Starting processing of items for step '%s' in flow '%s'", this.step, this.flow.getName()));
             JobTicket jobTicket = dataMovementManager.startJob(queryBatcher);
             ticketWrapper.put("jobTicket", jobTicket);
         }
 
         runningThread = new Thread(() -> {
             queryBatcher.awaitCompletion();
+            logger.info(String.format("Finished processing of items for step '%s' in flow '%s'", this.step, this.flow.getName()));
 
             // now that the job has completed we can close the resource
             if (uris instanceof DiskQueue) {
