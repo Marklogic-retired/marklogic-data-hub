@@ -71,8 +71,8 @@ public class FlowMigrator extends LoggingObject {
      * converted to mapping steps. Fortunately, a delete trigger exists on these to also delete the xml/xslt documents
      * associated with them.
      */
-    public void deleteInstalledLegacyMappings() {
-        logger.info("Deleting installed legacy mappings in staging and final databases");
+    public void deleteLegacyMappings() {
+        logger.info("Deleting legacy mappings in staging and final databases");
         HubClient hubClient = hubConfig.newHubClient();
         Stream.of(hubClient.getStagingClient(), hubClient.getFinalClient()).forEach(client -> {
             DataMovementManager dmm = client.newDataMovementManager();

@@ -138,6 +138,10 @@ public class EntityModelMigratorTest extends AbstractHubCoreTest {
         HubProject hubProject = getHubConfig().getHubProject();
         HubCentralMigrator hubCentralMigrator = new HubCentralMigrator(getHubConfig());
         hubCentralMigrator.migrateEntityModels();
+
+        File backupDir = hubProject.getProjectDir().resolve("migrated-entities").toFile();
+        assertTrue(backupDir.exists());
+
         verifyCustomerEntityModel(hubProject);
         verifyImproperEntityModels(hubProject);
         verifyNoIndexArraysEntityModel(hubProject);

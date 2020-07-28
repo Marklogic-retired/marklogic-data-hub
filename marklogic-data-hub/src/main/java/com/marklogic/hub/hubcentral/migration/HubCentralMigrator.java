@@ -7,10 +7,12 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.EntityManagerImpl;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -51,6 +53,14 @@ public class HubCentralMigrator extends LoggingObject {
         }
 
         logger.warn("Beginning migration of entity models in entities directory");
+
+        Path migratedEntitiesPath = hubProject.getProjectDir().resolve("migrated-entities");
+        try {
+            migratedEntitiesPath.toFile().mkdirs();
+            FileUtils.copyDirectory(entityModelsDir, migratedEntitiesPath.toFile());
+        } catch (Exception e) {
+            throw new RuntimeException("Couldn't migrate entity models as backing up models failed : " + e.getMessage(), e);
+        }
 
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
         boolean atLeastOneEntityModelWasMigrated = false;
