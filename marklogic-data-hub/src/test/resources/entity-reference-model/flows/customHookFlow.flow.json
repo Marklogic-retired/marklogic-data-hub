@@ -1,0 +1,41 @@
+{
+  "name": "customHookFlow",
+  "steps": {
+    "1": {
+      "name": "beforeHook",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": [
+          "Customer"
+        ],
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      },
+      "customHook": {
+        "module": "/custom-modules/custom-hooks/test-hook.sjs",
+        "runBefore": true
+      }
+    },
+    "2": {
+      "name": "afterHook",
+      "stepDefinitionName": "echoStep",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "collections": [
+          "Customer"
+        ],
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      },
+      "customHook": {
+        "module": "/custom-modules/custom-hooks/test-hook.sjs",
+        "runBefore": false
+      }
+    }
+  }
+}
