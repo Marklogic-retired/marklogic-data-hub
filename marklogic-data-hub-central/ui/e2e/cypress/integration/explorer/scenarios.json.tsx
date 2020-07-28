@@ -162,6 +162,19 @@ describe('json scenario for snippet on browse documents page', () => {
     detailPage.getDocumentJSON().should('exist');
   });
 
+  it('verify detail page source and instance tooltips', () => {
+    browsePage.search('Powers');
+    browsePage.getSourceViewIcon().trigger('mouseover');
+    cy.contains('Show the complete JSON').should('be.visible');
+    browsePage.getInstanceViewIcon().trigger('mouseover');
+    cy.contains('Show the processed data').should('be.visible');
+    browsePage.getSourceViewIcon().click();
+    detailPage.getSourceView().trigger('mouseover');
+    cy.contains('Show the complete JSON').should('be.visible');
+    detailPage.getInstanceView().trigger('mouseover');
+    cy.contains('Show the processed data').should('be.visible');
+  });
+
 });
 
 

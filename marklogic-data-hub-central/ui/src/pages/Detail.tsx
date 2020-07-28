@@ -12,6 +12,7 @@ import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
+import { MLTooltip } from '@marklogic/design-system';
 import {SearchContext} from "../util/search-context";
 
 
@@ -29,7 +30,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [selected, setSelected] = useState();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const [contentType, setContentType] = useState();
+  const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
 
@@ -129,12 +130,17 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           <div id='menu' className={styles.menu}>
             <Menu id='subMenu' onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
               <Menu.Item key="instance" id='instance' data-cy="instance-view">
-              <FontAwesomeIcon  icon={faThList} size="lg" /><span className={styles.subMenu}>Instance</span>
-             </Menu.Item>
+                <MLTooltip title={'Show the processed data'}>
+                  <FontAwesomeIcon  icon={faThList} size="lg" />
+                  <span className={styles.subMenu}>Instance</span>
+                </MLTooltip>
+              </Menu.Item>
               <Menu.Item key="full" id='full' data-cy="source-view">
-                <FontAwesomeIcon  icon={faCode} size="lg" />
-                <span className={styles.subMenu}>Source</span>
-             </Menu.Item>
+                <MLTooltip title={'Show the complete ' + contentType.toUpperCase()} >
+                  <FontAwesomeIcon  icon={faCode} size="lg" />
+                  <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
+                </MLTooltip>
+              </Menu.Item>
             </Menu>
           </div>
         </div>

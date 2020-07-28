@@ -88,7 +88,7 @@ const ResultsTabularView = (props) => {
                         if(subItem.properties) {
                             dataObjArr.push(generateTableDataWithSelectedColumns(subItem.properties));
                         }
-                        
+
                         dataObj[subItem.propertyPath] = dataObjArr;
                     }
                 } else {
@@ -98,7 +98,7 @@ const ResultsTabularView = (props) => {
             return dataObj;
         }
     }
-    
+
     let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
 
     let sortingOrder = false;
@@ -197,7 +197,7 @@ const ResultsTabularView = (props) => {
     }
 
     const getValueToCompare = (prop,propertyPath) => {
-        
+
         if (!prop[propertyPath]) {
             return "";
         } else if(Array.isArray(prop[propertyPath]) && (JSON.stringify(prop[propertyPath]) === JSON.stringify([]))) {
@@ -205,7 +205,7 @@ const ResultsTabularView = (props) => {
         } else {
             return prop[propertyPath];
         }
-        
+
     }
 
     const tableDataRender = (item) => {
@@ -226,7 +226,7 @@ const ResultsTabularView = (props) => {
                         tableView: props.tableView
                     }}} id={'instance'}
                     data-cy='instance'>
-                    <Tooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
+                    <Tooltip title={'Show the processed data'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
                 </Link>
                 <Link to={{ pathname: `${path.pathname}`,
                     state: { selectedValue: 'source',
@@ -238,7 +238,7 @@ const ResultsTabularView = (props) => {
                         tableView: props.tableView
                     } }} id={'source'}
                     data-cy='source'>
-                    <Tooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
+                    <Tooltip title={'Show the complete ' + item.format.toUpperCase()}><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
                 </Link>
             </div>
         if (props.selectedEntities?.length === 0) {
