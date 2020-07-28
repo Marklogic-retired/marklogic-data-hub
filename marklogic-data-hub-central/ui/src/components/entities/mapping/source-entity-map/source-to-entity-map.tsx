@@ -860,10 +860,10 @@ const SourceToEntityMap = (props) => {
             let flatArrayVal = element.key;
             if(!element.children && element.val) {
                 if(!flatArrayKey&& flatArrayKey.indexOf('/') == -1){
-                    flatArray.push({'value':flatArrayVal, 'key':element.key});
+                    flatArray.push({'value':flatArrayVal, 'key':element.key, 'struct': element.array ? true : false});
                 }
                 else {
-                    flatArray.push({'value':flatArrayVal, 'key':flatArrayKey+ '/'+element.key});
+                    flatArray.push({'value':flatArrayVal, 'key':flatArrayKey+ '/'+element.key, 'struct': element.array ? true : false});
                 }
             }
             else{
@@ -873,7 +873,7 @@ const SourceToEntityMap = (props) => {
                 else {
                     flatArrayKey = flatArrayKey +'/'+ element.key
                 }
-                flatArray.push({'value':flatArrayVal, 'key':flatArrayKey});
+                flatArray.push({'value':flatArrayVal, 'key':flatArrayKey, 'struct': true});
             }
             if(element.children) {
                 flattenSourceDoc(element.children, flatArray, flatArrayKey);

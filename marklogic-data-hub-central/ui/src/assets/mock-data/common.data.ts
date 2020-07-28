@@ -142,7 +142,8 @@ const xmlSourceData = [
         { rowKey: 6, key: 'LastName', val: 'Smith' }
       ]
       },
-      { rowKey: 7, key: 'proteinCat', val: 'commercial' }
+      { rowKey: 7, key: 'proteinCat', val: 'commercial' },
+      { rowKey: 8, key: 'proteinDog', val: 'retriever, golden, labrador', array: true}
     ]
   }
 ];
@@ -158,7 +159,8 @@ const jsonSourceData = [
       ]}
     ]
   },
-  { rowKey: 7, key: 'proteinCat', val: 'commercial' }
+  { rowKey: 7, key: 'proteinCat', val: 'commercial' },
+  { rowKey: 8, key: 'proteinDog', val: 'retriever, golden, labrador', array: true}
 ];
 
 const entityTypeProperties = [
