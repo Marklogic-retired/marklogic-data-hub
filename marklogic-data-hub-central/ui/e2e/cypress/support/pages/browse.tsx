@@ -223,6 +223,18 @@ class BrowsePage {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');
   }
 
+  clickColumnTitle(index: number) {
+    return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).click();
+  }
+
+  getSortIndicatorAsc(){
+    return cy.get(`.ant-table-column-sorter-up.on`);
+  }
+
+  getSortIndicatorDesc(){
+    return cy.get(`.ant-table-column-sorter-down.on`);
+  }
+
   getTableRows() {
     return cy.get('.ant-table-row');
   }

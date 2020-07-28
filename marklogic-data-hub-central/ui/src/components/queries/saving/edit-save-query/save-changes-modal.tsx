@@ -100,6 +100,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 currentQuery.savedQuery.query.entityTypeIds = searchOptions.entityTypeIds;
             }
             currentQuery.savedQuery.propertiesToDisplay = searchOptions.selectedTableProperties;
+            currentQuery.savedQuery.sortOrder = searchOptions.sortOrder;
 
             const response = await axios.put(`/api/entitySearch/savedQueries`, currentQuery);
             if (response.data) {

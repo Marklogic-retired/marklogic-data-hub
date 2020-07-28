@@ -72,7 +72,7 @@ interface ISearchContextInterface {
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void;
-  setSortOrder: (propertyName: string, datatype, sortOrder) => void;
+  setSortOrder: (propertyName: string, sortOrder: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -196,6 +196,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageLength: searchOptions.pageSize,
       selectedQuery: 'select a query',
       selectedTableProperties: [],
+      sortOrder: []
     });
     setGreyedOptions({
       ...greyedOptions,
@@ -203,7 +204,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageNumber: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
-      pageLength: greyedOptions.pageSize
+      pageLength: greyedOptions.pageSize,
+      sortOrder: []
     });
   }
 
@@ -476,28 +478,25 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         });
     }
 
-  const setSortOrder = (propertyName: string, datatype, sortOrder: string) => {
+  const setSortOrder = (propertyName: string, sortOrder: any) => {
     let sortingOrder: any = [];
     switch (sortOrder) {
       case 'ascend':
         sortingOrder = [{
           propertyName: propertyName,
-          sortDirection: "ascending"
+          sortDirection: 'ascending'
         }];
         break;
       case 'descend':
         sortingOrder = [{
           propertyName: propertyName,
-          sortDirection: "descending"
+          sortDirection: 'descending'
         }];
         break;
       default:
-        sortingOrder = [{
-          propertyName: propertyName
-        }];
+        sortingOrder = [];
         break;
     }
-
     setSearchOptions({
       ...searchOptions,
       sortOrder: sortingOrder

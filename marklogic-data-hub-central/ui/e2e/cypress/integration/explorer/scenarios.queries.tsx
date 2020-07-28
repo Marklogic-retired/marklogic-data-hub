@@ -25,6 +25,8 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedFacets().should('exist');
         browsePage.getGreySelectedFacets('Adams Cole').should('exist');
         browsePage.getFacetApplyButton().click();
+        browsePage.clickColumnTitle(2);
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getSaveModalIcon().click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSaveQueryName().should('be.visible');
@@ -50,12 +52,16 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryDescription().type('new-query-2 description');
         browsePage.getSaveQueryButton().click();
         browsePage.getSelectedQuery().should('contain', 'new-query-2');
-        browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').click();
-        browsePage.getGreySelectedFacets('loadCustomersJSON').should('exist');
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
+        browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
         browsePage.getSaveModalIcon().click();
         browsePage.getRadioOptionSelected();
         browsePage.getEditSaveChangesButton().click();
         browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getTableCell(1, 2).should('contain','102');
+        browsePage.getTableCell(2, 2).should('contain','103');
     });
 
     it('save/saveAs/edit more queries with duplicate query name from browse and manage queries view', () => {
@@ -168,9 +174,9 @@ describe('save/manage queries scenarios, developer role', () => {
     it('Edit saved query and verify discard changes functionality', () => {
         browsePage.selectEntity('Person');
         browsePage.getSelectedEntity().should('contain', 'Person');
-        browsePage.getFacetItemCheckbox('fname', 'Alexandra').click();
+        browsePage.getFacetItemCheckbox('lname', 'Bates').click();
         browsePage.getSelectedFacets().should('exist');
-        browsePage.getGreySelectedFacets('Alexandra').should('exist');
+        browsePage.getGreySelectedFacets('Bates').should('exist');
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().click();
         browsePage.waitForSpinnerToDisappear();
@@ -179,16 +185,17 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryButton().click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSelectedQuery().should('contain', 'person-query');
-        browsePage.getFacetItemCheckbox('lname', 'Wilson').click();
-        browsePage.getGreySelectedFacets('Wilson').should('exist');
+        browsePage.search('Bates');
+        browsePage.clickColumnTitle(4);
         browsePage.getDiscardChangesIcon().click();
         browsePage.getDiscardYesButton().click();
-        browsePage.getAppliedFacets('Alexandra').should('exist');
-        browsePage.getFacetItemCheckbox('lname', 'Wilson').click();
-        browsePage.getGreySelectedFacets('Wilson').should('exist');
+        browsePage.getAppliedFacets('Bates').should('exist');
+        browsePage.search('Bates');
+        browsePage.clickColumnTitle(4);
         browsePage.getDiscardChangesIcon().click();
         browsePage.getDiscardNoButton().click();
-        browsePage.getGreySelectedFacets('Wilson').should('exist');
+        browsePage.getSearchText().should('have.value', 'Bates');
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
     });
 
 
@@ -196,10 +203,10 @@ describe('save/manage queries scenarios, developer role', () => {
         // creating query 1 with customer entity
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
-        browsePage.getShowMoreLink().first().click();
-        browsePage.getFacetItemCheckbox('email', 'carmellahardin@nutralab.com').click();
-        browsePage.getFacetItemCheckbox('name', 'Carmella Hardin').click();
+        browsePage.getHubPropertiesExpanded();
+        browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
         browsePage.getFacetApplyButton().click();
+        browsePage.search('Adams Cole');
         browsePage.getSaveModalIcon().click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSaveQueryName().type('query-1');
@@ -213,28 +220,33 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryName().type("query-2");
         browsePage.getSaveQueryButton().click();
         // Making changes to query-2 and switching to query-1
-        browsePage.getClearFacetSearchSelection('Carmella Hardin').click();
+        browsePage.clickColumnTitle(2);
         browsePage.selectQuery("query-1");
         browsePage.getQueryConfirmationCancelClick().click();
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.selectQuery("query-1");
         browsePage.getQueryConfirmationNoClick().click();
         browsePage.getSelectedQuery().should('contain', 'query-1');
-        browsePage.getClearFacetSearchSelection('Carmella Hardin').click();
+        browsePage.getClearFacetSearchSelection('mapCustomersJSON').click();
+        browsePage.clickColumnTitle(2);
         browsePage.selectQuery("query-2");
         browsePage.getQueryConfirmationYesClick().click();
         browsePage.getEditSaveChangesButton().click();
         browsePage.getSelectedQuery().should('contain', 'query-2');
+        browsePage.getAppliedFacets('mapCustomersJSON').should('exist');
         browsePage.selectQuery("query-1");
-        browsePage.getClearAllButton().should('exist');
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
     });
 
     it('Switching between entities when making changes to saved query', () => {
         browsePage.selectQuery("new-query");
         browsePage.getClearFacetSearchSelection('Adams Cole').click();
+        browsePage.clickColumnTitle(3);
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationCancelClick().click();
         browsePage.getSelectedQuery().should('contain', 'new-query');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationNoClick().click();
         browsePage.getSelectedEntity().should('contain', 'Person');
@@ -242,6 +254,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.selectQuery('new-query');
         browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+        browsePage.clickColumnTitle(2);
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationYesClick().click();
         browsePage.getEditSaveChangesButton().click();
@@ -249,6 +262,9 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('new-query');
         browsePage.getAppliedFacets('Adams Cole').should('exist');
+        browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+        browsePage.getTableCell(1,2).should('contain', '103');
+        browsePage.getTableCell(2,2).should('contain', '102');
     });
 
     it('Switching between entities when there are saved queries', () => {
@@ -298,6 +314,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
         browsePage.getSelectedFacets().should('exist');
         browsePage.getFacetApplyButton().click();
+        browsePage.clickColumnTitle(2);
         browsePage.waitForSpinnerToDisappear();
         browsePage.getResetQueryButton().click();
         //selecting yes will save the new query and navigates to zero state
@@ -314,6 +331,9 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
         browsePage.getAppliedFacets('Adams Cole').should('exist');
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+        browsePage.getTableCell(1,2).should('contain', '102');
+        browsePage.getTableCell(2,2).should('contain', '103');
     });
 
     it('Show Reset query button, clicking reset confirmation when making changes to saved query', () => {
@@ -338,16 +358,18 @@ describe('save/manage queries scenarios, developer role', () => {
         //selecting yes will update the query and navigates to zero state
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
-        browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+        browsePage.clickColumnTitle(2);
         browsePage.getResetQueryButton().click();
         browsePage.getResetConfirmationYesClick();
-        browsePage.getRadioOptionSelected();
         browsePage.getEditSaveChangesButton().click();
         browsePage.getExploreButton().should('be.visible');
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
-        browsePage.getAppliedFacets('adamscole@nutralab.com').should('exist');
+        browsePage.getAppliedFacets('Adams Cole').should('exist');
+        browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+        browsePage.getTableCell(1,2).should('contain', '103');
+        browsePage.getTableCell(2,2).should('contain', '102');
     });
 
     it('Show Reset query button, clicking reset icon navigates to zero state', () => {
@@ -444,5 +466,5 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
         queryComponent.getManageQueryModal().should('not.be.visible');
     });
 
-    
+
 });

@@ -274,8 +274,9 @@ describe('json scenario for table on browse documents page', () => {
   it('verify source view of the document', () => {
     browsePage.selectEntity('Customer');
     browsePage.search('Adams Cole');
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').click();
-    browsePage.getGreySelectedFacets('loadCustomersJSON').should('exist');
+    browsePage.getHubPropertiesExpanded();
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
+    browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should('be.equal', 2);
     browsePage.getTableViewSourceIcon().click();
@@ -288,7 +289,7 @@ describe('json scenario for table on browse documents page', () => {
     //Verify navigating back from detail view should persist search options
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    browsePage.getClearFacetSearchSelection('loadCustomersJSON').should('exist');
+    browsePage.getClearFacetSearchSelection('mapCustomersJSON').should('exist');
     browsePage.getSearchText().should('have.value', 'Adams Cole');
     browsePage.getTableView().should('have.css', 'background-color', 'rgb(68, 73, 156)');
   });
@@ -311,22 +312,22 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 2);
   });
 
-  it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
+  xit('apply multiple facets, select and discard new facet, verify original facets checked', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').click();
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').click();
-    browsePage.getGreySelectedFacets('loadCustomersJSON').should('exist');
-    browsePage.getGreySelectedFacets('loadCustomersXML').should('exist');
+    browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').click();
+    browsePage.getFacetItemCheckbox('name', 'Lola Dunn').click();
+    browsePage.getGreySelectedFacets('Jacqueline Knowles').should('exist');
+    browsePage.getGreySelectedFacets('Lola Dunn').should('exist');
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').should('be.checked');
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').should('be.checked');
-    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
-    browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Lola Dunn').should('be.checked');
+    browsePage.getFacetItemCheckbox('email', 'jacquelineknowles@nutralab.com').click();
+    browsePage.getGreySelectedFacets('jacquelineknowles@nutralab.com').should('exist');
     browsePage.getClearGreyFacets().click();
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersJSON').should('be.checked');
-    browsePage.getFacetItemCheckbox('name', 'loadCustomersXML').should('be.checked');
-    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Lola Dunn').should('be.checked');
+    browsePage.getFacetItemCheckbox('email', 'jacquelineknowles@nutralab.com').should('not.be.checked');
   });
 });
 
@@ -336,7 +337,7 @@ describe('Verify numeric facet can be applied', () => {
     beforeEach(() => {
         cy.visit('/');
         cy.contains(Application.title);
-        cy.loginAsTestUserWithRoles("pii-reader").withRequest();
+        cy.loginAsTestUserWithRoles("pii-reader","hub-central-developer").withRequest();
         cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
         cy.waitUntil(() => browsePage.getExploreButton()).click();
         browsePage.waitForSpinnerToDisappear();
@@ -346,6 +347,7 @@ describe('Verify numeric facet can be applied', () => {
     it('Apply numeric facet values multiple times, clears the previous values and applies the new one', () => {
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.waitForSpinnerToDisappear();
         browsePage.changeNumericSlider('2273');
         browsePage.getGreyRangeFacet(2273).should('exist');
         browsePage.getFacetApplyButton().click();
