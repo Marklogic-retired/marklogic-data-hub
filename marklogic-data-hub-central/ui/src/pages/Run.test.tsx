@@ -630,8 +630,9 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
             let exploreButton = await(waitForElement(() => getByText("Explore Curated Data")));
             fireEvent.click(exploreButton);
         }
-        wait(() => {
-            expect(mockHistoryPush).toHaveBeenCalledWith('/tiles-explore');
+        await wait(() => {
+            expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
+                "state": {"entityName": "Customer", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
         })
         //TODO- E2E test to check if the explore tile is loaded or not.*/
     });

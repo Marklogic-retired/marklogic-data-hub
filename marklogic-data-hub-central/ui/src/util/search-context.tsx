@@ -71,7 +71,6 @@ interface ISearchContextInterface {
   setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
-  setViewWithEntity: (viewId: JSX.Element, zeroState: boolean,  nextEntityType: string, vals: string) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void;
   setSortOrder: (propertyName: string, datatype, sortOrder) => void;
 }
@@ -106,7 +105,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setManageQueryModal: () => { },
   setSelectedTableProperties: () => { },
   setView: () => { },
-  setViewWithEntity: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { }
 });
@@ -466,20 +464,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         });
     }
 
-    const setViewWithEntity = (viewId: JSX.Element, zeroState: boolean, nextEntityType: string, vals:string) => {
-        let facets = {};
-        let entityOptions = (nextEntityType === 'All Entities') ? [] : [nextEntityType];
-        facets = { createdByJob: { dataType: "string", stringValues: [vals] } };
-        setSearchOptions({
-            ...searchOptions,
-            selectedFacets: facets,
-            view: viewId,
-            zeroState: zeroState,
-            entityTypeIds: entityOptions,
-            nextEntityType: nextEntityType
-        });
-    }
-
     const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string  ) => {
       setSearchOptions({
             ...searchOptions,
@@ -560,7 +544,6 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setManageQueryModal,
       setSelectedTableProperties,
       setView,
-      setViewWithEntity,
       setPageWithEntity,
       setSortOrder
     }}>
