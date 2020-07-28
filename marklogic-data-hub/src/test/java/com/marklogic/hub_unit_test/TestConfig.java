@@ -1,88 +1,57 @@
 package com.marklogic.hub_unit_test;
 
+import com.marklogic.bootstrap.Installer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.DatabaseClientConfig;
+import com.marklogic.client.ext.DefaultConfiguredDatabaseClientFactory;
 import com.marklogic.client.ext.helper.DatabaseClientProvider;
-import com.marklogic.client.ext.spring.SimpleDatabaseClientProvider;
-import com.marklogic.hub.LoadTestModules;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.impl.HubConfigImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 /**
- * Spring configuration class that defines a connection to the final REST server in the test project.
- *
+ * Spring configuration class that defines the DatabaseClientProvider needed by AbstractSpringMarkLogicTest.
+ * <p>
  * This isn't in the "com.marklogic.hub" package so that it's not picked up by Spring ComponentScan annotations that
  * scan that package.
  */
 @Configuration
-@PropertySource(
-    value = {"file:gradle.properties", "file:gradle-local.properties"},
-    ignoreResourceNotFound = true
-)
-public class TestConfig implements InitializingBean {
+public class TestConfig {
 
-    @Value("${mlUsername}")
-    private String username;
+    @Autowired
+    HubConfigImpl hubConfig;
 
-    @Value("${mlPassword}")
-    private String password;
-
-    @Value("${mlHost:localhost}")
-    private String host;
-
-    @Value("${mlFinalPort:8011}")
-    private Integer finalPort;
-
-    @Value("${mlModulesDbName}")
-    private String modulesDatabaseName;
-
-    @Value("${mlModulePermissions}")
-    private String modulePermissions;
-
-    /**
-     * This is needed because other tests in the DHF test suite will clear "user" modules, thus deleting the
-     * marklogic-unit-test and test modules.
-     */
-    public void loadTestModules() {
-        LoadTestModules.loadTestModules(host, finalPort, username, password, modulesDatabaseName, modulePermissions);
-    }
-
-    /**
-     * Has to be static so that Spring instantiates it first.
-     */
     @Bean
-    public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
-        PropertySourcesPlaceholderConfigurer c = new PropertySourcesPlaceholderConfigurer();
-        c.setIgnoreResourceNotFound(true);
-        return c;
+    public DatabaseClientProvider databaseClientProvider() {
+        return new HubConfigDatabaseClientProvider(hubConfig);
+    }
+}
+
+class HubConfigDatabaseClientProvider implements DatabaseClientProvider {
+
+    private HubConfigImpl hubConfig;
+    private boolean loadedTestModules = false;
+
+    public HubConfigDatabaseClientProvider(HubConfigImpl hubConfig) {
+        this.hubConfig = hubConfig;
     }
 
     /**
-     * AbstractSpringMarkLogicTest depends on an instance of DatabaseClientProvider.
+     * This delays instantiation of a DatabaseClientConfig until after HubConfig has been initialized.
      *
      * @return
      */
-    @Bean
-    public DatabaseClientProvider databaseClientProvider() {
-        return new SimpleDatabaseClientProvider(
-            new DatabaseClientConfig(host, finalPort, username, password)
-        );
-    }
-
-    /**
-     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
-     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
-     * <p>This method allows the bean instance to perform validation of its overall
-     * configuration and final initialization when all bean properties have been set.
-     *
-     * @throws Exception in the event of misconfiguration (such as failure to set an
-     *                   essential property) or if initialization fails for any other reason
-     */
     @Override
-    public void afterPropertiesSet() throws Exception {
-        loadTestModules();
+    public DatabaseClient getDatabaseClient() {
+        if (!loadedTestModules) {
+            Installer.loadTestModules(hubConfig);
+            loadedTestModules = true;
+        }
+
+        DatabaseClientConfig config = new DatabaseClientConfig(hubConfig.getHost(), hubConfig.getPort(DatabaseKind.FINAL),
+            hubConfig.getMlUsername(), hubConfig.getMlPassword());
+        return new DefaultConfiguredDatabaseClientFactory().newDatabaseClient(config);
     }
 }

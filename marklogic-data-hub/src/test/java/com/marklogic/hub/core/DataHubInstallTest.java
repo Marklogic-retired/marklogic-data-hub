@@ -247,23 +247,4 @@ public class DataHubInstallTest extends HubTestBase {
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/harmonize/REST/options/patients.xml")));
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File("ye-olde-project/plugins/entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
     }
-
-    @Test
-    public void testClearUserModules() throws URISyntaxException {
-        URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
-        String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
-        createProjectDir(path);
-        HubConfig hubConfig = getDataHubAdminConfig();
-        dataHub.clearUserModules();
-
-
-        installUserModules(hubConfig, true);
-
-        // removed counts assertions which were so brittle as to be just an impediment to life.
-
-        dataHub.clearUserModules();
-
-
-    }
-
 }

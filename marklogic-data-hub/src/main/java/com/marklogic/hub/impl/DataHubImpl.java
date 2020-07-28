@@ -297,34 +297,42 @@ public class DataHubImpl implements DataHub, InitializingBean {
         hubConfig.initHubProject();
     }
 
-
     @Override
     public void clearUserModules() {
+        clearUserModules(null);
+    }
+
+    /**
+     *
+     * @param resourceNamesToNotDelete optional list of names of resources that should not be deleted; can be null;
+     *                                 introduced for the sake of DHF tests so that marklogic-unit-test will not be deleted
+     */
+    public void clearUserModules(List<String> resourceNamesToNotDelete) {
         logger.info("Clearing user modules");
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
-            HashSet<String> options = new HashSet<>();
+            HashSet<String> dataHubOptions = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-final/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-traces/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(r.getFilename().replace(".xml", ""));
             }
             for (Resource r : resolver.getResources("classpath*:/ml-modules-jobs/options/*.xml")) {
-                options.add(r.getFilename().replace(".xml", ""));
+                dataHubOptions.add(r.getFilename().replace(".xml", ""));
             }
 
-            HashSet<String> services = new HashSet<>();
+            HashSet<String> dataHubServices = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/services/*")) {
-                services.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
+                dataHubServices.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
-            HashSet<String> transforms = new HashSet<>();
+            HashSet<String> dataHubTransforms = new HashSet<>();
             for (Resource r : resolver.getResources("classpath*:/ml-modules/transforms/*")) {
-                transforms.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
+                dataHubTransforms.add(r.getFilename().replaceAll("\\.(sjs|xqy)$",""));
             }
 
             ServerConfigurationManager configMgr = hubConfig.newStagingClient().newServerConfigManager();
@@ -335,7 +343,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             Map<String, String> optionsMap = handle.getValuesMap();
             optionsMap.keySet().forEach(
                 optionsName -> {
-                    if (!options.contains(optionsName)) {
+                    if (!dataHubOptions.contains(optionsName)) {
                         stagingOptionsManager.deleteOptions(optionsName);
                     }
                 }
@@ -349,7 +357,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             Map<String, String> finalOptionsMap = finalHandle.getValuesMap();
             finalOptionsMap.keySet().forEach(
                 optionsName -> {
-                    if (!options.contains(optionsName)) {
+                    if (!dataHubOptions.contains(optionsName)) {
                         finalOptionsManager.deleteOptions(optionsName);
                     }
                 }
@@ -360,28 +368,31 @@ public class DataHubImpl implements DataHub, InitializingBean {
             JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
-                    if (!(transforms.contains(x) || x.startsWith("ml"))) {
+                    if (!(dataHubTransforms.contains(x) || x.startsWith("ml"))) {
                         transformExtensionsManager.deleteTransform(x);
                     }
                 }
             );
 
-            // remove resource extensions using amped channel
+            // remove resource extensions
             ResourceExtensionsManager resourceExtensionsManager = configMgr.newResourceExtensionsManager();
             JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
-            resourceExtensions.findValuesAsText("name").forEach(
-                x -> {
-                    if (!(services.contains(x) || x.startsWith("ml"))) {
-                        resourceExtensionsManager.deleteServices(x);
-                    }
+            if (resourceNamesToNotDelete == null) {
+                resourceNamesToNotDelete = new ArrayList<>(); // makes the boolean logic below simpler
+            }
+            for (String resourceName : resourceExtensions.findValuesAsText("name")) {
+                if (!dataHubServices.contains(resourceName) && !resourceName.startsWith("ml") && !resourceNamesToNotDelete.contains(resourceName)) {
+                    resourceExtensionsManager.deleteServices(resourceName);
                 }
-            );
+            }
 
             String query =
                 "cts:uris((),(),cts:not-query(cts:collection-query('hub-core-module')))[\n" +
                     "  fn:not(\n" +
-                    "    fn:matches(., \"^.+options/(" + String.join("|", options) + ").xml$\") or\n" +
-                    "    fn:starts-with(., \"/marklogic.rest.\")\n" +
+                    "    fn:matches(., \"^.+options/(" + String.join("|", dataHubOptions) + ").xml$\") or\n" +
+                    "    fn:starts-with(., '/marklogic.rest.') or\n" +
+                    // Retain compiled mappings for OOTB mapping functions
+                    "    fn:starts-with(., '/data-hub/5/mapping-functions/')\n" +
                     "  )\n" +
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));

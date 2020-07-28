@@ -10,7 +10,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.LoadTestModules;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
@@ -29,7 +28,10 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ContextConfiguration(classes = ApplicationConfig.class)
 public class MasterTest extends HubTestBase {
     static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-
-    @Autowired
-    HubConfig hubConfig;
 
     @Autowired
     FlowRunner flowRunner;
@@ -83,7 +82,7 @@ public class MasterTest extends HubTestBase {
 
 
     private void installProject() throws IOException {
-        LoadTestModules.loadTestModules(host, finalPort, secUser, secPassword, HubConfig.DEFAULT_MODULES_DB_NAME, hubConfig.getModulePermissions());
+        Installer.loadTestModules(getHubConfig());
         String[] directoriesToCopy = new String[]{"input", "flows", "step-definitions", "entities", "mappings"};
         for (final String subDirectory : directoriesToCopy) {
             final Path subProjectPath = projectPath.resolve(subDirectory);

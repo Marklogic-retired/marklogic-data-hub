@@ -235,7 +235,7 @@ public class LegacyFlowManagerTest extends HubTestBase {
 
     @Test
     public void testGetFlows() {
-        getDataHub().clearUserModules();
+        clearUserModules();
 
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
