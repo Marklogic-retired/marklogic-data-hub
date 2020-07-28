@@ -127,6 +127,7 @@ const Query = (props) => {
         if (currentQuery && currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
             if ((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
                 (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
+                (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
                 (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
                 (props.greyFacets.length > 0)) {
                 return true;
@@ -191,7 +192,6 @@ const Query = (props) => {
     const onResetCancel = () => {
         toggleResetQueryNewConfirmation(false);
         toggleResetQueryEditedConfirmation(false);
-
     }
 
     const onResetOk = () => {
@@ -228,7 +228,8 @@ const Query = (props) => {
         const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
                                             && searchOptions.selectedQuery !== 'select a query' && isSaveQueryChanged()
         const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 &&
-                                          (props.selectedFacets.length > 0 || searchOptions.query.length > 0)
+                                          (props.selectedFacets.length > 0 || searchOptions.query.length > 0
+                                          || searchOptions.sortOrder.length > 0)
                                           && searchOptions.selectedQuery === 'select a query'
         if (resetQueryNewConfirmation) {
             toggleResetQueryNewConfirmation(true)
@@ -278,7 +279,7 @@ const Query = (props) => {
         <div>
             <div>
                 {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query
-                    || props.isColumnSelectorTouched) &&
+                    || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
                 showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === 'select a query' &&
                     <div style={{ marginTop: '-22px' }}>
                         <MLTooltip title={'Save the current query'}>

@@ -157,12 +157,16 @@ describe("Results Table view component", () => {
 
         const customerIdColumnSort = getByTestId('resultsTableColumn-customerId'); // For name column sorting
         const nameColumnSort = getByTestId('resultsTableColumn-name'); // For value column sorting
+        const nickNamesColumnSort = getByTestId('resultsTableColumn-nicknames'); // For nicknames column sorting
 
-        //Sorted document uris based on name and customerId columns to be used later
+        //Sorted document uris based on name,customerId and nicknames columns to be used later
         const urisDefault = ['/Customer/Cust1.json', '/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust4.json','/Customer/Cust5.json'];
         const urisBasedOnDescendingCustomerId = ['/Customer/Cust5.json', '/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust4.json','/Customer/Cust5.json'];
         const urisBasedOnAscendingName = ['/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust1.json', '/Customer/Cust5.json','/Customer/Cust4.json'];
         const urisBasedOnDescendingName = ['/Customer/Cust4.json', '/Customer/Cust5.json', '/Customer/Cust1.json', '/Customer/Cust3.json','/Customer/Cust2.json'];
+        const urisBasedOnAscendingNickNames = ['/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust1.json', '/Customer/Cust5.json','/Customer/Cust4.json'];
+        const urisBasedOnDescendingNickNames = ['/Customer/Cust4.json', '/Customer/Cust5.json', '/Customer/Cust1.json', '/Customer/Cust2.json','/Customer/Cust3.json'];
+
 
         /* Validate sorting on name column in results*/
         //Check the sort order of Name column rows before enforcing sort order
@@ -189,6 +193,17 @@ describe("Results Table view component", () => {
         fireEvent.click(customerIdColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
         validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingCustomerId);
+
+        /* Validate sorting on nicknames column in results*/
+        //Click on the nicknames column to sort the rows by Ascending order
+        fireEvent.click(nickNamesColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisBasedOnAscendingNickNames);
+
+        //Click on the nicknames column to sort the rows by Descending order
+        fireEvent.click(nickNamesColumnSort);
+        resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingNickNames);
 
     });
 })

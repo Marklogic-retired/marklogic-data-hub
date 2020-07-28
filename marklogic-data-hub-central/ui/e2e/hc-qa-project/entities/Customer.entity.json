@@ -15,12 +15,14 @@
       "primaryKey": "customerId",
       "properties": {
         "customerId": {
-          "datatype": "integer"
+          "datatype": "integer",
+          "sortable": true
         },
         "name": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint",
-          "facetable": true
+          "facetable": true,
+          "sortable": true
         },
         "email": {
           "datatype": "string",
@@ -29,7 +31,8 @@
         },
         "pin": {
           "datatype": "integer",
-          "facetable": true
+          "facetable": true,
+          "sortable": true
         },
         "nicknames": {
           "datatype": "array",

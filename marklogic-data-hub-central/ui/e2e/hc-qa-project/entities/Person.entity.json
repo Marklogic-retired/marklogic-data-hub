@@ -21,12 +21,14 @@
         "fname": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint",
-          "facetable": true
+          "facetable": true,
+          "sortable": true
         },
         "lname": {
           "datatype": "string",
           "collation": "http://marklogic.com/collation/codepoint",
-          "facetable": true
+          "facetable": true,
+          "sortable": true
         },
         "desc": {
           "datatype": "string",

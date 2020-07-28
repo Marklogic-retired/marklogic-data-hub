@@ -34,6 +34,7 @@ describe("<SaveChangesModal/>", () => {
             toggleEntityQueryUpdate={jest.fn()}
             entityQueryUpdate={false}
             isSaveQueryChanged={jest.fn()}
+            resetYesClicked={false}
         />)
         queryField = getByPlaceholderText("Enter query name");
         expect(queryField).toHaveAttribute('value', 'Order query');
@@ -64,6 +65,7 @@ describe("<SaveChangesModal/>", () => {
             toggleEntityQueryUpdate={jest.fn()}
             entityQueryUpdate={false}
             isSaveQueryChanged={jest.fn()}
+            resetYesClicked={false}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: ''} });
@@ -84,8 +86,8 @@ describe("<SaveChangesModal/>", () => {
                         "searchText": "",
                          "selectedFacets": {},
                     },
-                    "propertiesToDisplay": [
-                    ]
+                    "propertiesToDisplay": [],
+                    "sortOrder": []
                 }
         }
 
@@ -117,6 +119,7 @@ describe("<SaveChangesModal/>", () => {
             toggleEntityQueryUpdate={jest.fn()}
             entityQueryUpdate={false}
             isSaveQueryChanged={jest.fn()}
+            resetYesClicked={false}
         />)
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: 'Edit new query'} });
@@ -133,8 +136,8 @@ describe("<SaveChangesModal/>", () => {
                     "searchText": "",
                     "selectedFacets": {},
                 },
-                "propertiesToDisplay": [
-                ]
+                "propertiesToDisplay": [],
+                "sortOrder": [],
             }
         }
 

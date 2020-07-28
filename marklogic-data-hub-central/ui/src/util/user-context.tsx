@@ -171,7 +171,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       case 405:
       case 408:
       case 414: {
-        console.log('HTTP ERROR', error.resonse);
+        console.log('HTTP ERROR', error.response);
         let title = error.response.status + ' ' + error.response.statusText;
         let message = DEFAULT_MESSAGE;
 
