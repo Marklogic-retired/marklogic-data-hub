@@ -332,43 +332,43 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check the sort order of Name column rows before enforcing sort order
       let srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog'], 'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinId', 'proteinType'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinDog', 'proteinId', 'proteinType'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Descending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinCat', 'nutFreeName'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinDog', 'proteinCat', 'nutFreeName'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog'], 'key', data.mapProps.sourceData);
 
       /* Validate sorting on Values column in source table */
 
       //Check the sort order of Values column rows before enforcing sort order
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador'], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Ascending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', undefined], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', 'retriever, golden, labrador', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Descending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['home', 'commercial', '123EAC', undefined], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['retriever, golden, labrador', 'home', 'commercial', '123EAC', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Value column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial'], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador'], 'val', data.mapProps.sourceData);
 
       /* Validate sorting in Entity table columns */
       const entityTableNameSort = getByTestId('entityTableName'); // For value column sorting
@@ -880,7 +880,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
     test('Nested JSON source data - Right XPATH expression',  async() => {
         axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
-        const { getByText,getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        const { getByText,getAllByText,getByTestId, getAllByRole } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
@@ -897,6 +897,19 @@ describe('RTL Source Selector/Source Search tests', () => {
         //Check if indentation is right
         expect(firstName[1]).toHaveStyle("line-height: 2vh; text-indent: 20px;");
 
+        //Verify Array icon is not present when item has no children
+        expect(getByTestId('FirstNamePreferred-optionIcon')).toHaveAttribute('src', '')
+
+        //Verify Array icon is present when item has children
+        expect(getByTestId('LastName-optionIcon')).toHaveAttribute('src', 'icon_array.png')
+
+        //Verify Array icon is present when item has no children but value was an Array of strings.
+        expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
+
+        //Verify tooltip for Array icon
+        fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
+        await waitForElement(() => getByText('Multiple'));
+
         //Click on 'FirstNamePreferred'
         fireEvent.click(firstName[1]);
 
@@ -911,7 +924,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
     test('Nested XML source data - Right XPATH expression',  async() => {
         axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
-        const {getAllByText,getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
+        const {getAllByText,getByTestId, getByText, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
 
         //Expanding all the nested levels first
         fireEvent.click(getByTestId('expandCollapseBtn-source'));
@@ -927,6 +940,19 @@ describe('RTL Source Selector/Source Search tests', () => {
 
         //Check if indentation is right
         expect(lastName[1]).toHaveStyle("line-height: 2vh; text-indent: 40px;");
+
+        //Verify Array icon is not present when item has no children
+        expect(getByTestId('FirstNamePreferred-optionIcon')).toHaveAttribute('src', '')
+
+        //Verify Array icon is present when item has children
+        expect(getByTestId('sampleProtein-optionIcon')).toHaveAttribute('src', 'icon_array.png')
+
+        //Verify Array icon is present when item has no children but value was an Array of strings.
+        expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
+
+        //Verify tooltip for Array icon
+        fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
+        await waitForElement(() => getByText('Multiple'));
 
         //Click on 'FirstNamePreferred'
         fireEvent.click(lastName[1]);

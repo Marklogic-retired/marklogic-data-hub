@@ -1,6 +1,8 @@
 import { Menu, Select } from "antd"
 import React, { useState, useEffect, useRef, useCallback, CSSProperties } from 'react';
 import styles from './dropdownWithSearch.module.scss';
+import arrayIcon from '../../../assets/icon_array.png';
+import {MLTooltip} from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
 
@@ -73,7 +75,7 @@ const DropDownWithSearch = (props) => {
                     value={null}
                     onChange={props.onItemSelect}
                 >
-                    {props.srcData.map((element, index) => <Select.Option style={optionsStyle(index)} key={element.key}>{element.value}</Select.Option>)}
+                    {props.srcData.map((element, index) => <Select.Option style={optionsStyle(index)} key={element.key}>{element.value} {<MLTooltip title = "Multiple"><img data-testid = {element.value + '-optionIcon'} src= {element.struct ? arrayIcon : '' }/></MLTooltip>}</Select.Option>)}
                </Select>  }
         </div>
     );
