@@ -42,11 +42,11 @@ describe("Results Table view component", () => {
 
         //Check if the tooltip on 'Detail on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show detail on a separate page'))))
+        await(waitForElement(() => (getByText('Show the processed data'))))
 
         //Check if the tooltip on 'source on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show source on a separate page'))))
+        await(waitForElement(() => (getByText('Show the complete JSON'))))
     });
 
     test('Result table with no data renders', () => {
@@ -124,11 +124,11 @@ describe("Results Table view component", () => {
 
         //Check if the tooltip on 'Detail on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show detail on a separate page'))))
+        await(waitForElement(() => (getByText('Show the processed data'))))
 
         //Check if the tooltip on 'source on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show source on a separate page'))))
+        await(waitForElement(() => (getByText('Show the complete JSON'))))
 
     });
 
@@ -163,7 +163,7 @@ describe("Results Table view component", () => {
         const urisBasedOnDescendingCustomerId = ['/Customer/Cust5.json', '/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust4.json','/Customer/Cust5.json'];
         const urisBasedOnAscendingName = ['/Customer/Cust2.json', '/Customer/Cust3.json', '/Customer/Cust1.json', '/Customer/Cust5.json','/Customer/Cust4.json'];
         const urisBasedOnDescendingName = ['/Customer/Cust4.json', '/Customer/Cust5.json', '/Customer/Cust1.json', '/Customer/Cust3.json','/Customer/Cust2.json'];
-        
+
         /* Validate sorting on name column in results*/
         //Check the sort order of Name column rows before enforcing sort order
         let resultsTable: any = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
