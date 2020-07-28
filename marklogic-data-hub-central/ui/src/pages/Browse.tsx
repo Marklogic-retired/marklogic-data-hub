@@ -168,7 +168,9 @@ const Browse: React.FC<Props> = ({ location }) => {
             location.state['query'])
         location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
-
+    if(location.state && location.state['entityName'] && location.state['jobId']){
+        setLatestJobFacet(location.state['jobId'], location.state['entityName']);
+    }
     if (location.state && location.state['entity']) {
       setEntityClearQuery(location.state['entity']);
     }

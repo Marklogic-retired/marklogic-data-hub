@@ -5,8 +5,7 @@ import { Modal, Collapse } from 'antd';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
-import {SearchContext} from "../util/search-context";
-import Browse from './Browse';
+import { useHistory } from 'react-router-dom';
 
 
 const { Panel } = Collapse;
@@ -26,9 +25,7 @@ const Statuses = {
 const Run = (props) => {
    const { handleError, resetSessionTime } = useContext(UserContext);
 
-    const {
-        setViewWithEntity,
-    } = useContext(SearchContext);
+    const history: any = useHistory();
 
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
@@ -175,8 +172,9 @@ const Run = (props) => {
     }
 
     const goToExplorer = (entityName, jobId) => {
+        history.push({pathname: "/tiles/explore",
+            state: { entityName: entityName, jobId: jobId }})
         Modal.destroyAll();
-        setViewWithEntity(<Browse/>, false, entityName, jobId);
     }
 
     function showStepRunResponse(stepName, stepType, entityName, jobId, response){
@@ -238,7 +236,8 @@ const Run = (props) => {
             title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
             content: (
                 <div id="error-list">
-                    {stepType.toLowerCase() === 'mapping' && entityName ? <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
+                    {stepType.toLowerCase() === 'mapping' && entityName ?
+                        <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
                     </div> : ''}
