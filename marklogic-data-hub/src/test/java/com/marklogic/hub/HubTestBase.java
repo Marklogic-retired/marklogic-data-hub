@@ -87,10 +87,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -978,7 +975,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     public void clearUserModules() {
-        getDataHub().clearUserModules();
+        dataHub.clearUserModules(Arrays.asList("marklogic-unit-test"));
     }
 
     protected String dhfCert() {
@@ -1106,8 +1103,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     protected void setupProjectForRunningTestFlow() {
         runAsAdmin();
-        // clear user modules as part of reset
-        getDataHub().clearUserModules();
+        clearUserModules();
         resetHubProject();
         copyFlowArtifactsToProject();
         installUserModules(getDataHubAdminConfig(), true);

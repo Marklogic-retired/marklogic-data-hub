@@ -30,11 +30,7 @@ import java.io.IOException;
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
  * <p>
  * To run these tests, this class just needs to know how to connect to the
- * /v1/resources/marklogic-unit-test endpoint on a REST server. None of the plumbing in HubTestBase is needed
- * for any of these tests.
- * <p>
- * This class depends on TestConfig loading the marklogic-unit-test and test modules because other tests in the DHF
- * test suite will clear out these modules after "gradle bootstrap" loads them.
+ * /v1/resources/marklogic-unit-test endpoint on a REST server.
  * <p>
  * After running this, you can also access the marklogic-unit-test runner at host:8011/test/default.xqy.
  */
@@ -70,13 +66,12 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     protected void init() {
         if (!initialized) {
             super.init();
-            // deploy test related amps
             try {
                 adminHubConfig.getAppConfig().getConfigDirs().add(new ConfigDir(new ClassPathResource("test-config").getFile()));
-                new SimpleAppDeployer(new DeployRolesCommand(), new DeployAmpsCommand(), new CreateGranularPrivilegesCommand(adminHubConfig)).deploy(adminHubConfig.getAppConfig());
+                new SimpleAppDeployer(new DeployRolesCommand(), new DeployAmpsCommand(), new CreateGranularPrivilegesCommand(adminHubConfig))
+                    .deploy(adminHubConfig.getAppConfig());
                 initialized = true;
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }

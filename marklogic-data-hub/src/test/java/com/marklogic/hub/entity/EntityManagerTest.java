@@ -23,11 +23,9 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +33,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityManagerTest extends AbstractHubCoreTest {
@@ -73,7 +70,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
     @Test
     public void testDeploySearchOptionsWithNoEntities() {
-    	getDataHub().clearUserModules();
+        clearUserModules();
         Path dir = project.getEntityConfigDir();
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
@@ -92,58 +89,10 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     }
 
     @Test
-    @Disabled
-    public void testDeploySearchOptions() throws IOException, SAXException {
-    	getDataHub().clearUserModules();
-        installEntities();
-
-        Path dir = project.getHubEntitiesDir();
-
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-
-        HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
-
-        assertEquals(2, deployed.size());
-        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        String expectedFile = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
-        // In DHS, group is 'Curator'
-        if (expectedFile == null) {
-            expectedFile = getModulesFile("/Curator/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
-        }
-
-        assertXMLEqual(getResource("entity-manager-test/options.xml"), expectedFile);
-        // if we re-merge modules this assertion will be true again:
-         assertXMLEqual(getResource("entity-manager-test/options.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-
-        updateManagerEntity();
-        deployed = entityManager.deployQueryOptions();
-        assertEquals(2, deployed.size());
-        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertEquals(0, getStagingDocCount());
-        assertEquals(0, getFinalDocCount());
-        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        // if we re-merge modules this assertion will be true again:
-        assertXMLEqual(getResource("entity-manager-test/options2.xml"), getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
-
-        // shouldn't deploy a 2nd time because of modules properties files
-        deployed = entityManager.deployQueryOptions();
-        assertEquals(0, deployed.size());
-    }
-
-    @Test
     public void deploySearchOptionsAsDataHubDeveloper() {
         runAsDataHubDeveloper();
 
-    	getDataHub().clearUserModules();
+        clearUserModules();
         installEntities();
 
         Path dir = Paths.get(PROJECT_PATH, HubConfig.ENTITY_CONFIG_DIR);
@@ -216,7 +165,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         File secondProtectedPathConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
         File queryRolesetsConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
 
-                    // assert that ELS configuation is in project
+        // assert that ELS configuation is in project
         JsonNode protectedPaths = mapper.readTree(protectedPathConfig);
         assertTrue(protectedPaths.get("path-expression").isTextual(),
             "Protected Path Config should have path expression.");
@@ -224,7 +173,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         assertTrue(protectedPaths.get("path-expression").isTextual(),
             "Protected Path Config should have path expression.");
         JsonNode rolesets = mapper.readTree(queryRolesetsConfig);
-        assertEquals( "pii-reader",
+        assertEquals("pii-reader",
             rolesets.get("role-name").get(0).asText(), "Config should have one roleset, pii-reader.");
 
 

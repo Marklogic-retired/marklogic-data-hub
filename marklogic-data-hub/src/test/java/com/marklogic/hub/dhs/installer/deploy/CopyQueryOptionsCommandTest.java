@@ -25,7 +25,7 @@ public class CopyQueryOptionsCommandTest extends HubTestBase {
     void test() throws Exception {
         runAsAdmin();
         // clear user modules to ensure extra options aren't left from other tests
-        getDataHub().clearUserModules();
+        clearUserModules();
         resetHubProject();
         try {
             final String groupName = adminHubConfig.getAppConfig().getGroupName();

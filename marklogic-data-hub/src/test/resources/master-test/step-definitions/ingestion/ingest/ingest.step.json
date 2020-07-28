@@ -16,5 +16,5 @@
   },
   "customHook" : { },
   "lang" : "zxx",
-  "modulePath": "/no-op.sjs"
+  "modulePath": "/custom-modules/no-op.sjs"
 }

@@ -1,7 +1,13 @@
 package com.marklogic.bootstrap;
 
+import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
+import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Privilege;
@@ -13,6 +19,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.List;
 
 @EnableAutoConfiguration
 public class Installer extends HubTestBase implements InitializingBean {
@@ -42,6 +50,8 @@ public class Installer extends HubTestBase implements InitializingBean {
         setupProject();
 
         dataHub.install();
+
+        loadTestModules(adminHubConfig);
 
         final API api = new API(adminHubConfig.getManageClient());
 
@@ -88,10 +98,6 @@ public class Installer extends HubTestBase implements InitializingBean {
         addStatusPrivilegeToDataHubDeveloper();
 
         applyDatabasePropertiesForTests(adminHubConfig);
-
-        if (getDataHubAdminConfig().getIsProvisionedEnvironment()) {
-            installHubModules();
-        }
     }
 
     /**
@@ -104,5 +110,59 @@ public class Installer extends HubTestBase implements InitializingBean {
         Privilege p = new DefaultResourceMapper(new API(client)).readResource(json, Privilege.class);
         p.addRole("data-hub-developer");
         mgr.save(p.getJson());
+    }
+
+    /**
+     * Loads the marklogic-unit-test modules and the DHF test modules under src/test/ml-modules.
+     *
+     * @param hubConfig
+     */
+    public static void loadTestModules(HubConfig hubConfig) {
+        final AppConfig appConfig = hubConfig.getAppConfig();
+        final Integer originalAppServicesPort = appConfig.getAppServicesPort();
+        final Integer originalBatchSize = appConfig.getModulesLoaderBatchSize();
+        final List<String> originalModulePaths = appConfig.getModulePaths();
+
+        try {
+            appConfig.setModuleTimestampsPath(null);
+            appConfig.setAppServicesPort(8010);
+
+            /**
+             * Setting this to a small number to fix some issues on Jenkins where jobs are picking up test modules
+             * from multiple places. This ensures that a single transaction doesn't try to write the same module
+             * twice.
+             */
+            appConfig.setModulesLoaderBatchSize(5);
+
+            /**
+             * Adjust this to the possible paths that contain test modules (the path depends on how this test is run - e.g.
+             * via an IDE or via Gradle). We don't need nor want to load from src/main/resources/ml-modules
+             * because that will overwrite some collections and tokens set by the Installer program.
+             */
+            appConfig.getModulePaths().clear();
+            appConfig.getModulePaths().add("marklogic-data-hub/build/mlBundle/marklogic-unit-test-modules/ml-modules");
+            appConfig.getModulePaths().add("marklogic-data-hub/src/test/ml-modules");
+            appConfig.getModulePaths().add("build/mlBundle/marklogic-unit-test-modules/ml-modules");
+            appConfig.getModulePaths().add("src/test/ml-modules");
+            appConfig.getModulePaths().add("../build/mlBundle/marklogic-unit-test-modules/ml-modules");
+            appConfig.getModulePaths().add("../src/test/ml-modules");
+
+            // Need to run GenerateFunctionMetadataCommand as well so that function metadata is generated both for
+            // core mapping functions and custom functions under src/test/ml-modules/root/custom-modules.
+            new SimpleAppDeployer(
+                new LoadModulesCommand(),
+                new GenerateFunctionMetadataCommand(hubConfig)
+            ).deploy(appConfig);
+
+            // Toss test modules into the 'hub-core-module' collection so that clearUserData() calls don't delete them
+            DatabaseClient modulesClient = hubConfig.newModulesDbClient();
+            modulesClient.newServerEval().xquery("cts:uri-match('/test/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
+            // Preserves the modules loaded from src/test/ml-modules/root/custom-modules
+            modulesClient.newServerEval().xquery("cts:uri-match('/custom-modules/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
+        } finally {
+            appConfig.setAppServicesPort(originalAppServicesPort);
+            appConfig.setModulesLoaderBatchSize(originalBatchSize);
+            appConfig.setModulePaths(originalModulePaths);
+        }
     }
 }
