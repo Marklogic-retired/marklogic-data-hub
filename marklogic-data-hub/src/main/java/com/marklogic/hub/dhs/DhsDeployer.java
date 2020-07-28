@@ -99,9 +99,13 @@ public class DhsDeployer extends LoggingObject {
             appConfig.setAppServicesSecurityContextType(SecurityContextType.valueOf(authMethod.toUpperCase()));
         }
 
-        // As part of the fix for DHFPROD-5073, disabling all CMA usage, as data-hub-developer/operator are not allowed
+        // As part of the fix for DHFPROD-5037, disabling all CMA usage, as data-hub-developer/operator are not allowed
         // to use CMA
-        appConfig.setCmaConfig(new CmaConfig(false));
+        CmaConfig cmaConfig = appConfig.getCmaConfig();
+        if (cmaConfig != null) {
+            cmaConfig.setCombineRequests(false);
+        }
+        //appConfig.setCmaConfig(new CmaConfig(false));
     }
 
     /**

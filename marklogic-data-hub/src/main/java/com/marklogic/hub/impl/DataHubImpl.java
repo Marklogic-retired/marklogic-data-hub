@@ -531,15 +531,15 @@ public class DataHubImpl implements DataHub, InitializingBean {
     }
 
     /**
-     * Turns off CMA for some resources that have bbugs in ML 9.0-7/8.
+     * Turns off CMA for some resources that have bugs in ML 9.0-7/8.
      *
      * @param appConfig
      */
     protected void disableSomeCmaUsage(AppConfig appConfig) {
         appConfig.getCmaConfig().setCombineRequests(false);
-        appConfig.getCmaConfig().setDeployDatabases(false);
-        appConfig.getCmaConfig().setDeployRoles(false);
-        appConfig.getCmaConfig().setDeployUsers(false);
+//        appConfig.getCmaConfig().setDeployDatabases(false);
+//        appConfig.getCmaConfig().setDeployRoles(false);
+//        appConfig.getCmaConfig().setDeployUsers(false);
     }
 
     /**
