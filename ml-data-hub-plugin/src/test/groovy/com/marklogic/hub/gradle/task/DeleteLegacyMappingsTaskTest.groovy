@@ -5,7 +5,7 @@ import org.gradle.testkit.runner.UnexpectedBuildFailure
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
-class DeleteInstalledLegacyMappingsTaskTest extends BaseTest {
+class DeleteLegacyMappingsTaskTest extends BaseTest {
 
     def setupSpec() {
         createGradleFiles()
@@ -15,10 +15,10 @@ class DeleteInstalledLegacyMappingsTaskTest extends BaseTest {
     def "simple smoke test"() {
         when:
         def result
-        result = runTask("hubDeleteInstalledLegacyMappings", '-Pconfirm=true')
+        result = runTask("hubDeleteLegacyMappings", '-Pconfirm=true')
 
         then:
         notThrown(UnexpectedBuildFailure)
-        result.task(":hubDeleteInstalledLegacyMappings").outcome == SUCCESS
+        result.task(":hubDeleteLegacyMappings").outcome == SUCCESS
     }
 }

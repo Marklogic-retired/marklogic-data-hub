@@ -82,7 +82,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         verifyLegacyMappingsStillExistInMarkLogic();
         verifyFlowsWereMigrated();
 
-        flowMigrator.deleteInstalledLegacyMappings();
+        flowMigrator.deleteLegacyMappings();
         verifyLegacyMappingsWereDeletedFromMarkLogic();
     }
 
