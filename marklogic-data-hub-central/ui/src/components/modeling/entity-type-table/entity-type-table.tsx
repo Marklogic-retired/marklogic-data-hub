@@ -179,7 +179,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const columns = [
     {
       title: 'Name',
-      dataIndex: 'name',
+      dataIndex: 'entityName',
       className: styles.tableText,
       width: 400,
       render: text => {
@@ -198,7 +198,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         )
       },
       sorter: (a, b) => {
-        return a.name.localeCompare(b.name)
+        return a['entityName'].split(',')[0].localeCompare(b['entityName'].split(',')[0])
       }
     },
     {
@@ -324,7 +324,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const expandedRowRender = (entity) => {
     return <PropertyTable
-              entityName={entity.name.split(',')[0]}
+              entityName={entity.entityName.split(',')[0]}
               definitions={entity.definitions}
               canReadEntityModel={props.canReadEntityModel}
               canWriteEntityModel={props.canWriteEntityModel}
@@ -334,18 +334,18 @@ const EntityTypeTable: React.FC<Props> = (props) => {
   const onExpand = (expanded, record) => {
     let newExpandedRows =  [...expandedRows]
     if (expanded) {
-      if ( newExpandedRows.indexOf(record.name) === -1) {
-        newExpandedRows.push(record.name);
+      if ( newExpandedRows.indexOf(record.entityName) === -1) {
+        newExpandedRows.push(record.entityName);
       }
     } else {
-      newExpandedRows = newExpandedRows.filter(row => row !== record.name);
+      newExpandedRows = newExpandedRows.filter(row => row !== record.entityName);
     }
     setExpandedRows(newExpandedRows);
   }
 
   const renderTableData = allEntityTypes.map((entity) => {
     return {
-      name: entity.entityName + ',' + getEntityTypeDescription(entity),
+      entityName: entity.entityName + ',' + getEntityTypeDescription(entity),
       instances: entity.entityName + ',' + parseInt(entity.entityInstanceCount),
       lastProcessed: entity.entityName + ',' + entity.latestJobId + ',' + entity.latestJobDateTime,
       actions: entity.entityName,
@@ -364,7 +364,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         confirmAction={confirmAction}
       />
       <MLTable
-        rowKey="name"
+        rowKey="entityName"
         locale={{ emptyText: ' ' }}
         className={styles.table}
         columns={columns}

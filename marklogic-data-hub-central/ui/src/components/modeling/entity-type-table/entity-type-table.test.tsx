@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { render, wait, screen } from '@testing-library/react';
+import { render, wait, screen, within } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import EntityTypeTable from './entity-type-table';
 
@@ -89,7 +89,8 @@ describe('EntityTypeModal Component', () => {
     userEvent.click(getByText('Last Processed'));
     userEvent.click(getByText('Instances'));
 
-    userEvent.click(getAllByRole('img')[0]);
+    const anotherModelExpandIcon = getByTestId('mltable-expand-AnotherModel');
+    userEvent.click(within(anotherModelExpandIcon).getByRole('img'));
 
     expect(getByLabelText('AnotherModel-add-property')).toBeDisabled();
   });
