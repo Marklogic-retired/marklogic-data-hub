@@ -36,8 +36,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const componentIsMounted = useRef(true);
   const {
     user,
-    handleError,
-    resetSessionTime
+    handleError
   } = useContext(UserContext);
   const {
     searchOptions,
@@ -83,7 +82,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       handleError(error);
     } finally {
       setIsLoading(false);
-      resetSessionTime();
     }
   }
 
@@ -127,7 +125,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       handleError(error);
     } finally {
       setIsLoading(false);
-      resetSessionTime();
     }
   }
 

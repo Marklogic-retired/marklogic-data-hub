@@ -34,8 +34,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
     } = useContext(SearchContext);
 
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
     const [queryName, setQueryName] = useState('');
@@ -111,8 +110,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             } else {
                 handleError(error);
             }
-        } finally {
-            resetSessionTime();
         }
     }
 

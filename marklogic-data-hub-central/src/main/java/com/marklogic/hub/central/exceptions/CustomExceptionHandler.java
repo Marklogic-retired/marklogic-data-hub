@@ -88,6 +88,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
     private String httpStatusSuggestion(HttpStatus httpStatus) {
         switch (httpStatus) {
             case FORBIDDEN:

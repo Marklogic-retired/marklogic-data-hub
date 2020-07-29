@@ -17,8 +17,7 @@ const QueryExportModal = (props) => {
         searchOptions
     } = useContext(SearchContext);
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
     const onClose = () => {
@@ -48,8 +47,6 @@ const QueryExportModal = (props) => {
                 await exportQuery(query, limit);
             } catch (error) {
                 handleError(error);
-            } finally {
-                resetSessionTime();
             }
         }
 

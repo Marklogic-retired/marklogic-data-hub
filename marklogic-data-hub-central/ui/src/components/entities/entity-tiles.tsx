@@ -2,14 +2,12 @@ import React, { useState, useEffect, useContext} from 'react';
 import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
-import { UserContext } from '../../util/user-context';
 import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
 
 const EntityTiles = (props) => {
-    const { resetSessionTime } = useContext(UserContext);
     const entityModels = props.entityModels || {};
     const location = useLocation<any>();
     const [locationEntityType, setLocationEntityType] = useState<string[]>([]);
@@ -78,9 +76,7 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.error('Error while fetching the mappings!', message);
-            } finally {
-              resetSessionTime();
-          }
+            }
     }
 
     const getMappingArtifactByMapName = async (entityTypeId,mapName) => {
@@ -98,8 +94,6 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.error('Error while fetching the mapping!', message);
-          } finally {
-            resetSessionTime();
           }
     }
 
@@ -138,8 +132,6 @@ const EntityTiles = (props) => {
             let err={code: code,
                     message: details}
             return err;
-          } finally {
-            resetSessionTime();
           }
     }
 
@@ -156,8 +148,6 @@ const EntityTiles = (props) => {
             let message = error;
             console.error('Error while updating the mapping!', message)
             return false;
-          } finally {
-            resetSessionTime();
           }
     }
 
@@ -174,8 +164,6 @@ const EntityTiles = (props) => {
           } catch (error) {
               let message = error;
               console.error('Error while fetching matching artifacts', message);
-          } finally {
-            resetSessionTime();
           }
     }
 
@@ -206,8 +194,6 @@ const EntityTiles = (props) => {
             let message = error.response.data.message;
             console.error('Error While creating the matching artifact!', message)
             setIsLoading(false);
-          } finally {
-            resetSessionTime();
           }
     }
 
@@ -227,8 +213,6 @@ const EntityTiles = (props) => {
         } catch (error) {
             let message = error;
             console.error('Error while fetching custom artifacts', message);
-        } finally {
-            resetSessionTime();
         }
     }
 

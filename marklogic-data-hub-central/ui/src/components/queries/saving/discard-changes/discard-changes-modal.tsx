@@ -21,8 +21,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
     } = useContext(SearchContext);
 
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
 
@@ -61,8 +60,6 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
             props.toggleApply(false);
         } catch (error) {
             handleError(error)
-        } finally {
-            resetSessionTime();
         }
     }
 

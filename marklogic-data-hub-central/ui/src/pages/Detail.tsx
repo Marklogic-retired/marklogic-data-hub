@@ -22,7 +22,7 @@ const { Content } = Layout;
 
 const Detail: React.FC<Props> = ({ history, location }) => {
 
-  const { user, handleError, resetSessionTime } = useContext(UserContext);
+  const { user, handleError } = useContext(UserContext);
   const uriSplit = location.pathname.replace('/tiles/explore/detail/', '');
   const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
   const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");
@@ -67,8 +67,6 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
       } catch (error) {
         handleError(error);
-      } finally {
-        resetSessionTime();
       }
     };
 

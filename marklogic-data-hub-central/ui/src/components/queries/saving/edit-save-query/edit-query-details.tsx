@@ -18,8 +18,7 @@ interface Props {
 const EditQueryDetails: React.FC<Props> = (props) => {
 
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
     const {
@@ -72,8 +71,6 @@ const EditQueryDetails: React.FC<Props> = (props) => {
             } else {
                 handleError(error);
             }
-        } finally {
-            resetSessionTime();
         }
     };
 

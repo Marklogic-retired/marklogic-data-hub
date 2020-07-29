@@ -206,10 +206,10 @@ const advancedAPI = (axiosMock) => {
 };
 
 const systemInfoAPI = (axiosMock) => {
-  return axiosMock.get['mockImplementation']((url) => {
+  return axiosMock['mockImplementation']((url) => {
     switch (url) {
       case '/api/environment/systemInfo':
-        return Promise.resolve(systemInfoData.environment);
+        return Promise.resolve({ status: 200, data: systemInfoData.environment });
       default:
         return Promise.reject(new Error('not found'));
     }

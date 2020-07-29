@@ -14,7 +14,7 @@ const SystemInfo = (props) => {
     const dataHubVersion = props.dataHubVersion || '';
     const marklogicVersion = props.marklogicVersion || '';
 
-    const { user, resetSessionTime } = useContext(UserContext);
+    const { user } = useContext(UserContext);
 
     const [message, setMessage] = useState({show: false});
     const [isLoading, setIsLoading] = useState(false);
@@ -42,9 +42,6 @@ const SystemInfo = (props) => {
                 document.body.appendChild(link);
                 link.click();
             })
-            .finally(() => {
-                resetSessionTime();
-            });
     };
 
     const clear =async () => {
@@ -61,8 +58,6 @@ const SystemInfo = (props) => {
             let message = error.response;
             setIsLoading(false);
             console.error('Error while clearing user data, message || error', message);
-        }finally {
-            resetSessionTime();
         }
     }
     const onCancel = () => {

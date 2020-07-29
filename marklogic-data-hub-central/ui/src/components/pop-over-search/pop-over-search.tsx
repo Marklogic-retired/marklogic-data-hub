@@ -13,7 +13,7 @@ interface Props {
 
 
 const PopOverSearch: React.FC<Props> = (props) => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
   const [popOverVisibility, setPopOverVisibilty] = useState(false);
@@ -37,8 +37,6 @@ const PopOverSearch: React.FC<Props> = (props) => {
       } catch (error) {
         console.log(error)
         handleError(error);
-      } finally {
-        resetSessionTime();
       }
     } else {
       setOptions([]);

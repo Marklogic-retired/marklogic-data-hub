@@ -16,7 +16,7 @@ const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
 
 const View: React.FC = () => {
-  const { user, handleError, resetSessionTime } = useContext(UserContext);
+  const { user, handleError } = useContext(UserContext);
   const [entities, setEntities] = useState<any[]>([]);
   const [lastHarmonized, setLastHarmonized] = useState<any[]>([]);
   const [facetValues, setFacetValues] = useState<any[]>([]);
@@ -36,8 +36,6 @@ const View: React.FC = () => {
       }
     } catch (error) {
       handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -63,7 +61,6 @@ const View: React.FC = () => {
     } catch (error) {
       handleError(error);
     } finally {
-      resetSessionTime();
       setIsLoading(false);
     }
   }
@@ -77,8 +74,6 @@ const View: React.FC = () => {
       }
     } catch (error) {
       handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 

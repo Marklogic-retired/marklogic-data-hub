@@ -21,7 +21,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const {
     searchOptions,
   } = useContext(SearchContext);
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
 
   const [range, setRange] = useState<number[]>([]);
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
@@ -64,8 +64,6 @@ const NumericFacet: React.FC<Props> = (props) => {
       }
     } catch (error) {
       handleError(error)
-    } finally {
-      resetSessionTime()
     }
 
   }

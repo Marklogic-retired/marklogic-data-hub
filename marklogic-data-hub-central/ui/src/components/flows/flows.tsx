@@ -50,7 +50,7 @@ const StepDefinitionTypeTitles = {
 }
 
 const Flows: React.FC<Props> = (props) => {
-    const { handleError, resetSessionTime } = useContext(UserContext);
+    const { handleError } = useContext(UserContext);
     const [newFlow, setNewFlow] = useState(false);
     const [title, setTitle] = useState('');
     const [flowData, setFlowData] = useState({});
@@ -289,8 +289,6 @@ const Flows: React.FC<Props> = (props) => {
         }
         catch(error){
             handleError(error);
-        }finally {
-            resetSessionTime();
         }
     }
 
@@ -341,8 +339,6 @@ const Flows: React.FC<Props> = (props) => {
                 }
             } catch (error) {
                 console.error('Error getting latest job info ', error);
-            }finally {
-                resetSessionTime();
             }
         }
     }

@@ -22,8 +22,7 @@ import { MLButton, MLTooltip } from '@marklogic/design-system';
 const Query = (props) => {
 
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
     const {
         searchOptions,
@@ -90,8 +89,6 @@ const Query = (props) => {
             }
         } catch (error) {
             handleError(error)
-        } finally {
-            resetSessionTime()
         }
     }
 
@@ -123,8 +120,6 @@ const Query = (props) => {
            }
        } catch (error) {
            handleError(error)
-       } finally {
-           resetSessionTime()
        }
    }
 

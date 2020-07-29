@@ -23,7 +23,7 @@ const Statuses = {
 }
 
 const Run = (props) => {
-   const { handleError, resetSessionTime } = useContext(UserContext);
+   const { handleError } = useContext(UserContext);
 
     const history: any = useHistory();
 
@@ -81,8 +81,6 @@ const Run = (props) => {
         } catch (error) {
             console.error('Error getting flows', error);
             handleError(error)
-        } finally {
-          resetSessionTime();
         }
     }
 
@@ -123,8 +121,6 @@ const Run = (props) => {
         catch (error) {
             console.error('Error updating flow', error)
             setIsLoading(false);
-        } finally {
-          resetSessionTime();
         }
     }
 
@@ -151,8 +147,6 @@ const Run = (props) => {
                 content: 'Error adding step "' + artifactName + '" to flow "' + flowName + '."',
             });
             handleError(error);
-        } finally {
-            resetSessionTime();
         }
     }
 

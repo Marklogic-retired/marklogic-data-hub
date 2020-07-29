@@ -19,7 +19,7 @@ type Props = {
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
   const layout = {
     labelCol: { span: 6 },
@@ -77,8 +77,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       } else {
         handleError(error);
       }
-    } finally {
-      resetSessionTime();
     }
   };
 
@@ -97,8 +95,6 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         handleError(error);
       }
       toggleLoading(false);
-    } finally {
-      resetSessionTime();
     }
   }
 

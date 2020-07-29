@@ -16,8 +16,7 @@ const QueryExport = (props) => {
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
     const [hasStructured, setStructured] = useState<boolean>();
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
     const {
@@ -63,8 +62,6 @@ const QueryExport = (props) => {
             }
         } catch (error) {
             handleError(error);
-        } finally {
-            resetSessionTime();
         }
     }
 

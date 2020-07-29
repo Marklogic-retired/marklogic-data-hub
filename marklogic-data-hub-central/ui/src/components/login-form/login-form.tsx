@@ -30,7 +30,6 @@ const LoginForm: React.FC = () => {
       if (response.status === 200) {
         setMessage({show: false, text: ''});
         setIsLoading(false);
-        console.log(response);
         localStorage.setItem('loginResp',JSON.stringify(response.data));
         loginAuthenticated(username, response.data);
       }
