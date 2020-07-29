@@ -15,6 +15,8 @@
 */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
+
 const StepRunner = require("/data-hub/5/impl/step-runner.sjs");
 
 var endpointState;

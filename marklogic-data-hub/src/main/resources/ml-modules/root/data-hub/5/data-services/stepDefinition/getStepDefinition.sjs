@@ -15,6 +15,8 @@
 */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
+
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 var name;

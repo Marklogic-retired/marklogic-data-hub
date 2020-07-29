@@ -15,6 +15,8 @@
 */
 'use strict';
 
+// No privilege required: Just appends strings to an entity type to form collection names
+
 var entityType;
 
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");

@@ -15,8 +15,21 @@
  */
 'use strict';
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+
 var stepDefinitionType;
 var stepName;
 
 stepDefinitionType = stepDefinitionType.toLowerCase();
+
+if ("ingestion" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
+} else if ("mapping" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+} else if ("custom" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "execute");
+} else {
+  ds.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
+}
+
 require('/data-hub/5/artifacts/core.sjs').getArtifact(stepDefinitionType, stepName);

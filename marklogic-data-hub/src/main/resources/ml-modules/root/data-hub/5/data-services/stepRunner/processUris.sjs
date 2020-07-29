@@ -15,6 +15,8 @@
 */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
+
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 

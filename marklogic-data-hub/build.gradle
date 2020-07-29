@@ -206,8 +206,7 @@ task generateFilesForDataServices(type: JavaExec) {
 
 // Dynamically generate a task for each data-service directory, where the task can generate a Java interface for the data service
 new File("src/main/resources/ml-modules/root/data-hub/5/data-services").listFiles().each { file ->
-    // jobInfo is currently excluded as the Explorer source code already has a generated interface
-    if (file.isDirectory() && new File(file, "service.json").exists() && !"jobInfo".equals(file.getName())) {
+    if (file.isDirectory() && new File(file, "service.json").exists()) {
         task "generate${file.getName()}Interface"(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
             description = "Must run this from the ./marklogic-data-hub directory"
             serviceDeclarationFile = dataServicesPath + "/${file.getName()}/service.json"

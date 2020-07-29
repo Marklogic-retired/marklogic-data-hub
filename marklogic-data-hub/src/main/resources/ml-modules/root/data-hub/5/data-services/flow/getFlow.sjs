@@ -15,5 +15,7 @@
  */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
+
 var name;
 require('/data-hub/5/artifacts/core.sjs').getArtifact("flow", name);

@@ -33,6 +33,11 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "data-hub-write-custom",
+      "action": "http://marklogic.com/data-hub/privileges/write-custom",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "create-trigger",
       "action": "http://marklogic.com/xdmp/privileges/create-trigger",
       "kind": "execute"

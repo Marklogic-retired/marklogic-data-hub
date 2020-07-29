@@ -15,6 +15,9 @@
  */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 var propertiesToReturn;

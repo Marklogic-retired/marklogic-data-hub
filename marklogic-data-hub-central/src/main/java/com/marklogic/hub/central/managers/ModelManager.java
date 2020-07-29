@@ -29,7 +29,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.exceptions.DataHubException;
-import com.marklogic.hub.dataservices.JobInfo;
+import com.marklogic.hub.dataservices.ModelsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,17 +74,14 @@ public class ModelManager {
                         documentRecord.getContent(handle);
                         jsonRes.add(handle.get());
                     });
-        }
-        catch (MarkLogicServerException e) {
+        } catch (MarkLogicServerException e) {
             if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
                 logger.warn(e.getLocalizedMessage());
-            }
-            else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
+            } else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
                 logger.error(e.getLocalizedMessage());
             }
             throw new DataHubException(e.getServerMessage(), e);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new DataHubException(e.getLocalizedMessage(), e);
         }
 
@@ -115,14 +112,11 @@ public class ModelManager {
      * @return - a list of JsonNode containing job info
      */
     public List<JsonNode> getLatestJobInfoForAllModels() {
+        ModelsService service = ModelsService.on(finalDataServiceClient);
         return getModelNames()
             .stream()
-            .map(s -> getLatestJobData(finalDataServiceClient, s))
+            .map(modelName -> service.getLatestJobData(modelName))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
-    }
-
-    JsonNode getLatestJobData(DatabaseClient dbClient, String modelName) {
-        return JobInfo.on(dbClient).getLatestJobData(modelName);
     }
 }

@@ -15,6 +15,8 @@
  */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
+
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 var name;

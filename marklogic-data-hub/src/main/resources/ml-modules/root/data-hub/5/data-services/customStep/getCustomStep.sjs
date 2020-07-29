@@ -14,6 +14,9 @@
  limitations under the License.
  */
 'use strict';
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "execute");
+
 const Artifacts = require('/data-hub/5/artifacts/core.sjs')
 var stepName;
 

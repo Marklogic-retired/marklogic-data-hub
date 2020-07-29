@@ -15,6 +15,8 @@
 */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
+
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 

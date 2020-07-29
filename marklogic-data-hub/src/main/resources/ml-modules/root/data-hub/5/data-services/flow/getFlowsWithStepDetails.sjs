@@ -14,4 +14,7 @@
  limitations under the License.
  */
 'use strict';
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
+
 require('./flow-lib.sjs').getFlowsWithStepDetails();

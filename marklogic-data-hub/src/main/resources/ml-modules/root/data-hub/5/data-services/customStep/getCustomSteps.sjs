@@ -11,6 +11,9 @@
  limitations under the License.
  */
 'use strict';
+
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "execute");
+
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const dataHub = DataHubSingleton.instance();

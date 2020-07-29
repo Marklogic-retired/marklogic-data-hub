@@ -17,11 +17,23 @@
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const consts = require("/data-hub/5/impl/consts.sjs");
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 var stepDefinitionType;
 var stepName;
 
 stepDefinitionType = stepDefinitionType.toLowerCase();
+
+if ("ingestion" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
+} else if ("mapping" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
+} else if ("custom" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-custom", "execute");
+} else {
+  ds.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
+}
+
 const stepId = stepName + "-" + stepDefinitionType;
 xdmp.trace(consts.TRACE_STEP, `Deleting step ${stepId}`);
 
