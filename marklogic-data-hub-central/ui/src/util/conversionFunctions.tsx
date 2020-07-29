@@ -38,12 +38,19 @@ const getInitialChars = (str, num, suffix) => {
 }
 
 const extractCollectionFromSrcQuery = (query) => {
-
-    let srcCollection = query.substring(
-        query.lastIndexOf("[") + 2,
-        query.lastIndexOf("]") - 1
-    );
-    return getInitialChars(srcCollection,30,'...');
+    if (query.includes('[') && query.includes(']')) {
+        let srcCollection = query.substring(
+            query.lastIndexOf("[") + 2,
+            query.lastIndexOf("]") - 1
+        );
+        return getInitialChars(srcCollection, 30, '...');
+    } else {
+        let srcCollection = query.substring(
+            query.lastIndexOf("(") + 2,
+            query.lastIndexOf(")") - 1
+        );
+        return getInitialChars(srcCollection, 30, '...');
+    }
 }
 
 const getLastChars = (str, num, prefix) => {

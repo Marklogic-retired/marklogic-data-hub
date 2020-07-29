@@ -37,11 +37,20 @@ const CreateEditMappingDialog = (props) => {
       setSrcQuery(props.mapData.sourceQuery);
       setSelectedSource(props.mapData.selectedSource);
       if(props.mapData.selectedSource === 'collection'){
-      let srcCollection = props.mapData.sourceQuery.substring(
-          props.mapData.sourceQuery.lastIndexOf("[") + 2, 
-          props.mapData.sourceQuery.lastIndexOf("]") - 1
-      );
-      setCollections(srcCollection);
+      if(props.mapData.sourceQuery.includes('[') && props.mapData.sourceQuery.includes(']')) {
+          let srcCollection = props.mapData.sourceQuery.substring(
+              props.mapData.sourceQuery.lastIndexOf("[") + 2,
+              props.mapData.sourceQuery.lastIndexOf("]") - 1
+          );
+          setCollections(srcCollection);
+      }
+      else{
+          let srcCollection = props.mapData.sourceQuery.substring(
+            props.mapData.sourceQuery.lastIndexOf("(") + 2,
+            props.mapData.sourceQuery.lastIndexOf(")") - 1
+          );
+          setCollections(srcCollection);
+      }
       }
       setIsValid(true);
       setTobeDisabled(true);
@@ -143,7 +152,7 @@ const CreateEditMappingDialog = (props) => {
         sourceQuery: srcQuery
       }
     }
-    
+
 
     setIsValid(true);
 
@@ -154,7 +163,7 @@ const CreateEditMappingDialog = (props) => {
     if (status.code === 200) {
       props.setNewMap(false);
     } else if (status.code === 400) {
-      
+
       setErrorMessage(status.message)
       setIsNameDuplicate(true);
       setIsValid(false);
@@ -225,7 +234,7 @@ const CreateEditMappingDialog = (props) => {
         setCollections(event.target.value);
         if (props.mapData && props.mapData.collection) {
           if (props.mapData.collection === event.target.value) {
-            
+
             setCollectionsTouched(false);
           }
         }

@@ -89,7 +89,15 @@ describe('Create/Edit Mapping Step artifact component', () => {
     const queryInput = getByPlaceholderText('Enter Source Query');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
     expect(queryInput).toHaveTextContent('cts.collectionQuery(["testCollection"])');
-
+    fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery("testCollection")'}});
+    expect(queryInput).toHaveTextContent('cts.collectionQuery("testCollection")');
+    expect(collInput).toHaveValue("testCollection");
+    fireEvent.change(queryInput, { target: {value: "cts.collectionQuery(['testCollection'])"}});
+    expect(queryInput).toHaveTextContent("cts.collectionQuery(['testCollection'])");
+    expect(collInput).toHaveValue('testCollection');
+    fireEvent.change(queryInput, { target: {value: "cts.collectionQuery('testCollection')"}});
+    expect(queryInput).toHaveTextContent("cts.collectionQuery('testCollection')");
+    expect(collInput).toHaveValue('testCollection');
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
 
