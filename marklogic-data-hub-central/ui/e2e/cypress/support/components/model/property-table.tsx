@@ -50,9 +50,8 @@ class PropertyTable {
     return cy.findByTestId(`${propertyName}-span`).click();
   }
 
-  //Format: EntityTypeName-PropertyName-Definition-Definition
-  expandNestedPropertyRow(nestedStructureClass: string) {
-    return cy.get(`.${nestedStructureClass}`).find('td > div > [role=img]').eq(0).click();
+  expandStructuredTypeIcon(propertyName: string) {
+    return cy.findByTestId(`mltable-expand-${propertyName}`);
   }
 
   getDeletePropertyIcon(entityName: string, propertyName: string) {

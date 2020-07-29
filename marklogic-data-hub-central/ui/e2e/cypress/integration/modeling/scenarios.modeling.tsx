@@ -48,7 +48,7 @@ describe('Entity Modeling', () => {
 
   it('can add new properties to existing Entity, revert the entity, and delete shows step warning', () => {
     // Adding property to Order entity
-    entityTypeTable.expandEntityRow(0);
+    entityTypeTable.getExpandEntityIcon('Order').click();
     propertyTable.getAddPropertyButton('Order').click();
 
     propertyModal.newPropertyName('orderID');
@@ -75,7 +75,7 @@ describe('Entity Modeling', () => {
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
 
     // Adding property to Person entity
-    entityTypeTable.expandEntityRow(1);
+    entityTypeTable.getExpandEntityIcon('Person').click();
     propertyTable.getAddPropertyButton('Person').click();
 
     propertyModal.newPropertyName('newID');
@@ -325,7 +325,7 @@ describe('Entity Modeling', () => {
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
 
-    propertyTable.expandNestedPropertyRow('User-extra-Zip-Extra');
+    propertyTable.expandStructuredTypeIcon('extra').click();
     propertyTable.getMultipleIcon('fourDigit').should('not.exist');
     propertyTable.getPiiIcon('fourDigit').should('exist');
     //propertyTable.getWildcardIcon('fourDigit').should('exist');
@@ -381,7 +381,7 @@ describe('Entity Modeling', () => {
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('Address').click();
     propertyModal.getSubmitButton().click();
-    propertyTable.expandNestedPropertyRow('User-alt_address-Address');
+    propertyTable.expandStructuredTypeIcon('alt_address').click();
     propertyTable.getProperty('streetAlt').should('exist');
 
     // delete structured property
@@ -409,7 +409,7 @@ describe('Entity Modeling', () => {
 
   it('can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, and save all entities', () => {
     // Adding property to Order entity
-    entityTypeTable.expandEntityRow(0);
+    entityTypeTable.getExpandEntityIcon('Order').click();
     propertyTable.getAddPropertyButton('Order').click();
 
     propertyModal.newPropertyName('orderID');
@@ -427,7 +427,7 @@ describe('Entity Modeling', () => {
 
 
     // Adding property to Person entity
-    entityTypeTable.expandEntityRow(1);
+    entityTypeTable.getExpandEntityIcon('Person').click();
     propertyTable.getAddPropertyButton('Person').click();
 
     propertyModal.newPropertyName('personID');

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, wait } from '@testing-library/react';
+import { render, screen, fireEvent, wait, within } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
 
@@ -114,21 +114,24 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('Address')).toHaveLength(2);
 
     // Table expansion shipping property -> Address Structure type
-    userEvent.click(getAllByRole('img')[0]);
+    const shippingExpandIcon = getByTestId('mltable-expand-shipping');
+    userEvent.click(within(shippingExpandIcon).getByRole('img'));
 
     expect(getByTestId('add-struct-Zip')).toBeInTheDocument();
     expect(getAllByText(/zip/i)).toHaveLength(2);
     expect(getAllByText('street')).toHaveLength(1);
     expect(getAllByText('state')).toHaveLength(1);
 
-    // Table expansion for shipping property -> Zip structure type
-    userEvent.click(getAllByRole('img')[1]);
+    // Table expansion for zip property -> Zip structure type
+    const zipExpandIcon = getByTestId('mltable-expand-zip');
+    userEvent.click(within(zipExpandIcon).getByRole('img'));
 
     expect(getByText('fiveDigit')).toBeInTheDocument();
     expect(getByText('plusFour')).toBeInTheDocument();
 
     // Table expansion for billing property, Address structure type
-    userEvent.click(getAllByRole('img')[2]);
+    const billingExpandIcon = getByTestId('mltable-expand-billing');
+    userEvent.click(within(billingExpandIcon).getByRole('img'));
 
     expect(getAllByTestId('add-struct-Zip')).toHaveLength(2);
     expect(getAllByText(/zip/i)).toHaveLength(4);
@@ -136,7 +139,8 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('state')).toHaveLength(2);
 
     // Table expansion for billing property -> Zip structure type
-    userEvent.click(getAllByRole('img')[3]);
+    const zipBillingExpandIcon = getAllByTestId('mltable-expand-zip')[1];
+    userEvent.click(within(zipBillingExpandIcon).getByRole('img'));
 
     expect(getAllByText('fiveDigit')).toHaveLength(2);
     expect(getAllByText('plusFour')).toHaveLength(2);
@@ -376,7 +380,8 @@ describe('Entity Modeling Property Table Component', () => {
       />
     )
 
-    userEvent.click(getAllByRole('img')[0]);
+    const shippingExpandIcon = getByTestId('mltable-expand-shipping');
+    userEvent.click(within(shippingExpandIcon).getByRole('img'));
     userEvent.click(getByTestId('delete-Customer-Address-city'));
 
     await wait(() =>
