@@ -93,7 +93,8 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
             installedHubVersion = versions.getInstalledVersion();
         }
         catch (Exception e){
-            logger.info("Data Hub is not installed yet");
+            logger.error("Unable to determine version of existing Data Hub installation: " + e.getMessage());
+            logger.info("Will only check MarkLogic version to determine if Data Hub can be installed");
         }
 
         MarkLogicVersion mlVersion = versions.getMLVersion(serverVersion);
