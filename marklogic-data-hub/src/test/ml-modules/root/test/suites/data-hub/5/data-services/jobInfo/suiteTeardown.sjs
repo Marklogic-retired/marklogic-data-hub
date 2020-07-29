@@ -1,3 +1,0 @@
-declareUpdate();
-
-xdmp.collectionDelete("jobInfoTestEntity");

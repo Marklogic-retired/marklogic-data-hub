@@ -12,6 +12,8 @@
  */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 
 if (esMappingLib.versionIsCompatibleWithES()) {

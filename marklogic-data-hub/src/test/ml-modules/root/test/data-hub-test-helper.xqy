@@ -19,6 +19,13 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("content", "raw-content")
 ));
 
+declare variable $TYPE-TO-PERMISSIONS-MAP := map:new((
+  map:entry("entities", (xdmp:permission("data-hub-entity-model-reader", "read"), xdmp:permission("data-hub-entity-model-writer", "update"))),
+  map:entry("flows", (xdmp:permission("data-hub-flow-reader", "read"), xdmp:permission("data-hub-flow-writer", "update"))),
+  map:entry("mappings", (xdmp:permission("data-hub-mapping-reader", "read"), xdmp:permission("data-hub-mapping-writer", "update"))),
+  map:entry("step-definitions", (xdmp:permission("data-hub-step-definition-reader", "read"), xdmp:permission("data-hub-step-definition-writer", "update")))
+));
+
 declare function load-artifacts($caller-path as xs:string) as xs:string*
 {
   map:keys($TYPE-TO-COLLECTION-MAP) ! load-artifacts(., $caller-path)
@@ -76,7 +83,10 @@ declare private function load-artifacts(
   let $path := fn:replace($uri, $test-data-path, "")
   let $artifact-uri := "/" || $path
   let $content := test:get-test-file($path)
-  let $permissions := xdmp:default-permissions()
+  let $permissions := (
+    xdmp:default-permissions(),
+    map:get($TYPE-TO-PERMISSIONS-MAP, $artifact-type)
+  )
   let $collections := map:get($TYPE-TO-COLLECTION-MAP, $artifact-type)
   (: TODO Should really use artifact library for this :)
   let $_ := invoke-in-staging-and-final(function() {

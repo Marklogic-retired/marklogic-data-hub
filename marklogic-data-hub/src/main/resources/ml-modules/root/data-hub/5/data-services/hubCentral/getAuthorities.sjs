@@ -15,6 +15,8 @@
  */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/login", "execute");
+
 const Security = require("/data-hub/5/impl/security.sjs");
 
 const response = {

@@ -55,6 +55,7 @@ public interface ModelsService {
             private BaseProxy.DBFunctionRequest req_createModel;
             private BaseProxy.DBFunctionRequest req_getModelReferences;
             private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
+            private BaseProxy.DBFunctionRequest req_getLatestJobData;
 
             private ModelsServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -76,6 +77,8 @@ public interface ModelsService {
                     "getModelReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
                     "updateModelEntityTypes.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_getLatestJobData = this.baseProxy.request(
+                    "getLatestJobData.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -186,6 +189,21 @@ public interface ModelsService {
                           BaseProxy.documentParam("input", false, BaseProxy.JsonDocumentType.fromJsonNode(input))
                           ).responseNone();
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getLatestJobData(String entityCollection) {
+                return getLatestJobData(
+                    this.req_getLatestJobData.on(this.dbClient), entityCollection
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getLatestJobData(BaseProxy.DBFunctionRequest request, String entityCollection) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("entityCollection", false, BaseProxy.StringType.fromString(entityCollection))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new ModelsServiceImpl(db, serviceDeclaration);
@@ -255,5 +273,13 @@ public interface ModelsService {
    * 
    */
     void updateModelEntityTypes(com.fasterxml.jackson.databind.JsonNode input);
+
+  /**
+   * Invokes the getLatestJobData operation on the database server
+   *
+   * @param entityCollection	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getLatestJobData(String entityCollection);
 
 }

@@ -15,6 +15,8 @@
 */
 'use strict';
 
+xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/export-entities", "execute");
+
 const op = require('/MarkLogic/optic');
 const search = require('/MarkLogic/appservices/search/search');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");

@@ -14,6 +14,8 @@
 
 declareUpdate();
 
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
+
 cts.uris(null, null, cts.collectionQuery("http://marklogic.com/data-hub/mappings")).toArray().forEach(uri => {
   const doc = cts.doc(uri);
   // "Touch" the document to force the trigger to run

@@ -15,6 +15,8 @@
  */
 'use strict';
 
+// No privilege required: Returns ML and DH version data that is not sensitive
+
 const config = require("/com.marklogic.hub/config.sjs");
 
 const versions = {

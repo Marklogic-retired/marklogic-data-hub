@@ -85,6 +85,8 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @ParameterizedTest
     @ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
     public void test(TestModule testModule) {
+        // Ensure we run as data-hub-developer, which has the hub-central-developer role, which flow-developer does not
+        runAsDataHubDeveloper();
         TestSuiteResult result = new TestManager(adminHubConfig.newFinalClient()).run(testModule);
         for (TestResult testResult : result.getTestResults()) {
             String failureXml = testResult.getFailureXml();
