@@ -318,7 +318,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         assertEquals( "mapping-step-xml-mapping",getStepId(ingMapFlow,"4"));
 
         assertEquals("mapXmlToXml-mapping", getStepId(ingMapMasterFlow,"2"));
-        assertNull( getStepId(ingMapMasterFlow,"3"));
+        assertEquals("json-matching-step-json-matching", getStepId(ingMapMasterFlow,"3"));
         assertNull( getStepId(ingMapMasterFlow,"4"));
 
         assertEquals("custom-mapping-step-custom", getStepId(custFlow, "1"));
