@@ -13,7 +13,7 @@ const Curate: React.FC = () => {
         getFlows();
     },[]);
 
-    const { handleError, resetSessionTime } = useContext(UserContext);
+    const { handleError } = useContext(UserContext);
     const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
     const [entityModels, setEntityModels] = useState<any>({});
@@ -41,8 +41,6 @@ const Curate: React.FC = () => {
         } catch (error) {
             console.error('Error fetching entities', error);
             handleError(error);
-        } finally {
-          resetSessionTime();
         }
 
     }
@@ -57,8 +55,6 @@ const Curate: React.FC = () => {
         } catch (error) {
             let message = error.response.data.message;
             console.error('Error getting flows', message);
-        } finally {
-        resetSessionTime();
         }
     }
 
@@ -75,8 +71,6 @@ const Curate: React.FC = () => {
         console.error('Error while adding mapping step to new flow.', message);
         setIsLoading(false);
         handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -102,8 +96,6 @@ const Curate: React.FC = () => {
           content: 'Error adding step "' + mappingArtifactName + '" to flow "' + flowName + '."',
         });
         handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 

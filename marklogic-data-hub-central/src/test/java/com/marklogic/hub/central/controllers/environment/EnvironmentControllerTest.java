@@ -6,6 +6,7 @@ import com.marklogic.hub.impl.VersionInfo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.mock.web.MockHttpSession;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,7 +25,7 @@ public class EnvironmentControllerTest extends AbstractHubCentralTest {
 
         runAsTestUserWithRoles("hub-central-user");
 
-        EnvironmentController.SystemInfo actualSystemInfo = environmentController.getSystemInfo();
+        EnvironmentController.SystemInfo actualSystemInfo = environmentController.getSystemInfo(new MockHttpSession());
         assertNotNull(actualSystemInfo);
         assertEquals(versionInfo.getHubVersion(), actualSystemInfo.dataHubVersion);
         assertEquals(versionInfo.getMarkLogicVersion(), actualSystemInfo.marklogicVersion);

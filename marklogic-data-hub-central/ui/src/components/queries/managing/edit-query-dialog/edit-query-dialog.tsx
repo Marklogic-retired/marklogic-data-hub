@@ -7,8 +7,7 @@ import { MLButton } from '@marklogic/design-system';
 
 const EditQueryDialog = (props) => {
     const {
-        handleError,
-        resetSessionTime
+        handleError
     } = useContext(UserContext);
 
     const [query, setQuery] = useState(props.query);
@@ -86,8 +85,6 @@ const EditQueryDialog = (props) => {
             } else {
                 handleError(error);
             }
-        } finally {
-            resetSessionTime();
         }
         props.getQueries();
     }

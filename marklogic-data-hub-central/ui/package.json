@@ -45,6 +45,8 @@
     "reactour": "^1.15.2",
     "scroll-into-view": "^1.14.2",
     "sinon": "^9.0.1",
+    "sockjs-client": "^1.4.0",
+    "stompjs": "^2.3.3",
     "typescript": "3.7.2",
     "use-deep-compare-effect": "^1.3.1"
   },

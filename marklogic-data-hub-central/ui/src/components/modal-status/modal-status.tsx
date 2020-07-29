@@ -26,8 +26,8 @@ const ModalStatus: React.FC<Props> = (props) => {
     userNotAuthenticated,
     handleError,
     clearErrorMessage,
-    resetSessionTime,
-    getSessionTime
+    getSessionTime,
+    resetSessionTime
   } = useContext(UserContext);
   const [showModal, toggleModal] = useState(false);
   const [sessionTime, setSessionTime] = useState(SESSION_WARNING_COUNTDOWN);
@@ -36,7 +36,7 @@ const ModalStatus: React.FC<Props> = (props) => {
   const [sessionWarning, setSessionWarning] = useState(false);
   const location = useLocation();
   const history = useHistory();
-  let sessionCount;
+  let sessionCount = 300;
 
   useEffect(() => {
     if (user.error.type === 'MODAL') {
@@ -67,24 +67,30 @@ const ModalStatus: React.FC<Props> = (props) => {
 
 
 
-  useInterval(() => {
-    sessionCount = getSessionTime();
-    if(sessionCount <= SESSION_WARNING_COUNTDOWN && !sessionWarning){
+  useInterval(async () => {
+    if (user.authenticated) {
+      sessionCount = getSessionTime();
+      if (sessionCount <= SESSION_WARNING_COUNTDOWN && !sessionWarning) {
         setSessionWarning(true);
-    }
-    if(sessionWarning) {
-        if (sessionTime === 0) {
-            onCancel();
+      } else if (sessionCount > SESSION_WARNING_COUNTDOWN && user.error.type !== 'MODAL') {
+        setSessionWarning(false);
+        toggleModal(false);
+      }
+      if (sessionWarning) {
+        if (sessionTime <= 0) {
+          onCancel();
         } else {
-            setSessionTime(sessionTime - 1);
+          setSessionTime(getSessionTime());
         }
+      }
+    } else if (showModal && user.error.type !== 'MODAL') {
+      toggleModal(false);
     }
   }, 1000);
 
   const onOk = async () => {
     if (user.error.type === 'MODAL') {
       clearErrorMessage();
-
     } else if (sessionWarning) {
       // refresh session
       try {

@@ -16,7 +16,7 @@ import { AuthoritiesContext } from '../util/authorities';
 import { ConfirmationType } from '../types/modeling-types';
 
 const Modeling: React.FC = () => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const { modelingOptions, setEntityTypeNamesArray, clearEntityModified } = useContext(ModelingContext);
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [modifiedEntityTypes, setModifiedEntityTypes] = useState<any[]>([]);
@@ -58,8 +58,6 @@ const Modeling: React.FC = () => {
       return response['data'];
     } catch (error) {
       handleError(error)
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -72,7 +70,6 @@ const Modeling: React.FC = () => {
     } catch (error) {
       handleError(error)
     } finally {
-      resetSessionTime();
       toggleConfirmModal(false);
     }
   }

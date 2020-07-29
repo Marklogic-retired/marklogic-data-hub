@@ -30,7 +30,7 @@ type Props = {
 }
 
 const EntityTypeTable: React.FC<Props> = (props) => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const { modelingOptions, removeEntityModified, clearEntityModified } = useContext(ModelingContext);
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [allEntityTypes, setAllEntityTypes] = useState<any[]>([]);
@@ -96,8 +96,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       }
     } catch (error) {
       handleError(error)
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -111,7 +109,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     } catch (error) {
       handleError(error)
     } finally {
-      resetSessionTime();
       toggleConfirmModal(false);
       props.updateEntities();
     }
@@ -127,7 +124,6 @@ const EntityTypeTable: React.FC<Props> = (props) => {
     } catch (error) {
       handleError(error)
     } finally {
-      resetSessionTime();
       toggleConfirmModal(false);
     }
   }

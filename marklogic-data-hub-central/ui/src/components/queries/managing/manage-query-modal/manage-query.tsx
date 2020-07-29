@@ -22,7 +22,7 @@ const QueryModal = (props) => {
         clearAllGreyFacets
     } = useContext(SearchContext);
 
-    const { handleError, resetSessionTime } = useContext(UserContext);
+    const { handleError } = useContext(UserContext);
     const [editModalVisibility, setEditModalVisibility] = useState(false);
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [exportModalVisibility, setExportModalVisibility] = useState(false);
@@ -42,8 +42,6 @@ const QueryModal = (props) => {
             }
         } catch (error) {
             handleError(error);
-        } finally {
-            resetSessionTime();
         }
     }
 
@@ -60,8 +58,6 @@ const QueryModal = (props) => {
             await removeQuery(query);
         } catch (error) {
             handleError(error);
-        } finally {
-            resetSessionTime();
         }
         getQueries();
     }
@@ -275,8 +271,6 @@ const QueryModal = (props) => {
             }
         } catch (error) {
             handleError(error)
-        } finally {
-            resetSessionTime()
         }
     }
 

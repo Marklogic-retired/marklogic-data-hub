@@ -20,7 +20,6 @@ const { TextArea } = Input;
 const { Option } = Select;
 
 const AdvancedSettingsDialog = (props) => {
-  const { resetSessionTime } = useContext(UserContext);
   const tooltips = Object.assign({}, AdvancedSettings, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = 'Invalid JSON';
@@ -170,8 +169,6 @@ const AdvancedSettingsDialog = (props) => {
         let message = error.response.data.message;
         console.error('Error while creating the activity settings artifact', message)
         setLoading(false);
-      } finally {
-        resetSessionTime();
       }
     }
   }
@@ -231,8 +228,6 @@ const AdvancedSettingsDialog = (props) => {
         setStepDefinitionName('');
         setIsCustomIngestion(false);
         setAdditionalSettings('');
-      } finally {
-        resetSessionTime();
       }
     }
   }

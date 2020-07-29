@@ -10,8 +10,10 @@ import tiles from './config/tiles.config';
 import App from './App';
 import axiosMock from 'axios';
 import mocks from './api/__mocks__/mocks.data';
-import { UserContext } from './util/user-context';
+import UserProvider, { UserContext } from './util/user-context';
 import { userAuthenticated } from './assets/mock-data/user-context-mock';
+import {StompContext} from './util/stomp';
+import {defaultStompContext} from './assets/mock-data/stomp-mocks';
 
 jest.mock('axios');
 
@@ -19,14 +21,13 @@ const mockDevRolesService = authorities.DeveloperRolesService;
 
 describe('App component', () => {
 
-  mocks.loadAPI(axiosMock);
-
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
   })
 
   test('Verify header title links return to overview', async () => {
+      mocks.loadAPI(axiosMock);
       const firstTool = Object.keys(tiles)[0];
       // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
       history.push('/tiles');
@@ -53,6 +54,44 @@ describe('App component', () => {
       fireEvent.click(getByLabelText("header-title"));
       expect(getByLabelText("overview")).toBeInTheDocument();
 
+  });
+
+  test('Session token stored in local storage', async () => {
+    mocks.systemInfoAPI(axiosMock);
+    // mock localStorage
+    Object.defineProperty(window, 'localStorage', {
+      value: {
+        // have getItem return a value so it appears we just authenticated
+        getItem: jest.fn((key) => {
+          switch (key) {
+            case 'dataHubUser':
+              return 'hub-user';
+            case 'loginResp':
+              return '{"authorities":["loginToHubCentral"]}';
+            default:
+              return null;
+          }
+        }),
+        setItem: jest.fn(() => null)
+      },
+      writable: true
+    });
+    // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
+    history.push('/tiles');
+    const { getByLabelText, debug } = render(<Router history={history}>
+      <StompContext.Provider value={defaultStompContext}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <UserProvider><App/></UserProvider>
+        </AuthoritiesContext.Provider>
+      </StompContext.Provider>
+    </Router>);
+    // Defaults to overview
+    await expect(getByLabelText("overview")).toBeInTheDocument();
+    // check localStorage for session token
+    expect(window.localStorage.setItem).toHaveBeenCalledWith(
+      'hubCentralSessionToken',
+      'mySessionToken'
+    );
   });
 
 });

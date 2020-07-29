@@ -118,7 +118,7 @@ const layout = {
 };
 
 const PropertyModal: React.FC<Props> = (props) => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const { modelingOptions } = useContext(ModelingContext);
 
   const [modalTitle, setModalTitle] = useState('');
@@ -233,8 +233,6 @@ const PropertyModal: React.FC<Props> = (props) => {
       }
     } catch (error) {
       handleError(error)
-    } finally {
-      resetSessionTime();
     }
   }
 

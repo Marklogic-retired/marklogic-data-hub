@@ -19,6 +19,7 @@ import com.marklogic.hub.central.HttpSessionHubClientProvider;
 import com.marklogic.hub.central.HubCentral;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -41,6 +42,9 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     HttpSessionHubClientProvider hubClientProvider;
 
+    @Autowired
+    Environment environment;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -55,12 +59,19 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             // Define requests that are always permitted, regardless of whether the user is authenticated or not
             .authorizeRequests()
+                // Needed for websocket tests
+//                .antMatchers("/websocket/**").permitAll()
                 // Needed for springfox to work - see https://github.com/springfox/springfox/issues/1996#issuecomment-335155187
                 .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
                 // Non-springfox patterns to permit
-                .antMatchers(getAlwaysPermittedPatterns()).permitAll().anyRequest().authenticated()
-            .and()
-            .logout().logoutUrl("/api/logout").logoutSuccessHandler(((request, response, authentication) -> request.getSession().invalidate()));
+                .antMatchers(getAlwaysPermittedPatterns()).permitAll();
+        // needed for WebSocket test
+        if (environment.getProperty("hub.websocket.securityDisabled","false").equals("true")) {
+            http.authorizeRequests().antMatchers("/websocket/**").permitAll();
+        }
+        http.authorizeRequests().anyRequest().authenticated()
+                .and()
+                .logout().logoutUrl("/api/logout").logoutSuccessHandler(((request, response, authentication) -> request.getSession().invalidate()));
     }
 
     /**

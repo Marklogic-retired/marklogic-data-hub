@@ -32,8 +32,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Optional;
 
 @Controller
 public class EnvironmentController extends BaseController {
@@ -68,7 +70,7 @@ public class EnvironmentController extends BaseController {
 
     @RequestMapping(value = "/api/environment/systemInfo", method = RequestMethod.GET)
     @ResponseBody
-    public SystemInfo getSystemInfo() {
+    public SystemInfo getSystemInfo(HttpSession session) {
         VersionInfo versionInfo = VersionInfo.newVersionInfo(getHubClient());
         SystemInfo info = new SystemInfo();
         info.serviceName = versionInfo.getClusterName();
@@ -76,6 +78,10 @@ public class EnvironmentController extends BaseController {
         info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
+        Object hubCentralSessionToken = session.getAttribute("hubCentralSessionToken");
+        if (hubCentralSessionToken != null) {
+            info.sessionToken = hubCentralSessionToken.toString();
+        }
         return info;
     }
 
@@ -85,6 +91,7 @@ public class EnvironmentController extends BaseController {
         public String marklogicVersion;
         public String host;
         public String sessionTimeout;
+        public String sessionToken;
     }
 
     public static class EnvironmentInfo {

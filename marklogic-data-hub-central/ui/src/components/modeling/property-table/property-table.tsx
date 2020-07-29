@@ -68,7 +68,7 @@ const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
 }
 
 const PropertyTable: React.FC<Props> = (props) => {
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
   const { modelingOptions, updateEntityModified } = useContext(ModelingContext)
   const [showPropertyModal, toggleShowPropertyModal] = useState(false);
 
@@ -620,8 +620,6 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
     } catch (error) {
       handleError(error)
-    } finally {
-      resetSessionTime();
     }
   }
 

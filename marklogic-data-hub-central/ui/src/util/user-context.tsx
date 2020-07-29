@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {Subscription} from 'rxjs';
 import axios from 'axios';
-import {
-  createUserPreferences,
-  getUserPreferences,
-  updateUserPreferences
-} from '../services/user-preferences';
-import { UserContextInterface, IUserContextInterface } from '../types/user-types';
-import { AuthoritiesContext } from './authorities';
-import {setEnvironment, resetEnvironment} from '../util/environment';
-import { useInterval } from '../hooks/use-interval';
+import {createUserPreferences, getUserPreferences, updateUserPreferences} from '../services/user-preferences';
+import {IUserContextInterface, UserContextInterface} from '../types/user-types';
+import {AuthoritiesContext} from './authorities';
+import {StompContext, STOMPState} from './stomp';
+import {resetEnvironment, setEnvironment} from '../util/environment';
+import {useInterval} from '../hooks/use-interval';
 
 const defaultUserData = {
   name: '',
@@ -38,18 +36,71 @@ export const UserContext = React.createContext<IUserContextInterface>({
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
+  const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription|null>(null);
+  const [unsubscribeId, setUnsubscribeId] = useState<string|null>(null);
   const sessionUser = localStorage.getItem('dataHubUser');
   const authoritiesService = useContext(AuthoritiesContext);
-  let sessionCount = 300;
+  const stompService = useContext(StompContext);
+  const sessionCount = useRef<number>(300);
   let sessionTimer = true;
+
+  const setSessionTime = (timeInSeconds) => {
+    sessionCount.current = timeInSeconds;
+  }
+
+  const resetSessionMonitor = () => {
+    // unsubscribe from STOMP/WebSockets
+    if (unsubscribeId) {
+      stompService.unsubscribe(unsubscribeId);
+      setUnsubscribeId(null);
+    }
+    // unsubscribe from message queue, so we don't double up subscriptions on login/logout
+    if (stompMessageSubscription !== null) {
+      stompMessageSubscription.unsubscribe();
+      setStompMessageSubscription(null);
+    }
+    const closedWebSockets = new Promise<STOMPState>(resolve => {
+      stompService.state.asObservable().subscribe((value) => {
+        if (value.valueOf() === STOMPState.CLOSED) {
+          resolve(value);
+        }
+      });
+    });
+    stompService.disconnect();
+    return closedWebSockets;
+  };
+
+  const subscribeToMonitorSession = () => {
+    const hubCentralSessionToken = localStorage.getItem('hubCentralSessionToken');
+    if (hubCentralSessionToken) {
+      if (!stompMessageSubscription) {
+        setStompMessageSubscription(stompService.messages.subscribe((message) => {
+          setSessionTime(parseInt(JSON.parse(message.body).sessionTimeout));
+        }));
+      }
+      if (!unsubscribeId) {
+        stompService.subscribe(`/topic/sessionStatus/${hubCentralSessionToken}`, (msgId: string) => {
+          setUnsubscribeId(msgId);
+        });
+      }
+    }
+  };
+  const monitorSession = () => {
+    if (stompService.isClosed()) {
+      stompService.configure(window.location.origin + '/websocket');
+      stompService.tryConnect().then(subscribeToMonitorSession);
+    }
+  };
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
     setEnvironment();
     let session = await axios('/api/environment/systemInfo');
-    sessionCount = parseInt(session.data['sessionTimeout']);
+    setSessionTime(parseInt(session.data['sessionTimeout']));
 
     localStorage.setItem('dataHubUser', username);
     localStorage.setItem('serviceName', session.data.serviceName);
+    localStorage.setItem('hubCentralSessionToken', session.data.sessionToken);
+    monitorSession();
 
     const authorities: string[] =  authResponse.authorities || [];
     authoritiesService.setAuthorities(authorities);
@@ -63,7 +114,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         authenticated: true,
         // redirect: true,
         // pageRoute: values.pageRoute,
-        maxSessionTime: sessionCount
+        maxSessionTime: sessionCount.current
       });
     } else {
       createUserPreferences(username);
@@ -72,12 +123,13 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         // redirect: true,
-        maxSessionTime: sessionCount
+        maxSessionTime: sessionCount.current
       });
     }
   };
 
   const sessionAuthenticated = (username: string) => {
+    monitorSession();
     localStorage.setItem('dataHubUser', username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
@@ -87,7 +139,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         name: username,
         authenticated: true,
         // pageRoute: values.pageRoute,
-        maxSessionTime: sessionCount
+        maxSessionTime: sessionCount.current
       });
     } else {
       createUserPreferences(username);
@@ -96,12 +148,14 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
-    localStorage.setItem('dataHubUser', '');
-    localStorage.setItem('serviceName', '');
-    localStorage.setItem('loginResp','');
-    authoritiesService.setAuthorities([]);
-    resetEnvironment();
-    setUser({ ...user,name: '', authenticated: false}); //, redirect: true});
+    resetSessionMonitor().then(() => {
+      localStorage.setItem('dataHubUser', '');
+      localStorage.setItem('serviceName', '');
+      localStorage.setItem('loginResp', '');
+      authoritiesService.setAuthorities([]);
+      resetEnvironment();
+      setUser({...user, name: '', authenticated: false}); //, redirect: true});
+    });
   };
 
   const handleError = (error) => {
@@ -206,11 +260,11 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   }
 
   const resetSessionTime = () => {
-    sessionCount = user.maxSessionTime;
+    setSessionTime(user.maxSessionTime);
   }
 
   const getSessionTime = () =>{
-      return sessionCount;
+      return sessionCount.current;
   }
 
   useEffect(() => {
@@ -225,7 +279,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   useInterval(() => {
     if (user.authenticated && sessionTimer) {
-        sessionCount -= 1;
+      setSessionTime(getSessionTime() - 1);
     }
   }, 1000);
 

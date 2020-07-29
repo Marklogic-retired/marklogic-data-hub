@@ -17,7 +17,7 @@ const Load: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
-  const { handleError, resetSessionTime } = useContext(UserContext);
+  const { handleError } = useContext(UserContext);
 
   //For role based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -53,8 +53,6 @@ const Load: React.FC = () => {
       console.error('Error While creating the Load Data artifact!', message)
       setIsLoading(false);
       handleError(error);
-    } finally {
-      resetSessionTime();
     }
 
   }
@@ -88,8 +86,6 @@ const Load: React.FC = () => {
         console.error('Error while deleting load data artifact.', message);
         setIsLoading(false);
         handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -103,8 +99,6 @@ const Load: React.FC = () => {
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error getting flows', message);
-    } finally {
-      resetSessionTime();
     }
 }
 
@@ -122,8 +116,6 @@ const Load: React.FC = () => {
         console.error('Error while adding load data step to new flow.', message);
         setIsLoading(false);
         handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 
@@ -149,8 +141,6 @@ const Load: React.FC = () => {
           content: 'Error adding step "' + loadArtifactName + '" to flow "' + flowName + '."',
         });
         handleError(error);
-    } finally {
-      resetSessionTime();
     }
   }
 

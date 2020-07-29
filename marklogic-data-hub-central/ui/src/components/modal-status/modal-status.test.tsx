@@ -10,6 +10,7 @@ import ModalStatus from './modal-status';
 import NoMatchRedirect from '../../pages/noMatchRedirect';
 import { UserContext } from '../../util/user-context';
 import {
+  userAuthenticated,
   userSessionWarning,
   userModalError,
   userNoErrorNoSessionWarning,
