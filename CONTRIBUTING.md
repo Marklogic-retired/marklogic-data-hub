@@ -1,3 +1,5 @@
+This is a test, the PR will be rejected. 
+
 # Contributing to MarkLogic Data Hub
 
 MarkLogic Data Hub welcomes new contributors. This document will guide you
