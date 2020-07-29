@@ -21,7 +21,7 @@ content.forEach(c => {
 
     // Extract the id and construct a new URI
     let id = value.envelope.instance.Customer.id;
-    let newUri = '/customers/' + id + '.json';
+    let newUri = '/customers/' + sem.uuidString() + '/' + id + '.json';
 
     // Set the contents new URI
     c.uri = newUri;

@@ -8,8 +8,6 @@
     "Customer": {
       "required": [],
       "pii": [],
-      "elementRangeIndex": [],
-      "rangeIndex": [],
       "wordLexicon": [],
       "properties": {
         "id": {

@@ -1,0 +1,6 @@
+{
+  "user-name": "hub-operator",
+  "description": "A user that is used for running flows",
+  "password": "password",
+  "role": ["data-hub-operator", "hub-central-operator"]
+}
