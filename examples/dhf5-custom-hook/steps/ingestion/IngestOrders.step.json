@@ -1,0 +1,33 @@
+{
+  "name" : "IngestOrders",
+  "description" : "",
+  "customHook" : {
+    "module" : "/custom-modules/ingestion/IngestOrders/archive-hook.sjs",
+    "parameters" : {
+      "archiveCollection" : "Archive"
+    },
+    "user" : "hub-operator",
+    "runBefore" : false
+  },
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "LoadOrders"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "",
+  "provenanceGranularityLevel" : "coarse",
+  "collections" : [ "IngestOrders" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "input/orders",
+  "outputURIReplacement" : ".*/input,''",
+  "separator" : ",",
+  "sourceFormat" : "csv",
+  "stepId" : "IngestOrders-ingestion"
+}

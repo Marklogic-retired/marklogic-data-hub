@@ -1,0 +1,6 @@
+{
+  "user-name": "hub-developer",
+  "description": "A user that is used for reading and writing from MarkLogic Data Hub databases and for maintaining DHF modules",
+  "password": "password",
+  "role": ["data-hub-developer", "hub-central-developer"]
+}

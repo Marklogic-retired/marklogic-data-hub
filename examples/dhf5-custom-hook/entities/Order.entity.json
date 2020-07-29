@@ -8,8 +8,6 @@
     "Order" : {
       "required" : [ ],
       "pii" : [ ],
-      "elementRangeIndex" : [ ],
-      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : { }
     }

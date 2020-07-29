@@ -1,0 +1,26 @@
+{
+  "name" : "IngestCustomers",
+  "description" : "",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "additionalCollections" : [ ],
+  "headers" : {
+    "sources" : [ {
+      "name" : "LoadCustomers"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
+  "sourceQuery" : "cts.collectionQuery([])",
+  "collections" : [ "IngestCustomers" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "input/customers",
+  "outputURIReplacement" : ".*/input,''",
+  "separator" : ",",
+  "sourceFormat" : "csv",
+  "stepId" : "IngestCustomers-ingestion"
+}
