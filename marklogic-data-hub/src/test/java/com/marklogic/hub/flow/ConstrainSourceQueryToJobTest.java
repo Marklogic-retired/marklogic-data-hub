@@ -1,67 +1,46 @@
 package com.marklogic.hub.flow;
 
-import com.marklogic.bootstrap.Installer;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.step.RunStepResponse;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class ConstrainSourceQueryToJobTest extends HubTestBase {
+public class ConstrainSourceQueryToJobTest extends AbstractHubCoreTest {
 
     @Autowired
     FlowRunnerImpl flowRunner;
 
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
-
-    @AfterAll
-    public static void cleanUp() {
-        new Installer().deleteProjectDir();
-    }
-
-    @BeforeEach
-    public void setupEach() {
-        setupProjectForRunningTestFlow();
-        runAsDataHubOperator();
-    }
-
     @Test
     public void test() {
-        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", "1").withJobId("job1"));
+        installReferenceModelProject();
+        runAsDataHubOperator();
+
+        final String flowName = "ingestToFinal";
+
+        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs(flowName, "1").withJobId("job1"));
         flowRunner.awaitCompletion();
         RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
         assertEquals("job1", stepResponse.getJobId());
-        assertEquals(1, stepResponse.getSuccessfulBatches(), "The XML document should have been ingested successfully");
+        assertEquals(1, stepResponse.getSuccessfulBatches(), "The document should have been ingested successfully");
 
-        final String mapXmlStep = "6";
+        final String mapXmlStep = "2";
 
         final Map<String, Object> options = new HashMap<>();
         options.put("constrainSourceQueryToJob", true);
 
-        flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", mapXmlStep).withJobId("job2").withOptions(options));
+        flowResponse = flowRunner.runFlow(new FlowInputs(flowName, mapXmlStep).withJobId("job2").withOptions(options));
         flowRunner.awaitCompletion();
         stepResponse = flowResponse.getStepResponses().get(mapXmlStep);
         assertEquals(0, stepResponse.getSuccessfulBatches(), "Since the sourceQuery was constrained to job2, and " +
             "no documents have that value for their datahubCreatedByJob metadata key, then nothing should have been processed");
 
-        flowResponse = flowRunner.runFlow(new FlowInputs("testFlow", mapXmlStep).withJobId("job1"));
+        flowResponse = flowRunner.runFlow(new FlowInputs(flowName, mapXmlStep).withJobId("job1"));
         flowRunner.awaitCompletion();
         stepResponse = flowResponse.getStepResponses().get(mapXmlStep);
         assertEquals(1, stepResponse.getSuccessfulBatches(), "Since the sourceQuery was constrained to job1, and the " +
