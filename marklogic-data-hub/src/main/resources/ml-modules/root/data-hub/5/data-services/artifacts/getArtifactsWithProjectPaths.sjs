@@ -49,10 +49,11 @@ if (entityModels.length > 0) {
   const protectedPathsExist = securityConfig.config && securityConfig.config["protected-path"] && securityConfig.config["protected-path"].length > 0;
   if (protectedPathsExist) {
     securityConfig.config["protected-path"].forEach((path, index) => {
-      // This name is intended to be consistent with what's defined in HubConfig.PII_PROTECTED_PATHS_FILE, although
-      // it is not doing leading zero-padding
+      // This name is intended to be consistent with what's defined in HubConfig.PII_PROTECTED_PATHS_FILE
+      const indexPlusOne = index + 1;
+      const prefix = indexPlusOne < 10 ? "0" + indexPlusOne : indexPlusOne;
       artifactsWithProjectPaths.push({
-        path: "src/main/ml-config/security/protected-paths/" + (index + 1) + "-pii-protected-paths.json",
+        path: "src/main/ml-config/security/protected-paths/" + prefix + "_pii-protected-paths.json",
         json: path
       });
     });
