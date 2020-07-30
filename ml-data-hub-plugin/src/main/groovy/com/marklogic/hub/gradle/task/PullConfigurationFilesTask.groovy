@@ -2,7 +2,6 @@ package com.marklogic.hub.gradle.task
 
 import com.marklogic.gradle.task.HubTask
 import com.marklogic.hub.hubcentral.HubCentralManager
-import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -29,6 +28,5 @@ class PullConfigurationFilesTask extends HubTask {
 
         println "Applying downloaded user configuration files to project"
         hubCentralManager.applyHubCentralZipToProject(getHubProject(), zipFile)
-        FileUtils.deleteQuietly(zipFile)
     }
 }
