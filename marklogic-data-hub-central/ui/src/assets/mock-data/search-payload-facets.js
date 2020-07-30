@@ -569,7 +569,7 @@ const searchPayloadFacets = {
       }
     ]
   },
-  "gender": {
+  "Customer.gender": {
     "type": "xs:string",
     "facetValues": [
       {
@@ -714,7 +714,7 @@ const searchPayloadFacets = {
       }
     ]
   },
-  "sales_region": {
+  "Customer.sales_region": {
     "type": "xs:string",
     "facetValues": [
       {

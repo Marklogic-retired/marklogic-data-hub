@@ -73,7 +73,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   const onChange = (e) => {
     let isNested = props.name === props.propertyPath ? false : true;
     setRange(e);
-    props.onChange(props.datatype, props.name, e, isNested)
+    props.onChange(props.datatype, props.constraint, e, isNested)
   }
 
   const onChangeMinInput = (e) => {
@@ -82,7 +82,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       let modifiedRange = [...range];
       modifiedRange[0] = e;
       setRange(modifiedRange);
-      props.onChange(props.datatype, props.name, modifiedRange, isNested)
+      props.onChange(props.datatype, props.constraint, modifiedRange, isNested)
     }
   }
 
@@ -92,7 +92,7 @@ const NumericFacet: React.FC<Props> = (props) => {
       let modifiedRange = [...range];
       modifiedRange[1] = e;
       setRange(modifiedRange);
-      props.onChange(props.datatype, props.name, modifiedRange, isNested)
+      props.onChange(props.datatype, props.constraint, modifiedRange, isNested)
     }
   }
 

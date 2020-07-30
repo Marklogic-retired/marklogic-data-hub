@@ -13,23 +13,23 @@
         "pin"
       ],
       "primaryKey": "customerId",
-      "elementRangeIndex": [
-        "name", "email","pin"
-      ],
       "properties": {
         "customerId": {
           "datatype": "integer"
         },
         "name": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
         },
         "email": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
         },
         "pin": {
-          "datatype": "integer"
+          "datatype": "integer",
+          "facetable": true
         },
         "nicknames": {
           "datatype": "array",
