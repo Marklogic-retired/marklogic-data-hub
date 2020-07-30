@@ -107,13 +107,14 @@ class DataHubPlugin implements Plugin<Project> {
                 "Data Hub associated with this Gradle task")
         project.task("hubApplyProjectZip", group: deployGroup, type: ApplyProjectZipTask,
             description: "Apply a project zip that was downloaded from Hub Central to this project. This will first delete " +
-                "all user files that can be managed with Hub Central, which are: entity models, flows, step definitions, and steps. " +
+                "all user files that can be managed with Hub Central, which are: entity models, entity model-based files, flows, and steps. " +
                 "The contents of the project zip, specified via -Pfile=/path/to/datahub-project.zip, " +
                 "will then be extracted into the project directory.")
         project.task("hubPullConfigurationFiles", group: deployGroup, type: PullConfigurationFilesTask,
-            description: "Download the Hub Central artifacts and apply the project zip to this project. " +
-                "This will first download the artifacts (entity models, flows, step definitions, and steps) , then delete all user files in the project directory"+
-                " and the contents of the downloaded zip will then be extracted into the project directory.")
+            description: "Download user configuration files from a Hub Central instance and apply them to this project. " +
+                "This consists of downloading the user configuration files (entity models, entity model-based files, flows, and steps) as a zip, " +
+                "deleting all such user configuration files in the project directory, "+
+                "and finally extracting the contents of the downloaded zip into the project directory.")
 
         String hubMigrationGroup = "Data Hub Migration"
         project.task("hubDeleteLegacyMappings", group: hubMigrationGroup, type: DeleteLegacyMappingsTask,

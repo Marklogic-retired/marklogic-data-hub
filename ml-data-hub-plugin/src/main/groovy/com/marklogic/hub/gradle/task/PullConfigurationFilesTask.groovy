@@ -11,24 +11,23 @@ class PullConfigurationFilesTask extends HubTask {
 
     @TaskAction
     void pullConfigurationFiles() {
-
         HubCentralManager hubCentralManager = new HubCentralManager()
         File zipFile
         FileOutputStream fos
-        println "Downloading project files"
-        try{
-            zipFile = File.createTempFile("datahub-project", ".zip")
+        try {
+            zipFile = File.createTempFile("hub-central-files", ".zip")
+            println "Downloading user configuration files to: " + zipFile
             fos = new FileOutputStream(zipFile)
             hubCentralManager.writeProjectArtifactsAsZip(getHubConfig().newHubClient(), fos)
         }
-        catch (Exception e){
-            throw new GradleException("Unable to download project files", e)
+        catch (Exception e) {
+            throw new GradleException("Unable to download user configuration files; cause: " + e.getMessage(), e)
         }
         finally {
             IOUtils.closeQuietly(fos)
         }
 
-        println "Applying project files from downloaded project file"
+        println "Applying downloaded user configuration files to project"
         hubCentralManager.applyHubCentralZipToProject(getHubProject(), zipFile)
         FileUtils.deleteQuietly(zipFile)
     }
