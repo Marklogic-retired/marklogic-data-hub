@@ -477,7 +477,8 @@ bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is do
 
 setupSSL.dependsOn(testClasses)
 bootstrap.dependsOn(setupSSL)
-test.dependsOn(bootstrap)
+task bootstrapAndTest(dependsOn:["bootstrap", "test"])
+test.mustRunAfter bootstrap
 testIntegration.dependsOn(bootstrap)
 testAcceptance.dependsOn(bootstrap)
 testBootstrap.dependsOn(bootstrap)

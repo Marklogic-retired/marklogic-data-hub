@@ -21,7 +21,7 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;"'
     		junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
 		    def result=false;
@@ -119,7 +119,7 @@ def dhfWinTests(String mlVersion, String type){
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
         bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat clean'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
         bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
         bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
         bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
@@ -170,9 +170,13 @@ pipeline{
 	    steps{
 	    script{
 	        def reviewState=getReviewState()
-	        if((!env.CHANGE_TITLE.startsWith("DHFPROD-"))||(reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){
+	        if((!env.CHANGE_TITLE.startsWith("DHFPROD-"))){
 	            sh 'exit 1'
 
+	        }
+	        println(reviewState)
+	        if((reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){
+	            sh 'exit 1'
 	        }
             def obj=new abortPrevBuilds();
             obj.abortPrevBuilds();
@@ -462,7 +466,7 @@ pipeline{
                 props = readProperties file:'data-hub/pipeline.properties';
 				copyRPM 'Release','9.0-11'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;'
+				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -Dorg.gradle.jvmargs=-Xmx1g -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew marklogic-data-hub:testBootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ ;sleep 10s;'
 				junit '**/TEST-*.xml'
                 def output=readFile 'data-hub/console.log'
 				def result=false;
@@ -863,7 +867,7 @@ pipeline{
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
                                 bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat clean'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
                                 bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
                                 bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
                                 bat 'set PATH=C:\\Program Files\\Java\\jdk-11\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
