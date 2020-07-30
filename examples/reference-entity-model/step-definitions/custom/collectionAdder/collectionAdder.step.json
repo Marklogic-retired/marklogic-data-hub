@@ -1,0 +1,10 @@
+{
+  "lang": "zxx",
+  "name": "collectionAdder",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json",
+    "collectionToAdd": "changeme"
+  },
+  "modulePath": "/custom-modules/custom/collectionAdder/collectionAdder.sjs"
+}
