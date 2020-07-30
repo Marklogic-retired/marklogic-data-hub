@@ -1,6 +1,6 @@
 {
   "user-name": "hub-developer",
-  "description": "Generic developer account; will soon be superceded by persona-specific accounts",
+  "description": "Generic developer account",
   "password": "%%testPassword%%",
   "role": [
     "hub-central-developer"

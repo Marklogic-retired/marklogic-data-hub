@@ -33,4 +33,10 @@ task runFlows {
     }
 }
 
-mlDeploy.finalizedBy runFlows
+task mergeJsonCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
+    flowName = "CurateCustomerJSON"
+    steps = ["3", "4"]
+}
+
+mlDeploy.finalizedBy runFlows, mergeJsonCustomers
+mergeJsonCustomers.mustRunAfter runFlows
