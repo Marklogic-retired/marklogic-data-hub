@@ -9,15 +9,28 @@ class CreateStepTask extends HubTask {
 
     @TaskAction
     void createStep() {
-        if (!project.hasProperty("stepName") || !project.hasProperty("stepType")) {
-            throw new GradleException("Please specify a step name and step type via -PstepName=MyStepName and -PstepType=(ingestion|mapping)")
-        }
+        String stepDefName = project.hasProperty("stepDefName") ? project.property("stepDefName").toString() : null
+        String stepName =  project.hasProperty("stepName") ? project.property("stepName").toString() : null
+        String stepType =  project.hasProperty("stepType") ? project.property("stepType").toString() : null
+        String entityType = project.hasProperty("entityType") ? project.property("entityType").toString() : null
 
-        Pair<File, String> results = new ScaffoldingImpl(getHubConfig()).createStepFile(project.property("stepName"), project.property("stepType"))
-        println "Created step file at: " + results.getLeft().getAbsolutePath()
+        if (stepName == null || stepType == null) {
+            throw new GradleException("Please specify a step name and step type via -PstepName=MyStepName and -PstepType=(ingestion|mapping|custom)")
+        }
+        if ("mapping".equalsIgnoreCase(stepType)){
+            if(entityType == null){
+                throw new GradleException("Please specify an entity type for the mapping step")
+            }
+            if(stepDefName != null) {
+                throw new GradleException("Cannot specify step definition name for 'mapping' steps")
+            }
+        }
+        Pair<File, String> results = new ScaffoldingImpl(getHubConfig()).createStepFile(stepName, stepType, stepDefName, entityType)
+
         if (results.getRight() != null) {
             println results.getRight()
         }
+        println "Step file is at: " + results.getLeft().getAbsolutePath()
     }
 
 }

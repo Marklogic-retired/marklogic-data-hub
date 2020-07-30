@@ -30,7 +30,7 @@ class CreateStepTaskTest extends BaseTest {
         result.task(":hubCreateStep").outcome == FAILED
     }
 
-    def "create any valid step"() {
+    def "create ingestion step"() {
         given:
         propertiesFile << """
             ext {
@@ -60,5 +60,38 @@ class CreateStepTaskTest extends BaseTest {
 
         then:
         result.task(":hubCreateStep").outcome == FAILED
+    }
+
+    def "create mapping step without entity type"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=myMap
+                stepType=mapping
+            }
+        """
+
+        when:
+        def result = runFailTask('hubCreateStep')
+
+        then:
+        result.task(":hubCreateStep").outcome == FAILED
+    }
+
+    def "create custom step"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=myCustomStep
+                stepType=custom
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateStep')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateStep").outcome == SUCCESS
     }
 }

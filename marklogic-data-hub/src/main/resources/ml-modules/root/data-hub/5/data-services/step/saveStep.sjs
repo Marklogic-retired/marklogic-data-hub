@@ -19,6 +19,7 @@ const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const Step = require("/data-hub/5/impl/step.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var stepDefinitionType;
 var stepProperties;
@@ -74,6 +75,17 @@ if (existingStep) {
 
   if(!stepProperties.stepDefinitionName){
     throw new Error(`Missing required property 'stepDefinitionName' for step: ${stepName}`);
+  }
+
+  if(stepProperties.entityType){
+    if(fn.docAvailable("/entities/"+ stepProperties.entityType +".entity.json")){
+      const entityTypeId = entityLib.getEntityTypeId(entityLib.findModelByEntityName(stepProperties.entityType), stepProperties.entityType);
+      stepProperties.targetEntityType = entityTypeId;
+    }
+    else {
+      stepProperties.targetEntityType = stepProperties.entityType;
+    }
+    delete stepProperties.entityType;
   }
 
   const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
