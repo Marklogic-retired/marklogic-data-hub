@@ -45,7 +45,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
     test('Verify that hub properties is expanded by default', () => {
         const parsedModelData = entityFromJSON(modelResponse);
         const entityDefArray = entityParser(parsedModelData);
-        const { getByText,querySelector } = render(<Sidebar
+        const { getByText } = render(<Sidebar
             entityDefArray={entityDefArray}
             facets={searchPayloadFacets}
             selectedEntities={[]}
@@ -60,7 +60,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
     test('Verify that entity properties is expanded when entity is selected', () => {
         const parsedModelData = entityFromJSON(modelResponse);
         const entityDefArray = entityParser(parsedModelData);
-        const { getByText,querySelector } = render(<Sidebar
+        const { getByText } = render(<Sidebar
             entityDefArray={entityDefArray}
             facets={searchPayloadFacets}
             selectedEntities={['Customer']}
@@ -73,5 +73,32 @@ describe("Sidebar createdOn face time window dropdown", () => {
         userEvent.click(getByText('Hub Properties'));
         expect(document.querySelector('#entity-properties div')).toHaveAttribute('aria-expanded','false');
         expect(document.querySelector('#hub-properties div')).toHaveAttribute('aria-expanded','true');
+    });
+
+    test('Verify entity properties, marked as facetable in entityModel, are rendered properly as facets', () => {
+        const parsedModelData = entityFromJSON(modelResponse);
+        const entityDefArray = entityParser(parsedModelData);
+        const { getByText, getByTestId } = render(<Sidebar
+            entityDefArray={entityDefArray}
+            facets={searchPayloadFacets}
+            selectedEntities={['Customer']}
+            facetRender = {jest.fn()}
+            checkFacetRender = {jest.fn()}
+        />);
+        expect(getByText("Entity Properties")).toBeInTheDocument(); //Checking if Entity Properties label is available
+        
+        //Validate if gender property and its values
+        expect(getByTestId("gender-facet")).toBeInTheDocument();
+        expect(getByText("F")).toBeInTheDocument();
+        expect(getByText("454")).toBeInTheDocument(); //Count of documents with gender as F
+        expect(getByText("M")).toBeInTheDocument();
+        expect(getByText("546")).toBeInTheDocument(); //Count of documents with gender as M
+
+        //Validate if sales_region property and its values
+        expect(getByTestId("sales_region-facet")).toBeInTheDocument();
+        expect(getByText("Alabama")).toBeInTheDocument();
+        expect(getByText("18")).toBeInTheDocument(); //Count of documents with sales region as Alabama
+        expect(getByText("Alaska")).toBeInTheDocument();
+        expect(getByText("15")).toBeInTheDocument(); //Count of documents with sales region as Alaska
     });
 });

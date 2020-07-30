@@ -166,6 +166,7 @@ const Facet: React.FC<Props> = (props) => {
         <div
           className={styles.name}
           data-cy={stringConverter(props.name) + "-facet"}
+          data-testid={stringConverter(props.name) + "-facet"}
         >
           <MLTooltip title={props.name}>{formatTitle()}</MLTooltip>
             <MLTooltip

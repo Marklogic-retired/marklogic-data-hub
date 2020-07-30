@@ -24,7 +24,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
 
   const onChange = (e) => {
     let isNested = props.constraint === props.propertyPath ? false : true;
-    props.onChange(props.datatype, props.name, e, isNested);
+    props.onChange(props.datatype, props.constraint, e, isNested);
     (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
   }
 

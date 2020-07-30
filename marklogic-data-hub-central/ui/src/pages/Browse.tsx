@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { Layout, Tooltip, Spin, Select } from 'antd';
+import { Layout } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
@@ -11,7 +11,6 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import ResultTable from '../components/result-table/result-table';
 import { updateUserPreferences, createUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
@@ -19,13 +18,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
 import { AuthoritiesContext } from "../util/authorities";
-import { fetchQueries } from '../api/queries';
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
 import { MLTooltip, MLSpin } from '@marklogic/design-system';
-
-
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -45,9 +41,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     resetSearchOptions,
     setEntity,
     applySaveQuery,
-    setZeroState,
-    setPageWithEntity,
-    setPage
+    setPageWithEntity
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -121,7 +115,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     } catch (error) {
-      console.log('error', error)
+        console.error('error', error)
       handleError(error);
     } finally {
       setIsLoading(false);
