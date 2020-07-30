@@ -22,85 +22,79 @@ import java.util.Optional;
 
 public class SearchQuery {
 
-  private DocSearchQueryInfo query;
-  private List<String> propertiesToDisplay;
-  private long start;
-  private long pageLength;
-  private List<SortOrder> sortOrder;
+    private DocSearchQueryInfo query;
+    private List<String> propertiesToDisplay;
+    private long start;
+    private long pageLength;
+    private List<SortOrder> sortOrder;
 
-  public SearchQuery() {
-    this.query = new DocSearchQueryInfo();
-    this.propertiesToDisplay = new ArrayList<>();
-  }
-
-  public DocSearchQueryInfo getQuery() {
-    return this.query;
-  }
-
-  public void setQuery(DocSearchQueryInfo query) {
-    this.query = query;
-  }
-
-  public long getStart() {
-    return start;
-  }
-
-  public void setStart(long start) {
-    this.start = start;
-  }
-
-  public long getPageLength() {
-    return pageLength;
-  }
-
-  public void setPageLength(long pageLength) {
-    this.pageLength = pageLength;
-  }
-
-  public Optional<List<SortOrder>> getSortOrder() {
-    return Optional.ofNullable(sortOrder);
-  }
-
-  public void setSortOrder(List<SortOrder> sortOrder) {
-    this.sortOrder = sortOrder;
-  }
-
-  public List<String> getPropertiesToDisplay() {
-    return propertiesToDisplay;
-  }
-
-  public void setPropertiesToDisplay(List<String> propertiesToDisplay) {
-    this.propertiesToDisplay = propertiesToDisplay;
-  }
-
-  public final static class SortOrder {
-
-    private String name;
-    private String dataType;
-    private boolean ascending;
-
-    public String getName() {
-      return name;
+    public SearchQuery() {
+        this.query = new DocSearchQueryInfo();
+        this.propertiesToDisplay = new ArrayList<>();
     }
 
-    public void setName(String name) {
-      this.name = name;
+    public DocSearchQueryInfo getQuery() {
+        return this.query;
     }
 
-    public String getDataType() {
-      return dataType;
+    public void setQuery(DocSearchQueryInfo query) {
+        this.query = query;
     }
 
-    public void setDataType(String dataType) {
-      this.dataType = dataType;
+    public long getStart() {
+        return start;
     }
 
-    public boolean isAscending() {
-      return ascending;
+    public void setStart(long start) {
+        this.start = start;
     }
 
-    public void setAscending(boolean ascending) {
-      this.ascending = ascending;
+    public long getPageLength() {
+        return pageLength;
     }
-  }
+
+    public void setPageLength(long pageLength) {
+        this.pageLength = pageLength;
+    }
+
+    public Optional<List<SortOrder>> getSortOrder() {
+        return Optional.ofNullable(sortOrder);
+    }
+
+    public void setSortOrder(List<SortOrder> sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
+    public List<String> getPropertiesToDisplay() {
+        return propertiesToDisplay;
+    }
+
+    public void setPropertiesToDisplay(List<String> propertiesToDisplay) {
+        this.propertiesToDisplay = propertiesToDisplay;
+    }
+
+    public final static class SortOrder {
+
+        private String propertyName;
+        private String sortDirection;
+
+        public String getPropertyName() {
+            return propertyName;
+        }
+
+        public void setPropertyName(String propertyName) {
+            this.propertyName = propertyName;
+        }
+
+        public String getSortDirection() {
+            if (!this.sortDirection.equals("ascending") && !this.sortDirection.equals("descending")) {
+                sortDirection = "descending";
+            }
+            return sortDirection;
+        }
+
+        public void setSortDirection(String sortDirection) {
+            this.sortDirection = sortDirection;
+        }
+    }
 }

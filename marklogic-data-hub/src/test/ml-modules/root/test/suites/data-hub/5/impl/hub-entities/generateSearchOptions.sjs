@@ -135,7 +135,73 @@ function generateExplorerWithFacetableAndSortableProperties() {
   ];
 }
 
+function verifySortOperatorsForSortableProperties() {
+  const input = [{
+    "info" : {
+      "title": "Book"
+    },
+    "definitions": {
+      "Book": {
+        "elementRangeIndex": ["bookId"],
+        "properties": {
+          "title": {"datatype": "string", "facetable": true, "sortable": true, "collation": "http://marklogic.com/collation/"},
+          "authors": {"datatype": "array", "sortable": true, "items": {"datatype": "string"}},
+          "bookId": {"datatype": "string", "collation": "http://marklogic.com/collation/"},
+          "completedDate": {"datatype": "dateTime", "facetable": true},
+        }
+      }
+    }
+  }];
+
+  const expOptions = hent.dumpSearchOptions(input, true);
+  return [
+    test.assertEqual("sort", xs.string(fn.head(expOptions.xpath("/*:operator/@name")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'titleDescending']")),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleDescending']/*:sort-order/@direction")))),
+    test.assertEqual("//*:instance/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleDescending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'titleAscending']")),
+    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleAscending']/*:sort-order/@direction")))),
+    test.assertEqual("//*:instance/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleAscending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'authorsDescending']")),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsDescending']/*:sort-order/@direction")))),
+    test.assertEqual("//*:instance/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsDescending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'authorsAscending']")),
+    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsAscending']/*:sort-order/@direction")))),
+    test.assertEqual("//*:instance/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsAscending']/*:sort-order/*:path-index")))),
+    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'bookId']")),
+    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'completedDate']"))
+  ];
+}
+
+function verifyReplaceEsNamespace() {
+  let propertyPath = "/es:instance/es:entityType/es:value";
+  let updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual("/*:instance/*:entityType/*:value", updatedPropertyPath);
+
+  propertyPath = "/es:instance/aes:entityType/es:value";
+  updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual("/*:instance/aes:entityType/*:value", updatedPropertyPath);
+
+  propertyPath = "/es1:instance/es:entityType/es3:value";
+  updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual("/es1:instance/*:entityType/es3:value", updatedPropertyPath);
+
+  propertyPath = "/es1:instance/es2:entityType/es3:value";
+  updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual("/es1:instance/es2:entityType/es3:value", updatedPropertyPath);
+
+  propertyPath = "test";
+  updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual("test", updatedPropertyPath);
+
+  propertyPath = "";
+  updatedPropertyPath = hent.replaceEsNamespace(propertyPath);
+  test.assertEqual(null, updatedPropertyPath);
+}
+
 []
     .concat(generateOptionsWithElementRangeIndex())
     .concat(generateExplorerOptionsWithElementRangeIndex())
-    .concat(generateExplorerWithFacetableAndSortableProperties());
+    .concat(generateExplorerWithFacetableAndSortableProperties())
+    .concat(verifySortOperatorsForSortableProperties())
+    .concat(verifyReplaceEsNamespace());

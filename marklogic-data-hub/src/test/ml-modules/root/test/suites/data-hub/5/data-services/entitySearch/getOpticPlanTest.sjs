@@ -45,7 +45,7 @@ function testValidAscendingPlan() {
         'EntitySearchEntity',
         'EntitySearchEntity', 10,
         structuredQuery, '',
-        [{'name':'searchEntityProp1', 'ascending':true}],
+        [{'propertyName':'searchEntityProp1', 'sortDirection':'ascending'}],
         ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
     const result = op.import(plan).result();
     const firstItem = fn.head(result);
@@ -62,7 +62,7 @@ function testValidDescendingPlan() {
         'EntitySearchEntity',
         'EntitySearchEntity', 10,
         structuredQuery, '',
-        [{'name':'searchEntityProp1', 'ascending':false}],
+        [{'propertyName':'searchEntityProp1', 'sortDirection':'descending'}],
         ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
     const result = op.import(plan).result();
     const firstItem = fn.head(result);
@@ -81,7 +81,7 @@ function testPlanWithBadSortOrder() {
             'EntitySearchEntity',
             'EntitySearchEntity', 10,
             structuredQuery, '',
-            [{'name':'colDoesNotExist', 'ascending':false}],
+            [{'propertyName':'colDoesNotExist', 'sortDirection':'descending'}],
             ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
         const result = op.import(plan).result();
     } catch (e) {
