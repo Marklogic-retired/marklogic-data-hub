@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
@@ -24,11 +25,15 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.StepDefinitionManager;
+import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -77,44 +82,92 @@ public class ScaffoldingImpl implements Scaffolding {
     }
 
     /**
-     * Create a step file  based on the given name and type.
+     * Create a step file  based on the given stepName, stepType, entityType (for non ingestion steps),
+     *  and stepDefName.
      *
-     * @param name
-     * @param type
+     * @param stepName
+     * @param stepType
+     * @param stepDefName
+     * @param entityType
      * @return a Pair with a File representing the created file, and a String representing an optional message that,
      * if not null, should likely be presented to the caller
      */
-    public Pair<File, String> createStepFile(String name, String type) {
-        StepDefinition.StepDefinitionType stepType = StepDefinition.StepDefinitionType.getStepDefinitionType(type);
-        Assert.notNull(stepType, "Unrecognized step type: " + type);
-        Assert.isTrue(stepType.equals(StepDefinition.StepDefinitionType.INGESTION) || stepType.equals(StepDefinition.StepDefinitionType.MAPPING),
-            "Can only create a step of type 'ingestion' or 'mapping'");
+    public Pair<File, String> createStepFile(String stepName, String stepType, String stepDefName, String entityType) {
+        StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
+        StepDefinitionType stepDefType = StepDefinitionType.getStepDefinitionType(stepType);
+        Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
+        Assert.isTrue(stepDefType.equals(StepDefinitionType.INGESTION) || stepDefType.equals(StepDefinitionType.MAPPING) ||
+                stepDefType.equals(StepDefinitionType.CUSTOM),
+            "Can only create a step of type 'ingestion', 'mapping' or 'custom'");
 
-        File stepFile = hubConfig.getHubProject().getStepFile(stepType, name);
+
+        StepDefinition stepDefinition = null;
+        JsonNode step;
+        StringBuilder messageBuilder = new StringBuilder();
+        File stepFile = hubConfig.getHubProject().getStepFile(stepDefType, stepName);
         if (stepFile.exists()) {
             throw new IllegalArgumentException("Cannot create step; a step file already exists at: " + stepFile.getAbsolutePath() + ". Please choose a different name for your step.");
         }
         stepFile.getParentFile().mkdirs();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode step = objectMapper.createObjectNode();
-        step.put("name", name);
-        step.put("description", "");
+        ObjectNode stepPayLoad = objectMapper.createObjectNode();
+        stepPayLoad.put("name", stepName);
+        stepPayLoad.put("description", "");
+        stepPayLoad.put("stepDefinitionType", stepType);
+        if(stepDefName != null) {
+            stepPayLoad.put("stepDefinitionName", stepDefName);
+        }
+        else {
+            if(StepDefinitionType.CUSTOM.equals(stepDefType)){
+                stepDefName = stepName;
+                stepPayLoad.put("stepDefinitionName", stepDefName);
+            }
+        }
 
-        String message = null;
-        if (StepDefinition.StepDefinitionType.INGESTION.equals(stepType)) {
-            step.put("sourceFormat", "json");
-            step.put("targetFormat", "json");
-        } else {
-            step.put("targetEntityType", "http://example.org/EntityName-1.0.0/EntityName");
-            step.put("selectedSource", "query");
-            step.put("sourceQuery", "cts.collectionQuery('changeme')");
-            message = "The mapping step file will need to be modified before usage, as it has example values for targetEntityType and sourceQuery.";
+        if (StepDefinitionType.INGESTION.equals(stepDefType)) {
+            stepPayLoad.put("sourceFormat", "json");
+            stepPayLoad.put("targetFormat", "json");
+        }
+        else {
+            stepPayLoad.put("selectedSource", "query");
+            stepPayLoad.put("sourceQuery", "cts.collectionQuery('changeme')");
+            if(entityType != null){
+                stepPayLoad.put("entityType", entityType);
+            }
+        }
+
+        if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
+            stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
+            createCustomModule(stepDefName, stepType);
+            stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
+            stepDefinitionManager.saveStepDefinition(stepDefinition);
+            messageBuilder.append(String.format("Created step definition '%s' of type '%s'.\n", stepName, stepType));
+            messageBuilder.append("The module file for the step definition is available at "
+                + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs" + ". \n");
+            messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
+        }
+        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. It will need to be modified before usage.");
+        DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
+        try {
+            if(stepDefinition != null) {
+                ArtifactService artifactService = ArtifactService.on(stagingClient);
+                artifactService.setArtifact("stepDefinition", stepDefName, objectMapper.valueToTree(stepDefinition));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to write step definition to database; cause: " + e.getMessage(), e);
+        }
+
+        try {
+            StepService stepService = StepService.on(stagingClient);
+            step = stepService.saveStep(stepType, stepPayLoad);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to write step to database; cause: " + e.getMessage(), e);
         }
 
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
-            return Pair.of(stepFile, message);
+            return Pair.of(stepFile, messageBuilder.toString());
         } catch (IOException e) {
             throw new RuntimeException("Unable to write step to file: " + stepFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
         }
