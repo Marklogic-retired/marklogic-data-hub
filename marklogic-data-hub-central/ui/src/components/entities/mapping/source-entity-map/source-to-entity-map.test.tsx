@@ -96,7 +96,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Filtering Name column in Source (JSON Source Data) and Entity tables', () => {
 
-        const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        const { getByText, getByTestId, getAllByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
             sourceData={data.jsonSourceDataMultipleSiblings}
             entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
@@ -120,8 +120,8 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(getByTestId('submitSearch-key')); //Click on Search button to apply the filter with the desired string
 
         //Check if the expected values are available/not available in search result.
-        expect(getByText('nutFreeName')).toBeInTheDocument();
-        expect(getByText('NamePreferred')).toBeInTheDocument();
+        expect(getAllByText('nutFreeName').length).toEqual(2);
+        expect(getAllByText('NamePreferred').length).toEqual(2);
         expect(getByText('John')).toBeInTheDocument();
         expect(queryByText('proteinId')).not.toBeInTheDocument();
         expect(queryByText('proteinType')).not.toBeInTheDocument();
@@ -151,8 +151,8 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText('Frog virus 3')).toBeInTheDocument();
         expect(getByText('OrganismType')).toBeInTheDocument();
         expect(getByText('scientific')).toBeInTheDocument();
-        expect(getByText('nutFreeName')).toBeInTheDocument();
-        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+        expect(getAllByText('nutFreeName').length).toEqual(2);
+        expect(getAllByText('FirstNamePreferred').length).toEqual(2);
         expect(getByText('John')).toBeInTheDocument();
         expect(queryByText('suffix')).not.toBeInTheDocument(); //This is not visible since only root and first level are expanded in the default state
 
@@ -186,15 +186,14 @@ describe('RTL Source-to-entity map tests', () => {
         //Check if the source table properties are not affected by the filter on Entity table
         expect(getByText('proteinId')).toBeInTheDocument();
         expect(getByText('proteinType')).toBeInTheDocument();
-        expect(getByText('nutFreeName')).toBeInTheDocument();
-        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
-        expect(getByText('LastName')).toBeInTheDocument();
+        expect(getAllByText('nutFreeName').length).toEqual(2);
+        expect(getAllByText('FirstNamePreferred').length).toEqual(2);
+        expect(getAllByText('LastName').length).toEqual(2);
         expect(getByText('withNutsOrganism')).toBeInTheDocument();
         expect(getByText('OrganismName')).toBeInTheDocument();
         expect(getByText('Frog virus 3')).toBeInTheDocument();
         expect(getByText('OrganismType')).toBeInTheDocument();
         expect(getByText('scientific')).toBeInTheDocument();
-        expect(getByText('FirstNamePreferred')).toBeInTheDocument();
         expect(getByText('John')).toBeInTheDocument();
         expect(queryByText('suffix')).not.toBeInTheDocument();
 
@@ -216,7 +215,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Filtering of Name column in XML Source data', () => {
 
-        const { getByText, getByTestId, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        const { getByText, getByTestId, getAllByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
             sourceData={data.xmlSourceDataMultipleSiblings}
             entityTypeProperties={data.entityTypePropertiesMultipleSiblings}
@@ -237,7 +236,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText(/withNuts:/)).toBeInTheDocument();
         expect(getByText('Frog virus 3')).toBeInTheDocument();
         expect(getByText('scientific')).toBeInTheDocument();
-        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(getAllByText(/nutFree:/).length).toEqual(2);
         expect(queryByText('NamePreferred')).not.toBeInTheDocument();
         expect(queryByText('John')).not.toBeInTheDocument();
         expect(queryByText('LastName')).not.toBeInTheDocument();
@@ -256,7 +255,7 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(resetSourceSearch);
 
         //Check if the table goes back to the default state after resetting the filter on source table.
-        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(getAllByText(/nutFree:/).length).toEqual(2);
         expect(getByText(/withNuts:/)).toBeInTheDocument();
         expect(onClosestTableRow(getByText('Frog virus 3'))?.style.display).toBe('none');
         expect(onClosestTableRow(getByText('scientific'))?.style.display).toBe('none');
@@ -495,7 +494,7 @@ describe('RTL Source-to-entity map tests', () => {
     test('Verify evaluation of valid expression for mapping reader user', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.testJSONResponse })));
         //Updating mapping expression as a mapping writer user first
-        const { getByText, getByTestId, rerender, debug } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        const { getByText, getByTestId, rerender } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
         let propAttributeExpression = getByText('placeholderAttribute')
 
         fireEvent.change(propAttributeExpression, { target: {value: "proteinType" }});
@@ -523,7 +522,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Verify evaluation of invalid expression for mapping writer user', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: data.errorJSONResponse })));
-        const { getByText, getByTestId, queryByTestId, queryByText, debug, getByTitle } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
+        const { getByText, getByTestId, queryByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />)
         let propIdExpression = getByText('id')
 
         fireEvent.change(propIdExpression, { target: {value: "proteinID" }})
@@ -594,7 +593,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('CollapseAll/Expand All feature in JSON Source data table and Entity table', () => {
 
-        const { getByTestId, getByText, debug, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        const { getByTestId, getByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
         />);
 
@@ -650,10 +649,10 @@ describe('RTL Source-to-entity map tests', () => {
             sourceData={data.xmlSourceData}
         />);
 
-        //Check if the expected elements are present in the DOM before hittting the Expan/Collapse button
+        //Check if the expected elements are present in the DOM before hittting the Expand/Collapse button
         expect(queryByText('FirstNamePreferred')).not.toBeInTheDocument();
         expect(queryByText('LastName')).not.toBeInTheDocument();
-        expect(getByText(/nutFree/)).toBeInTheDocument();
+        let nutFree = getByText(/nutFree/);
         expect(getByText('@proteinType')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
 
@@ -790,7 +789,7 @@ describe('Enzyme Source-to-entity map tests', () => {
     });
 
     test('XML source data renders properly',() => {
-        const { getByText,getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
+        const { getByText, getAllByText, getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
         //Expanding all the nested levels first
         fireEvent.click(getByTestId('expandCollapseBtn-source'));
         fireEvent.click(getByTestId('expandCollapseBtn-entity'));
@@ -802,6 +801,7 @@ describe('Enzyme Source-to-entity map tests', () => {
         expect(getByText('home')).toBeInTheDocument();
         expect(getByText(/nutFree:/)).toBeInTheDocument();
         expect(getByText('FirstNamePreferred')).toBeInTheDocument();
+
     });
 
     test('Nested entity data renders properly',() => {
@@ -878,9 +878,58 @@ describe('RTL Source Selector/Source Search tests', () => {
         expect(mapExp).toHaveTextContent("nutFreeName/FirstNamePreferred");
     });
 
+    test('JSON source data with objects - Right display of objects and icons in source dropdown', async() => {
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
+        const { getByText, getByTestId, getAllByTestId } = render(<SourceToEntityMap {...data.mapProps} sourceData = {data.jsonSourceDataMultipleSiblings} mappingVisible={true}/>);
+        let sourceSelector = getByTestId("itemTypes-listIcon");
+        fireEvent.click(sourceSelector);
+
+        //Verify object properties in source dropdown only appear once when data is an array of Objects 
+        expect(getAllByTestId('nutFreeName-option').length).toEqual(1);
+        expect(getAllByTestId('FirstNamePreferred-option').length).toEqual(1);
+        expect(getAllByTestId('LastName-option').length).toEqual(1);
+
+        //Verify Array icon is not present when item has no children
+        expect(getByTestId('FirstNamePreferred-optionIcon')).toHaveAttribute('src', '');
+
+        //Verify Array icon is present when item has children
+        expect(getByTestId('nutFreeName-optionIcon')).toHaveAttribute('src', 'icon_array.png');
+        expect(getByTestId('LastName-optionIcon')).toHaveAttribute('src', 'icon_array.png');
+
+        //Verify tooltip for Array icon
+        fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
+        await waitForElement(() => getByText('Multiple'));
+        fireEvent.mouseOver(getByTestId('nutFreeName-optionIcon'))
+        await waitForElement(() => getByText('Multiple'));
+        
+    });
+
+    test('XML source data with objects - Right display of objects and icons in source dropdown', async() => {
+        axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
+        const { getByText, getByTestId, getAllByTestId } = render(<SourceToEntityMap {...data.mapProps} sourceData = {data.xmlSourceDataMultipleSiblings} mappingVisible={true}/>);
+        let sourceSelector = getByTestId("itemTypes-listIcon");
+        fireEvent.click(sourceSelector);
+
+        //Verify object properties in source dropdown only appear once when data is an array of Objects 
+        expect(getAllByTestId('nutFree:name-option').length).toEqual(1);
+        expect(getAllByTestId('FirstNamePreferred-option').length).toEqual(1);
+        expect(getAllByTestId('LastName-option').length).toEqual(1);
+
+        //Verify Array icon is not present when item has no children
+        expect(getByTestId('FirstNamePreferred-optionIcon')).toHaveAttribute('src', '');
+
+        //Verify Array icon is present when item has children
+        expect(getByTestId('nutFree:name-optionIcon')).toHaveAttribute('src', 'icon_array.png');
+
+        //Verify tooltip for Array icon
+        fireEvent.mouseOver(getByTestId('nutFree:name-optionIcon'))
+        await waitForElement(() => getByText('Multiple'));        
+    });
+
+
     test('Nested JSON source data - Right XPATH expression',  async() => {
         axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
-        const { getByText,getAllByText,getByTestId, getAllByRole } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        const { getByText, getAllByText, getByTestId, getAllByTestId, getAllByRole } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
@@ -897,17 +946,11 @@ describe('RTL Source Selector/Source Search tests', () => {
         //Check if indentation is right
         expect(firstName[1]).toHaveStyle("line-height: 2vh; text-indent: 20px;");
 
-        //Verify Array icon is not present when item has no children
-        expect(getByTestId('FirstNamePreferred-optionIcon')).toHaveAttribute('src', '')
-
-        //Verify Array icon is present when item has children
-        expect(getByTestId('LastName-optionIcon')).toHaveAttribute('src', 'icon_array.png')
-
-        //Verify Array icon is present when item has no children but value was an Array of strings.
+        //Verify Array icon is present when item has no children but value was an Array of simple values.
         expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
-
+        
         //Verify tooltip for Array icon
-        fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
+        fireEvent.mouseOver(getByTestId('proteinDog-optionIcon'))
         await waitForElement(() => getByText('Multiple'));
 
         //Click on 'FirstNamePreferred'
@@ -924,7 +967,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
     test('Nested XML source data - Right XPATH expression',  async() => {
         axiosMock.post['mockImplementation'](data.mapProps.updateMappingArtifact);
-        const {getAllByText,getByTestId, getByText, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
+        const {getAllByText,getByTestId, getAllByTestId, getByText, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  sourceData={data.xmlSourceData} mappingVisible={true}/>);
 
         //Expanding all the nested levels first
         fireEvent.click(getByTestId('expandCollapseBtn-source'));
@@ -947,9 +990,17 @@ describe('RTL Source Selector/Source Search tests', () => {
         //Verify Array icon is present when item has children
         expect(getByTestId('sampleProtein-optionIcon')).toHaveAttribute('src', 'icon_array.png')
 
-        //Verify Array icon is present when item has no children but value was an Array of strings.
+        //Verify Array icon is present when item has no children but value was an Array of simple values.
         expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
 
+        //Verify option in source dropdown only appears once when value is an Array of simple values.
+        let proteinDog = (getAllByTestId('proteinDog-option'));
+        expect(proteinDog.length).toEqual(1);
+
+        //Verify option representing object in source dropdown only appears once when value is an array of Objects.
+        let nutFreeName = (getAllByTestId('nutFree:name-option'));
+        expect(nutFreeName.length).toEqual(1);
+        
         //Verify tooltip for Array icon
         fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
         await waitForElement(() => getByText('Multiple'));
@@ -978,7 +1029,7 @@ describe('RTL Source Selector/Source Search tests', () => {
         await(waitForElement(() =>  getAllByRole("option"),{"timeout":600}))
         //Set 'sourceContext' to 'nutFreeName'
         let nutFreeName = getAllByText("nutFreeName");
-        expect(nutFreeName.length).toEqual(2)
+        expect(nutFreeName.length).toEqual(2);
         fireEvent.click(getAllByText("nutFreeName")[1]);
         expect(await(waitForElement(() => getByTestId("successMessage"),{"timeout":600})))
 

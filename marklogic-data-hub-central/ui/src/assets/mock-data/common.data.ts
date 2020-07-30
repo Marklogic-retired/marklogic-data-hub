@@ -77,11 +77,19 @@ const jsonSourceDataMultipleSiblings = [
       ]}
     ]
   },
-  { rowKey: 7, key: 'proteinCat', val: 'commercial' },
   {
-    rowKey: 8, key: 'withNutsOrganism', children: [
-    { rowKey: 9, key: 'OrganismName', val: 'Frog virus 3' },
-    { rowKey: 10, key: 'OrganismType', val: 'scientific' }
+    rowKey: 7, key: 'nutFreeName', children: [
+      { rowKey: 8, key: 'FirstNamePreferred', val: 'Eric'},
+      { rowKey: 9, key: 'LastName', val: 'Johnson', children: [
+        { rowKey: 10, key: 'suffix', val: 'Jr.'}
+      ]}
+      ]
+  },
+  { rowKey: 11, key: 'proteinCat', val: 'commercial' },
+  {
+    rowKey: 12, key: 'withNutsOrganism', children: [
+    { rowKey: 13, key: 'OrganismName', val: 'Frog virus 3' },
+    { rowKey: 14, key: 'OrganismType', val: 'scientific' }
   ]
   }
 ];
@@ -97,11 +105,17 @@ const xmlSourceDataMultipleSiblings = [
         { rowKey: 6, key: 'LastName', val: 'Smith' }
       ]
       },
-      { rowKey: 7, key: 'proteinCat', val: 'commercial' },
       {
-        rowKey: 8, key: 'withNuts:Organism', children: [
-        { rowKey: 9, key: 'OrganismName', val: 'Frog virus 3' },
-        { rowKey: 10, key: 'OrganismType', val: 'scientific' }
+        rowKey: 7, key: 'nutFree:name', children: [
+        { rowKey: 8, key: 'FirstNamePreferred', val: 'Eric' },
+        { rowKey: 9, key: 'LastName', val: 'Johnson' }
+      ]
+      },
+      { rowKey: 10, key: 'proteinCat', val: 'commercial' },
+      {
+        rowKey: 11, key: 'withNuts:Organism', children: [
+        { rowKey: 12, key: 'OrganismName', val: 'Frog virus 3' },
+        { rowKey: 13, key: 'OrganismType', val: 'scientific' }
       ]
       }
     ]
