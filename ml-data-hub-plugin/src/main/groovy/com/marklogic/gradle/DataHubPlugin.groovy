@@ -24,7 +24,6 @@ import com.marklogic.appdeployer.impl.SimpleAppDeployer
 import com.marklogic.gradle.task.*
 import com.marklogic.gradle.task.client.WatchTask
 import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
-import com.marklogic.gradle.task.databases.ClearModulesDatabaseTask
 import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
 import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
@@ -175,9 +174,6 @@ class DataHubPlugin implements Plugin<Project> {
         CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager())
         watchTask.onModulesLoaded = new ModuleWatchingConsumer(commandContext, generateFunctionMetadataCommand)
         watchTask.afterModulesLoadedCallback = new AfterModulesLoadedCallback(loadUserModulesCommand, commandContext)
-
-        ((ClearModulesDatabaseTask)project.tasks.getByName("mlClearModulesDatabase")).command = new ClearDHFModulesCommand(hubConfig, dataHub)
-        project.tasks.mlClearModulesDatabase.getDependsOn().add("mlDeleteModuleTimestampsFile")
 
         /*
             DHF has triggers that generate TDE and entity file in the schemas database so finalizing by
