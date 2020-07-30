@@ -481,22 +481,19 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     switch (sortOrder) {
       case 'ascend':
         sortingOrder = [{
-          name: propertyName,
-          dataType: datatype,
-          ascending: true
+          propertyName: propertyName,
+          sortDirection: "ascending"
         }];
         break;
       case 'descend':
         sortingOrder = [{
-          name: propertyName,
-          dataType: datatype,
-          ascending: false
+          propertyName: propertyName,
+          sortDirection: "descending"
         }];
         break;
       default:
         sortingOrder = [{
-          name: propertyName,
-          dataType: datatype
+          propertyName: propertyName
         }];
         break;
     }

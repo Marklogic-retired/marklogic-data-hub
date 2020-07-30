@@ -192,6 +192,7 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
               <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
+          hent:add-sort-operators-to-search-options($sortable-properties),
           hent:fix-options-exp($n/node(), $sortable-properties)
         }
       case element(search:constraint) return
@@ -199,7 +200,8 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
           $n/@*,
           let $constraint-path := $n/search:range/search:path-index/text()
           let $search-range-node := $n/search:range
-          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, fn:string($constraint-path)))) then
+          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, fn:string($constraint-path)) and
+            map:get($sortable-properties, fn:string($constraint-path)) = fn:true())) then
             hent:fix-options-exp($n/node(), $sortable-properties)
             else
               element {fn:node-name($search-range-node)} {
@@ -233,6 +235,27 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
       case text() return
         fn:replace($n, "es:", "*:")
       default return $n
+};
+
+declare %private function hent:add-sort-operators-to-search-options($sortable-properties as map:map)
+{
+  let $sort-operators :=
+    <search:operator name="sort">
+      {
+        for $property-path in map:keys($sortable-properties)
+          let $constraint-name := fn:tokenize($property-path, "/")[last()]
+          let $property-path := hent:replace-es-namespace($property-path)
+          return
+            for $direction in ("ascending", "descending")
+            return
+              <search:state name="{fn:concat($constraint-name, xdmp:initcap($direction))}">
+                <search:sort-order direction="{$direction}">
+                  <search:path-index>{$property-path}</search:path-index>
+                </search:sort-order>
+              </search:state>
+      }
+    </search:operator>
+  return $sort-operators
 };
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
@@ -591,12 +614,30 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                   map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
             let $_ :=
                 let $title-property-path := fn:concat("//es:instance", "/", $entity-title, "/", $entity-type-property)
-                where $is-sortable and fn:not($is-facetable)
-                return map:put($sortable-properties, $title-property-path, "")
+                let $is-only-sortable := $is-sortable and fn:not($is-facetable)
+                where $is-sortable
+                return map:put($sortable-properties, $title-property-path, $is-only-sortable)
             where $is-facetable or $is-sortable
             return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
       return json:array-push($updated-models, $model)
   let $_ := map:put($result-map, "updated-models", $updated-models)
   let $_ := map:put($result-map, "sortable-properties", $sortable-properties)
   return $result-map
+};
+
+declare function hent:replace-es-namespace($property-path) {
+    let $properties := fn:tokenize($property-path, "/es:")
+    let $updated-ns-path := ""
+    let $_ :=
+      let $properties-size := fn:count($properties)
+      return
+        if ($properties-size = 1) then
+        xdmp:set($updated-ns-path, $property-path)
+        else
+          let $_ := xdmp:set($updated-ns-path, $properties[1])
+          for $property in $properties[position() > 1]
+          where $property != ""
+          return xdmp:set($updated-ns-path, fn:concat($updated-ns-path, "/*:", $property))
+
+    return $updated-ns-path
 };

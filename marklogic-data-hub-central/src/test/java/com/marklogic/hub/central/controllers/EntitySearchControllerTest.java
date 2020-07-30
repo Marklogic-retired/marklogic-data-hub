@@ -170,9 +170,8 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             "            \"orders\"\n" +
             "        ],\n" +
             "        \"sortOrder\": [\n" +
-            "          { \"name\":  \"customerId\",\n" +
-            "            \"ascending\": false,\n" +
-            "            \"dataType\": \"integer\"\n"+
+            "          { \"propertyName\":  \"customerId\",\n" +
+            "            \"sortDirection\": \"descending\"\n" +
             "          }\n" +
             "        ]\n" +
             "    }\n" +

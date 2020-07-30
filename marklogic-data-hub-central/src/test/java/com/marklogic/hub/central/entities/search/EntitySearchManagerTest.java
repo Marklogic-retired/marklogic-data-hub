@@ -25,6 +25,8 @@ import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
+import com.marklogic.hub.dhs.DhsDeployer;
+import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.AfterEach;
@@ -43,6 +45,8 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @AfterEach
     public void resetData() {
         EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
+        runAsDataHubDeveloper();
+        applyDatabasePropertiesForTests(getHubConfig());
     }
 
     /**
@@ -123,38 +127,86 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     }
 
     @Test
-    void testBuildSearchOptionsWithSortOptions() {
-        SearchQuery searchQuery = new SearchQuery();
+    public void testSortCriteria() {
+        EntitySearchManager entitySearchManager = new EntitySearchManager(getHubClient());
+        SearchQuery query = new SearchQuery();
+        DocSearchQueryInfo info = new DocSearchQueryInfo();
+        info.setEntityTypeIds(Arrays.asList("Customer"));
+        query.setQuery(info);
 
-        String query = "<query><collection-query><uri>collection1</uri></collection-query></query>";
-        List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
         SearchQuery.SortOrder sortOrder = new SearchQuery.SortOrder();
-
-        sortOrder.setName("entityTypeProperty1");
-        sortOrder.setDataType("string");
-        sortOrder.setAscending(true);
+        sortOrder.setPropertyName("customerId");
+        sortOrder.setSortDirection("ascending");
+        List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
         sortOrderList.add(sortOrder);
+        query.setSortOrder(sortOrderList);
 
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertTrue("sort:customerIdAscending".equals(query.getQuery().getSearchText()));
+
+        query.getQuery().setSearchText("");
+        sortOrderList.get(0).setSortDirection("descending");
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertTrue("sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+
+        query.getQuery().setSearchText("Jane");
+        sortOrderList.get(0).setSortDirection("descending");
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertTrue("Jane sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+
+        query.getQuery().setSearchText("Jane");
+        sortOrderList.get(0).setSortDirection("someOtherValue");
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertTrue("Jane sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+
+        query.getQuery().setSearchText("Jane");
+        sortOrderList.get(0).setSortDirection("descending");
         sortOrder = new SearchQuery.SortOrder();
-        sortOrder.setName("datahubCreatedOn");
-        sortOrder.setDataType("string");
-        sortOrder.setAscending(false);
-
+        sortOrder.setPropertyName("customerId");
+        sortOrder.setSortDirection("ascending");
         sortOrderList.add(sortOrder);
-        searchQuery.setSortOrder(sortOrderList);
-        String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<options><sort-order type=\"xs:string\" direction=\"ascending\"><element ns=\"\" name=\"entityTypeProperty1\"/>\n" +
-            "</sort-order><sort-order direction=\"descending\"><field name=\"datahubCreatedOn\"/>\n</sort-order></options><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(new EntitySearchManager(getHubClient()).buildSearchOptions(query, searchQuery).equals(expectedResult));
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertTrue("Jane sort:customerIdDescending sort:customerIdAscending".equals(query.getQuery().getSearchText()));
     }
 
     @Test
-    void testXmlEscapeUtils() {
-        String query = "<query><collection-query><uri>collection1</uri></collection-query></query>";
-        SearchQuery searchQuery = new SearchQuery();
-        searchQuery.getQuery().setSearchText("&<>'\"");
+    public void testSearchResultsWithSorting() {
+        runAsDataHubDeveloper();
+        installProjectInFolder("customer-entity-with-indexes", true);
+        new EntityManagerImpl(getHubConfig()).saveDbIndexes();
+        new DhsDeployer().deployAsDeveloper(getHubConfig());
 
-        String expectedResult = "<search xmlns=\"http://marklogic.com/appservices/search\">\n<qtext>&amp;&lt;&gt;&apos;&quot;</qtext><query><collection-query><uri>collection1</uri></collection-query></query></search>";
-        assertTrue(new EntitySearchManager(getHubClient()).buildSearchOptions(query, searchQuery).equals(expectedResult));
+        ReferenceModelProject project = new ReferenceModelProject(getHubClient());
+        project.createCustomerInstance(new Customer(1, "Jane"));
+        project.createCustomerInstance(new Customer(2, "Sally"));
+        project.createCustomerInstance(new Customer(3, "Kim"));
+
+        runAsHubCentralUser();
+
+        SearchQuery query = new SearchQuery();
+        DocSearchQueryInfo info = new DocSearchQueryInfo();
+        info.setEntityTypeIds(Arrays.asList("Customer"));
+        query.setQuery(info);
+
+        SearchQuery.SortOrder sortOrder = new SearchQuery.SortOrder();
+        sortOrder.setPropertyName("customerId");
+        sortOrder.setSortDirection("ascending");
+        List<SearchQuery.SortOrder> sortOrderList = new ArrayList<>();
+        sortOrderList.add(sortOrder);
+        query.setSortOrder(sortOrderList);
+
+        StringHandle results = new EntitySearchManager(getHubClient()).search(query);
+        ObjectNode node = readJsonObject(results.get());
+        assertEquals(1, node.get("results").get(0).get("entityProperties").get(0).get("propertyValue").asInt());
+        assertEquals(2, node.get("results").get(1).get("entityProperties").get(0).get("propertyValue").asInt());
+        assertEquals(3, node.get("results").get(2).get("entityProperties").get(0).get("propertyValue").asInt());
+
+        sortOrderList.get(0).setSortDirection("descending");
+        results = new EntitySearchManager(getHubClient()).search(query);
+        node = readJsonObject(results.get());
+        assertEquals(3, node.get("results").get(0).get("entityProperties").get(0).get("propertyValue").asInt());
+        assertEquals(2, node.get("results").get(1).get("entityProperties").get(0).get("propertyValue").asInt());
+        assertEquals(1, node.get("results").get(2).get("entityProperties").get(0).get("propertyValue").asInt());
     }
 
     @Test

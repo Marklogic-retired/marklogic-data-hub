@@ -31,9 +31,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.ReaderHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.client.io.marker.StructureWriteHandle;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.client.query.RawCombinedQueryDefinition;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.client.row.RowManager;
@@ -50,7 +48,6 @@ import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,16 +56,17 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class EntitySearchManager {
 
     private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
     private static final String[] IGNORED_SM_COLLECTION_SUFFIX = {"auditing", "notification"};
 
-    private static final String SEARCH_HEAD = "<search xmlns=\"http://marklogic.com/appservices/search\">\n";
-    private static final String SEARCH_TAIL = "</search>";
-    private static final Set<String> METADATA_FIELD_NAME = new HashSet<>(Arrays.asList("datahubCreatedOn"));
     private static final String CSV_CONTENT_TYPE = "text/csv";
     private static final String CSV_FILE_EXTENSION = ".csv";
     private static final String SEPARATOR = "_";
@@ -95,10 +93,9 @@ public class EntitySearchManager {
         resultHandle.setFormat(Format.JSON);
         try {
             //buildQuery includes datetime conversion which could cause DateTimeException or DateTimeParseException
-            StructuredQueryDefinition queryDef = buildQuery(queryMgr, searchQuery);
-            String query = queryDef.serialize();
-            StructureWriteHandle handle = new StringHandle(buildSearchOptions(query, searchQuery)).withMimetype("application/xml");
-            RawCombinedQueryDefinition rcQueryDef = queryMgr.newRawCombinedQueryDefinition(handle, queryDef.getOptionsName());
+            StructuredQueryDefinition queryDefinition = buildQuery(queryMgr, searchQuery);
+            buildSearchTextWithSortOperator(searchQuery);
+            queryDefinition.setCriteria(searchQuery.getQuery().getSearchText());
 
             // If an entity has been selected, then apply this transform
             String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
@@ -106,16 +103,15 @@ public class EntitySearchManager {
                 // We have some awkwardness here where the input is 'entityName', but as of 5.3.0, the "entityTypeIds"
                 // property is capturing entity names, which are expected to double as collection names as well
                 ServerTransform searchResultsTransform = new ServerTransform("hubEntitySearchTransform");
-                if(entityTypeCollections.length == 1) {
+                if (entityTypeCollections.length == 1) {
                     searchResultsTransform.put("entityName", entityTypeCollections);
                 }
                 searchResultsTransform.put("propertiesToDisplay", searchQuery.getPropertiesToDisplay());
-                rcQueryDef.setResponseTransform(searchResultsTransform);
+                queryDefinition.setResponseTransform(searchResultsTransform);
             }
 
-            return queryMgr.search(rcQueryDef, resultHandle, searchQuery.getStart());
-        }
-        catch (MarkLogicServerException e) {
+            return queryMgr.search(queryDefinition, resultHandle, searchQuery.getStart());
+        } catch (MarkLogicServerException e) {
             // If there are no entityModels to search, then we expect an error because no search options will exist
             if (searchQuery.getQuery().getEntityTypeIds().isEmpty() || modelManager.getModels().size() == 0) {
                 logger.warn("No entityTypes present to perform search");
@@ -137,8 +133,7 @@ public class EntitySearchManager {
             }
 
             throw new DataHubException(e.getServerMessage(), e);
-        }
-        catch (Exception e) { //other runtime exceptions
+        } catch (Exception e) { //other runtime exceptions
             throw new DataHubException(e.getLocalizedMessage(), e);
         }
     }
@@ -152,17 +147,14 @@ public class EntitySearchManager {
             String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class);
             Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
             return Optional.ofNullable(new Document(content, metadata));
-        }
-        catch (MarkLogicServerException e) {
+        } catch (MarkLogicServerException e) {
             if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
                 logger.warn(e.getLocalizedMessage());
-            }
-            else { //FailedRequestException || ResourceNotResendableException
+            } else { //FailedRequestException || ResourceNotResendableException
                 logger.error(e.getLocalizedMessage());
             }
             throw new DataHubException(e.getServerMessage(), e);
-        }
-        catch (Exception e) { //other runtime exceptions
+        } catch (Exception e) { //other runtime exceptions
             throw new DataHubException(e.getLocalizedMessage(), e);
         }
     }
@@ -188,8 +180,7 @@ public class EntitySearchManager {
                             queryBuilder.collection(excludedCollections));
 
             queries.add(finalCollQuery);
-        }
-        else { // If entity-model collections are empty, don't return any documents
+        } else { // If entity-model collections are empty, don't return any documents
             StructuredQueryDefinition finalCollQuery = queryBuilder.and(queryBuilder.collection());
             queries.add(finalCollQuery);
         }
@@ -228,23 +219,6 @@ public class EntitySearchManager {
         return excludedCol.toArray(new String[0]);
     }
 
-    protected String buildSearchOptions(String query, SearchQuery searchQuery) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(SEARCH_HEAD);
-
-        //build sort order options
-        buildSortOrderOptions(sb, searchQuery);
-        // Setting search string if provided by user
-        if (StringUtils.isNotEmpty(searchQuery.getQuery().getSearchText())) {
-            sb.append("<qtext>").append(StringEscapeUtils.escapeXml10(searchQuery.getQuery().getSearchText())).append("</qtext>");
-        }
-        sb.append(query);
-        sb.append(SEARCH_TAIL);
-
-        logger.debug(String.format("Search options: \n %s", sb.toString()));
-        return sb.toString();
-    }
-
     public void exportById(String queryId, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
         JsonNode queryDocument = EntitySearchService.on(finalDatabaseClient).getSavedQuery(queryId);
         exportByQuery(queryDocument, fileType, limit, out, response);
@@ -254,8 +228,7 @@ public class EntitySearchManager {
         if ("CSV".equals(fileType.toUpperCase())) {
             prepareResponseHeader(response, CSV_CONTENT_TYPE, getFileNameForDownload(queryDocument, CSV_FILE_EXTENSION));
             exportRows(queryDocument, limit, out);
-        }
-        else {
+        } else {
             throw new DataHubException("Invalid file type: " + fileType);
         }
     }
@@ -280,11 +253,9 @@ public class EntitySearchManager {
         try (ReaderHandle readerHandle = new ReaderHandle()) {
             rowManager.resultDoc(rowManager.newRawPlanDefinition(stringHandle), readerHandle.withMimetype(CSV_CONTENT_TYPE));
             readerHandle.write(out);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             IOUtils.closeQuietly(out);
         }
     }
@@ -296,8 +267,7 @@ public class EntitySearchManager {
                 .map(node -> {
                     try {
                         return new ObjectMapper().treeToValue(node, DocSearchQueryInfo.class);
-                    }
-                    catch (JsonProcessingException e) {
+                    } catch (JsonProcessingException e) {
                         throw new DataHubException("Invalid query");
                     }
                 })
@@ -372,8 +342,7 @@ public class EntitySearchManager {
             queryOptions = finalDatabaseClient.newServerConfigManager()
                     .newQueryOptionsManager()
                     .readOptionsAs(queryOptionsName, Format.XML, String.class);
-        }
-        catch (ResourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw new DataHubException(String.format("Could not find search options: %s", queryOptionsName), e);
         }
         return queryOptions;
@@ -396,33 +365,15 @@ public class EntitySearchManager {
         return FILE_PREFIX + queryInfo + SEPARATOR + timestamp + fileExtension;
     }
 
-    private void buildSortOrderOptions(StringBuilder sb, SearchQuery searchQuery) {
+    protected void buildSearchTextWithSortOperator(SearchQuery searchQuery) {
+        StringBuilder searchTextBuilder = new StringBuilder(searchQuery.getQuery().getSearchText());
         Optional<List<SearchQuery.SortOrder>> sortOrders = searchQuery.getSortOrder();
-        sortOrders.ifPresent(so -> {
-            sb.append("<options>");
-            so.forEach(o -> {
-                sb.append("<sort-order");
-                if (!METADATA_FIELD_NAME.contains(o.getName())) {
-                    sb.append(String.format(" type=\"xs:%s\"", StringEscapeUtils.escapeXml10(o.getDataType())));
-                }
-
-                if (o.isAscending()) {
-                    sb.append(" direction=\"ascending\">");
-                }
-                else {
-                    sb.append(" direction=\"descending\">");
-                }
-
-                if (METADATA_FIELD_NAME.contains(o.getName())) {
-                    sb.append(String.format("<field name=\"%s\"/>\n", StringEscapeUtils.escapeXml10(o.getName())));
-                }
-                else {
-                    sb.append(String.format("<element ns=\"\" name=\"%s\"/>\n", StringEscapeUtils.escapeXml10(o.getName())));
-                }
-                sb.append("</sort-order>");
-            });
-            sb.append("</options>");
-        });
+        sortOrders.ifPresent(sortOrderList -> sortOrderList.forEach(sortOrder -> {
+            String sortOperator = "sort";
+            String sortState = sortOrder.getPropertyName().concat(StringUtils.capitalize(sortOrder.getSortDirection()));
+            searchTextBuilder.append(" ").append(sortOperator).append(":").append(sortState);
+        }));
+        searchQuery.getQuery().setSearchText(searchTextBuilder.toString().trim());
     }
 
     private ArrayNode sortOrderToArrayNode(List<SearchQuery.SortOrder> sortOrderList) {
@@ -430,9 +381,8 @@ public class EntitySearchManager {
         ArrayNode arrayNode = objectMapper.createArrayNode();
         for (SearchQuery.SortOrder sortOrder: sortOrderList) {
             ObjectNode objectNode = objectMapper.createObjectNode();
-            objectNode.put("name", sortOrder.getName());
-            objectNode.put("dataType", sortOrder.getDataType());
-            objectNode.put("ascending", sortOrder.isAscending());
+            objectNode.put("propertyName", sortOrder.getPropertyName());
+            objectNode.put("sortDirection", sortOrder.getSortDirection());
             arrayNode.add(objectNode);
         }
         return arrayNode;

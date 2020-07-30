@@ -411,9 +411,14 @@ public abstract class AbstractHubTest extends TestObject {
             File testFile = new ClassPathResource("test-config/databases/final-database.json").getFile();
             String payload = new String(FileCopyUtils.copyToByteArray(testFile));
             new DatabaseManager(hubConfig.getManageClient()).save(payload);
+
+            testFile = new ClassPathResource("test-config/databases/staging-database.json").getFile();
+            payload = new String(FileCopyUtils.copyToByteArray(testFile));
+            new DatabaseManager(hubConfig.getManageClient()).save(payload);
+
             // Gotta rerun this command since the test file has path range indexes in it
             DeployDatabaseFieldCommand command = new DeployDatabaseFieldCommand();
-            command.setResourceFilenamesIncludePattern(Pattern.compile("final-database.xml"));
+            command.setResourceFilenamesIncludePattern(Pattern.compile("(staging|final)-database.xml"));
             command.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
         } catch (IOException ioe) {
             throw new RuntimeException("Unable to deploy test indexes", ioe);

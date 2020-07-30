@@ -106,8 +106,8 @@ let orderDefinitions = [];
 if (sortOrder) {
   // convert ArrayNode to Array with .toObject()
   for (let sort of sortOrder.toObject()) {
-    const col =  op.col(replaceHyphenWithUnderscore(sort.name));
-    if (sort.ascending) {
+    const col =  op.col(replaceHyphenWithUnderscore(sort.propertyName));
+    if (sort.sortDirection === "ascending") {
       orderDefinitions.push(op.asc(col));
     } else {
       orderDefinitions.push(op.desc(col));
