@@ -11,10 +11,6 @@
       "pii": [
         "SSN"
       ],
-      "elementRangeIndex": [
-        "fname",
-        "lname"
-      ],
       "rangeIndex": [ ],
       "wordLexicon": [ ],
       "properties": {
@@ -24,11 +20,13 @@
         },
         "fname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
         },
         "lname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint"
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
         },
         "desc": {
           "datatype": "string",

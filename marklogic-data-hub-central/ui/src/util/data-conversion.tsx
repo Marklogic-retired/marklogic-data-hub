@@ -10,19 +10,10 @@ export const entityFromJSON = (data: any) => {
 
   interface Definitions {
     name: string,
-    elementRangeIndex: [],
     pii: [],
-    rangeIndex: [],
     required: [],
     wordLexicon: [],
-    properties: Property[]
-  }
-
-  interface Property {
-    name: string,
-    datatype: string,
-    ref: string,
-    collation: string
+    properties: []
   }
 
   let entityArray: EntityModel[] = data.map(item => {
@@ -39,22 +30,20 @@ export const entityFromJSON = (data: any) => {
 
       let entityDefinition: Definitions = {
         name: '',
-        elementRangeIndex: [],
         pii: [],
-        rangeIndex: [],
         required: [],
         wordLexicon: [],
         properties: []
       };
 
-      let entityProperties: Property[] = [];
+      let entityProperties: any = [];
 
       entityDefinition.name = definition;
 
       for (let entityKeys in item['definitions'][definition]) {
         if (entityKeys === 'properties') {
           for (let properties in item['definitions'][definition][entityKeys]) {
-            let property: Property = {
+            let property = {
               name: '',
               datatype: '',
               ref: '',
@@ -77,6 +66,12 @@ export const entityFromJSON = (data: any) => {
               property.ref = item['definitions'][definition][entityKeys][properties]['$ref'].split('/').pop();
               property.datatype = 'entity';
             }
+            if(item['definitions'][definition][entityKeys][properties]['sortable']){
+              property['sortable'] = item['definitions'][definition][entityKeys][properties]['sortable'];
+            }
+            if(item['definitions'][definition][entityKeys][properties]['facetable']){
+              property['facetable'] = item['definitions'][definition][entityKeys][properties]['facetable'];
+            }
             entityProperties.push(property);
           }
         } else {
@@ -92,85 +87,14 @@ export const entityFromJSON = (data: any) => {
 }
 
 export const entityParser = (data: any) => {
-  return data.map((entity, index) => {
-    let rangeIndex = [];
-    let pathIndexMap = new Map();
-    let pathEntityIndexMap = new Map();
-    let nestedEntityDefinition;
+  return data.map((entity) => {
     let parsedEntity = {};
     let properties = [];
     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
-    let values = {}
-    let pathIndexArray = new Array();
-
-    let propArray = entityDefinition['properties'].map(p => p.name);
-    let propRefArray = entityDefinition['properties'].filter(p => p.ref.length > 0);
 
     for (var prop in entity.definitions) {
-      let path = entity.info['baseUri'] + entity.info['title'] + '-' + entity.info['version'] + '/' + entityDefinition.name;
-      // let entityPath = entityDefinition.name;
-
-      nestedEntityDefinition = entity.definitions[prop];
-      if (nestedEntityDefinition) {
-        let rangeIndexWithDup = [];
-        rangeIndexWithDup = rangeIndexWithDup.concat(nestedEntityDefinition['elementRangeIndex']).concat(nestedEntityDefinition['rangeIndex']);
-        for (let key of rangeIndexWithDup) {
-          if (rangeIndex.indexOf(key) === -1) {
-            rangeIndex.push(key);
-          }
-        }
-      }
-
       if (entity.definitions[prop]['name'] === entity.info['title']) {
         properties = entity.definitions[prop]['properties'];
-      }
-
-      for (let index of nestedEntityDefinition['elementRangeIndex']) {
-        if (propArray.includes(index)) {
-          pathIndexMap.set(index, index);
-          pathEntityIndexMap.set(index, index);
-        } else if (propRefArray.length > 0) {  //has nested ref
-          let pArr = new Array();
-          if ((getRefPath(entity.info.title, index, data, pArr).length) > 0) {
-            pathIndexMap.set(index, getRefPath(entity.info.title, index, data, pArr).join(''));
-            pathEntityIndexMap.set(index, getEntityPath(entity.info.title, index, data, pArr).join(''));
-          }
-        }
-        values = {
-          index: index,
-          referenceType: 'element',
-          entityTypeId: '',
-          propertyPath: pathIndexMap.get(index),
-          entityPath: pathEntityIndexMap.get(index)
-        }
-        pathIndexArray.push(values);
-
-        if (!pathIndexArray.some(e => e.index === index)) {
-          pathIndexArray.push(values)
-        }
-      }
-
-      for (let rIndex of nestedEntityDefinition['rangeIndex']) {
-        if (propArray.includes(rIndex)) {
-          pathIndexMap.set(rIndex, rIndex);
-          pathEntityIndexMap.set(rIndex, rIndex);
-        } else if (propRefArray.length > 0) {  //has nested ref
-          let pArr = new Array();
-          if ((getRefPath(entity.info.title, rIndex, data, pArr).length) > 0) {
-            pathIndexMap.set(rIndex, getRefPath(entity.info.title, rIndex, data, pArr).join(''));
-            pathEntityIndexMap.set(rIndex, getEntityPath(entity.info.title, rIndex, data, pArr).join(''));
-          }
-        }
-        values = {
-          index: rIndex,
-          referenceType: 'path',
-          entityTypeId: path,
-          propertyPath: pathIndexMap.get(rIndex),
-          entityPath: pathEntityIndexMap.get(rIndex)
-        }
-        if (!pathIndexArray.some(e => e.index === rIndex)) {
-          pathIndexArray.push(values)
-        }
       }
     }
 
@@ -178,78 +102,11 @@ export const entityParser = (data: any) => {
       name: entityDefinition['name'],
       info: entity.info,
       primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
-      rangeIndex: rangeIndex.length ? rangeIndex : [],
       properties: properties,
-      pathIndex: pathIndexArray
     }
     return parsedEntity;
   });
 }
-
-
-const getRefPath = (entity, index, data, path) => {
-
-  let fullPath = [...path];
-
-  const getPath = (entity, index, data, path) => {
-    data.forEach(item => {
-      if (item.info.title === entity) {
-        let entityDefinition = item.definitions.find(definition => definition.name === entity);
-        entityDefinition.properties.forEach(element => {
-          let elementPath = [...path];
-          if (element.ref.length > 0) {
-            elementPath.push(element.name);
-            getPath(element.ref, index, data, elementPath)
-          }
-          if (element.name === index) {
-            elementPath.push('/');
-            elementPath.push(element.name)
-            fullPath = elementPath;
-            return fullPath;
-          }
-        });
-      }
-    });
-
-    return fullPath;
-  }
-
-  return getPath(entity, index, data, path);
-}
-
-const getEntityPath = (entity, index, data, path) => {
-
-  let fullPath;
-
-  const getPath = (entity, index, data, path) => {
-    data.forEach(item => {
-      if (item.info.title === entity) {
-        let entityDefinition = item.definitions.find(definition => definition.name === entity);
-        entityDefinition.properties.forEach(element => {
-          let elementPath = [...path];
-
-          if (element.ref.length > 0) {
-            elementPath.push(element.ref)
-            elementPath.push('.');
-            getPath(element.ref, index, data, elementPath)
-          }
-
-          if (element.name === index) {
-            // elementPath.push('/');
-            elementPath.push(element.name)
-            fullPath = elementPath;
-            return fullPath;
-          }
-        });
-      }
-    });
-
-    return fullPath;
-  }
-
-  return getPath(entity, index, data, path);
-}
-
 
 export const facetParser = (facets: any) => {
   let facetArray: any[] = [];
