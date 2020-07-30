@@ -236,16 +236,17 @@ const QueryModal = (props) => {
     })
 
     const deleteConfirmation = <Modal
-        title="Confirmation"
         visible={deleteModalVisibility}
         okText='Yes'
         cancelText='No'
         onOk={() => onOk(query)}
         onCancel={() => onCancel()}
-        width={300}
+        width={400}
         maskClosable={false}
     >
-        <span style={{ fontSize: '16px' }}>Are you sure you want to delete '{props.currentQueryName}'?</span>
+        <span style={{ fontSize: '16px', position: 'relative', top:'10px'}} data-testid='deleteConfirmationText'>
+            Are you sure you would like to delete the <b>{props.currentQueryName}</b> query? This action cannot be undone.
+        </span>
     </Modal>;
 
     const getPreview = async (id) => {
