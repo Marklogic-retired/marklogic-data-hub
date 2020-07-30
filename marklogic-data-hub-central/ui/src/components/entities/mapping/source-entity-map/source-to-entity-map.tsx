@@ -21,6 +21,7 @@ const SourceToEntityMap = (props) => {
     let mapExpUI: any = {};
     let tempMapExp: any = {};
     let tempSourceContext: any = {}
+    let trackUniqueKeys: any = [];
     /*-------------------*/
 
     //For Dropdown menu
@@ -860,10 +861,15 @@ const SourceToEntityMap = (props) => {
             let flatArrayVal = element.key;
             if(!element.children && element.val) {
                 if(!flatArrayKey&& flatArrayKey.indexOf('/') == -1){
+                    trackUniqueKeys.push(element.key)
                     flatArray.push({'value':flatArrayVal, 'key':element.key, 'struct': element.array ? true : false});
                 }
                 else {
-                    flatArray.push({'value':flatArrayVal, 'key':flatArrayKey+ '/'+element.key, 'struct': element.array ? true : false});
+                    let fullKey = flatArrayKey + '/' + element.key;
+                    if (!trackUniqueKeys.includes(fullKey)){
+                        trackUniqueKeys.push(fullKey);
+                        flatArray.push({'value':flatArrayVal, 'key': fullKey, 'struct': element.array ? true : false});
+                    }
                 }
             }
             else{
@@ -873,7 +879,10 @@ const SourceToEntityMap = (props) => {
                 else {
                     flatArrayKey = flatArrayKey +'/'+ element.key
                 }
-                flatArray.push({'value':flatArrayVal, 'key':flatArrayKey, 'struct': true});
+                if (!trackUniqueKeys.includes(flatArrayKey)){
+                    trackUniqueKeys.push(flatArrayKey);
+                    flatArray.push({'value':flatArrayVal, 'key':flatArrayKey, 'struct': true});
+                }
             }
             if(element.children) {
                 flattenSourceDoc(element.children, flatArray, flatArrayKey);
