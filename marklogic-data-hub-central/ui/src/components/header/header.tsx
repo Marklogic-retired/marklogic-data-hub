@@ -17,7 +17,6 @@ const Header:React.FC<Props> = (props) => {
   const { user, userNotAuthenticated, handleError } = useContext(UserContext);
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
   const history = useHistory();
-
   const handleLogout = async () => {
     try {
       let response = await axios(`/api/logout`);
@@ -42,6 +41,31 @@ const Header:React.FC<Props> = (props) => {
               history.push('/noresponse');
             }
         })
+  }
+
+  const getVersionLink = () => {
+    let versionNum = parseVersion(props.environment.dataHubVersion);
+    return 'https://docs.marklogic.com/datahub/' + versionNum;
+  }
+
+  const parseVersion = (value) => {
+    if(value == ''){
+      return '';
+    }else{
+      let version = '';           
+      let flag = false;
+      for(let c in value){
+        if(value[c] != '.' && value[c] != '-'){
+          version += value[c];
+        }else if(value[c] == '.' && flag == false){
+          flag = true;
+          version += value[c];
+        }else{
+          break;
+        }
+      }
+      return version;
+    }
   }
 
   let userMenu = <div className={styles.userMenu}>
@@ -71,7 +95,7 @@ const Header:React.FC<Props> = (props) => {
           <MLTooltip title="Search"><Icon type="search"/></MLTooltip>
         </Menu.Item> */}
         <Menu.Item>
-          <MLTooltip title="Help"><Icon type="question-circle"/></MLTooltip>
+          <MLTooltip title="Help"><a id="help-link" href= {getVersionLink()} target="_blank"><Icon type="question-circle"/></a></MLTooltip>
         </Menu.Item>
         {/* <Menu.Item>
           <MLTooltip title="Settings"><Icon type="setting"/></MLTooltip>
@@ -93,7 +117,7 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <MLTooltip title="Help"><Icon type="question-circle"/></MLTooltip>
+          <MLTooltip title="Help"><a id="help-link" href='https://docs.marklogic.com/datahub/' target="_blank"><Icon type="question-circle"/></a></MLTooltip>
         </Menu.Item>
       </Menu>
     </div>
