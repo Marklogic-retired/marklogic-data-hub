@@ -33,6 +33,10 @@ const userArtifactQuery = cts.andQuery([
   ]),
   cts.notQuery(
     cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
+  ),
+  // In 5.3.0, HC does not allow editing custom steps, so don't include them
+  cts.notQuery(
+    cts.collectionQuery("http://marklogic.com/data-hub/steps/custom")
   )
 ]);
 

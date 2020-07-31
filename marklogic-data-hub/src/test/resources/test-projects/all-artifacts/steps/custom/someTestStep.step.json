@@ -1,0 +1,8 @@
+{
+  "name": "someTestStep",
+  "stepDefinitionName": "testStep",
+  "stepDefinitionType": "CUSTOM",
+  "sourceQuery": "cts.collectionQuery('customer-input')",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL"
+}
