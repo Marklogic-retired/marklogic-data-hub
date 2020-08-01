@@ -1,5 +1,5 @@
 {
-  "name": "ingestion_mapping_mastering-flow",
+  "name": "ingestionMappingMasteringFlow",
   "description": "This is the default flow containing all of the default steps",
   "batchSize": 100,
   "threadCount": 4,
@@ -62,6 +62,7 @@
     "3": {
       "name": "json-matching-step-json",
       "description": "matches the docs",
+      "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
       "stepDefinitionName": "default-matching",
       "stepDefinitionType": "MATCHING",
       "options": {

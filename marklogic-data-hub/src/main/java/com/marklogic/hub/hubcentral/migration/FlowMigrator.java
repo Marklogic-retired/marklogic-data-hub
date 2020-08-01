@@ -30,6 +30,8 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.*;
+import com.marklogic.hub.dataservices.MasteringService;
+import com.marklogic.hub.dataservices.SystemService;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
@@ -120,11 +122,13 @@ public class FlowMigrator extends LoggingObject {
 
         Path stepsDir = hubProject.getProjectDir().resolve("steps");
         Path ingestionDir = stepsDir.resolve(StepDefinitionType.INGESTION.toString());
+        Path matchingDir = stepsDir.resolve(StepDefinitionType.MATCHING.toString());
         Path mappingDir = stepsDir.resolve(StepDefinitionType.MAPPING.toString());
         Path customStepDir = stepsDir.resolve(StepDefinitionType.CUSTOM.toString());
 
         try {
             ingestionDir.toFile().mkdirs();
+            matchingDir.toFile().mkdirs();
             mappingDir.toFile().mkdirs();
             customStepDir.toFile().mkdirs();
         } catch (Exception e) {
@@ -152,9 +156,14 @@ public class FlowMigrator extends LoggingObject {
                     if (stepRequiresMigration(step)) {
                         String stepId;
                         Path targetDir;
-                        if(StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())){
+                        if(StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
                             targetDir = ingestionDir;
-                            stepId= String.join("-", step.getName(), StepDefinitionType.INGESTION.toString());
+                            stepId = String.join("-", step.getName(), StepDefinitionType.INGESTION.toString());
+                        }
+                        else if (StepDefinitionType.MATCHING.equals(step.getStepDefinitionType())) {
+                            targetDir = matchingDir;
+                            stepId= String.join("-", step.getName(), StepDefinitionType.MATCHING.toString());
+                            transformMatchingOptions(step);
                         }
                         else if (StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())) {
                             if("entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName()) || getMappingArtifact(flow.getName(), step) != null){
@@ -250,6 +259,7 @@ public class FlowMigrator extends LoggingObject {
     //so don't need to include them for the check.
     protected boolean stepRequiresMigration(Step step) {
         return (StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())) ||
+            (StepDefinitionType.MATCHING.equals(step.getStepDefinitionType())) ||
             (StepDefinitionType.INGESTION.equals(step.getStepDefinitionType()) ||
             (StepDefinitionType.CUSTOM.equals(step.getStepDefinitionType()) ||
             (StepDefinitionType.MASTERING.equals(step.getStepDefinitionType())
@@ -448,5 +458,11 @@ public class FlowMigrator extends LoggingObject {
     protected String getEntityNameFromEntityType(String targetEntityType) {
         int index = targetEntityType.lastIndexOf("/");
         return index > -1 ? targetEntityType.substring(index + 1) : targetEntityType;
+    }
+
+    protected void transformMatchingOptions(Step step) {
+        JsonNode beforeNode = (JsonNode)step.getOptions().get("matchOptions");
+        JsonNode afterNode = MasteringService.on(hubConfig.newHubClient().getStagingClient()).updateMatchOptions(beforeNode);
+        step.getOptions().put("matchOptions", afterNode);
     }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "custom-master",
+  "name": "customMaster",
   "steps": {
     "1": {
       "name": "generate-dictionary",

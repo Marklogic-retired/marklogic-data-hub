@@ -34,7 +34,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
     private final List<String> expectedStepUris = Arrays.asList(
         "/steps/ingestion/ingest-step-json.step.json",
         "/steps/ingestion/ingest-step-xml.step.json",
-        "/steps/ingestion/ingestion_mapping-flow-ingest-step-json.step.json",
+        "/steps/ingestion/ingestionMappingFlow-ingest-step-json.step.json",
         "/steps/ingestion/custom-ingest.step.json",
         "/steps/mapping/mapping-step-json.step.json",
         "/steps/mapping/mapXmlToXml.step.json",
@@ -59,15 +59,15 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
         FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
 
-        Flow custFlow = flowManager.getLocalFlow("custom_only-flow");
-        assertTrue(flowMigrator.flowRequiresMigration(flowManager.getLocalFlow("custom_only-flow")),
+        Flow custFlow = flowManager.getLocalFlow("customOnlyFlow");
+        assertTrue(flowMigrator.flowRequiresMigration(flowManager.getLocalFlow("customOnlyFlow")),
             "Per DHFPROD-5192, the flow needs to be migrated because all ingestion steps are being migrated");
         assertTrue(flowMigrator.stepRequiresMigration(custFlow.getStep("1")),
             "Custom steps are being migrated in 5.3.0");
         assertTrue(flowMigrator.stepRequiresMigration(custFlow.getStep("2")),
             "All ingestion steps are being migrated in 5.3.0");
 
-        Flow customMaster = flowManager.getLocalFlow("custom-master");
+        Flow customMaster = flowManager.getLocalFlow("customMaster");
         assertTrue(flowMigrator.flowRequiresMigration(customMaster),
             "The flow needs to be migrated because custom steps are being migrated");
         assertTrue(flowMigrator.stepRequiresMigration(customMaster.getStep("1")),
@@ -117,8 +117,8 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
     private void verifyCustomSteps(HubProject hubProject, Map<String, Flow> flowMap) {
         Path customSteps = hubProject.getProjectDir().resolve("steps").resolve("custom");
-        Flow customOnlyFlow = flowMap.get("custom_only-flow");
-        Flow customMasterFlow = flowMap.get("custom-master");
+        Flow customOnlyFlow = flowMap.get("customOnlyFlow");
+        Flow customMasterFlow = flowMap.get("customMaster");
 
         JsonNode customStep1 = readJsonObject(customSteps.resolve("custom-mastering.step.json").toFile());
         JsonNode customStep2 = readJsonObject(customSteps.resolve("generate-dictionary.step.json").toFile());
@@ -166,8 +166,8 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
     private void verifyMappingSteps(HubProject hubProject, Map<String, Mapping> mappingMap, Map<String, Flow> flowMap) {
         Path mappingSteps = hubProject.getProjectDir().resolve("steps").resolve("mapping");
-        Flow ingMapFlow = flowMap.get("ingestion_mapping-flow");
-        Flow ingMapMasterFlow = flowMap.get("ingestion_mapping_mastering-flow");
+        Flow ingMapFlow = flowMap.get("ingestionMappingFlow");
+        Flow ingMapMasterFlow = flowMap.get("ingestionMappingMasteringFlow");
 
         Mapping mapping1 = mappingMap.get("OrderMappingJson");
         Mapping mapping2 = mappingMap.get("xmlToXml-mapXmlToXml");
@@ -207,28 +207,17 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
     private void verifyIngestionSteps(HubProject hubProject, Map<String, Flow> flowMap) {
         Path ingestionSteps = hubProject.getProjectDir().resolve("steps").resolve("ingestion");
-        boolean duplicateStepName = ingestionSteps.resolve("ingestion_mapping-flow-ingest-step-json.step.json").toFile().exists();
+        boolean duplicateStepName = ingestionSteps.resolve("ingestionMappingMasteringFlow-ingest-step-json.step.json").toFile().exists();
 
-        Flow ingMapFlow = flowMap.get("ingestion_mapping-flow");
-        Flow ingMapMasterFlow = flowMap.get("ingestion_mapping_mastering-flow");
+        Flow ingMapFlow = flowMap.get("ingestionMappingFlow");
+        Flow ingMapMasterFlow = flowMap.get("ingestionMappingMasteringFlow");
 
-        JsonNode ingStep1 = readJsonObject(ingestionSteps.resolve("ingestion_mapping-flow-ingest-step-json.step.json").toFile());
+        JsonNode ingStep1 = readJsonObject(ingestionSteps.resolve("ingestionMappingMasteringFlow-ingest-step-json.step.json").toFile());
         JsonNode ingStep2 = readJsonObject(ingestionSteps.resolve("ingest-step-json.step.json").toFile());
         JsonNode ingStep3 = readJsonObject(ingestionSteps.resolve("ingest-step-xml.step.json").toFile());
 
         //Properties change based on which duplicate step is created
-        if(duplicateStepName){
-            verifyOptions(ingStep1, mapper.valueToTree(ingMapFlow.getStep("1").getOptions()));
-            verifyOptions(ingStep2, mapper.valueToTree(ingMapMasterFlow.getStep("1").getOptions()));
-            assertEquals("input", ingStep1.get("inputFilePath").asText());
-            assertEquals(".*input*.,'/mapping-flow/json/'", ingStep1.get("outputURIReplacement").asText());
-            assertEquals("mastering-input", ingStep2.get("inputFilePath").asText());
-            assertEquals(".*input*.,'/mastering-flow/json/'", ingStep2.get("outputURIReplacement").asText());
-
-            assertEquals("ingestion_mapping-flow-ingest-step-json-ingestion", ingStep1.get("stepId").asText());
-            assertEquals("ingest-step-json-ingestion", ingStep2.get("stepId").asText());
-        }
-        else{
+        if (duplicateStepName) {
             verifyOptions(ingStep1, mapper.valueToTree(ingMapMasterFlow.getStep("1").getOptions()));
             verifyOptions(ingStep2, mapper.valueToTree(ingMapFlow.getStep("1").getOptions()));
 
@@ -237,9 +226,21 @@ class FlowMigratorTest extends AbstractHubCoreTest {
             assertEquals("mastering-input", ingStep1.get("inputFilePath").asText());
             assertEquals(".*input*.,'/mastering-flow/json/'", ingStep1.get("outputURIReplacement").asText());
 
-            assertEquals("ingestion_mapping-flow-ingest-step-json-ingestion", ingStep2.get("stepId").asText());
-            assertEquals("ingest-step-json-ingestion", ingStep1.get("stepId").asText());
+            assertEquals("ingestionMappingMasteringFlow-ingest-step-json-ingestion", ingStep1.get("stepId").asText());
+            assertEquals("ingest-step-json-ingestion", ingStep2.get("stepId").asText());
         }
+        else {
+            verifyOptions(ingStep1, mapper.valueToTree(ingMapFlow.getStep("1").getOptions()));
+            verifyOptions(ingStep2, mapper.valueToTree(ingMapMasterFlow.getStep("1").getOptions()));
+            assertEquals("input", ingStep1.get("inputFilePath").asText());
+            assertEquals(".*input*.,'/mapping-flow/json/'", ingStep1.get("outputURIReplacement").asText());
+            assertEquals("mastering-input", ingStep2.get("inputFilePath").asText());
+            assertEquals(".*input*.,'/mastering-flow/json/'", ingStep2.get("outputURIReplacement").asText());
+
+            assertEquals("ingestionMappingMasteringFlow-ingest-step-json-ingestion", ingStep1.get("stepId").asText());
+            assertEquals("ingest-step-json-ingestion", ingStep2.get("stepId").asText());
+        }
+
         verifyOptions(ingStep3, mapper.valueToTree(ingMapFlow.getStep("3").getOptions()));
 
         assertEquals("ingest-step-xml-ingestion", ingStep3.get("stepId").asText());
@@ -299,17 +300,17 @@ class FlowMigratorTest extends AbstractHubCoreTest {
     }
 
     private void verifyFlows(HubProject hubProject) {
-        JsonNode ingMapFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestion_mapping-flow.flow.json").toFile());
-        JsonNode ingMapMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestion_mapping_mastering-flow.flow.json").toFile());
-        JsonNode custFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom_only-flow.flow.json").toFile());
-        JsonNode customMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom-master.flow.json").toFile());
-        boolean duplicateStepName = hubProject.getProjectDir().resolve("steps").resolve("ingestion").resolve("ingestion_mapping-flow-ingest-step-json.step.json").toFile().exists();
+        JsonNode ingMapFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingFlow.flow.json").toFile());
+        JsonNode ingMapMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingMasteringFlow.flow.json").toFile());
+        JsonNode custFlow = readJsonObject(hubProject.getFlowsDir().resolve("customOnlyFlow.flow.json").toFile());
+        JsonNode customMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("customMaster.flow.json").toFile());
+        boolean duplicateStepName = hubProject.getProjectDir().resolve("steps").resolve("ingestion").resolve("ingestionMappingFlow-ingest-step-json.step.json").toFile().exists();
         if(duplicateStepName){
-            assertEquals("ingestion_mapping-flow-ingest-step-json-ingestion", getStepId(ingMapFlow,"1"));
+            assertEquals("ingestionMappingFlow-ingest-step-json-ingestion", getStepId(ingMapFlow,"1"));
             assertEquals("ingest-step-json-ingestion", getStepId(ingMapMasterFlow,"1"));
         }
         else {
-            assertEquals("ingestion_mapping_mastering-flow-ingest-step-json-ingestion", getStepId(ingMapMasterFlow,"1"));
+            assertEquals("ingestionMappingMasteringFlow-ingest-step-json-ingestion", getStepId(ingMapMasterFlow,"1"));
             assertEquals("ingest-step-json-ingestion", getStepId(ingMapFlow,"1"));
         }
 
@@ -318,7 +319,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         assertEquals( "mapping-step-xml-mapping",getStepId(ingMapFlow,"4"));
 
         assertEquals("mapXmlToXml-mapping", getStepId(ingMapMasterFlow,"2"));
-        assertNull( getStepId(ingMapMasterFlow,"3"));
+        assertEquals("json-matching-step-json-matching", getStepId(ingMapMasterFlow,"3"));
         assertNull( getStepId(ingMapMasterFlow,"4"));
 
         assertEquals("custom-mapping-step-custom", getStepId(custFlow, "1"));

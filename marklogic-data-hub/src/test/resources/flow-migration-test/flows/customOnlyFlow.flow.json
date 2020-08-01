@@ -1,5 +1,5 @@
 {
-  "name": "custom_only-flow",
+  "name": "customOnlyFlow",
   "steps": {
     "1": {
       "name": "custom-mapping-step",
