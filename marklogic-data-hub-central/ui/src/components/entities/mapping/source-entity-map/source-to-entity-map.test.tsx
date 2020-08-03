@@ -467,15 +467,15 @@ describe('RTL Source-to-entity map tests', () => {
         //Verify truncated text in Source table
         await(waitForElement(() => getByTestId('proteinId-srcValue')))
         expect(getByTestId('proteinId-srcValue')).toHaveTextContent('extremelylonguse...')
-        expect(getByTestId('proteinType-srcValue')).toHaveTextContent('s@ml.com t@ml.com (6 more)')
+        expect(getByTestId('proteinType-srcValue')).toHaveTextContent('s@ml.com (7 more)')
 
         //Verify tooltip shows full value when hovering Source values
         fireEvent.mouseOver(getByText('extremelylonguse...'))
         await waitForElement(() => getByText('extremelylongusername@marklogic.com'));
 
         //Verify tooltip shows all values in a list when hovering values with multiple items
-        fireEvent.mouseOver(getByText((_, node) => node.textContent == '(6 more)'))
-        await waitForElement(() => getByText('s@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'));
+        fireEvent.mouseOver(getByText((_, node) => node.textContent == '(7 more)'))
+        await waitForElement(() => getByText('s@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'));
 
         // Test button should be enabled after mapping expression is saved
         expect(document.querySelector('#Test-btn')).toBeEnabled()
@@ -484,7 +484,7 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(getByText('Test'))
         await(waitForElement(() => getByTestId('propName-value')))
         expect(getByTestId('propName-value')).toHaveTextContent('extremelylongusername@m...')
-        expect(getByTestId('propAttribute-value')).toHaveTextContent('s@ml.com t@ml.com (6 more)')
+        expect(getByTestId('propAttribute-value')).toHaveTextContent('s@ml.com (7 more)')
 
         // Verify tooltip shows full value when hovering Test values
         fireEvent.mouseOver(getByText('extremelylongusername@m...'))
@@ -788,7 +788,7 @@ describe('Enzyme Source-to-entity map tests', () => {
         expect(splitPane).toHaveLength(1);
     });
 
-    test('XML source data renders properly',() => {
+    test('XML source data renders properly',async () => {
         const { getByText, getAllByText, getByTestId } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} sourceData={data.xmlSourceData}/>);
         //Expanding all the nested levels first
         fireEvent.click(getByTestId('expandCollapseBtn-source'));
@@ -801,7 +801,9 @@ describe('Enzyme Source-to-entity map tests', () => {
         expect(getByText('home')).toBeInTheDocument();
         expect(getByText(/nutFree:/)).toBeInTheDocument();
         expect(getByText('FirstNamePreferred')).toBeInTheDocument();
-
+        expect(getByTestId('proteinDog-srcValue')).toHaveTextContent('retriever (2 more)');
+        fireEvent.mouseOver(getByText('(2 more)'));
+        await waitForElement(() => getByText('retriever, , golden, labrador'));
     });
 
     test('Nested entity data renders properly',() => {
@@ -884,7 +886,7 @@ describe('RTL Source Selector/Source Search tests', () => {
         let sourceSelector = getByTestId("itemTypes-listIcon");
         fireEvent.click(sourceSelector);
 
-        //Verify object properties in source dropdown only appear once when data is an array of Objects 
+        //Verify object properties in source dropdown only appear once when data is an array of Objects
         expect(getAllByTestId('nutFreeName-option').length).toEqual(1);
         expect(getAllByTestId('FirstNamePreferred-option').length).toEqual(1);
         expect(getAllByTestId('LastName-option').length).toEqual(1);
@@ -901,7 +903,7 @@ describe('RTL Source Selector/Source Search tests', () => {
         await waitForElement(() => getByText('Multiple'));
         fireEvent.mouseOver(getByTestId('nutFreeName-optionIcon'))
         await waitForElement(() => getByText('Multiple'));
-        
+
     });
 
     test('XML source data with objects - Right display of objects and icons in source dropdown', async() => {
@@ -910,7 +912,7 @@ describe('RTL Source Selector/Source Search tests', () => {
         let sourceSelector = getByTestId("itemTypes-listIcon");
         fireEvent.click(sourceSelector);
 
-        //Verify object properties in source dropdown only appear once when data is an array of Objects 
+        //Verify object properties in source dropdown only appear once when data is an array of Objects
         expect(getAllByTestId('nutFree:name-option').length).toEqual(1);
         expect(getAllByTestId('FirstNamePreferred-option').length).toEqual(1);
         expect(getAllByTestId('LastName-option').length).toEqual(1);
@@ -923,7 +925,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
         //Verify tooltip for Array icon
         fireEvent.mouseOver(getByTestId('nutFree:name-optionIcon'))
-        await waitForElement(() => getByText('Multiple'));        
+        await waitForElement(() => getByText('Multiple'));
     });
 
 
@@ -948,7 +950,7 @@ describe('RTL Source Selector/Source Search tests', () => {
 
         //Verify Array icon is present when item has no children but value was an Array of simple values.
         expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
-        
+
         //Verify tooltip for Array icon
         fireEvent.mouseOver(getByTestId('proteinDog-optionIcon'))
         await waitForElement(() => getByText('Multiple'));
@@ -1000,7 +1002,7 @@ describe('RTL Source Selector/Source Search tests', () => {
         //Verify option representing object in source dropdown only appears once when value is an array of Objects.
         let nutFreeName = (getAllByTestId('nutFree:name-option'));
         expect(nutFreeName.length).toEqual(1);
-        
+
         //Verify tooltip for Array icon
         fireEvent.mouseOver(getByTestId('LastName-optionIcon'))
         await waitForElement(() => getByText('Multiple'));

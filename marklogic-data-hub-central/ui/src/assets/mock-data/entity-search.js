@@ -39,6 +39,7 @@ export const entitySearch = {
               "name": "Carmella Hardin",
               "nicknames": [
                 "Carm",
+                "",
                 "din"
               ],
               "shipping": [
@@ -1908,7 +1909,7 @@ export const entityDefArray = [{
     }],
   rangeIndex: []
 }]
-  
+
 
 
 

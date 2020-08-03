@@ -157,7 +157,7 @@ const xmlSourceData = [
       ]
       },
       { rowKey: 7, key: 'proteinCat', val: 'commercial' },
-      { rowKey: 8, key: 'proteinDog', val: 'retriever, golden, labrador', array: true}
+      { rowKey: 8, key: 'proteinDog', val: 'retriever, , golden, labrador', array: true}
     ]
   }
 ];
@@ -205,14 +205,14 @@ const testJSONResponse = {
 const truncatedJSONResponse = {
   properties: {
     propName: { output: 'extremelylongusername@marklogic.com', sourcedFrom: 'proteinId' },
-    propAttribute: { output: ['s@ml.com', 't@ml.com', 'u@ml.com' , 'v@ml.com' , 'w@ml.com' , 'x@ml.com' , 'y@ml.com', 'z@ml.com'], sourcedFrom: 'proteinType' },
+    propAttribute: { output: ['s@ml.com', '', 't@ml.com', 'u@ml.com' , 'v@ml.com' , 'w@ml.com' , 'x@ml.com' , 'y@ml.com', 'z@ml.com'], sourcedFrom: 'proteinType' },
   },
   targetEntityType: 'Person'
 };
 
 const JSONSourceDataToTruncate = [
   { rowKey: 1, key: 'proteinId', val: 'extremelylongusername@marklogic.com' },
-  { rowKey: 2, key: 'proteinType', val: 's@ml.com, t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'}
+  { rowKey: 2, key: 'proteinType', val: 's@ml.com, , t@ml.com, u@ml.com, v@ml.com, w@ml.com, x@ml.com, y@ml.com, z@ml.com'}
 ];
 
 const truncatedEntityProps = [
