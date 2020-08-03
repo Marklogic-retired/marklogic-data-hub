@@ -34,10 +34,10 @@
     }
 
     .panelContent {
+        overflow-x: auto;
         width: 100%;
         display: flex;
         justify-content: flex-start;
-
         .actions {
             .run {
                 position: relative;
@@ -98,6 +98,7 @@
         .cardContent {
             border: solid 1px #ddd;
             padding: 10px;
+            height: 54px;
             .format {
                 display: inline-block;
                 margin-top: -3px;
@@ -106,6 +107,7 @@
             .name {
                 display: inline-block;
                 margin-right: 10px;
+                padding-top: 5px;
             }
             .cardLinks {
                 position: absolute;

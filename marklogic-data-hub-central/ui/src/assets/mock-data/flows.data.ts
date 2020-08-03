@@ -527,9 +527,28 @@ const customSteps = {"data" :{"stepsWithEntity":[{
     "status" :200
 }
 
+const flowProps = {
+    flows: flows.data,
+    deleteFlow: jest.fn(),
+    createFlow: jest.fn(),
+    updateFlow: jest.fn(),
+    deleteStep: jest.fn(),
+    runStep: jest.fn(),
+    canReadFlow: true,
+    canWriteFlow: true,
+    hasOperatorRole: true,
+    running: [],
+    uploadError: "",
+    newStepToFlowOptions: jest.fn(),
+    addStepToFlow: jest.fn(),
+    flowsDefaultActiveKey: [],
+    showStepRunResponse: jest.fn(),
+    runEnded:jest.fn(),
+}
 
 const data = {
     primaryEntityTypes,
+    flowProps,
     flows: flows,
     entityTypes: entityTypes,
     response: response,
