@@ -1,34 +1,35 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import Flows from './flows';
+import data from '../../assets/mock-data/flows.data';
+import { render } from '@testing-library/react';
+import userEvent from "@testing-library/user-event";
+import {BrowserRouter as Router} from "react-router-dom";
 
 describe('Flows component', () => {
-    let flows = [];
-    let loads = [];
-    let mappings = [];
-    let deleteFlow = () => null;
-    let createFlow = () => null;
-    let updateFlow = () => null;
-    let runStep = () => null;
-    let deleteStep = () => null;
-    let canReadFlow = false;
-    let canWriteFlow = false;
-    let hasOperatorRole = false;
-    let running = [];
-    it('should render correctly', () => {
-        shallow(<Flows 
-            flows={flows} 
-            loads={loads} 
-            mappings={mappings} 
-            deleteFlow={deleteFlow} 
-            createFlow={createFlow} 
-            updateFlow={updateFlow} 
-            runStep={runStep} 
-            deleteStep={deleteStep} 
-            canReadFlow={canReadFlow}
-            canWriteFlow={canWriteFlow}
-            hasOperatorRole={hasOperatorRole}
-            running={running}
-        />);
-    });
+
+    it('Verifies input format names and type circles', () => {
+        const allKindsOfIngestInAFlow = [{ name: 'allInputFormats', steps: [{
+                "stepDefinitionType": "ingestion",
+                "sourceFormat": "csv"
+                }, {
+                "stepDefinitionType": "ingestion",
+                "sourceFormat": "binary"
+                }, {
+                "stepDefinitionType": "ingestion",
+                "sourceFormat": "text"
+                }, {
+                "stepDefinitionType": "ingestion",
+                "sourceFormat": "json"
+                }, {
+                "stepDefinitionType": "ingestion",
+                "sourceFormat": "xml"}
+                ]
+        }];
+        const { getByText, getByLabelText } = render(<Router><Flows {...data.flowProps} flows={allKindsOfIngestInAFlow} /></Router>);
+        userEvent.click(getByLabelText('icon: right'));
+        ["CSV", "BIN", "TXT", "JSON", "XML"].forEach(format => {
+            expect(getByText(format)).toBeInTheDocument();
+            expect(getByText(format)).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
+        });
+    })
 });

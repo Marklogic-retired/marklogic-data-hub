@@ -196,6 +196,7 @@ describe('Verify load step failures in a flow', () => {
         fireEvent.change(upload);
 
         fireEvent.click(getByLabelText("runStep-failedIngest"));
+
         expect(await(waitForElement(() => getByText((content, node) => {
             return getSubElements(content, node,"Ingestion step failedIngest failed")
         })))).toBeInTheDocument();
@@ -348,9 +349,12 @@ describe('Verify step display', () => {
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
         expect(await(waitForElement(() => getByText("XML")))).toBeInTheDocument();
+
         expect(await(waitForElement(() => getByText("loadXML")))).toBeInTheDocument();
 
         let notification = await(waitForElement(() =>getByLabelText("icon: check-circle")));
+        expect(getByText("XML")).toBeInTheDocument();
+        expect(getByText("XML")).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;")
         expect(notification).toBeInTheDocument();
         fireEvent.mouseOver(notification);
         expect(await(waitForElement(() => getByText("Step last ran successfully on 7/13/2020, 11:54:06 PM")))).toBeInTheDocument();

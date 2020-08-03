@@ -118,13 +118,18 @@ const Flows: React.FC<Props> = (props) => {
             }
         } else {
             customStyles = {
-                float: 'left',
-                backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
-                fontSize: '12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '35px',
+                width: '35px',
+                lineHeight: '35px',
+                backgroundColor: sourceFormatOptions[sourceFmt].color,
+                fontSize: sourceFmt === 'json' ? '12px' : '13px',
                 borderRadius: '50%',
-                textAlign: 'left',
+                textAlign: 'center',
                 color: '#ffffff',
-                padding: '5px'
+                verticalAlign: 'middle'
             }
         }
         return customStyles;
@@ -433,7 +438,7 @@ const Flows: React.FC<Props> = (props) => {
                              onMouseOver={(e) => handleMouseOver(e, viewStepId)}
                              onMouseLeave={(e) => setShowLinks('')} >
                             { sourceFormat ?
-                                <div className={styles.format} style={sourceFormatStyle(sourceFormat)}>{sourceFormat.toUpperCase()}</div>
+                                <div className={styles.format} style={sourceFormatStyle(sourceFormat)} >{sourceFormatOptions[sourceFormat].label}</div>
                                 : null }
                             <div className={styles.name}>{step.stepName}</div>
                             <div className={styles.cardLinks} style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType]  ? 'block' : 'none'}}>
