@@ -25,7 +25,7 @@
     }
     .cardsContainer {
         min-width: 700px;
-        overflow: scroll;
+        overflow: auto;
         .cards {
             display: grid;
             grid-template-columns: 20% 20% 20% 25%;

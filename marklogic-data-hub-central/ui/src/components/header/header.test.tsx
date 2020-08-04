@@ -29,7 +29,7 @@ describe('Header component', () => {
 
   test('should render correctly when a user is logged in', async () => {
 
-    const { getByText, getByLabelText } = render(
+    const { getByText, getByLabelText, rerender } = render(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
           <Header environment = {{...data.environment, dataHubVersion: '5.3-SNAPSHOT'}}/>
@@ -41,14 +41,15 @@ describe('Header component', () => {
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
     // expect(getByLabelText('icon: search')).toBeInTheDocument();
     expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
-    //test version specific link is correct when environment hub version data is set to '5.3-SNAPSHOT'
-    expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.3');
-    // expect(getByLabelText('icon: setting')).toBeInTheDocument();
     expect(getByLabelText('icon: user')).toBeInTheDocument();
-  });
+    // expect(getByLabelText('icon: setting')).toBeInTheDocument();
 
-  test('Verify proper version link given specific release dataHub release version', async () => {
-    const {} = render(
+
+    //verify correct version specific link when environment hub version data is set to '5.3-SNAPSHOT'
+    expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.3');
+
+    //verify correct version specific link given specific dataHub release version
+    rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
           <Header environment = {{...data.environment, dataHubVersion: '5.2.1'}}/>
@@ -57,10 +58,8 @@ describe('Header component', () => {
     )
     expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.2');
 
-  });
-
-  test('Verify proper version link given scenario with multi-digit dataHub versions', async () => {
-    const {} = render(
+    //verify correct version specific link given multi-digit dataHub versions
+    rerender(
       <Router>
         <UserContext.Provider value={userAuthenticated}>
           <Header environment = {{...data.environment, dataHubVersion: '5.64.123456'}}/>
