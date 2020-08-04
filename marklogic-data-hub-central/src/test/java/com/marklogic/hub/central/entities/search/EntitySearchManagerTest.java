@@ -45,7 +45,12 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @AfterEach
     public void resetData() {
         EntitySearchManager.QUERY_OPTIONS = ACTUAL_QUERY_OPTIONS;
-        runAsDataHubDeveloper();
+        if (isVersionCompatibleWith520Roles()) {
+            runAsDataHubDeveloper();
+        } else {
+            logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
+            runAsUser("flow-developer", "password");
+        }
         applyDatabasePropertiesForTests(getHubConfig());
     }
 
@@ -173,6 +178,12 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     public void testSearchResultsWithSorting() {
         runAsDataHubDeveloper();
         installProjectInFolder("customer-entity-with-indexes", true);
+
+        if (!isVersionCompatibleWith520Roles()) {
+            logger.warn("ML version is not compatible with 5.2.0 roles, so will deploy indexes as flow-developer instead of data-hub-developer");
+            runAsUser("flow-developer", "password");
+        }
+
         new EntityManagerImpl(getHubConfig()).saveDbIndexes();
         new DhsDeployer().deployAsDeveloper(getHubConfig());
 
