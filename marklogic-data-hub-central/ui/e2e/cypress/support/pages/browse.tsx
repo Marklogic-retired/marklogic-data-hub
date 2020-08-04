@@ -214,6 +214,10 @@ class BrowsePage {
     return cy.get('[data-cy=table-view]').click();
   }
 
+  getSideBarCollapseIcon() {
+    return cy.get('#sidebar-collapse-icon');
+  }
+  
   //table
   getColumnTitle(index: number) {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');

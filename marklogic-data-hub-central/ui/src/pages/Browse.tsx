@@ -15,7 +15,7 @@ import { updateUserPreferences, createUserPreferences } from '../services/user-p
 import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
+import { faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
 import { AuthoritiesContext } from "../util/authorities";
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
@@ -220,9 +220,10 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <Layout className={styles.layout}>
         <Sider className={styles.sideBarFacets}
+          trigger={null}
           collapsedWidth={0}
           collapsible
-          onCollapse={onCollapse}
+          collapsed={collapse}
           width={'20vw'}
         >
           <Sidebar
@@ -234,6 +235,13 @@ const Browse: React.FC<Props> = ({ location }) => {
           />
         </Sider>
         <Content className={styles.content}>
+
+          <div className={styles.collapseIcon} id='sidebar-collapse-icon'>
+            {collapse ?
+            <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
+            <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
+          </div>
+
           {user.error.type === 'ALERT' ?
             <AsyncLoader />
             :
