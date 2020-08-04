@@ -59,6 +59,8 @@ export enum ConfirmationType {
   Identifer = 'identifier',
   DeleteEntity = 'deleteEntity',
   DeleteEntityRelationshipWarn = 'deleteEntityRelationshipWarn',
+  DeleteEntityRelationshipOutstandingEditWarn = 'deleteEntityRelationshipOutstandingEditWarn',
+  DeleteEntityNoRelationshipOutstandingEditWarn = 'deleteEntityNoRelationshipOutstandingEditWarn',
   DeleteEntityStepWarn = 'deleteEntityStepWarn',
   DeletePropertyWarn = 'deletePropertyWarn',
   DeletePropertyStepWarn = 'deletePropertyStepWarn',

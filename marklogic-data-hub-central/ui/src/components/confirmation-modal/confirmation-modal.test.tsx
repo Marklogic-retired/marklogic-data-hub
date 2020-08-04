@@ -126,7 +126,7 @@ describe('Confirmation Modal Component', () => {
         isVisible={false}
         type={ConfirmationType.DeleteEntityStepWarn}
         boldTextArray={[entityName]} 
-        stepValues={stepValues}
+        arrayValues={stepValues}
         toggleModal={toggleModal}
         confirmAction={confirmAction}
       />
@@ -138,7 +138,7 @@ describe('Confirmation Modal Component', () => {
       isVisible={true}
       type={ConfirmationType.DeleteEntityStepWarn}
       boldTextArray={[entityName]} 
-      stepValues={stepValues}
+      arrayValues={stepValues}
       toggleModal={toggleModal}
       confirmAction={confirmAction}
     />);
@@ -159,6 +159,85 @@ describe('Confirmation Modal Component', () => {
 
     userEvent.click(getByText('Close'));
     expect(toggleModal).toBeCalledTimes(1);
+  });
+
+  test('can render delete type entity relation with outstanding edit warn confirmation', () => {
+    let entityName = 'PersonXML';
+    let arrayValues = ['Person-Mapping-XML']
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { getByText, getAllByText, queryByLabelText, rerender } =  render(
+      <ConfirmationModal
+        isVisible={false}
+        type={ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}
+        boldTextArray={[entityName]}
+        arrayValues={arrayValues}
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByLabelText('delete-relationship-edit-text')).toBeNull();
+
+    rerender(<ConfirmationModal
+      isVisible={true}
+      type={ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}
+      boldTextArray={[entityName]}
+      arrayValues={arrayValues}
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getAllByText(entityName)).toHaveLength(4);
+    expect(getByText('There are existing entity type relationships, and outstanding edits that need to be saved.')).toBeInTheDocument();
+    expect(getByText(arrayValues[0])).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
+  });
+
+  test('can render delete type outstanding edit warn confirmation', () => {
+    let entityName = 'PersonXML';
+    let arrayValues = ['Person-Mapping-XML']
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { getByText, getAllByText, queryByLabelText, rerender } =  render(
+      <ConfirmationModal
+        isVisible={false}
+        type={ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}
+        boldTextArray={[entityName]}
+        arrayValues={arrayValues}
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByLabelText('delete-no-relationship-edit-text')).toBeNull();
+
+
+    rerender(<ConfirmationModal
+      isVisible={true}
+      type={ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}
+      boldTextArray={[entityName]}
+      arrayValues={arrayValues}
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getAllByText(entityName)).toHaveLength(2);
+    expect(getByText('There are outstanding edits that need to be saved.')).toBeInTheDocument();
+    expect(getByText(arrayValues[0])).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
   });
 
   test('can render save entity type confirmation', () => {

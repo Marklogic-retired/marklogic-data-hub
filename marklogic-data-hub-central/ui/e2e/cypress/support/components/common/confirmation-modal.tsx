@@ -33,6 +33,15 @@ class ConfirmationModal {
   getDeleteEntityRelationshipText() {
     return cy.findByLabelText('delete-relationship-text', {timeout: 15000});
   }
+
+  getDeleteEntityRelationshipEditText() {
+    return cy.findByLabelText('delete-relationship-edit-text', {timeout: 25000});
+  }
+
+  getDeleteEntityNoRelationshipEditText() {
+    return cy.findByLabelText('delete-no-relationship-edit-text', {timeout: 25000});
+  }
+
   getDeleteEntityStepText() {
     return cy.findByLabelText('delete-step-text', {timeout: 15000});
   }

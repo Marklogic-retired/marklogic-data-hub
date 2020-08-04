@@ -290,5 +290,75 @@ describe('EntityTypeModal Component', () => {
       expect(screen.getByLabelText('revert-text')).toBeInTheDocument(),
     )
   });
+
+  test('Table can mock delete entity with no relations and outstanding edits', async () => {
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
+    mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
+
+    const { getByTestId } =  render(
+      <ModelingContext.Provider value={isModified}>
+      <Router>
+        <EntityTypeTable
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={true}
+          autoExpand=''
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          modifiedEntityTypesData={[]}
+          useModifiedEntityTypesData={false}
+          toggleModifiedEntityTypesData={jest.fn()}
+        />
+      </Router>
+      </ModelingContext.Provider>
+    );
+
+    userEvent.click(getByTestId('Product-trash-icon'));
+    expect(mockEntityReferences).toBeCalledWith('Product');
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-no-relationship-edit-text')).toBeInTheDocument(),
+  )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}-yes`));
+    expect(mockUpdateEntityModels).toBeCalledTimes(1);
+  });
+
+  test('Table can mock delete entity with relations and outstanding edits', async () => {
+    mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
+    mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadRelationships });
+
+    const { getByTestId } =  render(
+      <ModelingContext.Provider value={isModified}>
+        <Router>
+          <EntityTypeTable
+            allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={true}
+            autoExpand=''
+            editEntityTypeDescription={jest.fn()}
+            updateEntities={jest.fn()}
+            revertAllEntity={false}
+            toggleRevertAllEntity={jest.fn()}
+            modifiedEntityTypesData={[]}
+            useModifiedEntityTypesData={false}
+            toggleModifiedEntityTypesData={jest.fn()}
+          />
+        </Router>
+      </ModelingContext.Provider>
+    );
+
+    userEvent.click(getByTestId('Order-trash-icon'));
+    expect(mockEntityReferences).toBeCalledWith('Order');
+    expect(mockEntityReferences).toBeCalledTimes(1);
+
+    await wait(() =>
+      expect(screen.getByLabelText('delete-relationship-edit-text')).toBeInTheDocument(),
+    )
+    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}-yes`));
+    expect(mockUpdateEntityModels).toBeCalledTimes(1);
+  });
 });
 
