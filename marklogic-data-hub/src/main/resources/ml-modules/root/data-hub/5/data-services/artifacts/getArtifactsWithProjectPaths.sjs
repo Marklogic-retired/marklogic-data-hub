@@ -29,14 +29,11 @@ const userArtifactQuery = cts.andQuery([
     // cannot be managed via HC
     consts.FLOW_COLLECTION,
     consts.ENTITY_MODEL_COLLECTION,
-    consts.STEP_COLLECTION
+    "http://marklogic.com/data-hub/steps/ingestion",
+    "http://marklogic.com/data-hub/steps/mapping"
   ]),
   cts.notQuery(
     cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
-  ),
-  // In 5.3.0, HC does not allow editing custom steps, so don't include them
-  cts.notQuery(
-    cts.collectionQuery("http://marklogic.com/data-hub/steps/custom")
   )
 ]);
 
