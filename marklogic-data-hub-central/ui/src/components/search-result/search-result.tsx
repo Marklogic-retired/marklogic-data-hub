@@ -126,7 +126,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             start : searchOptions.start,
                             searchFacets : searchOptions.selectedFacets,
                             query: searchOptions.query,
-                            tableView: props.tableView
+                            tableView: props.tableView,
+                            sortOrder: searchOptions.sortOrder
                         }}} id={'instance'} data-cy='instance' >
                         <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
                     </Link>

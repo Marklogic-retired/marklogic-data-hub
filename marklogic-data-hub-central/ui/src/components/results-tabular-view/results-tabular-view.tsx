@@ -231,7 +231,8 @@ const ResultsTabularView = (props) => {
                         start: searchOptions.start,
                         searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
-                        tableView: props.tableView
+                        tableView: props.tableView,
+                        sortOrder: searchOptions.sortOrder
                     }
                 }} id={'instance'}
                     data-cy='instance'>
@@ -246,7 +247,8 @@ const ResultsTabularView = (props) => {
                         start: searchOptions.start,
                         searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
-                        tableView: props.tableView
+                        tableView: props.tableView,
+                        sortOrder: searchOptions.sortOrder
                     }
                 }} id={'source'}
                     data-cy='source'>

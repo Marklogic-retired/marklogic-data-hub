@@ -62,6 +62,16 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.waitForSpinnerToDisappear();
         browsePage.getTableCell(1, 2).should('contain','102');
         browsePage.getTableCell(2, 2).should('contain','103');
+
+        //Refresh the browser page.
+        cy.reload();
+
+        //Verify if the facets and other query related properties are intact after refreshing the browser page.
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getSelectedQuery().should('contain', 'new-query-2');
+        browsePage.getSelectedQueryDescription().should('contain', 'new-query-2 description');
+        browsePage.getTableCell(1, 2).should('contain','102');
+        browsePage.getTableCell(2, 2).should('contain','103');
     });
 
     it('save/saveAs/edit more queries with duplicate query name from browse and manage queries view', () => {

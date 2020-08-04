@@ -13,6 +13,8 @@ import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
 import DateTimeFacet from '../date-time-facet/date-time-facet';
 import { MLTooltip } from '@marklogic/design-system';
+import { getUserPreferences, updateUserPreferences } from '../../services/user-preferences';
+import { UserContext } from '../../util/user-context';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -34,6 +36,9 @@ const Sidebar: React.FC<Props> = (props) => {
     greyedOptions,
     setAllGreyedOptions
   } = useContext(SearchContext);
+  const {
+    user
+  } = useContext(UserContext);
   const [entityFacets, setEntityFacets] = useState<any[]>([]);
   const [hubFacets, setHubFacets] = useState<any[]>([]);
   const [allSelectedFacets, setAllSelectedFacets] = useState<any>(searchOptions.selectedFacets);
@@ -43,16 +48,32 @@ const Sidebar: React.FC<Props> = (props) => {
   let decimals = ['decimal', 'double', 'float'];
   const dateRangeOptions = ['Today', 'This Week', 'This Month', 'Custom'];
   const [activeKey, setActiveKey] = useState<any[]>([]);
+  const [userPreferences, setUserPreferences] = useState({});
 
   useEffect(() => {
     if (props.facets) {
-      props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
         return hubFacetValues && { ...hubFacet, ...hubFacetValues }
       });
+
       setHubFacets(filteredHubFacets);
+
+      let selectedHubFacets:any = [];
+      for( let facet in searchOptions.selectedFacets) {
+        let hubFacetValue = filteredHubFacets.find(hubFacet => hubFacet.facetName === facet);
+        if(hubFacetValue) {
+          selectedHubFacets.push(hubFacetValue);
+        }
+      }
+
+      if(selectedHubFacets.length) {
+        initializeFacetPreferences();
+      } else {
+        props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
+      }
+
       if (props.selectedEntities.length) {
         let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split('.')[0] === props.selectedEntities[0]);
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
@@ -197,7 +218,6 @@ const Sidebar: React.FC<Props> = (props) => {
     }
     setAllSelectedFacets(facets);
     setAllGreyedOptions(facets);
-
   }
 
   const addFacetValues = (constraint: string, vals: string[], dataType: string, facetCategory: string) => {
@@ -368,7 +388,31 @@ const Sidebar: React.FC<Props> = (props) => {
   }
      const setActive = (key) => {
          setActiveKey(key);
+         handleFacetPreferences(key);
      }
+  
+  const initializeFacetPreferences = () => {
+    let defaultPreferences = getUserPreferences(user.name);
+      if (defaultPreferences !== null) {
+        let parsedPreferences = JSON.parse(defaultPreferences);
+        if (parsedPreferences.activeFacets) {
+          setUserPreferences({...parsedPreferences});
+          setActiveKey([...parsedPreferences.activeFacets])
+        } else {
+          props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
+        }
+      }
+  }
+
+  const handleFacetPreferences = (key) => {
+    let options = {
+      ...userPreferences,
+      activeFacets: key
+    }
+    updateUserPreferences(user.name, options);
+  }
+    
+  
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <Collapse
