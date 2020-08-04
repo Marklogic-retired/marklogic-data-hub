@@ -65,15 +65,8 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @Override
     protected void init() {
         if (!initialized) {
-            super.init();
-            try {
-                adminHubConfig.getAppConfig().getConfigDirs().add(new ConfigDir(new ClassPathResource("test-config").getFile()));
-                new SimpleAppDeployer(new DeployRolesCommand(), new DeployAmpsCommand(), new CreateGranularPrivilegesCommand(adminHubConfig))
-                    .deploy(adminHubConfig.getAppConfig());
-                initialized = true;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+          super.init();
+          initialized = true;
         }
     }
 

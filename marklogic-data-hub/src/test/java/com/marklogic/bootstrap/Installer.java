@@ -1,12 +1,16 @@
 package com.marklogic.bootstrap;
 
 import com.marklogic.appdeployer.AppConfig;
+import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
+import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
+import com.marklogic.appdeployer.command.security.DeployRolesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
@@ -19,7 +23,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.util.List;
 
 @EnableAutoConfiguration
@@ -147,11 +153,16 @@ public class Installer extends HubTestBase implements InitializingBean {
             appConfig.getModulePaths().add("../build/mlBundle/marklogic-unit-test-modules/ml-modules");
             appConfig.getModulePaths().add("../src/test/ml-modules");
 
+            appConfig.getConfigDirs().add(new ConfigDir(new ClassPathResource("test-config").getFile()));
+
             // Need to run GenerateFunctionMetadataCommand as well so that function metadata is generated both for
             // core mapping functions and custom functions under src/test/ml-modules/root/custom-modules.
             new SimpleAppDeployer(
-                new LoadModulesCommand(),
-                new GenerateFunctionMetadataCommand(hubConfig)
+                new GenerateFunctionMetadataCommand(hubConfig),
+                new DeployRolesCommand(),
+                new DeployAmpsCommand(),
+                new CreateGranularPrivilegesCommand(hubConfig),
+                new LoadModulesCommand()
             ).deploy(appConfig);
 
             // Toss test modules into the 'hub-core-module' collection so that clearUserData() calls don't delete them
@@ -159,6 +170,8 @@ public class Installer extends HubTestBase implements InitializingBean {
             modulesClient.newServerEval().xquery("cts:uri-match('/test/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
             // Preserves the modules loaded from src/test/ml-modules/root/custom-modules
             modulesClient.newServerEval().xquery("cts:uri-match('/custom-modules/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } finally {
             appConfig.setAppServicesPort(originalAppServicesPort);
             appConfig.setModulesLoaderBatchSize(originalBatchSize);
