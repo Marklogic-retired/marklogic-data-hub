@@ -7,13 +7,13 @@ import TableView from '../components/table-view/table-view';
 import JsonView from '../components/json-view/json-view';
 import DetailHeader from '../components/detail-header/detail-header';
 import AsyncLoader from '../components/async-loader/async-loader';
-import {Layout, Menu, PageHeader, Tooltip} from 'antd';
+import {Layout, Menu, PageHeader} from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
 import { MLTooltip } from '@marklogic/design-system';
-import {SearchContext} from "../util/search-context";
+import { getUserPreferences } from '../services/user-preferences';
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -33,6 +33,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
+  const [parentPagePreferences, setParentPagePreferences] = useState({});
 
   const componentIsMounted = useRef(true);
 
@@ -82,12 +83,37 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
 
   useEffect(() => {
-    location.state && location.state.hasOwnProperty('selectedValue') && location.state['selectedValue'] === 'source' ?
+    if(location.state && JSON.stringify(location.state) !== JSON.stringify({})) {
+      location.state.hasOwnProperty('selectedValue') && location.state['selectedValue'] === 'source' ?
       setSelected('full') : setSelected('instance');
-    if(location.state === undefined){
-      location.state = {};
+    } else {
+      if(location.state === undefined){
+        location.state = {};
+      }
+      setSelected('instance');
+      handleUserPreferences();
     }
+    
   }, []);
+
+  //Apply user preferences on each page render
+  const handleUserPreferences = () => {
+    let currentPref = getUserPreferences(user.name);
+      if (currentPref !== null) {
+        let currPref = JSON.parse(currentPref);
+        let userPref:any = {
+          zeroState: false,
+          entity: currPref.query['entityTypeIds'] ? currPref.query['entityTypeIds'] : '',
+          pageNumber: currPref['pageNumber'] ? currPref['pageNumber'] : 1,
+          start: currPref['start'] ? currPref['start'] : 1,
+          searchFacets: currPref.query['selectedFacets'] ? currPref.query['selectedFacets'] : {},
+          query: currPref.query['searchText'] ? currPref.query['searchText']: '',
+          tableView: currPref.hasOwnProperty('tableView') ? currPref['tableView'] : true,
+          sortOrder: currPref['sortOrder'] ? currPref['sortOrder'] : []
+         }
+         setParentPagePreferences({...userPref})
+      }
+  }
 
   const setEntityInstanceFlag = (content) => {
     let instance = content.envelope.instance;
@@ -102,12 +128,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       pathname: "/tiles/explore",
       state: {
          zeroState: false,
-         entity: location.state ? location.state['entity'] : '',
-         pageNumber: location.state ? location.state['pageNumber'] : 1,
-         start: location.state ? location.state['start'] : 1,
-         searchFacets: location.state ? location.state['searchFacets'] : {},
-         query: location.state ? location.state['query'] : '',
-         tableView: location.state ? location.state['tableView'] : true
+         entity: location.state && location.state.hasOwnProperty('entity') ? location.state['entity'] : parentPagePreferences['entity'],
+         pageNumber: location.state && location.state.hasOwnProperty('pageNumber') ? location.state['pageNumber'] : parentPagePreferences['pageNumber'],
+         start: location.state && location.state.hasOwnProperty('start')? location.state['start'] : parentPagePreferences['start'],
+         searchFacets: location.state && location.state.hasOwnProperty('searchFacets') ? location.state['searchFacets'] : parentPagePreferences['searchFacets'],
+         query: location.state && location.state.hasOwnProperty('query')? location.state['query'] : parentPagePreferences['query'],
+         tableView: location.state && location.state.hasOwnProperty('tableView') ? location.state['tableView'] : parentPagePreferences['tableView'],
+         sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder']
         }
    }
 

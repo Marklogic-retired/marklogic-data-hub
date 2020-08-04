@@ -16,12 +16,14 @@ import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
 import { QueryOptions } from '../../types/query-types';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
+import { getUserPreferences } from '../../services/user-preferences';
 
 
 
 const Query = (props) => {
 
     const {
+        user,
         handleError
     } = useContext(UserContext);
     const {
@@ -151,6 +153,10 @@ const Query = (props) => {
     }, [searchOptions.entityTypeIds]);
 
     useEffect(() => {
+        initializeUserPreferences();
+    },[])
+
+    useEffect(() => {
             if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
                 // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
                 if (isSaveQueryChanged() && !searchOptions.zeroState) {
@@ -162,6 +168,20 @@ const Query = (props) => {
                 toggleEntityCancelClicked(false); // RESETTING THE STATE TO FALSE
             }
     }, [searchOptions.nextEntityType]);
+
+    const initializeUserPreferences = async () => {
+
+        let defaultPreferences = getUserPreferences(user.name);
+        if (defaultPreferences !== null) {
+            let parsedPreferences = JSON.parse(defaultPreferences);
+            if (parsedPreferences.selectedQuery !== 'select a query' && JSON.stringify(parsedPreferences) !== JSON.stringify([])) {
+                let queryObject = parsedPreferences.queries.find(obj => parsedPreferences.selectedQuery === obj.savedQuery?.name);
+                if (queryObject?.savedQuery && queryObject.savedQuery.hasOwnProperty('description') && queryObject.savedQuery.description) {
+                     setCurrentQueryDescription(queryObject?.savedQuery.description);
+                }
+            }
+        }
+    }
 
     // Switching between entity confirmation modal buttons
     const onCancel = () => {

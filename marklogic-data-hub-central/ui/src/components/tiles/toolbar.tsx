@@ -43,7 +43,11 @@ const Toolbar: React.FC<Props> = (props) => {
                 if (tiles[id]['iconType'] === 'custom') {
                     return (
                         props.enabled && props.enabled.includes(id) ?
-                            <Link to={'/tiles/' + id} aria-label={'tool-' + id + '-link'} key={i}>
+                            <Link to={
+                                {pathname: `/tiles/${id}`,
+                                state: {
+                                    tileIconClicked : true
+                                }}} aria-label={'tool-' + id + '-link'} key={i}>
                                 <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
                                     <div
                                         className={tiles[id]['icon']}

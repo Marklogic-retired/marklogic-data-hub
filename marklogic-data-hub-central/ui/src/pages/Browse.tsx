@@ -11,7 +11,7 @@ import SearchBar from '../components/search-bar/search-bar';
 import SearchPagination from '../components/search-pagination/search-pagination';
 import SearchSummary from '../components/search-summary/search-summary';
 import SearchResults from '../components/search-results/search-results';
-import { updateUserPreferences, createUserPreferences } from '../services/user-preferences';
+import { updateUserPreferences, createUserPreferences, getUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -41,7 +41,8 @@ const Browse: React.FC<Props> = ({ location }) => {
     resetSearchOptions,
     setEntity,
     applySaveQuery,
-    setPageWithEntity
+    setPageWithEntity,
+    setPageQueryOptions,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -124,6 +125,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   useEffect(() => {
     getEntityModel();
+    initializeUserPreferences();
     return () => {
       componentIsMounted.current = false
     }
@@ -138,26 +140,13 @@ const Browse: React.FC<Props> = ({ location }) => {
 
 
   useEffect(() => {
-    if (searchOptions.zeroState === true) {
-      let options: QueryOptions = {
-        searchText: '',
-        entityTypeIds: [],
-        selectedFacets: {},
-        selectedQuery: 'select a query',
-        propertiesToDisplay: [],
-        zeroState: true,
-        manageQueryModal: false,
-        sortOrder: []
-      }
-      applySaveQuery(options);
-    }
-
     if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
       setPageWithEntity(location.state['entity'],
         location.state['pageNumber'],
         location.state['start'],
         location.state['searchFacets'],
-        location.state['query'])
+        location.state['query'],
+        location.state['sortOrder'])
       location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
     else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
@@ -166,9 +155,58 @@ const Browse: React.FC<Props> = ({ location }) => {
     else if (location.state && location.state.hasOwnProperty('entity')) {
       setEntityClearQuery(location.state['entity']);
     }
+
   }, [searchOptions.zeroState]);
 
-  const handleUserPreferences = () => {
+  const setZeroStateQueryOptions = () => {
+    let options: QueryOptions = {
+      searchText: '',
+      entityTypeIds: [],
+      selectedFacets: {},
+      selectedQuery: 'select a query',
+      propertiesToDisplay: [],
+      zeroState: true,
+      manageQueryModal: false,
+      sortOrder: []
+    }
+     applySaveQuery(options);
+  }
+    
+  const initializeUserPreferences = async () => {
+    if (location.state) {
+      if (location.state['tileIconClicked']) {
+        await setZeroStateQueryOptions();
+      }
+    } else {
+      let defaultPreferences = getUserPreferences(user.name);
+      if (defaultPreferences !== null) {
+        let parsedPreferences = JSON.parse(defaultPreferences);
+        if (!parsedPreferences.zeroState && searchOptions.zeroState) {
+          let options: any = {
+            searchText: parsedPreferences.query.searchText || '',
+            entityTypeIds: parsedPreferences.query.entityTypeIds || [],
+            selectedFacets: parsedPreferences.query.selectedFacets || {},
+            selectedQuery: searchOptions.selectedQuery || 'select a query',
+            start: parsedPreferences.start || 1,
+            pageNumber: parsedPreferences.pageNumber || 1,
+            pageLength: parsedPreferences.pageLength,
+            propertiesToDisplay: searchOptions.selectedTableProperties || [],
+            zeroState: parsedPreferences.zeroState || false,
+            manageQueryModal: false,
+            sortOrder: parsedPreferences.sortOrder || []
+          }
+          await setPageQueryOptions(options)
+          if (parsedPreferences.hasOwnProperty('tableView')) {
+            toggleTableView(parsedPreferences.tableView);
+          }
+        } else if (parsedPreferences.zeroState) {
+          await setZeroStateQueryOptions();
+        }
+      }
+    }
+  }
+
+  const setUserPreferences = (view: string = '') => {
     let preferencesObject = {
       query: {
         searchText: searchOptions.query,
@@ -176,10 +214,20 @@ const Browse: React.FC<Props> = ({ location }) => {
         selectedFacets: searchOptions.selectedFacets
       },
       pageLength: searchOptions.pageLength,
-      tableView: tableView,
-      selectedQuery: searchOptions.selectedQuery
+      pageNumber: searchOptions.pageNumber,
+      start: searchOptions.start,
+      tableView: view ? (view === 'snippet' ? false : true) : tableView,
+      selectedQuery: searchOptions.selectedQuery,
+      queries: queries,
+      propertiesToDisplay: searchOptions.selectedTableProperties,
+      zeroState: searchOptions.zeroState,
+      sortOrder: searchOptions.sortOrder
     }
     updateUserPreferences(user.name, preferencesObject);
+  }
+
+  const handleUserPreferences = () => {
+    setUserPreferences();
 
     if (searchOptions.entityTypeIds.length > 0 && !entities.includes(searchOptions.entityTypeIds[0])) {
       // entityName is not part of entity model from model payload
@@ -207,6 +255,18 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const updateCheckedFacets = (facets) => {
     setGreyFacets(facets);
+  }
+
+  const handleViewChange = (view) => {
+    let tableView = '';
+    if (view === 'snippet') {
+      toggleTableView(false);
+      tableView = 'snippet';
+    } else {
+      toggleTableView(true);
+      tableView = 'table';
+    }
+    setUserPreferences(tableView);
   }
 
   if (searchOptions.zeroState) {
@@ -269,12 +329,12 @@ const Browse: React.FC<Props> = ({ location }) => {
                   <div className={styles.switchViews}>
                     <div className={!tableView ? styles.toggled : styles.toggleView}
                       data-cy="facet-view" id={'snippetView'}
-                      onClick={() => toggleTableView(false)}>
+                      onClick={() => handleViewChange('snippet')}>
                       <MLTooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></MLTooltip>
                     </div>
                     <div className={tableView ? styles.toggled : styles.toggleView}
                       data-cy="table-view" id={'tableView'}
-                      onClick={() => toggleTableView(true)}>
+                      onClick={() => handleViewChange('table')}>
                       <MLTooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></MLTooltip>
                     </div>
                   </div>

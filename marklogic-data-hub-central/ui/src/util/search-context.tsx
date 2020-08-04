@@ -71,8 +71,9 @@ interface ISearchContextInterface {
   setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
-  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string) => void;
+  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: []) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
+  setPageQueryOptions: (query: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -106,7 +107,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSelectedTableProperties: () => { },
   setView: () => { },
   setPageWithEntity: () => { },
-  setSortOrder: () => { }
+  setSortOrder: () => { },
+  setPageQueryOptions: () => { }
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -466,7 +468,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         });
     }
 
-    const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string  ) => {
+    const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string, sortOrder: []  ) => {
       setSearchOptions({
             ...searchOptions,
            entityTypeIds: option,
@@ -474,6 +476,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
            query: searchString,
            start: start,
            pageNumber : pageNumber,
+           sortOrder: sortOrder,
            zeroState: false
         });
     }
@@ -503,6 +506,23 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+  const setPageQueryOptions = (query: any) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: query.start || 1,
+      selectedFacets: query.selectedFacets,
+      query: query.searchText,
+      entityTypeIds: query.entityTypeIds,
+      nextEntityType: query.entityTypeIds[0],
+      pageNumber: query.pageNumber || 1,
+      pageLength: searchOptions.pageSize,
+      selectedQuery: query.selectedQuery,
+      selectedTableProperties: query.propertiesToDisplay,
+      zeroState: query.zeroState,
+      manageQueryModal: query.manageQueryModal,
+      sortOrder: query.sortOrder
+    });
+  }
     useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
@@ -541,7 +561,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setSelectedTableProperties,
       setView,
       setPageWithEntity,
-      setSortOrder
+      setSortOrder,
+      setPageQueryOptions
     }}>
       {children}
     </SearchContext.Provider>
