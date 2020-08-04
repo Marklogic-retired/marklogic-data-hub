@@ -224,6 +224,7 @@ const Modeling: React.FC = () => {
         isVisible={showConfirmModal}
         type={confirmType}
         boldTextArray={[]} 
+        arrayValues={[]}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />

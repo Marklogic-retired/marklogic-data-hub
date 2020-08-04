@@ -821,7 +821,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         isVisible={showConfirmModal}
         type={confirmType}
         boldTextArray={confirmBoldTextArray}
-        stepValues={stepValuesArray}
+        arrayValues={stepValuesArray}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
