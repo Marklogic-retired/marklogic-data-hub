@@ -10,7 +10,7 @@
 }
 
 .sideBarFacets {
-  background-color: #F1F2F5;
+  background-color: #f1f2f5;
   margin-top: 4px;
 }
 
@@ -59,4 +59,17 @@
 
 .ant-table-content {
   height: 400px;
+}
+
+.collapseIcon {
+  width: 21px;
+  height: 28px;
+  line-height: 28px;
+  margin-left: -36px;
+  margin-top: -20px;
+  background-color: #e8e8e8;
+  border-radius: 0px 5px 5px 0px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
 }
