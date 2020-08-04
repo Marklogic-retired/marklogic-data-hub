@@ -1,4 +1,7 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
+
+let assertions = [];
 
 function invokeService(entityTypeId, propertyPath, referenceType) {
   return fn.head(xdmp.invoke(
@@ -74,11 +77,11 @@ function testMinMaxFloatProperty() {
   ];
 }
 
-[]
-.concat(testMinMaxDecimalProperty())
-.concat(testMinMaxDoubleProperty())
-.concat(testMinMaxFloatProperty());
-/*
-.concat(testMinMaxTwoLevelNesting())
-.concat(testMinMaxOneLevelNesting())
-.concat(testMinMaxLongProperty())*/
+hubTest.runWithRolesAndPrivileges(['hub-central-entity-model-reader'], [], function() {
+  assertions = []
+    .concat(testMinMaxDecimalProperty())
+    .concat(testMinMaxDoubleProperty())
+    .concat(testMinMaxFloatProperty());
+});
+
+assertions;
