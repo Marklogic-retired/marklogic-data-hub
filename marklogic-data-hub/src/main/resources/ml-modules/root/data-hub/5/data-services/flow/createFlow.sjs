@@ -30,7 +30,7 @@ try {
   // swallowing error, as we don't want there to be an existing flow with the given name.
 }
 if (existingFlow) {
-  ds.throwBadRequest(`Unable to create a flow. Flow with the name "${name}" already exists.`);
+  ds.throwBadRequest(`This flow name already exists: ${name}`);
 }
 const flow = {
   name: name,
