@@ -1,7 +1,8 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
 const entitySearchService = require("/test/suites/data-hub/5/data-services/lib/entitySearchService.sjs");
 
-let assertions = [];
+let allAssertions = [];
 let saveQuery = JSON.stringify({
   "savedQuery": {
     "id": "",
@@ -41,6 +42,7 @@ let saveQuery = JSON.stringify({
 });
 
 function testGetQuery() {
+  let assertions = [];
   let id = entitySearchService.saveQuery(saveQuery).savedQuery.id;
   let result = JSON.parse(entitySearchService.getSavedQuery(id));
   assertions.push(
@@ -59,9 +61,11 @@ function testGetQuery() {
       test.assertEqual(null, result.savedQuery),
       test.assertEqual(0, Object.keys(result).length)
   );
+  return assertions;
 }
 
 function testGetQueries() {
+  let assertions = [];
   const result = entitySearchService.getSavedQueries();
   assertions.push(
       test.assertNotEqual(null, result),
@@ -70,6 +74,10 @@ function testGetQueries() {
   return assertions;
 }
 
-[]
+hubTest.runWithRolesAndPrivileges(['hub-central-saved-query-user'], [], function() {
+  allAssertions = []
     .concat(testGetQuery())
     .concat(testGetQueries());
+});
+
+allAssertions;

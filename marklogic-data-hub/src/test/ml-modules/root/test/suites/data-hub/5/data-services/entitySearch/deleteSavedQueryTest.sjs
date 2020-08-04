@@ -1,4 +1,5 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
 const entitySearchService = require("/test/suites/data-hub/5/data-services/lib/entitySearchService.sjs");
 
 let assertions = [];
@@ -40,18 +41,28 @@ let saveQuery = JSON.stringify({
     }
 });
 
-let id = entitySearchService.saveQuery(saveQuery).savedQuery.id;
-let result = entitySearchService.deleteSavedQuery(id);
-let resultAfterDeletion = entitySearchService.getSavedQueries();
-assertions.push(
+function testDeleteExistingSavedQuery() {
+  let id = entitySearchService.saveQuery(saveQuery).savedQuery.id;
+  let result = entitySearchService.deleteSavedQuery(id);
+  let resultAfterDeletion = entitySearchService.getSavedQueries();
+  return [
     test.assertEqual(null, result),
     test.assertEqual(0, resultAfterDeletion.length)
-);
+  ]
+}
 
-id = "some-non-existent-query-id";
-result = JSON.parse(entitySearchService.deleteSavedQuery(id));
-assertions.push(
+function testDeleteNonExistingSavedQuery() {
+  id = "some-non-existent-query-id";
+  result = JSON.parse(entitySearchService.deleteSavedQuery(id));
+  return [
     test.assertEqual(null, result)
-);
+  ]
+}
+
+hubTest.runWithRolesAndPrivileges(['hub-central-saved-query-user'], [], function() {
+  assertions = []
+    .concat(testDeleteExistingSavedQuery())
+    .concat(testDeleteNonExistingSavedQuery());
+});
 
 assertions;

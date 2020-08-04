@@ -1,7 +1,8 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
 const entitySearchService = require("/test/suites/data-hub/5/data-services/lib/entitySearchService.sjs");
 
-let assertions = [];
+let allAssertions = [];
 let saveQuery = JSON.stringify({
   "savedQuery": {
     "id": "",
@@ -41,6 +42,7 @@ let saveQuery = JSON.stringify({
 });
 
 function testSaveAndModifyQuery() {
+  let assertions = [];
   let insertedQuery = entitySearchService.saveQuery(saveQuery);
   const uri = "/saved-queries/" + insertedQuery.savedQuery.id + ".json";
   const permissions = JSON.parse(xdmp.invokeFunction(() => {
@@ -90,6 +92,7 @@ function testSaveAndModifyQuery() {
 }
 
 function testSaveAndModifyQueryExceptions() {
+  let assertions = [];
   let tempQuery = JSON.parse(saveQuery);
   tempQuery['savedQuery'] = undefined;
   assertions.push(test.assertThrowsError(xdmp.function(xs.QName('entitySearchService.saveQuery')), JSON.stringify(tempQuery), null));
@@ -127,6 +130,10 @@ function testSaveAndModifyQueryExceptions() {
   return assertions;
 }
 
-[]
+hubTest.runWithRolesAndPrivileges(['hub-central-saved-query-user'], [], function() {
+  allAssertions = []
     .concat(testSaveAndModifyQuery())
     .concat(testSaveAndModifyQueryExceptions());
+});
+
+allAssertions;

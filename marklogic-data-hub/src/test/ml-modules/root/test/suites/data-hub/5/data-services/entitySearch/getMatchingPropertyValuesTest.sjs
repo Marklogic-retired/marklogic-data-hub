@@ -1,4 +1,7 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
+
+let assertions = [];
 
 function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit) {
   return fn.head(xdmp.invoke(
@@ -108,16 +111,20 @@ function testMatchingValuesOnCollectionNames() {
   ];
 }
 
-[]
-.concat(testMatchingValuesOnRangeElementIndexes())
-.concat(testMatchingValuesOnRangeFieldIndexes())
-.concat(testMatchingValuesOnCollectionNames());
-/*
-.concat(testMatchingValuesStartingWithPattern())
-.concat(testMatchingValuesWithPatternInBetween())
-.concat(testMatchingValuesOnRangePathOneLevelNesting())
-.concat(testMatchingValuesOnRangePathNoNesting())
-.concat(testMatchingValuesWithLimit())
-.concat(testMatchingValuesOnRangeElementIndexes())
-.concat(testMatchingValuesOnRangeFieldIndexes())
-.concat(testMatchingValuesOnCollectionNames());*/
+hubTest.runWithRolesAndPrivileges(['hub-central-entity-model-reader'], [], function() {
+  assertions = []
+    .concat(testMatchingValuesOnRangeElementIndexes())
+    .concat(testMatchingValuesOnRangeFieldIndexes())
+    .concat(testMatchingValuesOnCollectionNames());
+  /*
+  .concat(testMatchingValuesStartingWithPattern())
+  .concat(testMatchingValuesWithPatternInBetween())
+  .concat(testMatchingValuesOnRangePathOneLevelNesting())
+  .concat(testMatchingValuesOnRangePathNoNesting())
+  .concat(testMatchingValuesWithLimit())
+  .concat(testMatchingValuesOnRangeElementIndexes())
+  .concat(testMatchingValuesOnRangeFieldIndexes())
+  .concat(testMatchingValuesOnCollectionNames());*/;
+});
+
+assertions;
