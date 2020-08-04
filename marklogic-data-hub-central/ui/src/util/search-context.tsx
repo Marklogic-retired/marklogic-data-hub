@@ -372,14 +372,18 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
 
   const clearGreyFacet = (constraint: string, val: string) => {
     let facets = greyedOptions.selectedFacets;
+    let selectedFacetsLength = Object.keys(searchOptions.selectedFacets).length
     let valueKey = '';
     if (facets[constraint].dataType === 'xs:string' || facets[constraint].dataType === 'string') {
       valueKey = 'stringValues';
     }
-    if (facets[constraint][valueKey].length > 1) {
+    if (facets[constraint][valueKey].length > 1 || (facets[constraint][valueKey].length > 0 && selectedFacetsLength)) {
       facets[constraint][valueKey] = facets[constraint][valueKey].filter(option => option !== val);
     } else {
       delete facets[constraint]
+    }
+    if (facets[constraint]) {
+      if (facets[constraint][valueKey].length === 0 && selectedFacetsLength) delete facets[constraint]
     }
     setGreyedOptions({ ...greyedOptions, selectedFacets: facets })
   }

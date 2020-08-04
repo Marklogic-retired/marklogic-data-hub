@@ -504,13 +504,15 @@ const Query = (props) => {
                 </MLTooltip>
             </div>
             <div className={styles.selectedFacets}>
-                <SelectedFacets
+              <SelectedFacets
                     selectedFacets={props.selectedFacets}
                     greyFacets={props.greyFacets}
                     applyClicked={applyClicked}
                     showApply={showApply}
                     toggleApply={(clicked) => toggleApply(clicked)}
                     toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
+                    setDiscardChangesRequest={props.setDiscardChangesRequest}
+                    discardChangesRequest={props.discardChangesRequest}
                 />
             </div>
             <QueryModal

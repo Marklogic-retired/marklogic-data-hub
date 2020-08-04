@@ -312,7 +312,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 2);
   });
 
-  xit('apply multiple facets, select and discard new facet, verify original facets checked', () => {
+  it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').click();
@@ -328,6 +328,34 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').should('be.checked');
     browsePage.getFacetItemCheckbox('name', 'Lola Dunn').should('be.checked');
     browsePage.getFacetItemCheckbox('email', 'jacquelineknowles@nutralab.com').should('not.be.checked');
+  });
+
+  it('apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked' , () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getShowMoreLink().first().click();
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+    browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('be.checked');
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('not.be.checked');
+    browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
+    browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('not.exist');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+    browsePage.getFacetApplyButton().click();
+    browsePage.clearFacetSelection('name');
+    browsePage.clearFacetSelection('email');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('not.be.checked');
+    browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
+    browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('not.exist');
   });
 });
 

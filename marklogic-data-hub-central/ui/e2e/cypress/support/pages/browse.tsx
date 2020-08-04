@@ -115,6 +115,15 @@ class BrowsePage {
     return cy.get('[data-cy="clear-' + facet + '"]');
   }
 
+  getClearFacetSelection(facet: string) {
+    return cy.get(`[data-cy="${facet}-clear"]`);
+  }
+
+  clearFacetSelection(facet: string) {
+    cy.get(`[data-cy="${facet}-clear"]`).click();
+    this.waitForSpinnerToDisappear();
+  }
+
   clearFacetSearchSelection(facet: string) {
     cy.get('[data-cy="clear-' + facet + '"]').click();
     this.waitForSpinnerToDisappear();
@@ -186,7 +195,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    return cy.get("#hub-properties > div > i").click();
+    return cy.get("#hub-properties > div").eq(1).invoke('show').click();
   }
 
   getExpandableSnippetView() {
@@ -217,7 +226,7 @@ class BrowsePage {
   getSideBarCollapseIcon() {
     return cy.get('#sidebar-collapse-icon');
   }
-  
+
   //table
   getColumnTitle(index: number) {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');

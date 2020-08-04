@@ -28,7 +28,8 @@
           }
         },
         "shippedDate": {
-          "datatype": "dateTime"
+          "datatype": "dateTime",
+          "facetable": true
         }
       }
     },

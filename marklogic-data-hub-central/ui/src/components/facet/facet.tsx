@@ -21,6 +21,12 @@ interface Props {
   propertyPath: any;
   updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
+  toggleClearRequest: (request: boolean) => void;
+  toggleUncheckLastFacet: (request: boolean) => void;
+  discardChangesRequest: boolean;
+  setDiscardChangesRequest: (request: boolean) => void;
+  clearRequest: boolean;
+  uncheckLastFacet: boolean;
 };
 
 const Facet: React.FC<Props> = (props) => {
@@ -73,10 +79,11 @@ const Facet: React.FC<Props> = (props) => {
 
     useEffect(() => {
         if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-            setCheckedOptions(greyedOptions)
+          setCheckedOptions(greyedOptions)
         } else if (Object.entries(greyedOptions.selectedFacets).length === 0 && Object.entries(searchOptions.selectedFacets).length !== 0) {
-            setCheckedOptions(searchOptions);
-        } else if ((Object.entries(searchOptions.selectedFacets).length === 0 || (!searchOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
+          (props.clearRequest || props.uncheckLastFacet) ? setCheckedOptions(greyedOptions) : setCheckedOptions(searchOptions)
+        }
+        else if ((Object.entries(searchOptions.selectedFacets).length === 0 || (!searchOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
             setChecked([]);
         }
     }, [greyedOptions]);
@@ -104,6 +111,9 @@ const Facet: React.FC<Props> = (props) => {
     // Deselection
     else if (index !== -1) {
       let newChecked = [...checked];
+      if (checked.length === 1) {
+        props.toggleUncheckLastFacet(true);
+      }
       newChecked.splice(index, 1);
       setChecked(newChecked);
       props.updateSelectedFacets(props.constraint, newChecked, props.facetType, isNested);
@@ -111,8 +121,9 @@ const Facet: React.FC<Props> = (props) => {
   }
 
   const handleClear = () => {
-    setChecked([]);
-    props.updateSelectedFacets(props.constraint, [], props.facetType, false);
+      setChecked([]);
+      props.toggleClearRequest(true);
+      props.updateSelectedFacets(props.constraint, [], props.facetType, false);
   }
 
 

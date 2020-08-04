@@ -15,8 +15,10 @@ interface Props {
   greyFacets: any[];
   toggleApply: (clicked:boolean) => void;
   toggleApplyClicked: (clicked:boolean) => void;
-  showApply: boolean
-  applyClicked: boolean
+  showApply: boolean;
+  applyClicked: boolean;
+  setDiscardChangesRequest: (request: boolean) => void;
+  discardChangesRequest: boolean;
 };
 
 const SelectedFacets: React.FC<Props> = (props) => {
@@ -35,36 +37,52 @@ const SelectedFacets: React.FC<Props> = (props) => {
    } = useContext(SearchContext);
 
     useEffect(() => {
-        if ((props.greyFacets.length > 0 || props.selectedFacets.length > 0) && (!props.applyClicked)) {
-            props.toggleApply(true);
-        } else {
-            props.toggleApply(false);
-        }
-        props.toggleApplyClicked(false);
-    }, [props.greyFacets]);
+      let greyFacetLength = props.greyFacets.length
+      let selectedFacetsLength = props.selectedFacets.length
 
+      if ((greyFacetLength > 0 || selectedFacetsLength > 0) && (greyFacetLength === selectedFacetsLength) && !(props.discardChangesRequest)) {
+        if (facetsModified()) {
+          props.toggleApply(true);
+        } else {
+          props.toggleApply(false);
+          props.setDiscardChangesRequest(false);
+          props.toggleApplyClicked(true);
+        }
+      } else if ((greyFacetLength > 0 || selectedFacetsLength > 0) && !(props.applyClicked) && !(props.discardChangesRequest)) {
+        props.toggleApply(true);
+      }
+      if (greyFacetLength === 0 && selectedFacetsLength === 0) {
+        props.toggleApply(false);
+        props.setDiscardChangesRequest(false);
+        props.toggleApplyClicked(true);
+      }
+        props.toggleApplyClicked(false);
+    }, [props.greyFacets, props.selectedFacets]);
+
+    const facetsModified = () => {
+      for (let i in props.greyFacets) {
+        if (props.greyFacets[i]['facet'] !== props.selectedFacets[i]['facet']) {
+          return true;
+        } else if (props.greyFacets[i]['rangeValues'] && props.selectedFacets[i]['rangeValues']) {
+          if (props.greyFacets[i]['rangeValues']['lowerBound'] !== props.selectedFacets[i]['rangeValues']['lowerBound']
+            || props.greyFacets[i]['rangeValues']['upperBound'] !== props.selectedFacets[i]['rangeValues']['upperBound']) {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
 
     const applyFacet = () => {
         let facets = {...greyedOptions.selectedFacets};
-        for (let constraint in searchOptions.selectedFacets) {
-            if (facets.hasOwnProperty(constraint)) {
-                if(searchOptions.selectedFacets[constraint].hasOwnProperty('rangeValues'))
-                    continue;
-                for (let sValue of searchOptions.selectedFacets[constraint].stringValues) {
-                    if (facets[constraint].stringValues.indexOf(sValue) == -1)
-                        facets[constraint].stringValues.push(sValue);
-                }
-            } else
-                facets[constraint] = searchOptions.selectedFacets[constraint];
-        }
         setAllSearchFacets(facets);
-        clearAllGreyFacets();
         props.toggleApplyClicked(true);
         props.toggleApply(false);
     }
 
     const clearGreyFacets = () => {
         clearAllGreyFacets();
+        props.setDiscardChangesRequest(true);
         props.toggleApplyClicked(true);
         props.toggleApply(false);
     }
@@ -90,7 +108,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
       className={styles.clearContainer}
       style={ (Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {'visibility': 'hidden'} : {'visibility': 'visible'}}
     >
-      { (props.selectedFacets.length > 0 ) &&
+        { (props.selectedFacets.length > 0 ) &&
         <MLButton
           size="small"
           className={styles.clearAllBtn}
@@ -260,7 +278,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             />
         </MLTooltip>
         }
-        {props.greyFacets.length > 0 &&
+        {props.showApply &&
         <MLTooltip title={'Discard all changes'}>
             <FontAwesomeIcon
                 icon={faWindowClose}

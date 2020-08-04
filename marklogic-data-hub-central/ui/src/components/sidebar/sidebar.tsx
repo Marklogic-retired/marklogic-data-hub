@@ -25,6 +25,8 @@ interface Props {
   entityDefArray: any[];
   facetRender: (facets: any) => void;
   checkFacetRender: (facets:any) =>void;
+  discardChangesRequest: boolean;
+  setDiscardChangesRequest: (request: boolean) => void;
 };
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -43,10 +45,17 @@ const Sidebar: React.FC<Props> = (props) => {
   let decimals = ['decimal', 'double', 'float'];
   const dateRangeOptions = ['Today', 'This Week', 'This Month', 'Custom'];
   const [activeKey, setActiveKey] = useState<any[]>([]);
+  const [clearRequest, toggleClearRequest] = useState<boolean>(false);
+  const [uncheckRequest, toggleUncheckLastFacet] = useState<boolean>(false);
 
   useEffect(() => {
     if (props.facets) {
       props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
+      for (let i in hubFacets) {
+        if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName)) {
+          setActiveKey(['hubProperties', 'entityProperties']);
+        }
+      }
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
@@ -148,10 +157,21 @@ const Sidebar: React.FC<Props> = (props) => {
           }
       } else {
           if (Object.entries(searchOptions.selectedFacets).length === 0) {
-              //setAllSearchFacets({});
               setAllSelectedFacets({});
-          } else{
+          } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (clearRequest || uncheckRequest)) || props.discardChangesRequest) {
+            if (props.discardChangesRequest) {
+              setAllGreyedOptions(searchOptions.selectedFacets);
+              props.setDiscardChangesRequest(false);
+            }
+            if (uncheckRequest && Object.entries(greyedOptions.selectedFacets).length === 0){
+              setAllSelectedFacets({});
+              toggleUncheckLastFacet(false);
+            } else if (clearRequest && Object.entries(greyedOptions.selectedFacets).length === 0){
+              setAllSelectedFacets({});
+              toggleClearRequest(false);
+            } else {
               setAllSelectedFacets(searchOptions.selectedFacets);
+            }
           }
           props.checkFacetRender([]);
       }
@@ -183,7 +203,6 @@ const Sidebar: React.FC<Props> = (props) => {
       default:
         break;
     }
-
     if (vals.length > 0) {
       facets = {
         ...facets,
@@ -400,6 +419,12 @@ const Sidebar: React.FC<Props> = (props) => {
                       propertyPath={facet.propertyPath}
                       updateSelectedFacets={updateSelectedFacets}
                       addFacetValues={addFacetValues}
+                      toggleClearRequest={toggleClearRequest}
+                      toggleUncheckLastFacet={toggleUncheckLastFacet}
+                      discardChangesRequest={props.discardChangesRequest}
+                      setDiscardChangesRequest={props.setDiscardChangesRequest}
+                      clearRequest={clearRequest}
+                      uncheckLastFacet={uncheckRequest}
                     />
                   )
                 }
@@ -534,6 +559,12 @@ const Sidebar: React.FC<Props> = (props) => {
                 referenceType={facet.referenceType}
                 entityTypeId={facet.entityTypeId}
                 propertyPath={facet.propertyPath}
+                toggleClearRequest={toggleClearRequest}
+                toggleUncheckLastFacet={toggleUncheckLastFacet}
+                discardChangesRequest={props.discardChangesRequest}
+                setDiscardChangesRequest={props.setDiscardChangesRequest}
+                clearRequest={clearRequest}
+                uncheckLastFacet={uncheckRequest}
               />
             )
           })}

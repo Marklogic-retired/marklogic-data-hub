@@ -58,7 +58,6 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             case 1:
                 facets = { ...facets, ...greyedOptions.selectedFacets };
                 setAllSearchFacets(facets);
-                clearAllGreyFacets();
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
                 break;

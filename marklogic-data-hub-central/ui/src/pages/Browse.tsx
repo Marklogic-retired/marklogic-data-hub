@@ -62,6 +62,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
+  const [discardChangesRequest, setDiscardChangesRequest] = useState<boolean>(false);
 
   const getEntityModel = async () => {
     try {
@@ -212,7 +213,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} />
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} setDiscardChangesRequest={setDiscardChangesRequest} discardChangesRequest={discardChangesRequest}/>
         <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
@@ -232,6 +233,8 @@ const Browse: React.FC<Props> = ({ location }) => {
             entityDefArray={entityDefArray}
             facetRender={updateSelectedFacets}
             checkFacetRender={updateCheckedFacets}
+            discardChangesRequest={discardChangesRequest}
+            setDiscardChangesRequest={setDiscardChangesRequest}
           />
         </Sider>
         <Content className={styles.content}>
@@ -289,6 +292,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   greyFacets={greyFacets}
                   isColumnSelectorTouched={isColumnSelectorTouched}
                   entityDefArray={entityDefArray}
+                  setDiscardChangesRequest={setDiscardChangesRequest}
+                  discardChangesRequest={discardChangesRequest}
                 />
               </div>
               <div className={styles.fixedView} >
