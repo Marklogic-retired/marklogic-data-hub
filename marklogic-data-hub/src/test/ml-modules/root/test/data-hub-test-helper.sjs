@@ -29,7 +29,7 @@ function runWithRolesAndPrivileges(roles, privileges, funOrModule, variables)
     }
     let execute;
     try {
-        if (funOrModule instanceof Function) {
+        if (funOrModule instanceof Function || typeof funOrModule === 'function') {
             execute = xdmp.invokeFunction(funOrModule, {userId});
         } else {
             execute = xdmp.invoke(funOrModule, variables, {userId});

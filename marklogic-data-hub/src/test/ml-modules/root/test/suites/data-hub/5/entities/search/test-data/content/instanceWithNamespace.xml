@@ -1,0 +1,16 @@
+<?xml  version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <info>
+        <title>Customer</title>
+        <version>0.0.1</version>
+    </info>
+    <instance>
+        <ml:Customer xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="" xmlns:ml="http://marklogic.com/ml/">
+            <ml:customerId xsi:type="xs:integer">101</ml:customerId>
+            <ml:name xsi:type="xs:string">Sally Hardin</ml:name>
+            <ml:nicknames datatype="array" xsi:type="xs:string">Sal</ml:nicknames>
+            <ml:nicknames datatype="array" xsi:type="xs:string">din</ml:nicknames>
+            <ml:nicknames datatype="array" xsi:type="xs:string">shh</ml:nicknames>
+        </ml:Customer>
+    </instance>
+</envelope>

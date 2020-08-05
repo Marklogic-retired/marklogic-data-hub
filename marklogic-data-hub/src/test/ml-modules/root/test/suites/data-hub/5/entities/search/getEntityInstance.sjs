@@ -133,11 +133,41 @@ function getInstanceWithNonExistentModel() {
   ];
 }
 
+function getInstanceWithNamespace() {
+  let docUri = "/content/instanceWithNamespace.xml";
+  const instance = entitySearchLib.getEntityInstance(docUri);
+  const results = instance["Customer"];
+  return [
+    test.assertEqual(101, results["customerId"]),
+    test.assertEqual("Sally Hardin", results["name"]),
+    test.assertEqual(["Sal", "din", "shh"], results["nicknames"])
+  ];
+}
+
+function getInstanceWithNonExistingDocUri() {
+    let docUri = "/content/someURI.xml";
+    const instance = entitySearchLib.getEntityInstance(docUri);
+    return [
+      test.assertEqual(null, instance)
+    ]
+}
+
+function getInstanceFromTextDocument() {
+  let docUri = "/content/textdoc.txt";
+  const instance = entitySearchLib.getEntityInstance(docUri);
+  return [
+    test.assertEqual(null, instance)
+  ]
+}
+
 []
     .concat(getInstanceWithoutESInfo())
     .concat(getInstanceWithESInfo())
     .concat(getInstanceWithAdditionalProperty())
-    .concat(getInstanceWithNonExistentModel());
+    .concat(getInstanceWithNonExistentModel())
+    .concat(getInstanceWithNamespace())
+    .concat(getInstanceWithNonExistingDocUri())
+    .concat(getInstanceFromTextDocument());
 
 
 

@@ -483,9 +483,12 @@ function verifySimplePropertiesForSingleEntity() {
   return [
     test.assertEqual(true, response.results[0].hasOwnProperty("entityName")),
     test.assertEqual(true, response.results[0].hasOwnProperty("createdOn")),
+    test.assertEqual(true, response.results[0].hasOwnProperty("createdBy")),
+    test.assertEqual(true, response.results[0].hasOwnProperty("sources")),
     test.assertEqual("Customer", response.results[0].entityName),
     test.assertEqual(true, response.results[1].hasOwnProperty("entityName")),
-    test.assertEqual(true, response.results[0].hasOwnProperty("createdOn")),
+    test.assertEqual(true, response.results[1].hasOwnProperty("createdOn")),
+    test.assertEqual(true, response.results[1].hasOwnProperty("sources")),
     test.assertEqual("Customer", response.results[1].entityName),
   ];
 }
@@ -514,6 +517,7 @@ function verifyPropertiesForAllEntitiesOption() {
     test.assertEqual(true, allEntitiesProps.hasOwnProperty('primaryKey')),
     test.assertEqual(true, allEntitiesProps.hasOwnProperty('entityName')),
     test.assertEqual(true, allEntitiesProps.hasOwnProperty('createdOn')),
+    test.assertEqual(true, allEntitiesProps.hasOwnProperty('createdBy')),
     test.assertEqual("identifier", allEntitiesProps.identifier.propertyPath),
     test.assertEqual(101, allEntitiesProps.identifier.propertyValue),
     test.assertEqual("Customer", allEntitiesProps.entityName)
@@ -547,6 +551,155 @@ function verifyIdentifierWithoutDefinedPrimaryKey() {
   ]);
 }
 
+function verifyEntityInstanceResults() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 7,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sally.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.xml",
+      },
+      {
+        "index": 3,
+        "uri": "/content/instanceWithAdditionalProperty.xml"
+      },
+      {
+        "index": 4,
+        "uri": "/content/instanceWithNonExistentModel.xml"
+      },
+      {
+        "index": 5,
+        "uri": "/content/instanceWithNamespace.xml"
+      },
+      {
+        "index": 6,
+        "uri": "/content/textdoc.txt"
+      },
+      {
+        "index": 7,
+        "uri": "/content/nonExistentDoc.json"
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual(5, Object.keys(response.results[0].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[0].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[0].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[0].entityInstance.nicknames),
+    test.assertEqual(2, response.results[0].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[0].entityInstance.birthDate),
+    test.assertEqual(null, response.results[0].entityInstance.status),
+    // For XML doc result
+    test.assertEqual(5, Object.keys(response.results[1].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[1].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[1].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[1].entityInstance.nicknames),
+    test.assertEqual(2, response.results[1].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[1].entityInstance.birthDate),
+    test.assertEqual(null, response.results[1].entityInstance.status),
+    // instanceWithAdditionalProperty
+    test.assertEqual(4, Object.keys(response.results[2].entityInstance).length, "4 props are populated. which are available in the xpath /*:envelope/*:instance" +
+        "Additional property birthDate is returned. There are only 4 properties in the instance"),
+    // instanceWithNonExistentModel
+    test.assertEqual(0, Object.keys(response.results[3].entityInstance).length),
+    test.assertEqual(0, Object.keys(response.results[3].entityProperties).length),
+    // instanceWithNamespace
+    test.assertEqual(3, Object.keys(response.results[4].entityInstance).length, "Sally has only 3 props populated. which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[4].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[4].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[4].entityInstance.nicknames),
+    test.assertEqual(null, response.results[4].entityInstance.shipping),
+    test.assertEqual(null, response.results[4].entityInstance.billing),
+    test.assertEqual(null, response.results[4].entityInstance.birthDate),
+    test.assertEqual(null, response.results[4].entityInstance.status),
+    // textdocument
+    test.assertEqual(0, Object.keys(response.results[5].entityInstance).length),
+    // nonExistentDoc
+    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length)
+  ];
+}
+
+function verifyEntityInstanceResultsForAllEntities() {
+  //Indicates that user has chosen 'All Entities' option
+  const entityName = null;
+  const response = {
+    "snippet-format": "snippet",
+    "total": 7,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sally.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.xml",
+      },
+      {
+        "index": 3,
+        "uri": "/content/instanceWithAdditionalProperty.xml"
+      },
+      {
+        "index": 4,
+        "uri": "/content/instanceWithNonExistentModel.xml"
+      },
+      {
+        "index": 5,
+        "uri": "/content/instanceWithNamespace.xml"
+      },
+      {
+        "index": 6,
+        "uri": "/content/textdoc.txt"
+      },
+      {
+        "index": 7,
+        "uri": "/content/nonExistentDoc.json"
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual(5, Object.keys(response.results[0].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[0].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[0].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[0].entityInstance.nicknames),
+    test.assertEqual(2, response.results[0].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[0].entityInstance.birthDate),
+    test.assertEqual(null, response.results[0].entityInstance.status),
+    // For XML doc result
+    test.assertEqual(5, Object.keys(response.results[1].entityInstance).length, "Sally has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[1].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[1].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[1].entityInstance.nicknames),
+    test.assertEqual(2, response.results[1].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[1].entityInstance.birthDate),
+    test.assertEqual(null, response.results[1].entityInstance.status),
+    // instanceWithAdditionalProperty
+    test.assertEqual(4, Object.keys(response.results[2].entityInstance).length, "4 props are populated. which are available in the xpath /*:envelope/*:instance" +
+        "Additional property birthDate is returned. There are only 4 properties in the instance"),
+    // instanceWithNonExistentModel
+    test.assertEqual(0, Object.keys(response.results[3].entityInstance).length),
+    // instanceWithNamespace
+    test.assertEqual(3, Object.keys(response.results[4].entityInstance).length, "Sally has only 3 props populated. which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(101, response.results[4].entityInstance.customerId),
+    test.assertEqual("Sally Hardin", response.results[4].entityInstance.name),
+    test.assertEqual(["Sal", "din", "shh"], response.results[4].entityInstance.nicknames),
+    test.assertEqual(null, response.results[4].entityInstance.shipping),
+    test.assertEqual(null, response.results[4].entityInstance.billing),
+    test.assertEqual(null, response.results[4].entityInstance.birthDate),
+    test.assertEqual(null, response.results[4].entityInstance.status),
+    // textdocument
+    test.assertEqual(0, Object.keys(response.results[5].entityInstance).length),
+    // nonExistentDoc
+    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length)
+  ];
+}
+
 []
   .concat(verifySimpleSelectedPropertiesResults())
   .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
@@ -556,4 +709,6 @@ function verifyIdentifierWithoutDefinedPrimaryKey() {
   .concat(verifyPrimaryKeyWithoutDefinedEntities())
   .concat(verifySimplePropertiesForSingleEntity())
   .concat(verifyPropertiesForAllEntitiesOption())
-  .concat(verifyIdentifierWithoutDefinedPrimaryKey());
+  .concat(verifyIdentifierWithoutDefinedPrimaryKey())
+  .concat(verifyEntityInstanceResults())
+  .concat(verifyEntityInstanceResultsForAllEntities());
