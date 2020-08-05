@@ -131,8 +131,11 @@ class DataHubPlugin implements Plugin<Project> {
                 "a type (either 'ingestion' or 'custom'; defaults to 'custom') via -PstepDefType=ingestion|custom, " +
                 "and a format (either 'sjs' or 'xqy'; defaults to 'sjs') via -Pformat=sjs|xqy")
         project.task("hubCreateStep", group: scaffoldGroup, type: CreateStepTask,
-            description: "Create a new step file in your project; specify a step name via -PstepName=YourStepName, and specify " +
-                "a step type via -PstepType=(ingestion|mapping)")
+            description: "Create a new step file in staging,final databases and write it to your project; specify a step name via -PstepName=YourStepName, and specify " +
+                "a step type via -PstepType=(ingestion|mapping|custom)")
+        project.task("hubAddStepToFlow", group: scaffoldGroup, type: AddStepToFlowTask,
+            description: "Add a step to a flow in staging,final databases and write it to your project; specify a flow name via -PflowName=YourFlowName" +
+                "step name via -PstepName=YourStepName, and specify a step type via -PstepType=(ingestion|mapping|custom)")
         project.task("hubCreateEntity", group: scaffoldGroup, type: CreateEntityTask)
         project.task("hubCreateFlow", group: scaffoldGroup, type: CreateFlowTask,
             description: "Create a new flow file in your project; specify a flow name with -PflowName=YourFlowName, and " +
