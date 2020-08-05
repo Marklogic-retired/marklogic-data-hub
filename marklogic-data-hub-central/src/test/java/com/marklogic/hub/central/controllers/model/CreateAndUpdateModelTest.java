@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -43,6 +44,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
 
     @AfterEach
     void cleanUp() {
+        deleteProtectedPaths();
         if (isVersionCompatibleWith520Roles()) {
             applyDatabasePropertiesForTests(getHubConfig());
         }
@@ -173,7 +175,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         List<PathIndex> pathIndexes = db.getRangePathIndex();
         assertEquals(2, pathIndexes.size());
         assertEquals("//*:instance/testPathIndexForDHFPROD4704", pathIndexes.get(0).getPathExpression());
-        assertEquals("//*:instance/Customer/someOtherProperty", pathIndexes.get(1).getPathExpression());
+        assertEquals("/(es:envelope|envelope)/(es:instance|instance)/Customer/someOtherProperty", pathIndexes.get(1).getPathExpression());
     }
 
     private void loadUnrelatedIndexes() {
@@ -206,7 +208,19 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
                 "}";
 
         ManageClient manageClient = getHubClient().getManageClient();
-        Stream.of(getHubConfig().getDbName(DatabaseKind.STAGING), getHubConfig().getDbName(DatabaseKind.FINAL))
-                .forEach(databaseKind -> manageClient.putJson("/manage/v2/databases/" + databaseKind + "/properties", indexConfig));
+        final String stagingName = getHubConfig().getDbName(DatabaseKind.STAGING);
+        final String finalName = getHubConfig().getDbName(DatabaseKind.FINAL);
+
+        // Clear out the range path indexes on both databases first to avoid issues with removing the "es" path prefix
+        Database db = new Database(new API(manageClient), stagingName);
+        db.setRangePathIndex(new ArrayList<>());
+        db.setRangeElementIndex(new ArrayList<>());
+        db.save();
+        db.setDatabaseName(finalName);
+        db.save();
+
+        Stream.of(stagingName, finalName).forEach(databaseKind ->
+            manageClient.putJson("/manage/v2/databases/" + databaseKind + "/properties", indexConfig)
+        );
     }
 }

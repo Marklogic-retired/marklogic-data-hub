@@ -1,0 +1,25 @@
+{
+  "info": {
+    "title": "NamespacedPerson",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "NamespacedPerson": {
+      "pii": [
+        "namespacedPersonId"
+      ],
+      "namespace": "org:namespacedPerson",
+      "namespacePrefix": "opwn",
+      "properties": {
+        "namespacedPersonId": {
+          "datatype": "integer"
+        },
+        "namespacedPersonName": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

@@ -147,7 +147,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
             JsonNode config = objectMapper.readTree(new File(dbDir, "final-database.json"));
             JsonNode pathIndexes = config.get("range-path-index");
             assertEquals(1, pathIndexes.size(), "Should only have the one index for personID, not orderID");
-            assertEquals("//*:instance/Person/personID", pathIndexes.get(0).get("path-expression").asText());
+            assertEquals("/(es:envelope|envelope)/(es:instance|instance)/Person/personID", pathIndexes.get(0).get("path-expression").asText());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

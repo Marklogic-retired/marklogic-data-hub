@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
@@ -88,12 +89,12 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         results = new EntitySearchManager(getHubClient()).search(query);
         node = readJsonObject(results.get());
         assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
-                "columns to display");
+            "columns to display");
         assertEquals(2, node.get("selectedPropertyDefinitions").size());
         assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
-                "to /api/models to get the property names and also traverse the entity definition itself");
+            "to /api/models to get the property names and also traverse the entity definition itself");
         assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
-                "entityProperties so that the UI knows what structured values to show for each entity instance");
+            "entityProperties so that the UI knows what structured values to show for each entity instance");
         assertTrue(node.get("results").get(1).has("entityProperties"));
     }
 
@@ -174,6 +175,10 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         assertTrue("Jane sort:customerIdDescending sort:customerIdAscending".equals(query.getQuery().getSearchText()));
     }
 
+    /**
+     * This is using XML instances with namespaces to ensure that path expressions in sort operator states work
+     * correctly. Will soon add a JSON test once we have sort operators that are entity-type-specific.
+     */
     @Test
     public void testSearchResultsWithSorting() {
         runAsDataHubDeveloper();
@@ -188,9 +193,10 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         new DhsDeployer().deployAsDeveloper(getHubConfig());
 
         ReferenceModelProject project = new ReferenceModelProject(getHubClient());
-        project.createCustomerInstance(new Customer(1, "Jane"));
-        project.createCustomerInstance(new Customer(2, "Sally"));
-        project.createCustomerInstance(new Customer(3, "Kim"));
+        final String customerNamespace = "urn:customerNamespace";
+        project.createCustomerInstance(new Customer(1, "Jane"), Format.XML, customerNamespace);
+        project.createCustomerInstance(new Customer(2, "Sally"), Format.XML, customerNamespace);
+        project.createCustomerInstance(new Customer(3, "Kim"), Format.XML, customerNamespace);
 
         runAsHubCentralUser();
 

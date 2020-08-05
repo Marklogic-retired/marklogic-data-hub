@@ -6,17 +6,17 @@
   } ],
   "range-path-index" : [ {
     "invalid-values" : "reject",
-    "path-expression" : "//*:instance/Customer/customerId",
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Customer/customerId",
     "range-value-positions" : false,
     "scalar-type" : "decimal"
   }, {
     "invalid-values" : "reject",
-    "path-expression" : "//*:instance/Customer/birthDate",
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Customer/birthDate",
     "range-value-positions" : false,
     "scalar-type" : "date"
   }, {
     "invalid-values" : "reject",
-    "path-expression" : "//*:instance/Customer/status",
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Customer/status",
     "range-value-positions" : false,
     "scalar-type" : "string",
     "collation" : "http://marklogic.com/collation/"

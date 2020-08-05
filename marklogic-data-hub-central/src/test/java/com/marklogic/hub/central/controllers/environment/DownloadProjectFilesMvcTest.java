@@ -1,6 +1,7 @@
 package com.marklogic.hub.central.controllers.environment;
 
 import com.marklogic.hub.central.AbstractMvcTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,6 +22,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
 
     private final static String PATH = "/api/environment/downloadProjectFiles";
+
+    @AfterEach
+    void afterEach() {
+        deleteProtectedPaths();
+    }
 
     @Test
     void permittedUser() throws Exception {

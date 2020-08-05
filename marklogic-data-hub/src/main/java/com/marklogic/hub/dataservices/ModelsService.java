@@ -49,6 +49,7 @@ public interface ModelsService {
 
             private BaseProxy.DBFunctionRequest req_updateModelInfo;
             private BaseProxy.DBFunctionRequest req_saveModel;
+            private BaseProxy.DBFunctionRequest req_generateProtectedPathConfig;
             private BaseProxy.DBFunctionRequest req_generateModelConfig;
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
             private BaseProxy.DBFunctionRequest req_deleteModel;
@@ -65,6 +66,8 @@ public interface ModelsService {
                     "updateModelInfo.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_saveModel = this.baseProxy.request(
                     "saveModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_generateProtectedPathConfig = this.baseProxy.request(
+                    "generateProtectedPathConfig.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_generateModelConfig = this.baseProxy.request(
                     "generateModelConfig.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getPrimaryEntityTypes = this.baseProxy.request(
@@ -108,6 +111,21 @@ public interface ModelsService {
                       .withParams(
                           BaseProxy.documentParam("model", false, BaseProxy.JsonDocumentType.fromJsonNode(model))
                           ).responseNone();
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode generateProtectedPathConfig(com.fasterxml.jackson.databind.JsonNode models) {
+                return generateProtectedPathConfig(
+                    this.req_generateProtectedPathConfig.on(this.dbClient), models
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode generateProtectedPathConfig(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode models) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("models", false, BaseProxy.JsonDocumentType.fromJsonNode(models))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -225,6 +243,14 @@ public interface ModelsService {
    * 
    */
     void saveModel(com.fasterxml.jackson.databind.JsonNode model);
+
+  /**
+   * Generate a CMA config object with protected paths and query rolesets based on the 'pii' arrays in the given entity models
+   *
+   * @param models	Array of entity models
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode generateProtectedPathConfig(com.fasterxml.jackson.databind.JsonNode models);
 
   /**
    * Invokes the generateModelConfig operation on the database server

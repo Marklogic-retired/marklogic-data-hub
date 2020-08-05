@@ -74,8 +74,8 @@ public class DeployEntityIndexesTest extends AbstractHubCoreTest {
                 assertEquals(4, indexes.size(), "Expecting the Person/personId, Person/name indexes and " +
                         "then two path range indexes that are added to Final for mastering purposes");
             }
-            assertEquals("//*:instance/Person/personId", indexes.get(0).get("path-expression").asText());
-            assertEquals("//*:instance/Person/name", indexes.get(1).get("path-expression").asText());
+            assertEquals("/(es:envelope|envelope)/(es:instance|instance)/Person/personId", indexes.get(0).get("path-expression").asText());
+            assertEquals("/(es:envelope|envelope)/(es:instance|instance)/Person/name", indexes.get(1).get("path-expression").asText());
         });
     }
 }

@@ -171,11 +171,12 @@ function generateIndexConfigForFacetableProperties() {
       }
     }
   ]);
+
   return [
     test.assertEqual(3, indexes.length),
-    test.assertEqual("//*:instance/Book/title", indexes[0]["path-expression"]),
-    test.assertEqual("//*:instance/Book/authors", indexes[1]["path-expression"]),
-    test.assertEqual("//*:instance/Book/rating", indexes[2]["path-expression"])
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", indexes[0]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", indexes[1]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[2]["path-expression"])
   ];
 }
 
@@ -241,9 +242,9 @@ function generateIndexConfigWithStructuredProperties() {
   ]);
   return [
     test.assertEqual(3, indexes.length),
-    test.assertEqual("//*:instance/Book/title", indexes[0]["path-expression"]),
-    test.assertEqual("//*:instance/Book/authors", indexes[1]["path-expression"]),
-    test.assertEqual("//*:instance/Book/rating", indexes[2]["path-expression"])
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", indexes[0]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", indexes[1]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[2]["path-expression"])
   ];
 }
 
@@ -274,12 +275,38 @@ function generateIndexConfigWithSortableProperties() {
       }
     }
   ]);
+
   return [
     test.assertEqual(4, indexes.length),
-    test.assertEqual("//*:instance/Address/street", indexes[0]["path-expression"]),
-    test.assertEqual("//*:instance/Book/title", indexes[1]["path-expression"]),
-    test.assertEqual("//*:instance/Book/authors", indexes[2]["path-expression"]),
-    test.assertEqual("//*:instance/Book/rating", indexes[3]["path-expression"])
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Address/street", indexes[0]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", indexes[1]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", indexes[2]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[3]["path-expression"])
+  ];
+}
+
+function entityDefWithNamespace() {
+  const indexes = generateRangeIndexConfig([
+    {
+      "info": {
+        "title": "Book"
+      },
+      "definitions": {
+        "Book": {
+          "namespace": "org:example",
+          "namespacePrefix": "oe",
+          "properties": {
+            "title": {"datatype": "string", "facetable": true, "collation": "http://marklogic.com/collation/"}
+          }
+        }
+      }
+    }
+  ]);
+
+  return [
+    test.assertEqual("/es:envelope/es:instance/oe:Book/oe:title", indexes[0]["path-expression"],
+      "When the entity def uses a namespace, the path should be explicit in requiring /es:envelope/es:instance, as the " +
+      "user is indicating that their entity instances are XML")
   ];
 }
 
@@ -292,4 +319,5 @@ function generateIndexConfigWithSortableProperties() {
   .concat(generateIndexConfigForMissingModelDefinition())
   .concat(generateIndexConfigWithNoEntityTypeProperties())
   .concat(generateIndexConfigWithStructuredProperties())
-  .concat(generateIndexConfigWithSortableProperties());
+  .concat(generateIndexConfigWithSortableProperties())
+  .concat(entityDefWithNamespace());

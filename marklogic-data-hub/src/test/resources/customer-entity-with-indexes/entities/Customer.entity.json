@@ -10,6 +10,8 @@
         "name"
       ],
       "primaryKey": "customerId",
+      "namespace": "urn:customerNamespace",
+      "namespacePrefix": "urncn",
       "properties": {
         "customerId": {
           "datatype": "integer",

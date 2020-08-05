@@ -2,38 +2,30 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class DeployProtectedPathsWhenUpdatingIndexesTest extends HubTestBase {
+public class DeployProtectedPathsWhenUpdatingIndexesTest extends AbstractHubCoreTest {
 
-    private final static String TEST_PATH_EXPRESSION = "/envelope//instance/SomeEntity/someProperty";
+    private final static String TEST_PATH_EXPRESSION = "/path/doesntMatter/forThisTest";
 
     @AfterEach
     public void teardown() {
-        ProtectedPathManager mgr = new ProtectedPathManager(adminHubConfig.getManageClient());
-        mgr.deleteByIdField(TEST_PATH_EXPRESSION);
-        assertFalse(mgr.exists(TEST_PATH_EXPRESSION));
+        deleteProtectedPaths();
     }
 
     @Test
     public void test() {
+        runAsFlowDeveloper();
         givenAProtectedPathFile();
         dataHub.updateIndexes();
         thenTheProtectedPathIsDeployed();
