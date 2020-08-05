@@ -23,7 +23,7 @@ The name of this constraint is a duplicate in the generated XML. It is within a 
 -->
   <search:constraint name="name">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index>//*:instance/Employee/name</search:path-index>
+      <search:path-index>/(es:envelope|envelope)/(es:instance|instance)/Employee/name</search:path-index>
     </search:range>
   </search:constraint>
   <search:constraint name="salary">
@@ -33,7 +33,7 @@ The name of this constraint is a duplicate in the generated XML. It is within a 
   </search:constraint>
   <search:tuples name="Employee">
     <search:range type="xs:string" facet="true" collation="http://marklogic.com/collation/codepoint">
-      <search:path-index>//*:instance/Employee/name</search:path-index>
+      <search:path-index>/(es:envelope|envelope)/(es:instance|instance)/Employee/name</search:path-index>
     </search:range>
     <search:range type="xs:decimal" facet="true">
       <search:element ns="" name="salary"/>

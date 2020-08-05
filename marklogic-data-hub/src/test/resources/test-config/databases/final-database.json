@@ -1,5 +1,11 @@
 {
   "database-name": "data-hub-FINAL",
+  "path-namespace": [
+    {
+      "prefix": "es",
+      "namespace-uri": "http://marklogic.com/entity-services"
+    }
+  ],
   "range-element-index" : [
     {
       "scalar-type" : "string",
@@ -61,35 +67,35 @@
   "range-path-index": [
     {
       "scalar-type": "int",
-      "path-expression": "//*:instance/NumericEntity/intProp",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/NumericEntity/intProp",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "long",
-      "path-expression": "//*:instance/NumericEntity/longProp",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/NumericEntity/longProp",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "int",
-      "path-expression": "//*:instance/NumericStringEntity/intProp",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/NumericStringEntity/intProp",
       "collation": "",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "path-expression": "//*:instance/NumericStringEntity/stringCityProp",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/NumericStringEntity/stringCityProp",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
     },
     {
       "scalar-type": "string",
-      "path-expression": "//*:instance/EntitySearchEntity/searchEntityProp2",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/EntitySearchEntity/searchEntityProp2",
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"

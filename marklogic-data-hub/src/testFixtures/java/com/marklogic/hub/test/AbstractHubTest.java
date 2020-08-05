@@ -8,6 +8,7 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
@@ -18,8 +19,10 @@ import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -408,20 +411,29 @@ public abstract class AbstractHubTest extends TestObject {
      */
     public static void applyDatabasePropertiesForTests(HubConfig hubConfig) {
         try {
+            // First need to clear out existing indexes; otherwise, the Manage API will throw an error if we try to
+            // update path expressions and end up removing one that an existing index depends on - even though that
+            // index is being removed at the same time
+            Database finalDb = new Database(new API(hubConfig.getManageClient()), hubConfig.getDbName(DatabaseKind.FINAL));
+            finalDb.setRangePathIndex(new ArrayList<>());
+            finalDb.setRangeElementIndex(new ArrayList<>());
+            finalDb.save();
+
             File testFile = new ClassPathResource("test-config/databases/final-database.json").getFile();
             String payload = new String(FileCopyUtils.copyToByteArray(testFile));
             new DatabaseManager(hubConfig.getManageClient()).save(payload);
 
-            testFile = new ClassPathResource("test-config/databases/staging-database.json").getFile();
-            payload = new String(FileCopyUtils.copyToByteArray(testFile));
-            new DatabaseManager(hubConfig.getManageClient()).save(payload);
+            Database stagingDb = new Database(new API(hubConfig.getManageClient()), hubConfig.getDbName(DatabaseKind.STAGING));
+            stagingDb.setRangePathIndex(new ArrayList<>());
+            stagingDb.setRangeElementIndex(new ArrayList<>());
+            stagingDb.save();
 
             // Gotta rerun this command since the test file has path range indexes in it
             DeployDatabaseFieldCommand command = new DeployDatabaseFieldCommand();
             command.setResourceFilenamesIncludePattern(Pattern.compile("(staging|final)-database.xml"));
             command.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
         } catch (IOException ioe) {
-            throw new RuntimeException("Unable to deploy test indexes", ioe);
+            throw new RuntimeException("Unable to deploy test indexes; cause: " + ioe.getMessage(), ioe);
         }
     }
 
@@ -431,5 +443,18 @@ public abstract class AbstractHubTest extends TestObject {
 
     protected CommandContext newCommandContext(HubConfig hubConfig) {
         return new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
+    }
+
+    /**
+     * This should be run after any test that deploys protected paths based on entity models, so that those do not
+     * impact other tests. It's quick enough that we may want to run it on AfterEach for every test (as if there are no
+     * protected paths, it's very quick).
+     */
+    protected void deleteProtectedPaths() {
+        runAsAdmin();
+        ProtectedPathManager mgr = new ProtectedPathManager(getHubConfig().getManageClient());
+        mgr.getAsXml().getListItemIdRefs().forEach(id -> {
+            mgr.deleteAtPath("/manage/v2/protected-paths/" + id + "?force=true");
+        });
     }
 }

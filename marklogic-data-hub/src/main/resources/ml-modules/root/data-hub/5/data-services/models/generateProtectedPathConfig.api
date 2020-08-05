@@ -1,0 +1,16 @@
+{
+    "functionName": "generateProtectedPathConfig",
+    "desc": "Generate a CMA config object with protected paths and query rolesets based on the 'pii' arrays in the given entity models",
+    "params": [
+        {
+            "name": "models",
+            "desc": "Array of entity models",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

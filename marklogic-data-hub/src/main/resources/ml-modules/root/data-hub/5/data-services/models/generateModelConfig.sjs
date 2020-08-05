@@ -19,6 +19,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model"
 
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const hubEs = require('/data-hub/5/impl/hub-es.sjs');
 
 
 const result = {
@@ -28,10 +29,15 @@ const result = {
   "searchOptions": {}
 };
 
-const entityModels = cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION)).toArray();
+// Need to ensure we have objects to pass to generateProtectedPathConfig
+const entityModels = [];
+for (var doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
+  entityModels.push(doc.toObject());
+}
+
 if (entityModels.length > 0) {
   // Add PII files
-  const securityConfig = hent.dumpPii(entityModels).toObject();
+  const securityConfig = hubEs.generateProtectedPathConfig(entityModels);
   const protectedPathsExist = securityConfig.config && securityConfig.config["protected-path"] && securityConfig.config["protected-path"].length > 0;
   if (protectedPathsExist) {
     securityConfig.config["protected-path"].forEach(path => {

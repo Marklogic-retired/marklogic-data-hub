@@ -4,33 +4,33 @@ let result = [];
 
 function testGetPropertyRangePath(entityIRI, propertyPath, expRes) {
   const path = lib.getPropertyRangePath(entityIRI, propertyPath);
-  test.assertEqual(expRes, path);
+  return [test.assertEqual(expRes, path)];
 }
 
-result
+result = result
 // getPropertyRangePath for two level nested property
 .concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/numEntProp/intProp",
-    "//*:instance/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/numEntProp/NumericEntity/intProp"))
+    "/(es:envelope|envelope)/(es:instance|instance)/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/numEntProp/NumericEntity/intProp"))
 // getPropertyRangePath for one level nested property
 .concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/strCityProp",
-    "//*:instance/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/strCityProp"))
+    "/(es:envelope|envelope)/(es:instance|instance)/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/strCityProp"))
 // getPropertyRangePath for one level nested property
 .concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
     "numEntProp/intProp",
-    "//*:instance/NumStringEntity/numEntProp/NumericEntity/intProp"))
+    "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/numEntProp/NumericEntity/intProp"))
 // getPropertyRangePath for root level property
 .concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
-    "intProp", "//*:instance/NumStringEntity/intProp"));
+    "intProp", "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/intProp"));
 
 
 function testRangePathPropertyReferenceType(entityIRI, propertyPath) {
   const refType = lib.getPropertyReferenceType(entityIRI, propertyPath);
-  test.assertEqual("path", refType);
+  return [test.assertEqual("path", refType)];
 }
 
-result
+result = result
 // getPropertyReferenceType for two level nested property
 .concat(testRangePathPropertyReferenceType("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/numEntProp/intProp"))
@@ -46,10 +46,10 @@ result
 
 function testRangeElementPropertyReferenceType(entityIRI, propertyPath) {
   const refType = lib.getPropertyReferenceType(entityIRI, propertyPath);
-  test.assertEqual("element", refType);
+  return [test.assertEqual("element", refType)];
 }
 
-result
+result = result
 // getPropertyReferenceType for two level nested property
 .concat(testRangeElementPropertyReferenceType("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/numEntProp/floatProp"))
@@ -65,7 +65,7 @@ result
 
 function testGetEntityDefinitionFromIRI(entityIRI, expRes) {
   const result = lib.getEntityDefinitionFromIRI(entityIRI);
-  test.assertTrue(result.definitions[expRes] !== null);
+  return [test.assertTrue(result.definitions[expRes] !== null)];
 }
 
 function testGetEntityServiceTitle(entityIRI, expected) {

@@ -41,10 +41,10 @@ public class ReferenceModelProject extends TestObject {
     }
 
     public void createCustomerInstance(Customer customer) {
-        createCustomerInstance(customer, Format.JSON);
+        createCustomerInstance(customer, Format.JSON, null);
     }
 
-    public void createCustomerInstance(Customer customer, Format contentFormat) {
+    public void createCustomerInstance(Customer customer, Format contentFormat, String xmlNamespace) {
         String customerEntityType = "Customer";
 
         Map<String, Object> infoMap = new LinkedHashMap<>();
@@ -56,7 +56,9 @@ public class ReferenceModelProject extends TestObject {
         customerProps.put("customerId", customer.customerId);
         customerProps.put("name", customer.name);
         customerProps.put("customerNumber", customer.customerNumber);
-        customerProps.put("customerSince", customer.customerSince);
+        if (customer.customerSince != null) {
+            customerProps.put("customerSince", customer.customerSince);
+        }
 
         Map<String, Object> instanceMap = new LinkedHashMap<>();
         instanceMap.put("info", infoMap);
@@ -72,10 +74,16 @@ public class ReferenceModelProject extends TestObject {
         mgr.setContentFormat(contentFormat);
 
         try {
-            if(contentFormat.getDefaultMimetype().equals("application/xml")) {
+            if (Format.XML.equals(contentFormat)) {
                 XmlMapper xmlMapper = new XmlMapper();
                 instanceBytes = xmlMapper.writer().withRootName("envelope").writeValueAsBytes(entityInstanceMap);
-                instanceByteStream = new ByteArrayInputStream(instanceBytes);
+                String xml = new String(instanceBytes);
+                // Some ugly hacking as I don't know how to specify namespaces when writing a Map
+                xml = xml.replace("<envelope>", "<envelope xmlns='http://marklogic.com/entity-services'>");
+                if (xmlNamespace != null) {
+                    xml = xml.replace("<Customer>", "<Customer xmlns='" + xmlNamespace + "'>");
+                }
+                instanceByteStream = new ByteArrayInputStream(xml.getBytes());
                 fileExtension = ".xml";
             } else {
                 ObjectMapper mapper = new ObjectMapper();
@@ -88,8 +96,8 @@ public class ReferenceModelProject extends TestObject {
         }
 
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-                .withCollections(customerEntityType)
-                .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+            .withCollections(customerEntityType)
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/" + customerEntityType + customer.customerId + fileExtension, metadata, new InputStreamHandle(instanceByteStream));
     }
 

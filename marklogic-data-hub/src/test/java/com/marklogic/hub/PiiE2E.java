@@ -145,6 +145,7 @@ public class PiiE2E extends HubTestBase
         runAsFlowDeveloper();
     }
 
+    @Disabled("Disabled because it's assuming that protected paths work against structured types")
     @Test
     public void testPiiE2E() throws Exception
     {
@@ -241,6 +242,7 @@ public class PiiE2E extends HubTestBase
         }
     }
 
+    @Disabled("Will delete this test class in separate PR, as GenerateProtectedPathsTest supercedes this")
     @Test
     public void testSavePii() throws Exception
     {

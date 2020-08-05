@@ -27,19 +27,14 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.modulesloader.impl.AssetFileLoader;
 import com.marklogic.client.ext.modulesloader.impl.DefaultModulesLoader;
 import com.marklogic.client.extensions.ResourceManager;
-import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.entity.DefinitionType;
-import com.marklogic.hub.entity.DefinitionsType;
-import com.marklogic.hub.entity.HubEntity;
-import com.marklogic.hub.entity.InfoType;
-import com.marklogic.hub.entity.ItemType;
-import com.marklogic.hub.entity.PropertyType;
+import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
@@ -54,12 +49,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -152,7 +142,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
         if (deployFinalQueryOptions() && deployExpFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
-        if (deployStagingQueryOptions() && deployExpStagingQueryOptions()) loadedResources.put(DatabaseKind.STAGING, true);
+        if (deployStagingQueryOptions() && deployExpStagingQueryOptions())
+            loadedResources.put(DatabaseKind.STAGING, true);
         return loadedResources;
     }
 
@@ -593,28 +584,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         }
     }
 
-    private class PiiGenerator extends ResourceManager {
-        private static final String NAME = "mlPiiGenerator";
-        private RequestParameters params = new RequestParameters();
-
-        PiiGenerator(DatabaseClient client) {
-            super();
-            client.init(NAME, this);
-        }
-
-        public String piiGenerate(List<JsonNode> entities) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode node = objectMapper.valueToTree(entities);
-            ResourceServices.ServiceResultIterator resultItr = this.getServices().post(params, new JacksonHandle(node));
-            if (resultItr == null || !resultItr.hasNext()) {
-                throw new EntityServicesGenerationException("Unable to generate pii config");
-            }
-            ResourceServices.ServiceResult res = resultItr.next();
-            return res.getContent(new StringHandle()).get();
-        }
-
-    }
-
     private class QueryOptionsGenerator extends ResourceManager {
         QueryOptionsGenerator(DatabaseClient client) {
             super();
@@ -650,15 +619,12 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
             ObjectMapper mapper = new ObjectMapper();
             ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-            // get all the entities.
+
             List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
-                PiiGenerator piiGenerator = new PiiGenerator(hubConfig.newReverseFlowClient());
-
-                String v3Config = piiGenerator.piiGenerate(entities);
-                JsonNode v3ConfigAsJson = null;
-                v3ConfigAsJson = mapper.readTree(v3Config);
-
+                ArrayNode models = mapper.createArrayNode();
+                entities.forEach(model -> models.add(model));
+                JsonNode v3ConfigAsJson = ModelsService.on(hubConfig.newStagingClient(null)).generateProtectedPathConfig(models);
                 ArrayNode paths = (ArrayNode) v3ConfigAsJson.get("config").get("protected-path");
                 int i = 0;
                 // write each path as a separate file for ml-gradle

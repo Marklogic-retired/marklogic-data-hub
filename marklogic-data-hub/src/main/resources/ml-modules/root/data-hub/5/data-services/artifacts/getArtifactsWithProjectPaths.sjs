@@ -20,6 +20,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/download-project-f
 const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const hent = require("/data-hub/5/impl/hub-entities.xqy");
+const hubEs = require('/data-hub/5/impl/hub-es.sjs');
 
 const artifactsWithProjectPaths = [];
 
@@ -42,9 +43,14 @@ cts.search(userArtifactQuery).toArray().forEach(artifact => {
   artifactsWithProjectPaths.push({"path": xdmp.nodeUri(artifact).substr(1), "json": artifact});
 });
 
-const entityModels = cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION)).toArray();
+// Need to ensure we have objects to pass to generateProtectedPathConfig
+const entityModels = [];
+for (var doc of cts.search(cts.collectionQuery(consts.ENTITY_MODEL_COLLECTION))) {
+  entityModels.push(doc.toObject());
+}
+
 if (entityModels.length > 0) {
-  const securityConfig = hent.dumpPii(entityModels).toObject();
+  const securityConfig = hubEs.generateProtectedPathConfig(entityModels);
 
   // Add PII files
   const protectedPathsExist = securityConfig.config && securityConfig.config["protected-path"] && securityConfig.config["protected-path"].length > 0;

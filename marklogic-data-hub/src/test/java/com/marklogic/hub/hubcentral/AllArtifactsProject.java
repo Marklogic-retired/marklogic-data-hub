@@ -62,9 +62,9 @@ public class AllArtifactsProject extends TestObject {
 
         // Verify PII stuff
         verifyEntryExists("src/main/ml-config/security/protected-paths/01_pii-protected-paths.json",
-            "path-expression", "/*:envelope//*:instance//*:Order/*:orderID");
+            "path-expression", "/(es:envelope|envelope)/(es:instance|instance)/Order/orderID");
         verifyEntryExists("src/main/ml-config/security/protected-paths/02_pii-protected-paths.json",
-            "path-expression", "/*:envelope//*:instance//*:Order/*:orderName");
+            "path-expression", "/(es:envelope|envelope)/(es:instance|instance)/Order/orderName");
         assertEquals("pii-reader", zipEntries.get("src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
 
         // Verify search options
@@ -74,7 +74,7 @@ public class AllArtifactsProject extends TestObject {
         });
 
         // Verify db props
-        final String expectedPathIndex = "//*:instance/Order/orderID";
+        final String expectedPathIndex = "/(es:envelope|envelope)/(es:instance|instance)/Order/orderID";
         JsonNode dbProps = verifyEntryExists("src/main/entity-config/databases/staging-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.STAGING));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());

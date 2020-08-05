@@ -102,7 +102,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         loginAsTestUserWithRoles("hub-central-user");
         verifyRequestIsForbidden(buildJsonPost(SAVED_QUERIES_PATH, json));
         verifyRequestIsForbidden(buildJsonPut(SAVED_QUERIES_PATH, savedQueryResponse.toString()));
-        verifyRequestIsForbidden(MockMvcRequestBuilders.delete(SAVED_QUERIES_PATH+ "/query").param("id", "some-id"));
+        verifyRequestIsForbidden(MockMvcRequestBuilders.delete(SAVED_QUERIES_PATH + "/query").param("id", "some-id"));
     }
 
     @Test
@@ -114,8 +114,8 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         customer1.setCustomerNumber(123456789);
         customer1.setCustomerSince("2012-05-16");
 
-        project.createCustomerInstance(customer1, Format.JSON);
-        project.createCustomerInstance(customer1, Format.XML);
+        project.createCustomerInstance(customer1);
+        project.createCustomerInstance(customer1, Format.XML, "doesnt-matter");
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("docUri", "/Customer1.xml");

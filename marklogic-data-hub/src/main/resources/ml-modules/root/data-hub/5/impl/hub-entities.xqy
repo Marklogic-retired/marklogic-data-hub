@@ -104,7 +104,7 @@ declare function hent:wrap-duplicates(
   this method doctors the output from ES
   because of https://github.com/marklogic/entity-services/issues/359
 :)
-declare %private function hent:fix-options($nodes as node()*)
+declare function hent:fix-options($nodes as node()*)
 {
   for $n in $nodes
   return
@@ -130,6 +130,7 @@ declare %private function hent:fix-options($nodes as node()*)
         }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
+      case element(search:path-index) return fix-path-index($n)
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
@@ -145,7 +146,11 @@ declare %private function hent:fix-options($nodes as node()*)
       default return $n
 };
 
-declare %private function hent:fix-options-exp($nodes as node()*, $sortable-properties as map:map)
+declare %private function hent:fix-options-for-explorer(
+  $nodes as node()*,
+  $sortable-properties as map:map,
+  $entity-namespace-map as map:map
+)
 {
   for $n in $nodes
   return
@@ -192,22 +197,23 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
               <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
-          hent:add-sort-operators-to-search-options($sortable-properties),
-          hent:fix-options-exp($n/node(), $sortable-properties)
+          hent:build-sort-operator($sortable-properties, $entity-namespace-map),
+          hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
         }
       case element(search:constraint) return
         element { fn:node-name($n) } {
           $n/@*,
-          let $constraint-path := $n/search:range/search:path-index/text()
+          let $path-expression := fix-path-expression(fn:string($n/search:range/search:path-index))
           let $search-range-node := $n/search:range
-          return if (fn:empty($search-range-node) or fn:not(map:contains($sortable-properties, fn:string($constraint-path)) and
-            map:get($sortable-properties, fn:string($constraint-path)) = fn:true())) then
-            hent:fix-options-exp($n/node(), $sortable-properties)
+          let $is-sortable-only := map:get($sortable-properties, $path-expression) = fn:true()
+          return
+            if (fn:empty($search-range-node) or fn:not($is-sortable-only)) then
+              hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
             else
               element {fn:node-name($search-range-node)} {
                 $search-range-node/attribute()[not(name()='facet')],
                 attribute facet {"false"},
-                hent:fix-options-exp($search-range-node, $sortable-properties)/node()
+                hent:fix-options-for-explorer($search-range-node, $sortable-properties, $entity-namespace-map)/node()
               }
         }
       case element(search:additional-query) return ()
@@ -216,14 +222,15 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
         element { fn:node-name($n) } {
          $n/namespace::node(),
          $n/@*,
-         hent:fix-options-exp($n/node(), $sortable-properties),
+         hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
          <search:extract-path xmlns:es="http://marklogic.com/entity-services">/*:envelope/*:headers</search:extract-path>}
       case element(search:transform-results) return <!--<search:transform-results apply="empty-snippet"></search:transform-results>-->
+      case element(search:path-index) return fix-path-index($n)
       case element() return
         element { fn:node-name($n) } {
           $n/namespace::node(),
           $n/@*,
-          hent:fix-options-exp($n/node(), $sortable-properties),
+          hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
 
           let $is-range-constraint := $n[self::search:range] and $n/..[self::search:constraint]
           where $is-range-constraint and fn:not($n/search:facet-option[starts-with(., "limit=")])
@@ -237,63 +244,87 @@ declare %private function hent:fix-options-exp($nodes as node()*, $sortable-prop
       default return $n
 };
 
-declare %private function hent:add-sort-operators-to-search-options($sortable-properties as map:map)
+declare %private function hent:build-sort-operator(
+  $sortable-properties as map:map,
+  $entity-namespace-map as map:map
+) as element(search:operator)?
 {
-  let $sort-operators :=
-    <search:operator name="sort">
-      {
-        for $property-path in map:keys($sortable-properties)
-          let $constraint-name := fn:tokenize($property-path, "/")[last()]
-          let $property-path := hent:replace-es-namespace($property-path)
-          return
-            for $direction in ("ascending", "descending")
-            return
-              <search:state name="{fn:concat($constraint-name, xdmp:initcap($direction))}">
-                <search:sort-order direction="{$direction}">
-                  <search:path-index>{$property-path}</search:path-index>
-                </search:sort-order>
-              </search:state>
-      }
-    </search:operator>
-  return $sort-operators
+  let $states :=
+    for $path-expression in map:keys($sortable-properties)
+    let $constraint-name :=
+      let $token := fn:tokenize($path-expression, "/")[last()]
+      return fn:tokenize($token, ":")[last()]
+
+    for $direction in ("ascending", "descending")
+    return
+      <search:state name="{fn:concat($constraint-name, xdmp:initcap($direction))}">
+        <search:sort-order direction="{$direction}">
+          {
+            element search:path-index {
+              attribute {"xmlns:es"} {"http://marklogic.com/entity-services"},
+              for $prefix in map:keys($entity-namespace-map)
+              return attribute {"xmlns:" || $prefix} {map:get($entity-namespace-map, $prefix)},
+              $path-expression
+            }
+          }
+        </search:sort-order>
+      </search:state>
+  where $states
+  return <search:operator name="sort">{$states}</search:operator>
 };
 
 declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
 {
-  let $sortable-properties := map:get(hent:add-indexes-for-entity-properties($entities), "sortable-properties")
-  let $entities := map:get(hent:add-indexes-for-entity-properties($entities), "updated-models")
+  let $updated-models := hent:add-indexes-for-entity-properties($entities)
+  let $sortable-properties := map:get($updated-models, "sortable-properties")
+  let $entities := map:get($updated-models, "updated-models")
   let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  return if ($for-explorer = fn:true())
-    then
-        hent:fix-options-exp(es:search-options-generate($uber-model), $sortable-properties)
-    else (
-        hent:fix-options(es:search-options-generate($uber-model)))
+
+  let $entity-namespace-map := map:new(
+    let $definitions := map:get($uber-model, "definitions")
+    for $entity-name in map:keys($definitions)
+    let $entity-type := map:get($definitions, $entity-name)
+    let $ns := map:get($entity-type, "namespace")
+    let $prefix := map:get($entity-type, "namespacePrefix")
+    where $ns and $prefix
+    return map:entry($prefix, $ns)
+  )
+
+  return
+    if ($for-explorer = fn:true()) then
+      hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, $entity-namespace-map)
+    else
+      hent:fix-options(es:search-options-generate($uber-model))
 };
 
-declare function hent:dump-pii($entities as json:array)
+declare private function fix-path-index($path-index as element(search:path-index)) as element(search:path-index)
 {
-  let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-  let $response := es:pii-generate($uber-model)
+  element {fn:node-name($path-index)} {
+    $path-index/namespace::node(),
+    $path-index/@*,
+    text {fix-path-expression($path-index/fn:string())}
+  }
+};
 
-  (: DHFPROD-5461 - Fix path expressions to support XML and JSON :)
-  let $json-response := xdmp:from-json($response)
-  let $_ :=
-    let $paths := map:get(map:get($json-response, "config"), "protected-path")
-    where $paths
+(:
+Fixes the path expression used by es:database-properties-generate and es:search-options-generate. Both are known to
+return a path starting with "//es:instance/" but not including namespace prefixes/wildcards for the entity and property
+names. This is instead replaced with our best attempt at a path that is functional and reasonably efficient.
+:)
+declare private function fix-path-expression($path as xs:string) as xs:string
+{
+  if (fn:starts-with($path, "//es:instance/")) then
+    let $subpath := fn:substring($path, fn:string-length("//es:instance/") + 1)
+    let $subpath-tokens := fn:tokenize($subpath, "/")
     return
-      for $path in json:array-values($paths)
-      let $ex := fn:string(map:get($path, "path-expression"))
-      (: The PiiE2E test is failing because when its entities are passed in, the es:pii-generate function generates a
-      path starting with /es: that uses the correct namespace prefixes. This appears to happen when a namespacePrefix
-      is defined in the entity model. So if the path starts with /es:, we can assume that es:pii-generate generated a
-      correct path that does not need modification. :)
-      where fn:not(fn:starts-with($ex, "/es:"))
-      return
-        let $ex := fn:replace($ex, "/", "/*:")
-        let $ex := fn:replace($ex, "\*:/", "/")
-        return map:put($path, "path-expression", $ex)
-
-  return xdmp:to-json($json-response)
+      if (fn:contains($subpath-tokens[1], ":")) then
+        "/es:envelope/es:instance/" || $subpath
+      else
+        "/(es:envelope|envelope)/(es:instance|instance)/" || $subpath
+  else
+    (: This is never expected to be reached, but if for some reason the ML function does not return a path
+    starting with //es:instance, we don't want to mess with it :)
+    $path
 };
 
 declare function hent:dump-indexes($entities as json:array)
@@ -309,14 +340,12 @@ declare function hent:dump-indexes($entities as json:array)
       map:delete($database-config, $x)
 
   let $_ :=
-    for $idx in map:get($database-config, "range-path-index") ! json:array-values(.)
-    return
-      map:put($idx, "path-expression", fn:replace(map:get($idx, "path-expression"), "es:", "*:"))
+    for $index in map:get($database-config, "range-path-index") ! json:array-values(.)
+    let $path := map:get($index, "path-expression")
+    return map:put($index, "path-expression", fix-path-expression($path))
 
   let $_ := remove-duplicate-range-indexes($database-config)
-
-  return
-    xdmp:to-json($database-config)
+  return xdmp:to-json($database-config)
 };
 
 (:
@@ -591,6 +620,9 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                 else ()
               return map:get($entity-type, "properties")
 
+      let $namespace := if (fn:exists($entity-type)) then map:get($entity-type, "namespace") else ()
+      let $namespace-prefix := if (fn:exists($entity-type)) then map:get($entity-type, "namespacePrefix") else ()
+
       let $_ :=
         for $entity-type-property in map:keys($entity-type-properties)
           let $ref := map:get($entity-type-properties, $entity-type-property)=>map:get("$ref")
@@ -604,6 +636,7 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                 else
                   fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
                   map:get($entity-type-properties, $entity-type-property)=>map:get("facetable")
+
             let $is-sortable :=
               let $items := map:get($entity-type-properties, $entity-type-property)=>map:get("items")
               return
@@ -612,32 +645,26 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                 else
                   fn:not(fn:starts-with(map:get($items, "$ref"), "#")) and
                   map:get($entity-type-properties, $entity-type-property)=>map:get("sortable")
+
             let $_ :=
-                let $title-property-path := fn:concat("//es:instance", "/", $entity-title, "/", $entity-type-property)
+              if ($is-sortable) then
+                let $path-expression :=
+                  if ($namespace and $namespace-prefix) then
+                    fn:concat("/es:envelope/es:instance/", $namespace-prefix, ":", $entity-title, "/", $namespace-prefix, ":", $entity-type-property)
+                  else
+                    fn:concat("/(es:envelope|envelope)/(es:instance|instance)/", $entity-title, "/", $entity-type-property)
+                (: If something is only sortable, we need a path range index for it, but we need to ensure that a facet
+                is not configured for it :)
                 let $is-only-sortable := $is-sortable and fn:not($is-facetable)
-                where $is-sortable
-                return map:put($sortable-properties, $title-property-path, $is-only-sortable)
+                return map:put($sortable-properties, $path-expression, $is-only-sortable)
+              else ()
+
             where $is-facetable or $is-sortable
             return json:array-push(map:get($entity-type, "rangeIndex"), $entity-type-property)
+
       return json:array-push($updated-models, $model)
+
   let $_ := map:put($result-map, "updated-models", $updated-models)
   let $_ := map:put($result-map, "sortable-properties", $sortable-properties)
   return $result-map
-};
-
-declare function hent:replace-es-namespace($property-path) {
-    let $properties := fn:tokenize($property-path, "/es:")
-    let $updated-ns-path := ""
-    let $_ :=
-      let $properties-size := fn:count($properties)
-      return
-        if ($properties-size = 1) then
-        xdmp:set($updated-ns-path, $property-path)
-        else
-          let $_ := xdmp:set($updated-ns-path, $properties[1])
-          for $property in $properties[position() > 1]
-          where $property != ""
-          return xdmp:set($updated-ns-path, fn:concat($updated-ns-path, "/*:", $property))
-
-    return $updated-ns-path
 };
