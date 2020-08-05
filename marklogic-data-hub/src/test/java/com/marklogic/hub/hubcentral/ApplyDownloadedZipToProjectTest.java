@@ -6,13 +6,17 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.dataservices.*;
+import com.marklogic.hub.dataservices.FlowService;
+import com.marklogic.hub.dataservices.ModelsService;
+import com.marklogic.hub.dataservices.StepDefinitionService;
+import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -63,10 +67,13 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         verifyEntityBasedArtifactsExist();
 
         DatabaseClient stagingClient = getHubClient().getStagingClient();
-        ModelsService.on(stagingClient).deleteModel("Order");
-        ModelsService.on(stagingClient).deleteModel("Person");
+        StepService stepService = StepService.on(stagingClient);
+        stepService.deleteStep("ingestion", "validArtifact");
+        stepService.deleteStep("mapping", "personMapping");
+        ModelsService modelsService = ModelsService.on(stagingClient);
+        modelsService.deleteModel("Order");
+        modelsService.deleteModel("Person");
         FlowService.on(stagingClient).deleteFlow("testFlow");
-        StepService.on(stagingClient).deleteStep("ingestion", "validArtifact");
         StepDefinitionService.on(stagingClient).deleteStepDefinition("testStep");
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
@@ -191,12 +198,24 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
     private void verifyFlowsAndEntitiesAndStepsWereDeletedFromProject() {
         HubProject project = getHubConfig().getHubProject();
 
-        Stream.of(project.getHubEntitiesDir(), project.getFlowsDir(), project.getStepsPath()).forEach(path -> {
+        Stream.of(project.getHubEntitiesDir(), project.getFlowsDir()).forEach(path -> {
             File dir = path.toFile();
             assertTrue(dir.exists(), "The directory should still exist, even though it doesn't contain anything, as that " +
                 "makes life easier for Pari in case she wants to manually add an artifact; couldn't find: " + dir.getAbsolutePath());
             assertTrue(dir.listFiles().length == 0, "The directory is expected to be empty since the associated " +
                 "artifacts were deleted from Hub Central; directory: " + dir.getAbsolutePath());
+        });
+
+        Path stepsPath = project.getStepsPath();
+        File customStepDir = stepsPath.resolve("custom").toFile();
+        assertTrue(customStepDir.exists(), "The custom step dir should still exist, as the step should not have been deleted");
+        File customStepFile = new File(customStepDir, "customStep.step.json");
+        assertTrue(customStepFile.exists());
+
+        Stream.of("ingestion", "mapping").forEach(stepType -> {
+            assertFalse(stepsPath.resolve(stepType).toFile().exists(),
+                "Expected step directory to have been deleted, as in 5.3.0, we need to delete ingestion and mapping " +
+                    "directories since those can be created/deleted in HC; step type: " + stepType);
         });
 
         File entityConfigDir = project.getEntityConfigDir().toFile();

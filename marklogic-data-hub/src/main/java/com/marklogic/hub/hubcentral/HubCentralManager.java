@@ -84,19 +84,26 @@ public class HubCentralManager extends LoggingObject {
     protected void deleteUserArtifacts(HubProject hubProject) {
         Stream.of(
             hubProject.getFlowsDir(),
-            hubProject.getHubEntitiesDir(),
-            hubProject.getStepsPath()
-        ).forEach(path -> {
-            File dir = path.toFile();
-            if (dir.exists() && dir.isDirectory()) {
-                try {
-                    logger.info("Deleting directory: " + dir);
-                    FileUtils.deleteDirectory(dir);
-                } catch (IOException ex) {
-                    throw new RuntimeException("Unable to delete directory: " + dir + "; cause: " + ex.getMessage(), ex);
-                }
+            hubProject.getHubEntitiesDir()
+        ).forEach(path -> deleteDirectory(path.toFile()));
+
+        // For 5.3.0, have to be careful with the steps path, as we only want to delete ingestion and mapping directories
+        File stepsDir = hubProject.getStepsPath().toFile();
+        if (stepsDir.exists() && stepsDir.isDirectory()) {
+            deleteDirectory(new File(stepsDir, "ingestion"));
+            deleteDirectory(new File(stepsDir, "mapping"));
+        }
+    }
+
+    private void deleteDirectory(File dir) {
+        if (dir.exists() && dir.isDirectory()) {
+            try {
+                logger.info("Deleting directory: " + dir);
+                FileUtils.deleteDirectory(dir);
+            } catch (IOException ex) {
+                throw new RuntimeException("Unable to delete directory: " + dir + "; cause: " + ex.getMessage(), ex);
             }
-        });
+        }
     }
 
     /**
@@ -158,8 +165,7 @@ public class HubCentralManager extends LoggingObject {
                     FileCopyUtils.copy(buffer, fileOut);
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
