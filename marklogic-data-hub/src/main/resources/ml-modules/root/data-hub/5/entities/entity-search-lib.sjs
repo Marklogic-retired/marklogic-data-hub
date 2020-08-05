@@ -35,7 +35,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
   let selectedPropertyMetadata = [];
   let propertyMetadata = [];
 
-  if (entityName != null) {
+  if (entityName) {
     //Single Entity is selected
 
     const entityModel = entityLib.findModelByEntityName(entityName);
@@ -58,7 +58,6 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
     searchResponse.results.forEach(result => {
       addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata)
     });
-
   } else {
     //'All Entities' option is selected
     searchResponse.results.forEach(result => {
@@ -240,11 +239,30 @@ function buildAndCacheSelectedPropertyMetadata(selectedPropertyName, selectedPro
 
 function getEntityInstance(docUri) {
   let doc = cts.doc(docUri);
+
+  if(!doc) {
+    console.log(`Unable to obtain entity instance from document with URI '${docUri}'`);
+    return null;
+  }
+
   if(doc instanceof Element || doc instanceof XMLDocument) {
     const builder = new NodeBuilder();
     return fn.head(es.instanceJsonFromDocument(builder.startDocument().addNode(doc.xpath("/*:envelope/*:instance")).endDocument().toNode())).toObject();
   }
-  return doc.toObject().envelope.instance;
+
+  if (doc.toObject().envelope && doc.toObject().envelope.instance) {
+    return doc.toObject().envelope.instance;
+  }
+  return null;
+}
+
+function getEntityInstanceHeaders(docUri) {
+    let doc = cts.doc(docUri);
+
+    if(doc && doc.envelope && doc.envelope.headers && doc.envelope.header.sources) {
+        return doc.envelope.header.sources;
+    }
+    return null;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
@@ -313,98 +331,105 @@ function getPrimaryValue(entityInstance, entityDefinition) {
 
 // Helper function to add properties to each result instance under results array in searchResponse
 function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata) {
-  let instance = null;
-  let entityTitle = entityInfo.entityName;
-  let createdOnDate = "";
-  result.entityProperties = [];
+  const entityTitle = entityInfo.entityName;
   result.entityName = "";
   result.createdOn = "";
+  result.createdBy = "";
+  result.entityProperties = [];
+  result.sources = [];
+  result.entityInstance = {};
 
-  try {
-    instance = getEntityInstance(result.uri);
-  } catch (error) {
+  const instance = getEntityInstance(result.uri);
+  if(!instance) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+    return;
   }
 
+  let entityDef = entityInfo.entityModel.definitions[entityTitle];
+  let entityInstance = instance[entityTitle];
+  if (!entityInstance) {
+    console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
+    return;
+  }
+
+  selectedPropertyMetadata.forEach(parentProperty => {
+    result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
+  });
+  addPrimaryKeyToResult(result, entityInstance, entityDef);
   try {
-    createdOnDate = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+    result.createdOn = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+    result.createdBy = xdmp.documentGetMetadata(result.uri).datahubCreatedBy;
   } catch (error) {
-    console.log(`Unable to obtain document with URI '${result.uri}'; will not add createdOn date to its search result`);
+    console.log(`Unable to obtain document with URI '${result.uri}'; will not add document metadata to its search result`);
   }
-
-  if (instance != null) {
-    let entityDef = entityInfo.entityModel.definitions[entityTitle];
-    const entityInstance = instance[entityTitle];
-    if (!entityInstance) {
-      console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
-    } else {
-      selectedPropertyMetadata.forEach(parentProperty => {
-        result.entityProperties.push(getPropertyValues(parentProperty, entityInstance));
-      });
-
-      addPrimaryKeyToResult(result, entityInstance, entityDef);
-    }
-  }
+  result.entityInstance = entityInstance;
+  result.sources = getEntityInstanceHeaders(result.uri) ? getEntityInstanceHeaders(result.uri) : result.sources;
   result.entityName = entityTitle;
-  result.createdOn = createdOnDate;
 }
 
 function addGenericEntityProperties(result) {
-  let instance = null;
-  let entityTitle = "";
-  let createdOnDate = "";
-  let entityModel = {};
   result.primaryKey = {};
   result.identifier = {};
   result.entityName = "";
   result.createdOn = "";
+  result.createdBy = "";
+  result.sources = [];
+  result.entityInstance = {};
 
-  try {
-    instance = getEntityInstance(result.uri);
-  } catch (error) {
+  const instance = getEntityInstance(result.uri);
+  if(!instance) {
     console.log(`Unable to obtain entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+    return;
   }
 
-  if (instance != null) {
-    let isEntityInstance = instance.hasOwnProperty("info") ? true : (Object.keys(instance).length > 1 ? false : true);
-    if(isEntityInstance) {
-    entityTitle = instance.hasOwnProperty("info") ? instance.info.title : Object.keys(instance)[0];
-    entityModel = entityLib.findModelByEntityName(entityTitle);
-    let entityDef = entityModel.definitions[entityTitle];
-    const entityInstance = instance[entityTitle];
-    if (!entityInstance) {
-      console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
-    } else {
-        addPrimaryKeyToResult(result, entityInstance, entityDef);
-    }
-    } else {
-      console.log(`Unable to obtain a valid entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
-    }
+  let isEntityInstance = instance.hasOwnProperty("info") ? true : (Object.keys(instance).length > 1 ? false : true);
+  if(!isEntityInstance) {
+    console.log(`Unable to obtain a valid entity instance from document with URI '${result.uri}'; will not add entity properties to its search result`);
+    return;
   }
+
+  const entityTitle = instance.hasOwnProperty("info") ? instance.info.title : Object.keys(instance)[0];
+  const entityModel = entityLib.findModelByEntityName(entityTitle);
+  if(!entityModel) {
+    console.log(`Unable to find an entity model for entity name: ${entityTitle}; will not add entity properties to its search result`);
+    return;
+  }
+
+  let entityDef = entityModel.definitions[entityTitle];
+  const entityInstance = instance[entityTitle];
+  if (!entityInstance) {
+    console.log(`Unable to obtain entity instance from document with URI '${result.uri}' and entity name '${entityTitle}'; will not add entity properties to its search result`);
+    return;
+  }
+
+  addPrimaryKeyToResult(result, entityInstance, entityDef);
   try {
-    createdOnDate = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+    result.createdOn = xdmp.documentGetMetadata(result.uri).datahubCreatedOn;
+    result.createdBy = xdmp.documentGetMetadata(result.uri).datahubCreatedBy;
   } catch (error) {
-    console.log(`Unable to obtain document with URI '${result.uri}'; will not add createdOn date to its search result`);
+    console.log(`Unable to obtain document with URI '${result.uri}'; will not add document metadata to its search result`);
   }
+
   let identifierValue = result.primaryKey.propertyPath === "uri" ? result.uri : result.primaryKey.propertyValue;
   result.identifier = {
     "propertyPath": "identifier",
     "propertyValue": identifierValue
   };
+  result.entityInstance = entityInstance;
+  result.sources = getEntityInstanceHeaders(result.uri) ? getEntityInstanceHeaders(result.uri) : result.sources;
   result.entityName = entityTitle;
-  result.createdOn = createdOnDate;
 }
 
 function addPrimaryKeyToResult(result, entityInstance, entityDef) {
-      result.primaryKey = getPrimaryValue(entityInstance, entityDef);
+  result.primaryKey = getPrimaryValue(entityInstance, entityDef);
 
-      // no primaryKey in entity instance, so use URI
-      if (result.primaryKey === null) {
-        result.primaryKey = {
-          "propertyPath": "uri",
-          "propertyValue": result.uri
-        }
-      }
+  // no primaryKey in entity instance, so use URI
+  if (!result.primaryKey) {
+    result.primaryKey = {
+      "propertyPath": "uri",
+      "propertyValue": result.uri
+    }
+  }
 }
 
 module.exports = {
