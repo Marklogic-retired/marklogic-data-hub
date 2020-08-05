@@ -1,0 +1,10 @@
+{
+  "lang": "zxx",
+  "name": "personMapping",
+  "version": 1,
+  "targetEntityType": "http://marklogic.com/example/Person-0.0.1/Person",
+  "sourceContext": "/",
+  "selectedSource": "collection",
+  "properties": {
+  }
+}
