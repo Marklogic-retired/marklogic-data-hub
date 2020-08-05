@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -36,9 +37,11 @@ import com.marklogic.hub.util.json.JSONStreamWriter;
 import com.marklogic.hub.util.json.JSONUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -315,6 +318,29 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         }
         catch (Exception e){
             throw new RuntimeException("Unable to create flow; cause: " + e.getMessage(), e);
+        }
+    }
+
+    public Pair<File, String> addStepToFlow(String flowName, String stepName, String stepType) {
+        StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(stepType);
+        Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
+        File flowFile = hubConfig.getFlowsDir().resolve(flowName + ".flow.json").toFile();
+        JsonNode flow;
+        try{
+            DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
+            FlowService flowService = FlowService.on(stagingClient);
+            flow = flowService.addStepToFlow(flowName, stepName, stepType);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to add step '" + stepName + "' to flow'" + flowName + "'; cause: " + e.getMessage(), e);
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(flowFile, flow);
+            return Pair.of(flowFile, "Added step '" + stepName + "' to flow '" + flowName + "'.");
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write flow to file: " + flowFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
         }
     }
 
