@@ -15,10 +15,9 @@
  */
 package com.marklogic.hub.central.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.HubCentral;
-import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.hubcentral.HubCentralManager;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.VersionInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -46,13 +45,11 @@ public class EnvironmentController extends BaseController {
     @Autowired
     Environment environment;
 
-    private ObjectMapper mapper = new ObjectMapper();
-
     @RequestMapping(value = "/api/environment/downloadProjectFiles", produces = "application/zip", method = RequestMethod.GET)
     @Secured("ROLE_downloadProjectFiles")
     public void downloadProjectFilesAsZip(HttpServletResponse response) {
         response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        response.addHeader("Content-Disposition", "attachment; filename=datahub-project.zip");
+        response.addHeader("Content-Disposition", "attachment; filename=hub-central-project.zip");
         try (OutputStream out = response.getOutputStream()) {
             new HubCentralManager().writeProjectArtifactsAsZip(getHubClient(), out);
             response.flushBuffer();
@@ -92,10 +89,6 @@ public class EnvironmentController extends BaseController {
         public String host;
         public String sessionTimeout;
         public String sessionToken;
-    }
-
-    public static class EnvironmentInfo {
-        public String sessionTimeout;
     }
 }
 

@@ -107,7 +107,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubApplyProjectZip", group: deployGroup, type: ApplyProjectZipTask,
             description: "Apply a project zip that was downloaded from Hub Central to this project. This will first delete " +
                 "all user files that can be managed with Hub Central, which are: entity models, entity model-based files, flows, and steps. " +
-                "The contents of the project zip, specified via -Pfile=/path/to/datahub-project.zip, " +
+                "The contents of the project zip, specified via -Pfile=/path/to/hub-central-project.zip, " +
                 "will then be extracted into the project directory.")
         project.task("hubPullConfigurationFiles", group: deployGroup, type: PullConfigurationFilesTask,
             description: "Download user configuration files from a Hub Central instance and apply them to this project. " +

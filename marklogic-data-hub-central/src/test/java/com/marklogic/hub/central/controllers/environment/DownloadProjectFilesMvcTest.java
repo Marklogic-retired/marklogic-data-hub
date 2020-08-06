@@ -38,7 +38,7 @@ public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
             .andDo(result -> {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
-                assertEquals("attachment; filename=datahub-project.zip", response.getHeader("Content-Disposition"));
+                assertEquals("attachment; filename=hub-central-project.zip", response.getHeader("Content-Disposition"));
 
                 // We trust the zip to be constructed correctly based on DownloadConfigurationFilesTest, so just
                 // doing a quick sanity check here
