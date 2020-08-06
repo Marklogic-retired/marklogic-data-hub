@@ -438,16 +438,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         if (isSslRun() || isCertAuth()) {
             certInit();
         }
-        adminHubConfig.setMlUsername(user);
-        adminHubConfig.setMlPassword(password);
-
-        // Turning off CMA for resources that have bugs in ML 9.0-7/8
-        adminHubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
-
-        return adminHubConfig;
+        return runAsFlowDeveloper();
     }
 
     protected HubConfigImpl runAsFlowOperator() {
@@ -471,7 +462,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             return super.runAsDataHubDeveloper();
         }
         logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
-        return getDataHubAdminConfig();
+        return runAsFlowDeveloper();
     }
 
     @Override
@@ -519,6 +510,13 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         }
         // Re-initializes the Manage API connection
         manageClient.setManageConfig(manageConfig);
+
+        // Turning off CMA for resources that have bugs in ML 9.0-7/8
+        adminHubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
+        adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+
         return adminHubConfig;
     }
 

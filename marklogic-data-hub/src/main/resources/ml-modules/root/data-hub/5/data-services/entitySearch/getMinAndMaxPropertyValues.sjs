@@ -55,8 +55,8 @@ if(!referenceType || referenceType === "") {
 if(referenceType === 'element') {
   query = cts.elementReference(propertyPath);
 } else {
-  let rangeIndexPath = lib.getPropertyRangePath(entityTypeId, propertyPath);
-  query = cts.pathReference(rangeIndexPath);
+  const result = lib.buildPathReferenceParts(entityTypeId, propertyPath);
+  query = cts.pathReference(result.pathExpression, null, result.namespaces);
 }
 
 rangeValues.min = cts.min(query);

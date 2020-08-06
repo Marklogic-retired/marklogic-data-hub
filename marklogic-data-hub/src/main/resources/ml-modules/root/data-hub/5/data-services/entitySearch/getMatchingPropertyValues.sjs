@@ -70,8 +70,8 @@ if(referenceType === 'element') {
 } else if(referenceType === 'collection') {
   query = cts.collectionReference();
 } else {
-  let rangeIndexPath = lib.getPropertyRangePath(entityTypeId, propertyPath);
-  query = cts.pathReference(rangeIndexPath);
+  const result = lib.buildPathReferenceParts(entityTypeId, propertyPath);
+  query = cts.pathReference(result.pathExpression, null, result.namespaces);
 }
 
 var facetValues = cts.valueMatch(query, pattern + "*",
