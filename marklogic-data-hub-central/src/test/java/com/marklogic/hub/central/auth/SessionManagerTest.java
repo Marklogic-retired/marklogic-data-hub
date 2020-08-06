@@ -45,7 +45,7 @@ import java.util.concurrent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // Disable WebSocket security for test
-@SpringBootTest(properties = {"hub.websocket.securityDisabled=true"}, webEnvironment= SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(properties = {"hub.websocket.securityDisabled=true"}, webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SessionManagerTest {
     long testTimeoutBetweenSessionUpdates = 0;
     @Autowired
