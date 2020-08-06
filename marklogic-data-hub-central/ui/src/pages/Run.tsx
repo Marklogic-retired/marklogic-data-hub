@@ -85,9 +85,10 @@ const Run = (props) => {
     }
 
     const createFlow = async (payload) => {
+        let newFlow;
         try {
             setIsLoading(true);
-            let newFlow = {
+            newFlow = {
                 name: payload.name,
                 description: payload.description
             }
@@ -100,9 +101,12 @@ const Run = (props) => {
         catch (error) {
             console.error('Error posting flow', error);
             setIsLoading(false);
-            Modal.error({
-              content: error.response.data.message,
-            });
+            let message = error.response.data.message;
+            message.indexOf(newFlow.name) > -1 ? Modal.error({
+                content: <p>Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.</p>
+            }) : Modal.error({
+                content: message
+            })
         }
     }
 
