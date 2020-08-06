@@ -310,6 +310,66 @@ function entityDefWithNamespace() {
   ];
 }
 
+function multipleNamespacesButNoIndexes() {
+  const indexes = hent.dumpIndexes([
+    {
+      "info": {
+        "title": "Book"
+      },
+      "definitions": {
+        "Book": {
+          "namespace": "org:book",
+          "namespacePrefix": "book",
+          "properties": {
+            "title": {"datatype": "string", "collation": "http://marklogic.com/collation/"}
+          }
+        },
+        "Author": {
+          "namespace": "org:author",
+          "namespacePrefix": "author",
+          "properties": {
+            "name": {"datatype": "string", "collation": "http://marklogic.com/collation/"}
+          }
+        }
+      }
+    }
+  ]);
+
+  const namespaces = indexes.toObject()["path-namespace"];
+
+  const assertions = [
+    test.assertEqual(3, namespaces.length, "The es namespace is expected to be provided by the ES function, and " +
+      "the two namespaces in the entity model should always be included regardless of whether there are any indexes. " +
+      "This is due to a bug in the Manage API - https://bugtrack.marklogic.com/55246 - that prevents indexes with " +
+      "namespace prefixes from being removed unless path-namespaces also contains the prefixes.")
+  ];
+
+  let foundEs = false;
+  let foundBook = false;
+  let foundAuthor = false;
+
+  // The order of these doesn't matter, just need to make sure that each is found
+  for (var ns of namespaces) {
+    if ("es" === ns.prefix) {
+      foundEs = true;
+      assertions.push(test.assertEqual("http://marklogic.com/entity-services", ns["namespace-uri"]));
+    } else if ("book" === ns.prefix) {
+      foundBook = true;
+      assertions.push(test.assertEqual("org:book", ns["namespace-uri"]));
+    } else if ("author" === ns.prefix) {
+      foundAuthor = true;
+      assertions.push(test.assertEqual("org:author", ns["namespace-uri"]));
+    }
+  }
+
+  assertions.push(
+    test.assertTrue(foundEs),
+    test.assertTrue(foundBook),
+    test.assertTrue(foundAuthor)
+  );
+  return assertions;
+}
+
 []
   .concat(sharedPropertyWithNullNamespace())
   .concat(sharedPropertyWithSameNamespaces())
@@ -320,4 +380,5 @@ function entityDefWithNamespace() {
   .concat(generateIndexConfigWithNoEntityTypeProperties())
   .concat(generateIndexConfigWithStructuredProperties())
   .concat(generateIndexConfigWithSortableProperties())
+  .concat(multipleNamespacesButNoIndexes())
   .concat(entityDefWithNamespace());

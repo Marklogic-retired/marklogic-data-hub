@@ -273,14 +273,13 @@ declare %private function hent:build-sort-operator(
   return <search:operator name="sort">{$states}</search:operator>
 };
 
-declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
+(:
+Returns a map with an entry for each entity definition that defines namespace and namespacePrefix, with the
+key of each entry being the prefix. It's public so unit tests can work against it.
+:)
+declare function build-entity-namespace-map($uber-model)
 {
-  let $updated-models := hent:add-indexes-for-entity-properties($entities)
-  let $sortable-properties := map:get($updated-models, "sortable-properties")
-  let $entities := map:get($updated-models, "updated-models")
-  let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
-
-  let $entity-namespace-map := map:new(
+  map:new(
     let $definitions := map:get($uber-model, "definitions")
     for $entity-name in map:keys($definitions)
     let $entity-type := map:get($definitions, $entity-name)
@@ -289,10 +288,17 @@ declare function hent:dump-search-options($entities as json:array, $for-explorer
     where $ns and $prefix
     return map:entry($prefix, $ns)
   )
+};
 
+declare function hent:dump-search-options($entities as json:array, $for-explorer as xs:boolean?)
+{
+  let $updated-models := hent:add-indexes-for-entity-properties($entities)
+  let $sortable-properties := map:get($updated-models, "sortable-properties")
+  let $entities := map:get($updated-models, "updated-models")
+  let $uber-model := hent:uber-model(json:array-values($entities) ! xdmp:to-json(.)/object-node())
   return
     if ($for-explorer = fn:true()) then
-      hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, $entity-namespace-map)
+      hent:fix-options-for-explorer(es:search-options-generate($uber-model), $sortable-properties, build-entity-namespace-map($uber-model))
     else
       hent:fix-options(es:search-options-generate($uber-model))
 };
@@ -334,6 +340,8 @@ declare function hent:dump-indexes($entities as json:array)
 
   let $database-config := xdmp:from-json(es:database-properties-generate($uber-model))
 
+  let $_ := add-entity-namespaces-to-path-namepaces($uber-model, $database-config)
+
   let $_ :=
     for $x in ("database-name", "schema-database", "triple-index", "collection-lexicon")
     return
@@ -349,11 +357,43 @@ declare function hent:dump-indexes($entities as json:array)
 };
 
 (:
+Regardless of whether there are any path expressions that use an entity definition's namespace, we ensure that
+such namespaces and their prefixes are added as path namespaces to workaround a bug in the Manage API where
+indexes that do use the prefixes cannot be removed unless the prefixes are defined in path-namespaces.
+:)
+declare private function hent:add-entity-namespaces-to-path-namepaces($uber-model, $database-config)
+{
+  let $path-namespaces := map:get($database-config, "path-namespace")
+  let $path-namespaces :=
+    (: This is expected to always define 'es', but just in case, we ensure it's an array :)
+    if (fn:not($path-namespaces)) then
+      let $array := json:array()
+      let $_ := map:put($database-config, "path-namespace", $array)
+      return $array
+    else $path-namespaces
+
+  let $already-defined-prefixes :=
+    for $ns in json:array-values($path-namespaces)
+    return map:get($ns, "prefix")
+
+  let $entity-namespace-map := build-entity-namespace-map($uber-model)
+  let $_ :=
+    for $prefix in map:keys($entity-namespace-map)
+    where fn:not($prefix = $already-defined-prefixes)
+    return json:array-push($path-namespaces, map:new((
+      map:entry("prefix", $prefix),
+      map:entry("namespace-uri", map:get($entity-namespace-map, $prefix))
+    )))
+
+  return ()
+};
+
+(:
 es:database-properties-generate will generate duplicate range indexes when e.g. two entities have properties with the
 same name and namespace and are both configured to have range indexes. This function removes duplicates, where
 duplicates are considered to have the same local name, namespace URI, and collation.
 :)
-declare function hent:remove-duplicate-range-indexes($database-config as item())
+declare private function hent:remove-duplicate-range-indexes($database-config as item())
 {
   let $indexes := map:get($database-config, "range-element-index")
   return
