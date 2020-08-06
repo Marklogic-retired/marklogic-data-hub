@@ -18,9 +18,21 @@
 const sem = require("/MarkLogic/semantics.xqy");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-function getPropertyRangePath(entityIRI, propertyPath) {
+/**
+ * @param entityIRI
+ * @param propertyPath
+ * @returns an object with properties "pathExpression" and "namespaces" that can then be used to build a
+ * cts.pathReference. Does not actually build one to make life easier on the tests, which can then test the construction
+ * of the path and namespaces without depending on a path range index existing.
+ */
+function buildPathReferenceParts(entityIRI, propertyPath) {
   let properties = propertyPath.split("/");
   let finalPath = "";
+
+  const namespaceMap = {
+    "es": "http://marklogic.com/entity-services"
+  };
+
   for (let property of properties) {
     let model = getEntityDefinitionFromIRI(entityIRI);
     let entityInfo = getEntityInfoFromIRI(entityIRI);
@@ -38,12 +50,19 @@ function getPropertyRangePath(entityIRI, propertyPath) {
     if (entityDefHasNamespace) {
       const ns = entityDef.namespacePrefix;
       finalPath += `/${ns}:${entityInfo.entityName}/${ns}:${property}`;
+      namespaceMap[entityDef.namespacePrefix] = entityDef.namespace;
     } else {
       finalPath += `/${entityInfo.entityName}/${property}`;
     }
     entityIRI = getRefEntityIdentifiers(entityIRI, entityInfo, prop).entityIRI;
   }
-  return finalPath;
+
+  // Returning an object so that application clients can build a cts.pathReference from this, but the existing tests
+  // still have an easy way to verify the path expression and don't have to require that a path reference exists
+  return {
+    pathExpression: finalPath,
+    namespaces: namespaceMap
+  };
 }
 
 function getPropertyReferenceType(entityIRI, propertyPath) {
@@ -220,7 +239,7 @@ function generateProtectedPathConfig(models) {
 module.exports = {
   findEntityServiceTitle,
   generateProtectedPathConfig,
-  getPropertyRangePath,
+  buildPathReferenceParts,
   getPropertyReferenceType,
   getEntityDefinitionFromIRI
 };

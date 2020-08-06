@@ -2,27 +2,35 @@ const test = require("/test/test-helper.xqy");
 const lib = require('/data-hub/5/impl/hub-es.sjs');
 let result = [];
 
-function testGetPropertyRangePath(entityIRI, propertyPath, expRes) {
-  const path = lib.getPropertyRangePath(entityIRI, propertyPath);
-  return [test.assertEqual(expRes, path)];
+function verifyPropertyPathReference(entityIRI, propertyPath, expectedPathExpression) {
+  const result = lib.buildPathReferenceParts(entityIRI, propertyPath);
+  return [
+    test.assertEqual(expectedPathExpression, result.pathExpression),
+    test.assertEqual("http://marklogic.com/entity-services", result.namespaces.es)
+  ];
 }
 
 result = result
-// getPropertyRangePath for two level nested property
-.concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
+  .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/numEntProp/intProp",
     "/(es:envelope|envelope)/(es:instance|instance)/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/numEntProp/NumericEntity/intProp"))
-// getPropertyRangePath for one level nested property
-.concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
+  .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/EntitiesSearchEntity",
     "numStrEntityProp/strCityProp",
     "/(es:envelope|envelope)/(es:instance|instance)/EntitiesSearchEntity/numStrEntityProp/NumStringEntity/strCityProp"))
-// getPropertyRangePath for one level nested property
-.concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
+  .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
     "numEntProp/intProp",
     "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/numEntProp/NumericEntity/intProp"))
-// getPropertyRangePath for root level property
-.concat(testGetPropertyRangePath("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
+  .concat(verifyPropertyPathReference("http://marklogic.com/EntitiesSearchEntity-0.0.1/NumStringEntity",
     "intProp", "/(es:envelope|envelope)/(es:instance|instance)/NumStringEntity/intProp"));
+
+
+// Verify a namespaced entity
+const pathParts = lib.buildPathReferenceParts("http://marklogic.com/EntitiesSearchEntity-0.0.1/NamespacedEntity", "namespacedProperty");
+result.push(
+  test.assertEqual("/es:envelope/es:instance/oex:NamespacedEntity/oex:namespacedProperty", pathParts.pathExpression),
+  test.assertEqual("http://marklogic.com/entity-services", pathParts.namespaces.es),
+  test.assertEqual("org:example", pathParts.namespaces.oex)
+);
 
 
 function testRangePathPropertyReferenceType(entityIRI, propertyPath) {
