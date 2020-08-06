@@ -204,6 +204,8 @@ task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
 }
 test.finalizedBy('testUI')
 
+build.dependsOn buildRpm
+
 /*task to publish war file to Maven repository, if project has property "mavenUser" then it will publish to nexus
  Use '-PskipWeb in your task to skip this task when publishing'*/
 publishing {
