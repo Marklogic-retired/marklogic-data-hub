@@ -2,10 +2,8 @@ package com.marklogic.hub.entity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployProtectedPathsCommand;
-import com.marklogic.appdeployer.command.security.DeployQueryRolesetsCommand;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
@@ -13,6 +11,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -108,16 +107,9 @@ public class GenerateProtectedPathsTest extends AbstractHubCoreTest {
     }
 
     private void deployProtectedPathsAndQueryRolesets() {
-        AppConfig appConfig = getHubConfig().getAppConfig();
         CommandContext context = newCommandContext();
-        boolean originalCmaSetting = appConfig.getCmaConfig().isCombineRequests();
-        try {
-            appConfig.getCmaConfig().setCombineRequests(false);
-            new DeployQueryRolesetsCommand().execute(context);
-            new DeployProtectedPathsCommand().execute(context);
-        } finally {
-            appConfig.getCmaConfig().setCombineRequests(originalCmaSetting);
-        }
+        new DeployHubQueryRolesetsCommand().execute(context);
+        new DeployProtectedPathsCommand().execute(context);
     }
 
     private void insertJsonEntity() {

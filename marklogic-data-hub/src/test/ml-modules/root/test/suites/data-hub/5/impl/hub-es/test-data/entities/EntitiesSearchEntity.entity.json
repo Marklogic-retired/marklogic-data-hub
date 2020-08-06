@@ -63,6 +63,19 @@
         }
       }
     },
+    "NamespacedEntity": {
+      "rangeIndex": [
+        "namespacedProperty"
+      ],
+      "namespace": "org:example",
+      "namespacePrefix": "oex",
+      "properties": {
+        "namespacedProperty": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    },
     "NumStringEntity": {
       "required": [],
       "pii": [],
