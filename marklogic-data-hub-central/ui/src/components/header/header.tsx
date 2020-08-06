@@ -3,7 +3,7 @@ import { RouteComponentProps, withRouter, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import { UserContext } from '../../util/user-context';
-import logo from './logo.jpg';
+import logo from './logo.svg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
@@ -52,7 +52,7 @@ const Header:React.FC<Props> = (props) => {
     if(value == ''){
       return '';
     }else{
-      let version = '';           
+      let version = '';
       let flag = false;
       for(let c in value){
         if(value[c] != '.' && value[c] != '-'){

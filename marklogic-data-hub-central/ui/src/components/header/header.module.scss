@@ -7,11 +7,11 @@ header.container {
     width: 240px;
     position: relative;
     top: -1px;
-    left: -48px;
+    left: -52px;
     cursor: pointer;
+    padding: 0px 20px 0px 20px;
     span.logo {
-        height: 48px;
-        width: 174px;
+        width: 160px;
         overflow: visible;
     }
       .vertical{
@@ -20,7 +20,7 @@ header.container {
           top: 3px;
           border-left: dotted 1px rgba(255, 255, 255, 0.65);
           height: 24px;
-          margin: -6px 0px;
+          margin: -6px 8px;
       }
   }
   div.title {
@@ -28,7 +28,7 @@ header.container {
     font-size: 28px;
     font-weight: 400;
     float: left;
-    margin: 0 60px 0 138px;
+    margin: 0 60px 0 150px;
     text-align: right;
     color: #fff;
     cursor: pointer;
@@ -37,7 +37,7 @@ header.container {
 .serviceName {
     font: 400 22px/48px 'HelveticaNeue-Light', 'Helvetica Neue', Helvetica, 'Open Sans', Arial, sans-serif;
     text-decoration: none;
-    color: white
+    color: white;
 }
 
 li.menuLink {
@@ -45,6 +45,9 @@ li.menuLink {
   font-size: 16px;
 }
 
+.ant-menu-dark {
+    background-color: #2B333C;
+}
 div.iconsContainerAuth {
   position: absolute;
   top: 8px;
