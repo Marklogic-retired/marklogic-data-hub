@@ -59,8 +59,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             // Define requests that are always permitted, regardless of whether the user is authenticated or not
             .authorizeRequests()
-                // Needed for websocket tests
-//                .antMatchers("/websocket/**").permitAll()
                 // Needed for springfox to work - see https://github.com/springfox/springfox/issues/1996#issuecomment-335155187
                 .antMatchers("/swagger-resources/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**").permitAll()
                 // Non-springfox patterns to permit
