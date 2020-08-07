@@ -78,7 +78,7 @@ describe('App component', () => {
     });
     // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
     history.push('/tiles');
-    const { getByLabelText, debug } = render(<Router history={history}>
+    const { getByLabelText } = render(<Router history={history}>
       <StompContext.Provider value={defaultStompContext}>
         <AuthoritiesContext.Provider value={mockDevRolesService}>
           <UserProvider><App/></UserProvider>
