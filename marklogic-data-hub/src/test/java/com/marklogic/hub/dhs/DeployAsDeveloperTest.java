@@ -89,9 +89,16 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
         CmaConfig cmaConfig = appConfig.getCmaConfig();
         assertFalse(cmaConfig.isDeployDatabases());
         assertFalse(cmaConfig.isDeployPrivileges());
-        assertFalse(cmaConfig.isDeployProtectedPaths());
         assertFalse(cmaConfig.isDeployQueryRolesets());
         assertFalse(cmaConfig.isDeployRoles());
+
+        assertTrue(cmaConfig.isDeployProtectedPaths(), "Testing for DHFPROD-5626 showed that when 2 or more protected paths " +
+            "are loaded via RMA (not in one operation via CMA) by a data-hub-developer, only the last path works. All the " +
+            "paths look fine, but only the last one works. But it may not always be last - it seems to be a timing condition, " +
+            "and it's likely related to the issue found in DHFPROD-4558 that caused us to deploy query rolesets before " +
+            "protected paths. Oddly, this condition has not been reproducible in a JUnit test, likely because it's related " +
+            "to timing. But we've found that enabling CMA for protected paths fixes the problem - at least in the " +
+            "reference-model project and the e2e hc-qa-projects, where we were able to reproduce the problem.");
     }
 
     @Test

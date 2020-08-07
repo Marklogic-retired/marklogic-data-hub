@@ -100,8 +100,12 @@ public class DhsDeployer extends LoggingObject {
         }
 
         // As part of the fix for DHFPROD-5073, disabling all CMA usage, as data-hub-developer/operator are not allowed
-        // to use CMA
+        // to use CMA for all resource types
         appConfig.setCmaConfig(new CmaConfig(false));
+
+        // See DeployAsDeveloperTest for comments on why CMA is used for protected paths - seems to deal with a timing
+        // issue when deploying many protected paths a certain amount of time after deploying query rolesets.
+        appConfig.getCmaConfig().setDeployProtectedPaths(true);
     }
 
     /**
