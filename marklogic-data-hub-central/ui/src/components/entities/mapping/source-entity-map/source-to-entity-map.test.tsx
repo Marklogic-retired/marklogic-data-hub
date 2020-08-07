@@ -29,7 +29,7 @@ describe('RTL Source-to-entity map tests', () => {
     });
 
     test('RTL tests with source data',  () => {
-        const { getByTestId,  getByText, queryByText} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+        const { getByTestId,  getByText, queryByText, rerender} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
         expect(getByTestId("entityContainer")).toBeInTheDocument();
@@ -37,6 +37,9 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
+        rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={true} />)
+        expect(getByTestId('spinTest')).toBeInTheDocument();
+        rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={false} />)
         expect(queryByText("Unable to find source records using the specified collection or query.")).not.toBeInTheDocument();
         let exp = getByText('testNameInExp');
         expect(exp).toBeInTheDocument();

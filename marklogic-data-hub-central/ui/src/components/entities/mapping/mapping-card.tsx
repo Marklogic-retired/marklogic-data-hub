@@ -53,6 +53,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [docNotFound, setDocNotFound] = useState(false);
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -167,6 +168,7 @@ const MappingCard: React.FC<Props> = (props) => {
         let sQuery = props.data[index].sourceQuery;
 
         try{
+        setIsLoading(true);
         let response = await getResultsByQuery(database,sQuery,20, true);
           if (response.status === 200) {
            if(response.data.length > 0){
@@ -177,15 +179,17 @@ const MappingCard: React.FC<Props> = (props) => {
               })
            setDocUris([...uris]);
            setSourceURI(response.data[0].uri);
-
            fetchSrcDocFromUri(response.data[0].uri);
-
           }
+           else{
+               setIsLoading(false);
+           }
         }
         }
         catch(error)  {
             let message = error;
             console.log('Error While loading the source data!', message);
+            setIsLoading(false);
             setDocNotFound(true);
         }
 
@@ -220,8 +224,10 @@ const MappingCard: React.FC<Props> = (props) => {
                 setSourceData([]);
                 setSourceData([...sDta]);
             }
+            setIsLoading(false);
         } catch(error)  {
             let message = error//.response.data.message;
+            setIsLoading(false);
             console.log('Error While loading the Doc from URI!', message)
             setDocNotFound(true);
         }
@@ -676,7 +682,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 mapFunctions={mapFunctions}
                 namespaces={namespaces}
                 mapIndex={mapIndex}
-                tgtEntityReferences={tgtEntityReferences}/>
+                tgtEntityReferences={tgtEntityReferences}
+                isLoading={isLoading}/>
             <AdvancedSettingsDialog
                 tooltipsData={AdvMapTooltips}
                 openAdvancedSettings={openMappingSettings}
