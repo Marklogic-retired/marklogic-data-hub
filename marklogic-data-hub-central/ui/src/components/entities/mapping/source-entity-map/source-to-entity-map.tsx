@@ -10,8 +10,7 @@ import { getMappingValidationResp } from "../../../../util/manageArtifacts-servi
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from 'react-split-pane';
 import Highlighter from 'react-highlight-words';
-import { MLButton, MLTooltip, MLCheckbox } from '@marklogic/design-system';
-
+import { MLButton, MLTooltip, MLCheckbox, MLSpin } from '@marklogic/design-system';
 
 const SourceToEntityMap = (props) => {
 
@@ -658,15 +657,15 @@ const SourceToEntityMap = (props) => {
             let xMore = '(' + (arr.length - 2) + ' more)';
             let itemOne = arr[0].length > 16 ? getInitialChars(arr[0], 16, '...\n') : arr[0] + '\n';
             let itemTwo = arr[1].length > 16 ? getInitialChars(arr[1], 16, '...\n') : arr[1] + '\n';
-            let fullItem = itemOne.concat(itemTwo);            
+            let fullItem = itemOne.concat(itemTwo);
             if(arr.length == 2){
                 return <p>{fullItem}</p>;
             }else{
                 return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
-            } 
+            }
         }else{
             return getInitialChars(arr[0],16,'...')
-        }           
+        }
     }
 
     //Response from server already is an array for multiple values, string for single value
@@ -678,12 +677,12 @@ const SourceToEntityMap = (props) => {
             let xMore = '(' + (respFromServer.length - 2) + ' more)';
             let itemOne = respFromServer[0].length > 23 ? getInitialChars(respFromServer[0], 23, '...\n') : respFromServer[0] + '\n';
             let itemTwo = respFromServer[1].length > 23 ? getInitialChars(respFromServer[1], 23, '...\n') : respFromServer[1] + '\n';
-            let fullItem = itemOne.concat(itemTwo);            
+            let fullItem = itemOne.concat(itemTwo);
             if(respFromServer.length == 2){
                 return <p>{fullItem}</p>;
             }else{
                 return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
-            } 
+            }
         }else{
             return getInitialChars(respFromServer,23,'...')
         }
@@ -729,6 +728,7 @@ const SourceToEntityMap = (props) => {
         return errorInSaving === 'noError' ? msg : errorMsg;
 
     };
+
     const emptyData = (JSON.stringify(props.sourceData) === JSON.stringify([]) && !props.docNotFound);
 
     const getValue = (object, keys) => keys.split('.').reduce((o, k) => (o || {})[k], object);
@@ -1195,7 +1195,10 @@ const SourceToEntityMap = (props) => {
                                 placement="right"
                             ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
                         </div>
-                        {emptyData ?
+                        {props.isLoading === true ? <div className={styles.spinRunning}>
+                            <MLSpin size={"large"} data-testid="spinTest"/>
+                        </div>:
+                        emptyData ?
                             <div id="noData">
                                 <br/><br/>
                                 <Card className={styles.emptyCard} size="small">
