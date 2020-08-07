@@ -166,7 +166,7 @@ function entityDefWithNamespace() {
 
   const expOptions = hent.dumpSearchOptions(input, true);
 
-  const pathNamespaces = expOptions.xpath("/*:operator/*:state[@name = 'ratingAscending']/*:sort-order/*:path-index/namespace::*").toArray();
+  const pathNamespaces = expOptions.xpath("/*:operator/*:state[@name = 'Book_ratingAscending']/*:sort-order/*:path-index/namespace::*").toArray();
   const bookNamespaceIndex = pathNamespaces.findIndex(val => val == "org:example");
   const authorNamespaceIndex = pathNamespaces.findIndex(val => val == "urn:author");
 
@@ -182,14 +182,14 @@ function entityDefWithNamespace() {
     test.assertEqual("false", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'rating')]/*:range/@facet"))),
       "A range constraint should exist for rating, but since it's only sortable and not facetable, facet should be 'false'"),
 
-    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'ratingDescending']/*:sort-order/@direction")))),
-    test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'ratingDescending']/*:sort-order/*:path-index")))),
-    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'ratingAscending']/*:sort-order/@direction")))),
-    test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'ratingAscending']/*:sort-order/*:path-index")))),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingDescending']/*:sort-order/@direction")))),
+    test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingDescending']/*:sort-order/*:path-index")))),
+    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingAscending']/*:sort-order/@direction")))),
+    test.assertEqual("/es:envelope/es:instance/oex:Book/oex:rating", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_ratingAscending']/*:sort-order/*:path-index")))),
 
-    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleAscending']"),
+    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']"),
       "title is not sortable, so there should not be a sort operator"),
-    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleDescending']"))
+    test.assertNotExists(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']"))
   ];
 }
 
@@ -214,21 +214,61 @@ function verifySortOperatorsForSortableProperties() {
   const expOptions = hent.dumpSearchOptions(input, true);
   return [
     test.assertEqual("sort", xs.string(fn.head(expOptions.xpath("/*:operator/@name")))),
-    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'titleDescending']")),
-    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleDescending']/*:sort-order/@direction")))),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleDescending']/*:sort-order/*:path-index")))),
-    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'titleAscending']")),
-    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleAscending']/*:sort-order/@direction")))),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'titleAscending']/*:sort-order/*:path-index")))),
-    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'authorsDescending']")),
-    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsDescending']/*:sort-order/@direction")))),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsDescending']/*:sort-order/*:path-index")))),
-    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'authorsAscending']")),
-    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsAscending']/*:sort-order/@direction")))),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'authorsAscending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_titleDescending']")),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']/*:sort-order/@direction")))),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_titleAscending']")),
+    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']/*:sort-order/@direction")))),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_authorsDescending']")),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsDescending']/*:sort-order/@direction")))),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsDescending']/*:sort-order/*:path-index")))),
+    test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_authorsAscending']")),
+    test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsAscending']/*:sort-order/@direction")))),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsAscending']/*:sort-order/*:path-index")))),
     test.assertNotExists(expOptions.xpath("/*:operator[@name = 'bookId']")),
     test.assertNotExists(expOptions.xpath("/*:operator[@name = 'completedDate']"))
   ];
+}
+
+function twoEntitiesHaveSameSortablePropertyName() {
+  const input = [
+    {
+      "info": {
+        "title": "Book"
+      },
+      "definitions": {
+        "Book": {
+          "properties": {
+            "title": {"datatype": "string", "sortable": true, "collation": "http://marklogic.com/collation/"}
+          }
+        }
+      }
+    },
+    {
+      "info": {
+        "title": "Author"
+      },
+      "definitions": {
+        "Author": {
+          "properties": {
+            "title": {"datatype": "string", "sortable": true, "collation": "http://marklogic.com/collation/"}
+          }
+        }
+      }
+    }
+  ];
+
+  const options = hent.dumpSearchOptions(input, true);
+  return [
+    test.assertExists(options.xpath("/*:operator/*:state[@name = 'Book_titleAscending']"),
+      "To ensure that state names are unique, the state name should begin with the entity name, an " +
+      "underscore, and then the property name. An underscore seems safe to use because it's more likely " +
+      "that a user would have a hyphen in an entity name as opposed to an underscore."),
+    test.assertExists(options.xpath("/*:operator/*:state[@name = 'Book_titleDescending']")),
+    test.assertExists(options.xpath("/*:operator/*:state[@name = 'Author_titleAscending']")),
+    test.assertExists(options.xpath("/*:operator/*:state[@name = 'Author_titleDescending']"))
+  ]
 }
 
 []
@@ -236,4 +276,5 @@ function verifySortOperatorsForSortableProperties() {
   .concat(generateOptionsWithElementRangeIndex())
   .concat(generateExplorerOptionsWithElementRangeIndex())
   .concat(generateExplorerWithFacetableAndSortableProperties())
+  .concat(twoEntitiesHaveSameSortablePropertyName())
   .concat(verifySortOperatorsForSortableProperties());
