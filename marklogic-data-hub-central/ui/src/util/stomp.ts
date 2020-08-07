@@ -152,10 +152,9 @@ export class STOMPService {
 
   /** Disconnect the STOMP client and clean up */
   public disconnect(message?: string) {
+    // Notify observers that we are disconnecting!
+    this.state.next(STOMPState.DISCONNECTING);
     if (this.client && this._isActive) {
-      // Notify observers that we are disconnecting!
-      this.state.next(STOMPState.DISCONNECTING);
-
       // Disconnect. Callback will set CLOSED state
       this.client.disconnect(
         () => {
@@ -164,6 +163,9 @@ export class STOMPService {
         },
         message
       );
+    } else {
+      this.state.next(STOMPState.CLOSED);
+      this._isActive = false;
     }
   }
 
@@ -219,8 +221,11 @@ export class STOMPService {
       // Attempt reconnection
       console.debug('Reconnecting in 5 seconds...');
       setTimeout(() => {
-        this.configure(this.endpoint);
-        this.tryConnect();
+        // ensure the
+        if (this.isClosed()) {
+          this.configure(this.endpoint);
+          this.tryConnect();
+        }
       }, 5000);
 
     }

@@ -60,11 +60,15 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       setStompMessageSubscription(null);
     }
     const closedWebSockets = new Promise<STOMPState>(resolve => {
-      stompService.state.asObservable().subscribe((value) => {
-        if (value.valueOf() === STOMPState.CLOSED) {
-          resolve(value);
-        }
-      });
+      if (stompService.isClosed() || stompService.isTrying()) {
+        resolve(stompService.state.getValue());
+      } else {
+        stompService.state.asObservable().subscribe((value) => {
+          if (value.valueOf() === STOMPState.CLOSED) {
+            resolve(value);
+          }
+        });
+      }
     });
     stompService.disconnect();
     return closedWebSockets;
@@ -152,6 +156,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       localStorage.setItem('dataHubUser', '');
       localStorage.setItem('serviceName', '');
       localStorage.setItem('loginResp', '');
+      localStorage.setItem('hubCentralSessionToken', '');
       authoritiesService.setAuthorities([]);
       resetEnvironment();
       setUser({...user, name: '', authenticated: false}); //, redirect: true});
