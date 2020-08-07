@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -149,6 +150,22 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
     }
 
+    @Test
+    public void doNotReturnExternalReferencesInExpandedEntities() {
+        installEntities();
+        Path entitiesDir = project.getHubEntitiesDir();
+        FileUtil.copy(getResourceStream("scaffolding-test/ManagerWithEmployeeRef.entity.json"), entitiesDir.resolve("ManagerWithEmployeeRef.entity.json").toFile());
+
+        HubEntity hubEntity = entityManager.getEntityFromProject("ManagerWithEmployeeRef", true);
+
+        AtomicBoolean employeesFound = new AtomicBoolean(false);
+        hubEntity.getDefinitions().getDefinitions().get("ManagerWithEmployeeRef").getProperties().forEach((propType) -> {
+            if ("employees".equals(propType.getName())) {
+                employeesFound.set(true);
+            }
+        });
+        assertFalse(employeesFound.get(), "Employees property should not exist");
+    }
 
     @Test
     @Tag("NoAWS")

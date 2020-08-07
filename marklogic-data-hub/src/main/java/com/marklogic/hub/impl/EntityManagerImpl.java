@@ -38,6 +38,7 @@ import com.marklogic.hub.entity.*;
 import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -459,20 +460,29 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         Map<String, DefinitionType> definitions = entity.getDefinitions().getDefinitions();
         for (String definitionName : definitions.keySet()) {
             DefinitionType definition = definitions.get(definitionName);
+            // Remove properties that are external references
+            List<PropertyType> propertiesToRemove = new ArrayList<>();
             for (PropertyType property : definition.getProperties()) {
                 String ref = property.getRef();
                 ItemType items = property.getItems();
-                if ((ref == null || "".equals(ref)) && items != null) {
+                if (StringUtils.isEmpty(ref) && items != null) {
                     ref = items.getRef();
                 }
-                if (!(ref == null || "".equals(ref))) {
-                    String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
-                    HubEntity subEntity = getEntityFromEntityDefinitions(subEntityName, entityDefinitions, version, true);
-                    if (subEntity != null) {
-                        DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
-                        property.setSubProperties(subDefinition.getProperties());
+                if (StringUtils.isNotEmpty(ref)) {
+                    if (ref.startsWith("#/")) {
+                        String subEntityName = ref.substring(ref.lastIndexOf('/') + 1);
+                        HubEntity subEntity = getEntityFromEntityDefinitions(subEntityName, entityDefinitions, version, true);
+                        if (subEntity != null) {
+                            DefinitionType subDefinition = subEntity.getDefinitions().getDefinitions().get(subEntityName);
+                            property.setSubProperties(subDefinition.getProperties());
+                        }
+                    } else {
+                        propertiesToRemove.add(property);
                     }
                 }
+            }
+            if (!propertiesToRemove.isEmpty()) {
+                definition.getProperties().removeAll(propertiesToRemove);
             }
         }
 
