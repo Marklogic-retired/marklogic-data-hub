@@ -205,7 +205,11 @@ declare %private function hent:fix-options-for-explorer(
           $n/@*,
           let $path-expression := fix-path-expression(fn:string($n/search:range/search:path-index))
           let $search-range-node := $n/search:range
-          let $is-sortable-only := map:get($sortable-properties, $path-expression) = fn:true()
+          let $is-sortable-only :=
+            let $sort-info := map:get($sortable-properties, $path-expression)
+            return
+              if (fn:exists($sort-info)) then map:get($sort-info, "is-sortable-only") = fn:true()
+              else fn:false()
           return
             if (fn:empty($search-range-node) or fn:not($is-sortable-only)) then
               hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
@@ -251,13 +255,13 @@ declare %private function hent:build-sort-operator(
 {
   let $states :=
     for $path-expression in map:keys($sortable-properties)
-    let $constraint-name :=
-      let $token := fn:tokenize($path-expression, "/")[last()]
-      return fn:tokenize($token, ":")[last()]
+    let $state-name-prefix :=
+      let $sort-info := map:get($sortable-properties, $path-expression)
+      return fn:concat(map:get($sort-info, "entity-title"), "_", map:get($sort-info, "property-name"))
 
     for $direction in ("ascending", "descending")
     return
-      <search:state name="{fn:concat($constraint-name, xdmp:initcap($direction))}">
+      <search:state name="{fn:concat($state-name-prefix, xdmp:initcap($direction))}">
         <search:sort-order direction="{$direction}">
           {
             element search:path-index {
@@ -695,8 +699,12 @@ declare %private function hent:add-indexes-for-entity-properties($entities as js
                     fn:concat("/(es:envelope|envelope)/(es:instance|instance)/", $entity-title, "/", $entity-type-property)
                 (: If something is only sortable, we need a path range index for it, but we need to ensure that a facet
                 is not configured for it :)
-                let $is-only-sortable := $is-sortable and fn:not($is-facetable)
-                return map:put($sortable-properties, $path-expression, $is-only-sortable)
+                let $sort-info := map:new((
+                  map:entry("is-sortable-only", $is-sortable and fn:not($is-facetable)),
+                  map:entry("entity-title", $entity-title),
+                  map:entry("property-name", $entity-type-property)
+                ))
+                return map:put($sortable-properties, $path-expression, $sort-info)
               else ()
 
             where $is-facetable or $is-sortable

@@ -148,22 +148,22 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         query.setSortOrder(sortOrderList);
 
         entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertTrue("sort:customerIdAscending".equals(query.getQuery().getSearchText()));
+        assertEquals("sort:Customer_customerIdAscending", query.getQuery().getSearchText());
 
         query.getQuery().setSearchText("");
         sortOrderList.get(0).setSortDirection("descending");
         entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertTrue("sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+        assertEquals("sort:Customer_customerIdDescending", query.getQuery().getSearchText());
 
         query.getQuery().setSearchText("Jane");
         sortOrderList.get(0).setSortDirection("descending");
         entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertTrue("Jane sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+        assertEquals("Jane sort:Customer_customerIdDescending", query.getQuery().getSearchText());
 
         query.getQuery().setSearchText("Jane");
         sortOrderList.get(0).setSortDirection("someOtherValue");
         entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertTrue("Jane sort:customerIdDescending".equals(query.getQuery().getSearchText()));
+        assertEquals("Jane sort:Customer_customerIdDescending", query.getQuery().getSearchText());
 
         query.getQuery().setSearchText("Jane");
         sortOrderList.get(0).setSortDirection("descending");
@@ -172,7 +172,14 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         sortOrder.setSortDirection("ascending");
         sortOrderList.add(sortOrder);
         entitySearchManager.buildSearchTextWithSortOperator(query);
-        assertTrue("Jane sort:customerIdDescending sort:customerIdAscending".equals(query.getQuery().getSearchText()));
+        assertEquals("Jane sort:Customer_customerIdDescending sort:Customer_customerIdAscending", query.getQuery().getSearchText());
+
+        info.setEntityTypeIds(null);
+        query.getQuery().setSearchText("Jane");
+        entitySearchManager.buildSearchTextWithSortOperator(query);
+        assertEquals("Jane sort:_customerIdDescending sort:_customerIdAscending", query.getQuery().getSearchText(),
+            "If there's somehow no entity type specified, then an error shouldn't be thrown; we should just have sort " +
+                "state names that don't correspond to actual states, which will result in no error but no sorting either");
     }
 
     /**

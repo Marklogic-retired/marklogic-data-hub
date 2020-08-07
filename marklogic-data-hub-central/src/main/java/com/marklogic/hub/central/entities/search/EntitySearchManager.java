@@ -368,11 +368,20 @@ public class EntitySearchManager {
     protected void buildSearchTextWithSortOperator(SearchQuery searchQuery) {
         StringBuilder searchTextBuilder = new StringBuilder(searchQuery.getQuery().getSearchText());
         Optional<List<SearchQuery.SortOrder>> sortOrders = searchQuery.getSortOrder();
+
+        DocSearchQueryInfo docQuery = searchQuery.getQuery();
+        // When sorting on a property, it is assumed there's one and only one entity type selected. If no type is
+        // provided somehow, then a sort state name will be built, but it's not going to match anything and thus won't sort
+        final String entityName =
+            docQuery != null && docQuery.getEntityTypeIds() != null && !docQuery.getEntityTypeIds().isEmpty() ?
+            docQuery.getEntityTypeIds().get(0) : "";
+
         sortOrders.ifPresent(sortOrderList -> sortOrderList.forEach(sortOrder -> {
             String sortOperator = "sort";
-            String sortState = sortOrder.getPropertyName().concat(StringUtils.capitalize(sortOrder.getSortDirection()));
-            searchTextBuilder.append(" ").append(sortOperator).append(":").append(sortState);
+            String stateName = entityName + "_" + sortOrder.getPropertyName().concat(StringUtils.capitalize(sortOrder.getSortDirection()));
+            searchTextBuilder.append(" ").append(sortOperator).append(":").append(stateName);
         }));
+
         searchQuery.getQuery().setSearchText(searchTextBuilder.toString().trim());
     }
 
