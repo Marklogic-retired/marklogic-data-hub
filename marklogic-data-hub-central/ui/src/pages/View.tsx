@@ -7,10 +7,8 @@ import AsyncLoader from '../components/async-loader/async-loader';
 import { entityFromJSON } from '../util/data-conversion';
 import tooltipsConfig from '../config/explorer-tooltips.config';
 import styles from './View.module.scss';
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MLTooltip } from '@marklogic/design-system';
-
+import { InfoCircle } from '@marklogic/design-system/es/MLIcon';
 
 const { Content } = Layout;
 const tooltips = tooltipsConfig.viewEntities;
@@ -102,14 +100,14 @@ const View: React.FC = () => {
               </div>
               <div style={{ marginLeft: '-50px' }}>
                 <MLTooltip title={tooltips.entities}>
-                  <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip>
+                  <InfoCircle className={styles.infoIcon} /></MLTooltip>
               </div>
               <div className={styles.statistic} data-cy="total-documents">
                 <Statistic title="Total Documents" value={totalDocs} style={{ marginLeft: '56px' }} />
               </div>
               <div style={{ marginLeft: '-50px' }}>
                 <MLTooltip title={tooltips.documents}>
-                  <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip>
+                  <InfoCircle className={styles.infoIcon} /></MLTooltip>
               </div>
             </div>
             <EntityTable entities={entities} facetValues={facetValues} lastHarmonized={lastHarmonized} />

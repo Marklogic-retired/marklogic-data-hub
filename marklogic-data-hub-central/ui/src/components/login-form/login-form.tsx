@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
+import { Form, Input, Checkbox, Alert } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { UserContext } from '../../util/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { UserOutlined, LockOutlined } from '@marklogic/design-system/es/MLIcon';
+import './login-form.scss';
 
 import { MLButton } from '@marklogic/design-system';
 
@@ -77,7 +79,7 @@ const LoginForm: React.FC = () => {
       <Alert message={message.text} type='error' showIcon />
     </div>
 
-    <div className={styles.loginForm}>
+    <div id="login-form" className={styles.loginForm}>
       <Form onSubmit={handleSubmit} className={styles.loginForm}>
 
         <Form.Item
@@ -88,7 +90,7 @@ const LoginForm: React.FC = () => {
         >
           <Input
             id="username"
-            prefix={<Icon type="user" className={styles.usernameIcon} />}
+            prefix={ <UserOutlined  className={styles.usernameIcon} /> }
             placeholder="Enter username"
             value={username}
             onChange={handleChange}
@@ -103,7 +105,7 @@ const LoginForm: React.FC = () => {
         >
           <Input
             id="password"
-            prefix={<Icon type="lock" className={styles.passwordIcon} />}
+            prefix={ <LockOutlined className={styles.passwordIcon} /> }
             placeholder="Enter password"
             type="password"
             value={password}

@@ -73,6 +73,17 @@ ul#global-icons.ant-menu .ant-dropdown-trigger .anticon.anticon-user {
   font-size: 24px;
 }
 
+/* Card icons */
+ul.ant-card-actions {
+  .anticon.anticon-setting, 
+  .anticon.anticon-edit {
+    color: #777777;
+  }
+  .anticon .fa-trash-alt {
+    font-size: 16px;
+  }
+} 
+
 /* Tool Bench Flows */
 div#flows-container div.ant-collapse-content-box {
   padding: 4px 16px 16px;

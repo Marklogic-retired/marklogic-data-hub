@@ -1,13 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Checkbox, Icon, Tooltip } from 'antd';
 import { SearchContext } from '../../util/search-context';
 import styles from './facet.module.scss';
 import { numberConverter } from '../../util/number-conversion';
 import { stringConverter } from '../../util/string-conversion';
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
 import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
+import { DownOutlined, InfoCircleSolid } from '@marklogic/design-system/es/MLIcon';
 
 interface Props {
   name: string;
@@ -172,7 +170,7 @@ const Facet: React.FC<Props> = (props) => {
             <MLTooltip
               title={props.tooltip} placement="topLeft">
               {props.tooltip ?
-                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}
+                <InfoCircleSolid className={styles.infoIcon} /> : ''}
             </MLTooltip>
         </div>
         <div className={styles.summary}>
@@ -185,7 +183,7 @@ const Facet: React.FC<Props> = (props) => {
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)}>
-            <Icon style={{fontSize: '12px'}} type='down' rotate={show ? 180 : undefined}/>
+            <DownOutlined style={{fontSize: '12px'}} rotate={show ? 180 : undefined} />
           </div>
         </div>
       </div>

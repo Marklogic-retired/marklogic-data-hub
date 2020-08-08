@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useHistory } from "react-router-dom";
 import styles from './load-list.module.scss';
 import './load-list.scss';
-import {Table, Icon, Button, Tooltip, Popover, Modal, Menu, Select, Dropdown} from 'antd';
+import {Table, Popover, Modal, Menu, Select, Dropdown} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { MLButton } from '@marklogic/design-system';
 import { convertDateFromISO } from '../../util/conversionFunctions';
@@ -13,6 +12,7 @@ import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialo
 import {AdvLoadTooltips} from "../../config/tooltips.config";
 import { MLTooltip } from '@marklogic/design-system';
 import { OmitProps } from 'antd/lib/transfer/renderListBody';
+import { SettingOutlined, TrashAltRegular } from '@marklogic/design-system/es/MLIcon';
 
 const {Option} = Select;
 
@@ -220,12 +220,29 @@ const LoadList: React.FC<Props> = (props) => {
             render: (text, row) => (
                 <span>
                     <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={['hover']} disabled = {!props.canWriteFlow}>
-                        {props.canWriteFlow ? <span className={'AddToFlowIcon'} aria-label = {row.name+'-add-icon'}></span> : <MLTooltip title={'Add to Flow'} placement="bottom"><span aria-label = {row.name+'-disabled-add-icon'} className={'disabledAddToFlowIcon'}></span></MLTooltip>}
+                        { props.canWriteFlow ? 
+                            <span className={'AddToFlowIcon'} aria-label = {row.name+'-add-icon'}></span> : 
+                            <MLTooltip title={'Add to Flow'} placement="bottom">
+                                <span aria-label = {row.name+'-disabled-add-icon'} className={'disabledAddToFlowIcon'}></span>
+                            </MLTooltip>
+                        }
                     </Dropdown>
-                    <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></MLTooltip>
+                    <MLTooltip title={'Settings'} placement="bottom">
+                        <SettingOutlined data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon}  />
+                    </MLTooltip>
                     &nbsp;&nbsp;
-                    {props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+'-delete'} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></MLTooltip> :
-                    <MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip> }
+                    { props.canReadWrite ? 
+                        <MLTooltip title={'Delete'} placement="bottom">
+                            <i aria-label="icon: delete">
+                                <TrashAltRegular data-testid={row.name+'-delete'} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} />
+                            </i>
+                        </MLTooltip> :
+                        <MLTooltip title={'Delete'} placement="bottom">
+                            <i aria-label="icon: delete">
+                                <TrashAltRegular onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} />
+                            </i>
+                        </MLTooltip> 
+                    }
                 </span>
             ),
 

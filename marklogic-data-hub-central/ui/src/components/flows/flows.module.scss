@@ -17,7 +17,16 @@
         cursor: pointer;
     }
 
+    .deleteIcon {
+        font-size: 18px;
+        position: relative;
+        top: 3px;
+    }
+
     .disabledDeleteIcon {
+        font-size: 18px;
+        position: relative;
+        top: 3px;
         color: rgba(0, 0, 0, 0.65);
         opacity: 0.5;
         cursor: not-allowed;

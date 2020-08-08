@@ -1,9 +1,9 @@
-import {Modal, Form, Input, Tooltip, Icon, Radio, Button} from "antd";
+import {Modal, Form, Input, Radio, Button} from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './view-custom-dialog.module.scss';
 import {NewCustomTooltips} from '../../../../config/tooltips.config';
 import { MLTooltip, MLButton } from '@marklogic/design-system';
-
+import { QuestionCircleFilled } from '@marklogic/design-system/es/MLIcon';
 
 
 const ViewCustomDialog = (props) => {
@@ -91,7 +91,7 @@ const ViewCustomDialog = (props) => {
             className={styles.input}
           />&nbsp;&nbsp;
           <MLTooltip title={NewCustomTooltips.name}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        <QuestionCircleFilled className={styles.questionCircle} theme="filled" />
       </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
@@ -106,7 +106,7 @@ const ViewCustomDialog = (props) => {
             className={styles.input}
           />&nbsp;&nbsp;
           <MLTooltip title={NewCustomTooltips.description}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        <QuestionCircleFilled className={styles.questionCircle} theme="filled" />
       </MLTooltip>
         </Form.Item>
 
@@ -131,7 +131,7 @@ const ViewCustomDialog = (props) => {
             >
             {/* {collectionsList} */}
           </Input>&nbsp;&nbsp;<MLTooltip title={NewCustomTooltips.sourceQuery}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            <QuestionCircleFilled className={styles.questionCircle} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
                 id="srcQuery"
                 placeholder="Enter Source Query"
@@ -139,7 +139,7 @@ const ViewCustomDialog = (props) => {
                 disabled={!props.canReadWrite}
                 className={styles.input}
             ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewCustomTooltips.sourceQuery}>
-          <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
+          <QuestionCircleFilled className={styles.questionCircleTextArea} theme="filled" />
         </MLTooltip></span>}
         </Form.Item>
         <br /><br /><br /><br />

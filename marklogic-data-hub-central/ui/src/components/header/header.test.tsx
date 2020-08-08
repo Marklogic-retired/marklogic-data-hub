@@ -21,8 +21,8 @@ describe('Header component', () => {
     
     expect(getByLabelText('header-logo')).toBeInTheDocument();
     expect(getByText(Application.title)).toBeInTheDocument();
-    expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
-    expect(queryByText('icon: user')).not.toBeInTheDocument();
+    expect(getByLabelText('question-circle')).toBeInTheDocument();
+    expect(queryByText('user')).not.toBeInTheDocument();
     //unauthenticated users get sent to default Marklogic docs 
     expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/')
   });
@@ -40,11 +40,11 @@ describe('Header component', () => {
     expect(getByText(Application.title)).toBeInTheDocument();
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
     // expect(getByLabelText('icon: search')).toBeInTheDocument();
-    expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
+    expect(getByLabelText('question-circle')).toBeInTheDocument();
     //test version specific link is correct when environment hub version data is set to '5.3-SNAPSHOT'
     expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.3');
     // expect(getByLabelText('icon: setting')).toBeInTheDocument();
-    expect(getByLabelText('icon: user')).toBeInTheDocument();
+    expect(getByLabelText('user')).toBeInTheDocument();
   });
 
   test('Verify proper version link given specific release dataHub release version', async () => {

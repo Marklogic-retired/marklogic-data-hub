@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios'
-import { Form, Icon, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import styles from './entity-type-modal.module.scss'
 
 import { UserContext } from '../../../util/user-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { updateModelInfo } from "../../../api/modeling";
 import { MLTooltip } from '@marklogic/design-system';
+import { QuestionCircleFilled } from '@marklogic/design-system/es/MLIcon';
 
 
 type Props = {
@@ -156,7 +157,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onBlur={handleChange}
           />}
           {props.isEditModal ? null : <MLTooltip title={ModelingTooltips.nameRegex}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
+            <QuestionCircleFilled className={styles.icon} />
           </MLTooltip>}
         </Form.Item>
 
@@ -175,7 +176,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
             onBlur={handleChange}
           />
           <MLTooltip title={ModelingTooltips.entityDescription}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
+            <QuestionCircleFilled className={styles.icon} />
           </MLTooltip>
         </Form.Item>
       </Form>

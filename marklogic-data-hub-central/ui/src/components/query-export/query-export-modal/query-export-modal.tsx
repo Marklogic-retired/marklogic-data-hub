@@ -4,8 +4,7 @@ import styles from './query-export-modal.module.scss';
 import { SearchContext } from '../../../util/search-context';
 import { UserContext } from '../../../util/user-context';
 import { exportQuery, exportSavedQuery } from '../../../api/queries'
-import { Icon } from '@iconify/react';
-import exclamationTriangle from '@iconify/icons-fa/exclamation-triangle';
+import { ExclamationTriangleSolid } from '@marklogic/design-system/es/MLIcon';
 
 const QueryExportModal = (props) => {
     const { Panel } = Collapse;
@@ -90,7 +89,7 @@ const QueryExportModal = (props) => {
                 {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div><Alert data-testid='export-warning' className={styles.warning}
                     message='One or more structured properties are included in this query. The
                                        data for those properties will not be included in the export file.
-                                       Check the Preview to see what will be exported.' type="warning" icon={<Icon icon={exclamationTriangle} color="#CE8406" />} showIcon />
+                                       Check the Preview to see what will be exported.' type="warning" icon={<ExclamationTriangleSolid color="#CE8406" />} showIcon />
                     <br /></div>}
 
                 <p className={styles.text}>Export to a CSV file containing the columns of data currently displayed.</p>
@@ -126,7 +125,7 @@ const QueryExportModal = (props) => {
             {props.tableColumns && props.tableColumns.length > 0 && props.hasStructured && <div>
                 <Collapse bordered={false} className={styles.collapseCustomPanel} style={{ border: '0px', color: 'blue' }}>
                     <Panel id='export-panel' header="Show Preview" key="1" style={{ border: '0px', color: 'blue' }}>
-                        <Alert data-testid='export-data-warning' className={styles.dataWarning} message='Preview may improperly render new lines in property values' type="warning" icon={<Icon icon={exclamationTriangle} color="#CE8406" />} showIcon /><br />
+                        <Alert data-testid='export-data-warning' className={styles.dataWarning} message='Preview may improperly render new lines in property values' type="warning" icon={<ExclamationTriangleSolid color="#CE8406" />} showIcon /><br />
                         <Table data-testid='export-preview-table' className={styles.exportTable} dataSource={props.tableData} columns={props.tableColumns} pagination={false} size='small' scroll={{ x: 500 }} bordered />
                     </Panel>
                 </Collapse>

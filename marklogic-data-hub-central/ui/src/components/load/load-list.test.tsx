@@ -57,7 +57,7 @@ describe('Load data component', () => {
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-settings`)).toBeInTheDocument();
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-delete`)).toBeInTheDocument();
 
-    expect(getAllByLabelText('icon: setting').length).toBe(2);
+    expect(getAllByLabelText('setting').length).toBe(2);
   })
 
   test('Verify Load settings from list view renders correctly', async () => {

@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { MLTable, MLTooltip } from '@marklogic/design-system';
-import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
+import { UndoSolid, TrashAltSolid } from '@marklogic/design-system/es/MLIcon';
 
 import PropertyTable from '../property-table/property-table';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
@@ -278,10 +277,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
             />
           </MLTooltip>
           <MLTooltip title={ModelingTooltips.revertIcon}>
-            <FontAwesomeIcon
+            <UndoSolid
               data-testid={text + '-revert-icon'} 
               className={(!props.canWriteEntityModel && props.canReadEntityModel) || !isAnyEntityModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
-              icon={faUndo}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()
@@ -292,10 +290,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               size="2x"
             />
           </MLTooltip>
-            <FontAwesomeIcon
+            <TrashAltSolid
               data-testid={text + '-trash-icon'}
               className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
-              icon={faTrashAlt}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()

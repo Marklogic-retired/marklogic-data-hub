@@ -1,19 +1,16 @@
 import React, {CSSProperties, useContext, useState} from 'react';
 import styles from './load-card.module.scss';
 import { useHistory } from 'react-router-dom';
-import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
-import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
+import {Card, Row, Col, Modal, Select} from 'antd';
 import sourceFormatOptions from '../../config/formats.config';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import { AdvLoadTooltips } from '../../config/tooltips.config';
-
 import { AuthoritiesContext } from "../../util/authorities";
 import { Link } from 'react-router-dom';
 import { MLTooltip } from '@marklogic/design-system';
+import { PlusCircleFilled, SettingOutlined, EditOutlined, TrashAltRegular } from '@marklogic/design-system/es/MLIcon';
 
 
 const { Option } = Select;
@@ -183,7 +180,9 @@ const LoadCard: React.FC<Props> = (props) => {
                     <Card
                         size="small"
                         className={styles.addNewCard}>
-                        <div aria-label="add-new-card"><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
+                        <div aria-label="add-new-card">
+                            <PlusCircleFilled className={styles.plusIcon} onClick={OpenAddNewDialog}/>
+                        </div>
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
@@ -195,9 +194,20 @@ const LoadCard: React.FC<Props> = (props) => {
                     >
                         <Card
                             actions={[
-                            <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)}/></MLTooltip>,
-                            <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                props.canReadWrite ?<MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                <span></span>,
+                                <MLTooltip title={'Settings'} placement="bottom">
+                                    <SettingOutlined key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)} />
+                                </MLTooltip>,
+                                <MLTooltip title={'Edit'} placement="bottom">
+                                    <EditOutlined key="edit" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)} />
+                                </MLTooltip>,
+                                props.canReadWrite ?
+                                <MLTooltip title={'Delete'} placement="bottom">
+                                    <i aria-label="icon: delete"><TrashAltRegular className={styles.deleteIcon} data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)} /></i>
+                                </MLTooltip> : 
+                                <MLTooltip title={'Delete'} placement="bottom">
+                                    <i><TrashAltRegular className={styles.disabledDeleteIcon} onClick={(event) => event.preventDefault()} /></i>
+                                </MLTooltip>
                             ]}
                             className={styles.cardStyle}
                             size="small"

@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MLButton, MLTable, MLTooltip } from '@marklogic/design-system';
-import { faCircle, faCheck, faTrashAlt, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import scrollIntoView from 'scroll-into-view';
 import useDeepCompareEffect from 'use-deep-compare-effect'
 import styles from './property-table.module.scss';
 
 import PropertyModal from '../property-modal/property-modal';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
+import { CircleSolid, CheckSolid, TrashAltSolid, PlusSquareSolid } from '@marklogic/design-system/es/MLIcon';
 
 import {
   Definition,
@@ -143,7 +142,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'identifier',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={'identifier-'+ text}/>
+        return text && <CircleSolid className={styles.identifierIcon} data-testid={'identifier-'+ text}/>
       }
     },
     {
@@ -155,7 +154,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'multiple',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={'multiple-'+ text}/>
+        return text && <CheckSolid className={styles.multipleIcon} data-testid={'multiple-'+ text}/>
       }
     },
     {
@@ -167,7 +166,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'sortable',
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={'sort-'+ text}/>
+        return text && <CheckSolid className={styles.sortIcon} data-testid={'sort-'+ text}/>
       }
     },
     {
@@ -179,7 +178,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'facetable',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={'facet-'+ text}/>
+        return text && <CheckSolid className={styles.facetIcon} data-testid={'facet-'+ text}/>
       }
     },
     // {
@@ -191,7 +190,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     //   dataIndex: 'wildcard',
     //   width: 150,
     //   render: (text) => {
-    //     return text && <FontAwesomeIcon className={styles.wildcardIcon} icon={faCheck} data-testid={'wildcard-'+ text}/>
+    //     return text && <CheckSolid className={styles.wildcardIcon} data-testid={'wildcard-'+ text}/>
     //   }
     // },
     {
@@ -203,7 +202,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'pii',
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={'pii-'+ text}/>
+        return text && <CheckSolid className={styles.icon} data-testid={'pii-'+ text}/>
       }
     },
     {
@@ -227,8 +226,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         }
         let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${record.propertyName}`
 
-        return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
-        icon={faTrashAlt}
+        return <TrashAltSolid className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
         size="2x"
         data-testid={id}
         onClick={(event) => {
@@ -249,10 +247,9 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
         return ( text &&
           <MLTooltip title={ModelingTooltips.addStructuredProperty}>
-            <FontAwesomeIcon
+            <PlusSquareSolid
               data-testid={'add-struct-'+ structuredTypeName}
               className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon}
-              icon={faPlusSquare}
               onClick={(event) => {
                 if (!props.canWriteEntityModel && props.canReadEntityModel) {
                   return event.preventDefault()

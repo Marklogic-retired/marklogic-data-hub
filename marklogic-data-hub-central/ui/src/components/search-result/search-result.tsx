@@ -6,12 +6,9 @@ import { UserContext } from '../../util/user-context';
 import { dateConverter } from '../../util/date-conversion';
 import { xmlParser } from '../../util/xml-parser';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
-import { Icon, Tooltip } from "antd";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
 import { MLTooltip } from '@marklogic/design-system';
 import {SearchContext} from "../../util/search-context";
-
+import { CodeSolid, ExternalLinkAltSolid, RightOutlined } from '@marklogic/design-system/es/MLIcon';
 
 interface Props extends RouteComponentProps {
     item: any;
@@ -118,7 +115,7 @@ const SearchResult: React.FC<Props> = (props) => {
     return (
         <div style={{ width: '100%' }}>
             <div className={styles.title} onClick={() => showTableEntityProperties()}>
-                <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined} />
+                <RightOutlined className={styles.expandableIcon} data-cy='expandable-icon' rotate={show ? 90 : undefined} />
                 <div className={styles.redirectIcons}>
                     <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {selectedValue:'instance',
                             entity : searchOptions.entityTypeIds ,
@@ -127,8 +124,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             searchFacets : searchOptions.selectedFacets,
                             query: searchOptions.query,
                             tableView: props.tableView
-                        }}} id={'instance'} data-cy='instance' >
-                        <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
+                        }}} id={'instance'} data-cy='instance'>
+                        <MLTooltip title={'Show the processed data'}><ExternalLinkAltSolid data-testid='instance-icon' /></MLTooltip>
                     </Link>
                     <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {selectedValue:'source',
                             entity : searchOptions.entityTypeIds ,
@@ -137,8 +134,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             searchFacets : searchOptions.selectedFacets,
                             query: searchOptions.query,
                             tableView: props.tableView
-                        }}} id={'source'} data-cy='source' >
-                        <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
+                        }}} id={'source'} data-cy='source'>
+                        <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><CodeSolid  data-testid='source-icon' /></MLTooltip>
                     </Link>
                 </div>
                 <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>

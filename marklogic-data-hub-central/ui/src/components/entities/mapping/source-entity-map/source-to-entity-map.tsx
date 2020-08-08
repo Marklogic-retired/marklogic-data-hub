@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect, CSSProperties, useRef, useLayoutEffect } from "react";
-import { Card, Modal, Table, Icon, Popover, Input, Button, Alert, Tooltip, Dropdown, Menu, Checkbox, Row, AutoComplete} from "antd";
+import { Card, Modal, Table, Popover, Input, Button, Alert, Tooltip, Dropdown, Menu, Checkbox, Row, AutoComplete} from "antd";
 import styles from './source-to-entity-map.module.scss';
 import './source-to-entity-map.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faObjectUngroup, faList, faPencilAlt, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { getInitialChars, convertDateFromISO, getLastChars } from "../../../../util/conversionFunctions";
 import { getMappingValidationResp } from "../../../../util/manageArtifacts-service"
@@ -12,6 +11,7 @@ import SplitPane from 'react-split-pane';
 import Highlighter from 'react-highlight-words';
 import ColumnGroup from "antd/lib/table/ColumnGroup";
 import { MLButton, MLTooltip, MLCheckbox } from '@marklogic/design-system';
+import { ListSolid, QuestionCircleFilled, DownOutlined, LeftOutlined, RightOutlined, CloseOutlined, CheckOutlined, PencilAltSolid, SearchOutlined, SearchSolid, ObjectUngroupSolid } from '@marklogic/design-system/es/MLIcon';
 
 
 const SourceToEntityMap = (props) => {
@@ -138,8 +138,8 @@ const SourceToEntityMap = (props) => {
         {!editingURI ? <div
             onMouseOver={(e) => handleMouseOver(e)}
             onMouseLeave={(e) => setShowEditURIOption(false)} className={styles.uri}>{!showEditURIOption ? <span className={styles.notShowingEditIcon}>URI: <span className={styles.URItext}>&nbsp;{getLastChars(srcURI,42,'...')}</span></span> :
-            <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><FontAwesomeIcon icon={faPencilAlt} size="lg" onClick={handleEditIconClick} className={styles.editIcon}
-            /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<Icon type="close" className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)}/>&nbsp;<Icon type="check" className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)}/></span></div>}
+            <span className={styles.showingEditContainer}>URI: <span className={styles.showingEditIcon}>{getLastChars(srcURI,42,'...')}  <i><PencilAltSolid className={styles.editIcon} onClick={handleEditIconClick} 
+            /></i></span></span>}</div> : <div className={styles.inputURIContainer}>URI: <span><Input value={srcURI} onChange={handleURIEditing} className={styles.uriEditing}></Input>&nbsp;<CloseOutlined className={styles.closeIcon} onClick={() => handleCloseEditOption(srcURI)} />&nbsp;<CheckOutlined className={styles.checkIcon} onClick={() => handleSubmitUri(srcURI)} /></span></div>}
     </div> : '';
 
 
@@ -251,13 +251,13 @@ const SourceToEntityMap = (props) => {
 
     const navigationButtons = <span className={styles.navigate_source_uris}>
         <MLButton className={styles.navigate_uris_left} data-testid="navigate-uris-left" onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
-            <Icon type="left" className={styles.navigateIcon} />
+            <LeftOutlined className={styles.navigateIcon} />
         </MLButton>
         &nbsp;
         <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
         &nbsp;
         <MLButton className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
-            <Icon type="right" className={styles.navigateIcon} />
+            <RightOutlined className={styles.navigateIcon} />
         </MLButton>
     </span>
 
@@ -488,11 +488,11 @@ const SourceToEntityMap = (props) => {
                     size="small"
                     className={styles.searchSubmitButton}
                 >
-                    <Icon type="search" theme="outlined" /> Search
+                    <SearchOutlined /> Search
               </MLButton>
             </div>
         ),
-        filterIcon: filtered => <i><FontAwesomeIcon data-testid={`filterIcon-${dataIndex}`} icon={faSearch} size="lg" className={ filtered ? 'active' : 'inactive' }  /></i>,
+        filterIcon: filtered => <i><SearchSolid data-testid={`filterIcon-${dataIndex}`} className={ filtered ? 'active' : 'inactive' } /></i>,
         onFilter: (value, record) => {
             let recordString = getPropValueFromDataIndex(record, dataIndex);
             return recordString.toString().toLowerCase().includes(value.toLowerCase());
@@ -609,7 +609,7 @@ const SourceToEntityMap = (props) => {
                 {expanded ? <div className={styles.typeContextContainer}><span className={styles.typeContext}>Context</span>&nbsp;<Popover
                 content={contextHelp}
                 trigger="click"
-                placement="right"><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
+                placement="right"><QuestionCircleFilled className={styles.questionCircle} /></Popover><p className={styles.typeText}>{dType}</p></div> : text}
                 </div>
             }
         },
@@ -617,7 +617,7 @@ const SourceToEntityMap = (props) => {
             title: <span>XPath Expression <Popover
                 content={xPathDocLinks}
                 trigger="click"
-                placement="top" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
+                placement="top" ><QuestionCircleFilled className={styles.questionCircle} /></Popover>
             </span>,
             dataIndex: 'key',
             key: 'key',
@@ -635,7 +635,7 @@ const SourceToEntityMap = (props) => {
                     disabled={!props.canReadWrite}></TextArea>&nbsp;&nbsp;
                 <span>
                     <Dropdown overlay={sourceSearchMenu} trigger={['click']} disabled={!props.canReadWrite}>
-                        <i  id="listIcon" data-testid={row.name.split('/').pop()+'-listIcon1'}><FontAwesomeIcon icon={faList} size="lg"  data-testid={row.name.split('/').pop()+'-listIcon'}  className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
+                        <i  id="listIcon" data-testid={row.name.split('/').pop()+'-listIcon1'}><ListSolid data-testid={row.name.split('/').pop()+'-listIcon'} className={styles.listIcon} onClick={(e) => handleSourceList(row)}/></i>
                     </Dropdown>
                 </span>
                 &nbsp;&nbsp;
@@ -699,11 +699,11 @@ const SourceToEntityMap = (props) => {
             if (props.expanded) {
                 return <a className={styles.expandIcon} onClick={e => {
                     props.onExpand(props.record, e);
-                }}><Icon type="down" /> </a>
+                }}><DownOutlined /> </a>
             } else {
                 return <a  className={styles.expandIcon} onClick={e => {
                     props.onExpand(props.record, e);
-                }}><Icon type="right" data-testid="expandedIcon"/> </a>
+                }}><RightOutlined data-testid="expandedIcon" /> </a>
             }
         } else {
             return <span style={{ color: 'black' }} onClick={e => {
@@ -1060,7 +1060,7 @@ const SourceToEntityMap = (props) => {
         visible={colOptMenuVisible}
         placement="bottomRight"
         overlayClassName={styles.columnSelectorOverlay}><a onClick={e => e.preventDefault()}>
-        Column Options <Icon type="down" theme="outlined"/>
+        Column Options <DownOutlined />
       </a></Dropdown>
 
     const getColumnsForEntityTable:any = () => {
@@ -1189,12 +1189,12 @@ const SourceToEntityMap = (props) => {
                         className={styles.sourceContainer}>
                         <div id="srcDetails" data-testid="srcDetails" className={styles.sourceDetails}>
                             <p className={styles.sourceName}
-                            ><i><FontAwesomeIcon icon={faList} size="sm" className={styles.sourceDataIcon}
+                            ><i><ListSolid className={styles.sourceDataIcon}
                             /></i> Source Data <Popover
                                 content={srcDetails}
                                 trigger="click"
                                 placement="right"
-                            ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
+                            ><QuestionCircleFilled className={styles.questionCircle} /></Popover></p>
                         </div>
                         {emptyData ?
                             <div id="noData">
@@ -1234,7 +1234,7 @@ const SourceToEntityMap = (props) => {
                         data-testid="entityContainer"
                         className={styles.entityContainer}>
                         <div className={styles.entityDetails}>
-                            <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
+                            <span className={styles.entityTypeTitle}><p ><i><ObjectUngroupSolid className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
                         </div>
                         <div ref={dummyNode}></div>
                         <div className={styles.columnOptionsSelectorContainer}>

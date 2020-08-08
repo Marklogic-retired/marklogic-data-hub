@@ -2,9 +2,9 @@ import { Modal, Form, Input, Button, Tooltip, Icon, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
-import {NewLoadTooltips} from '../../../config/tooltips.config';
+import { NewLoadTooltips, AdvancedSettings } from '../../../config/tooltips.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
-
+import { QuestionCircleFilled } from '@marklogic/design-system/es/MLIcon';
 
 const NewLoadDialog = (props) => {
   const [stepName, setStepName] = useState('');
@@ -274,8 +274,9 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
            className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          />&nbsp;&nbsp;
+          <MLTooltip title={NewLoadTooltips.name}>
+            <QuestionCircleFilled className={styles.questionCircle} />
           </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
@@ -288,9 +289,10 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+          />&nbsp;&nbsp;
+          <MLTooltip title={NewLoadTooltips.description}>
+            <QuestionCircleFilled className={styles.questionCircle} />
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -307,8 +309,9 @@ const NewLoadDialog = (props) => {
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          &nbsp;&nbsp;
+          <MLTooltip title={NewLoadTooltips.sourceFormat}>
+            <QuestionCircleFilled className={styles.questionCircle} />
           </MLTooltip>
         </Form.Item>
          {srcFormat === 'csv' ? <Form.Item label={<span>
@@ -327,17 +330,21 @@ const NewLoadDialog = (props) => {
             {fsoptions}
           </Select></span>
           &nbsp;&nbsp;
-          <span>{fieldSeparator === 'Other' ? <span><Input
-            id="otherSeparator"
-            value={otherSeparator}
-            onChange={handleOtherSeparator}
-            style={{width: 75}}
-            disabled={props.canReadOnly && !props.canReadWrite}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip></span>}</span>
+          <span>{fieldSeparator === 'Other' ? 
+            <span><Input
+              id="otherSeparator"
+              value={otherSeparator}
+              onChange={handleOtherSeparator}
+              style={{width: 75}}
+              disabled={props.canReadOnly && !props.canReadWrite}
+            />&nbsp;&nbsp;
+            <MLTooltip title={NewLoadTooltips.fieldSeparator}>
+              <QuestionCircleFilled className={styles.questionCircle} />
+            </MLTooltip></span> : <span>&nbsp;&nbsp;
+            <MLTooltip title={NewLoadTooltips.fieldSeparator}>
+              <QuestionCircleFilled className={styles.questionCircle} />
+            </MLTooltip></span>}
+          </span>
         </Form.Item> : ''}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -351,8 +358,8 @@ const NewLoadDialog = (props) => {
             style={{width: '95%'}}>
             {toptions}
           </Select>&nbsp;&nbsp;
-              <MLTooltip title={NewLoadTooltips.targetFormat}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          <MLTooltip title={AdvancedSettings.targetFormat}>
+            <QuestionCircleFilled className={styles.questionCircle} />
           </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
@@ -367,8 +374,8 @@ const NewLoadDialog = (props) => {
             className={styles.input}
           />&nbsp;&nbsp;
           <MLTooltip title={NewLoadTooltips.outputURIPrefix}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </MLTooltip>
+            <QuestionCircleFilled className={styles.questionCircle} />
+          </MLTooltip>
         </Form.Item>
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>

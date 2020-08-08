@@ -74,7 +74,7 @@ describe("Custom Card component", () => {
 
         expect(getByPlaceholderText("Please enter additional settings")).toBeInTheDocument();
         expect(getByText('{ "dummy": "value" }')).toBeInTheDocument();
-        let tipIcons  = getAllByLabelText('icon: question-circle');
+        let tipIcons  = getAllByLabelText('question-circle');
         fireEvent.mouseOver(tipIcons[tipIcons.length -1]);
         await waitForElement(() => getByText(AdvCustomTooltips.additionalSettings))
 

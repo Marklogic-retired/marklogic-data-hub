@@ -14,14 +14,15 @@ import SearchResults from '../components/search-results/search-results';
 import { updateUserPreferences, createUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons'
 import Query from '../components/queries/queries'
 import { AuthoritiesContext } from "../util/authorities";
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
 import { MLTooltip, MLSpin } from '@marklogic/design-system';
+import { StreamSolid, TableSolid, AngleDoubleRightSolid, AngleDoubleLeftSolid } from '@marklogic/design-system/es/MLIcon';
+import './Browse.scss';
+
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -238,8 +239,8 @@ const Browse: React.FC<Props> = ({ location }) => {
 
           <div className={styles.collapseIcon} id='sidebar-collapse-icon'>
             {collapse ?
-            <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
-            <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
+            <AngleDoubleRightSolid aria-label="collapsed" onClick={onCollapse} style={{ fontSize: '16px', color: '#000' }} /> :
+            <AngleDoubleLeftSolid aria-label="expanded" onClick={onCollapse} style={{ fontSize: '16px', color: '#000' }} />}
           </div>
 
           {user.error.type === 'ALERT' ?
@@ -270,12 +271,16 @@ const Browse: React.FC<Props> = ({ location }) => {
                     <div className={!tableView ? styles.toggled : styles.toggleView}
                       data-cy="facet-view" id={'snippetView'}
                       onClick={() => toggleTableView(false)}>
-                      <MLTooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></MLTooltip>
+                      <MLTooltip title={'Snippet View'}>
+                        <StreamSolid />
+                      </MLTooltip>
                     </div>
                     <div className={tableView ? styles.toggled : styles.toggleView}
                       data-cy="table-view" id={'tableView'}
                       onClick={() => toggleTableView(true)}>
-                      <MLTooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></MLTooltip>
+                      <MLTooltip title={'Table View'}>
+                        <TableSolid />
+                      </MLTooltip>
                     </div>
                   </div>
                 </div>

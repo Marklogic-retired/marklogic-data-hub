@@ -1,9 +1,9 @@
-import { Modal, Form, Input, Button, Tooltip, Icon } from "antd";
+import { Modal, Form, Input } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-flow-dialog.module.scss';
-import {NewFlowTooltips} from '../../../config/tooltips.config';
+import { NewFlowTooltips } from '../../../config/tooltips.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
-
+import { QuestionCircleFilled } from '@marklogic/design-system/es/MLIcon';
 
 const NewFlowDialog = (props) => {
 
@@ -126,7 +126,7 @@ const NewFlowDialog = (props) => {
             className={styles.input}
           />&nbsp;&nbsp;
           <MLTooltip title={NewFlowTooltips.name}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            <QuestionCircleFilled className={styles.questionCircle} />
           </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
@@ -141,7 +141,7 @@ const NewFlowDialog = (props) => {
             className={styles.input}
           />&nbsp;&nbsp;
           <MLTooltip title={NewFlowTooltips.description}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            <QuestionCircleFilled className={styles.questionCircle} />
           </MLTooltip>
         </Form.Item>
         <br /><br />

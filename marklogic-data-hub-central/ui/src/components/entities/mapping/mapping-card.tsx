@@ -1,8 +1,6 @@
 import React, {CSSProperties, useState, useEffect, useContext} from 'react';
 import styles from './mapping-card.module.scss';
-import {Card, Icon, Tooltip, Row, Col, Modal, Select} from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
+import {Card, Row, Col, Modal, Select} from 'antd';
 import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
@@ -16,6 +14,7 @@ import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
 import { Link, useHistory } from 'react-router-dom';
 import { MLTooltip } from '@marklogic/design-system';
+import { PlusCircleFilled, SettingOutlined, EditOutlined, TrashAltRegular } from '@marklogic/design-system/es/MLIcon';
 
 
 const { Option } = Select;
@@ -587,7 +586,9 @@ const MappingCard: React.FC<Props> = (props) => {
                     <Card
                         size="small"
                         className={styles.addNewCard}>
-                        <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
+                        <div>
+                            <PlusCircleFilled className={styles.plusIcon} onClick={OpenAddNewDialog}/>
+                        </div>
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
@@ -600,9 +601,21 @@ const MappingCard: React.FC<Props> = (props) => {
                             <Card
                                 actions={[
                                     <span></span>,
-                                    <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
-                                    <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                    <MLTooltip title={'Settings'} placement="bottom">
+                                        <SettingOutlined key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)} />
+                                    </MLTooltip>,
+                                    <MLTooltip title={'Edit'} placement="bottom">
+                                        <EditOutlined key="edit" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)} />
+                                    </MLTooltip>,
+                                    props.canReadWrite ? 
+                                    <MLTooltip title={'Delete'} placement="bottom">
+                                        <i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}>
+                                            <TrashAltRegular className={styles.deleteIcon} />
+                                        </i>
+                                    </MLTooltip> : 
+                                    <i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}>
+                                        <TrashAltRegular className={styles.disabledDeleteIcon} />
+                                    </i>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"

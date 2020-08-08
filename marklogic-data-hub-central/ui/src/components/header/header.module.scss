@@ -52,10 +52,6 @@ div.iconsContainerAuth {
   position: absolute;
   top: 8px;
   right: 10px;
-  i:hover {
-    cursor: pointer;
-    color: #fff;
-  }
   .vertical {
     display: inline-block;
     position: relative;
@@ -70,11 +66,9 @@ div.iconsContainer {
   position: absolute;
   top: 12px;
   right: 0;
-  i:hover {
-    cursor: pointer;
-    color: #fff;
-  }
 }
+
+
 
 span.userDropdown {
   i {

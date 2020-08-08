@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Form, Input, Icon, Radio, Cascader } from 'antd';
+import { Modal, Form, Input, Radio, Cascader } from 'antd';
 import { MLButton, MLAlert } from '@marklogic/design-system';
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './property-modal.module.scss';
 
 import StructuredTypeModal from '../structured-type-modal/structured-type-modal';
@@ -12,6 +10,7 @@ import { ModelingContext } from '../../../util/modeling-context';
 import { entityReferences } from '../../../api/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
+import { QuestionCircleFilled, TrashAltSolid } from '@marklogic/design-system/es/MLIcon';
 
 import {
   ConfirmationType,
@@ -570,7 +569,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Radio aria-label={radio.value + '-no'} value={'no'}>No</Radio>
         </Radio.Group>
         <MLTooltip title={radio.tooltip}>
-          <Icon type="question-circle" className={styles.radioQuestionIcon} theme="filled" />
+          <QuestionCircleFilled className={styles.radioQuestionIcon} />
         </MLTooltip>
       </Form.Item>
     )
@@ -591,7 +590,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           onChange={(event) => onCheckboxChange(event, checkbox.value)}
         >{checkbox.label}</MLCheckbox>
         <MLTooltip title={checkbox.tooltip}>
-          <Icon type="question-circle" className={styles.checkboxQuestionIcon} theme="filled" />
+          <QuestionCircleFilled className={styles.checkboxQuestionIcon} />
         </MLTooltip>
       </Form.Item>
     )
@@ -602,7 +601,7 @@ const PropertyModal: React.FC<Props> = (props) => {
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit &&
       <MLButton type="link" onClick={() => toggleConfirmModal(true)} >
-        <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
+        <TrashAltSolid data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} />
       </MLButton>
     }
     <div>
@@ -709,7 +708,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             onBlur={handleInputChange}
           />
           <MLTooltip title={ModelingTooltips.nameRegex}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
+            <QuestionCircleFilled className={styles.icon} />
           </MLTooltip>
         </Form.Item>
 

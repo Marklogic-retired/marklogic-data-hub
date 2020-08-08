@@ -74,7 +74,7 @@ describe('Load component', () => {
 
         // test settings
         await act(async () => {
-            await fireEvent.click(getByLabelText('icon: setting'));
+            await fireEvent.click(getByLabelText('setting'));
         });
         expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
         expect(getByText('Save')).toBeDisabled();
@@ -158,7 +158,7 @@ describe('Load component', () => {
         expect(getByText('Add New')).toBeInTheDocument();
 
         // test settings
-        fireEvent.click(getByLabelText('icon: setting'));
+        fireEvent.click(getByLabelText('setting'));
         expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
         expect(getByText('Save')).not.toBeDisabled();
         fireEvent.click(getByText('Cancel'));
@@ -199,7 +199,7 @@ describe('Load component', () => {
         expect(getByText('Test JSON.')).toBeInTheDocument();
         expect(getAllByText('json').length > 0);
         expect(getByText('01/01/2000 4:00AM')).toBeInTheDocument();
-        expect(getByLabelText('icon: setting')).toBeInTheDocument();
+        expect(getByLabelText('setting')).toBeInTheDocument();
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 
         // Check card view
@@ -207,8 +207,8 @@ describe('Load component', () => {
         expect(getByText('testLoad')).toBeInTheDocument();
         expect(getByText('JSON')).toBeInTheDocument();
         expect(getByText('Last Updated: 01/01/2000 4:00AM')).toBeInTheDocument();
-        expect(getByLabelText('icon: setting')).toBeInTheDocument();
-        expect(getByLabelText('icon: edit')).toBeInTheDocument();
+        expect(getByLabelText('setting')).toBeInTheDocument();
+        expect(getByLabelText('edit')).toBeInTheDocument();
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 
     });

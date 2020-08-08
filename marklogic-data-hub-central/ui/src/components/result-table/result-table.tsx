@@ -8,15 +8,13 @@ import { dateConverter } from '../../util/date-conversion';
 import { updateTablePreferences, getUserPreferences } from '../../services/user-preferences';
 import { xmlParser } from '../../util/xml-parser';
 import styles from './result-table.module.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCode, faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import ColumnSelector from '../../components/column-selector/column-selector';
 import { tableParser, headerParser, deepCopy, reconstructHeader, toStringArray, headerPropsParser } from '../../util/data-conversion';
 import ReactDragListView from 'react-drag-listview'
 import QueryExport from '../../components/query-export/query-export';
 import { AuthoritiesContext } from "../../util/authorities";
 import { MLTooltip } from '@marklogic/design-system';
-
+import { DownOutlined, RightOutlined, CodeSolid, ExternalLinkAltSolid } from '@marklogic/design-system/es/MLIcon';
 
 
 const ResizeableTitle = props => {
@@ -174,11 +172,15 @@ const ResultTable: React.FC<Props> = (props) => {
           <div className={styles.redirectIcons}>
             <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'instance' } }} id={'instance'}
               data-cy='instance'>
-              <MLTooltip title={'Show detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" /></MLTooltip>
+              <MLTooltip title={'Show detail on a separate page'}>
+                <ExternalLinkAltSolid />
+              </MLTooltip>
             </Link>
             <Link to={{ pathname: `${path.pathname}`, state: { selectedValue: 'source' } }} id={'source'}
               data-cy='source'>
-              <MLTooltip title={'Show source on a separate page'}><FontAwesomeIcon icon={faCode} size="sm" /></MLTooltip>
+              <MLTooltip title={'Show source on a separate page'}>
+                <CodeSolid />
+              </MLTooltip>
             </Link>
           </div>
 
@@ -439,8 +441,9 @@ const ResultTable: React.FC<Props> = (props) => {
             children: parseJson(obj[i]),
             view: <Link to={{ pathname: `${rowId.primaryKeyPath.pathname}`, state: { id: obj[i] } }}
               data-cy='nested-instance'>
-              <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
-                size="sm" /></MLTooltip>
+              <MLTooltip title={'Show nested detail on a separate page'}>
+                <ExternalLinkAltSolid />
+              </MLTooltip>
             </Link>
           });
         } else {
@@ -531,7 +534,7 @@ const ResultTable: React.FC<Props> = (props) => {
     icons.push(record.primaryKey);
     return (
       <a style={{ color: 'black' }} onClick={e => onExpand(record, e)}>
-        {expanded ? <Icon type="down" /> : <Icon type="right" />}
+        {expanded ? <DownOutlined /> : <RightOutlined />}
       </a>
     );
   }

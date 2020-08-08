@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, CSSProperties } from 'react';
-import {Collapse, Icon, DatePicker, Tooltip, Select} from 'antd';
+import {Collapse, DatePicker, Select} from 'antd';
 import moment from 'moment';
 import Facet from '../facet/facet';
 import { SearchContext } from '../../util/search-context';
@@ -7,12 +7,11 @@ import { facetParser } from '../../util/data-conversion';
 import hubPropertiesConfig from '../../config/hub-properties.config';
 import tooltipsConfig from '../../config/explorer-tooltips.config';
 import styles from './sidebar.module.scss';
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
 import DateTimeFacet from '../date-time-facet/date-time-facet';
 import { MLTooltip } from '@marklogic/design-system';
+import { InfoCircleSolid, UpOutlined } from '@marklogic/design-system/es/MLIcon';
 
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
@@ -374,7 +373,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <Collapse
         className={styles.sideBarFacets}
         activeKey={activeKey}
-        expandIcon={panelProps => <Icon type="up" rotate={panelProps.isActive ? 0 : 180} />}
+        expandIcon={panelProps => <UpOutlined rotate={panelProps.isActive ? 0 : 180} />}
         expandIconPosition="right"
         bordered={false}
         onChange={setActive}
@@ -494,7 +493,7 @@ const Sidebar: React.FC<Props> = (props) => {
         )}
         <Panel id="hub-properties" header={<div className={styles.title}>Hub Properties</div>} key="hubProperties" style={facetPanelStyle}>
           <div className={styles.facetName} data-cy='created-on-facet'>Created On<MLTooltip title={tooltips.createdOn} placement="topLeft">
-            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip></div>
+            <InfoCircleSolid className={styles.infoIcon} /></MLTooltip></div>
           <div>
             <Select
               style={{ width: 150 }}

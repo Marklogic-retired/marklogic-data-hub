@@ -8,6 +8,8 @@ import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import SystemInfo from './system-info';
+import { QuestionCircleOutlined, SettingOutlined, UserOutlined, SearchOutlined, CloseOutlined, TrashAltRegular } from '@marklogic/design-system/es/MLIcon';
+import './header.scss';
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -92,17 +94,25 @@ const Header:React.FC<Props> = (props) => {
         </Menu.Item>
         <div className={styles.vertical}></div>
         {/* <Menu.Item>
-          <MLTooltip title="Search"><Icon type="search"/></MLTooltip>
+          <span className="searchIcon">
+            <MLTooltip title="Search"><SearchOutlined /></MLTooltip>
+          </span>
         </Menu.Item> */}
         <Menu.Item>
-          <MLTooltip title="Help"><a id="help-link" href= {getVersionLink()} target="_blank"><Icon type="question-circle"/></a></MLTooltip>
+          <span className="helpIcon">
+            <a id="help-link" href= {getVersionLink()} target="_blank">
+              <MLTooltip title="Help"><QuestionCircleOutlined /></MLTooltip>
+            </a>
+          </span>
         </Menu.Item>
         {/* <Menu.Item>
-          <MLTooltip title="Settings"><Icon type="setting"/></MLTooltip>
+          <span className="settingsIcon">
+            <MLTooltip title="Settings"><SettingOutlined /></MLTooltip>
+          </span>
         </Menu.Item> */}
         <Dropdown overlay={userMenu}>
           <span className="userDropdown">
-            <MLTooltip title="User"><Icon type="user"/></MLTooltip>
+            <MLTooltip title="User"><UserOutlined /></MLTooltip>
           </span>
         </Dropdown>
       </Menu>
@@ -117,7 +127,13 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <MLTooltip title="Help"><a id="help-link" href='https://docs.marklogic.com/datahub/' target="_blank"><Icon type="question-circle"/></a></MLTooltip>
+          <span className="helpIcon">
+              <MLTooltip title="Help">
+                <a id="help-link" href='https://docs.marklogic.com/datahub/' target="_blank">
+                  <QuestionCircleOutlined />
+                </a>
+              </MLTooltip>
+          </span>
         </Menu.Item>
       </Menu>
     </div>

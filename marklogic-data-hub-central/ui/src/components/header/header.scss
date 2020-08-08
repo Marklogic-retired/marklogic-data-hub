@@ -1,0 +1,12 @@
+#global-icons {
+    .searchIcon .anticon.anticon-search,
+    .helpIcon .anticon.anticon-question-circle,
+    .settingsIcon .anticon.anticon-setting,
+    .userDropdown .anticon.anticon-user  {
+        color: rgba(255, 255, 255, 0.65);
+        :hover {
+            cursor: pointer;
+            color: #fff;
+        }
+    }
+}

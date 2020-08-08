@@ -1,7 +1,5 @@
 import React, {useState, CSSProperties, useEffect, useContext} from 'react';
-import { Collapse, Icon, Card, Modal} from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import { Collapse, Card, Modal} from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
@@ -12,6 +10,7 @@ import { AuthoritiesContext } from "../../util/authorities";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import {UserContext} from "../../util/user-context";
+import { CheckCircleFilled, ExclamationCircleFilled, PlayCircleFilled, CloseOutlined, TrashAltRegular } from '@marklogic/design-system/es/MLIcon';
 
 const { Panel } = Collapse;
 
@@ -196,28 +195,24 @@ const Flows: React.FC<Props> = (props) => {
             {props.canWriteFlow ?
                 <MLTooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
-                        <FontAwesomeIcon
-                            icon={faTrashAlt}
+                        <TrashAltRegular
                             onClick={event => {
                                 event.stopPropagation(); // Do not trigger collapse
                                 handleFlowDelete(name);
                             }}
                             data-testid={`deleteFlow-${name}`}
-                            className={styles.deleteIcon}
-                            size="lg"/>
+                            className={styles.deleteIcon}/>
                     </i>
                 </MLTooltip> :
                 <MLTooltip title={'Delete Flow'} placement="bottom">
                     <i aria-label={'deleteFlow-' + i}>
-                        <FontAwesomeIcon
-                            icon={faTrashAlt}
+                        <TrashAltRegular
                             onClick={(event) => {
                                 event.stopPropagation();
                                 event.preventDefault();
                             }}
                             data-testid={`deleteFlow-${name}`}
-                            className={styles.disabledDeleteIcon}
-                            size="lg"/>
+                            className={styles.disabledDeleteIcon}/>
                     </i>
                 </MLTooltip> }
         </span>
@@ -309,7 +304,7 @@ const Flows: React.FC<Props> = (props) => {
             tooltipText = "Step last ran successfully on "+ stepEndTime;
             return(
                 <MLTooltip overlayStyle={{maxWidth: '200px'}} title= {tooltipText} placement="bottom"  >
-                    <Icon type="check-circle" theme="filled" className={styles.successfulRun} />
+                    <CheckCircleFilled className={styles.successfulRun} />
                 </MLTooltip>
             );
 
@@ -318,7 +313,7 @@ const Flows: React.FC<Props> = (props) => {
             tooltipText = "Step last ran with errors on "+ stepEndTime;
             return(
                 <MLTooltip overlayStyle={{maxWidth: '190px'}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
-                    <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+                    <ExclamationCircleFilled className={styles.unSuccessfulRun} />
                 </MLTooltip>
             );
         }
@@ -326,7 +321,7 @@ const Flows: React.FC<Props> = (props) => {
             tooltipText = "Step last failed on "+ stepEndTime;
             return(
                 <MLTooltip overlayStyle={{maxWidth: '175px'}} title={tooltipText} placement="bottom"  onClick={(e) => showStepRunResponse(step)}>
-                    <Icon type="exclamation-circle" theme="filled" className={styles.unSuccessfulRun} />
+                    <ExclamationCircleFilled className={styles.unSuccessfulRun} />
                 </MLTooltip>
             );
         }
@@ -391,7 +386,7 @@ const Flows: React.FC<Props> = (props) => {
                                             }}
                                         >
                                             <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
-                                                <Icon type="play-circle" theme="filled" />
+                                                <PlayCircleFilled />
                                             </MLTooltip>
                                         </div>
                                         </MLUpload>
@@ -406,7 +401,7 @@ const Flows: React.FC<Props> = (props) => {
                                             data-testid={'runStep-' + stepNumber}
                                         >
                                             <MLTooltip title={RunToolTips.otherSteps} placement="bottom">
-                                                <Icon type="play-circle" theme="filled" />
+                                                <PlayCircleFilled />
                                             </MLTooltip>
                                         </div>
                                     :
@@ -416,15 +411,15 @@ const Flows: React.FC<Props> = (props) => {
                                         aria-label={'runStepDisabled-' + step.stepName}
                                         data-testid={'runStepDisabled-' + stepNumber}
                                     >
-                                        <Icon type="play-circle" theme="filled" />
+                                        <PlayCircleFilled />
                                     </div>
                                 }
                                 {props.canWriteFlow ?
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
+                                        <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><CloseOutlined /></div>
                                     </MLTooltip> :
                                     <MLTooltip title={'Delete Step'} placement="bottom">
-                                        <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
+                                        <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><CloseOutlined /></div>
                                     </MLTooltip>
                                 }
                             </div>

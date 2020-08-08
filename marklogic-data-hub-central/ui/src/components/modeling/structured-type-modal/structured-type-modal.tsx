@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Icon, Input, Modal } from 'antd';
+import { Form, Input, Modal } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import styles from './structured-type-modal.module.scss'
 
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip } from '@marklogic/design-system';
+import { QuestionCircleFilled } from '@marklogic/design-system/es/MLIcon';
 
 
 type Props = {
@@ -111,7 +112,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
             onBlur={handleChange}
           />
           <MLTooltip title={ModelingTooltips.nameRegex}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
+            <QuestionCircleFilled className={styles.icon} />
           </MLTooltip>
         </Form.Item>
       </Form>

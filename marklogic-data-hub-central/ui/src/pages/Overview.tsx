@@ -1,9 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Overview.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
-
+import { LongArrowAltRightSolid, CubeSolid, CubesSolid, ObjectUngroupSolid, ProjectDiagram } from '@marklogic/design-system/es/MLIcon';
 
 const Overview = (props) => {
 
@@ -20,7 +18,7 @@ const Overview = (props) => {
                     <div className={styles.cardLoad}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
-                            <i aria-label="load-icon"><FontAwesomeIcon icon={faLongArrowAltRight} /></i>Load
+                            <i aria-label="load-icon"><LongArrowAltRightSolid /></i>Load
                         </div>
                         <div className={styles.body}>Ingest raw data from multiple file types.</div>
                     </div>
@@ -29,7 +27,7 @@ const Overview = (props) => {
                         <div className={styles.head}></div>
                         <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
-                            <i aria-label="model-icon"><FontAwesomeIcon icon={faCube} /></i>Model
+                            <i aria-label="model-icon"><CubeSolid /></i>Model
                         </div>
                         <div className={styles.body}>Define entity types that will be leveraged during curation.</div>
                     </div>
@@ -38,7 +36,7 @@ const Overview = (props) => {
                         <div className={styles.head}></div>
                         <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
-                            <i aria-label="curate-icon"><FontAwesomeIcon icon={faObjectUngroup} /></i>Curate
+                            <i aria-label="curate-icon"><ObjectUngroupSolid /></i>Curate
                         </div>
                         <div className={styles.body}>Create a 360º view.</div>
                     </div>
@@ -55,7 +53,7 @@ const Overview = (props) => {
                         <div className={styles.head}>
                             <span className={styles.icon}></span> 
                             <div className={styles.subtitle}>
-                                <i aria-label="run-icon"><FontAwesomeIcon icon={faCubes} /></i>Run
+                                <i aria-label="run-icon"><CubesSolid /></i>Run
                             </div>
                             <div className={styles.body}>Arrange steps into data flows to test loading and curation.</div>
                         </div>

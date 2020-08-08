@@ -1,67 +1,55 @@
-  .loginForm {
-    margin: 20px 0 20px;
-  }
-  
-  div.host, div.username, div.password {
-    width: 300px;
-  }
+.loginForm {
+  margin: 20px 0 20px;
+}
 
-  .host div, .username div, .password div {
-    text-align: left;
-  }
-  
-  .help {
-    margin: 15px 0 35px 0;
+div.username, div.password {
+  width: 300px;
+}
 
-    .remember .rememberCheck {
-      margin-left: -3.9em;
-      margin-right: 10px;
-      color: #44499C;
-    }
-    
-    .forgot {
-      float: right;
-      color: #44499C;
-    }
-  }
-  
-  .loginButton button {
-    color:#ffffff;
-    width: 100%;
-    background-color: #394494;
-    border: none;
-  }
-  
-  .unauthorized {
-    text-align: center;
-    white-space: nowrap;
-  }
-  
-  .hostIcon {
-    position: relative;
-    font-size: 17px;
-    left: -3px;
-    top: 1px;
-  }
-  
-  .hostIcon, .usernameIcon, .passwordIcon {
-    color: rgba(0,0,0,.25);
-  }
-  
-  .formLabel {
-    display: inline-block;
-    width: 300px;
-    text-align: left;
-  }
-  
-  .questionIcon {
-    color: #ACB0CF;
-    position: relative;
-    font-size: 14px;
-    left: 4px;
-    top: -6px;
-  }
+.username div, .password div {
+  text-align: left;
+}
 
+.help {
+  margin: 15px 0 35px 0;
+
+  .remember .rememberCheck {
+    margin-left: -3.9em;
+    margin-right: 10px;
+    color: #44499C;
+  }
+  
+  .forgot {
+    float: right;
+    color: #44499C;
+  }
+}
+
+.loginButton button {
+  color:#ffffff;
+  width: 100%;
+  background-color: #394494;
+  border: none;
+}
+
+.unauthorized {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.formLabel {
+  display: inline-block;
+  width: 300px;
+  text-align: left;
+}
+
+.questionIcon {
+  color: #ACB0CF;
+  position: relative;
+  font-size: 14px;
+  left: 4px;
+  top: -6px;
+}
 
 .unauthorized {
   text-align: center;

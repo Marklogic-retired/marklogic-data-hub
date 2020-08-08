@@ -35,7 +35,7 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
     expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
     expect(queryAllByPlaceholderText('Enter URI Prefix')[0]).toBeInTheDocument();
-    let tooltip  = getAllByLabelText('icon: question-circle');
+    let tooltip  = getAllByLabelText('question-circle');
     //should be the last field in the form
     fireEvent.mouseOver(tooltip[tooltip.length-1]);
     await waitForElement(() => getByText("The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json."))

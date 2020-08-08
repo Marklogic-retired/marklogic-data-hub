@@ -401,7 +401,7 @@ describe('Advanced Step Settings dialog', () => {
     );
     fireEvent.click(getByText('Processors'));
     fireEvent.click(getByText('Custom Hook'));
-    let tipIcons  = getAllByLabelText('icon: question-circle');
+    let tipIcons  = getAllByLabelText('question-circle');
     const tips = ['sourceDatabase', 'targetDatabase', 'additionalCollections', 'targetPermissions',
       'targetFormat', 'provGranularity','validateEntity', 'batchSize', 'headers', 'processors', 'customHook'];
     tips.forEach(async (tip, i) => {
