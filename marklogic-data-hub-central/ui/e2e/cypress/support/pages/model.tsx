@@ -11,6 +11,10 @@ class ModelPage {
   getRevertAllButton() {
     return cy.findByLabelText('revert-all');
   }
+
+  getEntityModifiedAlert() {
+    return cy.findByLabelText('entity-modified-alert');
+  }
 }
 
 const modelPage = new ModelPage();

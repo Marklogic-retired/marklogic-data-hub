@@ -43,7 +43,7 @@ class PropertyTable {
   }
 
   getAddPropertyToStructureType(structureTypeName: string) {
-    return cy.findByTestId(`add-struct-${structureTypeName}`);
+    return cy.findAllByTestId(`add-struct-${structureTypeName}`).eq(0);
   }
 
   editProperty(propertyName: string) {
@@ -59,7 +59,7 @@ class PropertyTable {
   }
 
   getDeleteStructuredPropertyIcon(entityName: string, structuredTypeName: string, propertyName: string) {
-    return cy.findByTestId(`delete-${entityName}-${structuredTypeName}-${propertyName}`);
+    return cy.findAllByTestId(`delete-${entityName}-${structuredTypeName}-${propertyName}`).eq(0);
   }
 }
 

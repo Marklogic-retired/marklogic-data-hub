@@ -147,7 +147,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText('string')).toHaveLength(13);
   });
 
-  test('can add sortable and facetable Property to the table', async () => {
+  test('can add sortable and facetable Property to the table', () => {
       let entityName = propertyTableEntities[2].entityName;
       let definitions = propertyTableEntities[2].model.definitions;
       const { getByTestId, getByLabelText } =  render(
@@ -169,7 +169,7 @@ describe('Entity Modeling Property Table Component', () => {
 
       userEvent.click(getByLabelText('Customer-add-property'));
       userEvent.clear(screen.getByLabelText('input-name'));
-      await userEvent.type(screen.getByLabelText('input-name'), 'altName');
+      userEvent.type(screen.getByLabelText('input-name'), 'altName');
 
       userEvent.click(screen.getByPlaceholderText('Select the property type'));
       userEvent.click(screen.getByText('dateTime'));
@@ -186,7 +186,7 @@ describe('Entity Modeling Property Table Component', () => {
       expect(getByTestId('altName-span')).toBeInTheDocument();
   });
 
-  test('can add a Property to the table and then edit it', async () => {
+  test('can add a Property to the table and then edit it', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId, getByLabelText, debug } =  render(
@@ -200,7 +200,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     userEvent.click(screen.getByLabelText('Concept-add-property'));
 
-    await userEvent.type(screen.getByLabelText('input-name'), 'conceptDate');
+    userEvent.type(screen.getByLabelText('input-name'), 'conceptDate');
     userEvent.click(screen.getByPlaceholderText('Select the property type'));
     userEvent.click(screen.getByText('dateTime'));
 
@@ -211,13 +211,13 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.click(screen.getByTestId('conceptDate-span'));
 
     userEvent.clear(screen.getByLabelText('input-name'));
-    await userEvent.type(screen.getByLabelText('input-name'), 'conception');
+    userEvent.type(screen.getByLabelText('input-name'), 'conception');
 
     fireEvent.submit(screen.getByLabelText('input-name'));
     expect(getByTestId('conception-span')).toBeInTheDocument();
   });
 
-  test('can add a new structured type property to the table and then edit it', async () => {
+  test('can add a new structured type property to the table and then edit it', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
     const { getByText, getByTestId } =  render(
@@ -231,13 +231,13 @@ describe('Entity Modeling Property Table Component', () => {
 
     userEvent.click(screen.getByLabelText('Concept-add-property'));
 
-    await userEvent.type(screen.getByLabelText('input-name'), 'newStructure');
+    userEvent.type(screen.getByLabelText('input-name'), 'newStructure');
     userEvent.click(screen.getByPlaceholderText('Select the property type'));
     userEvent.click(screen.getByText('Structured'));
     userEvent.click(screen.getByText('New Property Type'));
 
     expect(screen.getByText('Add New Structured Property Type')).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText('structured-input-name'), 'Product');
+    userEvent.type(screen.getByLabelText('structured-input-name'), 'Product');
     fireEvent.submit(screen.getByLabelText('structured-input-name'));
 
     fireEvent.submit(screen.getByLabelText('input-name'));
@@ -246,7 +246,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     userEvent.click(screen.getByTestId('newStructure-span'));
     userEvent.clear(screen.getByLabelText('input-name'));
-    await userEvent.type(screen.getByLabelText('input-name'), 'basicName');
+    userEvent.type(screen.getByLabelText('input-name'), 'basicName');
     userEvent.click(screen.getByLabelText('type-dropdown'));
     userEvent.click(screen.getByText('More date types'));
     userEvent.click(screen.getByText('dayTimeDuration'));
@@ -255,7 +255,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('conception-span')).toBeInTheDocument();
   });
 
-  test('can edit a property and change the type from basic to relationship', async () => {
+  test('can edit a property and change the type from basic to relationship', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const { getByText, getByTestId, queryByTestId, getAllByTestId } =  render(
@@ -276,7 +276,7 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.click(getByTestId('nicknames-span'));
     userEvent.clear(screen.getByLabelText('input-name'));
 
-    await userEvent.type(screen.getByLabelText('input-name'), 'altName');
+    userEvent.type(screen.getByLabelText('input-name'), 'altName');
 
     const multipleRadio = screen.getByLabelText('multiple-yes');
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
@@ -299,7 +299,7 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.click(screen.getByTestId('altName-span'));
 
     userEvent.clear(screen.getByLabelText('input-name'));
-    await userEvent.type(screen.getByLabelText('input-name'), 'orderRelationship');
+    userEvent.type(screen.getByLabelText('input-name'), 'orderRelationship');
     userEvent.click(screen.getByLabelText('type-dropdown'));
     userEvent.click(screen.getByText('Relationship'));
     userEvent.click(screen.getAllByText('Order')[0]);
@@ -309,7 +309,7 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.click(screen.getByTestId('orderRelationship-span'));
 
     userEvent.clear(screen.getByLabelText('input-name'));
-    await userEvent.type(screen.getByLabelText('input-name'), 'basicID');
+    userEvent.type(screen.getByLabelText('input-name'), 'basicID');
     userEvent.click(screen.getByLabelText('type-dropdown'));
     userEvent.click(screen.getAllByText('integer')[0]);
     fireEvent.submit(screen.getByLabelText('input-name'));

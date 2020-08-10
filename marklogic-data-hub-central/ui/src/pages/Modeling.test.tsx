@@ -55,12 +55,10 @@ describe("Modeling Page", () => {
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
     userEvent.click(getByText('Save All'));
-    expect(screen.getByText(/Confirmation/i)).toBeInTheDocument();
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveAll}-yes`));
     expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1)
 
     userEvent.click(getByText('Revert All'));
-    expect(screen.getByText(/Confirmation/i)).toBeInTheDocument();
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
     expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1);
   });
@@ -68,7 +66,7 @@ describe("Modeling Page", () => {
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
   
-    const { getByText, getByLabelText, queryByText, debug } = render(
+    const { getByText, getByLabelText, queryByLabelText, debug } = render(
       <AuthoritiesContext.Provider value={mockOpRolesService}>
         <ModelingContext.Provider value={notModified}>
           <Router>
@@ -85,7 +83,7 @@ describe("Modeling Page", () => {
 
     expect(getByLabelText("add-entity")).toBeDisabled();
     expect(getByLabelText("save-all")).toBeDisabled();
-    expect(queryByText('You have edited some of the entity types and/or properties.')).toBeNull();
+    expect(queryByLabelText('entity-modified-alert')).toBeNull();
   });
 });
 

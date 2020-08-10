@@ -14,33 +14,36 @@ class ConfirmationModal {
     return cy.findByLabelText('toggle-steps');
   }
   getSaveEntityText() {
-    return cy.get('#save-text', {timeout: 25000});
+    return cy.findByLabelText('save-text', {timeout: 25000});
   }
   getSaveAllEntityText() {
-    return cy.get('#save-all-text', {timeout: 25000});
+    return cy.findByLabelText('save-all-text', {timeout: 25000});
   }
 
   getRevertEntityText() {
-    return cy.get('#revert-text', {timeout: 25000});
+    return cy.findByLabelText('revert-text', {timeout: 25000});
   }
 
   getRevertAllEntityText() {
-    return cy.get('#revert-all-text', {timeout: 25000});
+    return cy.findByLabelText('revert-all-text', {timeout: 25000});
   }
   getDeleteEntityText() {
-    return cy.get('#delete-text', {timeout: 15000});
+    return cy.findByLabelText('delete-text', {timeout: 15000});
   }
   getDeleteEntityRelationshipText() {
-    return cy.get('#delete-relationship-text', {timeout: 15000});
+    return cy.findByLabelText('delete-relationship-text', {timeout: 15000});
   }
   getDeleteEntityStepText() {
-    return cy.get('#delete-step-text', {timeout: 15000});
+    return cy.findByLabelText('delete-step-text', {timeout: 15000});
   }
   getDeletePropertyWarnText() {
-    return cy.get('#delete-property-text', {timeout: 15000});
+    return cy.findByLabelText('delete-property-text', {timeout: 15000});
   }
   getDeletePropertyStepWarnText() {
-    return cy.get('#delete-property-step-text', {timeout: 15000});
+    return cy.findByLabelText('delete-property-step-text', {timeout: 15000});
+  }
+  getNavigationWarnText() {
+    return cy.findByLabelText('navigation-warn-text');
   }
 }
 

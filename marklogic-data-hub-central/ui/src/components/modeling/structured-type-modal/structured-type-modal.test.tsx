@@ -20,7 +20,7 @@ describe('Structured Type Modal Component', () => {
     expect(queryByText('Add New Structured Property Type')).toBeNull();
   });
 
-  test('can create structured property with valid name', async () => {
+  test('can create structured property with valid name', () => {
     const toggleModal = jest.fn();
     const updateStructuredTypesAndHideModal = jest.fn();
 
@@ -33,14 +33,14 @@ describe('Structured Type Modal Component', () => {
       />);
 
     expect(getByText('Add New Structured Property Type')).toBeInTheDocument();
-    await userEvent.type(getByPlaceholderText('Enter name'), 'Product');
+    userEvent.type(getByPlaceholderText('Enter name'), 'Product');
 
     userEvent.click(getByText('Add'));
     expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(1)
     expect(toggleModal).toHaveBeenCalledTimes(1)
   });
 
-  test('can do error handling for duplicate name and name regex validation ', async () => {
+  test('can do error handling for duplicate name and name regex validation ', () => {
     const toggleModal = jest.fn();
     const updateStructuredTypesAndHideModal = jest.fn();
 
@@ -53,12 +53,12 @@ describe('Structured Type Modal Component', () => {
       />);
 
     expect(getByText('Add New Structured Property Type')).toBeInTheDocument();
-    await userEvent.type(getByLabelText('structured-input-name'), 'Address');
+    userEvent.type(getByLabelText('structured-input-name'), 'Address');
     userEvent.click(getByText('Add'));
     expect(getByText('A structured type already exists with a name of Address')).toBeInTheDocument();
     userEvent.clear(getByLabelText('structured-input-name'));
 
-    await userEvent.type(getByLabelText('structured-input-name'), '123-Name');
+    userEvent.type(getByLabelText('structured-input-name'), '123-Name');
     userEvent.click(getByText('Add'));
     expect(getByText(ModelingTooltips.nameRegex)).toBeInTheDocument();
 

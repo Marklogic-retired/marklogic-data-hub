@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, getByLabelText } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import ConfirmationModal from './confirmation-modal';
@@ -13,7 +13,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.Identifer}
@@ -23,7 +23,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('identifier-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -33,7 +33,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getAllByText(currentIdentifier)).toHaveLength(3);
     expect(getByText(newIdentifier)).toBeInTheDocument();
     expect(getByText(/Each entity type is allowed a maximum of one identifier/i)).toBeInTheDocument();
@@ -51,7 +50,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.DeleteEntity}
@@ -61,7 +60,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('delete-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -71,7 +70,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getByText(entityName)).toBeInTheDocument();
     expect(getByText(/Permanently delete/i)).toBeInTheDocument();
 
@@ -87,7 +85,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.DeleteEntityRelationshipWarn}
@@ -97,7 +95,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('delete-relationship-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -107,7 +105,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getAllByText(entityName)).toHaveLength(3);
     expect(getByText('Existing entity type relationships.')).toBeInTheDocument();
 
@@ -124,7 +121,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, getAllByText, rerender, getByLabelText } =  render(
+    const { queryByText, queryByLabelText, getByText, getAllByText, rerender, getByLabelText } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.DeleteEntityStepWarn}
@@ -135,7 +132,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Delete: Entity Type in Use')).toBeNull();
+    expect(queryByLabelText('delete-step-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -146,7 +143,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Delete: Entity Type in Use')).toBeInTheDocument();
     expect(getAllByText(entityName)).toHaveLength(1);
     expect(getByText('Entity type is used in one or more steps.')).toBeInTheDocument();
     expect(getByText('Show Steps...')).toBeInTheDocument();
@@ -170,7 +166,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.SaveEntity}
@@ -180,7 +176,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('save-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -190,7 +186,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getByText(entityName)).toBeInTheDocument();
     expect(getByText(/Are you sure you want to save changes to /i)).toBeInTheDocument();
 
@@ -205,7 +200,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, rerender } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.SaveAll}
@@ -215,7 +210,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('save-all-text')).toBeNull();
 
     rerender(<ConfirmationModal 
       isVisible={true}
@@ -225,7 +220,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getByText('Are you sure you want to save ALL changes to ALL entity types?')).toBeInTheDocument();
 
     userEvent.click(getByText('No'));
@@ -240,7 +234,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, rerender } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal
         isVisible={false}
         type={ConfirmationType.RevertEntity}
@@ -250,7 +244,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('revert-text')).toBeNull();
 
     rerender(<ConfirmationModal
       isVisible={true}
@@ -260,7 +254,6 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getByText(entityName)).toBeInTheDocument();
     expect(getByText(/Are you sure you want to discard your changes to /i)).toBeInTheDocument();
 
@@ -275,7 +268,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByText, getByText, rerender } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal
         isVisible={false}
         type={ConfirmationType.RevertAll}
@@ -285,7 +278,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByText('Confirmation')).toBeNull();
+    expect(queryByLabelText('revert-all-text')).toBeNull();
 
     rerender(<ConfirmationModal
       isVisible={true}
@@ -295,8 +288,41 @@ describe('Confirmation Modal Component', () => {
       confirmAction={confirmAction}
     />);
 
-    expect(getByText('Confirmation')).toBeInTheDocument();
     expect(getByText('Are you sure you want to discard all changes to all entity types?')).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
+  });
+
+  test('can render navigation away confirmation', () => {
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { queryByLabelText, getByText, rerender, getByLabelText } =  render(
+      <ConfirmationModal
+        isVisible={false}
+        type={ConfirmationType.NavigationWarn}
+        boldTextArray={[]}
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByLabelText('navigation-warn-text')).toBeNull();
+
+    rerender(<ConfirmationModal
+      isVisible={true}
+      type={ConfirmationType.NavigationWarn}
+      boldTextArray={[]}
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getByText('Unsaved Changes')).toBeInTheDocument();
+    expect(getByText('You have made changes to the properties of one or more entity types. If you exit now, you will lose those changes.')).toBeInTheDocument();
 
     userEvent.click(getByText('No'));
     expect(toggleModal).toBeCalledTimes(1);

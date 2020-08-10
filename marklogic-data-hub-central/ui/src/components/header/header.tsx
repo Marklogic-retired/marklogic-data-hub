@@ -3,11 +3,14 @@ import { RouteComponentProps, withRouter, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import { UserContext } from '../../util/user-context';
-import logo from './logo.svg';
+import { ModelingContext} from '../../util/modeling-context';
+import logo from './logo.jpg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import SystemInfo from './system-info';
+import ConfirmationModal from '../confirmation-modal/confirmation-modal';
+import { ConfirmationType } from '../../types/modeling-types';
 
 interface Props extends RouteComponentProps<any> {
   environment: any
@@ -15,9 +18,21 @@ interface Props extends RouteComponentProps<any> {
 
 const Header:React.FC<Props> = (props) => {
   const { user, userNotAuthenticated, handleError } = useContext(UserContext);
+  const { modelingOptions, clearEntityModified } = useContext(ModelingContext);
+
   const [systemInfoVisible, setSystemInfoVisible] = useState(false);
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
   const history = useHistory();
-  const handleLogout = async () => {
+
+  const handleLogout = () => {
+    if (modelingOptions.isModified) {
+      toggleConfirmModal(true);
+    } else {
+      confirmLogout();
+    }
+  };
+
+  const confirmLogout = async () => {
     try {
       let response = await axios(`/api/logout`);
       if (response.status === 200 ) {
@@ -26,7 +41,9 @@ const Header:React.FC<Props> = (props) => {
     } catch (error) {
       handleError(error);
     }
-  };
+    clearEntityModified();
+    toggleConfirmModal(false);
+  }
 
   const handleSystemInfoDisplay = () => {
     axios.get('/api/environment/systemInfo')
@@ -146,6 +163,13 @@ const Header:React.FC<Props> = (props) => {
           systemInfoVisible={systemInfoVisible}
           setSystemInfoVisible={setSystemInfoVisible}
        />
+      <ConfirmationModal
+          isVisible={showConfirmModal}
+          type={ConfirmationType.NavigationWarn}
+          boldTextArray={[]} 
+          toggleModal={toggleConfirmModal}
+          confirmAction={confirmLogout}
+      />
     </>
   )
 }

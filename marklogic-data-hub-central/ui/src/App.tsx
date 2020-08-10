@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+import axios from 'axios';
 import { Switch } from 'react-router';
 import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from './util/user-context';
@@ -10,18 +11,15 @@ import Footer from './components/footer/footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import TilesView from './pages/TilesView';
-import Browse from './pages/Browse';
-import Detail from './pages/Detail';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import NoResponse from './pages/NoResponse';
+import ModalStatus from './components/modal-status/modal-status';
+import NavigationPrompt from './components/navigation-prompt/navigation-prompt';
 
 import './App.scss';
 import { Application } from './config/application.config';
 import { themes, themeMap } from './config/themes.config';
-import axios from 'axios';
-import ModalStatus from './components/modal-status/modal-status';
 import { getEnvironment } from './util/environment';
-
 
 interface Props extends RouteComponentProps<any> {}
 
@@ -84,24 +82,19 @@ const App: React.FC<Props> = ({history, location}) => {
 
   return (
     <div id="background" style={pageTheme['background']}>
-      <Header environment={getEnvironment()} />
-      <ModalStatus/>
-      <main>
-        <div className="contentContainer">
-        <Switch>
-          <Route path="/" exact component={Login}/>
-          <Route path="/noresponse" exact component={NoResponse} />
-          <PrivateRoute path="/home" exact>
-            <Home/>
-          </PrivateRoute>
-          <SearchProvider>
-            <PrivateRoute path="/browse" exact>
-                <Browse/>
-            </PrivateRoute>
-            {/*<PrivateRoute path="/detail/:pk/:uri">
-              <Detail/>
-            </PrivateRoute>*/}
-            <ModelingProvider>
+      <SearchProvider>
+        <ModelingProvider>
+          <Header environment={getEnvironment()} />
+          <ModalStatus/>
+          <NavigationPrompt/>
+          <main>
+            <div className="contentContainer">
+            <Switch>
+              <Route path="/" exact component={Login}/>
+              <Route path="/noresponse" exact component={NoResponse} />
+              <PrivateRoute path="/home" exact>
+                <Home/>
+              </PrivateRoute>
               <PrivateRoute path="/tiles" exact>
                 <TilesView/>
               </PrivateRoute>
@@ -126,13 +119,13 @@ const App: React.FC<Props> = ({history, location}) => {
               <PrivateRoute path="/tiles/explore/detail/:pk/:uri" exact>
                  <TilesView id='explore'/>
               </PrivateRoute>
-            </ModelingProvider>
-          </SearchProvider>
-          <Route component={NoMatchRedirect}/>
-        </Switch>
-        <Footer pageTheme={pageTheme}/>
-        </div>
-      </main>
+              <Route component={NoMatchRedirect}/>
+            </Switch>
+              <Footer pageTheme={pageTheme}/>
+            </div>
+          </main>
+        </ModelingProvider>
+      </SearchProvider>
     </div>
   );
 }
