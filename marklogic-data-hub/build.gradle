@@ -198,10 +198,14 @@ ext {
     dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
 }
 
-task generateFilesForDataServices(type: JavaExec) {
-    description = "Generate DS source files based on API files in the ./specs directory"
+task generateDataService(type: JavaExec) {
+    description = "Generate DS source files based on a service name and endpoint name specified via -PserviceName and -PendpointName"
     classpath = sourceSets.test.runtimeClasspath
-    main = 'com.marklogic.hub.tools.DataServiceFilesGenerator'
+    main = 'com.marklogic.hub.tools.DataServiceGenerator'
+    args = [
+        project.hasProperty("serviceName") ? project.findProperty("serviceName") : "",
+        project.hasProperty("endpointName") ? project.findProperty("endpointName") : ""
+    ]
 }
 
 // Dynamically generate a task for each data-service directory, where the task can generate a Java interface for the data service
@@ -233,10 +237,11 @@ if (!(
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("clientjar") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:clientjar") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("generatefilesfordataservices") ||
+        gradle.startParameter.taskNames*.toLowerCase().contains("generatedataservice") ||
         // Added for Hub Central
         gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
         gradle.startParameter.taskNames*.toLowerCase().contains("buildrpm") ||
+
         project.hasProperty('skipui')
 )
 ) {
