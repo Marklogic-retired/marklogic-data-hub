@@ -1,14 +1,17 @@
 {
   "role-name": "hub-central-clear-user-data",
-  "description": "This temporarily inherits data-hub-developer so it has the necessary privileges to use Data Hub and to insert artifacts. Will rework this once the new 5.3.0 roles are available.",
+  "description": "Permits clearing user data via Hub Central",
   "role": [
+    "data-hub-custom-writer",
+    "data-hub-entity-model-writer",
+    "data-hub-flow-writer",
+    "data-hub-ingestion-writer",
+    "data-hub-mapping-writer",
+    "data-hub-match-merge-writer",
+    "data-hub-operator",
+    "data-hub-step-definition-writer",
     "hub-central-user",
-    "data-hub-developer",
-    "data-hub-entity-model-reader",
-    "data-hub-flow-reader",
-    "data-hub-ingestion-reader",
-    "data-hub-mapping-reader",
-    "data-hub-match-merge-reader",
-    "data-hub-step-definition-reader"
+    "manage-user",
+    "tde-admin"
   ]
 }
