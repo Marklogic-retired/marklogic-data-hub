@@ -219,16 +219,12 @@ const MappingCard: React.FC<Props> = (props) => {
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
                 setSourceData([]);
                 setSourceData([...sDta]);
-                if(typeof(srcDocResp.data) === 'string'){
-                    let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,props.data[index].name);
-                    updateMappingWithNamespaces(mData);
-                }
             }
-            } catch(error)  {
-                let message = error//.response.data.message;
-                console.log('Error While loading the Doc from URI!', message)
-                setDocNotFound(true);
-            }
+        } catch(error)  {
+            let message = error//.response.data.message;
+            console.log('Error While loading the Doc from URI!', message)
+            setDocNotFound(true);
+        }
     }
 
     const getParsedXMLDoc = (xmlDoc) => {
