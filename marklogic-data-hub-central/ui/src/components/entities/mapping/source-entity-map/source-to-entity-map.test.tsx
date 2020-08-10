@@ -644,7 +644,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('CollapseAll/Expand All feature in XML Source data table', () => {
 
-        const { getByTestId, getByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        const { getByTestId, getByText, getAllByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
             sourceData={data.xmlSourceData}
         />);
@@ -652,7 +652,8 @@ describe('RTL Source-to-entity map tests', () => {
         //Check if the expected elements are present in the DOM before hittting the Expand/Collapse button
         expect(queryByText('FirstNamePreferred')).not.toBeInTheDocument();
         expect(queryByText('LastName')).not.toBeInTheDocument();
-        let nutFree = getByText(/nutFree/);
+        let nutFree = getAllByText(/nutFree/);
+        expect(nutFree.length).toEqual(2);
         expect(getByText('@proteinType')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
 
@@ -799,9 +800,9 @@ describe('Enzyme Source-to-entity map tests', () => {
         expect(getByText('123EAC')).toBeInTheDocument();
         expect(getByText('@proteinType')).toBeInTheDocument();
         expect(getByText('home')).toBeInTheDocument();
-        expect(getByText(/nutFree:/)).toBeInTheDocument();
+        expect(getAllByText(/nutFree:/)).toHaveLength(2);
         expect(getByText('FirstNamePreferred')).toBeInTheDocument();
-        expect(getByTestId('proteinDog-srcValue')).toHaveTextContent('retriever (2 more)');
+        expect(getByTestId('nutFree:proteinDog-srcValue')).toHaveTextContent('retriever (2 more)');
         fireEvent.mouseOver(getByText('(2 more)'));
         await waitForElement(() => getByText('retriever, , golden, labrador'));
     });
@@ -993,10 +994,10 @@ describe('RTL Source Selector/Source Search tests', () => {
         expect(getByTestId('sampleProtein-optionIcon')).toHaveAttribute('src', 'icon_array.png')
 
         //Verify Array icon is present when item has no children but value was an Array of simple values.
-        expect(getByTestId('proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
+        expect(getByTestId('nutFree:proteinDog-optionIcon')).toHaveAttribute('src', 'icon_array.png')
 
         //Verify option in source dropdown only appears once when value is an Array of simple values.
-        let proteinDog = (getAllByTestId('proteinDog-option'));
+        let proteinDog = (getAllByTestId('nutFree:proteinDog-option'));
         expect(proteinDog.length).toEqual(1);
 
         //Verify option representing object in source dropdown only appears once when value is an array of Objects.
@@ -1016,6 +1017,16 @@ describe('RTL Source Selector/Source Search tests', () => {
         let mapExp = getByTestId("itemTypes-mapexpression");
         //Right Xpath is populated
         expect(mapExp).toHaveTextContent("sampleProtein/nutFree:name/LastName");
+
+        //Right Xpath population for namespaced option representing array of values
+        sourceSelector = getByTestId("items-listIcon");
+        fireEvent.click(sourceSelector);
+        await(waitForElement(() =>  getAllByRole("option"),{"timeout":200}))
+        let proteinDogOption = (getAllByTestId('nutFree:proteinDog-option'));
+        expect(proteinDogOption.length).toEqual(2);
+        fireEvent.click(proteinDogOption[1]);
+        mapExp = getByTestId("items-mapexpression");
+        expect(mapExp).toHaveTextContent("sampleProtein/nutFree:proteinDog");
 
     });
 
