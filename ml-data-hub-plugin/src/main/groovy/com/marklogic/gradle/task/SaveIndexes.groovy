@@ -17,17 +17,13 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.EntityManager
-
 import org.gradle.api.tasks.TaskAction
 
 class SaveIndexes extends HubTask {
 
     @TaskAction
-    public void saveIndexes() {
-        println "Saving Indexes to src/main/entity-config/databases directory"
-        EntityManager em = getEntityManager()
-        em.saveDbIndexes()
-        println "Saving Indexes to src/main/entity-config/databases directory complete"
+    void saveIndexes() {
+        println "Writing database index files based on entity models to src/main/entity-config/databases"
+        getEntityManager().saveDbIndexes()
     }
 }

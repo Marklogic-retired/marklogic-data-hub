@@ -8,6 +8,7 @@ class DeployAsSecurityAdminTask extends HubTask {
 
     @TaskAction
     void deployToDhs() {
+        println "Deploying resources that a user with the 'data-hub-security-admin' role is permitted to deploy"
         new DhsDeployer().deployAsSecurityAdmin(getHubConfig())
     }
 

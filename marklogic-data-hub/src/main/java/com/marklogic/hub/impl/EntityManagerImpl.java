@@ -35,7 +35,6 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.*;
-import com.marklogic.hub.error.EntityServicesGenerationException;
 import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.LoggerFactory;
@@ -223,8 +222,8 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                     }
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("Unable to generate database index files for entity properties; cause: " + e.getMessage(), e);
         }
         return false;
     }
@@ -606,7 +605,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
     @Override
     public boolean savePii() {
         try {
-
             Path protectedPaths = hubConfig.getUserSecurityDir().resolve("protected-paths");
             Path queryRolesets = hubConfig.getUserSecurityDir().resolve("query-rolesets");
             if (!protectedPaths.toFile().exists()) {
@@ -638,8 +636,9 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                 }
                 writer.writeValue(queryRolesetsConfig, v3ConfigAsJson.get("config").get("query-roleset"));
             }
-        } catch (IOException e) {
-            throw new EntityServicesGenerationException("Protected path writing failed", e);
+        } catch (Exception e) {
+            logger.error("Unable to generate files for entity properties marked as PII; cause: " + e.getMessage(), e);
+            return false;
         }
         return true;
     }

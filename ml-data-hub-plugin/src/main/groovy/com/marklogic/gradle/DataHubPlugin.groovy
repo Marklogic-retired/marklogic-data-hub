@@ -65,7 +65,6 @@ class DataHubPlugin implements Plugin<Project> {
     private FlowManagerImpl flowManager
     private LegacyFlowManagerImpl legacyFlowManager
     private EntityManagerImpl entityManager
-    private GeneratePiiCommand generatePiiCommand
     private GenerateFunctionMetadataCommand generateFunctionMetadataCommand
 
     Logger logger = LoggerFactory.getLogger(getClass())
@@ -232,7 +231,7 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeployAsDeveloper", group: deployGroup, type: DeployAsDeveloperTask,
             description: "Deploy project configuration as a user with the data-hub-developer role"
         )
-            .dependsOn("mlPrepareBundles") // Needed for https://github.com/marklogic-community/ml-gradle/wiki/Bundles
+            .dependsOn("mlPrepareBundles", "hubGeneratePii", "hubSaveIndexes") // Needed for https://github.com/marklogic-community/ml-gradle/wiki/Bundles
             .finalizedBy(["hubGenerateExplorerOptions"])
             .mustRunAfter("hubDeployAsSecurityAdmin")
 
@@ -264,8 +263,6 @@ class DataHubPlugin implements Plugin<Project> {
         flowManager = ctx.getBean(FlowManagerImpl.class)
         legacyFlowManager = ctx.getBean(LegacyFlowManagerImpl.class)
         entityManager = ctx.getBean(EntityManagerImpl.class)
-        generatePiiCommand = ctx.getBean(GeneratePiiCommand.class)
-        generateFunctionMetadataCommand = ctx.getBean(GenerateFunctionMetadataCommand.class)
 
         project.extensions.add("dataHubApplicationContext", ctx)
 
@@ -325,7 +322,6 @@ class DataHubPlugin implements Plugin<Project> {
             project.extensions.add("flowManager", flowManager)
             project.extensions.add("legacyFlowManager", legacyFlowManager)
             project.extensions.add("entityManager", entityManager)
-            project.extensions.add("generatePiiCommand", generatePiiCommand)
 
             configureAppDeployer(project)
         }
