@@ -10,7 +10,6 @@ import { getMappingValidationResp } from "../../../../util/manageArtifacts-servi
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
 import SplitPane from 'react-split-pane';
 import Highlighter from 'react-highlight-words';
-import ColumnGroup from "antd/lib/table/ColumnGroup";
 import { MLButton, MLTooltip, MLCheckbox } from '@marklogic/design-system';
 
 

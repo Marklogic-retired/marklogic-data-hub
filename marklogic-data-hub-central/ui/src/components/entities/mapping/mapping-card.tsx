@@ -366,9 +366,10 @@ const MappingCard: React.FC<Props> = (props) => {
                     if (val[0].constructor.name === "String") {
                             let stringValues = val.join(', ')
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
+                            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
                             let propty = {
                                 rowKey: sourceTableKeyIndex,
-                                key: key,
+                                key: finalKey,
                                 val: stringValues,
                                 array: true
                             };
@@ -401,7 +402,6 @@ const MappingCard: React.FC<Props> = (props) => {
                             key: finalKey,
                             val: String(val)
                         };
-
                         nestedDoc.push(propty);
                     }
                 }
@@ -416,7 +416,6 @@ const MappingCard: React.FC<Props> = (props) => {
                         key: finalKey,
                         val: ""
                     };
-
                     nestedDoc.push(propty);
                 }
             }

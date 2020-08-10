@@ -157,7 +157,7 @@ const xmlSourceData = [
       ]
       },
       { rowKey: 7, key: 'proteinCat', val: 'commercial' },
-      { rowKey: 8, key: 'proteinDog', val: 'retriever, , golden, labrador', array: true}
+      { rowKey: 8, key: 'nutFree:proteinDog', val: 'retriever, , golden, labrador', array: true}
     ]
   }
 ];
