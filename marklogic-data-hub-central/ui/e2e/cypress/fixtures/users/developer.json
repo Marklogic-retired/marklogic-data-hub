@@ -1,8 +1,10 @@
 {
     "user-name": "hc-developer",
-    "description": "A hub central developer user",
+    "description": "A user with hub-central-developer, data-hub-developer and data-hub-security-admin to run hubDeploy and hubDeployAsDeveloper tasks",
     "password": "password",
     "role": [
-      "hub-central-developer"
+      "hub-central-developer",
+      "data-hub-developer",
+      "data-hub-security-admin"
     ]
 }
