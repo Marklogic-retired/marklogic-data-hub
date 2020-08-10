@@ -17,6 +17,7 @@
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
@@ -119,9 +120,19 @@ class Flow {
    * @return {*}
    */
   findMatchingContent(flowName, stepNumber, options, filterQuery) {
+    // getFlow will throw an error if the flow cannot be found
     const flow = this.getFlow(flowName);
+
     const flowStep = flow.steps[stepNumber];
+    if (!flowStep) {
+      ds.throwServerError(`Could not find step '${stepNumber}' in flow '${flowName}'`);
+    }
+
     const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    if (!stepDefinition) {
+      ds.throwServerError(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
+    }
+
     const combinedOptions = Object.assign({}, stepDefinition.options || {}, flow.options || {}, flowStep.options || {}, options);
 
     let query;

@@ -33,5 +33,5 @@ let result = fn.head(fn.subsequence(cts.search(query), 1, 1));
 if (result != undefined) {
   result
 } else {
-  ds.throwBadRequest(`Unable to find a step definition with name ${name} and type ${type}`);
+  ds.throwBadRequest(`Could not find a step definition with name '${name}' and type '${type}'`);
 }

@@ -21,11 +21,9 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     private final static String CUSTOMER1_URI = "/echo/customer1.json";
     private final static String CUSTOMER2_URI = "/echo/customer2.json";
 
-    ReferenceModelProject project;
-
     @BeforeEach
     void beforeEach() {
-        project = installReferenceModelProject();
+        ReferenceModelProject project = installReferenceModelProject();
         runAsDataHubOperator();
         project.createRawCustomer(1, "Jane");
         project.createRawCustomer(2, "John");
@@ -34,7 +32,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     @Test
     void overrideUriViaIngestionStep() {
         makeInputFilePathsAbsoluteInFlow("stepProcessors");
-        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "4"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "4"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         final String expectedUri = "/overridden/1.json";
@@ -47,7 +45,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void twoProcessorsOnAStep() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "1"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "1"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         JSONDocumentManager mgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
@@ -71,7 +69,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void missingProcessorModule() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "2"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "2"));
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(),
             "The job should have failed because step 2 references an invalid path");
 
@@ -83,7 +81,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void missingWhen() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "3"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "3"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         JSONDocumentManager mgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
@@ -96,7 +94,7 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void stopOnErrorIsTrue() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("stepProcessors", "5", "1"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "5", "1"));
 
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(), "The job should have stopped after " +
             "running step 5, as the processor for that step throws an error, and the flow has stopOnError=true");

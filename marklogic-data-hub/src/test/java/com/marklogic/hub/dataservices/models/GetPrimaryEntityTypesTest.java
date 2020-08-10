@@ -2,7 +2,6 @@ package com.marklogic.hub.dataservices.models;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.flow.FlowInputs;
 import org.junit.jupiter.api.Test;
@@ -13,9 +12,8 @@ public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
 
     @Test
     void referenceModelWithOneCustomerLoaded() {
-        ReferenceModelProject project = installReferenceModelProject();
-        project.createRawCustomer(1, "Customer One");
-        project.runFlow(new FlowInputs("echoFlow").withJobId("echoFlow-test"));
+        installReferenceModelProject().createRawCustomer(1, "Customer One");
+        runFlow(new FlowInputs("echoFlow").withJobId("echoFlow-test"));
 
         ArrayNode entityTypes = (ArrayNode) ModelsService.on(adminHubConfig.newFinalClient(null)).getPrimaryEntityTypes();
         assertEquals(2, entityTypes.size(), "Expecting an entry for Customer and for Order");

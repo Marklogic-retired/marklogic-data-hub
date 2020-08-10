@@ -16,6 +16,9 @@ import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
 import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.flow.FlowInputs;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
@@ -456,5 +459,18 @@ public abstract class AbstractHubTest extends TestObject {
         mgr.getAsXml().getListItemIdRefs().forEach(id -> {
             mgr.deleteAtPath("/manage/v2/protected-paths/" + id + "?force=true");
         });
+    }
+
+    /**
+     * Convenience method for running a flow so you don't have to remember to call awaitCompletion.
+     *
+     * @param flowInputs
+     * @return
+     */
+    protected RunFlowResponse runFlow(FlowInputs flowInputs) {
+        FlowRunnerImpl flowRunner = new FlowRunnerImpl(getHubClient());
+        RunFlowResponse response = flowRunner.runFlow(flowInputs);
+        flowRunner.awaitCompletion();
+        return response;
     }
 }

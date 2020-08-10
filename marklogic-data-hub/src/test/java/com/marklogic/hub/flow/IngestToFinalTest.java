@@ -20,9 +20,9 @@ public class IngestToFinalTest extends AbstractHubCoreTest {
     void ingestToFinalAndMapToStaging() {
         final String flowName = "ingestToFinal";
 
-        ReferenceModelProject project = installReferenceModelProject();
+        installReferenceModelProject();
         makeInputFilePathsAbsoluteInFlow(flowName);
-        project.runFlow(new FlowInputs(flowName));
+        runFlow(new FlowInputs(flowName));
 
         JsonNode rawDoc = getFinalDoc("/customers/customer1.json");
         assertEquals("1", rawDoc.get("envelope").get("instance").get("CustomerID").asText(),
