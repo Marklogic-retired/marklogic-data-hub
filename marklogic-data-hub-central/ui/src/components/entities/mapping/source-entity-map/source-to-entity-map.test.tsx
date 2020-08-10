@@ -613,7 +613,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText('suffix')).toBeInTheDocument();
 
         //Check if indentation is right
-        expect(getByText('suffix').closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;");
+        expect(getByText('suffix').closest('td')?.firstElementChild).toHaveStyle("padding-left: 40px;");
 
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
         expect(expandCollapseBtn.textContent).toBe('Expand'); // Validating the button label
@@ -665,10 +665,10 @@ describe('RTL Source-to-entity map tests', () => {
         let firstName = getByText('FirstNamePreferred');
         let lastName = getByText('LastName');
         expect(firstName).toBeInTheDocument();
-        expect(firstName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;"); // Check if the indentation is right
+        expect(firstName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 40px;"); // Check if the indentation is right
 
         expect(lastName).toBeInTheDocument();
-        expect(lastName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 28px;"); // Check if the indentation is right
+        expect(lastName.closest('td')?.firstElementChild).toHaveStyle("padding-left: 40px;"); // Check if the indentation is right
 
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
         expect(expandCollapseBtn.textContent).toBe('Expand');

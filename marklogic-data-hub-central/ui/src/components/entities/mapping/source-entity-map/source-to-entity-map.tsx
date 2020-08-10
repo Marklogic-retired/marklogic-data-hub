@@ -1219,7 +1219,7 @@ const SourceToEntityMap = (props) => {
                                         className={styles.sourceTable}
                                         rowClassName={() => styles.sourceTableRows}
                                         scroll={{y: '60vh', x: 300 }}
-                                        indentSize={14}
+                                        indentSize={20}
                                         //defaultExpandAllRows={true}
                                         //size="small"
                                         columns={columns}
