@@ -539,7 +539,7 @@ function getXpathFunctionsThatDoNotWorkInMappingExpressions() {
 function getXpathMappingFunctions() {
   const xpathFunctions = xdmp.functions().toObject();
   // The *-uri functions are excluded because the object being mapped is in memory and these functions won't work on it
-  const excludeFunctions = ["base-uri", "document-uri"].concat(getXpathFunctionsThatDoNotWorkInMappingExpressions());
+  const excludeFunctions = ["base-uri", "document-uri", "distinct-values"].concat(getXpathFunctionsThatDoNotWorkInMappingExpressions());
   return getFunctionsWithSignatures(xpathFunctions, excludeFunctions);
 }
 
