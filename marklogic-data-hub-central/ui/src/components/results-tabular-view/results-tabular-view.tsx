@@ -6,7 +6,6 @@ import styles from './results-tabular-view.module.scss';
 import ColumnSelector from '../../components/column-selector/column-selector';
 import { Tooltip } from 'antd';
 import { SearchContext } from '../../util/search-context';
-import { tableParser } from '../../util/data-conversion';
 import { Link } from 'react-router-dom';
 import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -66,7 +65,6 @@ const ResultsTabularView = (props) => {
     const [popoverVisibility, setPopoverVisibility] = useState<boolean>(false);
     const [primaryKey, setPrimaryKey] = useState<string>('');
 
-
     const {
         searchOptions,
         setSelectedTableProperties,
@@ -76,7 +74,6 @@ const ResultsTabularView = (props) => {
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
     let counter = 0;
-    let parsedPayload = tableParser(props);
 
     let selectedTableColumns = props.selectedPropertyDefinitions;
 
@@ -379,13 +376,13 @@ const ResultsTabularView = (props) => {
         }
 
         let index: string = '';
-        for (let i in parsedPayload.data) {
-            if (parsedPayload.data[i].uri == rowId.uri) {
+        for (let i in props.data) {
+            if (props.data[i].uri == rowId.uri) {
                 index = i;
             }
         }
-
-        nestedData = parseJson(parsedPayload.data[index]?.itemEntityProperties[0]);
+ 
+        nestedData = parseJson(props.data[index]?.entityInstance);
 
         return <MLTable
             rowKey="key"
