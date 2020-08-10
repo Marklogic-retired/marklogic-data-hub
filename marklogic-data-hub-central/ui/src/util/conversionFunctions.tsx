@@ -44,12 +44,15 @@ const extractCollectionFromSrcQuery = (query) => {
             query.lastIndexOf("]") - 1
         );
         return getInitialChars(srcCollection, 30, '...');
-    } else {
+    } else if (query.includes('(') && query.includes(')')) {
         let srcCollection = query.substring(
             query.lastIndexOf("(") + 2,
             query.lastIndexOf(")") - 1
         );
         return getInitialChars(srcCollection, 30, '...');
+    }
+    else{
+        return getInitialChars(query, 30, '...');
     }
 }
 

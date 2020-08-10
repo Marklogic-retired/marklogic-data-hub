@@ -14,7 +14,7 @@ const CreateEditMappingDialog = (props) => {
   const [collections, setCollections] = useState('');
   const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
-
+  const [isQuerySelected, setIsQuerySelected] = useState(false);
   //To check submit validity
   const [isMapNameTouched, setMapNameTouched] = useState(false);
   const [isDescriptionTouched, setDescriptionTouched] = useState(false);
@@ -36,6 +36,7 @@ const CreateEditMappingDialog = (props) => {
       setDescription(props.mapData.description);
       setSrcQuery(props.mapData.sourceQuery);
       setSelectedSource(props.mapData.selectedSource);
+      if(isQuerySelected == true) setCollections("");
       if(props.mapData.selectedSource === 'collection'){
       if(props.mapData.sourceQuery.includes('[') && props.mapData.sourceQuery.includes(']')) {
           let srcCollection = props.mapData.sourceQuery.substring(
@@ -44,12 +45,15 @@ const CreateEditMappingDialog = (props) => {
           );
           setCollections(srcCollection);
       }
-      else{
+      else if((props.mapData.sourceQuery.includes('(') && props.mapData.sourceQuery.includes(')'))){
           let srcCollection = props.mapData.sourceQuery.substring(
             props.mapData.sourceQuery.lastIndexOf("(") + 2,
             props.mapData.sourceQuery.lastIndexOf(")") - 1
           );
           setCollections(srcCollection);
+      }
+      else{
+          setCollections(props.mapData.sourceQuery);
       }
       }
       setIsValid(true);
@@ -144,7 +148,8 @@ const CreateEditMappingDialog = (props) => {
         sourceQuery: sQuery
       }
     } else {
-      dataPayload = {
+        setIsQuerySelected(true); //to reset collection name
+        dataPayload = {
         name: mapName,
         targetEntityType: props.targetEntityType,
         description: description,
@@ -279,6 +284,7 @@ const CreateEditMappingDialog = (props) => {
     else {
       setSelectedSourceTouched(true);
       setSelectedSource(event.target.value);
+
       if (props.mapData && event.target.value === props.mapData.selectedSource) {
         setSelectedSourceTouched(false);
       }
