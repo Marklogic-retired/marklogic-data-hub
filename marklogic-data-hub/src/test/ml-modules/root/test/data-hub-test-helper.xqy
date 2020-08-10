@@ -14,6 +14,10 @@ declare variable $TYPE-TO-COLLECTION-MAP := map:new((
   map:entry("flows", "http://marklogic.com/data-hub/flow"),
   map:entry("entities", "http://marklogic.com/entity-services/models"),
   map:entry("mappings", "http://marklogic.com/data-hub/mappings"),
+  map:entry("steps/ingestion", ("http://marklogic.com/data-hub/steps/ingestion","http://marklogic.com/data-hub/steps")),
+  map:entry("steps/mapping", ("http://marklogic.com/data-hub/mappings","http://marklogic.com/data-hub/steps/mapping","http://marklogic.com/data-hub/steps")),
+  map:entry("steps/matching", ("http://marklogic.com/data-hub/steps/matching","http://marklogic.com/data-hub/steps")),
+  map:entry("steps/merging", ("http://marklogic.com/data-hub/steps/merging","http://marklogic.com/data-hub/steps")),
   map:entry("step-definitions", "http://marklogic.com/data-hub/step-definition"),
   map:entry("loadData", "http://marklogic.com/data-hub/load-data-artifact"),
   map:entry("content", "raw-content")
@@ -23,7 +27,12 @@ declare variable $TYPE-TO-PERMISSIONS-MAP := map:new((
   map:entry("entities", (xdmp:permission("data-hub-entity-model-reader", "read"), xdmp:permission("data-hub-entity-model-writer", "update"))),
   map:entry("flows", (xdmp:permission("data-hub-flow-reader", "read"), xdmp:permission("data-hub-flow-writer", "update"))),
   map:entry("mappings", (xdmp:permission("data-hub-mapping-reader", "read"), xdmp:permission("data-hub-mapping-writer", "update"))),
-  map:entry("step-definitions", (xdmp:permission("data-hub-step-definition-reader", "read"), xdmp:permission("data-hub-step-definition-writer", "update")))
+  map:entry("steps/ingestion", (xdmp:permission("data-hub-ingestion-reader", "read"), xdmp:permission("data-hub-ingestion-writer", "update"))),
+  map:entry("steps/mapping", (xdmp:permission("data-hub-mapping-reader", "read"), xdmp:permission("data-hub-mapping-writer", "update"))),
+  map:entry("steps/matching", (xdmp:permission("data-hub-match-merge-reader", "read"), xdmp:permission("data-hub-match-merge-writer", "update"))),
+  map:entry("steps/merging", (xdmp:permission("data-hub-match-merge-reader", "read"), xdmp:permission("data-hub-match-merge-writer", "update"))),
+  map:entry("step-definitions", (xdmp:permission("data-hub-step-definition-reader", "read"), xdmp:permission("data-hub-step-definition-writer", "update"))),
+  map:entry("content", (xdmp:permission("data-hub-common", "read"), xdmp:permission("data-hub-common", "update")))
 ));
 
 declare function load-artifacts($caller-path as xs:string) as xs:string*

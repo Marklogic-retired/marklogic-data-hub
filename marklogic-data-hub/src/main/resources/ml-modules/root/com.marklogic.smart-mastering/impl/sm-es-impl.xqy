@@ -11,6 +11,8 @@ module namespace es-impl = "http://marklogic.com/smart-mastering/entity-services
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace helper-impl = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 declare variable $_entity-descriptors as array-node() := array-node {
@@ -29,7 +31,7 @@ declare variable $_entity-descriptors as array-node() := array-node {
     for $entity in  $entities
     let $entity-version := map:get($entity, "entityVersion")
     let $entity-title := map:get($entity, "entityTitle")
-    let $nc-name := xdmp:encode-for-NCName($entity-title)
+    let $nc-name := helper-impl:NCName-compatible($entity-title)
     let $raw-def :=
           fn:collection("http://marklogic.com/entity-services/models")
             /(object-node()|es:model)[(es:info/es:version|info/version) = $entity-version]

@@ -1,0 +1,38 @@
+{
+  "name": "customerV1Flow",
+  "steps": {
+    "1": {
+      "name" : "matchCustomer_V1",
+      "options" : {
+        "stepUpdate" : false,
+        "additionalCollections" : [ ],
+        "sourceQuery" : "cts.collectionQuery([\"raw-content\"])",
+        "acceptsBatch" : true,
+        "targetEntity" : "Customer_V1",
+        "sourceDatabase" : "data-hub-FINAL",
+        "collections" : [ ],
+        "permissions" : "data-hub-common,read,data-hub-common,update",
+        "matchOptions" : {
+          "scoring" : {
+            "add" : [ {
+              "propertyName" : "customer_Id",
+              "weight" : "10"
+            } ]
+          },
+          "thresholds" : {
+            "threshold" : [ {
+              "above" : "9",
+              "label" : "merged",
+              "action" : "merge"
+            } ]
+          }
+        },
+        "sourceCollection" : "raw-content",
+        "outputFormat" : "json",
+        "targetDatabase" : "data-hub-FINAL"
+      },
+      "stepDefinitionName" : "default-matching",
+      "stepDefinitionType" : "MATCHING"
+    }
+  }
+}

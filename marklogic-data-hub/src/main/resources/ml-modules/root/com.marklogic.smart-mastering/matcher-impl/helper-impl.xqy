@@ -48,7 +48,7 @@ declare function helper-impl:property-name-to-query($options as element(), $full
             )
         else ()
       let $prop-entity-def := $property-details/../..
-      let $property-entity-qname := $prop-entity-def ! fn:QName(./namespaceUri, xdmp:encode-for-NCName(./entityTitle))
+      let $property-entity-qname := $prop-entity-def ! fn:QName(./namespaceUri, helper-impl:NCName-compatible(./entityTitle))
       let $scope-query :=
         if (fn:exists($property-entity-qname)) then
           if ($is-json) then
@@ -125,13 +125,13 @@ declare function helper-impl:property-name-to-qname($options as element(), $full
             )
         else ()
       let $prop-entity-def := $property-details/../..
-      let $property-entity-qname := $prop-entity-def ! fn:QName(./namespaceUri, xdmp:encode-for-NCName(./entityTitle))
+      let $property-entity-qname := $prop-entity-def ! fn:QName(./namespaceUri, helper-impl:NCName-compatible(./entityTitle))
       let $property-def := $options/matcher:property-defs/matcher:property[@name = $full-property-name]
       let $qname :=
           if (fn:exists($property-def)) then
             fn:QName($property-def/@namespace, $property-def/@localname)
           else
-            fn:QName($prop-entity-def/namespaceUri, xdmp:encode-for-NCName($property-name))
+            fn:QName($prop-entity-def/namespaceUri, helper-impl:NCName-compatible($property-name))
       return (
         map:put($_cached-property-name-to-qnames, $key, $qname),
         $qname
@@ -196,4 +196,11 @@ declare function helper-impl:group-queries-by-scope($queries as cts:query*, $gro
         $grouping-query-fun($grouped-queries)
       else
         $grouped-queries
+};
+
+declare function helper-impl:NCName-compatible($title as xs:string) {
+  if ($title castable as xs:NCName) then
+    $title
+  else
+    xdmp:encode-for-NCName($title)
 };
