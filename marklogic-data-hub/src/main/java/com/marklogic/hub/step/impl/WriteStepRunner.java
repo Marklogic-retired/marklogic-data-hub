@@ -401,7 +401,7 @@ public class WriteStepRunner implements StepRunner {
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
         }
 
-        if(StringUtils.isNotEmpty(outputURIPrefix) && StringUtils.isNotEmpty(outputURIReplacement)){
+        if(outputURIPrefix != null && StringUtils.isNotEmpty(outputURIReplacement)){
             throw new RuntimeException("'outputURIPrefix' and 'outputURIReplacement' cannot be set simultaneously");
         }
 
@@ -679,7 +679,7 @@ public class WriteStepRunner implements StepRunner {
 
     protected String generateUriForCsv(String parentPath, String os){
         String uri;
-        if(StringUtils.isNotEmpty(outputURIPrefix)){
+        if(outputURIPrefix != null){
             try {
                 uri = generateAndEncodeURI(outputURIPrefix).replace("%", "%%");
             } catch (URISyntaxException e) {
@@ -696,8 +696,9 @@ public class WriteStepRunner implements StepRunner {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+            uri = uri + "/";
         }
-        return String.format(uri +"/%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID());
+        return String.format(uri +"%s." + ("xml".equalsIgnoreCase(outputFormat) ? "xml":"json"), UUID.randomUUID());
     }
 
     private void addToBatcher(File file, Format fileFormat) throws IOException {
@@ -728,7 +729,7 @@ public class WriteStepRunner implements StepRunner {
                 if (!writeBatcher.isStopped()) {
                     try {
                         String uri;
-                        if(StringUtils.isNotEmpty(outputURIPrefix)){
+                        if(outputURIPrefix != null){
                             uri = getPrefixedEncodedURI(file.getName());
                         }
                         else {

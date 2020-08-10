@@ -173,6 +173,12 @@ public class WriteStepRunnerTest extends HubTestBase {
         assertThat(wsr.generateUriForCsv("/abc", SystemUtils.OS_NAME.toLowerCase()), matchesPattern(expectedPattern(null, wsr)));
         assertThat(wsr.generateUriForCsv("C:\\abc\\def", "windows 10"), matchesPattern(expectedPattern(null, wsr)));
 
+        wsr.outputURIPrefix = "";
+        wsr.outputFormat = "json";
+        assertThat(wsr.generateUriForCsv("/abc", SystemUtils.OS_NAME.toLowerCase()), matchesPattern(expectedPattern("", wsr)));
+        assertThat(wsr.generateUriForCsv("C:\\abc\\def", "windows 10"), matchesPattern(expectedPattern("", wsr)));
+
+
         wsr.outputURIPrefix = null;
         wsr.outputFormat = "json";
 
@@ -185,12 +191,12 @@ public class WriteStepRunnerTest extends HubTestBase {
     }
 
     private String expectedPattern(String path, WriteStepRunner wsr){
-        String commonPattern = new StringBuilder().append("/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}.").append(wsr.outputFormat).toString();
-        if(StringUtils.isNotEmpty(wsr.outputURIPrefix)){
+        String commonPattern = new StringBuilder().append("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}.").append(wsr.outputFormat).toString();
+        if(wsr.outputURIPrefix != null){
             return new StringBuilder().append(wsr.outputURIPrefix).append(commonPattern).toString();
         }
         else{
-            return new StringBuilder().append(path).append(commonPattern).toString();
+            return new StringBuilder().append(path).append("/").append(commonPattern).toString();
         }
 
     }

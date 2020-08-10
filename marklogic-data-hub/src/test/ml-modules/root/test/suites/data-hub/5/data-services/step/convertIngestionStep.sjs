@@ -37,7 +37,7 @@ let info = {
   additionalCollections: ["customerJSON"],
   inputFilePath: "data-sets/CustomerLoadJSON",
   outputURIReplacement: ".*CustomerLoadJSON,'/customer'",
-  outputURIPrefix: "/customer/",
+  outputURIPrefix: "",
   separator: ",",
   batchSize: 52,
   threadCount: 7
@@ -72,7 +72,7 @@ assertions.push(
   test.assertEqual("data-sets/CustomerLoadJSON", flowStep.fileLocations.inputFilePath),
   //'outputURIReplacement' should be removed from the step as it has 'outputURIPrefix' set
   test.assertNotExists(flowStep.fileLocations.outputURIReplacement),
-  test.assertEqual("/customer/", flowStep.fileLocations.outputURIPrefix),
+  test.assertEqual("", flowStep.fileLocations.outputURIPrefix),
   test.assertEqual(",", flowStep.fileLocations.separator),
 
   test.assertEqual("myIngester", options.headers.sources[0].name),
