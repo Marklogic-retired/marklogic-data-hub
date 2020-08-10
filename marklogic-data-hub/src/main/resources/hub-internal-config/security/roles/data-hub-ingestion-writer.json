@@ -3,6 +3,7 @@
   "description": "Permits writing an ingestion step",
   "role": [
     "data-hub-step-definition-reader",
+    "data-hub-ingestion-reader",
     "data-hub-common-writer"
   ],
   "privilege": [

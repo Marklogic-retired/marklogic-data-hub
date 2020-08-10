@@ -3,6 +3,7 @@
   "description": "Permits updating mapping documents",
   "role": [
     "data-hub-common-writer",
+    "data-hub-mapping-reader",
     "data-hub-step-definition-reader"
   ],
   "privilege": [
