@@ -191,7 +191,7 @@ public class FlowRunnerTest extends HubTestBase {
         Map<String,Object> stepConfig = new HashMap<>();
         Map<String,String> stepDetails = new HashMap<>();
 
-        stepDetails.put("outputURIPrefix" ,"/prefix-output");
+        stepDetails.put("outputURIPrefix" ,"/prefix-output/");
         stepConfig.put("fileLocations", stepDetails);
         stepDetails.put("outputURIReplacement" ,null);
 
