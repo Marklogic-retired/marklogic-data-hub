@@ -184,8 +184,8 @@ const Facet: React.FC<Props> = (props) => {
             data-cy={stringConverter(props.name) + "-clear"}
           >Clear
           </div>
-          <div className={styles.toggle} onClick={() => toggleShow(!show)}>
-            <Icon style={{fontSize: '12px'}} type='down' rotate={show ? 180 : undefined}/>
+          <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
+            <Icon style={{fontSize: '12px'}} type='down' rotate={show ? 0 : 180} />
           </div>
         </div>
       </div>

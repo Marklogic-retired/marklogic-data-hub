@@ -325,7 +325,6 @@ const Browse: React.FC<Props> = ({ location }) => {
                   />
                 </div>
                 <div className={styles.spinViews}>
-                  {isLoading && <MLSpin data-testid="spinner" className={styles.overlay} />}
                   <div className={styles.switchViews}>
                     <div className={!tableView ? styles.toggled : styles.toggleView}
                       data-cy="facet-view" id={'snippetView'}
@@ -351,6 +350,8 @@ const Browse: React.FC<Props> = ({ location }) => {
                   entityDefArray={entityDefArray}
                 />
               </div>
+              {isLoading ? <MLSpin data-testid="spinner" className={styles.overlay} /> :
+              <div>
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
@@ -384,6 +385,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   maxRowsPerPage={searchOptions.maxRowsPerPage}
                 />
               </div>
+              </div>}
             </>
           }
         </Content>
