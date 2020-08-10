@@ -27,14 +27,6 @@ function getNameProperty() {
   return 'name';
 }
 
-function getEntityNameProperty() {
-  return 'targetEntityType';
-}
-
-function getVersionProperty() {
-  return null;
-}
-
 function getCollections() {
   return collections;
 }
@@ -88,7 +80,6 @@ function defaultArtifact(artifactName, entityTypeId) {
 
 module.exports = {
   getNameProperty,
-  getVersionProperty,
   getCollections,
   getStorageDatabases,
   getPermissions,

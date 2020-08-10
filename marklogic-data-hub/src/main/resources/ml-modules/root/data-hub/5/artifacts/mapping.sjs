@@ -30,14 +30,6 @@ function getNameProperty() {
     return 'name';
 }
 
-function getEntityNameProperty() {
-    return 'targetEntityType';
-}
-
-function getVersionProperty() {
-    return null;
-}
-
 function getCollections() {
     return collections;
 }
@@ -72,7 +64,7 @@ function validateArtifact(artifact) {
   const mappingWithSameNameButDifferentEntityTypeExists = cts.exists(cts.andQuery([
     cts.collectionQuery(collections[0]),
     cts.jsonPropertyValueQuery(getNameProperty(), artifact.name),
-    cts.notQuery(cts.jsonPropertyValueQuery(getEntityNameProperty(), artifact.targetEntityType))
+    cts.notQuery(cts.jsonPropertyValueQuery("targetEntityType", artifact.targetEntityType))
   ]));
   if (mappingWithSameNameButDifferentEntityTypeExists) {
     return new Error(`A mapping with the same name but for a different entity type already exists. Please choose a different name.`);
@@ -100,7 +92,6 @@ function defaultArtifact(artifactName, entityTypeId) {
 
 module.exports = {
     getNameProperty,
-    getVersionProperty,
     getCollections,
     getStorageDatabases,
     getPermissions,
