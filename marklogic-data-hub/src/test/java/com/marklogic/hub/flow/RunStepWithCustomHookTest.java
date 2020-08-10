@@ -13,12 +13,11 @@ public class RunStepWithCustomHookTest extends AbstractHubCoreTest {
 
     private final static String URI_CREATED_BY_HOOK = "/insertedByHook/customer1.json";
 
-    ReferenceModelProject project;
     HubClient client;
 
     @BeforeEach
     void beforeEach() {
-        project = installReferenceModelProject();
+        ReferenceModelProject project = installReferenceModelProject();
         runAsDataHubOperator();
         client = getHubClient();
         project.createRawCustomer(1, "Jane");
@@ -26,7 +25,7 @@ public class RunStepWithCustomHookTest extends AbstractHubCoreTest {
 
     @Test
     void beforeHook() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("customHookFlow", "1"));
+        RunFlowResponse response = runFlow(new FlowInputs("customHookFlow", "1"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         assertNotNull(client.getStagingClient().newDocumentManager().exists(URI_CREATED_BY_HOOK));
@@ -41,7 +40,7 @@ public class RunStepWithCustomHookTest extends AbstractHubCoreTest {
      */
     @Test
     void afterHook() {
-        RunFlowResponse response = project.runFlow(new FlowInputs("customHookFlow", "2"));
+        RunFlowResponse response = runFlow(new FlowInputs("customHookFlow", "2"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         assertNull(client.getStagingClient().newDocumentManager().exists(URI_CREATED_BY_HOOK));

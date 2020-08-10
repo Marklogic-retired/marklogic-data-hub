@@ -10,10 +10,6 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.flow.FlowInputs;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 
 import java.io.ByteArrayInputStream;
 import java.util.LinkedHashMap;
@@ -99,12 +95,5 @@ public class ReferenceModelProject extends TestObject {
             .withCollections(customerEntityType)
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
         mgr.write("/" + customerEntityType + customer.customerId + fileExtension, metadata, new InputStreamHandle(instanceByteStream));
-    }
-
-    public RunFlowResponse runFlow(FlowInputs flowInputs) {
-        FlowRunner flowRunner = new FlowRunnerImpl(hubClient);
-        RunFlowResponse flowResponse = flowRunner.runFlow(flowInputs);
-        flowRunner.awaitCompletion();
-        return flowResponse;
     }
 }

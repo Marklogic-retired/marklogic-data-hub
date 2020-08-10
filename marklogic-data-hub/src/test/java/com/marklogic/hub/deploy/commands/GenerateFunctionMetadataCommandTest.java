@@ -10,7 +10,6 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.impl.Versions;
-import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,17 +71,16 @@ public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
     @Test
     void updateModule() {
         if (versions.isVersionCompatibleWithES()) {
-            ReferenceModelProject project = installReferenceModelProject();
-            project.createRawCustomer(2, "CustomerTwo");
+            installReferenceModelProject().createRawCustomer(2, "CustomerTwo");
 
             // Run the flow first to make sure it succeeds
-            RunFlowResponse response = project.runFlow(new FlowInputs("simpleMapping", "1"));
+            RunFlowResponse response = runFlow(new FlowInputs("simpleMapping", "1"));
             assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
 
             // Now generate function metadata. If the mapping transforms aren't re-generated as well, then
             // the flow will fail. So we'll then run the flow to make sure it still succeeds.
             new GenerateFunctionMetadataCommand(getHubConfig(), true).generateFunctionMetadata();
-            response = project.runFlow(new FlowInputs("simpleMapping", "1"));
+            response = runFlow(new FlowInputs("simpleMapping", "1"));
             assertEquals("finished", response.getJobStatus());
             assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
         }
