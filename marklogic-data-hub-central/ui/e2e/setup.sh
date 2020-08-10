@@ -18,15 +18,11 @@ if $DHS
 then
         env=dhs
         perl -i -pe"s/mlHost=/mlHost=$mlHost/g" gradle-dhs.properties
-        ./gradlew hubSaveIndexes -PenvironmentName=$env --info --stacktrace
-        ./gradlew hubGeneratePII -PenvironmentName=$env --info --stacktrace
         ./gradlew hubDeployAsDeveloper -PenvironmentName=$env --info --stacktrace
 else
         cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
 
         ./gradlew mlDeploy -PmlUsername=admin -PmlPassword=admin --info --stacktrace
-        ./gradlew hubSaveIndexes --info --stacktrace
-        ./gradlew hubGeneratePII --info --stacktrace
         ./gradlew hubDeployAsDeveloper --info --stacktrace
 fi
 

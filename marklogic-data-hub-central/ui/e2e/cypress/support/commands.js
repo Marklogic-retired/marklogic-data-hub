@@ -83,7 +83,8 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
 })
 
 Cypress.Commands.add('loginAsDeveloper', () => {
-  return cy.fixture('users/developer')
+  setTestUserRoles(["hub-central-developer"])
+  return cy.fixture('users/hub-user')
 })
 
 Cypress.Commands.add("loginAsOperator", () => {
