@@ -18,6 +18,8 @@ import {
 } from '../../../assets/mock-data/modeling';
 
 import { ConfirmationType } from '../../../types/modeling-types';
+import { ModelingContext } from '../../../util/modeling-context';
+import { isModified } from '../../../assets/mock-data/modeling-context-mock';
 
 jest.mock('../../../api/modeling');
 
@@ -116,7 +118,7 @@ describe('EntityTypeModal Component', () => {
 
     // Add back once functionality is added
     expect(getByTestId('Order-save-icon')).not.toHaveClass('iconSave');
-    // expect(getByTestId('Order-revert-icon')).toHaveClass('iconRevert');
+    //expect(getByTestId('Order-revert-icon')).toHaveClass('iconRevert');
     expect(getByTestId('Order-trash-icon')).toHaveClass('iconTrash');
 
     userEvent.click(getByTestId('Order-span'));
@@ -151,9 +153,11 @@ describe('EntityTypeModal Component', () => {
       expect(mockEntityReferences).toBeCalledTimes(1);
 
       await wait(() =>
-        expect(screen.getByText('Confirmation')).toBeInTheDocument(),
+        expect(screen.getByLabelText('delete-text')).toBeInTheDocument(),
       )
+
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntity}-yes`));
+
       expect(mockDeleteEntity).toBeCalledTimes(1);
   });
 
@@ -185,7 +189,7 @@ describe('EntityTypeModal Component', () => {
       expect(mockEntityReferences).toBeCalledTimes(1);
 
       await wait(() =>
-        expect(screen.getByText('Confirmation')).toBeInTheDocument()
+        expect(screen.getByLabelText('delete-relationship-text')).toBeInTheDocument()
       )
       expect(screen.getByText('Existing entity type relationships.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipWarn}-yes`));
@@ -220,7 +224,7 @@ describe('EntityTypeModal Component', () => {
       expect(mockEntityReferences).toBeCalledTimes(1);
 
       await wait(() =>
-        expect(screen.getByText('Delete: Entity Type in Use')).toBeInTheDocument()
+        expect(screen.getByLabelText('delete-step-text')).toBeInTheDocument()
       )
       expect(screen.getByText('Entity type is used in one or more steps.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityStepWarn}-close`));
@@ -232,25 +236,27 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId, getByLabelText, getByText, debug } =  render(
       <Router>
-        <EntityTypeTable 
-          allEntityTypesData={getEntityTypes}
-          canReadEntityModel={true}
-          canWriteEntityModel={true}
-          autoExpand=''
-          editEntityTypeDescription={jest.fn()}
-          updateEntities={jest.fn()}
-          revertAllEntity={false}
-          toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
-        />
+        <ModelingContext.Provider value={isModified}>  
+          <EntityTypeTable 
+            allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={true}
+            autoExpand=''
+            editEntityTypeDescription={jest.fn()}
+            updateEntities={jest.fn()}
+            revertAllEntity={false}
+            toggleRevertAllEntity={jest.fn()}
+            modifiedEntityTypesData={[]}
+            useModifiedEntityTypesData={false}
+            toggleModifiedEntityTypesData={jest.fn()}
+          />
+        </ModelingContext.Provider>
       </Router>);
 
       userEvent.click(getByTestId('Order-save-icon'));
 
       await wait(() =>
-        expect(screen.getByText('Confirmation')).toBeInTheDocument(),
+        expect(screen.getByLabelText('save-text')).toBeInTheDocument(),
       )
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveEntity}-yes`));
       expect(mockUpdateEntityModels).toBeCalledTimes(1);
@@ -261,25 +267,27 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId } =  render(
       <Router>
-        <EntityTypeTable
-          allEntityTypesData={getEntityTypes}
-          canReadEntityModel={true}
-          canWriteEntityModel={true}
-          autoExpand=''
-          editEntityTypeDescription={jest.fn()}
-          updateEntities={jest.fn()}
-          revertAllEntity={false}
-          toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
-        />
+        <ModelingContext.Provider value={isModified}>  
+          <EntityTypeTable
+            allEntityTypesData={getEntityTypes}
+            canReadEntityModel={true}
+            canWriteEntityModel={true}
+            autoExpand=''
+            editEntityTypeDescription={jest.fn()}
+            updateEntities={jest.fn()}
+            revertAllEntity={false}
+            toggleRevertAllEntity={jest.fn()}
+            modifiedEntityTypesData={[]}
+            useModifiedEntityTypesData={false}
+            toggleModifiedEntityTypesData={jest.fn()}
+          />
+        </ModelingContext.Provider>
       </Router>);
 
     userEvent.click(getByTestId('Order-revert-icon'));
 
     await wait(() =>
-      expect(screen.getByText('Confirmation')).toBeInTheDocument(),
+      expect(screen.getByLabelText('revert-text')).toBeInTheDocument(),
     )
   });
 });

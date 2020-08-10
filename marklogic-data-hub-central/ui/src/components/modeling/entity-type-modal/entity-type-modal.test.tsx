@@ -42,8 +42,8 @@ describe('EntityTypeModal Component', () => {
         description={''}
       />);
     expect(getByText('Add Entity Type')).toBeInTheDocument();
-    await userEvent.type(getByPlaceholderText('Enter name'), 'AnotherModel');
-    await userEvent.type(getByPlaceholderText('Enter description'), 'Testing');
+    userEvent.type(getByPlaceholderText('Enter name'), 'AnotherModel');
+    userEvent.type(getByPlaceholderText('Enter description'), 'Testing');
 
     await wait(() => {
       userEvent.click(getByText('Add'));
@@ -67,8 +67,8 @@ describe('EntityTypeModal Component', () => {
       />);
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
-    await userEvent.type(getByPlaceholderText('Enter name'), '123-Box');
-    await userEvent.type(getByPlaceholderText('Enter description'), 'Product entity desription');;
+    userEvent.type(getByPlaceholderText('Enter name'), '123-Box');
+    userEvent.type(getByPlaceholderText('Enter description'), 'Product entity desription');;
 
     await wait(() => {
       userEvent.click(getByText('Add'));
@@ -92,8 +92,8 @@ describe('EntityTypeModal Component', () => {
       />);
     expect(getByText('Add Entity Type')).toBeInTheDocument();
 
-    await userEvent.type(getByPlaceholderText('Enter name'), 'Testing');
-    await userEvent.type(getByPlaceholderText('Enter description'), '');
+    userEvent.type(getByPlaceholderText('Enter name'), 'Testing');
+    userEvent.type(getByPlaceholderText('Enter description'), '');
 
     await wait(() => {
       userEvent.click(getByText('Add'));
@@ -151,8 +151,8 @@ describe('EntityTypeModal Component', () => {
         description={'Model description'}
       />);
 
-    await userEvent.clear(getByPlaceholderText('Enter description'));
-    await userEvent.type(getByPlaceholderText('Enter description'), 'Updated Description');
+    userEvent.clear(getByPlaceholderText('Enter description'));
+    userEvent.type(getByPlaceholderText('Enter description'), 'Updated Description');
 
     await wait(() => {
       userEvent.click(getByText('OK'));

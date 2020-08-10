@@ -184,13 +184,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let entityDescription = parseText[1];
 
         return (
-          <MLTooltip title={ModelingTooltips.entityTypeName}>
-            <span data-testid={parseText[0] + '-span'} className={styles.link}
-              onClick={() => {
-                props.editEntityTypeDescription(entityName, entityDescription);
-              }}>
-              {entityName}</span>
-          </MLTooltip>
+          <>
+            {props.canWriteEntityModel && props.canReadEntityModel ? (
+              <MLTooltip title={ModelingTooltips.entityTypeName}>
+                <span data-testid={parseText[0] + '-span'} className={styles.link}
+                  onClick={() => {
+                    props.editEntityTypeDescription(entityName, entityDescription);
+                  }}>
+                  {entityName}</span>
+              </MLTooltip>
+            ) : <span data-testid={parseText[0] + '-span'}>{entityName}</span>}
+          </>
         )
       },
       sorter: (a, b) => {
@@ -207,17 +211,22 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         let instanceCount = numberConverter(parseInt(parseText[1]));
 
         return (
-          <MLTooltip title={ModelingTooltips.instanceNumber}>
-            <Link
-              to={{
-                pathname: "/tiles/explore",
-                state: { entity: parseText[0] }
-              }}
-              data-testid={parseText[0] + '-instance-count'}
-            >
-              {instanceCount}
-            </Link>
-          </MLTooltip>
+          <>
+            {instanceCount === '0' ? <span data-testid={parseText[0] + '-instance-count'}>{instanceCount}</span> : (
+              <MLTooltip title={ModelingTooltips.instanceNumber}>
+                <Link
+                  to={{
+                    pathname: "/tiles/explore",
+                    state: { entity: parseText[0] }
+                  }}
+                  data-testid={parseText[0] + '-instance-count'}
+                >
+                  {instanceCount}
+                </Link>
+              </MLTooltip>
+              )
+            }
+         </> 
         )
       },
       sorter: (a, b) => {
@@ -268,30 +277,41 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       className: styles.actions,
       width: 100,
       render: text => {
-        return (
-          <div className={styles.iconContainer}>
+
+        const saveIcon = props.canWriteEntityModel ? (
           <MLTooltip title={ModelingTooltips.saveIcon}>
             <span
               data-testid={text + '-save-icon'}
-              className={(!props.canWriteEntityModel && props.canReadEntityModel) || !isAnyEntityModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
-              onClick={() => confirmSaveEntity(text)}
-            />
-          </MLTooltip>
-          <MLTooltip title={ModelingTooltips.revertIcon}>
-            <FontAwesomeIcon
-              data-testid={text + '-revert-icon'} 
-              className={(!props.canWriteEntityModel && props.canReadEntityModel) || !isAnyEntityModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
-              icon={faUndo}
+              className={!isAnyEntityModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
               onClick={(event) => {
-                if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                if (!props.canWriteEntityModel && props.canReadEntityModel || !isEntityModified(text)) {
                   return event.preventDefault()
                 } else {
-                  confirmRevertEntity(text);
+                  confirmSaveEntity(text)
                 }
               }}
-              size="2x"
             />
           </MLTooltip>
+        ) : <span data-testid={text + '-save-icon'} className={styles.iconSaveReadOnly}/>
+
+        return (
+          <div className={styles.iconContainer}>
+            {saveIcon}
+            <MLTooltip title={ModelingTooltips.revertIcon}>
+              <FontAwesomeIcon
+                data-testid={text + '-revert-icon'} 
+                className={(!props.canWriteEntityModel && props.canReadEntityModel) || !isAnyEntityModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
+                icon={faUndo}
+                onClick={(event) => {
+                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                    return event.preventDefault()
+                  } else {
+                    confirmRevertEntity(text);
+                  }
+                }}
+                size="2x"
+              />
+            </MLTooltip>
             <FontAwesomeIcon
               data-testid={text + '-trash-icon'}
               className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}

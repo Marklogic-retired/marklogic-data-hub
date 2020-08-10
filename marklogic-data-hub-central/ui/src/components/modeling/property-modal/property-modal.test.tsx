@@ -68,7 +68,7 @@ describe('Property Modal Component', () => {
     expect(queryByText('Add Property')).toBeNull();
   });
 
-  test('Add a basic property type and duplicate name validation', async () => {
+  test('Add a basic property type and duplicate name validation', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -90,12 +90,12 @@ describe('Property Modal Component', () => {
       </ModelingContext.Provider>
     );
 
-    await userEvent.type(getByLabelText('input-name'), 'name');
+    userEvent.type(getByLabelText('input-name'), 'name');
     userEvent.click(getByText('Add'));
     expect(getByText('A property already exists with a name of name')).toBeInTheDocument();
 
     userEvent.clear(getByLabelText('input-name'));
-    await userEvent.type(getByLabelText('input-name'), 'new-property-name');
+    userEvent.type(getByLabelText('input-name'), 'new-property-name');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
@@ -128,7 +128,7 @@ describe('Property Modal Component', () => {
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
 
-  test('Add a Property with relationship type', async () => {
+  test('Add a Property with relationship type', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -150,7 +150,7 @@ describe('Property Modal Component', () => {
       </ModelingContext.Provider>
     );
 
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'Entity-Property');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'Entity-Property');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('Relationship'));
@@ -170,7 +170,7 @@ describe('Property Modal Component', () => {
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
 
-  test('can display error message for property name and type inputs and press cancel', async () => {
+  test('can display error message for property name and type inputs and press cancel', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -189,12 +189,12 @@ describe('Property Modal Component', () => {
         deletePropertyFromDefinition={jest.fn()}
       />);
 
-    await userEvent.type(getByLabelText('input-name'), '123-name');
+    userEvent.type(getByLabelText('input-name'), '123-name');
     userEvent.click(getByText('Add'));
     expect(getByText(ModelingTooltips.nameRegex)).toBeInTheDocument();
     userEvent.clear(getByLabelText('input-name'));
 
-    await userEvent.type(getByLabelText('input-name'), 'name2');
+    userEvent.type(getByLabelText('input-name'), 'name2');
     userEvent.click(getByText('Add'));
     expect(getByText('Type is required')).toBeInTheDocument();
 
@@ -206,7 +206,7 @@ describe('Property Modal Component', () => {
     expect(mockAdd).toHaveBeenCalledTimes(0);
   });
 
-  test('Add a Property with a structured type, no relationship type in dropdown', async () => {
+  test('Add a Property with a structured type, no relationship type in dropdown', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -228,7 +228,7 @@ describe('Property Modal Component', () => {
       </ModelingContext.Provider>
     );
 
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'alternate-address');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'alternate-address');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('Structured'));
@@ -245,7 +245,7 @@ describe('Property Modal Component', () => {
     expect(mockAdd).toHaveBeenCalledTimes(1);
   });
 
-  test('Add a new property to a structured type definition', async () => {
+  test('Add a new property to a structured type definition', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -270,7 +270,7 @@ describe('Property Modal Component', () => {
     expect(getByText('Structured Type:')).toBeInTheDocument();
     expect(getByText('Employee')).toBeInTheDocument();
 
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'email');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'email');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
@@ -292,7 +292,7 @@ describe('Property Modal Component', () => {
     expect(addMock).toHaveBeenCalledTimes(1);
   });
 
-  test('Add a Property with a newly created structured type', async () => {
+  test('Add a Property with a newly created structured type', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -314,14 +314,14 @@ describe('Property Modal Component', () => {
       </ModelingContext.Provider>
     );
 
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'alternate-address');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'alternate-address');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('Structured'));
     userEvent.click(getByText('New Property Type'));
 
     expect(screen.getByText('Add New Structured Property Type')).toBeInTheDocument();
-    await userEvent.type(screen.getByLabelText('structured-input-name'), 'Product');
+    userEvent.type(screen.getByLabelText('structured-input-name'), 'Product');
 
     fireEvent.submit(screen.getByLabelText('structured-input-name'));
 
@@ -339,7 +339,7 @@ describe('Property Modal Component', () => {
     expect(addMock).toHaveBeenCalledTimes(1);
   });
 
-  test('Add an identifier to a new Property', async () => {
+  test('Add an identifier to a new Property', () => {
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Order' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -360,7 +360,7 @@ describe('Property Modal Component', () => {
         />
       </ModelingContext.Provider>
     );
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'newId');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'newId');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
@@ -573,7 +573,7 @@ describe('Property Modal Component', () => {
     expect(getByText('Edit Property')).toBeInTheDocument();
 
     userEvent.clear(getByPlaceholderText('Enter the property name'));
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'alt_shipping');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'alt_shipping');
 
     const multipleRadio = screen.getByLabelText('multiple-yes')
     expect(multipleRadio['value']).toBe('yes');
@@ -589,7 +589,7 @@ describe('Property Modal Component', () => {
     expect(editMock).toHaveBeenCalledTimes(1);
   });
 
-  test('can edit a basic property from a structured type', async () => {
+  test('can edit a basic property from a structured type', () => {
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -646,7 +646,7 @@ describe('Property Modal Component', () => {
     expect(getByText('Structured Type:')).toBeInTheDocument();
 
     userEvent.clear(getByPlaceholderText('Enter the property name'));
-    await userEvent.type(getByPlaceholderText('Enter the property name'), 'county');
+    userEvent.type(getByPlaceholderText('Enter the property name'), 'county');
 
     const piiRadio = screen.getByLabelText('pii-yes')
     expect(piiRadio['value']).toBe('yes');
@@ -709,7 +709,7 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
-    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(mockEntityReferences).toBeCalledTimes(2);
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
@@ -770,7 +770,7 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
-    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(mockEntityReferences).toBeCalledTimes(2);
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-step-text')).toBeInTheDocument(),
@@ -824,7 +824,7 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByTestId(`delete-${editPropertyOptions.name}`));
     expect(mockEntityReferences).toBeCalledWith(entityType?.entityName);
-    expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(mockEntityReferences).toBeCalledTimes(2);
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),

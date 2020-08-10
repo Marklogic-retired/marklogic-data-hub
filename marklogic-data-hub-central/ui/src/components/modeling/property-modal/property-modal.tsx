@@ -601,7 +601,12 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const modalFooter = <div className={props.editPropertyOptions.isEdit ? styles.editFooter : styles.addFooter}>
     { props.editPropertyOptions.isEdit &&
-      <MLButton type="link" onClick={() => toggleConfirmModal(true)} >
+      <MLButton type="link" onClick={async () => {
+        if (confirmType === ConfirmationType.Identifer) {
+          await getEntityReferences();
+        }
+        toggleConfirmModal(true);
+      }}>
         <FontAwesomeIcon data-testid={'delete-' + props.editPropertyOptions.name} className={styles.trashIcon} icon={faTrashAlt} />
       </MLButton>
     }

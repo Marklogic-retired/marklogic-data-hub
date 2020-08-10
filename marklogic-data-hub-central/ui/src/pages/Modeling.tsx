@@ -18,6 +18,7 @@ import { ConfirmationType } from '../types/modeling-types';
 const Modeling: React.FC = () => {
   const { handleError } = useContext(UserContext);
   const { modelingOptions, setEntityTypeNamesArray, clearEntityModified } = useContext(ModelingContext);
+
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [modifiedEntityTypes, setModifiedEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
@@ -37,13 +38,37 @@ const Modeling: React.FC = () => {
   const canWriteEntityModel = authorityService.canWriteEntityModel();
 
   useEffect(() => {
-    setEntityTypesFromServer();
+    if (modelingOptions.isModified) {
+      setEntityTypesFromServerAndContext()
+    } else {
+      setEntityTypesFromServer();
+    }
+
   }, []);
 
   const setEntityTypesFromServer = async () => {
     const response = await getPrimaryEntityTypes();
     if (response) {
       setEntityTypes(response);
+      if (response.length > 0) {
+        setEntityTypeNamesArray(response.map(entity => {
+          return {name: entity.entityName, entityTypeId: entity.entityTypeId}
+        }));
+      }
+    }
+  }
+
+  const setEntityTypesFromServerAndContext = async () => {
+    const response = await getPrimaryEntityTypes();
+    if (response && modelingOptions.modifiedEntitiesArray.length > 0) {
+      let updatedEntityTypes = [...response];
+
+      modelingOptions.modifiedEntitiesArray.forEach( entity => {
+        let index = updatedEntityTypes.findIndex( item => item['entityName'] === entity.entityName );
+        updatedEntityTypes[index]['model']['definitions'] = entity.modelDefinition;
+      });
+
+      setEntityTypes(updatedEntityTypes);
       if (response.length > 0) {
         setEntityTypeNamesArray(response.map(entity => {
           return {name: entity.entityName, entityTypeId: entity.entityTypeId}
@@ -150,7 +175,7 @@ const Modeling: React.FC = () => {
   return (
     <div className={styles.modelContainer}>
       { modelingOptions.isModified && (
-        <MLAlert type="info" showIcon message={ModelingTooltips.entityEditedAlert}/>
+        <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
       )}
       <div className={styles.header}>
         <h1>Entity Types</h1>
@@ -178,11 +203,14 @@ const Modeling: React.FC = () => {
             <span className={styles.publishIcon}></span>
             Save All
           </MLButton>
-          <MLButton aria-label="revert-all" onClick={() => {
-            setConfirmType(ConfirmationType.RevertAll);
-            toggleConfirmModal(true)
-          }}
-                    disabled={!modelingOptions.isModified}>
+          <MLButton 
+            disabled={!modelingOptions.isModified}
+            aria-label="revert-all" 
+            onClick={() => {
+              setConfirmType(ConfirmationType.RevertAll);
+              toggleConfirmModal(true)
+            }}
+          >
             <FontAwesomeIcon 
               className={styles.icon} 
               icon={faUndo} 
@@ -196,7 +224,6 @@ const Modeling: React.FC = () => {
         isVisible={showConfirmModal}
         type={confirmType}
         boldTextArray={[]} 
-        stepValues={[]}
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />

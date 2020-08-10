@@ -4,9 +4,9 @@ export const isModified = {
     isModified: true,
     modifiedEntitiesArray: [
       {
-        "entityName": "Product",
+        "entityName": "Order",
         "modelDefinition": {
-          "Product": {
+          "Order": {
             "required": [],
             "pii": [
               "someProperty"
@@ -36,6 +36,7 @@ export const isModified = {
       }
     ]
   },
+  clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn()
 }
@@ -44,6 +45,7 @@ export const notModified = {
   modelingOptions: {
     isModified: false
   },
+  clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn()
 }

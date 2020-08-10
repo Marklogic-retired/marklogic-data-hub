@@ -247,28 +247,32 @@ const PropertyTable: React.FC<Props> = (props) => {
       render: text => {
         let textParse = text && text.split(',');
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
-        return ( text &&
+
+        const addIcon = props.canWriteEntityModel ? (
           <MLTooltip title={ModelingTooltips.addStructuredProperty}>
             <FontAwesomeIcon
               data-testid={'add-struct-'+ structuredTypeName}
-              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.addIconReadOnly : styles.addIcon}
+              className={styles.addIcon}
               icon={faPlusSquare}
-              onClick={(event) => {
-                if (!props.canWriteEntityModel && props.canReadEntityModel) {
-                  return event.preventDefault()
-                } else {
-                  setStructuredTypeOptions({
-                    isStructured: true,
-                    name: text,
-                    propertyName: ''
-                  });
-                  setEditPropertyOptions({ ...editPropertyOptions, isEdit: false })
-                  toggleShowPropertyModal(true);
-                }
+              onClick={() => {
+                setStructuredTypeOptions({
+                  isStructured: true,
+                  name: text,
+                  propertyName: ''
+                });
+                setEditPropertyOptions({ ...editPropertyOptions, isEdit: false })
+                toggleShowPropertyModal(true);           
               }}
             />
           </MLTooltip>
-        )
+        ) : (
+          <FontAwesomeIcon 
+            data-testid={'add-struct-'+ structuredTypeName} className={styles.addIconReadOnly}
+            icon={faPlusSquare}
+          />
+        );
+
+        return text && addIcon
       }
     }
   ];

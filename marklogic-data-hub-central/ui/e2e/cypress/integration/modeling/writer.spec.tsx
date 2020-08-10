@@ -11,17 +11,16 @@ import {
 import { confirmationModal, toolbar, tiles } from '../../support/components/common/index';
 import { Application } from '../../support/application.config';
 import { ConfirmationType } from '../../support/types/modeling-types';
-import browsePage from '../../support/pages/browse'
 import 'cypress-wait-until';
 
-describe('Entity Modeling', () => {
+describe('Entity Modeling: Writer Role', () => {
 
   //login with valid account
   beforeEach(() => {
     cy.visit('/');
     cy.contains(Application.title);
     console.log(Cypress.env('mlHost'));
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer").withRequest()
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest()
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });
@@ -31,19 +30,32 @@ describe('Entity Modeling', () => {
       cy.resetTestUser();
   });
 
-  it('can navigate between explore and model tile by clicking instance count and last processed', () => {
-    cy.waitUntil(() => entityTypeTable.getEntityLastProcessed('Person')).click();
-    tiles.getExploreTile().should('exist');
-    cy.waitUntil(() => browsePage.getSelectedEntity()).should('eq', 'Person');
-    browsePage.getClearAllButton().should('exist');
-    
+  it('can edit, can navigate and see persisted edits, can see navigation warning when logging out with edits', () => {
+    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Customer')).click();
+    propertyTable.editProperty('nicknames');
+    propertyModal.clickCheckbox('facetable');
+    propertyModal.clickCheckbox('sortable');
+    propertyModal.getSubmitButton().click();
+    propertyTable.getFacetIcon('nicknames').should('exist');
+    propertyTable.getSortIcon('nicknames').should('exist');
+    modelPage.getEntityModifiedAlert().should('exist');
+
+    toolbar.getExploreToolbarIcon().click();
+    cy.waitUntil(() => tiles.getExploreTile());
+    cy.url().should('include', '/tiles/explore');
+
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should('exist');
+    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Customer')).click();
+    modelPage.getEntityModifiedAlert().should('exist');
+    propertyTable.getFacetIcon('nicknames').should('exist');
+    propertyTable.getSortIcon('nicknames').should('exist');
 
-    cy.waitUntil(() => entityTypeTable.getEntityInstanceCount('Order')).click();
-    tiles.getExploreTile().should('exist');
-    cy.waitUntil(() => browsePage.getSelectedEntity().should('eq', 'Order'));
-    browsePage.getClearAllButton().should('not.exist');
+    cy.get('.userDropdown').trigger('mouseover');
+    cy.waitUntil(() => cy.get('#logOut').should('be.visible')).click();
+    confirmationModal.getNavigationWarnText().should('be.visible');
+    confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();
+    cy.location('pathname').should('eq', '/');
   });
 
   it('can add new properties to existing Entity, revert the entity, and delete shows step warning', () => {
@@ -60,6 +72,8 @@ describe('Entity Modeling', () => {
     //propertyModal.clickCheckbox('wildcard');
     propertyModal.getSubmitButton().click();
 
+    modelPage.getEntityModifiedAlert().should('exist');
+
     propertyTable.getMultipleIcon('orderID').should('exist');
     propertyTable.getPiiIcon('orderID').should('exist');
     //propertyTable.getWildcardIcon('orderID').should('exist');
@@ -72,6 +86,7 @@ describe('Entity Modeling', () => {
 
     propertyTable.getMultipleIcon('orderID').should('not.exist');
     propertyTable.getPiiIcon('orderID').should('not.exist');
+    modelPage.getEntityModifiedAlert().should('not.exist');
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
 
     // Adding property to Person entity
@@ -95,7 +110,12 @@ describe('Entity Modeling', () => {
     propertyTable.getFacetIcon('newID').should('exist');
     propertyTable.getSortIcon('newID').should('exist');
 
+    // show identifier confirm modal, and then show delete property confim modal
     propertyTable.editProperty('lname');
+    propertyModal.getYesRadio('identifier').click();
+    confirmationModal.getYesButton(ConfirmationType.Identifer).click();
+    propertyModal.getYesRadio('identifier').should('be.checked');
+
     propertyModal.getDeleteIcon('lname').click();
     confirmationModal.getDeletePropertyStepWarnText().should('exist');
     confirmationModal.getNoButton(ConfirmationType.DeletePropertyStepWarn).click();
@@ -135,6 +155,11 @@ describe('Entity Modeling', () => {
 
     confirmationModal.getCloseButton(ConfirmationType.DeleteEntityStepWarn).click();
     entityTypeTable.getEntity('Person').should('exist');
+
+    modelPage.getRevertAllButton().click();
+    confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
+    confirmationModal.getRevertAllEntityText().should('exist');
+    confirmationModal.getRevertAllEntityText().should('not.exist');
   });
 
   it('can check for duplicate entity, create a new entity, add relationship type, and add identifier confirmation, delete property from modal, and delete entity', () => {
@@ -425,6 +450,8 @@ describe('Entity Modeling', () => {
     propertyTable.getPiiIcon('orderID').should('exist');
     //propertyTable.getWildcardIcon('orderID').should('exist');
 
+    modelPage.getEntityModifiedAlert().should('exist');
+
 
     // Adding property to Person entity
     entityTypeTable.getExpandEntityIcon('Person').click();
@@ -456,6 +483,7 @@ describe('Entity Modeling', () => {
     propertyTable.getMultipleIcon('orderID').should('not.exist');
     propertyTable.getPiiIcon('orderID').should('not.exist');
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
+    modelPage.getEntityModifiedAlert().should('not.exist');
 
     // Create first entity
     modelPage.getAddEntityButton().should('exist');
@@ -489,6 +517,8 @@ describe('Entity Modeling', () => {
     confirmationModal.getDeletePropertyWarnText().should('exist');
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty('testing').should('not.exist');
+
+    modelPage.getEntityModifiedAlert().should('exist');
 
     //create second Entity
     modelPage.getAddEntityButton().should('exist').click();
@@ -539,6 +569,8 @@ describe('Entity Modeling', () => {
     confirmationModal.getYesButton(ConfirmationType.SaveAll).click();
     confirmationModal.getSaveAllEntityText().should('exist');
     confirmationModal.getSaveAllEntityText().should('not.exist');
+
+    modelPage.getEntityModifiedAlert().should('not.exist');
 
     entityTypeTable.getDeleteEntityIcon('Concept').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntityRelationshipWarn).click();

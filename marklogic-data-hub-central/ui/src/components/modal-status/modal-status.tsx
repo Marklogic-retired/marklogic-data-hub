@@ -4,6 +4,7 @@ import { Modal } from 'antd';
 import axios from "axios";
 
 import { UserContext } from '../../util/user-context';
+import { ModelingContext} from '../../util/modeling-context';
 import { useInterval } from '../../hooks/use-interval';
 import { SESSION_WARNING_COUNTDOWN } from '../../config/application.config';
 
@@ -29,6 +30,7 @@ const ModalStatus: React.FC<Props> = (props) => {
     getSessionTime,
     resetSessionTime
   } = useContext(UserContext);
+  const { clearEntityModified } = useContext(ModelingContext);
   const [showModal, toggleModal] = useState(false);
   const [sessionTime, setSessionTime] = useState(SESSION_WARNING_COUNTDOWN);
   const [title, setTitle] = useState('Session Timeout');
@@ -131,6 +133,7 @@ const ModalStatus: React.FC<Props> = (props) => {
         setSessionWarning(false);
       }
     }
+    clearEntityModified();
     toggleModal(false);
   };
 
