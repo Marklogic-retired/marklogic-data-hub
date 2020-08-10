@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-
 import Facet from './facet';
 import { facetValues } from '../../assets/mock-data/entity-table';
 
@@ -72,4 +71,30 @@ describe("Facet component", () => {
     expect(getByText(/CustomerType/i)).toBeInTheDocument();
     expect(getByText(/999/i)).toBeInTheDocument();
   });
+
+  it("Collapse/Expand carets render properly for facet properties" , () => {
+    const { getByTestId } = render(
+        <Facet
+          name="sales_region"
+          constraint="sales_region"
+          facetValues={facetValues}
+          key=""
+          tooltip=""
+          facetType="xs:string"
+          facetCategory="entity"
+          updateSelectedFacets={jest.fn()}
+          addFacetValues={jest.fn()}
+          referenceType="element"
+          entityTypeId=""
+          propertyPath="sales_region"
+        />
+    )
+
+    expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
+    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();
+    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(180deg);');
+    fireEvent.click(getByTestId('sales_region-toggle')); 
+    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(180deg);');
+  });
+
 });

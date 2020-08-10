@@ -1,50 +1,48 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import Sidebar from './sidebar';
 import { entityFromJSON, entityParser } from '../../util/data-conversion';
 import modelResponse from '../../assets/mock-data/model-response';
 import searchPayloadFacets from '../../assets/mock-data/search-payload-facets';
+import { render, fireEvent } from '@testing-library/react';
+
 
 describe("Sidebar component", () => {
-    let wrapper;
-    const parsedModelData = entityFromJSON(modelResponse);
-    const entityDefArray = entityParser(parsedModelData);
+  const parsedModelData = entityFromJSON(modelResponse);
+  const entityDefArray = entityParser(parsedModelData);
 
-    describe('All Entities Dropdown Option', () => {
-      beforeEach(() => {
-        wrapper = shallow(
-          <Sidebar
-            entityDefArray={entityDefArray}
-            facets={searchPayloadFacets}
-            selectedEntities={[]}
-            facetRender = {jest.fn()}
-            checkFacetRender = {jest.fn()}
-          />
-        )
-      });
+  it("Collapse/Expand carets render properly for hub properties", () => {
+    const { getByTestId } = render(
+      <Sidebar
+        entityDefArray={entityDefArray}
+        facets={searchPayloadFacets}
+        selectedEntities={[]}
+        facetRender={jest.fn()}
+        checkFacetRender={jest.fn()}
+      />
+    )
+    expect(document.querySelector('#hub-properties [data-icon=down]')).toBeInTheDocument();
+    expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+    fireEvent.click(getByTestId('toggle'));
+    expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+  });
 
-      it('should render only Hub Properties Panel', () => {
-        expect(wrapper.exists('#hub-properties')).toBe(true);
-        expect(wrapper.exists('#entity-properties')).toBe(false);
-      });
-    });
-
-    describe('An Entity is selected', () => {
-      beforeEach(() => {
-        wrapper = shallow(
-          <Sidebar
-            entityDefArray={entityDefArray}
-            facets={searchPayloadFacets}
-            selectedEntities={['Customer']}
-            facetRender = {jest.fn()}
-            checkFacetRender = {jest.fn()}
-          />
-        )
-      });
-
-      it('should render both Entity and Hub Properties panel', () => {
-        expect(wrapper.exists('#hub-properties')).toBe(true);
-        expect(wrapper.exists('#entity-properties')).toBe(true);
-      });
-    });
+  it("Collapse/Expand carets render properly for entity and hub properties", () => {
+    const { getAllByTestId } = render(
+      <Sidebar
+        entityDefArray={entityDefArray}
+        facets={searchPayloadFacets}
+        selectedEntities={['Customer']}
+        facetRender={jest.fn()}
+        checkFacetRender={jest.fn()}
+      />
+    )
+    expect(document.querySelector('#entity-properties [data-icon=down]')).toBeInTheDocument();
+    expect(document.querySelector('#entity-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+    fireEvent.click(getAllByTestId('toggle')[0]);
+    expect(document.querySelector('#entity-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+    expect(document.querySelector('#hub-properties [data-icon=down]')).toBeInTheDocument();
+    expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+    fireEvent.click(getAllByTestId('toggle')[1]);
+    expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+  });
 })
