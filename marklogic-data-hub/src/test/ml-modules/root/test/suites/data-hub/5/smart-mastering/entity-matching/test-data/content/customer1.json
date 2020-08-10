@@ -1,0 +1,22 @@
+{
+  "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ]
+    },
+    "triples": [],
+    "instance": {
+      "info": {
+        "title": "Customer_V1",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer_V1": {
+        "customer_Id": 105
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "info": {
+    "title": "Customer_V1",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer_V1": {
+      "primaryKey": "customer_Id",
+      "properties": {
+        "customer_Id": {
+          "datatype": "integer",
+          "sortable": true
+        }
+      }
+    }
+  }
+}

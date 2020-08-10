@@ -53,7 +53,10 @@ import module namespace util-impl = "http://marklogic.com/smart-mastering/util-i
   at "/com.marklogic.smart-mastering/impl/util.xqy";
 import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations/functional"
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
-import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services" at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
+  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+import module namespace helper = "http://marklogic.com/smart-mastering/helper-impl"
+  at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 declare namespace sm = "http://marklogic.com/smart-mastering";
@@ -2362,10 +2365,7 @@ declare function merge-impl:archive-document($uri as xs:string, $merge-options a
 
 declare function merge-impl:NCName-compatible($value as xs:string)
 {
-  if ($value castable as xs:NCName) then
-    $value
-  else
-    xdmp:encode-for-NCName($value)
+  helper:NCName-compatible($value)
 };
 
 declare variable $_to-decoded-NCName as map:map := map:map();

@@ -190,6 +190,9 @@ declare function match-impl:compile-match-options(
         $cache-id,
         $compiled-match-options
       ),
+      if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "Compiled match options: " || xdmp:describe($compiled-match-options,(),()))
+      else (),
       $compiled-match-options
     )
 };
@@ -320,8 +323,9 @@ declare function match-impl:find-document-matches-by-options(
       else
         cts:false-query()
     (: Exclude the current document and any blocked matches :)
+    let $document-uri := xdmp:node-uri($document)
     let $excluded-uris := (
-      xdmp:node-uri($document),
+      $document-uri,
       blocks-impl:get-blocks(fn:base-uri($document))/node()
     )
     let $match-base-query := cts:and-query((
@@ -351,13 +355,17 @@ declare function match-impl:find-document-matches-by-options(
       element match-query {
         $match-query
       }
+    let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+            xdmp:trace($const:TRACE-MATCH-RESULTS, "match-query cts.doc('"||$document-uri||"'):" || xdmp:describe($match-query, (),()))
+        else ()
     return
       (: If minimum threshold can't be met or we're short-circuiting a query already run, don't bother with estimate and search :)
       if ($minimum-threshold-combinations-query instance of cts:false-query or $has-redundant-match-combo) then
         match-impl:build-empty-results($start, $page-length, $serialized-match-query)
       else
-        let $estimate := xdmp:estimate(cts:search(fn:collection(), match-impl:instance-query-wrapper($match-query, $is-json), "unfiltered"))
+        let $estimate := xdmp:estimate(cts:search(fn:collection(), $match-query, "unfiltered"))
         return (
+          xdmp:trace($const:TRACE-MATCH-RESULTS, "Estimated " || $estimate || "doc(s) found for cts.doc('"|| $document-uri ||"')"),
           element results {
             attribute total { $estimate },
             attribute page-length { $page-length },
@@ -564,6 +572,9 @@ declare function match-impl:search(
       fn:sum(
         $matching-weights-map => map:get("values")
       )
+  let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('" || $uri || "') score: " || $score || " minimum-threshold: " || $min-threshold)
+    else ()
   where $score ge $min-threshold
   return
     element result {
