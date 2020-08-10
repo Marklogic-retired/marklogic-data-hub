@@ -17,15 +17,14 @@
 
 package com.marklogic.gradle.task
 
-import com.marklogic.hub.deploy.commands.GeneratePiiCommand
 import org.gradle.api.tasks.TaskAction
 
 class GeneratePiiTask extends HubTask {
 
     @TaskAction
     void generatePii() {
-        def cmd = getGeneratePiiCommand()
-        cmd.execute(getCommandContext())
+        println "Writing protected path and query roleset files for entity model properties marked as PII to src/main/ml-config/security"
+        getEntityManager().savePii()
     }
 
 }

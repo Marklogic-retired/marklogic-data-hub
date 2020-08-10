@@ -155,7 +155,6 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
 
     private void removeSchemaAndTriggersDatabaseSettingsInAProvisionedEnvironment(ObjectNode payload) {
         if (hubConfig.getIsProvisionedEnvironment()) {
-            logger.warn("Deploying indexes only to a provisioned environment");
             payload.remove("schema-database");
             payload.remove("triggers-database");
         }

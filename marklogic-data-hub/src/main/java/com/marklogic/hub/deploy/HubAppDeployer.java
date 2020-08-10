@@ -32,20 +32,15 @@ import com.marklogic.mgmt.admin.AdminManager;
  */
 public class HubAppDeployer extends SimpleAppDeployer {
 
-    private ManageClient manageClient;
-    private AdminManager adminManager;
     private HubDeployStatusListener listener;
     // this is for the telemetry hook to use mlUsername/mlPassword
     private DatabaseClient databaseClient;
 
-    private String mlVersion = null;
     // Keeps track of completion percentage
     private int completed = 0;
 
     public HubAppDeployer(ManageClient manageClient, AdminManager adminManager, HubDeployStatusListener listener, DatabaseClient databaseClient) {
         super(manageClient, adminManager);
-        this.manageClient = manageClient;
-        this.adminManager = adminManager;
         this.databaseClient = databaseClient;
         this.listener = listener;
     }

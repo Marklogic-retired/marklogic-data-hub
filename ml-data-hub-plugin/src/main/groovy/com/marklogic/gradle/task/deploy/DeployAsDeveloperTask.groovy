@@ -8,6 +8,7 @@ class DeployAsDeveloperTask extends HubTask {
 
     @TaskAction
     void deployToDhs() {
+        println "Deploying resources that a user with the 'data-hub-developer' role is permitted to deploy"
         new DhsDeployer().deployAsDeveloper(getHubConfig())
     }
 }
