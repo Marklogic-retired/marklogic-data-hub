@@ -29,10 +29,6 @@ function getNameProperty() {
     return 'name';
 }
 
-function getVersionProperty() {
-    return null;
-}
-
 function getCollections() {
     return collections;
 }
@@ -88,7 +84,6 @@ function getDirectory() {
 
 module.exports = {
   getNameProperty,
-  getVersionProperty,
   getCollections,
   getStorageDatabases,
   getPermissions,

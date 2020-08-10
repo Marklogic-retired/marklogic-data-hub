@@ -28,10 +28,6 @@ function getNameProperty() {
     return 'name';
 }
 
-function getVersionProperty() {
-    return null;
-}
-
 function getCollections() {
     return collections;
 }
@@ -87,7 +83,6 @@ function validateArtifact(artifact) {
 
 module.exports = {
   getNameProperty,
-  getVersionProperty,
   getCollections,
   getStorageDatabases,
   getDirectory,
