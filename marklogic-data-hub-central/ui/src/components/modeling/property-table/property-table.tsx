@@ -35,12 +35,6 @@ type Props = {
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
   name: '',
-  primaryKey: '',
-  elementRangeIndex: [],
-  pii: [],
-  rangeIndex: [],
-  required: [],
-  wordLexicon: [],
   properties: []
 };
 
@@ -313,11 +307,6 @@ const PropertyTable: React.FC<Props> = (props) => {
   const addStructuredTypeToDefinition = (structuredTypeName: string) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName] : {
-        elementRangeIndex: [],
-        pii: [],
-        rangeIndex: [],
-        required: [],
-        wordLexicon: [],
         properties: {}
       }
     }
@@ -408,8 +397,6 @@ const PropertyTable: React.FC<Props> = (props) => {
       } else {
         entityTypeDefinition['pii'] = [propertyName]
       }
-    } else if (!entityTypeDefinition.hasOwnProperty('pii')) {
-      entityTypeDefinition['pii'] = []
     }
 
     // if (propertyOptions.wildcard) {
@@ -421,18 +408,6 @@ const PropertyTable: React.FC<Props> = (props) => {
     // } else if (!entityTypeDefinition.hasOwnProperty('wordLexicon')) {
     //   entityTypeDefinition['wordLexicon'] = []
     // }
-
-    if (!entityTypeDefinition.hasOwnProperty('required')) {
-      entityTypeDefinition['required'] = []
-    }
-
-    if (!entityTypeDefinition.hasOwnProperty('rangeIndex')) {
-      entityTypeDefinition['rangeIndex'] = []
-    }
-
-    if (!entityTypeDefinition.hasOwnProperty('elementRangeIndex')) {
-      entityTypeDefinition['elementRangeIndex'] = []
-    }
 
     if (structuredTypeOptions.isStructured) {
       newRowKey = props.entityName + '-' + structuredTypeOptions.name.split(',').join('-');
@@ -701,18 +676,18 @@ const PropertyTable: React.FC<Props> = (props) => {
                   facetable: structProperty.facetable ? structProperty.name : '',
                   sortable: structProperty.sortable ? structProperty.name : '',
                   //wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
-                  pii: structuredType?.pii.some(value => value ===  structProperty.name) ? structProperty.name : '',
+                  pii: structuredType?.pii?.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   delete: entityTypeDefinition.name
                 }
               }
             });
 
-            let piiValue = entityTypeDefinition?.pii.some(value => value ===  property.name) ? property.name : '';
+            let piiValue = entityTypeDefinition?.pii?.some(value => value ===  property.name) ? property.name : '';
             let addValue = property.name + ',' + structuredType.name;
 
             if (parentDefinitionName) {
               let parentTypeDefinition: Definition = entityDefinitionsArray.find( definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
-              piiValue = parentTypeDefinition?.pii.some(value => value ===  property.name) ? property.name : '';
+              piiValue = parentTypeDefinition?.pii?.some(value => value ===  property.name) ? property.name : '';
               addValue = property.name + ',' + parentDefinitionName + ',' + structuredType.name;
             }
             return {
@@ -742,7 +717,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           facetable: property.facetable ? property.name : '',
           sortable: property.sortable ? property.name : '',
           //wildcard: entityTypeDefinition?.wordLexicon.some( value => value === property.name) ? property.name : '',
-          pii: entityTypeDefinition?.pii.some(value => value === property.name) ? property.name : '',
+          pii: entityTypeDefinition?.pii?.some(value => value === property.name) ? property.name : '',
           add: '',
           delete: entityTypeDefinition.name
         }
