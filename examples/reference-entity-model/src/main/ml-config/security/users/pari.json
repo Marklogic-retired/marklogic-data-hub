@@ -4,6 +4,7 @@
   "password": "%%testPassword%%",
   "role": [
     "hub-central-developer",
-    "data-hub-developer"
+    "data-hub-developer",
+    "pii-reader"
   ]
 }

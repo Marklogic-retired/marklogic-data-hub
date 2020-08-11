@@ -9,6 +9,7 @@
       "required": [
         "name"
       ],
+      "pii": ["ssn"],
       "primaryKey": "customerId",
       "properties": {
         "customerId": {
@@ -48,6 +49,9 @@
         },
         "customerSince": {
           "datatype": "date"
+        },
+        "ssn": {
+          "datatype": "string"
         },
         "orders": {
           "datatype": "array",

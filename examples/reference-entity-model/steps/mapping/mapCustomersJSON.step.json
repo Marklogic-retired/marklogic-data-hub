@@ -80,6 +80,12 @@
     },
     "customerSince": {
       "sourcedFrom": ""
+    },
+    "status": {
+      "sourcedFrom": "Status"
+    },
+    "ssn": {
+      "sourcedFrom": "SSN"
     }
   },
   "lastUpdated": "2020-06-05T00:34:51.96953Z",

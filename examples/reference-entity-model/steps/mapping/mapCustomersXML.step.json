@@ -84,6 +84,9 @@
     },
     "nicknames": {
       "sourcedFrom": "//*:Name/*:FirstName"
+    },
+    "ssn": {
+      "sourcedFrom": "SSN"
     }
   }
 }

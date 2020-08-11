@@ -1,0 +1,35 @@
+{
+  "name": "mapNamespacedCustomers",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapNamespacedCustomers-mapping",
+  "targetEntityType": "http://example.org/NamespacedCustomer-0.0.1/NamespacedCustomer",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadNamespacedCustomers'])",
+  "collections": [
+    "NamespacedCustomer",
+    "mapNamespacedCustomers"
+  ],
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "XML",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "coarse",
+  "properties": {
+    "customerIdentifier": {
+      "sourcedFrom": "/Customer/CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "/Customer/Name"
+    },
+    "nicknames": {
+      "sourcedFrom": "/Customer/Nickname"
+    },
+    "dateOfBirth": {
+      "sourcedFrom": "/Customer/DOB"
+    },
+    "status": {
+      "sourcedFrom": "/Customer/Status"
+    }
+  }
+}
