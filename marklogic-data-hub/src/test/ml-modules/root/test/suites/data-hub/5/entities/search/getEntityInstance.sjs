@@ -160,6 +160,13 @@ function getInstanceFromTextDocument() {
   ]
 }
 
+function getInstanceWithInstanceInDifferentXpath() {
+  const assertions = [];
+  let docUri = "/content/instanceElementInDifferentXpath.xml";
+  let instance = entitySearchLib.getEntityInstance(docUri);
+  assertions.push(test.assertEqual(null, instance));
+}
+
 []
     .concat(getInstanceWithoutESInfo())
     .concat(getInstanceWithESInfo())
@@ -167,7 +174,5 @@ function getInstanceFromTextDocument() {
     .concat(getInstanceWithNonExistentModel())
     .concat(getInstanceWithNamespace())
     .concat(getInstanceWithNonExistingDocUri())
-    .concat(getInstanceFromTextDocument());
-
-
-
+    .concat(getInstanceFromTextDocument())
+    .concat(getInstanceWithInstanceInDifferentXpath());

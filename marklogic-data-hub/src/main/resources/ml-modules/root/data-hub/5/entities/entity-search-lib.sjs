@@ -247,12 +247,16 @@ function getEntityInstance(docUri) {
 
   if(doc instanceof Element || doc instanceof XMLDocument) {
     const builder = new NodeBuilder();
-    return fn.head(es.instanceJsonFromDocument(builder.startDocument().addNode(doc.xpath("/*:envelope/*:instance")).endDocument().toNode())).toObject();
+    const instance = doc.xpath("/*:envelope/*:instance");
+    if(!fn.empty(instance)) {
+      return fn.head(es.instanceJsonFromDocument(builder.startDocument().addNode(instance).endDocument().toNode())).toObject();
+    }
   }
 
-  if (doc.toObject().envelope && doc.toObject().envelope.instance) {
+  if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.instance) {
     return doc.toObject().envelope.instance;
   }
+
   return null;
 }
 
@@ -277,7 +281,8 @@ function getPropertyValues(currentProperty, entityInstance) {
       return resultObject;
     }
 
-    if(currentProperty.multiple) {
+    // OR condition is to handle the merged instances where datatype is object but there are array of objects after merge
+    if(currentProperty.multiple || Array.isArray(entityInstance[propertyName])) {
       entityInstance = entityInstance[propertyName];
       entityInstance.forEach((instance) => {
         let currentPropertyValueArray = [];
