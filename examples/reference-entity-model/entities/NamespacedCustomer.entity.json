@@ -1,0 +1,41 @@
+{
+  "info": {
+    "title": "NamespacedCustomer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "NamespacedCustomer": {
+      "required": [
+        "name"
+      ],
+      "namespace": "http://example.org/",
+      "namespacePrefix": "oex",
+      "primaryKey": "customerIdentifier",
+      "properties": {
+        "customerIdentifier": {
+          "datatype": "integer",
+          "sortable": true
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "nicknames": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of simple values",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "dateOfBirth": {
+          "datatype": "date"
+        },
+        "status": {
+          "datatype": "string",
+          "facetable": true
+        }
+      }
+    }
+  }
+}

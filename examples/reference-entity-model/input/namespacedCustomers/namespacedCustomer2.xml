@@ -1,0 +1,7 @@
+<Customer>
+  <CustomerID>502</CustomerID>
+  <Name>Namespaced Person Two</Name>
+  <Nickname>First Nickname</Nickname>
+  <DOB>1982-02-02</DOB>
+  <Status>Updated</Status>
+</Customer>

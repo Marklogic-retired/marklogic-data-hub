@@ -19,7 +19,7 @@ plugins {
 }
 apply plugin: "com.marklogic.ml-data-hub"
 
-["CurateCustomerJSON", "CurateCustomerXML"].each {theFlowName ->
+["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers"].each {theFlowName ->
     task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
         description = "Run the ingestion and mapping steps for flow ${theFlowName}"
         flowName = theFlowName

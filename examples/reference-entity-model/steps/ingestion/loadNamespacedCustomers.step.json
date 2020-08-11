@@ -1,0 +1,17 @@
+{
+  "name": "loadNamespacedCustomers",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadNamespacedCustomers-ingestion",
+  "description": "",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "collections": [
+    "loadNamespacedCustomers"
+  ],
+  "inputFilePath": "input/namespacedCustomers",
+  "outputURIReplacement": ".*input/namespacedCustomers,'/NamespacedCustomer'",
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse"
+}

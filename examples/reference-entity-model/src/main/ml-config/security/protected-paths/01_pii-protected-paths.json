@@ -1,0 +1,11 @@
+{
+  "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Customer/ssn",
+  "path-namespace" : [ {
+    "prefix" : "es",
+    "namespace-uri" : "http://marklogic.com/entity-services"
+  } ],
+  "permission" : {
+    "role-name" : "pii-reader",
+    "capability" : "read"
+  }
+}

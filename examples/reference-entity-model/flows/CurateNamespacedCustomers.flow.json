@@ -1,0 +1,13 @@
+{
+  "name": "CurateNamespacedCustomers",
+  "description": "Simple flow for testing XML entity instances for an entity definition that defines a namespace",
+  "steps": {
+    "1": {
+      "stepId": "loadNamespacedCustomers-ingestion"
+    },
+    "2": {
+      "stepId": "mapNamespacedCustomers-mapping"
+    }
+  },
+  "lastUpdated": "2020-06-04T23:01:35.580381Z"
+}
