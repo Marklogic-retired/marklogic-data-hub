@@ -344,12 +344,6 @@ export const definitionsParser = (definitions: any): Definition[] => {
   for (let definition in definitions) {
     let entityDefinition: Definition = {
       name: '',
-      primaryKey: '',
-      elementRangeIndex: [],
-      pii: [],
-      rangeIndex: [],
-      required: [],
-      wordLexicon: [],
       properties: []
     };
 

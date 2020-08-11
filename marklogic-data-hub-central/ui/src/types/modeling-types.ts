@@ -1,11 +1,9 @@
 export interface Definition {
   name: string,
-  primaryKey: string,
-  elementRangeIndex: string[],
-  pii: string[],
-  rangeIndex: string[],
-  required: string[],
-  wordLexicon: string[],
+  primaryKey?: string,
+  pii?: string[],
+  required?: string[],
+  wordLexicon?: string[],
   properties: Property[]
 }
 
@@ -23,11 +21,9 @@ export interface Property {
 export interface EntityDefinitionPayload {
   [entityName: string]: {
     primaryKey?: string,
-    elementRangeIndex: string[],
-    pii: string[],
-    rangeIndex: string[],
-    required: string[],
-    wordLexicon: string[],
+    pii?: string[],
+    required?: string[],
+    wordLexicon?: string[],
     properties: any
   }
 }

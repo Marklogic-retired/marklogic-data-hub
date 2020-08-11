@@ -177,17 +177,13 @@ const PropertyModal: React.FC<Props> = (props) => {
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
 
-        } else if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
-          typeDisplayValue = [ 'structured', props.editPropertyOptions.propertyOptions.type ]
+        } else if (props.structuredTypeOptions.isStructured) {
+          structuredLabel = props.structuredTypeOptions.name;
           newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
           showConfigOptions = false;
-          structuredLabel = props.structuredTypeOptions.name;
-        }
-
-        if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Basic) {
-          structuredLabel = props.structuredTypeOptions.name;
-          newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
-          showConfigOptions = true;
+          if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
+            typeDisplayValue = [ 'structured', props.editPropertyOptions.propertyOptions.type ]
+          }
         }
 
         setModalTitle('Edit Property');

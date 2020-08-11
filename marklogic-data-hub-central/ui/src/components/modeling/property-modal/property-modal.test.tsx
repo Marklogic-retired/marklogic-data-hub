@@ -539,7 +539,7 @@ describe('Property Modal Component', () => {
       propertyName: 'shipping'
     }
 
-    const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
+    const { getByLabelText, getByText, getByPlaceholderText, queryByText, queryByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -584,6 +584,9 @@ describe('Property Modal Component', () => {
     const piiRadio = screen.getByLabelText('pii-yes')
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
+
+    expect(queryByLabelText('Sort')).toBeNull();
+    expect(queryByLabelText('Facet')).toBeNull();
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(editMock).toHaveBeenCalledTimes(1);
