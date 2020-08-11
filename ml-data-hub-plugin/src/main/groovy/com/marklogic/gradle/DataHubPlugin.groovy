@@ -141,9 +141,6 @@ class DataHubPlugin implements Plugin<Project> {
                 "optionally generate a default set of inline steps by including -PwithInlineSteps=true")
         project.task("hubCreateHarmonizeFlow", group: scaffoldGroup, type: CreateHarmonizeLegacyFlowTask)
         project.task("hubCreateInputFlow", group: scaffoldGroup, type: CreateInputLegacyFlowTask)
-        project.task("hubGenerateExplorerOptions", group: scaffoldGroup, type: GenerateExplorerQueryOptions,
-            description: "Generates the query options files required for Explorer application")
-            .finalizedBy(["hubDeployUserModules"])
         project.task("hubGeneratePii", group: scaffoldGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
         project.task("hubGenerateTDETemplates", group: scaffoldGroup, type: GenerateTDETemplateFromEntityTask,
@@ -153,8 +150,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Saves the indexes defined in {entity-name}.entity.json file to staging and final entity config in src/main/entity-config/databases directory")
         project.task("hubExportProject", group: scaffoldGroup, type: ExportProjectTask,
             description: "Exports the contents of the hub project directory")
-
-        project.tasks.mlPostDeploy.getDependsOn().add("hubGenerateExplorerOptions")
 
         // Hub Mastering tasks
         String masteringGroup = "MarkLogic Data Hub Mastering Tasks"
@@ -232,7 +227,6 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Deploy project configuration as a user with the data-hub-developer role"
         )
             .dependsOn("mlPrepareBundles", "hubGeneratePii", "hubSaveIndexes") // Needed for https://github.com/marklogic-community/ml-gradle/wiki/Bundles
-            .finalizedBy(["hubGenerateExplorerOptions"])
             .mustRunAfter("hubDeployAsSecurityAdmin")
 
         project.task("hubDeploy", group: deployGroup, dependsOn: ["hubDeployAsDeveloper", "hubDeployAsSecurityAdmin"],

@@ -35,7 +35,6 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.*;
-import com.marklogic.hub.util.HubModuleManager;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -54,6 +53,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class EntityManagerImpl extends LoggingObject implements EntityManager {
+
     public static final String ENTITY_FILE_EXTENSION = ".entity.json";
 
     @Autowired
@@ -85,93 +85,54 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
             File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
             File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
 
-            long lastModified = Math.max(stagingFile.lastModified(), finalFile.lastModified());
-            List<JsonNode> entities = getModifiedRawEntities(lastModified);
+            List<JsonNode> entities = getAllEntities();
             if (entities.size() > 0) {
                 String options = generator.generateOptions(entities, false);
                 if (options != null) {
                     FileUtils.writeStringToFile(stagingFile, options);
-                    logger.debug("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
+                    logger.info("Wrote entity-specific search options to: " + stagingFile.getAbsolutePath());
                     FileUtils.writeStringToFile(finalFile, options);
-                    logger.debug("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
+                    logger.info("Wrote entity-specific search options to: " + finalFile.getAbsolutePath());
                 }
                 String expOptions = generator.generateOptions(entities, true);
                 if (expOptions != null) {
                     FileUtils.writeStringToFile(expStagingFile, expOptions);
-                    logger.debug("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
+                    logger.info("Wrote entity-specific search options for Explorer to: " + stagingFile.getAbsolutePath());
                     FileUtils.writeStringToFile(expFinalFile, expOptions);
-                    logger.debug("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
+                    logger.info("Wrote entity-specific search options for Explorer to: " + finalFile.getAbsolutePath());
                 }
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.warn("Unable to generate search options, cause: " + e.getMessage(), e);
         }
         return false;
     }
 
     @Override
-    public void generateExplorerQueryOptions() {
-        QueryOptionsGenerator generator = new QueryOptionsGenerator(hubConfig.newStagingClient());
-        try {
-            Path dir = hubConfig.getHubProject().getEntityConfigDir();
-            if (!dir.toFile().exists()) {
-                dir.toFile().mkdirs();
-            }
-            List<JsonNode> entities = getAllEntities();
-            if (entities.size() > 0) {
-                File expStagingFile = Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile();
-                File expFinalFile = Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile();
-                String options = generator.generateOptions(entities, true);
-                if (options != null) {
-                    FileUtils.writeStringToFile(expStagingFile, options);
-                    logger.debug("Wrote entity-specific search options for Explorer to: " + expStagingFile.getAbsolutePath());
-                    FileUtils.writeStringToFile(expFinalFile, options);
-                    logger.debug("Wrote entity-specific search options for Explorer to: " + expFinalFile.getAbsolutePath());
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to generate query options; cause: " + e.getMessage(), e);
-        }
-    }
-
-    @Override
     public HashMap<Enum, Boolean> deployQueryOptions() {
-        // save them first
         saveQueryOptions();
 
         HashMap<Enum, Boolean> loadedResources = new HashMap<>();
-        if (deployFinalQueryOptions() && deployExpFinalQueryOptions()) loadedResources.put(DatabaseKind.FINAL, true);
-        if (deployStagingQueryOptions() && deployExpStagingQueryOptions())
+
+        if (deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE) &&
+            deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE)) {
+            loadedResources.put(DatabaseKind.FINAL, true);
+        }
+        if (deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE) &&
+            deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE)) {
             loadedResources.put(DatabaseKind.STAGING, true);
+        }
+
         return loadedResources;
     }
 
-
-    public boolean deployFinalQueryOptions() {
-        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
-    }
-
-    public boolean deployStagingQueryOptions() {
-        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
-    }
-
-    private boolean deployExpFinalQueryOptions() {
-        return deployQueryOptions(hubConfig.newFinalClient(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
-    }
-
-    private boolean deployExpStagingQueryOptions() {
-        return deployQueryOptions(hubConfig.newStagingClient(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
-    }
-
     private boolean deployQueryOptions(DatabaseClient client, String filename) {
-
-        HubModuleManager propsManager = getPropsMgr();
-        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient(), propsManager));
+        DefaultModulesLoader modulesLoader = new DefaultModulesLoader(new AssetFileLoader(hubConfig.newFinalClient()));
 
         boolean isLoaded = false;
 
-        modulesLoader.setModulesManager(propsManager);
+        modulesLoader.setModulesManager(null);
         modulesLoader.setShutdownTaskExecutorAfterLoadingModules(false);
 
         AppConfig appConfig = hubConfig.getAppConfig();
@@ -229,12 +190,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return false;
     }
 
-
-    private HubModuleManager getPropsMgr() {
-        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
-        return new HubModuleManager(timestampFile);
-    }
-
     private List<JsonNode> getAllEntities() {
         List<JsonNode> entities = new ArrayList<>(getAllLegacyEntities());
         Path entitiesPath = hubConfig.getHubEntitiesDir();
@@ -274,79 +229,6 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
                         entities.add(objectMapper.readTree(fileInputStream));
                         fileInputStream.close();
                     }
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return entities;
-    }
-
-    private List<JsonNode> getModifiedRawEntities(long minimumFileTimestampToLoad) {
-        logger.debug("min modified: " + minimumFileTimestampToLoad);
-        HubModuleManager propsManager = getPropsMgr();
-        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
-
-        List<JsonNode> entities = new ArrayList<>(getModifiedRawLegacyEntities(minimumFileTimestampToLoad));
-        List<JsonNode> tempEntities = new ArrayList<>();
-        Path entitiesPath = hubConfig.getHubEntitiesDir();
-        File[] entityDefs = entitiesPath.toFile().listFiles(pathname -> pathname.toString().endsWith(ENTITY_FILE_EXTENSION) && !pathname.isHidden());
-        if (entityDefs != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                boolean hasOneChanged = false;
-                for (File entityDef : entityDefs) {
-                    if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
-                        hasOneChanged = true;
-                    }
-                    FileInputStream fileInputStream = new FileInputStream(entityDef);
-                    tempEntities.add(objectMapper.readTree(fileInputStream));
-                    fileInputStream.close();
-                }
-                // all or nothing
-                if (hasOneChanged) {
-                    entities.addAll(tempEntities);
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-        }
-        return entities;
-    }
-
-    private List<JsonNode> getModifiedRawLegacyEntities(long minimumFileTimestampToLoad) {
-        HubModuleManager propsManager = getPropsMgr();
-        propsManager.setMinimumFileTimestampToLoad(minimumFileTimestampToLoad);
-
-        List<JsonNode> entities = new ArrayList<>();
-        List<JsonNode> tempEntities = new ArrayList<>();
-        Path entitiesPath = hubConfig.getHubProject().getLegacyHubEntitiesDir();
-        File[] entityFiles = entitiesPath.toFile().listFiles(pathname -> pathname.isDirectory() && !pathname.isHidden());
-        List<String> entityNames;
-        if (entityFiles != null) {
-            entityNames = Arrays.stream(entityFiles)
-                .map(file -> file.getName())
-                .collect(Collectors.toList());
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                boolean hasOneChanged = false;
-                for (String entityName : entityNames) {
-                    File[] entityDefs = entitiesPath.resolve(entityName).toFile().listFiles((dir, name) -> name.endsWith(ENTITY_FILE_EXTENSION));
-                    for (File entityDef : entityDefs) {
-                        if (propsManager.hasFileBeenModifiedSinceLastLoaded(entityDef)) {
-                            hasOneChanged = true;
-                        }
-                        FileInputStream fileInputStream = new FileInputStream(entityDef);
-                        tempEntities.add(objectMapper.readTree(fileInputStream));
-                        fileInputStream.close();
-                    }
-                }
-                // all or nothing
-                if (hasOneChanged) {
-                    entities.addAll(tempEntities);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
