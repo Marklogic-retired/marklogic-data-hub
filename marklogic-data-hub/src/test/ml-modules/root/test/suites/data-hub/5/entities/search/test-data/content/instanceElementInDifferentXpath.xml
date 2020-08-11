@@ -1,0 +1,60 @@
+<es:envelope
+        xmlns:es="http://marklogic.com/entity-services">
+    <es:headers>
+        <sm:id xmlns:sm="http://marklogic.com/smart-mastering">/com.marklogic.smart-mastering/merged/53eba80d9ae97ef183a839e8515822e2.xml</sm:id>
+        <sm:merges xmlns:sm="http://marklogic.com/smart-mastering">
+            <sm:document-uri last-merge="2020-08-10T08:21:16.108498-07:00">/persons/first-name-synonym1.xml</sm:document-uri>
+            <sm:document-uri last-merge="2020-08-10T08:21:16.108498-07:00">/persons/first-name-synonym2.xml</sm:document-uri>
+        </sm:merges>
+        <sm:sources xmlns:sm="http://marklogic.com/smart-mastering"></sm:sources>
+        <sm:merge-options xml:lang="zxx" xmlns:sm="http://marklogic.com/smart-mastering">
+            <sm:value>504B030414000000080</sm:value>
+        </sm:merge-options>
+        <sources>
+            <name>persons</name>
+        </sources>
+        <sources>
+            <name>persons</name>
+        </sources>
+        <createdOn>2020-08-10T08:21:13.359818-07:00</createdOn>
+        <createdBy>admin</createdBy>
+    </es:headers>
+    <es:triples>
+        <sem:triple xmlns:sem="http://marklogic.com/semantics">
+            <sem:subject>http://marklogic.com/Person-0.0.1/Person/%2Fpersons%2Ffirst-name-synonym1.xml%231</sem:subject>
+            <sem:predicate>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</sem:predicate>
+            <sem:object>http://marklogic.com/Person-0.0.1/Person</sem:object>
+        </sem:triple>
+        <sem:triple xmlns:sem="http://marklogic.com/semantics">
+            <sem:subject>http://marklogic.com/Person-0.0.1/Person/%2Fpersons%2Ffirst-name-synonym2.xml%231</sem:subject>
+            <sem:predicate>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</sem:predicate>
+            <sem:object>http://marklogic.com/Person-0.0.1/Person</sem:object>
+        </sem:triple>
+        <sem:triple xmlns:sem="http://marklogic.com/semantics">
+            <sem:subject>http://marklogic.com/Person-0.0.1/Person/%2Fpersons%2Ffirst-name-synonym1.xml%231</sem:subject>
+            <sem:predicate>http://www.w3.org/2000/01/rdf-schema#isDefinedBy</sem:predicate>
+            <sem:object datatype="http://www.w3.org/2001/XMLSchema#anyURI">/persons/first-name-synonym1.xml</sem:object>
+        </sem:triple>
+        <sem:triple xmlns:sem="http://marklogic.com/semantics">
+            <sem:subject>http://marklogic.com/Person-0.0.1/Person/%2Fpersons%2Ffirst-name-synonym2.xml%231</sem:subject>
+            <sem:predicate>http://www.w3.org/2000/01/rdf-schema#isDefinedBy</sem:predicate>
+            <sem:object datatype="http://www.w3.org/2001/XMLSchema#anyURI">/persons/first-name-synonym2.xml</sem:object>
+        </sem:triple>
+    </es:triples>
+    <es:merged>
+        <es:instance>
+            <es:info>
+                <es:title>Person</es:title>
+                <es:version>0.0.1</es:version>
+            </es:info>
+            <Person>
+                <Address xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">123 Bates St</Address>
+                <FirstName xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Robert</FirstName>
+                <FirstName xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Bob</FirstName>
+                <LastName xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Bates</LastName>
+                <SSN xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">333-33-3330</SSN>
+                <SSN xsi:type="xs:string" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">333-33-3331</SSN>
+            </Person>
+        </es:instance>
+    </es:merged>
+</es:envelope>

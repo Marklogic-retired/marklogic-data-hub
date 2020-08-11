@@ -314,6 +314,139 @@ function verifyStructuredSelectedPropertiesResults() {
   return assertions;
 }
 
+function verifyMergedJsonEntityTypeProperties() {
+  const entityName = "Customer";
+  const expectedShippingResult = [
+    [
+      {
+        "propertyPath": "shipping.street",
+        "propertyValue": [
+          "Hanover Place",
+          "1800 Tysons Blvd"
+        ]
+      },
+      {
+        "propertyPath": "shipping.city",
+        "propertyValue": [
+          "Marshall",
+          "McLean"
+        ]
+      },
+      {
+        "propertyPath": "shipping.state",
+        "propertyValue": [
+          "Oklahoma",
+          "Virginia"
+        ]
+      },
+      {
+        "propertyPath": "shipping.zip",
+        "propertyValue": [
+          [
+            {
+              "propertyPath": "shipping.zip.fiveDigit",
+              "propertyValue": [
+                "22102",
+                "19111"
+              ]
+            },
+            {
+              "propertyPath": "shipping.zip.plusFour",
+              "propertyValue": [
+                "2021",
+                "1001"
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  ];
+  const expectedBillingResult = [
+    [
+      {
+        "propertyPath": "billing.street",
+        "propertyValue": [
+          "Sunnyside Avenue"
+        ]
+      },
+      {
+        "propertyPath": "billing.city",
+        "propertyValue": "Brutus"
+      },
+      {
+        "propertyPath": "billing.state",
+        "propertyValue": "Wisconsin"
+      },
+      {
+        "propertyPath": "billing.zip",
+        "propertyValue": [
+          [
+            {
+              "propertyPath": "billing.zip.fiveDigit",
+              "propertyValue": "30706"
+            },
+            {
+              "propertyPath": "billing.zip.plusFour",
+              "propertyValue": "8854"
+            }
+          ]
+        ]
+      }
+    ]
+  ];
+  const response = {
+    "snippet-format": "snippet",
+    "total": 1,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/mergedJsonInstance.json"
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual("customerId", response.results[0].entityProperties[0].propertyPath),
+    test.assertEqual(105, response.results[0].entityProperties[0].propertyValue),
+    test.assertEqual("name", response.results[0].entityProperties[1].propertyPath),
+    test.assertEqual(["Hollan Welles", "Holland Wells"], response.results[0].entityProperties[1].propertyValue),
+    test.assertEqual("nicknames", response.results[0].entityProperties[2].propertyPath),
+    test.assertEqual([], response.results[0].entityProperties[2].propertyValue),
+    test.assertEqual("shipping", response.results[0].entityProperties[3].propertyPath),
+    test.assertEqual(expectedShippingResult, response.results[0].entityProperties[3].propertyValue),
+    test.assertEqual("billing", response.results[0].entityProperties[4].propertyPath),
+    test.assertEqual(expectedBillingResult, response.results[0].entityProperties[4].propertyValue)
+  ];
+}
+
+function verifyMergedXmlEntityTypeProperties() {
+  const entityName = "Person";
+  const response = {
+    "snippet-format": "snippet",
+    "total": 1,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/mergedXmlInstance.xml"
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual("FirstName", response.results[0].entityProperties[0].propertyPath),
+    test.assertEqual(["Robert", "Bob"], response.results[0].entityProperties[0].propertyValue),
+    test.assertEqual("LastName", response.results[0].entityProperties[1].propertyPath),
+    test.assertEqual("Bates", response.results[0].entityProperties[1].propertyValue),
+    test.assertEqual("SSN", response.results[0].entityProperties[2].propertyPath),
+    test.assertEqual(["333-33-3330", "333-33-3331"], response.results[0].entityProperties[2].propertyValue),
+    test.assertEqual("ZipCode", response.results[0].entityProperties[3].propertyPath),
+    test.assertEqual("", response.results[0].entityProperties[3].propertyValue),
+    test.assertEqual("Address", response.results[0].entityProperties[4].propertyPath),
+    test.assertEqual("123 Bates St", response.results[0].entityProperties[4].propertyValue)
+  ];
+}
+
 function verifyResultsWithoutSelectedProperties() {
   const response = {
     "snippet-format": "snippet",
@@ -554,7 +687,7 @@ function verifyIdentifierWithoutDefinedPrimaryKey() {
 function verifyEntityInstanceResults() {
   const response = {
     "snippet-format": "snippet",
-    "total": 7,
+    "total": 8,
     "results": [
       {
         "index": 1,
@@ -583,6 +716,10 @@ function verifyEntityInstanceResults() {
       {
         "index": 7,
         "uri": "/content/nonExistentDoc.json"
+      },
+      {
+        "index": 8,
+        "uri": "/content/mergedJsonInstance.json"
       }
     ]
   };
@@ -621,7 +758,14 @@ function verifyEntityInstanceResults() {
     // textdocument
     test.assertEqual(0, Object.keys(response.results[5].entityInstance).length),
     // nonExistentDoc
-    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length)
+    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length),
+    // mergedJsonInstance
+    test.assertEqual(4, Object.keys(response.results[7].entityInstance).length, "mergedJsonInstance has 5 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(105, response.results[7].entityInstance.customerId),
+    test.assertEqual(["Hollan Welles", "Holland Wells"], response.results[7].entityInstance.name),
+    test.assertEqual(1, response.results[7].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[7].entityInstance.birthDate),
+    test.assertEqual(null, response.results[7].entityInstance.status)
   ];
 }
 
@@ -630,7 +774,7 @@ function verifyEntityInstanceResultsForAllEntities() {
   const entityName = null;
   const response = {
     "snippet-format": "snippet",
-    "total": 7,
+    "total": 9,
     "results": [
       {
         "index": 1,
@@ -659,6 +803,14 @@ function verifyEntityInstanceResultsForAllEntities() {
       {
         "index": 7,
         "uri": "/content/nonExistentDoc.json"
+      },
+      {
+        "index": 8,
+        "uri": "/content/mergedJsonInstance.json"
+      },
+      {
+        "index": 9,
+        "uri": "/content/mergedXmlInstance.xml"
       }
     ]
   };
@@ -696,7 +848,20 @@ function verifyEntityInstanceResultsForAllEntities() {
     // textdocument
     test.assertEqual(0, Object.keys(response.results[5].entityInstance).length),
     // nonExistentDoc
-    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length)
+    test.assertEqual(0, Object.keys(response.results[6].entityInstance).length),
+    // mergedJsonInstance
+    test.assertEqual(4, Object.keys(response.results[7].entityInstance).length, "mergedJsonInstance has 4 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(105, response.results[7].entityInstance.customerId),
+    test.assertEqual(["Hollan Welles", "Holland Wells"], response.results[7].entityInstance.name),
+    test.assertEqual(1, response.results[7].entityInstance.shipping.length),
+    test.assertEqual(null, response.results[7].entityInstance.birthDate),
+    test.assertEqual(null, response.results[7].entityInstance.status),
+    // mergedXmlInstance
+    test.assertEqual(4, Object.keys(response.results[8].entityInstance).length, "mergedXmlInstance has 4 props populated which are available in the xpath /*:envelope/*:instance"),
+    test.assertEqual(["Robert", "Bob"], response.results[8].entityInstance.FirstName),
+    test.assertEqual(["333-33-3330", "333-33-3331"], response.results[8].entityInstance.SSN),
+    test.assertEqual("Bates", response.results[8].entityInstance.LastName),
+    test.assertEqual("123 Bates St", response.results[8].entityInstance.Address)
   ];
 }
 
@@ -705,6 +870,8 @@ function verifyEntityInstanceResultsForAllEntities() {
   .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
   .concat(verifyStructuredSelectedPropertiesResults())
   .concat(verifyResultsWithoutSelectedProperties())
+  .concat(verifyMergedJsonEntityTypeProperties())
+  .concat(verifyMergedXmlEntityTypeProperties())
   .concat(verifyPrimaryKeyWithDefinedEntities())
   .concat(verifyPrimaryKeyWithoutDefinedEntities())
   .concat(verifySimplePropertiesForSingleEntity())

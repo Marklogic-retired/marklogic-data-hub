@@ -1,0 +1,152 @@
+{
+  "envelope": {
+    "headers": {
+      "merge-options": {
+        "lang": "zxx",
+        "value": "504B0304140000"
+      },
+      "sources": [
+        {
+          "name": "loadCustomersJSON"
+        }
+      ],
+      "createdOn": "2020-08-10T06:45:06.23416-07:00",
+      "createdBy": "admin",
+      "merges": [
+        {
+          "document-uri": "/Customer/Cust5-merge.json",
+          "last-merge": "2020-08-10T06:45:09.534496-07:00"
+        },
+        {
+          "document-uri": "/Customer/Cust5.json",
+          "last-merge": "2020-08-10T06:45:09.534496-07:00"
+        }
+      ],
+      "id": "/com.marklogic.smart-mastering/merged/9cee177e850d7a2fd46be6fa3d65853a.json"
+    },
+    "triples": [
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Address/%2FCustomer%2FCust5.json%231",
+          "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          "object": "http://example.org/Customer-0.0.1/Address"
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Customer/105",
+          "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          "object": "http://example.org/Customer-0.0.1/Customer"
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Zip/%2FCustomer%2FCust5.json%231",
+          "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+          "object": "http://example.org/Customer-0.0.1/Zip"
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Address/%2FCustomer%2FCust5.json%231",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+          "object": {
+            "datatype": "http://www.w3.org/2001/XMLSchema#anyURI",
+            "value": "/Customer/Cust5.json"
+          }
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Customer/105",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+          "object": {
+            "datatype": "http://www.w3.org/2001/XMLSchema#anyURI",
+            "value": "/Customer/Cust5-merge.json"
+          }
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Customer/105",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+          "object": {
+            "datatype": "http://www.w3.org/2001/XMLSchema#anyURI",
+            "value": "/Customer/Cust5.json"
+          }
+        }
+      },
+      {
+        "triple": {
+          "subject": "http://example.org/Customer-0.0.1/Zip/%2FCustomer%2FCust5.json%231",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+          "object": {
+            "datatype": "http://www.w3.org/2001/XMLSchema#anyURI",
+            "value": "/Customer/Cust5.json"
+          }
+        }
+      }
+    ],
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "billing": [
+          {
+            "Address": {
+              "zip": {
+                "Zip": {
+                  "fiveDigit": "30706",
+                  "plusFour": "8854"
+                }
+              },
+              "city": "Brutus",
+              "street": [
+                "Sunnyside Avenue"
+              ],
+              "state": "Wisconsin"
+            }
+          }
+        ],
+        "shipping": [
+          {
+            "Address": {
+              "zip": {
+                "Zip": {
+                  "fiveDigit": [
+                    "22102",
+                    "19111"
+                  ],
+                  "plusFour": [
+                    "2021",
+                    "1001"
+                  ]
+                }
+              },
+              "city": [
+                "Marshall",
+                "McLean"
+              ],
+              "street": [
+                "Hanover Place",
+                "1800 Tysons Blvd"
+              ],
+              "state": [
+                "Oklahoma",
+                "Virginia"
+              ]
+            }
+          }
+        ],
+        "customerId": 105,
+        "name": [
+          "Hollan Welles",
+          "Holland Wells"
+        ]
+      }
+    }
+  }
+}
