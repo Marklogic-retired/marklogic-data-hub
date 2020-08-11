@@ -15,15 +15,12 @@
  */
 package com.marklogic.hub.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EntityManagerTest extends AbstractHubCoreTest {
 
     @Autowired
-    EntityManager entityManager;
+    EntityManagerImpl entityManager;
 
     @Autowired
     HubProject project;
@@ -136,18 +133,6 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("final-database.json").toFile()), true);
         assertJsonEqual(getResource("entity-manager-test/db-config2.json"), FileUtils.readFileToString(dir.resolve("staging-database.json").toFile()), true);
-
-        // try a deploy too
-        /* this section causes a state change in the db that's hard to tear down/
-         so it's excluded from our automated testing for the time being
-        try {
-            getDataHub().updateIndexes();
-            // pass
-        } catch (Exception e) {
-            throw (e);
-        }
-         */
-
     }
 
     @Test
@@ -168,41 +153,12 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     }
 
     @Test
-    @Tag("NoAWS")
-    public void testDeployPiiConfigurations() throws IOException {
-        installEntities();
-
-        ObjectMapper mapper = new ObjectMapper();
-        Path dir = getDataHubAdminConfig().getHubEntitiesDir();
-
-        // deploy is separate
-        entityManager.savePii();
-
-        File protectedPathConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("protected-paths/01_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File secondProtectedPathConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("protected-paths/02_" + HubConfig.PII_PROTECTED_PATHS_FILE).toFile();
-        File queryRolesetsConfig = getDataHubAdminConfig().getUserSecurityDir().resolve("query-rolesets/" + HubConfig.PII_QUERY_ROLESET_FILE).toFile();
-
-        // assert that ELS configuation is in project
-        JsonNode protectedPaths = mapper.readTree(protectedPathConfig);
-        assertTrue(protectedPaths.get("path-expression").isTextual(),
-            "Protected Path Config should have path expression.");
-        protectedPaths = mapper.readTree(secondProtectedPathConfig);
-        assertTrue(protectedPaths.get("path-expression").isTextual(),
-            "Protected Path Config should have path expression.");
-        JsonNode rolesets = mapper.readTree(queryRolesetsConfig);
-        assertEquals("pii-reader",
-            rolesets.get("role-name").get(0).asText(), "Config should have one roleset, pii-reader.");
-
-
-    }
-
-    @Test
     public void generateExplorerOptions() {
         installEntities();
         File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
         File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
 
-        entityManager.generateExplorerQueryOptions();
+        entityManager.saveQueryOptions();
 
         assertTrue(finalDbOptions.exists());
         assertTrue(stagingDbOptions.exists());
@@ -213,7 +169,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
         File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
 
-        entityManager.generateExplorerQueryOptions();
+        entityManager.saveQueryOptions();
 
         assertFalse(finalDbOptions.exists());
         assertFalse(stagingDbOptions.exists());
@@ -229,7 +185,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         long oldFinalOptionsTimeStamp = finalDbOptions.lastModified();
         long oldStagingOptionsTimeStamp = stagingDbOptions.lastModified();
 
-        entityManager.generateExplorerQueryOptions();
+        entityManager.saveQueryOptions();
 
         long newFinalOptionsTimeStamp = finalDbOptions.lastModified();
         long newStagingOptionsTimeStamp = stagingDbOptions.lastModified();
