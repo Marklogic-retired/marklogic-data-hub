@@ -61,4 +61,12 @@ public interface MasteringManager {
      * @return - a JsonNode with the historical information
      */
     public JsonNode documentHistory(String mergedURI);
+
+    /**
+     * Returns notifications
+     * @param start - (optional, defaulting to 1) the 1-based index of the first notification to return
+     * @param pageLength - (optional, defaulting to 10) the number of notifications to return
+     * @return - a JsonNode with the notifications
+     */
+    public JsonNode notifications(int start, int pageLength);
 }

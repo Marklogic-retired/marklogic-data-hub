@@ -310,7 +310,7 @@ declare function notify-impl:get-notifications-as-xml(
   $extractions as map:map)
 as element(sm:notification)*
 {
-  for $n in (fn:collection($const:NOTIFICATION-COLL)[$start to $end])/sm:notification
+  for $n in cts:search(/sm:notification, cts:true-query(), "unfiltered")[$start to $end]
   return
     notify-impl:enhance-notification-xml($n, $extractions)
 };

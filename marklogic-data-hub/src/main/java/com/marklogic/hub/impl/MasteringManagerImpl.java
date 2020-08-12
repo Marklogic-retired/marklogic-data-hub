@@ -57,6 +57,11 @@ public class MasteringManagerImpl implements MasteringManager {
         return getDocumentHistoryResource(DatabaseKind.FINAL).documentHistory(mergedURI);
     }
 
+    @Override
+    public JsonNode notifications(int start, int pageLength)  {
+        return getNotificationsResource(DatabaseKind.FINAL).notifications(start, pageLength) ;
+    }
+
     private MergeResource getMergeResource(DatabaseKind databaseKind) {
         return new MergeResource(getSrcClient(databaseKind), hubConfig.getDbName(databaseKind));
     }
@@ -67,6 +72,10 @@ public class MasteringManagerImpl implements MasteringManager {
 
     private DocumentHistoryResource getDocumentHistoryResource(DatabaseKind databaseKind) {
         return new DocumentHistoryResource(getSrcClient(databaseKind));
+    }
+
+    private NotificationsResource getNotificationsResource(DatabaseKind databaseKind) {
+        return new NotificationsResource(getSrcClient(databaseKind));
     }
 
     private DatabaseClient getSrcClient(DatabaseKind databaseKind) {
@@ -154,6 +163,24 @@ public class MasteringManagerImpl implements MasteringManager {
 
             RequestParameters params = new RequestParameters();
             params.put("uri", mergedURI);
+            resp = this.getServices().get(params, new JacksonHandle()).get();
+            return resp;
+        }
+    }
+
+    static class NotificationsResource extends ResourceManager {
+
+        public NotificationsResource(DatabaseClient srcClient) {
+            super();
+            srcClient.init("mlSmNotifications" , this);
+        }
+
+        public JsonNode notifications(int start, int pageLength) {
+            JsonNode resp;
+
+            RequestParameters params = new RequestParameters();
+            params.put("start", String.valueOf(start));
+            params.put("pageLength", String.valueOf(pageLength));
             resp = this.getServices().get(params, new JacksonHandle()).get();
             return resp;
         }
