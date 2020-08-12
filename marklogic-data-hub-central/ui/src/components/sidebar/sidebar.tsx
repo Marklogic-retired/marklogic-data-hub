@@ -52,6 +52,12 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.facets) {
+      props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
+      for (let i in hubFacets) {
+        if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName)) {
+          setActiveKey(['hubProperties', 'entityProperties']);
+        }
+      }
       const parsedFacets = facetParser(props.facets);
       const filteredHubFacets = hubPropertiesConfig.map(hubFacet => {
         let hubFacetValues = parsedFacets.find(facet => facet.facetName === hubFacet.facetName);
