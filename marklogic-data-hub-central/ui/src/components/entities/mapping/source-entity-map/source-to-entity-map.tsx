@@ -41,9 +41,9 @@ const SourceToEntityMap = (props) => {
     const [mapSaved, setMapSaved] = useState(false);
     const [errorInSaving, setErrorInSaving] = useState('');
 
-    const [srcURI, setSrcURI] = useState(props.sourceURI);
-
     const [srcData, setSrcData] = useState<any[]>([]);
+    const [srcURI, setSrcURI] = useState(props.sourceURI);
+    const [srcFormat, setSrcFormat] = useState(props.sourceFormat);
 
     //For source dropdown search menu
     const [flatArray, setFlatArray]   = useState<any[]>([]);
@@ -156,19 +156,22 @@ const SourceToEntityMap = (props) => {
         })
     }, [props.mappingVisible]);
 
+    useEffect(() => {
+        setSrcData([...props.sourceData])
+        setFlatArray(flattenSourceDoc([...props.sourceData], [], ''))
+    }, [props.sourceData]);
 
     useEffect(() => {
         if (props.sourceURI) {
             setSrcURI(props.sourceURI);
         }
-
     }, [props.sourceURI]);
 
     useEffect(() => {
-        setSrcData([...props.sourceData])
-        setFlatArray(flattenSourceDoc([...props.sourceData], [], ''))
-
-    }, [props.sourceData]);
+        if (props.sourceFormat) {
+            setSrcFormat(props.sourceFormat);
+        }
+    }, [props.sourceFormat]);
 
     useEffect(()=> {
         initializeSourceExpandKeys();
@@ -574,7 +577,7 @@ const SourceToEntityMap = (props) => {
             ellipsis: true,
             sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
             width: '40%',
-            render: (text, row) => (<div data-testid = {row.key +'-srcValue'} className = {styles.sourceValue}>{text ? <MLTooltip title={text}>{getTextforSourceValue(text)}</MLTooltip> : ''}</div>)
+            render: (text, row) => (<div data-testid = {row.key +'-srcValue'} className = {styles.sourceValue}>{(text || text === '') ? <MLTooltip title={text}>{getTextforSourceValue(text, row)}</MLTooltip> : ''}</div>)
         }
     ];
 
@@ -651,20 +654,27 @@ const SourceToEntityMap = (props) => {
         }
     ]
 
-    const getTextforSourceValue = (text) => {
+    const getClassNames = (format, datatype) => {
+        let classNames : string[] = [];
+        if (format) classNames.push('format-'.concat(format));
+        if (datatype) classNames.push('datatype-'.concat(datatype));
+        return classNames.join(' ');
+    }
+
+    const getTextforSourceValue = (text, row) => {
         let arr = text.split(', ')
         if (arr.length >= 2){
-            let xMore = '(' + (arr.length - 2) + ' more)';
-            let itemOne = arr[0].length > 16 ? getInitialChars(arr[0], 16, '...\n') : arr[0] + '\n';
-            let itemTwo = arr[1].length > 16 ? getInitialChars(arr[1], 16, '...\n') : arr[1] + '\n';
-            let fullItem = itemOne.concat(itemTwo);
-            if(arr.length == 2){
+            let xMore = <span className="moreVal">{'(' + (arr.length - 2) + ' more)'}</span>;
+            let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
+            let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], 14, '...')}</span>;
+            let fullItem = <span>{itemOne}{'\n'}{itemTwo}</span>;
+            if (arr.length == 2){
                 return <p>{fullItem}</p>;
-            }else{
-                return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
+            } else {
+                return <p>{fullItem}{'\n'}{xMore}</p>;
             }
-        }else{
-            return getInitialChars(arr[0],16,'...')
+        } else {
+            return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
         }
     }
 
@@ -674,14 +684,14 @@ const SourceToEntityMap = (props) => {
         let respFromServer = getDataForValueField(row.name);
         //if array of values and more than 2 values
         if(respFromServer && Array.isArray(respFromServer) && respFromServer.length >= 2){
-            let xMore = '(' + (respFromServer.length - 2) + ' more)';
+            let xMore = <span className="moreVal">{'(' + (respFromServer.length - 2) + ' more)'}</span>;
             let itemOne = respFromServer[0].length > 23 ? getInitialChars(respFromServer[0], 23, '...\n') : respFromServer[0] + '\n';
             let itemTwo = respFromServer[1].length > 23 ? getInitialChars(respFromServer[1], 23, '...\n') : respFromServer[1] + '\n';
             let fullItem = itemOne.concat(itemTwo);
             if(respFromServer.length == 2){
                 return <p>{fullItem}</p>;
             }else{
-                return <p>{fullItem}<span style= {{color: 'grey'}}>{xMore}</span></p>;
+                return <p>{fullItem}{xMore}</p>;
             }
         }else{
             return getInitialChars(respFromServer,23,'...')
@@ -858,8 +868,8 @@ const SourceToEntityMap = (props) => {
     const flattenSourceDoc = (sourceData, flatArray, flatArrayKey) => {
         sourceData.forEach(element =>{
             let flatArrayVal = element.key;
-            if(!element.children && element.val) {
-                if(!flatArrayKey&& flatArrayKey.indexOf('/') == -1){
+            if (!element.children && (element.val || element.val === '')) {
+                if (!flatArrayKey&& flatArrayKey.indexOf('/') == -1){
                     trackUniqueKeys.push(element.key)
                     flatArray.push({'value':flatArrayVal, 'key':element.key, 'struct': element.array ? true : false});
                 }
@@ -872,7 +882,7 @@ const SourceToEntityMap = (props) => {
                 }
             }
             else{
-                if(!flatArrayKey){
+                if (!flatArrayKey){
                     flatArrayKey =element.key
                 }
                 else {
@@ -883,7 +893,7 @@ const SourceToEntityMap = (props) => {
                     flatArray.push({'value':flatArrayVal, 'key':flatArrayKey, 'struct': true});
                 }
             }
-            if(element.children) {
+            if (element.children) {
                 flattenSourceDoc(element.children, flatArray, flatArrayKey);
                 flatArrayKey = (flatArrayKey.indexOf("/")==-1)?'':flatArrayKey.substring(0,flatArrayKey.lastIndexOf("/"))
             }

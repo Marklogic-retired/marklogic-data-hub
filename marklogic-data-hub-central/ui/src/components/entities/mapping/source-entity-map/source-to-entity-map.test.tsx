@@ -29,14 +29,27 @@ describe('RTL Source-to-entity map tests', () => {
     });
 
     test('RTL tests with source data',  () => {
-        const { getByTestId,  getByText, queryByText, rerender} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+        const { getByTestId,  getByText, queryByText, rerender } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
+        expect(getByText('emptyString')).toBeInTheDocument();
+        expect(getByText('nullValue')).toBeInTheDocument();
+        expect(getByText('numberValue')).toBeInTheDocument();
+        expect(getByText('booleanValue')).toBeInTheDocument();
+        expect(getByText('whitespaceValue')).toBeInTheDocument();
         expect(getByTestId("entityContainer")).toBeInTheDocument();
         expect(getByTestId("srcContainer")).toBeInTheDocument();
         expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
+
+        // Check datatype class names for source values
+        expect(getByTestId("emptyString-srcValue").children[0].className.includes('datatype-string')).toBe(true);
+        expect(getByTestId("nullValue-srcValue").children[0].className.includes('datatype-null')).toBe(true);
+        expect(getByTestId("numberValue-srcValue").children[0].className.includes('datatype-number')).toBe(true);
+        expect(getByTestId("booleanValue-srcValue").children[0].className.includes('datatype-boolean')).toBe(true);
+        expect(getByTestId("whitespaceValue-srcValue").children[0].className.includes('datatype-string')).toBe(true);
+
         rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={true} />)
         expect(getByTestId('spinTest')).toBeInTheDocument();
         rerender(<SourceToEntityMap{...data.mapProps} mappingVisible={true} isLoading={false} />)
@@ -319,7 +332,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('Sorting in Source and Entity table',() => {
 
-      const { getByTestId } = render(<SourceToEntityMap {...data.mapProps}
+      const { getByTestId, debug } = render(<SourceToEntityMap {...data.mapProps}
         mappingVisible={true}
         />);
 
@@ -334,43 +347,43 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check the sort order of Name column rows before enforcing sort order
       let srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue'], 'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['nutFreeName', 'proteinCat', 'proteinDog', 'proteinId', 'proteinType'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['booleanValue', 'emptyString', 'nullValue', 'numberValue', 'nutFreeName', 'proteinCat', 'proteinDog', 'proteinId', 'proteinType', 'whitespaceValue'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Descending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinType','proteinId', 'proteinDog', 'proteinCat', 'nutFreeName'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['whitespaceValue', 'proteinType','proteinId', 'proteinDog', 'proteinCat', 'nutFreeName', 'numberValue', 'nullValue', 'emptyString', 'booleanValue'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue'], 'key', data.mapProps.sourceData);
 
       /* Validate sorting on Values column in source table */
 
       //Check the sort order of Values column rows before enforcing sort order
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador'], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' '], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Ascending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'commercial', 'home', 'retriever, golden, labrador', undefined], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['', ' ', '123EAC', '321', 'commercial', 'home', 'null', 'retriever, golden, labrador', 'true', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Descending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['retriever, golden, labrador', 'home', 'commercial', '123EAC', undefined], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['true', 'retriever, golden, labrador', 'null', 'home', 'commercial', '123EAC', undefined, '321', ' ', ''], 'val', data.mapProps.sourceData);
 
       //Click on the Value column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador'], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' '], 'val', data.mapProps.sourceData);
 
       /* Validate sorting in Entity table columns */
       const entityTableNameSort = getByTestId('entityTableName'); // For value column sorting
@@ -469,11 +482,11 @@ describe('RTL Source-to-entity map tests', () => {
 
         //Verify truncated text in Source table
         await(waitForElement(() => getByTestId('proteinId-srcValue')))
-        expect(getByTestId('proteinId-srcValue')).toHaveTextContent('extremelylonguse...')
+        expect(getByTestId('proteinId-srcValue')).toHaveTextContent('extremelylongu...')
         expect(getByTestId('proteinType-srcValue')).toHaveTextContent('s@ml.com (7 more)')
 
         //Verify tooltip shows full value when hovering Source values
-        fireEvent.mouseOver(getByText('extremelylonguse...'))
+        fireEvent.mouseOver(getByText('extremelylongu...'))
         await waitForElement(() => getByText('extremelylongusername@marklogic.com'));
 
         //Verify tooltip shows all values in a list when hovering values with multiple items

@@ -7,3 +7,14 @@
 .ant-table-filter-icon.ant-dropdown-trigger.ant-table-filter-selected{
     background: #394494; 
 }
+
+.datatype-string::before {
+    content: '"';
+}
+.datatype-string::after {
+    content: '"';
+}
+
+.moreVal {
+    color: grey;
+}
