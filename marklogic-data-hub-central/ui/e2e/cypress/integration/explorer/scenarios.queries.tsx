@@ -52,6 +52,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryDescription().type('new-query-2 description');
         browsePage.getSaveQueryButton().click();
         browsePage.getSelectedQuery().should('contain', 'new-query-2');
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getHubPropertiesExpanded();
         browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
         browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
@@ -213,6 +214,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // creating query 1 with customer entity
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.waitForSpinnerToDisappear()
         browsePage.getHubPropertiesExpanded();
         browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
         browsePage.getFacetApplyButton().click();
@@ -264,17 +266,18 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.selectQuery('new-query');
         browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
-        browsePage.clickColumnTitle(2);
+        browsePage.clickColumnTitle(3);
         browsePage.selectEntity('Person');
         browsePage.getEntityConfirmationYesClick().click();
         browsePage.getEditSaveChangesButton().click();
         browsePage.getSelectedEntity().should('contain', 'Person');
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('new-query');
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getAppliedFacets('Adams Cole').should('exist');
-        browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
-        browsePage.getTableCell(1,2).should('contain', '103');
-        browsePage.getTableCell(2,2).should('contain', '102');
+        browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
+        browsePage.getTableCell(1,3).should('contain', 'Adams Cole');
+        browsePage.getTableCell(2,3).should('contain', 'Adams Cole');
     });
 
     it('Switching between entities when there are saved queries', () => {
@@ -340,6 +343,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getAppliedFacets('Adams Cole').should('exist');
         browsePage.getSortIndicatorAsc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.getTableCell(1,2).should('contain', '102');
@@ -376,6 +380,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getAppliedFacets('Adams Cole').should('exist');
         browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.getTableCell(1,2).should('contain', '103');
