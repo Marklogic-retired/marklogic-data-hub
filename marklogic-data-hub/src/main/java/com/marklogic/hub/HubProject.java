@@ -90,7 +90,7 @@ public interface HubProject {
      * @param type - a Step type
      * @return the path for the hub steps directory
      */
-    Path getStepsDirByType(StepDefinition.StepDefinitionType type);
+    Path getStepDefinitionPath(StepDefinition.StepDefinitionType type);
 
     /**
      * Gets the path for the hub's config directory
@@ -291,6 +291,14 @@ public interface HubProject {
      * @return the directory containing steps, as defined in the 5.3.0 release
      */
     Path getStepsPath();
+
+    /**
+     *
+     * @param type
+     * @return the step-type-specific subdirectory of the steps directory (e.g. steps/mapping),
+     * as defined in the 5.3.0 release
+     */
+    Path getStepsPath(StepDefinition.StepDefinitionType type);
 
     /**
      * @param stepType

@@ -20,6 +20,8 @@ const Flow = require('./flow');
 const LoadData = require('./loadData');
 const Mapping = require('./mapping');
 const Matching = require('./matching');
+const Merging = require('./merging');
+const Mastering = require('./mastering');
 const StepDef = require('./stepDefinition');
 const CustomStep = require('./customStep')
 
@@ -35,6 +37,8 @@ const registeredArtifactTypes = {
     stepDefinition: StepDef,
     mapping: Mapping,
     matching: Matching,
+    merging: Merging,
+    mastering: Mastering,
     custom: CustomStep
 };
 
@@ -161,8 +165,10 @@ function setArtifact(artifactType, artifactName, artifact) {
     if (fn.empty(existingArtifact) && artifactLibrary.defaultArtifact) {
         artifact = Object.assign({}, artifactLibrary.defaultArtifact(artifactName, artifact.targetEntityType), artifact);
     }
+
     artifact.lastUpdated = fn.string(fn.currentDateTime());
     dataHub.hubUtils.replaceLanguageWithLang(artifact);
+
     for (const db of artifactDatabases) {
         dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
     }

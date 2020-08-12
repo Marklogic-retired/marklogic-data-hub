@@ -20,7 +20,7 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
 
-const collections = ['http://marklogic.com/data-hub/steps/matching', 'http://marklogic.com/data-hub/steps'];
+const collections = ['http://marklogic.com/data-hub/steps/mastering', 'http://marklogic.com/data-hub/steps'];
 const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
 const permissions =
   [
@@ -50,7 +50,7 @@ function getFileExtension() {
 }
 
 function getDirectory() {
-  return "/steps/matching/";
+  return "/steps/mastering/";
 }
 
 function getArtifactNode(artifactName, artifactVersion) {

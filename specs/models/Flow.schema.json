@@ -89,6 +89,27 @@
                     }
                   }
                 },
+                "fileLocations": {
+                  "type": "object",
+                  "description": "Applicable only to ingestion steps run via Gradle or QuickStart; not applicable when using MLCP",
+                  "properties": {
+                    "inputFilePath": {
+                      "type": "string"
+                    },
+                    "inputFileType": {
+                      "type": "string"
+                    },
+                    "outputURIReplacement": {
+                      "type": "string"
+                    },
+                    "outputURIPrefix": {
+                      "type": "string"
+                    },
+                    "separator": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "options": {
                   "type": "object",
                   "properties": {
@@ -152,27 +173,6 @@
                     "headers": {
                       "type": "object",
                       "description": "Any properties in this object will be copied into the headers of each document processed by the step"
-                    },
-                    "fileLocations": {
-                      "type": "object",
-                      "description": "Applicable only to ingestion steps run via Gradle or QuickStart; not applicable when using MLCP",
-                      "properties": {
-                        "inputFilePath": {
-                          "type": "string"
-                        },
-                        "inputFileType": {
-                          "type": "string"
-                        },
-                        "outputURIReplacement": {
-                          "type": "string"
-                        },
-                        "outputURIPrefix": {
-                          "type": "string"
-                        },
-                        "separator": {
-                          "type": "string"
-                        }
-                      }
                     },
                     "mapping": {
                       "type": "object",

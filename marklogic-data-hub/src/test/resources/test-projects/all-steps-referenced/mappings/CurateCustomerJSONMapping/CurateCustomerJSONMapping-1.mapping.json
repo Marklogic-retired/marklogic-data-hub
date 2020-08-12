@@ -1,0 +1,75 @@
+{
+  "lang" : "zxx",
+  "name" : "CurateCustomerJSONMapping",
+  "description" : "",
+  "version" : 1,
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
+  "sourceContext" : "/",
+  "sourceURI" : "",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "concat(Name/FirstName, ' ', Name/LastName)"
+    },
+    "shipping": {
+      "sourcedFrom": "/Address/Shipping",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "billing": {
+      "sourcedFrom": "/Address/Billing",
+      "properties": {
+        "street": {
+          "sourcedFrom": "Street"
+        },
+        "city": {
+          "sourcedFrom": "City"
+        },
+        "state": {
+          "sourcedFrom": "State"
+        },
+        "zip": {
+          "sourcedFrom": ".",
+          "properties": {
+            "fiveDigit": {
+              "sourcedFrom": "substring(Postal, 1, 5)"
+            },
+            "plusFour": {
+              "sourcedFrom": "substring(Postal, 7)"
+            }
+          },
+          "targetEntityType": "#/definitions/Zip"
+        }
+      },
+      "targetEntityType": "#/definitions/Address"
+    },
+    "customerSince": {
+      "sourcedFrom": ""
+    }
+  },
+  "namespaces" : { }
+}
