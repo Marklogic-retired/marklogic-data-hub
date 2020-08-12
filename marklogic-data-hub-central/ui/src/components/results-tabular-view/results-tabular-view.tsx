@@ -179,7 +179,6 @@ const ResultsTabularView = (props) => {
                 setSortOrder(item.propertyLabel,sortOrder)
                 sortingOrder = true;
             }
-            return getTableSortValue(a,b,item);
         },
          sortOrder : (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
              && searchOptions.sortOrder[0].hasOwnProperty('sortDirection') ) ? (searchOptions.sortOrder[0].sortDirection === 'ascending') ?'ascend':'descend' : null,
@@ -197,22 +196,6 @@ const ResultsTabularView = (props) => {
     }
 
     const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
-
-    const getTableSortValue = (a, b, item) => {
-        let sortValue = (item.datatype !== 'string' || item.multiple) ? getValueToCompare(a, item.propertyPath)?.length - getValueToCompare(b, item.propertyPath)?.length : getValueToCompare(a, item.propertyPath)?.localeCompare(getValueToCompare(b, item.propertyPath));
-        return sortValue;
-    }
-
-    const getValueToCompare = (prop, propertyPath) => {
-        if (!prop[propertyPath]) {
-            return "";
-        } else if (Array.isArray(prop[propertyPath]) && (JSON.stringify(prop[propertyPath]) === JSON.stringify([]))) {
-            return "";
-        } else {
-            return prop[propertyPath];
-        }
-
-    }
 
     const tableDataRender = (item) => {
         let dataObj = {};
@@ -383,7 +366,7 @@ const ResultsTabularView = (props) => {
                 index = i;
             }
         }
- 
+
         nestedData = parseJson(props.data[index]?.entityInstance);
 
         return <MLTable
