@@ -49,6 +49,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [mappingVisible, setMappingVisible] = useState(false);
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
+    const [sourceFormat,setSourceFormat] = useState('');
     const [sourceDatabaseName, setSourceDatabaseName] = useState('data-hub-STAGING')
     const [docNotFound, setDocNotFound] = useState(false);
     const [flowName, setFlowName] = useState('');
@@ -104,7 +105,6 @@ const MappingCard: React.FC<Props> = (props) => {
     const OpenMappingSettingsDialog = (index) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
-        console.log('Open settings')
     }
 
     //Custom CSS for source Format
@@ -188,7 +188,7 @@ const MappingCard: React.FC<Props> = (props) => {
         }
         catch(error)  {
             let message = error;
-            console.log('Error While loading the source data!', message);
+            console.error('Error While loading the source data!', message);
             setIsLoading(false);
             setDocNotFound(true);
         }
@@ -203,8 +203,10 @@ const MappingCard: React.FC<Props> = (props) => {
                 let parsedDoc: any;
                 if(typeof(srcDocResp.data) === 'string'){
                     parsedDoc = getParsedXMLDoc(srcDocResp);
+                    setSourceFormat('xml');
                 } else {
                     parsedDoc = srcDocResp.data;
+                    setSourceFormat('json');
                 }
                 if(parsedDoc['envelope']){
                     if(parsedDoc['envelope'].hasOwnProperty('@xmlns')){
@@ -232,7 +234,7 @@ const MappingCard: React.FC<Props> = (props) => {
         } catch(error)  {
             let message = error//.response.data.message;
             setIsLoading(false);
-            console.log('Error While loading the Doc from URI!', message)
+            console.error('Error While loading the Doc from URI!', message)
             setDocNotFound(true);
         }
     }
@@ -260,7 +262,7 @@ const MappingCard: React.FC<Props> = (props) => {
             }
         }
 
-        if (val.constructor.name === 'Object') {
+        if (val && val.constructor && val.constructor.name === 'Object') {
             let valObject = Object.keys(val).filter((el) => /^@xmlns/.test(el));
             let count = valObject.length;
             if (count === 1) {
@@ -321,7 +323,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 propty = {
                     rowKey: sourceTableKeyIndex,
                     key: key,
-                    val: obj['#text']
+                    val: obj['#text'],
+                    datatype: getValDatatype(obj['#text'])
                 }
             } else {
                 sourceTableKeyIndex = sourceTableKeyIndex + 1;
@@ -329,7 +332,8 @@ const MappingCard: React.FC<Props> = (props) => {
                     rowKey: sourceTableKeyIndex,
                     key: key,
                     val: obj['#text'],
-                    'children': []
+                    'children': [],
+                    datatype: getValDatatype(obj['#text'])
                 }
             }
         } else {
@@ -343,13 +347,19 @@ const MappingCard: React.FC<Props> = (props) => {
         return propty;
     }
 
+    const getValDatatype = (val) => {
+        let result: any = typeof val;
+        result = val === null ? 'null' : result; // null returns typeof 'object', handle that
+        return result;
+    }
+
     // construct infinitely nested source Data
     const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString) => {
         Object.keys(respData).map(key => {
             let val = respData[key];
             if (val !== null && val !== "") {
 
-                if (val.constructor.name === "Object") {
+                if (val && val.constructor && val.constructor.name === "Object") {
                     let tempNS = parentNamespace;
 
                     if(val.hasOwnProperty('@xmlns')){
@@ -366,7 +376,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     if(parentNamespace !== tempNS){
                         parentNamespace = tempNS;
                     }
-                } else if (val.constructor.name === "Array") {
+                } else if (val && Array.isArray(val)) {
                     if (val[0].constructor.name === "String") {
                             let stringValues = val.join(', ')
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
@@ -375,7 +385,8 @@ const MappingCard: React.FC<Props> = (props) => {
                                 rowKey: sourceTableKeyIndex,
                                 key: finalKey,
                                 val: stringValues,
-                                array: true
+                                array: true,
+                                datatype: getValDatatype(stringValues)
                             };
                             nestedDoc.push(propty);
                     } else {
@@ -404,21 +415,25 @@ const MappingCard: React.FC<Props> = (props) => {
                         propty = {
                             rowKey: sourceTableKeyIndex,
                             key: finalKey,
-                            val: String(val)
+                            val: String(val),
+                            datatype: getValDatatype(val)
                         };
                         nestedDoc.push(propty);
                     }
                 }
 
-            } else {
-                if (val && !/^@xmlns/.test(key)) {
+            } 
+            // val is null or ""
+            else {
+                if (!/^@xmlns/.test(key)) {
                     let finalKey = getNamespace(key, val, parentNamespace);
 
                     sourceTableKeyIndex = sourceTableKeyIndex + 1;
                     let propty = {
                         rowKey: sourceTableKeyIndex,
                         key: finalKey,
-                        val: ""
+                        val: String(val),
+                        datatype: getValDatatype(val)
                     };
                     nestedDoc.push(propty);
                 }
@@ -441,11 +456,10 @@ const MappingCard: React.FC<Props> = (props) => {
 
             if (response.status === 200) {
                 setMapFunctions({...response.data});
-              console.log('GET Mapping functions API Called successfully!');
             }
           } catch (error) {
               let message = error;
-              console.log('Error while fetching the functions!', message);
+              console.error('Error while fetching the functions!', message);
           }
     }
 
@@ -658,6 +672,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 <SourceToEntityMap
                 sourceData={sourceData}
                 sourceURI={sourceURI}
+                sourceFormat={sourceFormat}
                 mapData={mapData}
                 entityTypeProperties={entityTypeProperties}
                 mappingVisible={mappingVisible}

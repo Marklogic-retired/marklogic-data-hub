@@ -163,18 +163,23 @@ const xmlSourceData = [
 ];
 
 const jsonSourceData = [
-  { rowKey: 1, key: 'proteinId', val: '123EAC' },
-  { rowKey: 2, key: 'proteinType', val: 'home' },
+  { rowKey: 1, key: 'proteinId', val: '123EAC', datatype: 'string' },
+  { rowKey: 2, key: 'proteinType', val: 'home', datatype: 'string' },
   {
     rowKey: 3, key: 'nutFreeName', children: [
-      { rowKey: 4, key: 'FirstNamePreferred', val: 'John' },
-      { rowKey: 5, key: 'LastName', val: 'Smith' , children: [
-        { rowKey: 6, key: 'suffix', val: 'Sr.' }
+      { rowKey: 4, key: 'FirstNamePreferred', val: 'John', datatype: 'string' },
+      { rowKey: 5, key: 'LastName', val: 'Smith', datatype: 'string', children: [
+        { rowKey: 6, key: 'suffix', val: 'Sr.', datatype: 'string' }
       ]}
     ]
   },
-  { rowKey: 7, key: 'proteinCat', val: 'commercial' },
-  { rowKey: 8, key: 'proteinDog', val: 'retriever, golden, labrador', array: true}
+  { rowKey: 7, key: 'proteinCat', val: 'commercial', datatype: 'string' },
+  { rowKey: 8, key: 'proteinDog', val: 'retriever, golden, labrador', array: true, datatype: 'string' },
+  { rowKey: 9, key: 'emptyString', val: '', datatype: 'string' },
+  { rowKey: 10, key: 'nullValue', val: 'null', datatype: 'null' },
+  { rowKey: 11, key: 'numberValue', val: '321', datatype: 'number' },
+  { rowKey: 12, key: 'booleanValue', val: 'true', datatype: 'boolean' },
+  { rowKey: 13, key: 'whitespaceValue', val: ' ', datatype: 'string' }
 ];
 
 const entityTypeProperties = [
