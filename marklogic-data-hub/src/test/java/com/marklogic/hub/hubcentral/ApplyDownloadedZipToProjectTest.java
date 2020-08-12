@@ -188,7 +188,7 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
      * user's project, and thus the one in our test project should always exist after applying the project zip.
      */
     private void verifyCustomStepDefinitionExists() {
-        File customDir = project.getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM).toFile();
+        File customDir = project.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).toFile();
         assertTrue(customDir.exists());
         File stepDefDir = new File(customDir, "testStep");
         assertTrue(stepDefDir.exists());

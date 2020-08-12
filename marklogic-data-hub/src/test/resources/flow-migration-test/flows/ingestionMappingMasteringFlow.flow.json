@@ -1,5 +1,5 @@
 {
-  "name": "ingestion_mapping_mastering-flow",
+  "name": "ingestionMappingMasteringFlow",
   "description": "This is the default flow containing all of the default steps",
   "batchSize": 100,
   "threadCount": 4,

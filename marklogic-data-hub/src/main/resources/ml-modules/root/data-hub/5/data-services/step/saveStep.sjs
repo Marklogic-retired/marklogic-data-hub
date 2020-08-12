@@ -32,6 +32,8 @@ if ("ingestion" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
 } else if ("custom" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-custom", "execute");
+} else if ("matching" === stepDefinitionType || "merging" === stepDefinitionType || "mastering" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 } else {
   ds.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
 }
@@ -51,18 +53,19 @@ if (existingStep) {
   xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, so will update`);
   let updatedStep = Object.assign(existingStep.toObject(), stepProperties);
   Artifacts.setArtifact(stepDefinitionType, stepName, updatedStep);
-} else {
+}
+else {
   xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType}  does not exist, so will create`);
 
   // For now, can assume the stepDefinitionName based on the type. Can add stepDefinitionType as a parameter once we need
   // more flexibility.
   let stepDefinitionName;
-  if("mapping" === stepDefinitionType){
+  if ("mapping" === stepDefinitionType) {
     stepDefinitionName = "entity-services-mapping";
   }
   else {
-    //if 'stepDefinitionName' is not set for ingestion step, it will be set to 'default-ingestion'
-    if("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName){
+    // if 'stepDefinitionName' is not set for ingestion step, it will be set to 'default-ingestion'
+    if ("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName){
       stepDefinitionName = "default-ingestion";
     }
     else {
@@ -73,12 +76,12 @@ if (existingStep) {
   stepProperties.stepDefinitionType = stepDefinitionType;
   stepProperties.stepId = stepName + "-" + stepDefinitionType;
 
-  if(!stepProperties.stepDefinitionName){
+  if (!stepProperties.stepDefinitionName){
     throw new Error(`Missing required property 'stepDefinitionName' for step: ${stepName}`);
   }
 
-  if(stepProperties.entityType){
-    if(fn.docAvailable("/entities/"+ stepProperties.entityType +".entity.json")){
+  if (stepProperties.entityType){
+    if (fn.docAvailable("/entities/"+ stepProperties.entityType +".entity.json")){
       const entityTypeId = entityLib.getEntityTypeId(entityLib.findModelByEntityName(stepProperties.entityType), stepProperties.entityType);
       stepProperties.targetEntityType = entityTypeId;
     }
@@ -98,20 +101,21 @@ if (existingStep) {
       }
     });
   }
-  if(isEmptyString(stepProperties.customHook)){
+  if (isEmptyString(stepProperties.customHook)){
     stepProperties.customHook = {};
   }
-  if(isEmptyString(stepProperties.headers)){
+  if (isEmptyString(stepProperties.headers)){
     stepProperties.headers = {};
   }
-  if(isEmptyString(stepProperties.processors)){
+  if (isEmptyString(stepProperties.processors)){
     stepProperties.processors = [];
   }
+
   Artifacts.setArtifact(stepDefinitionType, stepName, stepProperties);
 }
 
 function isEmptyString(property) {
-  if(property !== undefined && typeof property === 'string' && property.trim().length === 0){
+  if (property !== undefined && typeof property === 'string' && property.trim().length === 0){
     return true;
   }
   return false;

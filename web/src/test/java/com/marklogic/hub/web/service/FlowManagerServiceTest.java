@@ -228,7 +228,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         String customStepName = "myTestCustomStep";
         InputStream inputStream = getResourceStream(
             "scaffolding-test/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION);
-        FileUtil.copy(inputStream, getDataHubAdminConfig().getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM)
+        FileUtil.copy(inputStream, getDataHubAdminConfig().getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM)
             .resolve(customStepName + "/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION).toFile());
         IOUtils.closeQuietly(inputStream);
         assertEquals(1, stepDefinitionManager.getStepDefinitions().size(),

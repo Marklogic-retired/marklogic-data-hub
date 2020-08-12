@@ -63,7 +63,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
                 stepDefinition.incrementVersion();
             }
 
-            Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), stepDefinition.getName());
+            Path dir = resolvePath(hubConfig.getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -83,7 +83,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
     @Override
     public void deleteStepDefinition(StepDefinition stepDefinition) {
         final String name = stepDefinition.getName();
-        Path dir = resolvePath(hubConfig.getStepsDirByType(stepDefinition.getType()), name);
+        Path dir = resolvePath(hubConfig.getStepDefinitionPath(stepDefinition.getType()), name);
         if (dir.toFile().exists()) {
             try {
                 logger.info(format("Deleting step definition with name '%s' in directory: %s", name, dir.toFile()));
@@ -108,7 +108,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
     //TODO: Should this look into db first ?
     @Override
     public StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type) {
-        Path stepPath = resolvePath(hubConfig.getStepsDirByType(type), name);
+        Path stepPath = resolvePath(hubConfig.getStepDefinitionPath(type), name);
 
         try {
             String targetFileName = name + STEP_DEFINITION_FILE_EXTENSION;
@@ -143,7 +143,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     @Override
     public ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepDefinitionType type) {
-        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepsDirByType(type));
+        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepDefinitionPath(type));
     }
 
     @Override

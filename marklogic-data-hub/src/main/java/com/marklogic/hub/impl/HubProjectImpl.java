@@ -112,7 +112,7 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public Path getStepsDirByType(StepDefinition.StepDefinitionType type) {
+    public Path getStepDefinitionPath(StepDefinition.StepDefinitionType type) {
         Path path;
 
         if (type == null) {
@@ -139,7 +139,7 @@ public class HubProjectImpl implements HubProject {
                     path = this.stepDefinitionsDir.resolve("merging");
                     break;
                 default:
-                    throw new DataHubProjectException("Invalid Step type");
+                    throw new DataHubProjectException("Invalid Step type" + type.toString());
             }
         }
 
@@ -767,6 +767,43 @@ public class HubProjectImpl implements HubProject {
     @Override
     public Path getStepsPath() {
         return this.projectDir.resolve("steps");
+    }
+
+    @Override
+    public Path getStepsPath(StepDefinition.StepDefinitionType type) {
+        Path path;
+
+        Path parent = this.getStepsPath();
+
+        if (type == null) {
+            throw new DataHubProjectException("Invalid Step type");
+        }
+        else {
+            switch (type) {
+                case CUSTOM:
+                    path = parent.resolve("custom");
+                    break;
+                case INGESTION:
+                    path = parent.resolve("ingestion");
+                    break;
+                case MAPPING:
+                    path = parent.resolve("mapping");
+                    break;
+                case MASTERING:
+                    path = parent.resolve("mastering");
+                    break;
+                case MATCHING:
+                    path = parent.resolve("matching");
+                    break;
+                case MERGING:
+                    path = parent.resolve("merging");
+                    break;
+                default:
+                    throw new DataHubProjectException("Invalid Step type" + type.toString());
+            }
+        }
+
+        return path;
     }
 
     @Override

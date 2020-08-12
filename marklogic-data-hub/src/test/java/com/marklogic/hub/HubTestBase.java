@@ -1115,11 +1115,11 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
                 adminHubConfig.getHubProjectDir().resolve("input").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
-                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
+                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
-                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
+                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/value-step.step.json"),
-                adminHubConfig.getStepsDirByType(StepDefinition.StepDefinitionType.CUSTOM).resolve("value-step").toFile());
+                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("value-step").toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
                 adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/custom-modules/custom/value-step/main.sjs"),
