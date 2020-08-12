@@ -865,6 +865,59 @@ function verifyEntityInstanceResultsForAllEntities() {
   ];
 }
 
+function verifyEntityNameNotInCollectionFacet() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 1,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/jane.json",
+      }
+    ],
+    "facets": {
+      "Collection": {
+        "type": "collection",
+        "facetValues": [
+          {
+            "name": "Customer",
+            "count": 10,
+            "value": "Customer"
+          },
+          {
+            "name": "mapCustomersJSON",
+            "count": 5,
+            "value": "mapCustomersJSON"
+          },
+          {
+            "name": "mapCustomersXML",
+            "count": 5,
+            "value": "mapCustomersXML"
+          }
+        ]
+      }
+    }
+  };
+  const expectedFacetValues = [
+    {
+      "name": "mapCustomersJSON",
+      "count": 5,
+      "value": "mapCustomersJSON"
+    },
+    {
+      "name": "mapCustomersXML",
+      "count": 5,
+      "value": "mapCustomersXML"
+    }
+  ];
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  let facetValues = response.facets.Collection.facetValues
+  return ([
+    test.assertEqual(2, facetValues.length),
+    test.assertEqual(expectedFacetValues, facetValues),
+  ]);
+}
+
 []
   .concat(verifySimpleSelectedPropertiesResults())
   .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
@@ -878,4 +931,5 @@ function verifyEntityInstanceResultsForAllEntities() {
   .concat(verifyPropertiesForAllEntitiesOption())
   .concat(verifyIdentifierWithoutDefinedPrimaryKey())
   .concat(verifyEntityInstanceResults())
-  .concat(verifyEntityInstanceResultsForAllEntities());
+  .concat(verifyEntityInstanceResultsForAllEntities())
+  .concat(verifyEntityNameNotInCollectionFacet());

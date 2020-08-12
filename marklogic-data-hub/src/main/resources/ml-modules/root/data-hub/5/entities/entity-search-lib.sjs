@@ -58,6 +58,8 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
     searchResponse.results.forEach(result => {
       addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadata)
     });
+    // Remove entityName from Collection facetValues
+    removeEntityNameFromCollection(searchResponse, entityName);
   } else {
     //'All Entities' option is selected
     searchResponse.results.forEach(result => {
@@ -433,6 +435,18 @@ function addPrimaryKeyToResult(result, entityInstance, entityDef) {
     result.primaryKey = {
       "propertyPath": "uri",
       "propertyValue": result.uri
+    }
+  }
+}
+
+function removeEntityNameFromCollection(searchResponse, entityName) {
+  if (searchResponse.hasOwnProperty('facets')) {
+    if (searchResponse.facets.hasOwnProperty("Collection")) {
+      let updatedFacetValues = []
+      searchResponse.facets.Collection.facetValues.map(facet => {
+        if (facet.name !== entityName) updatedFacetValues.push(facet);
+      })
+      searchResponse.facets.Collection.facetValues = updatedFacetValues
     }
   }
 }

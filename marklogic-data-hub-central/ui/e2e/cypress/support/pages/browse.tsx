@@ -186,7 +186,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    return cy.get("#hub-properties > div > i").click();
+    return cy.get("#hub-properties > div").eq(1).invoke('show').click();
   }
 
   getExpandableSnippetView() {
