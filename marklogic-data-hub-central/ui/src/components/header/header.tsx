@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Layout, Icon, Avatar, Menu, Tooltip, Dropdown } from 'antd';
 import { UserContext } from '../../util/user-context';
 import { ModelingContext} from '../../util/modeling-context';
-import logo from './logo.jpg';
+import logo from './logo.svg';
 import styles from './header.module.scss';
 import { Application } from '../../config/application.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
@@ -166,7 +166,7 @@ const Header:React.FC<Props> = (props) => {
       <ConfirmationModal
           isVisible={showConfirmModal}
           type={ConfirmationType.NavigationWarn}
-          boldTextArray={[]} 
+          boldTextArray={[]}
           toggleModal={toggleConfirmModal}
           confirmAction={confirmLogout}
       />
