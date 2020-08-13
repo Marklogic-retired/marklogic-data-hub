@@ -407,7 +407,7 @@ class Flow {
     }
     //add our metadata to this
     content.context = content.context || {};
-    content.context.metadata = this.flowUtils.createMetadata(content.context.metadata ? content.context.metadata : {}, flowName, flowStep.stepDefinitionName, this.globalContext.jobId);
+    content.context.metadata = this.flowUtils.createMetadata(content.context.metadata ? content.context.metadata : {}, flowName, flowStep.name, this.globalContext.jobId);
     // normalize context values to arrays
     if (content.context.collections) {
       content.context.collections = normalizeToArray(content.context.collections);
