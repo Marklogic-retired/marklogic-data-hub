@@ -119,6 +119,14 @@ tr.ant-table-row:hover > td {
   content: "\22C1";
 }
 
+.ant-table-body {
+  overflow: auto !important;
+}
+
+.ant-table-header {
+  background: #FAFAFA
+}
+
 .react-resizable {
   position: relative;
   background-clip: padding-box;
