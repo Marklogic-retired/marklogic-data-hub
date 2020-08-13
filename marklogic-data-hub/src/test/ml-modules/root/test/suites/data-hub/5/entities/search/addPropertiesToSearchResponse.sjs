@@ -543,6 +543,25 @@ function verifyResultsWithoutSelectedProperties() {
   ];
 }
 
+function verifyOrderOfSelectedProperties() {
+  const response = {
+    "snippet-format": "snippet",
+    "total": 1,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sally.json",
+      }
+    ]
+  };
+  const selectedProperties = ["customerId", "nicknames", "shipping", "name", "billing"];
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response, selectedProperties);
+  const orderedProperties = response.results[0].entityProperties.map(entityProperty => entityProperty.propertyPath);
+  return [
+      test.assertEqual(selectedProperties, orderedProperties)
+  ]
+}
+
 function verifyPrimaryKeyWithDefinedEntities() {
   const response = {
     "snippet-format": "snippet",
@@ -925,6 +944,7 @@ function verifyEntityNameNotInCollectionFacet() {
   .concat(verifyResultsWithoutSelectedProperties())
   .concat(verifyMergedJsonEntityTypeProperties())
   .concat(verifyMergedXmlEntityTypeProperties())
+  .concat(verifyOrderOfSelectedProperties())
   .concat(verifyPrimaryKeyWithDefinedEntities())
   .concat(verifyPrimaryKeyWithoutDefinedEntities())
   .concat(verifySimplePropertiesForSingleEntity())
