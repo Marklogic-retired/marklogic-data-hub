@@ -169,7 +169,7 @@ function buildSelectedPropertiesMetadata(allMetadata, selectedPropertyNames) {
       }
     } else {
       if(granularPropertyMetadata[actualSelectedPropertyName]) {
-        selectedPropertyDefinitionsArray.push(granularPropertyMetadata[actualSelectedPropertyName]);
+        selectedPropertyDefinitions[actualSelectedPropertyName] = granularPropertyMetadata[actualSelectedPropertyName];
       }
     }
   });
