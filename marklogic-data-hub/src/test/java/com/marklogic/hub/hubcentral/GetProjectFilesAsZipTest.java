@@ -73,7 +73,7 @@ public class GetProjectFilesAsZipTest extends AbstractHubCoreTest {
             byte[] buffer = new byte[entrySize];
             zip.getInputStream(entry).read(buffer, 0, entrySize);
 
-            File file = new File(PROJECT_PATH, entry.getName());
+            File file = new File(getHubProject().getProjectDir().toFile(), entry.getName());
             file.getParentFile().mkdirs();
             FileCopyUtils.copy(buffer, file);
         }

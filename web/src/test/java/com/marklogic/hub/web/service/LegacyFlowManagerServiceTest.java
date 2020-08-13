@@ -23,45 +23,29 @@ import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.web.WebApplication;
-import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, LegacyFlowManagerServiceTest.class})
 public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
-    private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
     LegacyFlowManagerService fm;
@@ -72,13 +56,8 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     Scaffolding scaffolding;
 
-    @Autowired
-    HubConfig hubConfig;
-
     @BeforeEach
     public void setup() {
-        createProjectDir();
-
         try {
             scaffolding.createEntity(ENTITY);
         }
@@ -104,7 +83,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         scaffolding.createLegacyFlow(ENTITY, "xqy-xml-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        Path inputDir = projectDir.resolve("plugins/entities/" + ENTITY + "/input");
+        Path inputDir = getHubProject().getProjectDir().resolve("plugins/entities/" + ENTITY + "/input");
         InputStream inputStream = getResourceStream("legacy-flow-manager/sjs-flow/headers.sjs");
         FileUtil.copy(inputStream, inputDir.resolve("sjs-json-input-flow/headers.sjs").toFile());
         IOUtils.closeQuietly(inputStream);
@@ -145,7 +124,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         FileUtil.copy(inputStream, inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
         IOUtils.closeQuietly(inputStream);
 
-        Path harmonizeDir = projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize");
+        Path harmonizeDir = getHubProject().getProjectDir().resolve("plugins/entities/" + ENTITY + "/harmonize");
         inputStream = getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs");
         FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
         IOUtils.closeQuietly(inputStream);
@@ -153,57 +132,10 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         installUserModules(getDataHubAdminConfig(), true);
     }
 
-    protected void setEnvConfig() {
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
     @Test
     public void getFlowMlcpOptionsFromFile() throws Exception {
-        setEnvConfig();
-
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
-    }
-
-    @Test
-    @Disabled
-    // this test fails in some environments because wihen running in test,
-    // its classpath is too long to call mlcp as an interprocess communication.
-    public void runMlcp() throws IOException, InterruptedException, JSONException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-
-        String flowName = "sjs-json-input-flow";
-
-        LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.INPUT);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String inputPath = getResourceFile("legacy-flow-manager/input.json").getAbsolutePath();
-        String basePath = getResourceFile("legacy-flow-manager").getAbsolutePath();
-        JsonNode mlcpOptions = objectMapper.readTree(
-            "{" +
-                "\"input_file_path\":\"" + inputPath.replace("\\", "\\\\\\\\") + "\"," +
-                "\"input_file_type\":\"\\\"documents\\\"\"," +
-                "\"output_collections\":\"\\\"" + ENTITY + "\\\"\"," +
-                "\"output_permissions\":\"\\\"rest-reader,read,rest-writer,update\\\"\"," +
-                "\"output_uri_replace\":\"\\\"" + basePath.replace("\\", "/").replaceAll("^([A-Za-z]):", "/$1:") + ",''\\\"\"," +
-                "\"document_type\":\"\\\"json\\\"\"," +
-                "\"transform_module\":\"\\\"/data-hub/4/transforms/mlcp-flow-transform.sjs\\\"\"," +
-                "\"transform_namespace\":\"\\\"http://marklogic.com/data-hub/mlcp-flow-transform\\\"\"," +
-                "\"transform_param\":\"\\\"entity-name=" + ENTITY + ",flow-name=" + flowName + "\\\"\"" +
-                "}");
-        LegacyFlowStatusListener flowStatusListener = (jobId, percentComplete, message) -> {
-            logger.error(message);
-        };
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", runAsFlowOperator(), flow, stagingClient, mlcpOptions, flowStatusListener);
-        mlcpRunner.start();
-        mlcpRunner.join();
-
-        assertEquals(1, getStagingDocCount());
-        String expected = getResource("legacy-flow-manager/final.json");
-
-        String actual = stagingDocMgr.read("/input.json").next().getContent(new StringHandle()).get();
-        JSONAssert.assertEquals(expected, actual, false);
+        JSONAssert.assertEquals("{ \"input_file_path\": " + getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
@@ -216,13 +148,8 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
-        String pdir = "C:\\some\\crazy\\path\\to\\project";
-        setEnvConfig();
-
         String flowName = "sjs-json-harmonization-flow";
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
-
-        //HubConfig hubConfig = getHubConfig();
 
         Object monitor = new Object();
         JobTicket jobTicket = fm.runFlow(flow, 1, 1, null, new LegacyFlowStatusListener(){
@@ -254,15 +181,8 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
 
-        String pdir = "C:\\some\\crazy\\path\\to\\project";
-        //EnvironmentConfig envConfig = new EnvironmentConfig("local", "admin", "admin");
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(pdir).build());
-        setEnvConfig();
-
         String flowName = "sjs-json-harmonization-flow";
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
-
-        //HubConfig hubConfig = getHubConfig();
 
         final String OPT_VALUE = "test-value";
         Map<String, Object> options = new HashMap<String, Object>();

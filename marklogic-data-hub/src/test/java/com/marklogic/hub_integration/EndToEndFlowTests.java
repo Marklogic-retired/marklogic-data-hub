@@ -17,7 +17,6 @@ package com.marklogic.hub_integration;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.datamovement.DataMovementManager;
@@ -26,34 +25,30 @@ import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
+import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.MlcpRunner;
-import com.marklogic.hub.legacy.validate.EntitiesValidator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -105,41 +100,27 @@ class FinalCounts {
     }
 }
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class EndToEndFlowTests extends HubTestBase {
+public class EndToEndFlowTests extends AbstractHubCoreTest {
+
     private static final String ENTITY = "e2eentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 500;
     private static final int BATCH_SIZE = 10;
+
     @Autowired
-    private LegacyFlowManager flowManager;
-    private DataMovementManager flowRunnerDataMovementManager;
+    LegacyFlowManager flowManager;
+    DataMovementManager flowRunnerDataMovementManager;
 
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
+
     @Autowired
-    private Scaffolding scaffolding;
+    Scaffolding scaffolding;
+
     private EntitiesValidator ev = null;
-
-    @BeforeAll
-    public static void setup() {
-        new Installer().teardownProject();
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().setupProject();
-    }
-
-    @AfterAll
-    public static void teardown() {
-    	new Installer().teardownProject();
-    }
 
     @BeforeEach
     public void setupEach() {
-    	createProjectDir();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-
         enableTracing();
         enableDebugging();
 
@@ -148,11 +129,6 @@ public class EndToEndFlowTests extends HubTestBase {
         scaffolding.createEntity(ENTITY);
 
         installUserModules(getDataHubAdminConfig(), true);
-    }
-
-    @AfterEach
-    public void clearProjectData() {
-        this.deleteProjectDir();
     }
 
     private JsonNode validateUserModules() {
@@ -419,7 +395,7 @@ public class EndToEndFlowTests extends HubTestBase {
     @TestFactory
     public List<DynamicTest> generateValidationTests() {
         List<DynamicTest> tests = new ArrayList<>();
-        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path entityDir = getHubProject().getHubPluginsDir().resolve("entities").resolve(ENTITY);
 
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-no-errors";
@@ -478,7 +454,7 @@ public class EndToEndFlowTests extends HubTestBase {
     @TestFactory
     public List<DynamicTest> generateValidationHeadersErrorsTests() {
         List<DynamicTest> tests = new ArrayList<>();
-        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path entityDir = getHubProject().getHubPluginsDir().resolve("entities").resolve(ENTITY);
 
         allCombos(((codeFormat, dataFormat, flowType, useEs) -> {
             String prefix = "validation-headers-errors";
@@ -702,7 +678,7 @@ public class EndToEndFlowTests extends HubTestBase {
     }
 
     private void scaffoldFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs) {
-        Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path entityDir = getHubProject().getHubPluginsDir().resolve("entities").resolve(ENTITY);
         if (useEs) {
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
         }
@@ -726,11 +702,11 @@ public class EndToEndFlowTests extends HubTestBase {
 
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, CreateFlowListener listener) {
         String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, useEs);
-        Path legacyEntityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+        Path legacyEntityDir = getHubProject().getHubPluginsDir().resolve("entities").resolve(ENTITY);
         Path flowDir = legacyEntityDir.resolve(flowType.toString()).resolve(flowName);
 
         if (useEs) {
-            Path entityDir = projectDir.resolve("entities");
+            Path entityDir = getHubProject().getProjectDir().resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getDataHubAdminConfig(), true);
         }

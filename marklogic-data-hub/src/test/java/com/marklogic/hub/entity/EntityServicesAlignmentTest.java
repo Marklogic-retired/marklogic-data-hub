@@ -11,7 +11,6 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -22,9 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
-
-    @Autowired
-    HubConfig hubConfig;
 
     @BeforeEach
     void beforeEach() {
@@ -58,7 +54,7 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
-        DatabaseClient finalClient = hubConfig.newFinalClient();
+        DatabaseClient finalClient = getHubClient().getFinalClient();
 
         GenericDocumentManager docMgr = finalClient.newDocumentManager();
         DocumentWriteSet writeSet = docMgr.newWriteSet();

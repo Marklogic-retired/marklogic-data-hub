@@ -3,17 +3,9 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.entity.DefinitionType;
-import com.marklogic.hub.entity.DefinitionsType;
-import com.marklogic.hub.entity.HubEntity;
-import com.marklogic.hub.entity.InfoType;
-import com.marklogic.hub.entity.PropertyType;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.entity.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,9 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Companion test to generate-indexes.sjs - runs a single test to verify that DbConfigsManager works correctly.
  * All other tests should be in generate-indexes.sjs, as those tests will run faster.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class GenerateIndexesTest extends HubTestBase {
+public class GenerateIndexesTest extends AbstractHubCoreTest {
 
     private List<JsonNode> entities = new ArrayList<>();
     private ObjectNode indexes;

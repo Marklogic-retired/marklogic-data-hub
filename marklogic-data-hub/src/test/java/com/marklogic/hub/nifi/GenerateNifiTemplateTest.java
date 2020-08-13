@@ -1,22 +1,16 @@
 package com.marklogic.hub.nifi;
 
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.junit5.XmlNode;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Can also do ad hoc testing of this feature via qconsole using a script like this:
- *
+ * <p>
  * import module namespace nifi = "http://marklogic.com/data-hub/nifi" at "/nifi.xqy";
  * nifi:build-template("/flows/ingestion_mapping_mastering-flow.flow.json")
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class GenerateNifiTemplateTest extends HubTestBase {
+public class GenerateNifiTemplateTest extends AbstractHubCoreTest {
 
     /**
      * This is focused on verifying that none of the XQuery modules have errors in them, and it's verifying a few

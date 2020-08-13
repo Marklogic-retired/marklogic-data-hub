@@ -5,21 +5,15 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubTestBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class ValidateMappingTest extends HubTestBase {
+public class ValidateMappingTest extends AbstractHubCoreTest {
 
     private final static String CUSTOMER_MODEL = "{\n" +
         "  \"info\" : {\n" +
@@ -57,9 +51,6 @@ public class ValidateMappingTest extends HubTestBase {
 
     @BeforeEach
     public void setup() {
-        // Need to re-initialize adminHubConfig in case getHubFlowRunnerConfig was called before this test
-        // TODO Arguably HubTestBase should call this before every test??
-        getDataHubAdminConfig();
         client = adminHubConfig.newStagingClient(adminHubConfig.getDbName(DatabaseKind.FINAL));
         client.newJSONDocumentManager().write(
             CUSTOMER_URI,
@@ -76,14 +67,12 @@ public class ValidateMappingTest extends HubTestBase {
 
     @AfterEach
     public void teardown() {
-        client.newJSONDocumentManager().delete(CUSTOMER_URI);
-        client.newJSONDocumentManager().delete("/validate/test.json");
         client.release();
     }
 
     @Test
     public void validMapping() {
-        if(versions.isVersionCompatibleWithES()){
+        if (versions.isVersionCompatibleWithES()) {
             JsonNode response = mgr.validateJsonMapping("{\n" +
                 "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
                 "  \"properties\": {\n" +
@@ -102,7 +91,7 @@ public class ValidateMappingTest extends HubTestBase {
 
     @Test
     public void invalidMapping() {
-        if(versions.isVersionCompatibleWithES()) {
+        if (versions.isVersionCompatibleWithES()) {
             JsonNode response = mgr.validateJsonMapping("{\n" +
                 "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
                 "  \"properties\": {\n" +

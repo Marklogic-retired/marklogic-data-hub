@@ -16,7 +16,6 @@
 
 package com.marklogic.hub.flow.impl;
 
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
@@ -27,19 +26,15 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.FlowManager;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
@@ -47,23 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class FlowRunnerTest extends HubTestBase {
+public class FlowRunnerTest extends AbstractHubCoreTest {
 
     @Autowired
     FlowRunnerImpl flowRunner;
-
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
-
-    @AfterAll
-    public static void cleanUp(){
-        new Installer().deleteProjectDir();
-    }
 
     @BeforeEach
     public void setupEach() {

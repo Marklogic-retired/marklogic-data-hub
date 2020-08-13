@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.datamovement.DataMovementManager;
 import com.marklogic.client.datamovement.JobTicket;
@@ -28,24 +29,21 @@ import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.legacy.LegacyFlowManager;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.bootstrap.Installer;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.w3c.dom.Document;
 
 import javax.xml.transform.OutputKeys;
@@ -59,7 +57,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -67,34 +64,25 @@ import java.util.concurrent.TimeUnit;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
+public class MappingE2E extends AbstractHubCoreTest {
 
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class MappingE2E extends HubTestBase {
     private static final String ENTITY = "e2eentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
     private static final int TEST_SIZE = 20;
     private static final int BATCH_SIZE = 10;
+
     @Autowired
-    private LegacyFlowManager flowManager;
-    private DataMovementManager stagingDataMovementManager;
+    LegacyFlowManager flowManager;
+
     private boolean installDocsFinished = false;
     private boolean installDocsFailed = false;
     private String installDocError;
     private List<String> modelProperties;
-    @Autowired
-    private Scaffolding scaffolding;
 
     @Autowired
-    private MappingManager mappingManager;
+    Scaffolding scaffolding;
 
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-        new Installer().setupProject();
-    }
+    @Autowired
+    MappingManager mappingManager;
 
     @AfterAll
     public static void teardown() {
@@ -105,14 +93,12 @@ public class MappingE2E extends HubTestBase {
 
     @BeforeEach
     public void setupEach() {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        createProjectDir();
         enableTracing();
         enableDebugging();
         if (!isSetup) {
             isSetup = true;
             scaffolding.createEntity(ENTITY);
-            Path entityDir = projectDir.resolve("entities");
+            Path entityDir = getHubProject().getProjectDir().resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
             installUserModules(getDataHubAdminConfig(), true);
             if (modelProperties == null) {
@@ -150,7 +136,6 @@ public class MappingE2E extends HubTestBase {
             createFlow("extranodes", CodeFormat.XQUERY, DataFormat.XML, FlowType.HARMONIZE, true,"validPath1-threeProp", 1, (CreateFlowListener)null);
             createFlow("extranodes", CodeFormat.JAVASCRIPT, DataFormat.XML, FlowType.HARMONIZE, true, "validPath1-threeProp", 1, (CreateFlowListener)null);
             installUserModules(getDataHubAdminConfig(), true);
-            stagingDataMovementManager = flowRunnerClient.newDataMovementManager();
         }
     }
 
@@ -220,7 +205,7 @@ public class MappingE2E extends HubTestBase {
     private void createFlow(String prefix, CodeFormat codeFormat, DataFormat dataFormat, FlowType flowType, boolean useEs, String mapping, int  version, CreateFlowListener listener) {
     	if(useEs && flowType.equals(FlowType.HARMONIZE)) {
     		String flowName = getFlowName(prefix, codeFormat, dataFormat, flowType, mapping, version);
-    		Path entityDir = projectDir.resolve("plugins").resolve("entities").resolve(ENTITY);
+    		Path entityDir = getHubProject().getProjectDir().resolve("plugins").resolve("entities").resolve(ENTITY);
     		Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
 
 	        scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, true, mapping + "-" +version);

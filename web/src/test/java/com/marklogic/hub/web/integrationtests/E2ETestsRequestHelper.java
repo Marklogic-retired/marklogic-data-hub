@@ -37,7 +37,7 @@ public class E2ETestsRequestHelper extends HubTestBase {
 	static final protected Logger logger = LoggerFactory.getLogger(E2ETestsRequestHelper.class);
 
 	public Response initilizeProjectConfiguration() {
-		String projectPath = new File(PROJECT_PATH).getAbsolutePath();
+		String projectPath = getHubProject().getProjectDir().toFile().getAbsolutePath();
 		Response projectInitResponse =
 				given()
 					.contentType("application/x-www-form-urlencoded")

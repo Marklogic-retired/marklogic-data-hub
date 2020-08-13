@@ -1,23 +1,16 @@
 package com.marklogic.hub.step.impl;
 
-import com.marklogic.bootstrap.Installer;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.StepDefinition;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -27,40 +20,23 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class WriteStepRunnerTest extends HubTestBase {
+public class WriteStepRunnerTest extends AbstractHubCoreTest {
 
     @Autowired
-    private HubConfigImpl hubConfig;
-    @Autowired
-    private StepDefinitionManagerImpl stepDefMgr;
-    @Autowired
-    private FlowManagerImpl flowManager;
+    StepDefinitionManagerImpl stepDefMgr;
 
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
+    @Autowired
+    FlowManagerImpl flowManager;
 
     @BeforeEach
     public void setupEach() throws IOException {
-        basicSetup();
-        getDataHubAdminConfig();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), hubConfig.getFlowsDir().toFile());
+        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), getHubConfig().getFlowsDir().toFile());
         installUserModules(getDataHubAdminConfig(), true);
-    }
-
-    @AfterAll
-    public static void cleanUp(){
-        new Installer().deleteProjectDir();
     }
 
     @Test
     public void testRunningPercent() {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
+        WriteStepRunner wsr = new WriteStepRunner(getHubConfig().newHubClient(), getHubProject());
         Flow flow = flowManager.getFullFlow("testFlow");
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("3");
@@ -112,7 +88,7 @@ public class WriteStepRunnerTest extends HubTestBase {
 
     @Test
     public void testLoadStepRunnerParameters() {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
+        WriteStepRunner wsr = new WriteStepRunner(getHubConfig().newHubClient(), getHubConfig().getHubProject());
         Flow flow = flowManager.getFullFlow("testCsvLoadData");
         Map<String, Step> steps = flow.getSteps();
         Step step = steps.get("1");
@@ -128,7 +104,7 @@ public class WriteStepRunnerTest extends HubTestBase {
 
     @Test
     void getPrefixedEncodedURI() throws URISyntaxException {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
+        WriteStepRunner wsr = new WriteStepRunner(getHubConfig().newHubClient(), getHubConfig().getHubProject());
         wsr.outputURIPrefix = "/prefix/";
 
         Assertions.assertEquals("/prefix/test1.json", wsr.getPrefixedEncodedURI("test1.json"));
@@ -164,7 +140,7 @@ public class WriteStepRunnerTest extends HubTestBase {
 
     @Test
     void generateUriForCsv() {
-        WriteStepRunner wsr = new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject());
+        WriteStepRunner wsr = new WriteStepRunner(getHubConfig().newHubClient(), getHubConfig().getHubProject());
         wsr.outputURIPrefix = "/prefix";
         wsr.outputFormat = "json";
         assertThat(wsr.generateUriForCsv("/abc", SystemUtils.OS_NAME.toLowerCase()), matchesPattern(expectedPattern(null, wsr)));

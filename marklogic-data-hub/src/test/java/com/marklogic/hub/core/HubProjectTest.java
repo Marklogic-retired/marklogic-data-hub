@@ -1,16 +1,12 @@
 package com.marklogic.hub.core;
 
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,30 +17,21 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class HubProjectTest extends HubTestBase {
-
-    private static File projectPath = new File(PROJECT_PATH);
+public class HubProjectTest extends AbstractHubCoreTest {
 
     @BeforeEach
-    public void setupDir() {
+    void beforeEach() {
         deleteProjectDir();
     }
 
     @AfterEach
     public void cleanup() {
         resetProperties();
-        createProjectDir();
-        adminHubConfig.createProject(PROJECT_PATH);
-        adminHubConfig.withPropertiesFromEnvironment("local");
-        adminHubConfig.refreshProject();
     }
 
     @Test
     public void testInit() throws IOException {
         HubConfig config = adminHubConfig;
-        config.createProject(PROJECT_PATH);
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setForestsPerHost(DatabaseKind.STAGING, 100);
@@ -60,7 +47,7 @@ public class HubProjectTest extends HubTestBase {
         config.setForestsPerHost(DatabaseKind.JOB, 100);
         config.setPort(DatabaseKind.JOB, 3333);
 
-        config.setForestsPerHost(DatabaseKind.MODULES,3);
+        config.setForestsPerHost(DatabaseKind.MODULES, 3);
         config.setForestsPerHost(DatabaseKind.STAGING_TRIGGERS, 4);
 
         config.setForestsPerHost(DatabaseKind.STAGING_SCHEMAS, 5);
@@ -69,6 +56,8 @@ public class HubProjectTest extends HubTestBase {
         config.setFlowOperatorUserName("myuser");
 
         config.initHubProject();
+
+        String projectPath = getHubProject().getProjectDirString();
 
         assertTrue(new File(projectPath, "src/main/hub-internal-config/servers/staging-server.json").exists());
         assertTrue(new File(projectPath, "src/main/hub-internal-config/databases/staging-database.json").exists());
@@ -95,8 +84,8 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(new File(projectPath, "src/main/hub-internal-config/security/roles/hub-central-entity-exporter.json").exists());
 
 
-        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-batch.json").exists());
-        assertTrue(new File(projectPath,"src/main/hub-internal-config/security/amps/amps-dhf-update-job.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/amps/amps-dhf-update-batch.json").exists());
+        assertTrue(new File(projectPath, "src/main/hub-internal-config/security/amps/amps-dhf-update-job.json").exists());
 
         assertTrue(new File(projectPath, "src/main/ml-config/servers/final-server.json").exists());
         assertTrue(new File(projectPath, "src/main/ml-config/databases/final-database.json").exists());
@@ -181,14 +170,14 @@ public class HubProjectTest extends HubTestBase {
         assertTrue(gradleLocalProperties.exists());
     }
 
-   @Test
+    @Test
     public void testUserModulesDeployTimestampFilePath() {
         String envName = "dev";
 
         adminHubConfig.withPropertiesFromEnvironment(envName);
         adminHubConfig.refreshProject();
 
-        String expectedPath = Paths.get(PROJECT_PATH, ".tmp", envName + "-" + adminHubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+        String expectedPath = Paths.get(getHubProject().getProjectDirString(), ".tmp", envName + "-" + adminHubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
 
         assertEquals(expectedPath, adminHubConfig.getHubProject().getUserModulesDeployTimestampFile());
     }

@@ -1,23 +1,12 @@
 package com.marklogic.hub.web.service;
 
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.web.WebApplication;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-
-public class AbstractServiceTest extends HubTestBase implements InitializingBean {
-
-    protected void setupEnv() {
-        createProjectDir();
-        adminHubConfig.refreshProject();
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
-        setupEnv();
-    }
+@ContextConfiguration(classes = {WebApplication.class})
+@WebAppConfiguration
+public class AbstractServiceTest extends AbstractHubCoreTest {
 
 }

@@ -1,12 +1,6 @@
 package com.marklogic.hub_unit_test;
 
-import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
-import com.marklogic.appdeployer.command.security.DeployRolesCommand;
-import com.marklogic.appdeployer.impl.SimpleAppDeployer;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
@@ -17,14 +11,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.io.IOException;
 
 /**
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
@@ -34,10 +23,9 @@ import java.io.IOException;
  * <p>
  * After running this, you can also access the marklogic-unit-test runner at host:8011/test/default.xqy.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {ApplicationConfig.class, TestConfig.class})
+@ContextConfiguration(classes = {TestConfig.class})
 @TestInstance(Lifecycle.PER_CLASS)
-public class RunMarkLogicUnitTestsTest extends HubTestBase {
+public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
 
     private static boolean initialized = false;
 
@@ -65,8 +53,8 @@ public class RunMarkLogicUnitTestsTest extends HubTestBase {
     @Override
     protected void init() {
         if (!initialized) {
-          super.init();
-          initialized = true;
+            super.init();
+            initialized = true;
         }
     }
 

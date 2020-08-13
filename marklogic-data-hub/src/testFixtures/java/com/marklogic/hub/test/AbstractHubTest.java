@@ -20,6 +20,7 @@ import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.database.Database;
@@ -233,6 +234,11 @@ public abstract class AbstractHubTest extends TestObject {
             File flowsDir = new File(testProjectDir, "flows");
             if (flowsDir.exists()) {
                 FileUtils.copyDirectory(flowsDir, hubProject.getFlowsDir().toFile());
+            }
+
+            File inputDir = new File(testProjectDir, "input");
+            if (inputDir.exists()) {
+                FileUtils.copyDirectory(inputDir, new File(hubProject.getProjectDir().toFile(), "input"));
             }
 
             File mappingsDir = new File(testProjectDir, "mappings");
@@ -472,5 +478,9 @@ public abstract class AbstractHubTest extends TestObject {
         RunFlowResponse response = flowRunner.runFlow(flowInputs);
         flowRunner.awaitCompletion();
         return response;
+    }
+
+    protected HubProjectImpl getHubProject() {
+        return (HubProjectImpl)getHubConfig().getHubProject();
     }
 }

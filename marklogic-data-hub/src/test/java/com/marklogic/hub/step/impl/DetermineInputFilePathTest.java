@@ -1,7 +1,5 @@
 package com.marklogic.hub.step.impl;
 
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +13,7 @@ public class DetermineInputFilePathTest {
     @Test
     void absolutePath() {
         HubProjectImpl project = new HubProjectImpl();
-        project.createProject(HubTestBase.PROJECT_PATH);
+        project.createProject("build");
 
         Path path = new WriteStepRunner(null, project).determineInputFilePath("/absolute/path");
         assertEquals("/absolute/path", path.toString());
@@ -24,7 +22,7 @@ public class DetermineInputFilePathTest {
     @Test
     void relativePathWithHubProject() {
         HubProjectImpl project = new HubProjectImpl();
-        project.createProject(HubTestBase.PROJECT_PATH);
+        project.createProject("build");
 
         Path path = new WriteStepRunner(null, project).determineInputFilePath("relativePath");
 

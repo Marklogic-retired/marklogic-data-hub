@@ -16,18 +16,12 @@
 
 package com.marklogic.hub.step;
 
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,23 +29,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class StepDefinitionManagerTest extends HubTestBase {
+public class StepDefinitionManagerTest extends AbstractHubCoreTest {
+
     private String mappingStepName = "myTestMappingStep";
     private String ingestStepName = "myTestIngestStep";
     private String customStepName = "myTestCustomStep";
 
-    @BeforeEach
-    public void setup() {
-        basicSetup();
-        adminHubConfig.initHubProject();
-    }
-
-    @AfterEach
-    public void teardown() {
-        deleteProjectDir();
-    }
+    @Autowired
+    StepDefinitionManager stepDefinitionManager;
 
     @Test
     void saveStep() {

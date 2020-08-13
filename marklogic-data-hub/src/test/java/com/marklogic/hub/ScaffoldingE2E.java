@@ -20,17 +20,11 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.bootstrap.Installer;
 import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.xml.sax.SAXException;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -41,48 +35,18 @@ import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class ScaffoldingE2E extends HubTestBase {
-
-
-    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-    private static File projectDir = projectPath.toFile();
-    private static File pluginDir = projectPath.resolve("plugins").toFile();
+public class ScaffoldingE2E extends AbstractHubCoreTest {
 
     @Autowired
     Scaffolding scaffolding;
 
-    @Autowired
-    HubProject project;
-
-    @BeforeAll
-    public static void setupHub() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().setupProject();
-    }
-
-    @AfterAll
-    public static void teardown() {
-        new Installer().teardownProject();
-    }
-
-    @BeforeEach
-    public void setup() throws IOException {
-        deleteProjectDir();
-
-        createProjectDir();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
-    }
-
     private void installEntity() {
         String entityName = "my-fun-test";
 
-        Path entityDir = project.getHubEntitiesDir();
+        Path entityDir = getHubProject().getHubEntitiesDir();
 
         scaffolding.createEntity(entityName);
         scaffolding.createEntity("employee");
-        assertTrue(projectDir.exists());
         assertTrue(entityDir.toFile().exists());
 
         FileUtil.copy(getResourceStream("scaffolding-test/employee.entity.json"), entityDir.resolve("employee.entity.json").toFile());
@@ -97,7 +61,7 @@ public class ScaffoldingE2E extends HubTestBase {
 
         scaffolding.createLegacyFlow(entityName, flowName, flowType, codeFormat, dataFormat, useEsModel);
         Path flowDir = scaffolding.getLegacyFlowDir(entityName, flowName, flowType);
-        assertEquals(Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), flowName), flowDir);
+        assertEquals(Paths.get(getHubProject().getProjectDir().resolve("plugins").toString(), "entities", entityName, flowType.toString(), flowName), flowDir);
         assertTrue(flowDir.toFile().exists());
 
         Path flowDescriptor = flowDir.resolve(flowName + ".properties");
@@ -168,16 +132,6 @@ public class ScaffoldingE2E extends HubTestBase {
         assertTrue(main.toFile().exists());
     }
 
-    private void createInputFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
-        installEntity();
-        createFlow(codeFormat, dataFormat, FlowType.INPUT, useEsModel);
-    }
-
-    private void createHarmonizeFlow(CodeFormat codeFormat, DataFormat dataFormat, boolean useEsModel) throws IOException, SAXException {
-        installEntity();
-        createFlow(codeFormat, dataFormat, FlowType.HARMONIZE, useEsModel);
-    }
-
     @TestFactory
     public List<DynamicTest> generateFlowTests() {
         installEntity();
@@ -185,7 +139,7 @@ public class ScaffoldingE2E extends HubTestBase {
         allCombos((codeFormat, dataFormat, flowType, useEs) -> {
             String flowName = "test-" + flowType.toString() + "-" + codeFormat.toString() + "-" + dataFormat.toString();
             tests.add(DynamicTest.dynamicTest(flowName, () -> {
-                FileUtils.deleteDirectory(projectDir);
+                FileUtils.deleteDirectory(getHubProject().getProjectDir().toFile());
                 createFlow(codeFormat, dataFormat, flowType, true);
             }));
         });

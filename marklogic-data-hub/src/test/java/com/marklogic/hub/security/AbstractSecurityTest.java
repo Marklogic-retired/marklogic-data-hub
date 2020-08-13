@@ -1,7 +1,6 @@
 package com.marklogic.hub.security;
 
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
@@ -13,11 +12,7 @@ import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.rest.util.ResourcesFragment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,9 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Base class for tests that verify that DHF roles can/cannot do what they're intended to do.
  */
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public abstract class AbstractSecurityTest extends HubTestBase {
+public abstract class AbstractSecurityTest extends AbstractHubCoreTest {
 
     protected static final String FINAL_DB = "data-hub-FINAL";
     protected static final String STAGING_DB = "data-hub-STAGING";

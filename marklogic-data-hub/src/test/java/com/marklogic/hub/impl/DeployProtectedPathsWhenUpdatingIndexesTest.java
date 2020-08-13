@@ -37,7 +37,7 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends AbstractHubCore
         ObjectNode perm = node.putObject("permission");
         perm.put("role-name", "pii-reader");
         perm.put("capability", "read");
-        ConfigDir configDir = new ConfigDir(new File(PROJECT_PATH, "src/main/ml-config"));
+        ConfigDir configDir = new ConfigDir(new File(getHubProject().getProjectDir().toFile(), "src/main/ml-config"));
         configDir.getBaseDir().mkdirs();
         configDir.getSecurityDir().mkdirs();
         File pathsDir = configDir.getProtectedPathsDir();

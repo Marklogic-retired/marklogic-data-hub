@@ -393,11 +393,6 @@ task bootstrap(type: JavaExec) {
     main = 'com.marklogic.bootstrap.Installer'
 }
 
-task teardown(type: JavaExec) {
-    classpath = sourceSets.test.runtimeClasspath
-    main = 'com.marklogic.bootstrap.UnInstaller'
-}
-
 test {
     useJUnitPlatform()
     minHeapSize = "128m"
@@ -488,5 +483,3 @@ test.mustRunAfter bootstrap
 testIntegration.dependsOn(bootstrap)
 testAcceptance.dependsOn(bootstrap)
 testBootstrap.dependsOn(bootstrap)
-//Uncomment this line if hub has to be uninstalled after test
-//test.finalizedBy(teardown)

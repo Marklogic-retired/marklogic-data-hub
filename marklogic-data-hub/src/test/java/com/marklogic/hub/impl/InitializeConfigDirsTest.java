@@ -2,12 +2,8 @@ package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.util.List;
@@ -15,9 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class InitializeConfigDirsTest extends HubTestBase {
+public class InitializeConfigDirsTest extends AbstractHubCoreTest {
 
     private final static String DEFAULT_CONFIG_PATH = String.join(File.separator, "src", "main", "ml-config");
     private static String OS = System.getProperty("os.name").toLowerCase();
@@ -67,11 +61,10 @@ public class InitializeConfigDirsTest extends HubTestBase {
         assertEquals(1, configDirs.size());
         if (OS.indexOf("win") >= 0) {
             assertEquals("C:\\" + String.join(File.separator, "some", "absolute", "path")
-            , configDirs.get(0).getBaseDir().getAbsolutePath());
-        }
-        else {
+                , configDirs.get(0).getBaseDir().getAbsolutePath());
+        } else {
             assertEquals("/" + String.join(File.separator, "some", "absolute", "path"), configDirs.get(0).getBaseDir().getAbsolutePath(),
-                    "If the user for some reason sets the config dir to an absolute path, it should remain that way");
+                "If the user for some reason sets the config dir to an absolute path, it should remain that way");
         }
     }
 }

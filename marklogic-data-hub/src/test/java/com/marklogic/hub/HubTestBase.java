@@ -98,7 +98,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Component
 public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
-    public static final String PROJECT_PATH = "ye-olde-project";
+    private static final String PROJECT_PATH = "ye-olde-project";
 
     /**
      * This is a misleading name; it's really "the current HubConfig being used by tests". It's actually rarely a user
@@ -112,9 +112,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected DataHubImpl dataHub;
 
     @Autowired
-    protected HubProjectImpl project;
-
-    @Autowired
     protected Versions versions;
 
     @Autowired
@@ -124,58 +121,49 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected MappingManager mappingManager;
 
     @Autowired
-    protected MasteringManager masteringManager;
-
-    @Autowired
-    protected StepDefinitionManager stepDefinitionManager;
-
-    @Autowired
     protected LegacyFlowManagerImpl fm;
 
-    static final protected Logger logger = LoggerFactory.getLogger(HubTestBase.class);
-
-
-    public  String host;
-    public  int stagingPort;
+    public String host;
+    public int stagingPort;
     public int finalPort;
-    public  int jobPort;
-    public  String user;
-    public  String password;
-    public  String manageUser;
-    public  String managePassword;
-    public  String secUser;
-    public  String secPassword;
+    public int jobPort;
+    public String user;
+    public String password;
+    public String manageUser;
+    public String managePassword;
+    public String secUser;
+    public String secPassword;
     public static String flowRunnerUser;
     public static String flowRunnerPassword;
-    protected  Authentication stagingAuthMethod;
-    protected   Authentication jobAuthMethod;
-    protected  Authentication finalAuthMethod;
-    public  DatabaseClient stagingClient = null;
-    public  DatabaseClient flowRunnerClient = null;
+    protected Authentication stagingAuthMethod;
+    protected Authentication jobAuthMethod;
+    protected Authentication finalAuthMethod;
+    public DatabaseClient stagingClient = null;
+    public DatabaseClient flowRunnerClient = null;
     // this is needed for some evals in the test suite that are not mainline tests.
-    public  DatabaseClient stagingModulesClient = null;
-    public  DatabaseClient finalSchemasClient = null;
-    public  DatabaseClient stagingSchemasClient = null;
-    public  DatabaseClient finalClient = null;
-    public  DatabaseClient finalFlowRunnerClient = null;
-    public  DatabaseClient jobClient = null;
-    public  DatabaseClient jobModulesClient = null;
+    public DatabaseClient stagingModulesClient = null;
+    public DatabaseClient finalSchemasClient = null;
+    public DatabaseClient stagingSchemasClient = null;
+    public DatabaseClient finalClient = null;
+    public DatabaseClient finalFlowRunnerClient = null;
+    public DatabaseClient jobClient = null;
+    public DatabaseClient jobModulesClient = null;
     public Boolean isHostLoadBalancer = false;
     private AppConfig appConfig = null;
-    private  AdminConfig adminConfig = null;
-    private  ManageConfig manageConfig = null;
-    private  ManageClient manageClient = null;
-    private  static boolean sslRun = false;
-    private  static boolean certAuth = false;
+    private AdminConfig adminConfig = null;
+    private ManageConfig manageConfig = null;
+    private ManageClient manageClient = null;
+    private static boolean sslRun = false;
+    private static boolean certAuth = false;
     public static SSLContext certContext;
     static SSLContext flowDevelopercertContext;
     static SSLContext flowOperatorcertContext;
-    private  Properties properties = new Properties();
-    public  GenericDocumentManager stagingDocMgr;
-    public  GenericDocumentManager flowRunnerDocMgr;
-    public  GenericDocumentManager finalDocMgr;
-    public  JSONDocumentManager jobDocMgr;
-    public  GenericDocumentManager modMgr;
+    private Properties properties = new Properties();
+    public GenericDocumentManager stagingDocMgr;
+    public GenericDocumentManager flowRunnerDocMgr;
+    public GenericDocumentManager finalDocMgr;
+    public JSONDocumentManager jobDocMgr;
+    public GenericDocumentManager modMgr;
     static TrustManagerFactory tmf;
 
     static {
@@ -184,7 +172,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             certContext = createSSLContext(getResourceFile("ssl/client-cert.p12"));
             flowDevelopercertContext = createSSLContext(getResourceFile("ssl/client-flow-developer.p12"));
             flowOperatorcertContext = createSSLContext(getResourceFile("ssl/client-flow-operator.p12"));
-            System.setProperty("hubProjectDir", PROJECT_PATH);
         } catch (Exception e) {
             throw new DataHubConfigurationException("Root ca not loaded", e);
         }
@@ -202,7 +189,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     @Override
     protected File getTestProjectDirectory() {
-        return new File(PROJECT_PATH);
+        return getHubProject().getProjectDir().toFile();
     }
 
 
@@ -232,10 +219,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected void init() {
-        //dataHub.initProject();
         createProjectDir();
         adminHubConfig.createProject(PROJECT_PATH);
-        if(! project.isInitialized()) {
+        if (!getHubProject().isInitialized()) {
             adminHubConfig.initHubProject();
         }
         // note the app config loads dhf defaults from classpath
@@ -245,8 +231,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             p2 = new FileInputStream("gradle.properties");
             p.load(p2);
             properties.putAll(p);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("Properties file not loaded.");
         } finally {
             IOUtils.closeQuietly(p2);
@@ -259,8 +244,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             is = new FileInputStream("gradle-local.properties");
             p.load(is);
             properties.putAll(p);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.err.println("gradle-local.properties file not loaded.");
         } finally {
             IOUtils.closeQuietly(is);
@@ -268,7 +252,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
-        if(sslStaging && sslJob && sslFinal){
+        if (sslStaging && sslJob && sslFinal) {
             setSslRun(true);
         }
 
@@ -294,27 +278,24 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         String auth = properties.getProperty("mlStagingAuth");
         if (auth != null) {
             stagingAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
+        } else {
             stagingAuthMethod = Authentication.DIGEST;
         }
         auth = properties.getProperty("mlFinalAuth");
         if (auth != null) {
             finalAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
+        } else {
             finalAuthMethod = Authentication.DIGEST;
         }
 
         auth = properties.getProperty("mlJobAuth");
         if (auth != null) {
             jobAuthMethod = Authentication.valueOf(auth.toUpperCase());
-        }
-        else {
+        } else {
             jobAuthMethod = Authentication.DIGEST;
         }
-        if(jobAuthMethod.equals(Authentication.CERTIFICATE)
-        && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
+        if (jobAuthMethod.equals(Authentication.CERTIFICATE)
+            && stagingAuthMethod.equals(Authentication.CERTIFICATE)) {
             setCertAuth(true);
         }
 
@@ -322,15 +303,14 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
             finalFlowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
-            stagingModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
+            stagingModulesClient = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, stagingAuthMethod);
             // NOTE finalClient must use staging port and final database to use DHF enode code.
             finalClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_NAME, user, password, finalAuthMethod);
             finalSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, user, password, finalAuthMethod);
             stagingSchemasClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, user, password, stagingAuthMethod);
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
-            jobModulesClient  = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
-        }
-        catch(Exception e) {
+            jobModulesClient = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
+        } catch (Exception e) {
             System.err.println("client objects not created.");
             e.printStackTrace();
         }
@@ -342,12 +322,12 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
         adminHubConfig.applyProperties(new SimplePropertySource(properties));
 
-        if(isSslRun() || isCertAuth()) {
+        if (isSslRun() || isCertAuth()) {
             certInit();
         }
     }
 
-    protected DatabaseClient getClient(String host, int port, String dbName, String user,String password, Authentication authMethod) {
+    protected DatabaseClient getClient(String host, int port, String dbName, String user, String password, Authentication authMethod) {
         if (isHostLoadBalancer) {
             if (isCertAuth()) {
                 return DatabaseClientFactory.newClient(
@@ -356,17 +336,21 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
                     DatabaseClient.ConnectionType.GATEWAY);
             } else if (isSslRun()) {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
-                            .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
-                            .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()),
-                        DatabaseClient.ConnectionType.GATEWAY);
-                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
-                        DatabaseClient.ConnectionType.GATEWAY);
+                    case DIGEST:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
+                                .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
+                                .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()),
+                            DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password).withSSLHostnameVerifier(SSLHostnameVerifier.ANY),
+                            DatabaseClient.ConnectionType.GATEWAY);
                 }
             } else {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
-                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                    case DIGEST:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
+                    case BASIC:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password), DatabaseClient.ConnectionType.GATEWAY);
                 }
             }
         } else {
@@ -379,17 +363,21 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
                     new DatabaseClientFactory.CertificateAuthContext((flowRunnerUser.equals(user) ? flowOperatorcertContext : flowDevelopercertContext), SSLHostnameVerifier.ANY));
             } else if (isSslRun()) {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
+                    case DIGEST:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password)
                             .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
                             .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()));
-                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password)
+                    case BASIC:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password)
                             .withSSLHostnameVerifier(SSLHostnameVerifier.ANY)
                             .withSSLContext(SimpleX509TrustManager.newSSLContext(), new SimpleX509TrustManager()));
                 }
             } else {
                 switch (authMethod) {
-                    case DIGEST: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password));
-                    case BASIC: return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password));
+                    case DIGEST:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.DigestAuthContext(user, password));
+                    case BASIC:
+                        return DatabaseClientFactory.newClient(host, port, dbName, new DatabaseClientFactory.BasicAuthContext(user, password));
                 }
             }
         }
@@ -482,11 +470,11 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         manageConfig = adminHubConfig.getManageConfig();
         manageClient = adminHubConfig.getManageClient();
         adminConfig = adminHubConfig.getAdminConfig();
-        if(isCertAuth()) {
+        if (isCertAuth()) {
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-operator.p12");
             adminHubConfig.setCertFile(DatabaseKind.FINAL, "src/test/resources/ssl/client-flow-operator.p12");
-            adminHubConfig.setSslContext(DatabaseKind.JOB,flowOperatorcertContext);
+            adminHubConfig.setSslContext(DatabaseKind.JOB, flowOperatorcertContext);
             manageConfig.setSslContext(flowOperatorcertContext);
             adminConfig.setSslContext(flowOperatorcertContext);
 
@@ -538,7 +526,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
         // force module loads for new test runs.
         File timestampDirectory = new File(projectDir + "/.tmp");
-        if ( timestampDirectory.exists() ) {
+        if (timestampDirectory.exists()) {
             try {
                 FileUtils.forceDelete(timestampDirectory);
             } catch (Exception ex) {
@@ -546,8 +534,8 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             }
         }
 
-        File finalTimestampDirectory = new File( "build/ml-javaclient-util");
-        if ( finalTimestampDirectory.exists() ) {
+        File finalTimestampDirectory = new File("build/ml-javaclient-util");
+        if (finalTimestampDirectory.exists()) {
             try {
                 FileUtils.forceDelete(finalTimestampDirectory);
             } catch (Exception ex) {
@@ -560,27 +548,27 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             Path projectProperties = projectDir.toPath().resolve("gradle.properties");
             Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         // note at this point the properties from the project have not been  read.  maybe
         // props reading should be in this directory...
     }
+
     private void certInit() {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
 
         appConfig = adminHubConfig.getAppConfig();
-        manageConfig = ((HubConfigImpl)adminHubConfig).getManageConfig();
-        manageClient = ((HubConfigImpl)adminHubConfig).getManageClient();
-        adminConfig = ((HubConfigImpl)adminHubConfig).getAdminConfig();
+        manageConfig = ((HubConfigImpl) adminHubConfig).getManageConfig();
+        manageClient = ((HubConfigImpl) adminHubConfig).getManageClient();
+        adminConfig = ((HubConfigImpl) adminHubConfig).getAdminConfig();
 
-        if(isCertAuth()) {
+        if (isCertAuth()) {
 
-            adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING,SSLHostnameVerifier.ANY);
-            adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL,SSLHostnameVerifier.ANY);
-            adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB,SSLHostnameVerifier.ANY);
+            adminHubConfig.setSslHostnameVerifier(DatabaseKind.STAGING, SSLHostnameVerifier.ANY);
+            adminHubConfig.setSslHostnameVerifier(DatabaseKind.FINAL, SSLHostnameVerifier.ANY);
+            adminHubConfig.setSslHostnameVerifier(DatabaseKind.JOB, SSLHostnameVerifier.ANY);
 
             appConfig.setAppServicesCertFile("src/test/resources/ssl/client-flow-developer.p12");
             adminHubConfig.setCertFile(DatabaseKind.STAGING, "src/test/resources/ssl/client-flow-developer.p12");
@@ -611,11 +599,11 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
         }
         adminHubConfig.setAppConfig(appConfig);
-        ((HubConfigImpl)adminHubConfig).setManageConfig(manageConfig);
+        ((HubConfigImpl) adminHubConfig).setManageConfig(manageConfig);
         manageClient.setManageConfig(manageConfig);
-        ((HubConfigImpl)adminHubConfig).setManageClient(manageClient);
+        ((HubConfigImpl) adminHubConfig).setManageClient(manageClient);
 
-        ((HubConfigImpl)adminHubConfig).setAdminConfig(adminConfig);
+        ((HubConfigImpl) adminHubConfig).setAdminConfig(adminConfig);
     }
 
     public void deleteProjectDir() {
@@ -636,8 +624,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         try {
             inputStream = getResourceStream(resourceName);
             output = IOUtils.toString(inputStream);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
             IOUtils.closeQuietly(inputStream);
@@ -649,11 +636,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         try {
             String contents = modMgr.read(uri).next().getContent(new StringHandle()).get();
             return contents.replaceFirst("(\\(:|//)\\s+cache\\sbuster:.+\\n", "");
-        }
-        catch (IllegalStateException e){
+        } catch (IllegalStateException e) {
             return null;
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
@@ -705,6 +690,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected int getFinalDocCount() {
         return getFinalDocCount(null);
     }
+
     protected int getFinalDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection);
     }
@@ -712,6 +698,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected int getTracingDocCount() {
         return getTracingDocCount("trace");
     }
+
     protected int getTracingDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
@@ -719,6 +706,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected int getJobDocCount() {
         return getJobDocCount("job");
     }
+
     protected int getJobDocCount(String collection) {
         return getDocCount(HubConfig.DEFAULT_JOB_NAME, collection);
     }
@@ -730,7 +718,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             collectionName = "'" + collection + "'";
         }
         EvalResultIterator resultItr = runInDatabase("xdmp:estimate(fn:collection(" + collectionName + "))", database);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return count;
         }
         EvalResult res = resultItr.next();
@@ -741,7 +729,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected int getDocCountByQuery(String database, String query) {
         int count = 0;
         EvalResultIterator resultItr = runInDatabase("xdmp:estimate(cts:search(fn:collection()," + query + "))", database);
-        if (resultItr == null || ! resultItr.hasNext()) {
+        if (resultItr == null || !resultItr.hasNext()) {
             return count;
         }
         EvalResult res = resultItr.next();
@@ -751,7 +739,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     protected JsonNode getQueryResults(String query, String database) {
         AbstractReadHandle res = runInDatabase(query, database, new JacksonHandle());
-        return ((JacksonHandle)res).get();
+        return ((JacksonHandle) res).get();
     }
 
     /**
@@ -764,14 +752,14 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         ServerEvaluationCall eval = stagingClient.newServerEval();
         String installer =
             "declare variable $databases external;\n" +
-            "for $database in fn:tokenize($databases, \",\")\n" +
-            "return\n" +
-            "  xdmp:eval('\n" +
-            "    cts:uris((),(),cts:not-query(cts:collection-query((\"http://marklogic.com/provenance-services/record\", \"hub-core-artifact\")))) ! xdmp:document-delete(.)\n" +
-            "  ',\n" +
-            "  (),\n" +
-            "  map:entry(\"database\", xdmp:database($database))\n" +
-            "  )";
+                "for $database in fn:tokenize($databases, \",\")\n" +
+                "return\n" +
+                "  xdmp:eval('\n" +
+                "    cts:uris((),(),cts:not-query(cts:collection-query((\"http://marklogic.com/provenance-services/record\", \"hub-core-artifact\")))) ! xdmp:document-delete(.)\n" +
+                "  ',\n" +
+                "  (),\n" +
+                "  map:entry(\"database\", xdmp:database($database))\n" +
+                "  )";
         eval.addVariable("databases", String.join(",", databases));
         EvalResultIterator result = eval.xquery(installer).eval();
         if (result.hasNext()) {
@@ -801,7 +789,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         modules.forEach((String path, String localPath) -> {
             InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
             String ext = FilenameUtils.getExtension(path);
-            switch(ext) {
+            switch (ext) {
                 case "xml":
                     handle.setFormat(Format.XML);
                     break;
@@ -815,22 +803,24 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             writeSet.add(path, getPermissionsMetaDataHandle(), handle);
         });
         modMgr.write(writeSet);
-        writeSet.parallelStream().forEach((writeOp) -> { IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());});
+        writeSet.parallelStream().forEach((writeOp) -> {
+            IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());
+        });
         clearFlowCache();
     }
 
     protected void installModule(String path, String localPath) {
         InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
         String ext = FilenameUtils.getExtension(path);
-        switch(ext) {
-        case "xml":
-            handle.setFormat(Format.XML);
-            break;
-        case "json":
-            handle.setFormat(Format.JSON);
-            break;
-        default:
-            handle.setFormat(Format.TEXT);
+        switch (ext) {
+            case "xml":
+                handle.setFormat(Format.XML);
+                break;
+            case "json":
+                handle.setFormat(Format.JSON);
+                break;
+            default:
+                handle.setFormat(Format.TEXT);
         }
         modMgr.write(path, getPermissionsMetaDataHandle(), handle);
         clearFlowCache();
@@ -866,8 +856,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected EvalResultIterator runInDatabase(String query, String databaseName) {
         try {
             return getServerEval(databaseName).xquery(query).eval();
-        }
-        catch(FailedRequestException e) {
+        } catch (FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
             e.printStackTrace();
             throw e;
@@ -877,8 +866,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     protected AbstractReadHandle runInDatabase(String query, String databaseName, AbstractReadHandle handle) {
         try {
             return getServerEval(databaseName).xquery(query).eval(handle);
-        }
-        catch(FailedRequestException e) {
+        } catch (FailedRequestException e) {
             logger.error("Failed run code: " + query, e);
             e.printStackTrace();
             throw e;
@@ -890,7 +878,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected DatabaseClient getClientByName(String databaseName) {
-        switch(databaseName) {
+        switch (databaseName) {
             case HubConfig.DEFAULT_FINAL_NAME:
                 return finalClient;
             case HubConfig.DEFAULT_MODULES_DB_NAME:
@@ -907,10 +895,10 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected void allCombos(ComboListener listener) {
-        CodeFormat[] codeFormats = new CodeFormat[] { CodeFormat.JAVASCRIPT, CodeFormat.XQUERY };
-        DataFormat[] dataFormats = new DataFormat[] { DataFormat.JSON, DataFormat.XML };
-        FlowType[] flowTypes = new FlowType[] { FlowType.INPUT, FlowType.HARMONIZE };
-        Boolean[] useEses = new Boolean[] { false, true };
+        CodeFormat[] codeFormats = new CodeFormat[]{CodeFormat.JAVASCRIPT, CodeFormat.XQUERY};
+        DataFormat[] dataFormats = new DataFormat[]{DataFormat.JSON, DataFormat.XML};
+        FlowType[] flowTypes = new FlowType[]{FlowType.INPUT, FlowType.HARMONIZE};
+        Boolean[] useEses = new Boolean[]{false, true};
         for (CodeFormat codeFormat : codeFormats) {
             for (DataFormat dataFormat : dataFormats) {
                 for (FlowType flowType : flowTypes) {
@@ -930,7 +918,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         }
     }
 
-    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception{
+    public JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception {
         JsonNode jsonOutput = objectMapper.readTree(stepOutput.toString());
         return jsonOutput.get(index).get(field);
     }
@@ -978,7 +966,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
 
     protected String dhfCert() {
         return new String(
-                "<certificate-template-properties xmlns=\"http://marklogic.com/manage\"> <template-name>dhf-cert</template-name><template-description>System Cert</template-description> <key-type>rsa</key-type><key-options/><req><version>0</version><subject><countryName>US</countryName><stateOrProvinceName>CA</stateOrProvinceName><commonName>*.marklogic.com</commonName><emailAddress>fbermude@marklogic.com</emailAddress><localityName>San Carlos</localityName><organizationName>MarkLogic</organizationName><organizationalUnitName>Engineering</organizationalUnitName></subject></req> </certificate-template-properties>");
+            "<certificate-template-properties xmlns=\"http://marklogic.com/manage\"> <template-name>dhf-cert</template-name><template-description>System Cert</template-description> <key-type>rsa</key-type><key-options/><req><version>0</version><subject><countryName>US</countryName><stateOrProvinceName>CA</stateOrProvinceName><commonName>*.marklogic.com</commonName><emailAddress>fbermude@marklogic.com</emailAddress><localityName>San Carlos</localityName><organizationName>MarkLogic</organizationName><organizationalUnitName>Engineering</organizationalUnitName></subject></req> </certificate-template-properties>");
     }
 
     private static SSLContext createSSLContext(File certFile) {
@@ -989,33 +977,29 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         KeyManager[] keyMgr = null;
         try {
             keyManagerFactory = KeyManagerFactory.getInstance("SunX509");
-        }
-        catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("CertificateAuthContext requires KeyManagerFactory.getInstance(\"SunX509\")");
         }
         try {
             keyStore = KeyStore.getInstance("PKCS12");
-        }
-        catch (KeyStoreException e) {
+        } catch (KeyStoreException e) {
             throw new IllegalStateException("CertificateAuthContext requires KeyStore.getInstance(\"PKCS12\")");
         }
         try {
             FileInputStream certFileStream = new FileInputStream(certFile);
             try {
                 keyStore.load(certFileStream, certPassword.toCharArray());
-            }
-            finally {
-              if (certFileStream != null)
-                certFileStream.close();
+            } finally {
+                if (certFileStream != null)
+                    certFileStream.close();
             }
             keyManagerFactory.init(keyStore, certPassword.toCharArray());
             keyMgr = keyManagerFactory.getKeyManagers();
             sslContext = SSLContext.getInstance("TLSv1.2");
-          }
-        catch (NoSuchAlgorithmException | KeyStoreException e) {
+        } catch (NoSuchAlgorithmException | KeyStoreException e) {
             throw new IllegalStateException("The certificate algorithm used or the Key store "
-            + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
-            + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
+                + "Service provider Implementaion (SPI) is invalid. CertificateAuthContext "
+                + "requires SunX509 algorithm and PKCS12 Key store SPI", e);
         } catch (CertificateException e) {
             throw new IllegalStateException(e);
         } catch (UnrecoverableKeyException e) {
@@ -1035,8 +1019,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     private static void installCARootCertIntoStore(File caRootCert) {
-        try (InputStream keyInputStream =  new ByteArrayInputStream(FileUtils.readFileToByteArray(caRootCert)))
-        {
+        try (InputStream keyInputStream = new ByteArrayInputStream(FileUtils.readFileToByteArray(caRootCert))) {
             X509Certificate caCert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(new BufferedInputStream(keyInputStream));
             tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -1054,41 +1037,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         }
     }
 
-    protected void writeProp(String key, String value) {
-        try {
-            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
-            Properties props = new Properties();
-            FileInputStream fis = new FileInputStream(gradleProperties);
-            props.load(fis);
-            fis.close();
-            props.put(key, value);
-            FileOutputStream fos = new FileOutputStream(gradleProperties);
-            props.store(fos, "");
-            fos.close();
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected void deleteProp(String key) {
-        try {
-            File gradleProperties = new File(PROJECT_PATH, "gradle.properties");
-            Properties props = new Properties();
-            FileInputStream fis = new FileInputStream(gradleProperties);
-            props.load(fis);
-            fis.close();
-            props.remove(key);
-            FileOutputStream fos = new FileOutputStream(gradleProperties);
-            props.store(fos, "");
-            fos.close();
-        }
-        catch(IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
     public void resetProperties() {
         adminHubConfig.applyDefaultPropertyValues();
     }
@@ -1100,14 +1048,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     }
 
     protected void setupProjectForRunningTestFlow() {
-        runAsAdmin();
-        clearUserModules();
-        resetHubProject();
-        copyFlowArtifactsToProject();
-        installUserModules(getDataHubAdminConfig(), true);
-    }
-
-    protected void copyFlowArtifactsToProject() {
         try {
             FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
                 adminHubConfig.getHubEntitiesDir().toFile());
@@ -1129,6 +1069,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
+        installUserModules(getDataHubAdminConfig(), true);
     }
 
     /**
@@ -1179,6 +1120,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             }
         }
     }
+
     /**
      * These assertions are made in several tests, so this method is in this class to avoid duplicating them.
      */
@@ -1209,7 +1151,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
      * Convenience method for verifying that the test-data-hub-user user can't do something.
      *
      * @param r
-     *
      */
     protected void verifyTestUserIsForbiddenTo(Runnable r, String reason) {
         runAsTestUser();

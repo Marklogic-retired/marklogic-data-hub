@@ -17,7 +17,6 @@ package com.marklogic.hub.entity;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
@@ -38,11 +37,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     @Autowired
     EntityManagerImpl entityManager;
 
-    @Autowired
-    HubProject project;
-
     private void installEntities() {
-        Path entitiesDir = project.getHubEntitiesDir();
+        Path entitiesDir = getHubProject().getHubEntitiesDir();
         if (!entitiesDir.toFile().exists()) {
             entitiesDir.toFile().mkdirs();
         }
@@ -54,7 +50,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     }
 
     private void updateManagerEntity() {
-        Path entitiesDir = project.getHubEntitiesDir();
+        Path entitiesDir = getHubProject().getHubEntitiesDir();
         assertTrue(entitiesDir.toFile().exists());
         File targetFile = entitiesDir.resolve("manager.entity.json").toFile();
         FileUtil.copy(getResourceStream("scaffolding-test/manager2.entity.json"), targetFile);
@@ -69,7 +65,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     @Test
     public void testDeploySearchOptionsWithNoEntities() {
         clearUserModules();
-        Path dir = project.getEntityConfigDir();
+        Path dir = getHubProject().getEntityConfigDir();
 
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         // this should be true regardless
@@ -93,7 +89,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         clearUserModules();
         installEntities();
 
-        Path dir = Paths.get(PROJECT_PATH, HubConfig.ENTITY_CONFIG_DIR);
+        Path dir = getHubProject().getEntityConfigDir();
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
@@ -138,7 +134,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     @Test
     public void doNotReturnExternalReferencesInExpandedEntities() {
         installEntities();
-        Path entitiesDir = project.getHubEntitiesDir();
+        Path entitiesDir = getHubProject().getHubEntitiesDir();
         FileUtil.copy(getResourceStream("scaffolding-test/ManagerWithEmployeeRef.entity.json"), entitiesDir.resolve("ManagerWithEmployeeRef.entity.json").toFile());
 
         HubEntity hubEntity = entityManager.getEntityFromProject("ManagerWithEmployeeRef", true);
@@ -155,8 +151,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     @Test
     public void generateExplorerOptions() {
         installEntities();
-        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
-        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+        File finalDbOptions = getHubProject().getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = getHubProject().getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
 
         entityManager.saveQueryOptions();
 
@@ -166,8 +162,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
     @Test
     public void generateExplorerOptionsWithNoEntities() {
-        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
-        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+        File finalDbOptions = getHubProject().getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = getHubProject().getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
 
         entityManager.saveQueryOptions();
 
@@ -179,8 +175,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     public void overrideExistingExplorerOptions() {
         installEntities();
         copyTestEntityOptionsIntoProject();
-        File finalDbOptions = project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
-        File stagingDbOptions = project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
+        File finalDbOptions = getHubProject().getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile();
+        File stagingDbOptions = getHubProject().getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile();
 
         long oldFinalOptionsTimeStamp = finalDbOptions.lastModified();
         long oldStagingOptionsTimeStamp = stagingDbOptions.lastModified();
@@ -198,11 +194,11 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         try {
             FileUtils.copyFile(
                 getResourceFile("entity-manager-test/options.xml"),
-                project.getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile()
+                getHubProject().getEntityConfigDir().resolve("exp-final-entity-options.xml").toFile()
             );
             FileUtils.copyFile(
                 getResourceFile("entity-manager-test/options2.xml"),
-                project.getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile()
+                getHubProject().getEntityConfigDir().resolve("exp-staging-entity-options.xml").toFile()
             );
         } catch (IOException e) {
             throw new RuntimeException(e);

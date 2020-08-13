@@ -1,12 +1,9 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.util.List;
@@ -14,30 +11,35 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class InitializeModulePathsTest extends HubTestBase {
+public class InitializeModulePathsTest extends AbstractHubCoreTest {
 
     private final static String DEFAULT_MODULES_PATH = String.join(File.separator, "src", "main", "ml-modules");
-    private final static String PROJECT_MODULES_PATH = String.join(File.separator, PROJECT_PATH, DEFAULT_MODULES_PATH);
+
     private static String OS = System.getProperty("os.name").toLowerCase();
     // Uses a "fresh" AppConfig object so no other test class is impacted
     private AppConfig appConfig = new AppConfig();
+
+    private String projectModulesPath;
+
+    @BeforeEach
+    void beforeEach() {
+        projectModulesPath = String.join(File.separator, getHubProject().getProjectDir().toFile().getName(), DEFAULT_MODULES_PATH);
+    }
 
     @Test
     public void defaultModulePaths() {
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(), "ml-app-deployer defaults to a single modules path");
         /*Default modules path seems to be "src/main/ml-modules" and doesn't seem to change with
-         * OS. Once modules path is initialized, it picks the OS specific file separator. 
+         * OS. Once modules path is initialized, it picks the OS specific file separator.
          */
         assertEquals("src/main/ml-modules", modulePaths.get(0));
 
         adminHubConfig.initializeModulePaths(appConfig);
-        
+
         modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(), "Should still just have a single modules path");
-        assertTrue(modulePaths.get(0).endsWith(PROJECT_MODULES_PATH),
+        assertTrue(modulePaths.get(0).endsWith(projectModulesPath),
             "But the single modules path should now be relative to the project path");
     }
 
@@ -55,10 +57,10 @@ public class InitializeModulePathsTest extends HubTestBase {
 
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(2, modulePaths.size(), "Should have both module paths");
-        assertTrue(modulePaths.get(0).endsWith(PROJECT_MODULES_PATH),
+        assertTrue(modulePaths.get(0).endsWith(projectModulesPath),
             "The first path should be the default path, relative to the project");
 
-        String testModulesPath = String.join(File.separator, PROJECT_PATH, "src", "test", "ml-modules");
+        String testModulesPath = String.join(File.separator, getHubProject().getProjectDirString(), "src", "test", "ml-modules");
         assertTrue(modulePaths.get(1).endsWith(testModulesPath),
             "And the custom path should also be relative to the project");
     }
@@ -74,9 +76,8 @@ public class InitializeModulePathsTest extends HubTestBase {
             "If a user overrides module paths, e.g. via mlModulePaths, the default modules path is not added by default");
         if (OS.indexOf("win") >= 0) {
             assertEquals("C:\\some\\absolute\\path", modulePaths.get(0),
-                    "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
-        }
-        else {
+                "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
+        } else {
             assertEquals("/some/absolute/path", modulePaths.get(0),
                 "If the user for some reason specifies an absolute path (not likely), it will be kept as-is");
         }

@@ -1,43 +1,26 @@
 package com.marklogic.hub.job;
 
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.job.impl.JobMonitorImpl;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-class JobMonitorTest extends HubTestBase {
+class JobMonitorTest extends AbstractHubCoreTest {
 
     private JobMonitorImpl jobMonitor;
 
-    @BeforeAll
-    public static void runOnce() {
-        new Installer().deleteProjectDir();
-    }
-
     @BeforeEach
     public void setup() {
-        basicSetup();
-        adminHubConfig.initHubProject();
         clearDatabases(HubConfig.DEFAULT_JOB_NAME);
         addJobDocs();
         jobMonitor = new JobMonitorImpl(adminHubConfig.newJobDbClient());
-    }
-
-    @AfterAll
-    public static void removeProjectDir() {
-        new Installer().deleteProjectDir();
     }
 
     @Test
@@ -91,11 +74,6 @@ class JobMonitorTest extends HubTestBase {
         expected.add("/def");
         Assertions.assertTrue(
             jobMonitor.getBatchResponse("10584668255644629399", "11368953415268525918").containsAll(expected));
-    }
-
-    //TODO after implementation of the corresponding method
-    @Test
-    void getNextStep() {
     }
 
     private void addJobDocs() {
