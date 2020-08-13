@@ -3,43 +3,25 @@ const test = require("/test/test-helper.xqy");
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const flowUtils = new FlowUtils();
 
-const results = [];
-const metadata = [];
+const assertions = [];
 
-let jobId = "alpha-num3r1c-j06-1d";
-let flowDoc = {
-                "name": "testFlow",
-                "description": "This is the flow doc to test metadata values",
-                "steps": {
-                  "1": {
-                    "name": "ingestion",
-                    "description": "This is the custom ingestion step",
-                    "stepDefinitionName": "ingestion",
-                    "stepDefinitionType": "INGESTION"
-                  },
-                  "2": {
-                    "name": "mapping",
-                    "description": "This is the custom mapping step",
-                    "stepDefinitionName": "mapping",
-                    "stepDefinitionType": "MAPPING"
-                  },
-                  "3": {
-                     "name": "mastering",
-                     "description": "This is the custom mapping step",
-                     "stepDefinitionName": "mastering",
-                     "stepDefinitionType": "MASTERING"
-                  }
-                }
-              };
-
-//this is to verify that stepDefName corresponding to the stepNumber is the value of metadata datahubCreatedByStep
-for (const stepNum in flowDoc.steps) {
-  metadata.push(flowUtils.createMetadata(metadata ? metadata : {}, flowDoc.name, flowDoc.steps[stepNum].stepDefinitionName, jobId).datahubCreatedByStep)
-}
-
-
-results.push(
-  test.assertEqual("ingestion,mapping,mastering", metadata.toString())
+const initialMetadata = flowUtils.createMetadata({}, "myFlow", "stepOne", "job-one");
+const currentDate = fn.substring(fn.currentDate().toString(), 1, 10);
+assertions.push(
+  test.assertEqual("myFlow", initialMetadata.datahubCreatedInFlow),
+  test.assertEqual("stepOne", initialMetadata.datahubCreatedByStep),
+  test.assertEqual("job-one", initialMetadata.datahubCreatedByJob),
+  test.assertEqual(currentDate, fn.substring(initialMetadata.datahubCreatedOn, 1, 10),
+    "datahubCreatedOn is expected to be populated with the current dateTime")
 );
 
-results;
+const updatedMetadata = flowUtils.createMetadata(initialMetadata, "mySecondFlow", "stepTwo", "job-two");
+assertions.push(
+  test.assertEqual("mySecondFlow", initialMetadata.datahubCreatedInFlow),
+  test.assertEqual("stepTwo", initialMetadata.datahubCreatedByStep),
+  test.assertEqual("job-one job-two", initialMetadata.datahubCreatedByJob,
+    "Per DHFPROD-2285, multiple job IDs are retained, delimited by spaces. It is not known why this is done for job ID " +
+    "but not for the other metadata keys")
+);
+
+assertions;
