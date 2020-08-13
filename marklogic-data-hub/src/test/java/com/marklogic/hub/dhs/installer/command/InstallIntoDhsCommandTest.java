@@ -109,7 +109,7 @@ public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
-        File dir = new File(PROJECT_PATH); // the directory doesn't matter, only the filename
+        File dir = getHubProject().getProjectDir().toFile(); // the directory doesn't matter, only the filename
         assertTrue(filter.accept(dir, "data-hub-entity-model-reader.json"));
         assertTrue(filter.accept(dir, "data-hub-explorer-architect.json"));
         assertFalse(filter.accept(dir, "flow-developer-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");

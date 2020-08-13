@@ -18,34 +18,22 @@ package com.marklogic.hub.legacy.collector;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.legacy.flow.*;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class EmptyLegacyCollectorTest extends HubTestBase {
+public class EmptyLegacyCollectorTest extends AbstractHubCoreTest {
 
     private static final String ENTITY = "streamentity";
 
     @BeforeEach
     public void setup() {
-        // note, not basicSetup
-
-        XMLUnit.setIgnoreWhitespace(true);
-
-        createProjectDir();
         resetProperties();
         adminHubConfig.refreshProject();
 

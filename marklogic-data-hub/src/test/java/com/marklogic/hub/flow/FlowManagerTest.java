@@ -18,28 +18,20 @@ package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.bootstrap.Installer;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.impl.FlowManagerImpl;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.util.List;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-class FlowManagerTest extends HubTestBase {
+class FlowManagerTest extends AbstractHubCoreTest {
 
     @Autowired
-    private FlowManagerImpl fm;
+    FlowManagerImpl fm;
 
     private String flowString = "{\n" +
         "  \"name\": \"test-flow\",\n" +
@@ -56,24 +48,15 @@ class FlowManagerTest extends HubTestBase {
 
     @BeforeEach
     void setUp() throws IOException {
-        deleteProjectDir();
-        basicSetup();
-        getDataHubAdminConfig();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.readTree(flowString);
         Flow flow = fm.createFlowFromJSON(node);
         fm.saveFlow(flow);
     }
 
-    @AfterAll
-    static void runAfterAll() {
-        new Installer().deleteProjectDir();
-    }
-
     @Test
     void missingFlowsDirectory() {
-        runAfterAll();
-
+        deleteProjectDir();
         List<String> names = fm.getLocalFlowNames();
         Assertions.assertEquals(0, names.size(), "When the flows directory doesn't exist (in this case, the entire " +
             "project directory is missing), an error shouldn't be thrown - should just get back an empty list");

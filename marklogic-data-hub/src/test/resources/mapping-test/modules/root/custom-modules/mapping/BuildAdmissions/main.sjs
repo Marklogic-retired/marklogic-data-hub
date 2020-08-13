@@ -24,8 +24,8 @@ function main(content, options) {
   //now, we search for the labs that match this patient ID and admission ID, then add those
   let diagnosesDocs = cts.search(
                         cts.andQuery([
-                          cts.jsonPropertyRangeQuery('PatientID', '=', patientID),
-                          cts.jsonPropertyRangeQuery('AdmissionID', '=',admissionID),
+                          cts.jsonPropertyValueQuery('PatientID', patientID),
+                          cts.jsonPropertyValueQuery('AdmissionID', admissionID),
                           cts.collectionQuery(['DiagnosesCore'])
                         ])
                       )
@@ -43,8 +43,8 @@ function main(content, options) {
   //time to grab the labs and do the same thing
   let labsDocs = cts.search(
                   cts.andQuery([
-                    cts.jsonPropertyRangeQuery('PatientID', '=', patientID),
-                    cts.jsonPropertyRangeQuery('AdmissionID', '=',admissionID),
+                    cts.jsonPropertyValueQuery('PatientID', patientID),
+                    cts.jsonPropertyValueQuery('AdmissionID', admissionID),
                     cts.collectionQuery(['LabsCore'])
                   ])
                  )

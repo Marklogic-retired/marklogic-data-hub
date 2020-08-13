@@ -16,17 +16,12 @@
 package com.marklogic.hub.legacy.job;
 
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.legacy.flow.*;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,28 +38,22 @@ import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+public class LegacyJobManagerTest extends AbstractHubCoreTest {
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class LegacyJobManagerTest extends HubTestBase {
     private static final String ENTITY = "e2eentity";
     private static final String HARMONIZE_FLOW_XML = "testharmonize-xml";
     private static final String HARMONIZE_FLOW_JSON = "testharmonize-json";
     private static List<String> jobIds = Collections.synchronizedList(new ArrayList<String>());
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
-    private static Path exportPath = projectDir.resolve("testExport.zip");
+
+    private Path exportPath;
     private LegacyJobManager jobManager;
 
     private LegacyFlowItemCompleteListener flowItemCompleteListener =
         (jobId, itemId) -> recordJobId(jobId);
 
     @BeforeEach
-    public void setupStuff() throws InterruptedException, IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-        deleteProjectDir();
-
-        createProjectDir();
-        getDataHubAdminConfig();
+    public void setupStuff() {
+        exportPath = getHubProject().getProjectDir().resolve("testExport.zip");
         enableDebugging();
         enableTracing();
 

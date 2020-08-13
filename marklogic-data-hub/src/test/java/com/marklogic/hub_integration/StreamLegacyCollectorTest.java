@@ -23,22 +23,16 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -48,14 +42,9 @@ import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
-
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class StreamLegacyCollectorTest extends HubTestBase {
+public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
 
     private static final String ENTITY = "streamentity";
-    private static Path projectDir = Paths.get(PROJECT_PATH);
     private static final int TEST_SIZE = 3000000;
     private static final int BATCH_SIZE = 1000;
     private static int DOC_COUNT = TEST_SIZE / BATCH_SIZE;
@@ -65,21 +54,16 @@ public class StreamLegacyCollectorTest extends HubTestBase {
     private String installDocError;
 
     @Autowired
-    private LegacyFlowManager fm;
+    LegacyFlowManager fm;
 
     @Autowired
-    private Scaffolding scaffolding;
+    Scaffolding scaffolding;
 
     @BeforeEach
     public void setup() throws IOException {
-        XMLUnit.setIgnoreWhitespace(true);
-
-        createProjectDir();
-        dataHub.initProject();
-
         // it triggers installation of staging db before staging schemas db exists.
         // a subtle bug. to solve, users must create schemas db hook here too.
-        Path dbDir = projectDir.resolve("src/main/entity-config").resolve("databases");
+        Path dbDir = getHubProject().getProjectDir().resolve("src/main/entity-config").resolve("databases");
         dbDir.toFile().mkdirs();
         FileUtil.copy(getResourceStream("stream-collector-test/staging-database.json"), dbDir.resolve("staging-database.json").toFile());
 
@@ -130,11 +114,6 @@ public class StreamLegacyCollectorTest extends HubTestBase {
         writeBatcher.flushAndWait();
         assertTrue("Doc install not finished", installDocsFinished );
         assertFalse("Doc install failed: " + installDocError, installDocsFailed);
-    }
-
-    @AfterEach
-    public void removeProjectDir() {
-        deleteProjectDir();
     }
 
     @Test

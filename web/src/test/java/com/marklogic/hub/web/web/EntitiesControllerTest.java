@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
@@ -32,32 +32,26 @@ import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.web.WebApplication;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, EntitiesControllerTest.class})
-@WebAppConfiguration
-class EntitiesControllerTest extends BaseTestController {
+@SpringBootTest(classes = {WebApplication.class})
+class EntitiesControllerTest extends AbstractHubCoreTest {
 
     private static String ENTITY = "test-entity";
 
     @Autowired
-    private EntitiesController ec;
+    EntitiesController ec;
 
     @Autowired
     Scaffolding scaffolding;
@@ -76,10 +70,7 @@ class EntitiesControllerTest extends BaseTestController {
         deleteProjectDir();
         createProjectDir();
 
-        //envConfig.setInitialized(true);
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-
-        Path projectDir = Paths.get(".", PROJECT_PATH);
+        Path projectDir = getHubProject().getProjectDir();
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -93,9 +84,6 @@ class EntitiesControllerTest extends BaseTestController {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
-
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-        setEnvConfig();
 
         ObjectMapper mapper = new ObjectMapper();
         JsonNode body = mapper.readTree("{\"batchSize\":1, \"threadCount\": 1}");
@@ -115,12 +103,7 @@ class EntitiesControllerTest extends BaseTestController {
 
     @Test
     public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
-        deleteProjectDir();
-        createProjectDir();
-
-        //envConfig.setInitialized(true);
-        //envConfig.setMlSettings(HubConfigBuilder.newHubConfigBuilder(PROJECT_PATH).withPropertiesFromEnvironment().build());
-        Path projectDir = Paths.get(".", PROJECT_PATH);
+        Path projectDir = getHubProject().getProjectDir();
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -135,8 +118,6 @@ class EntitiesControllerTest extends BaseTestController {
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
         installStagingDoc("/staged.json", meta, "legacy-flow-manager/staged.json");
-
-        setEnvConfig();
 
         final String OPT_VALUE = "test-value";
         ObjectMapper mapper = new ObjectMapper();
@@ -154,8 +135,6 @@ class EntitiesControllerTest extends BaseTestController {
         JsonNode optionNode = headers.path("test-option");
         assertFalse(optionNode.isMissingNode());
         assertEquals(OPT_VALUE, optionNode.asText());
-
-        //uninstallHub();
     }
 
 }

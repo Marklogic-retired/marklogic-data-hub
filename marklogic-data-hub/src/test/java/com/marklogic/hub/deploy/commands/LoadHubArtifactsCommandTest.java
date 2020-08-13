@@ -1,15 +1,11 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -18,9 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class LoadHubArtifactsCommandTest extends HubTestBase {
+public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
 
     private String originalModulePermissions;
 
@@ -37,7 +31,7 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
     @Test
     public void verifyDefaultPermissions() {
         LoadHubArtifactsCommand loadHubArtifactsCommand = new LoadHubArtifactsCommand(adminHubConfig);
-        DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(),"http://marklogic.com/data-hub/flow");
+        DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow");
         assertEquals(2, h.getCollections().size());
         Iterator<String> collections = h.getCollections().iterator();
         assertEquals("http://marklogic.com/data-hub/flow", collections.next());
@@ -49,7 +43,7 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
         DocumentMetadataHandle.DocumentPermissions perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
 
-        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition");
+        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition");
         assertEquals(2, h.getCollections().size());
         collections = h.getCollections().iterator();
         assertEquals("http://marklogic.com/data-hub/step-definition", collections.next());
@@ -81,12 +75,12 @@ public class LoadHubArtifactsCommandTest extends HubTestBase {
 
         LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
 
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(),"http://marklogic.com/data-hub/step-definition").getPermissions();
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-step-definition-reader"));
 
-        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(),"http://marklogic.com/data-hub/flow").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(config.getFlowPermissions(), "http://marklogic.com/data-hub/flow").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-flow-writer"));

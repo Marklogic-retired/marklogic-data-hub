@@ -18,16 +18,10 @@ package com.marklogic.hub.mapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.MappingManager;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.util.FileUtil;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -38,23 +32,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class MappingManagerTest extends HubTestBase {
+public class MappingManagerTest extends AbstractHubCoreTest {
 
-    private        String mappingName = "my-fun-test";
-
-    @BeforeEach
-    public void setup() {
-        basicSetup();
-        adminHubConfig.initHubProject();
-    }
-
-    @AfterEach
-    public void teardown() {
-        deleteProjectDir();
-    }
-
+    private String mappingName = "my-fun-test";
 
     @Test
     public void createMapping() {
@@ -201,10 +181,10 @@ public class MappingManagerTest extends HubTestBase {
     }
 
     private void copyTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-1"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void copySecondTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName+"/"+mappingName+"-2"+MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 }

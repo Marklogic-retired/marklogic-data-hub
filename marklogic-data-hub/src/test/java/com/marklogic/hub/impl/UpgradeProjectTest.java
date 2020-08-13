@@ -3,12 +3,12 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubProject;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -34,17 +34,6 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     @Autowired
     FlowManagerImpl flowManager;
 
-    @Autowired
-    HubProjectImpl hubProject;
-
-    @Autowired
-    Versions versions;
-
-    @AfterEach
-    public void cleanup() {
-        deleteProjectDir();
-    }
-
     @Test
     void localProjectIsPre430() {
         copyTestProjectToTempDirectory("pre430");
@@ -66,6 +55,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void upgrade43xToCurrentVersion() throws IOException {
+        final HubProject hubProject = getHubProject();
         final File projectDir = copyTestProjectToTempDirectory("dhf43x");
 
         // This test is a little awkward because it's not clear if dataHub.upgradeProject can just be called in the
@@ -172,12 +162,10 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void testUpgradeTo510MappingStep() {
-        createProjectDir();
-        adminHubConfig.createProject(PROJECT_PATH);
         Assumptions.assumingThat(versions.isVersionCompatibleWithES(), () -> {
             FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
             FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
-            project.updateStepDefinitionTypeForInlineMappingSteps();
+            getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
             Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
             Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
         });
@@ -196,7 +184,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        hubProject.createProject(projectPath);
+        getHubProject().createProject(projectPath);
         return projectDir;
     }
 }

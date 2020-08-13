@@ -20,45 +20,31 @@ package com.marklogic.hub.web.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentPage;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.FlowModel;
 import com.marklogic.hub.web.model.entity_services.EntityModel;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {WebApplication.class, ApplicationConfig.class, EntityManagerServiceTest.class})
-public class EntityManagerServiceTest extends AbstractServiceTest implements InitializingBean {
+public class EntityManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
     private static String ENTITY2 = "test-entity2";
-    private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     @Autowired
     EntityManagerService entityMgrService;
@@ -66,22 +52,15 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
     @Autowired
     Scaffolding scaffolding;
 
-    @Autowired
-    HubConfigImpl hubConfig;
-
     @BeforeEach
     public void setUp() {
-        createProjectDir();
-        hubConfig.initHubProject();
-        hubConfig.refreshProject();
-
         try {
             scaffolding.createEntity(ENTITY);
-        }
-        catch (DataHubProjectException e) {
+        } catch (DataHubProjectException e) {
             // Entity is already present
         }
 
+        Path projectDir = getHubProject().getProjectDir();
         Path legacyEntityDir = projectDir.resolve("plugins/entities/" + ENTITY);
         Path entityDir = projectDir.resolve("entities");
         Path inputDir = legacyEntityDir.resolve("input");
@@ -121,13 +100,6 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
         installUserModules(getDataHubAdminConfig(), true);
     }
 
-    @AfterEach
-    public void teardownProject() {
-        clearUserModules();
-        deleteProjectDir();
-    }
-
-
     @Test
     public void getEntities() throws IOException {
         List<EntityModel> entities = entityMgrService.getEntities();
@@ -139,7 +111,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
     @Test
     @Deprecated
     public void saveEntity() throws IOException {
-        Path entityDir = projectDir.resolve("entities");
+        Path entityDir = getHubProject().getProjectDir().resolve("entities");
         String entityFilename = ENTITY2 + EntityManagerService.ENTITY_FILE_EXTENSION;
 
         JsonNode node = getJsonFromResource(entityFilename);
@@ -214,6 +186,7 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
 
     /**
      * Try getting a flow using the name of a valid flow, but requesting using the wrong type.
+     *
      * @throws IOException
      */
     @Test
@@ -264,9 +237,5 @@ public class EntityManagerServiceTest extends AbstractServiceTest implements Ini
         //cleanup.
         entityMgrService.deleteEntity(RENAMED_ENTITY);
         entityMgrService.deleteEntity(ENTITY);
-    }
-
-    public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
     }
 }

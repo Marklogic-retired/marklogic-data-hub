@@ -1,13 +1,12 @@
 package com.marklogic.hub.cli.client;
 
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
@@ -15,17 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class RunFlowViaMainTest extends AbstractHubCoreTest {
-
-    @BeforeAll
-    public static void setup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        new Installer().deleteProjectDir();
-    }
-
-    @AfterAll
-    public static void cleanUp() {
-        new Installer().deleteProjectDir();
-    }
 
     @Test
     public void testRunFlow() {

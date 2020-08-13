@@ -16,25 +16,17 @@
 
 package com.marklogic.hub.scaffolding;
 
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.error.ScaffoldingValidationException;
+import com.marklogic.hub.impl.ScaffoldingImpl;
+import com.marklogic.hub.impl.ScaffoldingValidator;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.impl.ScaffoldingValidator;
-import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.util.FileUtil;
-import org.apache.commons.io.FileUtils;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,44 +36,28 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class ScaffoldingValidatorTest extends HubTestBase {
+public class ScaffoldingValidatorTest extends AbstractHubCoreTest {
 
-   private static final String projectPath = PROJECT_PATH;
    private static final String TEST_ENTITY_NAME = "test-entity";
 
    @Autowired
-   private Scaffolding scaffolding;
+   Scaffolding scaffolding;
 
    @Autowired
-   private ScaffoldingValidator validator;
-
-   @BeforeAll
-   public static void setupClass() throws IOException {
-       XMLUnit.setIgnoreWhitespace(true);
-   }
+   ScaffoldingValidator validator;
 
    @BeforeEach
    public void setup() throws IOException {
-       deleteProjectDir();
        createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
        createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
-   }
-
-   @AfterEach
-   public void teardownDir() throws IOException {
-       FileUtils.deleteDirectory(new File(projectPath));
    }
 
    private void createPlugins(String entityName, FlowType flowType, CodeFormat codeFormat) throws IOException {
 
        String flowName = entityName + flowType + "-flow";
-       String flowTypePath = ScaffoldingImpl.getAbsolutePath(projectPath, "plugins", "entities", entityName, flowType.toString());
+       String flowTypePath = ScaffoldingImpl.getAbsolutePath(getHubProject().getProjectDirString(), "plugins", "entities", entityName, flowType.toString());
        String flowPath = ScaffoldingImpl.getAbsolutePath(flowTypePath, flowName);
 
        List<Plugin> plugins = new ArrayList<>();

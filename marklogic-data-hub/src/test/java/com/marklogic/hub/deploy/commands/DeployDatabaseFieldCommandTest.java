@@ -3,23 +3,17 @@ package com.marklogic.hub.deploy.commands;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class DeployDatabaseFieldCommandTest extends HubTestBase {
+public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
 
     @Test
     public void test() {

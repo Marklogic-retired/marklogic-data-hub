@@ -21,9 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -31,33 +30,26 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class LegacyFlowRunnerTest extends HubTestBase {
+public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
+
     private static final String ENTITY = "e2eentity";
-    private static Path projectDir = Paths.get(".", "ye-olde-project");
+    private Path projectDir;
 
     @BeforeEach
     public void setup(){
-        resetHubProject();
-        getDataHubAdminConfig();
-
+        projectDir = getHubProject().getProjectDir();
         // Specific to this test - must also delete legacy entities in the modules database
         runInModules("cts:uri-match('/entities/**') ! xdmp:document-delete(.)");
 

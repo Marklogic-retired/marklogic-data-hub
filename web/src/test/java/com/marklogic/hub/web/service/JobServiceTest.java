@@ -18,27 +18,11 @@
 package com.marklogic.hub.web.service;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.web.model.JobQuery;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, LegacyFlowManagerServiceTest.class})
-public class JobServiceTest extends HubTestBase {
-
-    @BeforeEach
-    public void setup() throws IOException {
-        deleteProjectDir();
-        createProjectDir();
-    }
+public class JobServiceTest extends AbstractHubCoreTest {
 
     @Test
     public void getJobs() {

@@ -20,16 +20,13 @@ package com.marklogic.hub.web.service;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
@@ -37,30 +34,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {WebApplication.class, ApplicationConfig.class, FlowManagerServiceTest.class})
 class FlowManagerServiceTest extends AbstractServiceTest {
 
     private static String FLOW = "testFlow";
     private static String FLOWWITHCOMMONSTEPS = "testFlowWithStepsInOtherFlow";
-
-    private static Path projectDir = Paths.get(".", PROJECT_PATH);
 
     private String customIngestStep = "{\"name\":\"firstIngest\",\"description\":\"\",\"isValid\":false,\"fileLocations\":{\"inputFilePath\":" +
         "\"/Users/ssambasu/Downloads/2508\",\"inputFileType\":\"json\",\"outputURIReplacement\":\"\",\"separator\":\",\"},\"options\":{\"ingestionKey\":\"ingestionVal\"," +
@@ -91,16 +78,9 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     @Autowired
     FlowManager flowManager;
 
-    @Autowired
-    HubConfigImpl hubConfig;
-
     @BeforeEach
     void setUp() {
-        createProjectDir();
-        hubConfig.initHubProject();
-        hubConfig.refreshProject();
-
-        Path flowDir = projectDir.resolve("flows");
+        Path flowDir = getHubProject().getFlowsDir();
 
         FileUtil.copy(getResourceStream("flow-manager/flows/testFlow.flow.json"), flowDir.resolve("testFlow.flow.json").toFile());
         FileUtil.copy(getResourceStream("flow-manager/flows/testFlowWithStepsInOtherFlow.flow.json"), flowDir.resolve("testFlowWithStepsInOtherFlow.flow.json").toFile());
@@ -181,7 +161,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
     void deleteMappingStepThatIsNotReferencedByAnyOtherFlows() throws IOException {
         final String mappingName = "testMapping";
 
-        Path entityDir = projectDir.resolve("entities");
+        Path entityDir = getHubProject().getProjectDir().resolve("entities");
         String entityFilename = "test-entity" + EntityManagerService.ENTITY_FILE_EXTENSION;
         FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
 
@@ -205,8 +185,8 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         flowManager.saveFlow(flow);
 
         // Install artifacts so we can verify that the mappings are deleted
-        installHubArtifacts(hubConfig, true);
-        installUserModules(hubConfig, true);
+        installHubArtifacts(getHubConfig(), true);
+        installUserModules(getHubConfig(), true);
 
         // Verify the mappings exist
         GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
@@ -245,8 +225,8 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         flowManager.saveFlow(flow);
 
         // Install artifacts so we can verify that the step definition can be deleted
-        installHubArtifacts(hubConfig, true);
-        installUserModules(hubConfig, true);
+        installHubArtifacts(getHubConfig(), true);
+        installUserModules(getHubConfig(), true);
 
         // Verify the step exists
         GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
@@ -287,13 +267,13 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION) != null);
         Assertions.assertTrue(flow.getStep("6").getOptions().containsKey("ingestionKey"));
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstIngest", StepDefinition.StepDefinitionType.INGESTION).getModulePath().equals("/custom-modules/ingestion/firstIngest/main.sjs"));
-        Assertions.assertTrue(project.getCustomModuleDir("firstIngest", "ingestion").resolve("main.sjs").toFile().exists());
+        Assertions.assertTrue(getHubProject().getCustomModuleDir("firstIngest", "ingestion").resolve("main.sjs").toFile().exists());
         //Assertions.assertTrue(flow.getStep("6").getModulePath() == null);
 
         flowManagerService.createStep(FLOW, 6, null, customMappingStep);
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMapping", StepDefinition.StepDefinitionType.MAPPING) != null);
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMapping", StepDefinition.StepDefinitionType.MAPPING).getModulePath().equals("/custom-modules/mapping/firstMapping/main.sjs"));
-        Assertions.assertTrue(project.getCustomModuleDir("firstMapping", "mapping").resolve("main.sjs").toFile().exists());
+        Assertions.assertTrue(getHubProject().getCustomModuleDir("firstMapping", "mapping").resolve("main.sjs").toFile().exists());
         flow = flowManager.getFlow("testFlow");
         Assertions.assertTrue(flow.getSteps().size() == 7);
         Assertions.assertTrue(flow.getStep("6").getOptions().get("mappingKey").toString().equals("\"mappingVal\""));
@@ -301,7 +281,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         flowManagerService.createStep(FLOW, 6, null, customMasteringStep);
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMastering", StepDefinition.StepDefinitionType.MASTERING) != null);
         Assertions.assertTrue(stepDefinitionManager.getStepDefinition("firstMastering", StepDefinition.StepDefinitionType.MASTERING).getModulePath().equals("/custom-modules/mastering/firstMastering/main.sjs"));
-        Assertions.assertTrue(project.getCustomModuleDir("firstMastering", "mastering").resolve("main.sjs").toFile().exists());
+        Assertions.assertTrue(getHubProject().getCustomModuleDir("firstMastering", "mastering").resolve("main.sjs").toFile().exists());
         flow = flowManager.getFlow("testFlow");
         Assertions.assertTrue(flow.getSteps().size() == 8);
         Assertions.assertTrue(flow.getStep("6").getOptions().containsKey("masteringKey"));
@@ -314,13 +294,13 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         flowManagerService.createStep(FLOW, 6, null, customMasteringStep);
 
         flowManagerService.deleteStep(FLOW, "firstIngest-INGESTION");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
 
         flowManagerService.deleteStep(FLOW, "firstMapping-MAPPING");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
 
         flowManagerService.deleteStep(FLOW, "firstMastering-MASTERING");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
     }
 
     @Test
@@ -335,19 +315,19 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         //attempt1 -- Shouldnt delete the step definition since it is referenced by another flow
 
         flowManagerService.deleteStep(FLOW, "firstMapping-MAPPING");
-        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+        Assertions.assertTrue(getHubProject().getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
         flowManagerService.deleteStep(FLOW, "firstMastering-MASTERING");
-        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+        Assertions.assertTrue(getHubProject().getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
         flowManagerService.deleteStep(FLOW, "firstIngest-INGESTION");
-        Assertions.assertTrue(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
+        Assertions.assertTrue(getHubProject().getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
 
         //attempt2 -- Should delete the step definition since it is not referenced by another flow
 
         flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstMapping-MAPPING");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("mapping").resolve("firstMapping").toFile().exists());
         flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstMastering-MASTERING");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("mastering").resolve("firstMastering").toFile().exists());
         flowManagerService.deleteStep(FLOWWITHCOMMONSTEPS, "firstIngest-INGESTION");
-        Assertions.assertFalse(project.getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
+        Assertions.assertFalse(getHubProject().getStepDefinitionsDir().resolve("ingestion").resolve("firstIngest").toFile().exists());
     }
 }

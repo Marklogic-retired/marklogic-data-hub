@@ -43,62 +43,63 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @AutoConfigureJsonTesters
 public class HubConfigJsonTest {
 
-    protected static final String PROJECT_PATH = "ye-olde-project";
+    @Autowired
+    JacksonTester<HubConfig> json;
 
     @Autowired
-    private JacksonTester<HubConfig> json;
-
-    @Autowired
-    private HubConfigImpl hubConfig;
+    HubConfigImpl hubConfig;
 
     @Test
     public void testSerialize() throws IOException {
-        hubConfig.createProject(PROJECT_PATH);
-        hubConfig.initHubProject();
-        hubConfig.refreshProject();
+        String originalUsername = hubConfig.getMlUsername();
+        String originalPassword = hubConfig.getMlPassword();
+        try {
+            hubConfig.setMlUsername("mluser");
+            hubConfig.setMlPassword("mlpassword");
 
-        hubConfig.setMlUsername("mluser");
-        hubConfig.setMlPassword("mlpassword");
+            String expected = "{\n" +
+                "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
+                "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
+                "  \"stagingForestsPerHost\": 1,\n" +
+                "  \"stagingPort\": 8010,\n" +
+                "  \"stagingAuthMethod\": \"digest\",\n" +
+                "  \"finalDbName\": \"data-hub-FINAL\",\n" +
+                "  \"finalHttpName\": \"data-hub-FINAL\",\n" +
+                "  \"finalForestsPerHost\": 1,\n" +
+                "  \"finalPort\": 8011,\n" +
+                "  \"finalAuthMethod\": \"digest\",\n" +
+                "  \"jobDbName\": \"data-hub-JOBS\",\n" +
+                "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
+                "  \"jobForestsPerHost\": 1,\n" +
+                "  \"jobPort\": 8013,\n" +
+                "  \"jobAuthMethod\": \"digest\",\n" +
+                "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
+                "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
+                "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
+                "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
+                "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
+                "  \"modulesForestsPerHost\": 1,\n" +
+                "  \"stagingTriggersForestsPerHost\": 1,\n" +
+                "  \"stagingSchemasForestsPerHost\": 1,\n" +
+                "  \"finalTriggersForestsPerHost\": 1,\n" +
+                "  \"finalSchemasForestsPerHost\": 1,\n" +
+                "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
+                "  \"flowOperatorUserName\": \"flow-operator\",\n" +
+                "  \"customForestPath\": \"forests\",\n" +
+                "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
+                "}";
 
-        String expected = "{\n" +
-            "  \"stagingDbName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingHttpName\": \"data-hub-STAGING\",\n" +
-            "  \"stagingForestsPerHost\": 1,\n" +
-            "  \"stagingPort\": 8010,\n" +
-            "  \"stagingAuthMethod\": \"digest\",\n" +
-            "  \"finalDbName\": \"data-hub-FINAL\",\n" +
-            "  \"finalHttpName\": \"data-hub-FINAL\",\n" +
-            "  \"finalForestsPerHost\": 1,\n" +
-            "  \"finalPort\": 8011,\n" +
-            "  \"finalAuthMethod\": \"digest\",\n" +
-            "  \"jobDbName\": \"data-hub-JOBS\",\n" +
-            "  \"jobHttpName\": \"data-hub-JOBS\",\n" +
-            "  \"jobForestsPerHost\": 1,\n" +
-            "  \"jobPort\": 8013,\n" +
-            "  \"jobAuthMethod\": \"digest\",\n" +
-            "  \"modulesDbName\": \"data-hub-MODULES\",\n" +
-            "  \"stagingTriggersDbName\": \"data-hub-staging-TRIGGERS\",\n" +
-            "  \"stagingSchemasDbName\": \"data-hub-staging-SCHEMAS\",\n" +
-            "  \"finalTriggersDbName\": \"data-hub-final-TRIGGERS\",\n" +
-            "  \"finalSchemasDbName\": \"data-hub-final-SCHEMAS\",\n" +
-            "  \"modulesForestsPerHost\": 1,\n" +
-            "  \"stagingTriggersForestsPerHost\": 1,\n" +
-            "  \"stagingSchemasForestsPerHost\": 1,\n" +
-            "  \"finalTriggersForestsPerHost\": 1,\n" +
-            "  \"finalSchemasForestsPerHost\": 1,\n" +
-            "  \"flowOperatorRoleName\": \"flow-operator-role\",\n" +
-            "  \"flowOperatorUserName\": \"flow-operator\",\n" +
-            "  \"customForestPath\": \"forests\",\n" +
-            "  \"jarVersion\": \"" + hubConfig.getJarVersion() + "\"\n" +
-            "}";
+            assertThat(json.write(hubConfig)).isEqualToJson(expected);
 
-        assertThat(json.write(hubConfig)).isEqualToJson(expected);
-
-        // Verify some fields were not serialized
-        JsonNode actualJson = new ObjectMapper().readTree(json.write(hubConfig).getJson());
-        assertFalse(actualJson.has("mlUsername"), "mlUsername and mlPassword were previously serialized because they " +
-            "had public getters in HubConfigImpl, but this seems like an unintended error, as we wouldn't want to " +
-            "serialize passwords out into a JSON string");
-        assertFalse(actualJson.has("mlPassword"));
+            // Verify some fields were not serialized
+            JsonNode actualJson = new ObjectMapper().readTree(json.write(hubConfig).getJson());
+            assertFalse(actualJson.has("mlUsername"), "mlUsername and mlPassword were previously serialized because they " +
+                "had public getters in HubConfigImpl, but this seems like an unintended error, as we wouldn't want to " +
+                "serialize passwords out into a JSON string");
+            assertFalse(actualJson.has("mlPassword"));
+        } finally {
+            hubConfig.setMlUsername(originalUsername);
+            hubConfig.setMlPassword(originalPassword);
+        }
     }
 }

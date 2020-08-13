@@ -9,7 +9,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.impl.Versions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
-
-    @Autowired
-    Versions versions;
 
     @Autowired
     GenerateFunctionMetadataCommand generateFunctionMetadataCommand;

@@ -17,63 +17,34 @@
 
 package com.marklogic.hub.web.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
-import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.FlowType;
+import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.scaffold.Scaffolding;
-import com.marklogic.hub.web.WebApplication;
-import com.marklogic.hub.web.auth.ConnectionAuthenticationToken;
 import com.marklogic.hub.web.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-
-@ExtendWith(SpringExtension.class)
-@WebAppConfiguration
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, TraceServiceTest.class})
 class TraceServiceTest extends AbstractServiceTest {
 
     private DatabaseClient traceClient;
-    private static Path projectDir = Paths.get(".", PROJECT_PATH);
     private static String ENTITY = "test-entity";
 
     @Autowired
-    private LegacyFlowManagerService flowMgrService;
+    LegacyFlowManagerService flowMgrService;
 
     @Autowired
     Scaffolding scaffolding;
 
 
     @BeforeEach
-    public void setUp() throws IOException {
-        deleteProjectDir();
-        //envConfig.checkIfInstalled();
-        setEnvConfig();
-        createProjectDir();
-        //enableTracing();
-
+    public void setUp() {
         scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
@@ -90,11 +61,6 @@ class TraceServiceTest extends AbstractServiceTest {
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
     }
 
-    protected void setEnvConfig() {
-        ConnectionAuthenticationToken authenticationToken = new ConnectionAuthenticationToken("admin", "admin", "localhost", 1, "local");
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
     @Test
     public void getTraces() {
         TraceService tm = new TraceService(traceClient);
@@ -102,25 +68,5 @@ class TraceServiceTest extends AbstractServiceTest {
         traceQuery.start = 1L;
         traceQuery.count = 10L;
         tm.getTraces(traceQuery);
-    }
-
-    @Test
-    @Disabled
-    public void getTrace() throws IOException {
-        TraceService tm = new TraceService(traceClient);
-        TraceQuery traceQuery = new TraceQuery();
-        traceQuery.start = 1L;
-        traceQuery.count = 1L;
-        StringHandle traces = tm.getTraces(traceQuery);
-
-        String resultStr = traces.toString();
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readTree(resultStr);
-        JsonNode results = node.findValue("results");
-        String traceId = results.get(0).findValue("content").findValue("traceId").asText();
-
-        JsonNode trace = tm.getTrace(traceId);
-        assertNotNull(trace);
-        assertEquals(traceId, trace.findValue("traceId").asText());
     }
 }

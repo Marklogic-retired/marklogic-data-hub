@@ -3,7 +3,6 @@ package com.marklogic.hub.impl;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.StringUtils;
@@ -117,7 +116,7 @@ public class HubConfigImplTest {
     @Test
     void hostOnAppConfigShouldBeUpdated() {
         HubProjectImpl project = new HubProjectImpl();
-        project.createProject(HubTestBase.PROJECT_PATH);
+        project.createProject(new File(new File("build"), "HubConfigImplTest").getAbsolutePath());
 
         HubConfigImpl config = new HubConfigImpl(project);
         Properties userProperties = new Properties();

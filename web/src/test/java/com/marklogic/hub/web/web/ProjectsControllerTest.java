@@ -18,7 +18,7 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.HubSettings;
 import com.marklogic.hub.web.model.Project;
@@ -27,12 +27,9 @@ import com.marklogic.hub.web.service.ProjectManagerService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -40,20 +37,19 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, ProjectsControllerTest.class})
-@WebAppConfiguration
-public class ProjectsControllerTest extends BaseTestController {
+@SpringBootTest(classes = {WebApplication.class})
+public class ProjectsControllerTest extends AbstractHubCoreTest {
 
     @Autowired
-    private ProjectsController pc;
+    ProjectsController pc;
 
     @Autowired
-    private ProjectManagerService pms;
+    ProjectManagerService pms;
 
     private TemporaryFolder temporaryFolder;
 
     private String projectPath;
+
     @BeforeEach
     public void setup() throws IOException {
         pms.reset();

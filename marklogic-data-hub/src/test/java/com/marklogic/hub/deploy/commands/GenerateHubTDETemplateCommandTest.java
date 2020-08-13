@@ -15,48 +15,33 @@
  */
 package com.marklogic.hub.deploy.commands;
 
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.HubTestBase;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
-    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
-    private static File projectDir = projectPath.toFile();
-    private static final String RESOURCES_DIR = "scaffolding-test/generate-tde-template/";
+public class GenerateHubTDETemplateCommandTest extends AbstractHubCoreTest {
 
-    @Autowired
-    HubProject project;
+    private static final String RESOURCES_DIR = "scaffolding-test/generate-tde-template/";
 
     GenerateHubTDETemplateCommand GenerateHubTDETemplateCommand;
 
     @BeforeEach
     public void setup() {
-        deleteProjectDir();
         GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getDataHubAdminConfig());
-        createProjectDir();
     }
 
 
     private void installEntity(String entityName) {
-        Path entityDir = project.getHubEntitiesDir();
+        Path entityDir = getHubProject().getHubEntitiesDir();
         if (!entityDir.toFile().exists()) {
             entityDir.toFile().mkdirs();
         }
@@ -65,44 +50,44 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
     }
 
     @Test
-    public void testFindEntityFilesNoEntityFiles()  {
+    public void testFindEntityFilesNoEntityFiles() {
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
-        assertEquals("Expected to find no entity files",0,entityFiles.size());
+        assertEquals("Expected to find no entity files", 0, entityFiles.size());
     }
 
     @Test
-    public void testFindEntityFilesOneEntityFiles()  {
+    public void testFindEntityFilesOneEntityFiles() {
         installEntity("myfirst");
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
-        assertEquals("Expected to find one entity file",1,entityFiles.size());
+        assertEquals("Expected to find one entity file", 1, entityFiles.size());
     }
 
     @Test
-    public void testFindEntityFilesTwoEntityFiles()  {
+    public void testFindEntityFilesTwoEntityFiles() {
         installEntity("myfirst");
         installEntity("mysecond");
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
-        assertEquals("Expected to find two entity files",2,entityFiles.size());
+        assertEquals("Expected to find two entity files", 2, entityFiles.size());
     }
 
     @Test
-    public void testCreateEntityNameFileMapWithNoEntityFiles()  {
-        Map<String,File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(null);
-        assertEquals("Expected to find no entity files",0,entityNameFileMap.size());
+    public void testCreateEntityNameFileMapWithNoEntityFiles() {
+        Map<String, File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(null);
+        assertEquals("Expected to find no entity files", 0, entityNameFileMap.size());
 
         entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(new ArrayList<>());
-        assertEquals("Expected to find no entity files",0,entityNameFileMap.size());
+        assertEquals("Expected to find no entity files", 0, entityNameFileMap.size());
     }
 
     @Test
-    public void testCreateEntityNameFileMapWithTwoEntityFiles()  {
+    public void testCreateEntityNameFileMapWithTwoEntityFiles() {
         installEntity("myfirst");
         installEntity("mysecond");
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
 
-        Map<String,File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertTrue("Does not contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        Map<String, File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertTrue("Does not contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
 
         //assertEquals("Expected to find no entity files",2,entityNameFileMap.size());
     }
@@ -115,51 +100,51 @@ public class GenerateHubTDETemplateCommandTest extends HubTestBase  {
 
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
 
-        Map<String,File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertTrue("Does not contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        Map<String, File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertTrue("Does not contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
 
         GenerateHubTDETemplateCommand.filterEntities(entityNameFileMap);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertFalse("Does contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertFalse("Does contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
     }
 
     @Test
-    public void testFilterTwoEntityWithTwoEntityFiles()  {
+    public void testFilterTwoEntityWithTwoEntityFiles() {
         installEntity("myfirst");
         installEntity("mysecond");
         GenerateHubTDETemplateCommand.setEntityNames("myfirst,mysecond");
 
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
 
-        Map<String,File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertTrue("Does not contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        Map<String, File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertTrue("Does not contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
 
         GenerateHubTDETemplateCommand.filterEntities(entityNameFileMap);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertTrue("Does not contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertTrue("Does not contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
     }
 
     @Test
-    public void testFilterIncorrectEntities()  {
+    public void testFilterIncorrectEntities() {
         installEntity("myfirst");
         installEntity("mysecond");
         GenerateHubTDETemplateCommand.setEntityNames("XCXZ,ZXCXZC");
 
         List<File> entityFiles = GenerateHubTDETemplateCommand.findEntityFiles();
 
-        Map<String,File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
-        assertTrue("Does not contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertTrue("Does not contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        Map<String, File> entityNameFileMap = GenerateHubTDETemplateCommand.createEntityNameFileMap(entityFiles);
+        assertTrue("Does not contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertTrue("Does not contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
 
         GenerateHubTDETemplateCommand.filterEntities(entityNameFileMap);
-        assertFalse("Does contain myfirst entity",entityNameFileMap.containsKey("myfirst"));
-        assertFalse("Does contain mysecond entity",entityNameFileMap.containsKey("mysecond"));
+        assertFalse("Does contain myfirst entity", entityNameFileMap.containsKey("myfirst"));
+        assertFalse("Does contain mysecond entity", entityNameFileMap.containsKey("mysecond"));
     }
 
     @Test
-    public void testExtractEntityNameFromFilename()  {
-        assertEquals("Could not extract entity ABC", "ABC",GenerateHubTDETemplateCommand.extractEntityNameFromFilename("ABC.entity.json").get());
+    public void testExtractEntityNameFromFilename() {
+        assertEquals("Could not extract entity ABC", "ABC", GenerateHubTDETemplateCommand.extractEntityNameFromFilename("ABC.entity.json").get());
     }
 }

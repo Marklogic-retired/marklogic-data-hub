@@ -3,26 +3,21 @@ package com.marklogic.hub.mlcp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.util.MlcpRunner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class MlcpCopyTest  extends HubTestBase {
+public class MlcpCopyTest  extends AbstractHubCoreTest {
+
     @Test
     public void testCopyAsOperator() {
         HubConfigImpl hubConfig = runAsFlowOperator();

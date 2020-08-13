@@ -20,24 +20,17 @@ package com.marklogic.hub.web.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.MappingModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class, MappingManagerServiceTest.class})
 public class MappingManagerServiceTest extends AbstractServiceTest {
 
     private static String ENTITY = "test-entity";
@@ -52,18 +45,16 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     public void setup() throws IOException {
         // watcher service is not compatible with this test.
         try {
-            fileSystemWatcherService.unwatch(PROJECT_PATH);
+            fileSystemWatcherService.unwatch(getHubProject().getProjectDirString());
         } catch (IOException e) {
             // ignore... might be a problem but probably just a forced delete.
         }
-        createProjectDir();
     }
 
     @AfterEach
     public void tearDown() {
         try {
-            fileSystemWatcherService.unwatch(PROJECT_PATH);
-            deleteProjectDir();
+            fileSystemWatcherService.unwatch(getHubProject().getProjectDirString());
         } catch (Exception e) {
             // ignore... might be a problem but probably just trying to delete
             // from under an unstopped service.
@@ -88,15 +79,15 @@ public class MappingManagerServiceTest extends AbstractServiceTest {
     public void testMappingVersion() throws IOException {
         String mappingName = "testMapping";
         String jsonString = "{" +
-                            "   \"lang\":\"zxx\"," +
-                            "   \"name\":\"" + mappingName + "\"," +
-                            "   \"description\":\"\"," +
-                            "   \"version\":\"0\"," +
-                            "   \"targetEntityType\":\"http://example.org/" + ENTITY + "-0.0.1/" + ENTITY + "\"," +
-                            "   \"sourceContext\":\"\"," +
-                            "   \"sourceURI\":\"\"," +
-                            "   \"properties\":{}" +
-                            "}";
+            "   \"lang\":\"zxx\"," +
+            "   \"name\":\"" + mappingName + "\"," +
+            "   \"description\":\"\"," +
+            "   \"version\":\"0\"," +
+            "   \"targetEntityType\":\"http://example.org/" + ENTITY + "-0.0.1/" + ENTITY + "\"," +
+            "   \"sourceContext\":\"\"," +
+            "   \"sourceURI\":\"\"," +
+            "   \"properties\":{}" +
+            "}";
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonString);

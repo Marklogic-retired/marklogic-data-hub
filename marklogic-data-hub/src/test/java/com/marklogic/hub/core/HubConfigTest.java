@@ -4,39 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.client.ext.SecurityContextType;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubConfigurationException;
+import com.marklogic.mgmt.util.SimplePropertySource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assumptions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class HubConfigTest extends HubTestBase {
-
-
-    @BeforeEach
-    public void setup() {
-        deleteProjectDir();
-        createProjectDir();
-        dataHub.initProject();
-    }
+public class HubConfigTest extends AbstractHubCoreTest {
 
     @AfterEach
     public void cleanup() {
         resetProperties();
-        adminHubConfig.refreshProject();
     }
 
     @Test
@@ -54,7 +39,7 @@ public class HubConfigTest extends HubTestBase {
 
         AppConfig config = adminHubConfig.getAppConfig();
 
-        assertEquals((Integer)8011, config.getRestPort(),
+        assertEquals((Integer) 8011, config.getRestPort(),
             "The final port should be used as restPort so that any ml-gradle feature that depends on mlRestPost " +
                 "ends up talking to the final app server");
         if (!(isCertAuth() || isSslRun())) {
@@ -84,7 +69,7 @@ public class HubConfigTest extends HubTestBase {
         config = adminHubConfig.getAppConfig();
 
         assertEquals(SecurityContextType.BASIC, config.getRestSecurityContextType());
-        assertEquals((Integer)8123, config.getRestPort());
+        assertEquals((Integer) 8123, config.getRestPort());
         assertEquals("/path/to/file", config.getRestCertFile());
         assertEquals("changeme", config.getRestCertPassword());
         assertEquals("somename", config.getRestExternalName());
@@ -117,16 +102,13 @@ public class HubConfigTest extends HubTestBase {
 
     @Test
     public void testConfigAppName() {
-        deleteProp("mlAppName");
-        resetProperties();
-        adminHubConfig.refreshProject();
         // When not set, app name should default to "DHF"
         assertEquals("DHF", adminHubConfig.getAppConfig().getName());
 
         String appName = "data-hub";
-        writeProp("mlAppName", appName);
-        resetProperties();
-        adminHubConfig.refreshProject();
+        Properties props = new Properties();
+        props.setProperty("mlAppName", appName);
+        adminHubConfig.applyProperties(new SimplePropertySource(props));
         assertEquals(appName, adminHubConfig.getAppConfig().getName());
     }
 

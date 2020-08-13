@@ -20,7 +20,6 @@ import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
@@ -104,7 +103,7 @@ public class DeployAsDeveloperTest extends AbstractHubCoreTest {
     @Test
     public void knownPropertyValuesShouldBeFixed() {
         HubProjectImpl project = new HubProjectImpl();
-        project.createProject(HubTestBase.PROJECT_PATH);
+        project.createProject(getHubProject().getProjectDirString());
         HubConfigImpl hubConfig = new HubConfigImpl(project);
 
         // Set these to custom values that a user may use on-premise

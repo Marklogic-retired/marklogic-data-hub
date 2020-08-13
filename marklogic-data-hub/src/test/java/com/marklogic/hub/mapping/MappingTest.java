@@ -3,64 +3,40 @@ package com.marklogic.hub.mapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.bootstrap.Installer;
 import com.marklogic.client.dataservices.OutputEndpoint;
 import com.marklogic.client.impl.NodeConverter;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.ApplicationConfig;
+import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class MappingTest extends HubTestBase {
-
-    static Path projectPath = Paths.get(PROJECT_PATH).toAbsolutePath();
+public class MappingTest extends AbstractHubCoreTest {
 
     @Autowired
     FlowRunner flowRunner;
 
     @BeforeEach
-    public void setupTest() {
-        resetHubProject();
-    }
-
-    @AfterAll
-    public static void teardown() {
-        new Installer().teardownProject();
-    }
-
-    @AfterEach
-    public void clearProjectData() {
-        this.deleteProjectDir();
-        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
+    void beforeEach() {
+        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
+        installProjectInFolder("mapping-test");
     }
 
     @Test
-    public void testMappingStep() throws Exception {
-        installProject();
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
+    public void testMappingStep() {
         runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
@@ -81,11 +57,7 @@ public class MappingTest extends HubTestBase {
      * @throws Exception
      */
     @Test
-    void runMappingStepViaDataServicesEndpoint() throws Exception {
-        installProject();
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
-
+    void runMappingStepViaDataServicesEndpoint() {
         runAsDataHubOperator();
         runFlow("CustomerXML", "1");
 
@@ -109,12 +81,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testValidLookupFunction() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testLookupFunction.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         //Insert a valid dictionary for document lookup
         runInDatabase("xdmp:document-insert('/lookupDictionary/validDictionary.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
@@ -134,12 +103,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testLookupInvalidURI() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testLookupFunction.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         //Insert a dictionary with a URI different from the URI in mapping artifact
         runInDatabase("xdmp:document-insert('/lookupDictionary/invalidURI.json', object-node"+getJsonFromResource("mapping-test/lookupDictionary/validDictionary.json")+")", HubConfig.DEFAULT_STAGING_NAME);
@@ -156,12 +122,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testLookupInvalidDocument() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testLookupInvalidDocument.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         //Insert a dictionary with a URI different from the URI in mapping artifact
         runInDatabase("xdmp:document-insert('/lookupDictionary/invalidDictionary.xml', <Dictionary>\n" +
@@ -181,12 +144,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testDateANDDateTime() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testDateANDDateTime.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         String timezoneStr = getTimezoneString();
 
@@ -218,12 +178,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDatePattern() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testInvalidDatePattern.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -237,12 +194,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidStandardFormats() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testInvalidStandardFormat.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -256,12 +210,9 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDateTimePattern() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testInvalidDateTimePattern.json");
 
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -275,12 +226,8 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testInvalidDateTimeFormat() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testInvalidDateTimeFormat.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -294,12 +241,8 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testCustomFunction() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testCustomFunction1.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -316,12 +259,8 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testXPathFunctions() throws Exception{
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         createMappingFromConfig("testXPathFunctions.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -340,12 +279,8 @@ public class MappingTest extends HubTestBase {
 
     @Test
     public void testMappingsPermissions() throws Exception {
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
-        installProject();
         Mapping testMap = createMappingFromConfig("testXPathFunctions.json");
-
-        installHubArtifacts(getDataHubAdminConfig(), true);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserArtifacts();
 
         // test map for permissions
         String uri = "/mappings/" + testMap.getName() + "/" + testMap.getName() + "-" + testMap.getVersion() + ".mapping.xml.xslt";
@@ -357,30 +292,6 @@ public class MappingTest extends HubTestBase {
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.READ));
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.EXECUTE));
         Assertions.assertTrue(permissions.get("data-hub-common").contains(DocumentMetadataHandle.Capability.EXECUTE));
-    }
-
-    private void installProject() throws IOException {
-        projectPath.toFile().mkdirs();
-        String[] directoriesToCopy = new String[]{"input", "flows", "entities", "mappings", "src/main/ml-modules/root/custom-modules"};
-        for (final String subDirectory: directoriesToCopy) {
-            final Path subProjectPath = projectPath.resolve(subDirectory);
-            subProjectPath.toFile().mkdirs();
-            Path subResourcePath = Paths.get("mapping-test", subDirectory);
-            copyFileStructure(subResourcePath, subProjectPath);
-        }
-    }
-
-    private void copyFileStructure(Path resourcePath, Path projectPath) throws IOException {
-        for (File childFile: getResourceFile(resourcePath.toString().replaceAll("\\\\","/")).listFiles()) {
-            if (childFile.isDirectory()) {
-                Path subProjectPath = projectPath.resolve(childFile.getName());
-                subProjectPath.toFile().mkdir();
-                Path subResourcePath = resourcePath.resolve(childFile.getName());
-                copyFileStructure(subResourcePath, subProjectPath);
-            } else {
-                Files.copy(getResourceStream(resourcePath.resolve(childFile.getName()).toString().replaceAll("\\\\","/")), projectPath.resolve(childFile.getName()));
-            }
-        }
     }
 
     private Mapping createMappingFromConfig(String mapping) throws IOException {
