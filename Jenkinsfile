@@ -153,6 +153,53 @@ def PRDraftCheck(){
     def jsonObj = new JsonSlurperClassic().parseText(PrObj.toString().trim())
     return jsonObj.draft
 }
+
+def runCypressE2e(){
+    script{
+        copyRPM 'Release','10.0-4.2'
+        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        sh 'rm -rf *central*.rpm || true'
+        copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
+        sh(script:'''#!/bin/bash
+            export JAVA_HOME=~/java/jdk-11.0.2
+            sudo mladmin install-hubcentral $WORKSPACE/*central*.rpm;
+            sudo mladmin add-javahome-hubcentral $JAVA_HOME
+            sudo mladmin add-hubcentral-property hubUseLocalDefaults=true
+            sudo mladmin start-hubcentral
+        ''')
+        sh(script:'''#!/bin/bash
+            export JAVA_HOME=~/java/jdk-11.0.2
+            export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+            export PATH=$M2_LOCAL_REPO:$PATH
+            rm -rf $M2_LOCAL_REPO || true
+            mkdir -p $M2_LOCAL_REPO
+            cd $WORKSPACE/data-hub;
+            ./gradlew marklogic-data-hub:publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+            '''
+        )
+        sh(script:'''
+          #!/bin/bash
+          export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
+          export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+          export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
+          export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
+          cd $WORKSPACE/data-hub;
+          rm -rf $GRADLE_USER_HOME/caches;
+          cd marklogic-data-hub-central/ui/e2e;
+          chmod +x setup.sh;
+          ./setup.sh dhs=false mlHost=localhost;
+          '''
+        )
+        sh(script:'''#!/bin/bash
+            export NODE_HOME=$NODE_HOME_DIR/bin;
+            export PATH=$NODE_HOME:$PATH
+            cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
+            npm run cy:run || true;
+        '''
+        )
+        junit '**/e2e/**/*.xml'
+    }
+}
 pipeline{
 	agent none;
 	options {
@@ -164,6 +211,8 @@ pipeline{
 	JAVA_HOME_DIR="~/java/jdk-11.0.2"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
+	M2_HOME_REPO="/repository"
+	NODE_HOME_DIR="~/nodeJs/node-v12.18.3-linux-x64"
 	DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
@@ -238,6 +287,8 @@ pipeline{
                   }
                   }
 		}
+		stage('tests'){
+		parallel{
 		stage('Unit-Tests'){
 		agent { label 'dhfLinuxAgent'}
 			steps{
@@ -299,6 +350,46 @@ pipeline{
                       }
                   }
                   }
+		}
+		stage('cypresse2e'){
+		agent { label 'dhfLinuxAgent'}
+		steps{
+		    runCypressE2e()
+		}
+        post{
+				  always{
+				  	sh 'rm -rf $WORKSPACE/xdmp'
+				  }
+                  success {
+                    println("E2e Tests Completed")
+                    script{
+                    def email;
+                    if(env.CHANGE_AUTHOR){
+                    def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                     email=getEmailFromGITUser author
+                    }else{
+                    	email=Email
+                    }
+                    sendMail email,'<h3>All the E2E Tests Passed on <a href=${CHANGE_URL}>$BRANCH_NAME</a> and the next stage is Code-review.</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'E2E Tests for  $BRANCH_NAME Passed'
+                    }
+                   }
+                   unstable {
+                      println("E2E Tests Failed")
+                      archiveArtifacts artifacts: "**/e2e/**/videos/**/*,**/e2e/**/screenshots/**/*"
+                      script{
+                      def email;
+                    if(env.CHANGE_AUTHOR){
+                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                    	 email=getEmailFromGITUser author
+                    }else{
+                    email=Email
+                    }
+                      sendMail email,'<h3>Some of the  E2E Tests Failed on   <a href=${CHANGE_URL}>$BRANCH_NAME</a>. Please look into the issues and fix it.</h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'E2E Tests for $BRANCH_NAME Failed'
+                      }
+                  }
+                  }
+		}
+		}
 		}
 		stage('code-review'){
 		when {

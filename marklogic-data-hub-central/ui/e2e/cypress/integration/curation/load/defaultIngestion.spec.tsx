@@ -10,7 +10,7 @@ describe('Default ingestion ', () => {
         cy.contains(Application.title);
         cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
         cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
-        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
+        cy.waitUntil(() => loadPage.stepName('ingestion-step').should('be.visible'));
     });
 
     afterEach(() => {
@@ -299,15 +299,4 @@ describe('Default ingestion ', () => {
         tiles.closeRunMessage().click();
     })
 
-    xit('Run Ingest in a flow to verify failed_with_error status',() => {
-
-    })
-
-    xit('Verifies usage of step processors', () => {
-
-    })
-
-    xit('Verifies usage of custom hook', () => {
-
-    })
 })

@@ -44,6 +44,7 @@ Cypress.Commands.add('withUI', { prevSubject: 'optional'}, (subject) => {
       loginPage.getPassword().type(user.password)
       loginPage.getLoginButton().click();
     })
+    cy.wait(2000)
   }
 })
 
@@ -62,7 +63,6 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
       }).then(response => {
         window.localStorage.setItem('dataHubUser', username)
         window.localStorage.setItem('loginResp', JSON.stringify(response.body))
-        window.localStorage.setItem('projectName', response.body.projectName)
       });
 
       cy.request({
@@ -73,11 +73,10 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
         window.localStorage.setItem('serviceName', response.body.serviceName)
       });
 
-      //window.localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(userPreference))
-
+      //Loading /tiles post login
       cy.visit('/tiles')
       cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
-      cy.wait(200);
+      cy.wait(2000);
     })
   }
 })

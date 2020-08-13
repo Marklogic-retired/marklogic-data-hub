@@ -43,7 +43,6 @@ describe('column selector test scenarios', () => {
   it('has columns selector popover, draggable titles and checkable titles', () => {
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    browsePage.getHubPropertiesExpanded();
     browsePage.getColumnSelectorIcon().should('be.visible')
     browsePage.getColumnSelectorIcon().click()
     browsePage.getColumnSelector().should('be.visible')
