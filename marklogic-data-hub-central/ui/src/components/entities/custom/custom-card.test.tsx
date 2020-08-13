@@ -32,7 +32,7 @@ describe("Custom Card component", () => {
 
     test('Custom card does not allow edit', async () => {
         let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
-        let queryAllByText, getByRole, queryAllByRole;
+        let queryAllByText, getByRole, queryAllByRole, getAllByLabelText, getByText;
         await act(async () => {
             const renderResults = render(
                 <Router><CustomCard data={customData}
@@ -41,12 +41,22 @@ describe("Custom Card component", () => {
             queryAllByText = renderResults.queryAllByText;
             getByRole = renderResults.getByRole;
             queryAllByRole = renderResults.queryAllByRole;
+            getAllByLabelText=renderResults.getAllByLabelText;
+            getByText=renderResults.getByText;
         });
 
         expect(getByRole("edit-custom")).toBeInTheDocument();
         expect(getByRole("settings-custom")).toBeInTheDocument();
         expect(queryAllByRole('delete-custom')).toHaveLength(0);
         expect(getByRole('disabled-delete-custom')).toBeInTheDocument();
+
+        let tipIconSetting  = getAllByLabelText('icon: setting');
+        fireEvent.mouseOver(tipIconSetting[0]);
+        await waitForElement(() => getByText(AdvCustomTooltips.settings))
+
+        let tipIconView  = getAllByLabelText('icon: edit');
+        fireEvent.mouseOver(tipIconView[0]);
+        await waitForElement(() => getByText(AdvCustomTooltips.viewCustom))
     });
 
     test('Open advanced settings', async () => {

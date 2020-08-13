@@ -52,6 +52,8 @@ const AdvMapTooltips = {
 
 const AdvCustomTooltips = {
     'additionalSettings': 'A JSON object containing key-value pairs to pass to the custom step module.',
+    'settings': 'Settings',
+    'viewCustom': 'View',
 }
 
 const NewMatchTooltips = {
