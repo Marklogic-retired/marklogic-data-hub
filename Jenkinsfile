@@ -143,6 +143,16 @@ def getReviewState(){
     def reviewState=getReviewStateOfPR reviewResponse,2,commit_id ;
     return reviewState
 }
+def PRDraftCheck(){
+    def type;
+    withCredentials([usernameColonPassword(credentialsId: '550650ab-ee92-4d31-a3f4-91a11d5388a3', variable: 'Credentials')]) {
+        PrObj= sh (returnStdout: true, script:'''
+                   curl -u $Credentials  -X GET  '''+githubAPIUrl+'''/pulls/$CHANGE_ID
+                   ''')
+    }
+    def jsonObj = new JsonSlurperClassic().parseText(PrObj.toString().trim())
+    return jsonObj.draft
+}
 pipeline{
 	agent none;
 	options {
@@ -162,13 +172,13 @@ pipeline{
 	}
 	stages{
 	    stage('Pre-Build-Check'){
-	    when {
-          			changeRequest author: '', authorDisplayName: '', authorEmail: '', branch: '', fork: '', id: '', target: '', title: '', url: ''
-          			beforeAgent true
-        }
 	    agent { label 'dhfLinuxAgent'}
 	    steps{
 	    script{
+	        if(env.CHANGE_ID){
+	        if(PRDraftCheck()){
+	             sh 'exit 1'
+	        }
 	        def reviewState=getReviewState()
 	        if((!env.CHANGE_TITLE.startsWith("DHFPROD-"))){
 	            sh 'exit 1'
@@ -178,9 +188,9 @@ pipeline{
 	        if((reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){
 	            sh 'exit 1'
 	        }
+	        }
             def obj=new abortPrevBuilds();
             obj.abortPrevBuilds();
-
             }
 	    }
 	    post{
