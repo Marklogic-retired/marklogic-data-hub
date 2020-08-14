@@ -273,7 +273,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <>
         <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} />
-        <ZeroStateExplorer entities={entities} setEntity={setEntity} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+        <ZeroStateExplorer entities={entities} setEntity={setEntity} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
   } else {
