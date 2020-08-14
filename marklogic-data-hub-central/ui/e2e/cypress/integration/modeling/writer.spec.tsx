@@ -582,7 +582,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getAddPropertyButton('Concept').click();
     propertyModal.newPropertyName('testing');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('More date types').click();    
+    propertyModal.getTypeFromDropdown('More date types').click();
     propertyModal.getCascadedTypeFromDropdown('gDat').click();
     propertyModal.getSubmitButton().click();
 
@@ -629,7 +629,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getAddPropertyButton('Patient').click();
     propertyModal.newPropertyName('patientId');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('More number types').click();    
+    propertyModal.getTypeFromDropdown('More number types').click();
     propertyModal.getCascadedTypeFromDropdown('byte').click();
     propertyModal.getSubmitButton().click();
 

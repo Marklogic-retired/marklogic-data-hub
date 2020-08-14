@@ -60,7 +60,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 5);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.clearFacetSearchSelection('mapCustomersXML');
+    browsePage.getClearFacetSearchSelection('mapCustomersXML').click();
   });
 
   it('apply facet search and clear individual grey facet', () => {
@@ -148,13 +148,6 @@ describe('xml scenario for table on browse documents page', () => {
     browsePage.getTableRows().should('have.length', 5);
     //check table columns
     browsePage.getTableColumns().should('have.length', 6);
-    //check cells data
-      //commenting this validation since there can be empty values when PII is set on that property
-    // for (let i = 2; i <= 5; i++) {
-    //   for (let j = 2; j <= 5; j++) {
-    //     browsePage.getTableCell(i, j).should('not.be.empty')
-    //   }
-    // }
   });
 
   it('verify instance view of the document', () => {
