@@ -12,4 +12,9 @@ describe('Footer component', () => {
     it('should render correctly', () => {
         expect(wrapper.exists('.ant-layout-footer')).toBe(true);
     });
+
+    it('should display correct text', () => {
+        const currentYear = (new Date()).getFullYear();
+        expect(wrapper.text()).toBe('© ' + currentYear + ' MarkLogic Corporation|Privacy');
+    });
 });
