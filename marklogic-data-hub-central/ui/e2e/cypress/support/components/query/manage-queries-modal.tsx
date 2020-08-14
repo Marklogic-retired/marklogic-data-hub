@@ -16,6 +16,10 @@ class ManageQuery {
     return cy.get(`#name`).first();
   }
 
+  getEditQueryDescription() {
+    return cy.get(`#description`).first();
+  }
+
   getSubmitButton() {
     return cy.get('button[type=submit]').first();
   }

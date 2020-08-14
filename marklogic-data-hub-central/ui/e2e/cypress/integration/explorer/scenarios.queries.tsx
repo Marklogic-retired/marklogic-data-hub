@@ -465,11 +465,14 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
         queryComponent.getEditQuery().click();
         queryComponent.getEditQueryName().clear();
         queryComponent.getEditQueryName().type('edited-query');
+        queryComponent.getEditQueryDescription().clear();
+        queryComponent.getEditQueryDescription().type('edited-query-description');
         queryComponent.getSubmitButton().click();
         //apply query
         queryComponent.getQueryByName('edited-query').click();
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSelectedQuery().should('contain', 'edited-query');
+        browsePage.getSelectedQueryDescription().should('contain', 'edited-query-description');
         //remove query
         browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
