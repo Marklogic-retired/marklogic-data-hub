@@ -120,9 +120,69 @@ class OperatorRolesService implements IAuthoritiesContextInterface{
     };
   }
 
+  class HCUserRolesService implements IAuthoritiesContextInterface {
+    public authorities: string[] = [];
+
+    public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
+        this.authorities = authorities;
+    };
+    public canReadMapping:() => boolean = () => {
+        return false;
+    };
+    public canWriteMapping:() => boolean = () => {
+        return false;
+    };
+    public canReadMatchMerge:() => boolean = () => {
+        return false;
+    };
+    public canWriteMatchMerge:() => boolean = () => {
+        return false;
+    };
+    public canReadLoad:() => boolean = () => {
+        return false;
+    };
+    public canWriteLoad:() => boolean = () => {
+        return false;
+    };
+    public canReadEntityModel:() => boolean = () => {
+        return false;
+    };
+    public canWriteEntityModel:() => boolean = () => {
+        return false;
+    };
+    public canReadFlow:() => boolean = () => {
+        return false;
+    };
+    public canWriteFlow:() => boolean = () => {
+        return false;
+    };
+    public canReadCustom:() => boolean = () => {
+        return false;
+    };
+    public canWriteCustom:() => boolean = () => {
+        return false;
+    };
+    public canDownloadProjectFiles:() => boolean = () => {
+        return false;
+    };
+    public canExportEntityInstances:() => boolean = () => {
+        return false;
+    };
+    public isSavedQueryUser:() => boolean = () => {
+        return false;
+    };
+    public canRunStep:() => boolean = () => {
+        return false;
+    };
+    public canClearUserData:() => boolean = () => {
+        return false;
+    };
+  }
+
   const authorities = {
     DeveloperRolesService: new DeveloperRolesService(),
-    OperatorRolesService: new OperatorRolesService()
+    OperatorRolesService: new OperatorRolesService(),
+    HCUserRolesService: new HCUserRolesService()
 };
 
 export default authorities;

@@ -16,11 +16,7 @@
   pointer-events: none;
   margin-right: 8px;
   margin-bottom: 2px;
-  opacity: 0.5;
-  color: #5B69AF;
-}
-.iconTrashReadOnly {
-  color: #B32424;
+  color: #cccccc;
 }
 
 .iconSave:before {       
@@ -37,10 +33,9 @@
   cursor: not-allowed;
   pointer-events: none;      
   font-family: MLCustomFont; 
-  color: #5B69AF;
+  color: #cccccc;
   font-size: 22px;
   padding: 8px;
-  opacity: 0.5;
 }
 th.actions,
 td.actions {

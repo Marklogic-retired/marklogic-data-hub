@@ -20,6 +20,7 @@ const mockUpdateEntityModels = updateEntityModels as jest.Mock;
 
 const mockDevRolesService = authorities.DeveloperRolesService;
 const mockOpRolesService = authorities.OperatorRolesService;
+const mockHCUserRolesService = authorities.HCUserRolesService;
 
 describe("Modeling Page", () => {
   afterEach(() => {
@@ -83,6 +84,29 @@ describe("Modeling Page", () => {
 
     expect(getByLabelText("add-entity")).toBeDisabled();
     expect(getByLabelText("save-all")).toBeDisabled();
+    expect(queryByLabelText('entity-modified-alert')).toBeNull();
+  });
+
+  test("Modeling: can not see data if user does not have entity model reader role", async () => {
+    mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
+
+    const { queryByText, queryByLabelText } = render(
+      <AuthoritiesContext.Provider value={mockHCUserRolesService}>
+        <ModelingContext.Provider value={notModified}>
+          <Router>
+            <Modeling/>
+          </Router>
+        </ModelingContext.Provider>
+      </AuthoritiesContext.Provider>
+    );
+
+    await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(0));
+    expect(queryByText('Entity Types')).toBeNull();
+    expect(queryByText('Instances')).toBeNull();
+    expect(queryByText('Last Processed')).toBeNull();
+
+    expect(queryByLabelText("add-entity")).toBeNull();
+    expect(queryByLabelText("save-all")).toBeNull();
     expect(queryByLabelText('entity-modified-alert')).toBeNull();
   });
 });
