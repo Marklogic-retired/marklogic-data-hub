@@ -146,6 +146,7 @@ const Query = (props) => {
             for (let key of props.queries) {
                 if (key.savedQuery.name === currentQueryName) {
                     setCurrentQuery(key);
+                    // setCurrentQueryDescription(key['savedQuery']['description']);
                 }
             }
         }
@@ -277,9 +278,11 @@ const Query = (props) => {
     useEffect(() => {
         if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== 'select a query') {
             setHoverOverDropdown(true);
+            setCurrentQueryDescription(currentQuery['savedQuery']['description']);
         }
         else{
             setHoverOverDropdown(false);
+            setCurrentQueryDescription('');
         }
     }, [currentQuery]);
 
@@ -568,6 +571,5 @@ const Query = (props) => {
             </Modal>
         </div>
     )
-
 }
 export default Query;
