@@ -84,10 +84,11 @@ const Query = (props) => {
 
     const getSaveQueries = async () => {
         try {
-            const response = await fetchQueries();
-
-            if (response.data) {
-               props.setQueries(response.data);
+            if(props.isSavedQueryUser) {
+                const response = await fetchQueries();
+                if (response.data) {
+                    props.setQueries(response.data);
+                }
             }
         } catch (error) {
             handleError(error)
@@ -97,27 +98,29 @@ const Query = (props) => {
     const getSaveQueryWithId = async (key) => {
        try {
            const response = await fetchQueryById(key);
-           if (response.data) {
-            let options: QueryOptions = {
-                searchText: response.data.savedQuery.query.searchText,
-                entityTypeIds: response.data.savedQuery.query.entityTypeIds,
-                selectedFacets: response.data.savedQuery.query.selectedFacets,
-                selectedQuery: response.data.savedQuery.name,
-                propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
-                zeroState: searchOptions.zeroState,
-                manageQueryModal: searchOptions.manageQueryModal,
-                sortOrder: response.data.savedQuery.sortOrder
-            }
-            applySaveQuery(options);
-            setCurrentQuery(response.data);
-               if(props.greyFacets.length > 0){
-                   clearAllGreyFacets();
-               }
-               toggleApply(false);
-               if(response.data.savedQuery.hasOwnProperty('description') && response.data.savedQuery.description){
-                   setCurrentQueryDescription(response.data.savedQuery.description);
-               } else{
-                   setCurrentQueryDescription('');
+           if(props.isSavedQueryUser) {
+               if (response.data) {
+                   let options: QueryOptions = {
+                       searchText: response.data.savedQuery.query.searchText,
+                       entityTypeIds: response.data.savedQuery.query.entityTypeIds,
+                       selectedFacets: response.data.savedQuery.query.selectedFacets,
+                       selectedQuery: response.data.savedQuery.name,
+                       propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
+                       zeroState: searchOptions.zeroState,
+                       manageQueryModal: searchOptions.manageQueryModal,
+                       sortOrder: response.data.savedQuery.sortOrder
+                   }
+                   applySaveQuery(options);
+                   setCurrentQuery(response.data);
+                   if(props.greyFacets.length > 0){
+                       clearAllGreyFacets();
+                   }
+                   toggleApply(false);
+                   if(response.data.savedQuery.hasOwnProperty('description') && response.data.savedQuery.description){
+                       setCurrentQueryDescription(response.data.savedQuery.description);
+                   } else{
+                       setCurrentQueryDescription('');
+                   }
                }
            }
        } catch (error) {

@@ -483,3 +483,44 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
 
 
 });
+
+describe('User without hub-central-saved-query-user role should not see saved queries drop down on zero sate page', () => {
+    beforeEach(() => {
+        cy.visit('/');
+        cy.contains(Application.title);
+        cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
+        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    });
+
+    afterEach(() => {
+        cy.resetTestUser();
+    });
+
+    after(() => {
+        cy.loginAsDeveloper().withRequest();
+    });
+
+    it('verifies saved queries drop down does not exist', () => {
+        browsePage.getSaveQueriesDropdown().should('not.be.visible');
+    });
+
+    it('verifies user without hub-central-saved-query-user role can explore data', () => {
+        browsePage.getSaveQueriesDropdown().should('not.be.visible');
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+    });
+
+    it('verifies user without hub-central-saved-query-user can not save query', () => {
+        browsePage.getSaveQueriesDropdown().should('not.be.visible');
+        cy.waitUntil(() => browsePage.getExploreButton()).click();
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+        browsePage.getSelectedFacets().should('exist');
+        browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getSaveModalIcon().should('not.be.visible');
+    });
+});

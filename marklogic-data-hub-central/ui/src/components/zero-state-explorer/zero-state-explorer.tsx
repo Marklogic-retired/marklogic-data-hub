@@ -150,12 +150,12 @@ const ZeroStateExplorer = (props) => {
             </div>
           </Col>
         </Row>
-        <Row gutter={[0, 28]}>
+        {props.isSavedQueryUser && <Row gutter={[0, 28]}>
           <Col span={24}>
             <p className={styles.p}>- or -</p>
           </Col>
-        </Row>
-        <Row >
+        </Row>}
+        {props.isSavedQueryUser && <Row >
           <Col span={24}>
             <div className={styles.box}>
               <Card className={styles.smallCard} bordered={false}>
@@ -178,7 +178,7 @@ const ZeroStateExplorer = (props) => {
               </Card>
             </div>
           </Col>
-        </Row>
+        </Row>}
       </div>
       <div className={styles.footer}>
       </div>
