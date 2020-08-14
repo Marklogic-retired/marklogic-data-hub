@@ -143,6 +143,7 @@ const Query = (props) => {
             for (let key of props.queries) {
                 if (key.savedQuery.name === currentQueryName) {
                     setCurrentQuery(key);
+                    setCurrentQueryDescription(key['savedQuery']['description']);
                 }
             }
         }
