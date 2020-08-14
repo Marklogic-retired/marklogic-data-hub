@@ -520,7 +520,7 @@ const AdvancedSettingsDialog = (props) => {
             aria-label="sourceDatabase-select"
           >
             {sourceDbOptions}
-          </Select>&nbsp;&nbsp;
+          </Select>
           <div className={styles.selectTooltip}>
             <MLTooltip title={tooltips.sourceDatabase}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
