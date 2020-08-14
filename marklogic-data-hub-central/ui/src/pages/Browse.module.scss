@@ -48,10 +48,22 @@
   color: white;
 }
 
-.overlay {
-  display: flex;
-  justify-content: center; 
-  margin-top: 100px; 
+.sideBarExpanded {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  z-index: 999;
+}
+
+.sideBarCollapsed {
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 336px;
+  right: 0;
+  z-index: 999;
 }
 
 .ant-table-content {
