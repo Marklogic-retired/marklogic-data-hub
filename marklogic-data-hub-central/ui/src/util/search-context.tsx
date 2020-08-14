@@ -63,6 +63,7 @@ interface ISearchContextInterface {
   greyedOptions: SearchContextInterface;
   setAllGreyedOptions: (facets: any) => void;
   clearGreyFacet: (constraint: string, val: string) => void;
+  clearConstraint: (constraint: string) => void;
   clearAllGreyFacets: () => void;
   resetGreyedOptions: () => void;
   applySaveQuery: (query: QueryOptions) => void;
@@ -98,6 +99,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setAllSearchFacets: () => { },
   setAllGreyedOptions: () => { },
   clearGreyFacet: () => { },
+  clearConstraint: () => { },
   clearAllGreyFacets: () => { },
   resetGreyedOptions: () => { },
   applySaveQuery: () => { },
@@ -372,6 +374,19 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   }
 
+  const clearConstraint = (constraint: string) => {
+      let selectedFacet = searchOptions.selectedFacets;
+      let greyFacets = greyedOptions.selectedFacets;
+     if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)){
+         delete greyFacets[constraint]
+         setGreyedOptions({ ...greyedOptions, selectedFacets: greyFacets });
+     }
+      if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)){
+          delete selectedFacet[constraint]
+         setSearchOptions({ ...searchOptions, selectedFacets: selectedFacet });
+     }
+  }
+
   const clearGreyFacet = (constraint: string, val: string) => {
     let facets = greyedOptions.selectedFacets;
     let valueKey = '';
@@ -394,8 +409,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageNumber: 1,
       pageLength: greyedOptions.pageSize
     });
-    resetGreyedOptions();
   }
+
 
   const resetGreyedOptions = () => {
     setGreyedOptions({ ...defaultSearchOptions });
@@ -552,6 +567,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       setAllSearchFacets,
       setAllGreyedOptions,
       clearGreyFacet,
+      clearConstraint,
       clearAllGreyFacets,
       resetGreyedOptions,
       applySaveQuery,

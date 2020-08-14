@@ -404,6 +404,26 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getDataExportIcon().click();
         browsePage.getStructuredDataWarning().should('be.visible');
     });
+
+    it('Apply facet,save query using save as is option,verify facets checked on sidebar',() => {
+        browsePage.selectEntity('Person');
+        browsePage.getFacetItemCheckbox('lname', 'Bates').click();
+        browsePage.getFacetItemCheckbox('lname', 'Bates').should('be.checked');
+        browsePage.getGreySelectedFacets('Bates').should('exist');
+        browsePage.getFacetApplyButton().click();
+        browsePage.getFacetItemCheckbox('fname', 'Bob').click();
+        browsePage.getFacetItemCheckbox('fname', 'Bob').should('be.checked');
+        browsePage.getSaveModalIcon().click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getSaveQueryName().should('be.visible');
+        browsePage.getSaveQueryName().type('check-query');
+        browsePage.getSaveQueryDescription().should('be.visible');
+        browsePage.getSaveQueryDescription().type('check-query description');
+        browsePage.getSaveQueryButton().click();
+        browsePage.getFacetItemCheckbox('fname', 'Bob').should('be.checked');
+        browsePage.getFacetApplyButton().should('be.visible')
+    })
+
 });
 
 

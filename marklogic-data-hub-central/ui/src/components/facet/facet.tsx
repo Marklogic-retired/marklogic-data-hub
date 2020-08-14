@@ -19,7 +19,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean) => void;
+  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?:boolean, toDeleteAll?:boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
 
@@ -42,6 +42,8 @@ const Facet: React.FC<Props> = (props) => {
             facetName = props.propertyPath;
         }
         if (facetName) {
+            if(searchOptions.selectedFacets.length == 0 )
+                setChecked([]);
             for (let facet in selectedOptions.selectedFacets) {
                 if (facet === facetName) {
                     let valueType = '';
@@ -59,6 +61,8 @@ const Facet: React.FC<Props> = (props) => {
                     }
                 }
             }
+        }else{
+            setChecked([]);
         }
     }
 
@@ -70,18 +74,12 @@ const Facet: React.FC<Props> = (props) => {
         }
     }, [searchOptions]);
 
-
     useEffect(() => {
         if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             setCheckedOptions(greyedOptions)
-        } else if (Object.entries(greyedOptions.selectedFacets).length === 0 && Object.entries(searchOptions.selectedFacets).length !== 0) {
-            setCheckedOptions(searchOptions);
-        } else if ((Object.entries(searchOptions.selectedFacets).length === 0 || (!searchOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
-            setChecked([]);
-        }
+        }else
+            setCheckedOptions(searchOptions)
     }, [greyedOptions]);
-
-
 
     const checkFacetValues = (checkedValues) => {
     let updatedChecked = [...checked];
@@ -103,16 +101,14 @@ const Facet: React.FC<Props> = (props) => {
     }
     // Deselection
     else if (index !== -1) {
-      let newChecked = [...checked];
-      newChecked.splice(index, 1);
-      setChecked(newChecked);
-      props.updateSelectedFacets(props.constraint, newChecked, props.facetType, isNested);
+      let remChecked = [e.target.value];
+      props.updateSelectedFacets(props.constraint, remChecked, props.facetType, isNested, true, false);
     }
   }
 
   const handleClear = () => {
     setChecked([]);
-    props.updateSelectedFacets(props.constraint, [], props.facetType, false);
+    props.updateSelectedFacets(props.constraint, checked, props.facetType, false, false, true);
   }
 
 

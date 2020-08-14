@@ -115,13 +115,12 @@ class BrowsePage {
     return cy.get('[data-cy="clear-' + facet + '"]');
   }
 
-  clearFacetSearchSelection(facet: string) {
-    cy.get('[data-cy="clear-' + facet + '"]').click();
-    this.waitForSpinnerToDisappear();
-  }
-
   getFacetSearchSelectionCount(facet: string) {
     return cy.get('[data-cy="' + facet + '-selected-count"]').invoke('text');
+  }
+
+  getClearFacetSelection(facet: string) {
+    return cy.get(`[data-cy="${facet}-clear"]`);
   }
 
   /*applyFacetSearchSelection(facet: string) {
@@ -193,7 +192,13 @@ class BrowsePage {
     return cy.get('.ant-list-items li:first-child [data-cy = expandable-icon]').click();
   }
 
-  //table, facet view
+  clearFacetSelection(facet: string) {
+    cy.get(`[data-cy="${facet}-clear"]`).click();
+    this.waitForSpinnerToDisappear();
+  }
+
+
+    //table, facet view
   clickFacetView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
@@ -217,7 +222,7 @@ class BrowsePage {
   getSideBarCollapseIcon() {
     return cy.get('#sidebar-collapse-icon');
   }
-  
+
   //table
   getColumnTitle(index: number) {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');

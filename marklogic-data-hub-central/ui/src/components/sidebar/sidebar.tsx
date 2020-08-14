@@ -32,7 +32,9 @@ interface Props {
 const Sidebar: React.FC<Props> = (props) => {
   const {
     searchOptions,
-    setAllSearchFacets,
+    clearConstraint,
+    clearFacet,
+    clearGreyFacet,
     greyedOptions,
     setAllGreyedOptions
   } = useContext(SearchContext);
@@ -184,7 +186,7 @@ const Sidebar: React.FC<Props> = (props) => {
       }
   }, [greyedOptions]);
 
-  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean) => {
+  const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete=false, toDeleteAll: boolean=false) => {
     let facets = { ...allSelectedFacets };
     let type = '';
     let valueKey = '';
@@ -222,8 +224,22 @@ const Sidebar: React.FC<Props> = (props) => {
     } else {
       delete facets[facetName];
     }
-    setAllSelectedFacets(facets);
-    setAllGreyedOptions(facets);
+    if(toDelete){
+        if (Object.entries(searchOptions.selectedFacets).length > 0 && searchOptions.selectedFacets.hasOwnProperty(constraint)) {
+            clearFacet(constraint, vals[0])
+        }
+        else if (Object.entries(greyedOptions.selectedFacets).length > 0 && greyedOptions.selectedFacets.hasOwnProperty(constraint)) {
+            clearGreyFacet(constraint, vals[0]);
+        }
+    }
+    else if(toDeleteAll)
+    {
+        clearConstraint(constraint)
+    }
+    else{
+        setAllSelectedFacets(facets);
+        setAllGreyedOptions(facets);
+    }
   }
 
   const addFacetValues = (constraint: string, vals: string[], dataType: string, facetCategory: string) => {
@@ -396,7 +412,7 @@ const Sidebar: React.FC<Props> = (props) => {
          setActiveKey(key);
          handleFacetPreferences(key);
      }
-  
+
   const initializeFacetPreferences = () => {
     let defaultPreferences = getUserPreferences(user.name);
       if (defaultPreferences !== null) {
@@ -417,8 +433,8 @@ const Sidebar: React.FC<Props> = (props) => {
     }
     updateUserPreferences(user.name, options);
   }
-    
-  
+
+
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <Collapse

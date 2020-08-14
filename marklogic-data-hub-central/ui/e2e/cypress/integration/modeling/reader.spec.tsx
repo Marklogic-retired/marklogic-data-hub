@@ -34,7 +34,7 @@ describe('Entity Modeling: Reader Role', () => {
     tiles.getExploreTile().should('exist');
     cy.waitUntil(() => browsePage.getSelectedEntity()).should('eq', 'Person');
     browsePage.getClearAllButton().should('exist');
-    
+
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should('exist');
 
@@ -94,7 +94,7 @@ describe('Entity Modeling: Reader Role', () => {
     propertyTable.getAddPropertyToStructureType('Zip').click({ force: true });
     cy.wait(100);
     propertyModal.getStructuredTypeName().should('not.be.visible');
-    
+
     propertyTable.getDeleteStructuredPropertyIcon('Customer', 'Zip', 'fiveDigit').click({ force: true });
     cy.wait(100);
     confirmationModal.getDeletePropertyStepWarnText().should('not.be.visible');
