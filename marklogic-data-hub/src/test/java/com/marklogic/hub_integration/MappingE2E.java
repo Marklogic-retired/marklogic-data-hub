@@ -84,11 +84,6 @@ public class MappingE2E extends AbstractHubCoreTest {
     @Autowired
     MappingManager mappingManager;
 
-    @AfterAll
-    public static void teardown() {
-        new Installer().teardownProject();
-    }
-
     private static boolean isSetup = false;
 
     @BeforeEach
