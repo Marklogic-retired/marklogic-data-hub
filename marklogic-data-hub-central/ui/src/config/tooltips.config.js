@@ -29,6 +29,7 @@ const NewLoadTooltips = {
     'description': 'The description of this data load configuration.',
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
+    'targetFormat': 'The format of the processed record.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
     'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.'
 }
