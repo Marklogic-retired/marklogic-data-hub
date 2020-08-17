@@ -216,15 +216,19 @@ function verifySortOperatorsForSortableProperties() {
     test.assertEqual("sort", xs.string(fn.head(expOptions.xpath("/*:operator/@name")))),
     test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_titleDescending']")),
     test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']/*:sort-order/@direction")))),
+    test.assertEqual("xs:string", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']/*:sort-order/@type")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleDescending']/*:sort-order/*:path-index")))),
     test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_titleAscending']")),
     test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']/*:sort-order/@direction")))),
+    test.assertEqual("xs:string", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']/*:sort-order/@type")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_titleAscending']/*:sort-order/*:path-index")))),
     test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_authorsDescending']")),
     test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsDescending']/*:sort-order/@direction")))),
+    test.assertEqual("xs:string", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsDescending']/*:sort-order/@type")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsDescending']/*:sort-order/*:path-index")))),
     test.assertExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_authorsAscending']")),
     test.assertEqual("ascending", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsAscending']/*:sort-order/@direction")))),
+    test.assertEqual("xs:string", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsAscending']/*:sort-order/@type")))),
     test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_authorsAscending']/*:sort-order/*:path-index")))),
     test.assertNotExists(expOptions.xpath("/*:operator[@name = 'bookId']")),
     test.assertNotExists(expOptions.xpath("/*:operator[@name = 'completedDate']"))
@@ -271,10 +275,96 @@ function twoEntitiesHaveSameSortablePropertyName() {
   ]
 }
 
+function verifySortOptionDatatypeWhenEntityPropertyIsUpdated() {
+  const assertions = [];
+  let input = [{
+    "info" : {
+      "title": "Book"
+    },
+    "definitions": {
+      "Book": {
+        "properties": {
+          "bookId": {"datatype": "integer", "facetable": true, "sortable": true, "collation": "http://marklogic.com/collation/"}
+        }
+      }
+    }
+  }];
+
+  let expOptions = hent.dumpSearchOptions(input, true);
+  assertions.push(
+    test.assertEqual("xs:decimal", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_bookIdDescending']/*:sort-order/@type")))),
+    test.assertEqual("xs:decimal", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_bookIdAscending']/*:sort-order/@type"))))
+  );
+
+  input = [{
+    "info" : {
+      "title": "Book"
+    },
+    "definitions": {
+      "Book": {
+        "properties": {
+          "bookId": {"datatype": "int", "facetable": true, "sortable": true, "collation": "http://marklogic.com/collation/"}
+        }
+      }
+    }
+  }];
+  expOptions = hent.dumpSearchOptions(input, true);
+  assertions.push(
+      test.assertEqual("xs:int", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_bookIdDescending']/*:sort-order/@type")))),
+      test.assertEqual("xs:int", xs.string(fn.head(expOptions.xpath("/*:operator[@name = 'sort']/*:state[@name = 'Book_bookIdAscending']/*:sort-order/@type")))),
+      test.assertNotExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_bookIdDescending']/*:sort-order[@type = 'xs:decimal']")),
+      test.assertNotExists(expOptions.xpath("/*:operator/*:state[@name = 'Book_bookIdAscending']/*:sort-order[@type = 'xs:decimal']"))
+  );
+  return assertions;
+}
+
+function testHubCentralSupportedDatatypeMappingsForSort() {
+  const assertions = [];
+  // Logical entity types supported by ES
+  assertions.push(
+    test.assertEqual("string", hent.getIndexableDatatype("boolean")),
+    test.assertEqual("string", hent.getIndexableDatatype("iri")),
+    test.assertEqual("int", hent.getIndexableDatatype("byte")),
+    test.assertEqual("int", hent.getIndexableDatatype("short")),
+    test.assertEqual("unsignedInt", hent.getIndexableDatatype("unsignedShort")),
+    test.assertEqual("unsignedInt", hent.getIndexableDatatype("unsignedByte")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("integer")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("negativeInteger")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("nonNegativeInteger")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("positiveInteger")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("nonPositiveInteger"))
+  );
+
+  // actual data types supported by ML
+  assertions.push(
+    test.assertEqual("string", hent.getIndexableDatatype("string")),
+    test.assertEqual("dateTime", hent.getIndexableDatatype("dateTime")),
+    test.assertEqual("anyUri", hent.getIndexableDatatype("anyUri")),
+    test.assertEqual("decimal", hent.getIndexableDatatype("decimal")),
+    test.assertEqual("double", hent.getIndexableDatatype("double")),
+    test.assertEqual("float", hent.getIndexableDatatype("float")),
+    test.assertEqual("int", hent.getIndexableDatatype("int")),
+    test.assertEqual("long", hent.getIndexableDatatype("long")),
+    test.assertEqual("unsignedInt", hent.getIndexableDatatype("unsignedInt")),
+    test.assertEqual("unsignedLong", hent.getIndexableDatatype("unsignedLong")),
+    test.assertEqual("date", hent.getIndexableDatatype("date")),
+    test.assertEqual("dayTimeDuration", hent.getIndexableDatatype("dayTimeDuration")),
+    test.assertEqual("gMonth", hent.getIndexableDatatype("gMonth")),
+    test.assertEqual("gYear", hent.getIndexableDatatype("gYear")),
+    test.assertEqual("gYearMonth", hent.getIndexableDatatype("gYearMonth")),
+    test.assertEqual("time", hent.getIndexableDatatype("time")),
+    test.assertEqual("yearMonthDuration", hent.getIndexableDatatype("yearMonthDuration"))
+  );
+
+  return assertions;
+}
+
 []
   .concat(entityDefWithNamespace())
   .concat(generateOptionsWithElementRangeIndex())
   .concat(generateExplorerOptionsWithElementRangeIndex())
   .concat(generateExplorerWithFacetableAndSortableProperties())
   .concat(twoEntitiesHaveSameSortablePropertyName())
-  .concat(verifySortOperatorsForSortableProperties());
+  .concat(verifySortOperatorsForSortableProperties())
+  .concat(verifySortOptionDatatypeWhenEntityPropertyIsUpdated())
+  .concat(testHubCentralSupportedDatatypeMappingsForSort());
