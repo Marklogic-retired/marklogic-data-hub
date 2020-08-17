@@ -170,7 +170,8 @@ def runCypressE2e(){
         sh(script:'''#!/bin/bash
             export JAVA_HOME=~/java/jdk-11.0.2
             export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
-            export PATH=$M2_LOCAL_REPO:$PATH
+            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
+            export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
             rm -rf $M2_LOCAL_REPO || true
             mkdir -p $M2_LOCAL_REPO
             cd $WORKSPACE/data-hub;
