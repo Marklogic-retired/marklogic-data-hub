@@ -91,8 +91,9 @@ const EditQueryDetails: React.FC<Props> = (props) => {
             title={'Edit Query Details'}
             closable={true}
             onCancel={() => onCancel()}
-            maskClosable={true}
+            maskClosable={false}
             footer={null}
+            destroyOnClose={true}
         >
             <Form
                 name="basic"
