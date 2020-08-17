@@ -223,6 +223,10 @@ const MappingCard: React.FC<Props> = (props) => {
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
                 setSourceData([]);
                 setSourceData([...sDta]);
+                if(typeof(srcDocResp.data) === 'string'){
+                    let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,props.data[index].name);
+                    updateMappingWithNamespaces(mData);
+                }
             }
             setIsLoading(false);
         } catch(error)  {
@@ -241,13 +245,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const updateMappingWithNamespaces = async (mapDataLocal) => {
         let {lastUpdated, ...dataPayload} = mapDataLocal;
         dataPayload['namespaces'] = nmspaces;
-        await props.updateMappingArtifact(dataPayload);
-
-        let mapArt = await props.getMappingArtifactByMapName(dataPayload.targetEntityType,dataPayload.name);
-
-        if(mapArt) {
-            await setMapData({...mapArt});
-        }
+        setMapData({...dataPayload});
     }
 
     //Generate namespaces for source properties
