@@ -17,6 +17,7 @@
 package com.marklogic.hub.step.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Step {
+    private String stepId;
     private String name;
     private String description;
     private Map<String, Object> options;
@@ -38,6 +40,14 @@ public class Step {
     private String stepDefinitionName;
     private StepDefinition.StepDefinitionType stepDefinitionType;
     private JsonNode fileLocations;
+
+    public String getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(String stepId) {
+        this.stepId = stepId;
+    }
 
     public String getName() {
         return name;
@@ -123,6 +133,7 @@ public class Step {
         Step step = new Step();
 
         JSONObject jsonObject = new JSONObject(json);
+        step.setStepId(jsonObject.getString("stepId"));
         step.setStepDefinitionName(jsonObject.getString("stepDefinitionName"));
         step.setStepDefinitionType(StepDefinition.StepDefinitionType.getStepDefinitionType(jsonObject.getString("stepDefinitionType")));
         String stepName = jsonObject.getString("name");

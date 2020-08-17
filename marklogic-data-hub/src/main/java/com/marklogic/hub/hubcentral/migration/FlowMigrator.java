@@ -149,6 +149,10 @@ public class FlowMigrator extends LoggingObject {
             ObjectNode newSteps = nodeFactory.objectNode();
             for (Map.Entry<String, Step> entry : steps.entrySet()) {
                 Step step = entry.getValue();
+                if (step.getStepId() != null) {
+                    newSteps.set(entry.getKey(), nodeFactory.objectNode().put("stepId", step.getStepId()));
+                    continue;
+                }
                 String stepId;
                 Path targetDir;
                 if (StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {

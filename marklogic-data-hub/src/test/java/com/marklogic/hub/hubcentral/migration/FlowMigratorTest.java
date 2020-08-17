@@ -71,6 +71,24 @@ class FlowMigratorTest extends AbstractHubCoreTest {
         verifyLegacyMappingsWereDeletedFromMarkLogic();
     }
 
+    @Test
+    void migrateFlowsTwice() {
+        HubConfig hubConfig = getHubConfig();
+        MappingManager mappingManager = new MappingManagerImpl(hubConfig);
+        FlowManager flowManager = new FlowManagerImpl(hubConfig, mappingManager);
+        flowManager.getLocalFlows().forEach(flow ->flowMap.put(flow.getName(), flow));
+        mappingManager.getMappings().forEach(mapping -> mappingMap.put(mapping.getName(), mapping));
+
+        FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
+
+        flowMigrator.migrateFlows();
+        // migrateFlows() should be a no-op the 2nd time
+        flowMigrator.migrateFlows();
+
+        verifyLegacyMappingsStillExistInMarkLogic();
+        verifyFlowsWereMigrated();
+    }
+
     private void verifyFlowsWereMigrated() {
         HubProject hubProject = getHubConfig().getHubProject();
 
