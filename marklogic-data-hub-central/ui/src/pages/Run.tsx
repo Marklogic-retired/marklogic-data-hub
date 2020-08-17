@@ -51,6 +51,9 @@ const Run = (props) => {
         retryLimit: 10  // Timeout after retries
     }
 
+    useEffect(() => {
+        return () =>  Modal.destroyAll()
+    }, []);
 
     useEffect(() => {
         getFlows();
