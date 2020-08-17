@@ -5,7 +5,6 @@
       "name": "loadCustomersJSON",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "ingestion",
-      "stepId": "loadCustomersJSON-ingestion",
       "description": "",
       "sourceFormat": "json",
       "targetFormat": "json",
