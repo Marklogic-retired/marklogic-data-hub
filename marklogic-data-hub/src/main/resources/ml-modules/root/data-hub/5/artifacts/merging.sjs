@@ -65,14 +65,30 @@ function validateArtifact(artifact) {
 function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   return {
-    artifactName,
-    collections: ['default-mastering'],
-    additionalCollections: [],
+    batchSize: 100,
+    threadCount: 1,
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
-    provenanceGranularityLevel: 'coarse',
     permissions: defaultPermissions,
-    batchSize: 100
+    targetEntity: "Change this to a valid entity type name; e.g. Customer",
+    sourceQuery: "cts.collectionQuery('mastering-summary')",
+    collections: [],
+    targetFormat: "json",
+    mergeOptions: {
+      propertyDefs: {
+        properties: [],
+        namespaces: {}
+      },
+      algorithms: {
+        stdAlgorithm: {
+          timestamp: {}
+        },
+        custom: [],
+        collections: {}
+      },
+      mergeStrategies: [],
+      merging: []
+    }
   };
 }
 

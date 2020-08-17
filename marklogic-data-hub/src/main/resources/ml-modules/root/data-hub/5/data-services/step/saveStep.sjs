@@ -63,6 +63,12 @@ else {
   if ("mapping" === stepDefinitionType) {
     stepDefinitionName = "entity-services-mapping";
   }
+  else if("matching" === stepDefinitionType){
+    stepDefinitionName = "default-matching";
+  }
+  else if("merging" === stepDefinitionType){
+    stepDefinitionName = "default-merging";
+  }
   else {
     // if 'stepDefinitionName' is not set for ingestion step, it will be set to 'default-ingestion'
     if ("ingestion" === stepDefinitionType && !stepProperties.stepDefinitionName){

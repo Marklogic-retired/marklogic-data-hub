@@ -96,10 +96,6 @@ public class ScaffoldingImpl implements Scaffolding {
         StepDefinitionManager stepDefinitionManager = new StepDefinitionManagerImpl(hubConfig);
         StepDefinitionType stepDefType = StepDefinitionType.getStepDefinitionType(stepType);
         Assert.notNull(stepDefType, "Unrecognized step type: " + stepType);
-        Assert.isTrue(stepDefType.equals(StepDefinitionType.INGESTION) || stepDefType.equals(StepDefinitionType.MAPPING) ||
-                stepDefType.equals(StepDefinitionType.CUSTOM),
-            "Can only create a step of type 'ingestion', 'mapping' or 'custom'");
-
 
         StepDefinition stepDefinition = null;
         JsonNode step;
@@ -125,15 +121,17 @@ public class ScaffoldingImpl implements Scaffolding {
             }
         }
 
-        if (StepDefinitionType.INGESTION.equals(stepDefType)) {
+        if ("ingestion".equalsIgnoreCase(stepType)) {
             stepPayLoad.put("sourceFormat", "json");
             stepPayLoad.put("targetFormat", "json");
         }
         else {
             stepPayLoad.put("selectedSource", "query");
-            stepPayLoad.put("sourceQuery", "cts.collectionQuery('changeme')");
-            if(entityType != null){
-                stepPayLoad.put("entityType", entityType);
+            if("custom".equalsIgnoreCase(stepType) || "mapping".equalsIgnoreCase(stepType)){
+                stepPayLoad.put("sourceQuery", "cts.collectionQuery('changeme')");
+                if(entityType != null){
+                    stepPayLoad.put("entityType", entityType);
+                }
             }
         }
 

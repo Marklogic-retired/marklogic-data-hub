@@ -1,7 +1,6 @@
 package com.marklogic.gradle.task
 
 import com.marklogic.hub.impl.FlowManagerImpl
-import com.marklogic.hub.impl.ScaffoldingImpl
 import org.apache.commons.lang3.tuple.Pair
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
@@ -16,9 +15,6 @@ class AddStepToFlowTask extends HubTask {
 
         if (flowName == null || stepName == null || stepType == null) {
             throw new GradleException("Please specify a flow name, step name and step type via -PflowName=myFlowName -PstepName=MyStepName and -PstepType=(ingestion|mapping|custom)")
-        }
-        if ("mastering".equalsIgnoreCase(stepType)){
-            throw new GradleException("'mastering' steps are not supported. Please use 'matching' and 'merging' steps instead.")
         }
         Pair<File, String> results = new FlowManagerImpl(getHubConfig()).addStepToFlow(flowName, stepName, stepType)
 

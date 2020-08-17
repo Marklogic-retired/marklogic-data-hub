@@ -94,4 +94,54 @@ class CreateStepTaskTest extends BaseTest {
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateStep").outcome == SUCCESS
     }
+
+    def "create matching step"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=myMatchStep
+                stepType=matching
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateStep')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateStep").outcome == SUCCESS
+    }
+
+    def "create merging step"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=myMergeStep
+                stepType=merging
+            }
+        """
+
+        when:
+        def result = runTask('hubCreateStep')
+
+        then:
+        notThrown(UnexpectedBuildFailure)
+        result.task(":hubCreateStep").outcome == SUCCESS
+    }
+
+    def "create mastering step"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=myMaster
+                stepType=mastering
+            }
+        """
+
+        when:
+        def result = runFailTask('hubCreateStep')
+
+        then:
+        result.task(":hubCreateStep").outcome == FAILED
+    }
 }
