@@ -27,7 +27,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         Pair<JsonNode, String> results = createStep("myIngester", "ingestion", null, null);
 
         JsonNode step = results.getLeft();
-        verifyStep("myIngester", step, true);
+        verifyStep("myIngester", step, "ingestion");
         verifyMessages(results.getRight(), "myIngester", "ingestion", null, false);
         verifyArtifactsAreWrittenToDbAndProject("myIngester", "ingestion", null);
 
@@ -41,15 +41,33 @@ public class CreateStepTest extends AbstractHubCoreTest {
 
         results = createStep("myIngest1", "ingestion", "customIngestion", null);
         step = results.getLeft();
-        verifyStep("myIngest1", step, true);
+        verifyStep("myIngest1", step, "ingestion");
         verifyMessages(results.getRight(), "myIngest1", "ingestion", "customIngestion", true);
         verifyArtifactsAreWrittenToDbAndProject("myIngest1", "ingestion", "customIngestion");
 
         results = createStep("myIngest2", "ingestion", "customIngestion", null);
         step = results.getLeft();
-        verifyStep("myIngest2", step, true);
+        verifyStep("myIngest2", step, "ingestion");
         verifyMessages(results.getRight(), "myIngest2", "ingestion", "customIngestion", false);
         verifyArtifactsAreWrittenToDbAndProject("myIngest2", "ingestion", null);
+    }
+
+    @Test
+    void matchingStep() throws IOException {
+        Pair<JsonNode, String> results = createStep("myMatch", "matching", null, null);
+        JsonNode step = results.getLeft();
+        verifyStep("myMatch", step, "matching");
+        verifyMessages(results.getRight(), "myMatch", "matching", null, false);
+        verifyArtifactsAreWrittenToDbAndProject("myMatch", "matching", null);
+    }
+
+    @Test
+    void mergingStep() throws IOException {
+        Pair<JsonNode, String> results = createStep("myMerge", "merging", null, null);
+        JsonNode step = results.getLeft();
+        verifyStep("myMerge", step, "merging");
+        verifyMessages(results.getRight(), "myMerge", "merging", null, false);
+        verifyArtifactsAreWrittenToDbAndProject("myMerge", "merging", null);
     }
 
     @Test
@@ -59,7 +77,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         JsonNode step = results.getLeft();
         assertEquals("http://example.org/Customer-0.0.1/Customer", step.get("targetEntityType").asText());
         assertFalse(step.has("entityType"), "'entityType' should be replaced with 'targetEntityType'");
-        verifyStep("myMapper", step, false);
+        verifyStep("myMapper", step, "mapping");
         verifyMessages(results.getRight(), "myMapper", "mapping", null, false);
         verifyArtifactsAreWrittenToDbAndProject("myMapper", "mapping", null);
 
@@ -81,7 +99,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         JsonNode step = results.getLeft();
         assertEquals("http://example.org/Customer-0.0.1/Customer", step.get("targetEntityType").asText());
         assertFalse(step.has("entityType"), "'entityType' should be replaced with 'targetEntityType'");
-        verifyStep("myCustom", step, false);
+        verifyStep("myCustom", step, "custom");
         verifyMessages(results.getRight(), "myCustom", "custom", "myCustom", true);
         verifyArtifactsAreWrittenToDbAndProject("myCustom", "custom", "myCustom");
 
@@ -97,7 +115,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
         results = createStep("customNoEntity", "custom", "myCustom", null);
         step = results.getLeft();
         assertFalse(step.has("targetEntityType"), "Step not associated with entityType");
-        verifyStep("customNoEntity", step, false);
+        verifyStep("customNoEntity", step, "custom");
         verifyMessages(results.getRight(), "customNoEntity", "custom", "myCustom", false);
         verifyArtifactsAreWrittenToDbAndProject("customNoEntity", "custom", "myCustom");
 
@@ -106,13 +124,20 @@ public class CreateStepTest extends AbstractHubCoreTest {
         step = results.getLeft();
         assertEquals("http://example.org/Customer-0.0.1/Customer", step.get("targetEntityType").asText());
         assertFalse(step.has("entityType"), "'entityType' should be replaced with 'targetEntityType'");
-        verifyStep("customDiffStepDef", step, false);
+        verifyStep("customDiffStepDef", step, "custom");
         verifyMessages(results.getRight(), "customDiffStepDef", "custom", "newCustomStepDef", true);
         verifyArtifactsAreWrittenToDbAndProject("customDiffStepDef", "custom", "newCustomStepDef");
     }
 
     @Test
     void badStep() {
+        //Create a step of type 'mastering' not allowed
+        try {
+            scaffolding.createStepFile("masterStep", "mastering", null, null);
+            fail("Expected an error because creation of step of type 'mastering' is not allowed");
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
         //Create a step of invalid type
         try {
             scaffolding.createStepFile("badStep", "invalidType", null, "Customer");
@@ -137,16 +162,31 @@ public class CreateStepTest extends AbstractHubCoreTest {
         return Pair.of(step, results.getRight());
     }
 
-    private void verifyStep(String stepName, JsonNode step, boolean isIngestionStep){
+    private void verifyStep(String stepName, JsonNode step, String stepType){
         assertEquals(stepName, step.get("name").asText());
         assertEquals("", step.get("description").asText());
         final String message = "The default step should have stepDefinitionName/stepDefinitionType/stepId " ;
         assertTrue(step.has("stepDefinitionName"), message);
         assertTrue(step.has("stepDefinitionType"), message);
         assertTrue(step.has("stepId"), message);
-        if (isIngestionStep){
+        if ("ingestion".equalsIgnoreCase(stepType)){
             assertEquals("json", step.get("sourceFormat").asText());
             assertEquals("json", step.get("targetFormat").asText());
+        }
+        else if("matching".equalsIgnoreCase(stepType) || "merging".equalsIgnoreCase(stepType)){
+            assertEquals("query", step.get("selectedSource").asText());
+            assertEquals("1", step.get("threadCount").asText());
+            assertEquals("json", step.get("targetFormat").asText());
+            assertEquals("Change this to a valid entity type name; e.g. Customer", step.get("targetEntity").asText());
+            assertEquals(false, step.get("stepUpdate").asBoolean());
+            if("matching".equalsIgnoreCase(stepType)){
+                assertNotNull( step.get("matchOptions"));
+                assertEquals(true, step.get("acceptsBatch").asBoolean());
+            }
+            else{
+                assertNotNull( step.get("mergeOptions"));
+                assertEquals(false, step.get("acceptsBatch").asBoolean());
+            }
         }
         else {
             assertEquals("query", step.get("selectedSource").asText());

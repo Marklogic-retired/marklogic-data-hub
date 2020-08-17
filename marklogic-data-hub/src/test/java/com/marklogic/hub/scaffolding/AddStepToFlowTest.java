@@ -33,6 +33,8 @@ public class AddStepToFlowTest extends AbstractHubCoreTest {
         scaffolding.createStepFile("ingestionStep", "ingestion", null, null);
         scaffolding.createStepFile("mappingStep", "mapping", null, "Customer");
         scaffolding.createStepFile("customStep", "custom", null, null);
+        scaffolding.createStepFile("matchStep", "matching", null, null);
+        scaffolding.createStepFile("mergeStep", "merging", null, null);
         installUserArtifacts();
     }
 
@@ -49,7 +51,15 @@ public class AddStepToFlowTest extends AbstractHubCoreTest {
 
         results = addStepToFlow("testFlow", "customStep", "custom");
         verifyFlow(results.getLeft(),"testFlow","customStep", "custom", "3");
-        verifyMessages(results.getRight(), "testFlow", "customStep");;
+        verifyMessages(results.getRight(), "testFlow", "customStep");
+
+        results = addStepToFlow("testFlow", "matchStep", "matching");
+        verifyFlow(results.getLeft(),"testFlow","matchStep", "matching", "4");
+        verifyMessages(results.getRight(), "testFlow", "matchStep");
+
+        results = addStepToFlow("testFlow", "mergeStep", "merging");
+        verifyFlow(results.getLeft(),"testFlow","mergeStep", "merging", "5");
+        verifyMessages(results.getRight(), "testFlow", "mergeStep");
     }
 
     private Pair<JsonNode,String> addStepToFlow(String flowName, String stepName, String stepType) throws IOException{

@@ -15,14 +15,19 @@ class CreateStepTask extends HubTask {
         String entityType = project.hasProperty("entityType") ? project.property("entityType").toString() : null
 
         if (stepName == null || stepType == null) {
-            throw new GradleException("Please specify a step name and step type via -PstepName=MyStepName and -PstepType=(ingestion|mapping|custom)")
+            throw new GradleException("Please specify a step name and step type via -PstepName=MyStepName and -PstepType=(ingestion|mapping|custom|matching|merging)")
+        }
+        if("mastering".equalsIgnoreCase(stepType)){
+            throw new GradleException("Creating mastering steps is not supported. Matching and merging steps are recommended instead.")
         }
         if ("mapping".equalsIgnoreCase(stepType)){
             if(entityType == null){
                 throw new GradleException("Please specify an entity type for the mapping step")
             }
-            if(stepDefName != null) {
-                throw new GradleException("Cannot specify step definition name for 'mapping' steps")
+        }
+        if(stepDefName != null) {
+            if(!("ingestion".equalsIgnoreCase(stepType) || "custom".equalsIgnoreCase(stepType))) {
+                throw new GradleException("Cannot specify step definition name for '" + stepType + "' steps")
             }
         }
         Pair<File, String> results = new ScaffoldingImpl(getHubConfig()).createStepFile(stepName, stepType, stepDefName, entityType)
