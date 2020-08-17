@@ -3,6 +3,7 @@ import { render, fireEvent, waitForElement } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import NewLoadDialog from './new-load-dialog';
 import {BrowserRouter} from "react-router-dom";
+import {NewLoadTooltips} from '../../../config/tooltips.config';
 import axiosMock from 'axios'
 
 jest.mock('axios');
@@ -36,9 +37,21 @@ describe('New/edit load data configuration', () => {
     expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
     expect(queryAllByPlaceholderText('Enter URI Prefix')[0]).toBeInTheDocument();
     let tooltip  = getAllByLabelText('icon: question-circle');
-    //should be the last field in the form
-    fireEvent.mouseOver(tooltip[tooltip.length-1]);
-    await waitForElement(() => getByText("The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json."))
+    //Tooltip for name
+    fireEvent.mouseOver(tooltip[0]);
+    await waitForElement(() => getByText(NewLoadTooltips.name));
+    //Tooltip for Description
+    fireEvent.mouseOver(tooltip[1]);
+    await waitForElement(() => getByText(NewLoadTooltips.description));
+    //Tooltip for Source Format
+    fireEvent.mouseOver(tooltip[2]);
+    await waitForElement(() => getByText(NewLoadTooltips.sourceFormat));
+    //Tooltip for Target Format
+    fireEvent.mouseOver(tooltip[3]);
+    await waitForElement(() => getByText(NewLoadTooltips.targetFormat));
+    //Tooltip for Target URI Prefix
+    fireEvent.mouseOver(tooltip[4]);
+    await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix))
     expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
     expect(getByText("Target URI Prefix:")).toHaveTextContent('Target URI Prefix:');
   });
