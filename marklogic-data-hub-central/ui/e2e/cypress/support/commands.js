@@ -33,7 +33,7 @@ require('cypress-plugin-tab');
 //cy.fixture('users/developer.json').as('developer')
 
 let protocol = 'http';
-if(`${Cypress.env('mlHost')}` !== 'localhost')
+if(Cypress.env('mlHost').indexOf('marklogicsvc') > -1)
   protocol = 'https';
 
 Cypress.Commands.add('withUI', { prevSubject: 'optional'}, (subject) => {

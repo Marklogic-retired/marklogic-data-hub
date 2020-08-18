@@ -1,23 +1,31 @@
 {
-  "name" : "ingestion-step",
-  "description" : "This is the default ingestion step",
-  "batchSize" : 100,
-  "threadCount" : 4,
-  "stepDefinitionName" : "cusIngTest",
-  "stepDefinitionType" : "INGESTION",
-  "headers" : {
-    "sources" : [ {
-      "name" : "testEleanor"
-    } ],
-    "createdOn" : "currentDateTime",
-    "createdBy" : "currentUser"
+  "headers": {
+    "sources": [
+      {
+        "name": "ingestion-step"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
   },
-  "collections" : [ "cusIngTest", "ingestion-step" ],
-  "permissions" : "data-hub-common,read,data-hub-common,update",
-  "targetDatabase" : "data-hub-STAGING",
-  "targetFormat" : "json",
-  "inputFilePath" : "/input/json",
-  "outputURIReplacement" : ".*input,''",
-  "sourceFormat" : "json",
-  "stepId" : "ingestion-step-ingestion"
+  "collections": [
+    "cusIngTest",
+    "ingestion-step"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "ingestion-step",
+  "description": "This is the default ingestion step",
+  "threadCount": 4,
+  "stepDefinitionName": "cusIngTest",
+  "stepDefinitionType": "INGESTION",
+  "targetDatabase": "data-hub-STAGING",
+  "targetFormat": "json",
+  "inputFilePath": "input/json/customers",
+  "outputURIReplacement": ".*input,'/cusIngTest/'",
+  "sourceFormat": "json",
+  "stepId": "ingestion-step-ingestion",
+  "sourceQuery": "cts.collectionQuery([])",
+  "outputFormat": "json",
+  "lastUpdated": "2020-08-18T00:14:42.054146Z"
 }

@@ -1,0 +1,198 @@
+{
+  "name" : "master-person",
+  "description" : "",
+  "stepDefinitionName" : "default-mastering",
+  "stepDefinitionType" : "MASTERING",
+  "stepUpdate" : true,
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"mapPersonJSON\"])",
+  "provenanceGranularityLevel" : "fine",
+  "acceptsBatch" : true,
+  "targetEntity" : "Person",
+  "targetDatabase" : "data-hub-FINAL",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "master-person", "Person" ],
+  "mergeOptions" : {
+    "algorithms" : {
+      "stdAlgorithm" : {
+        "timestamp" : {
+          "path" : "/envelope/headers/createdOn"
+        }
+      },
+      "custom" : [ {
+        "name" : "mergeDob",
+        "function" : "mergeDob",
+        "at" : "/custom-modules/custom/dob-merge.sjs"
+      } ],
+      "collections" : {
+        "onNoMatch" : {
+          "add" : {
+            "collection" : [ "no-match" ]
+          },
+          "remove" : {
+            "collection" : [ "" ]
+          },
+          "set" : {
+            "collection" : [ "" ]
+          }
+        },
+        "onNotification" : {
+          "add" : {
+            "collection" : [ "likely-match" ]
+          },
+          "remove" : {
+            "collection" : [ "" ]
+          },
+          "set" : {
+            "collection" : [ "" ]
+          }
+        },
+        "onMerge" : {
+          "add" : {
+            "collection" : [ "" ]
+          },
+          "remove" : {
+            "collection" : [ "no-match", "likely-match" ]
+          },
+          "set" : {
+            "collection" : [ "" ]
+          }
+        }
+      }
+    },
+    "mergeStrategies" : [ {
+      "sourceWeights" : [ ],
+      "name" : "retain-single-value",
+      "algorithmRef" : "standard",
+      "maxValues" : "1",
+      "length" : {
+        "weight" : "10"
+      }
+    } ],
+    "merging" : [ {
+      "propertyName" : "Address",
+      "algorithmRef" : "standard",
+      "maxValues" : "1",
+      "length" : {
+        "weight" : "10"
+      },
+      "sourceWeights" : [ ],
+      "strategy" : "retain-single-value"
+    }, {
+      "propertyName" : "DateOfBirth",
+      "algorithmRef" : "mergeDob",
+      "sourceWeights" : [ ]
+    }, {
+      "propertyName" : "ZipCode",
+      "algorithmRef" : "standard",
+      "maxValues" : "1",
+      "length" : {
+        "weight" : "10"
+      },
+      "sourceWeights" : [ ],
+      "strategy" : "retain-single-value"
+    } ]
+  },
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "matchOptions" : {
+    "dataFormat" : "json",
+    "algorithms" : {
+      "algorithm" : [ {
+        "name" : "double-metaphone",
+        "function" : "double-metaphone",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
+      }, {
+        "name" : "thesaurus",
+        "function" : "thesaurus",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
+      }, {
+        "name" : "zip-match",
+        "function" : "zip-match",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/com.marklogic.smart-mastering/algorithms/zip.xqy"
+      }, {
+        "name" : "standard-reduction",
+        "function" : "standard-reduction"
+      }, {
+        "name" : "dob-match",
+        "function" : "dob-match",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/custom-modules/custom/dob-match.xqy"
+      } ]
+    },
+    "collections" : {
+      "content" : [ ]
+    },
+    "scoring" : {
+      "add" : [ {
+        "propertyName" : "lname",
+        "weight" : "10"
+      }, {
+        "propertyName" : "SSN",
+        "weight" : "20"
+      } ],
+      "expand" : [ {
+        "propertyName" : "fname",
+        "algorithmRef" : "double-metaphone",
+        "weight" : "10",
+        "dictionary" : "/dictionary/first-names.xml",
+        "distanceThreshold" : "100"
+      }, {
+        "propertyName" : "fname",
+        "algorithmRef" : "thesaurus",
+        "weight" : "10",
+        "thesaurus" : "/thesaurus/nicknames.xml"
+      }, {
+        "propertyName" : "DateOfBirth",
+        "algorithmRef" : "dob-match",
+        "weight" : "10"
+      }, {
+        "propertyName" : "ZipCode",
+        "algorithmRef" : "zip-match",
+        "zip" : [ {
+          "origin" : 5,
+          "weight" : "10"
+        }, {
+          "origin" : 9,
+          "weight" : "10"
+        } ]
+      } ],
+      "reduce" : [ {
+        "allMatch" : {
+          "property" : [ "Address" ]
+        },
+        "algorithmRef" : "standard-reduction",
+        "weight" : "5"
+      } ]
+    },
+    "actions" : {
+      "action" : [ {
+        "name" : "customMatch",
+        "at" : "/custom-modules/custom/custom-match-action.sjs",
+        "function" : "customMatch"
+      } ]
+    },
+    "thresholds" : {
+      "threshold" : [ {
+        "above" : "19",
+        "label" : "Match",
+        "action" : "merge"
+      }, {
+        "above" : "9",
+        "label" : "Likely Match",
+        "action" : "notify"
+      }, {
+        "above" : "4",
+        "label" : "Slight Match",
+        "action" : "customMatch"
+      } ]
+    },
+    "tuning" : {
+      "maxScan" : 200
+    }
+  },
+  "targetFormat" : "json",
+  "stepId" : "master-person-mastering"
+}

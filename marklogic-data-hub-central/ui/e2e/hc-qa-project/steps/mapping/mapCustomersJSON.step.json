@@ -1,4 +1,12 @@
 {
+  "collections": [
+    "Customer",
+    "mapCustomersJSON"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
   "name": "mapCustomersJSON",
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "mapping",
@@ -7,17 +15,9 @@
   "description": "",
   "selectedSource": "collection",
   "sourceQuery": "cts.collectionQuery(['loadCustomersJSON'])",
-  "collections": [
-    "Customer",
-    "mapCustomersJSON"
-  ],
-  "additionalCollections": [ ],
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
   "targetFormat": "JSON",
-  "permissions": "data-hub-common,read,data-hub-operator,update",
-  "batchSize": 100,
-  "validateEntity": "doNotValidate",
   "provenanceGranularityLevel": "coarse",
   "properties": {
     "customerId": {
@@ -93,7 +93,7 @@
       "sourcedFrom": "nicknames"
     }
   },
-  "lastUpdated": "2020-07-08T16:08:45.508899-07:00",
+  "lastUpdated": "2020-08-18T00:14:41.991366Z",
   "customHook": {
     "module": "",
     "parameters": "{}",

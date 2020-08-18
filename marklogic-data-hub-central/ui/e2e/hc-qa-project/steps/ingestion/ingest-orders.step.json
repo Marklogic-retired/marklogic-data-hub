@@ -1,13 +1,29 @@
 {
-  "name" : "ingest-orders",
-  "stepDefinitionName" : "default-ingestion",
-  "stepDefinitionType" : "INGESTION",
-  "collections" : [ "order-input", "ingest-orders" ],
-  "permissions" : "data-hub-common,read,data-hub-common,update",
-  "targetDatabase" : "data-hub-STAGING",
-  "targetFormat" : "json",
-  "inputFilePath" : "input/json/orders",
-  "outputURIReplacement" : ".*input,''",
-  "sourceFormat" : "json",
-  "stepId" : "ingest-orders-ingestion"
+  "headers": {
+    "sources": [
+      {
+        "name": "ingest-orders"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "order-input",
+    "ingest-orders"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "ingest-orders",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "INGESTION",
+  "targetDatabase": "data-hub-STAGING",
+  "targetFormat": "json",
+  "inputFilePath": "input/json/orders",
+  "outputURIReplacement": ".*input,''",
+  "sourceFormat": "json",
+  "stepId": "ingest-orders-ingestion",
+  "outputFormat": "json",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-08-18T00:14:42.038914Z"
 }

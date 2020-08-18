@@ -18,7 +18,7 @@
   "sourceDatabase": "data-hub-STAGING",
   "targetDatabase": "data-hub-FINAL",
   "provenanceGranularityLevel": "coarse",
-  "lastUpdated": "2020-06-24T21:06:12.442649-07:00",
+  "lastUpdated": "2020-08-18T00:14:41.904565Z",
   "properties": {
     "fname": {
       "sourcedFrom": "FirstName"

@@ -18,7 +18,7 @@ const spell = require("/MarkLogic/spell");
 
 function main(content, options) {
 
-  const values = cts.elementValues(xs.QName('fname')).toArray();
+  const values = cts.values(cts.pathReference('/(es:envelope|envelope)/(es:instance|instance)/Person/fname',[],{es:"http://marklogic.com/entity-services"})).toArray();
 
   const dictionary = spell.makeDictionary(values, "element");
   const uri = "/dictionary/first-names.xml";
