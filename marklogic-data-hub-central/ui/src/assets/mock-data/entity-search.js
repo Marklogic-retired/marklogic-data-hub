@@ -130,7 +130,9 @@ export const entitySearch = {
           "propertyPath": "nicknames",
           "propertyValue": [
             "Carm",
-            "din"
+            "din",
+            "",
+            null
           ]
         },
         {
