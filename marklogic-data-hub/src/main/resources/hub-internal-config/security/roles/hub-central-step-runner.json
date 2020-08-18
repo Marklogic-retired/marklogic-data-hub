@@ -6,7 +6,6 @@
     "data-hub-common-writer",
     "data-hub-flow-reader",
     "data-hub-ingestion-reader",
-    "data-hub-job-internal",
     "data-hub-job-reader",
     "data-hub-mapping-reader",
     "data-hub-match-merge-reader",
