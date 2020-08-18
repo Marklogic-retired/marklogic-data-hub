@@ -1,7 +1,0 @@
-{
-  "name" : "customIngest",
-  "description" : "",
-  "stepDefinitionName" : "customIngestion",
-  "sourceFormat" : "json",
-  "targetFormat" : "json"
-}

@@ -1,55 +1,64 @@
 {
-  "name" : "map-orders",
-  "stepDefinitionName" : "entity-services-mapping",
-  "stepDefinitionType" : "MAPPING",
-  "sourceQuery" : "cts.collectionQuery('order-input')",
-  "sourceDatabase" : "data-hub-STAGING",
-  "collections" : [ "map-orders", "Order" ],
-  "targetDatabase" : "data-hub-FINAL",
-  "targetFormat" : "json",
-  "targetEntityType" : "http://marklogic.com/example/Order-0.0.1/Order",
-  "properties" : {
-    "orderDetails" : {
-      "sourcedFrom" : "/",
-      "properties" : {
-        "productID" : {
-          "sourcedFrom" : "OrderDetails/ProductID"
+  "collections": [
+    "map-orders",
+    "Order"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "name": "map-orders",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "sourceQuery": "cts.collectionQuery('order-input')",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "json",
+  "targetEntityType": "http://marklogic.com/example/Order-0.0.1/Order",
+  "properties": {
+    "orderDetails": {
+      "sourcedFrom": "/",
+      "properties": {
+        "productID": {
+          "sourcedFrom": "OrderDetails/ProductID"
         },
-        "unitPrice" : {
-          "sourcedFrom" : "head(OrderDetails/UnitPrice)"
+        "unitPrice": {
+          "sourcedFrom": "head(OrderDetails/UnitPrice)"
         },
-        "quantity" : {
-          "sourcedFrom" : "OrderDetails/Quantity"
+        "quantity": {
+          "sourcedFrom": "OrderDetails/Quantity"
         },
-        "discount" : {
-          "sourcedFrom" : "head(OrderDetails/Discount)"
+        "discount": {
+          "sourcedFrom": "head(OrderDetails/Discount)"
         }
       },
-      "targetEntityType" : "#/definitions/OrderDetails"
+      "targetEntityType": "#/definitions/OrderDetails"
     },
-    "address" : {
-      "sourcedFrom" : "/",
-      "properties" : {
-        "city" : {
-          "sourcedFrom" : "ShipCity"
+    "address": {
+      "sourcedFrom": "/",
+      "properties": {
+        "city": {
+          "sourcedFrom": "ShipCity"
         },
-        "state" : {
-          "sourcedFrom" : "ShipAddress"
+        "state": {
+          "sourcedFrom": "ShipAddress"
         }
       },
-      "targetEntityType" : "#/definitions/Address"
+      "targetEntityType": "#/definitions/Address"
     },
-    "orderId" : {
-      "sourcedFrom" : "OrderID"
+    "orderId": {
+      "sourcedFrom": "OrderID"
     },
-    "shipRegion" : {
-      "sourcedFrom" : "ShipRegion"
+    "shipRegion": {
+      "sourcedFrom": "ShipRegion"
     },
-    "shippedDate" : {
-      "sourcedFrom" : "ShippedDate"
+    "shippedDate": {
+      "sourcedFrom": "ShippedDate"
     }
   },
-  "namespaces" : { },
-  "selectedSource" : "query",
-  "stepId" : "map-orders-mapping"
+  "namespaces": { },
+  "selectedSource": "query",
+  "stepId": "map-orders-mapping",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-08-18T00:14:41.943199Z"
 }

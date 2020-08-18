@@ -1,99 +1,14 @@
 {
-  "name" : "master-person",
+  "name" : "match-person",
   "description" : "",
-  "stepDefinitionName" : "customMastering",
-  "stepDefinitionType" : "CUSTOM",
-  "stepUpdate" : true,
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
   "additionalCollections" : [ ],
   "sourceQuery" : "cts.collectionQuery([\"mapPersonJSON\"])",
   "provenanceGranularityLevel" : "fine",
-  "acceptsBatch" : true,
-  "sourceCollection" : "mapPersonJSON",
-  "targetDatabase" : "data-hub-FINAL",
+  "targetEntity" : "Person",
   "sourceDatabase" : "data-hub-FINAL",
-  "collections" : [ "master-person", "Person" ],
-  "mergeOptions" : {
-    "algorithms" : {
-      "stdAlgorithm" : {
-        "timestamp" : {
-          "path" : "/envelope/headers/createdOn"
-        }
-      },
-      "custom" : [ {
-        "name" : "mergeDob",
-        "function" : "mergeDob",
-        "at" : "/custom-modules/custom/dob-merge.sjs"
-      } ],
-      "collections" : {
-        "onNoMatch" : {
-          "add" : {
-            "collection" : [ "no-match" ]
-          },
-          "remove" : {
-            "collection" : [ "" ]
-          },
-          "set" : {
-            "collection" : [ "" ]
-          }
-        },
-        "onNotification" : {
-          "add" : {
-            "collection" : [ "likely-match" ]
-          },
-          "remove" : {
-            "collection" : [ "" ]
-          },
-          "set" : {
-            "collection" : [ "" ]
-          }
-        },
-        "onMerge" : {
-          "add" : {
-            "collection" : [ "" ]
-          },
-          "remove" : {
-            "collection" : [ "no-match", "likely-match" ]
-          },
-          "set" : {
-            "collection" : [ "" ]
-          }
-        }
-      }
-    },
-    "mergeStrategies" : [ {
-      "sourceWeights" : [ ],
-      "name" : "retain-single-value",
-      "algorithmRef" : "standard",
-      "maxValues" : "1",
-      "length" : {
-        "weight" : "10"
-      }
-    } ],
-    "merging" : [ {
-      "propertyName" : "Address",
-      "algorithmRef" : "standard",
-      "maxValues" : "1",
-      "length" : {
-        "weight" : "10"
-      },
-      "sourceWeights" : [ ],
-      "strategy" : "retain-single-value"
-    }, {
-      "propertyName" : "DateOfBirth",
-      "algorithmRef" : "mergeDob",
-      "sourceWeights" : [ ]
-    }, {
-      "propertyName" : "ZipCode",
-      "algorithmRef" : "standard",
-      "maxValues" : "1",
-      "length" : {
-        "weight" : "10"
-      },
-      "sourceWeights" : [ ],
-      "strategy" : "retain-single-value"
-    } ]
-  },
-  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "collections" : [ "match-person", "Person" ],
   "matchOptions" : {
     "dataFormat" : "json",
     "algorithms" : {
@@ -193,7 +108,7 @@
       "maxScan" : 200
     }
   },
+  "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
-  "targetEntityType" : "Person",
-  "stepId" : "master-person-custom"
+  "stepId" : "match-person-matching"
 }

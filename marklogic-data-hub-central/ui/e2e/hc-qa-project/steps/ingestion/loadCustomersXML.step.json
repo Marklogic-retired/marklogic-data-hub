@@ -1,4 +1,18 @@
 {
+  "headers": {
+    "sources": [
+      {
+        "name": "loadCustomersXML"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadCustomersXML"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
   "name": "loadCustomersXML",
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
@@ -6,16 +20,11 @@
   "description": "",
   "sourceFormat": "xml",
   "targetFormat": "xml",
-  "collections": [
-    "loadCustomersXML"
-  ],
   "inputFilePath": "input/xml/customers",
   "outputURIReplacement": ".*input,''",
   "sourceDatabase": null,
   "targetDatabase": "data-hub-STAGING",
-  "permissions": "data-hub-common,read,data-hub-common,update",
-  "batchSize": 100,
   "provenanceGranularityLevel": "coarse",
-  "lastUpdated": "2020-06-24T21:12:22.481031-07:00",
+  "lastUpdated": "2020-08-18T00:14:42.101256Z",
   "outputFormat": "xml"
 }

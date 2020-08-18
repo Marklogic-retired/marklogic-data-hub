@@ -1,92 +1,12 @@
 {
-  "name" : "testCustomFlow",
-  "steps" : {
-    "1" : {
-      "stepId" : "ingestion-step-ingestion"
+  "name": "testCustomFlow",
+  "steps": {
+    "1": {
+      "stepId": "ingestion-step-ingestion"
     },
-    "2" : {
-      "stepId" : "mapping-step-custom"
-    },
-    "3" : {
-      "name" : "matching-step",
-      "description" : "This is the default matching step",
-      "options" : {
-        "sourceQuery" : "cts.collectionQuery('customMapping')",
-        "targetEntity" : "Customer",
-        "sourceDatabase" : "data-hub-FINAL",
-        "collections" : [ "customMatching" ],
-        "permissions" : "data-hub-common,read,data-hub-common,update",
-        "matchOptions" : {
-          "dataFormat" : "json",
-          "propertyDefs" : {
-            "property" : [ ]
-          },
-          "algorithms" : {
-            "algorithm" : [ ]
-          },
-          "collections" : {
-            "content" : [ ]
-          },
-          "scoring" : {
-            "add" : [ ],
-            "expand" : [ ],
-            "reduce" : [ ]
-          },
-          "actions" : {
-            "action" : [ ]
-          },
-          "thresholds" : {
-            "threshold" : [ ]
-          },
-          "tuning" : {
-            "maxScan" : 200
-          }
-        },
-        "outputFormat" : "json",
-        "targetDatabase" : "data-hub-FINAL"
-      },
-      "batchSize" : 100,
-      "threadCount" : 1,
-      "stepDefinitionName" : "customMatching",
-      "stepDefinitionType" : "MATCHING"
-    },
-    "4" : {
-      "name" : "merging-step",
-      "description" : "This is the default merging step",
-      "options" : {
-        "sourceQuery" : "cts.collectionQuery('customMatching')",
-        "targetEntity" : "Customer",
-        "sourceDatabase" : "data-hub-FINAL",
-        "collections" : [ "customMerging", "mastered" ],
-        "permissions" : "data-hub-common,read,data-hub-common,update",
-        "mergeOptions" : {
-          "propertyDefs" : {
-            "properties" : [ ],
-            "namespaces" : { }
-          },
-          "algorithms" : {
-            "stdAlgorithm" : {
-              "timestamp" : { }
-            },
-            "custom" : [ ],
-            "collections" : { }
-          },
-          "mergeStrategies" : [ ],
-          "merging" : [ ]
-        },
-        "outputFormat" : "json",
-        "targetDatabase" : "data-hub-FINAL"
-      },
-      "batchSize" : 100,
-      "threadCount" : 1,
-      "stepDefinitionName" : "customMerging",
-      "stepDefinitionType" : "MERGING"
-    },
-    "5" : {
-      "stepId" : "master-person-custom"
-    },
-    "6" : {
-      "stepId" : "custom-step-custom"
+    "2": {
+      "stepId": "mapping-step-custom"
     }
-  }
+  },
+  "lastUpdated": "2020-08-18T00:14:41.488072Z"
 }
