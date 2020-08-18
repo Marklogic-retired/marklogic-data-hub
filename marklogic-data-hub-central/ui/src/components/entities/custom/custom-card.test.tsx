@@ -48,7 +48,6 @@ describe("Custom Card component", () => {
         expect(getByRole("edit-custom")).toBeInTheDocument();
         expect(getByRole("settings-custom")).toBeInTheDocument();
         expect(queryAllByRole('delete-custom')).toHaveLength(0);
-        expect(getByRole('disabled-delete-custom')).toBeInTheDocument();
 
         let tipIconSetting  = getAllByLabelText('icon: setting');
         fireEvent.mouseOver(tipIconSetting[0]);
