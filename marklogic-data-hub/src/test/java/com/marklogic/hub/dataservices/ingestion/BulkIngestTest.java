@@ -6,14 +6,9 @@ import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.ApplicationConfig;
-import com.marklogic.hub.HubTestBase;
+import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -21,9 +16,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertNotNull;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = ApplicationConfig.class)
-public class BulkIngestTest extends HubTestBase {
+public class BulkIngestTest extends AbstractHubCoreTest {
 
     DatabaseClient db;
 
@@ -56,15 +49,6 @@ public class BulkIngestTest extends HubTestBase {
         checkResults("/bulkIngestTest/1/1.json");
         checkResults("/bulkIngestTest/1/2.json");
         checkResults("/bulkIngestTest/1/3.json");
-    }
-
-    @AfterEach
-    public void cleanup(){
-        JSONDocumentManager docMgr = db.newJSONDocumentManager();
-        for(int i=1; i<=3; i++) {
-            String uri = "/bulkIngestTest/1/" + i + ".json";
-            docMgr.delete(uri);
-        }
     }
 
     public static InputStream asInputStream(String value) {
