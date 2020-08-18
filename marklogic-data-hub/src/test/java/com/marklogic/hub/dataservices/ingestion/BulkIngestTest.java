@@ -40,7 +40,7 @@ public class BulkIngestTest extends HubTestBase {
         String workUnit      = "{\"taskId\":"+1+"}";
 
         InputEndpoint loadEndpt = InputEndpoint.on(adminHubConfig.newStagingClient(null),
-            adminHubConfig.newModulesDbClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkInputCallerImpl.api", new StringHandle()));
+            adminHubConfig.newModulesDbClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle()));
 
         InputEndpoint.BulkInputCaller loader = loadEndpt.bulkCaller();
         loader.setEndpointState(new ByteArrayInputStream(endpointState.getBytes()));
