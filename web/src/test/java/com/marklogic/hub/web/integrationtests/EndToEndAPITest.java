@@ -3,11 +3,9 @@ package com.marklogic.hub.web.integrationtests;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
-import com.marklogic.hub.web.WebApplication;
 import com.marklogic.hub.web.model.entity_services.EntityModel;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
@@ -16,13 +14,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,8 +30,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 // extendwith is the junit 5 way to run spring tests
-@ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class})
+//@ExtendWith(SpringExtension.class)
+//@SpringBootTest(classes = {WebApplication.class, ApplicationConfig.class})
+@Disabled("Will rework this to extend AbstractWebTest")
 public class EndToEndAPITest {
 
 	@LocalServerPort
@@ -48,8 +45,8 @@ public class EndToEndAPITest {
 	@BeforeEach
 	public void setUp() {
         RestAssured.port = port;
-		requestHelper.createProjectDir();
-        requestHelper.clearUserModules();
+		//requestHelper.createProjectDir();
+        //requestHelper.clearUserModules();
 	}
 
 	@AfterEach

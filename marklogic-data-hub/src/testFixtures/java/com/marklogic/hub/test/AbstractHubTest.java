@@ -89,8 +89,8 @@ public abstract class AbstractHubTest extends TestObject {
         if (projectDir != null && projectDir.exists()) {
             try {
                 FileUtils.deleteDirectory(projectDir);
-            } catch (IOException ex) {
-                logger.warn("Unable to delete the project directory", ex);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete the project directory: " + ex.getMessage());
             }
         }
     }
@@ -137,6 +137,10 @@ public abstract class AbstractHubTest extends TestObject {
         Properties props = new Properties();
         props.setProperty("mlUsername", mlUsername);
         props.setProperty("mlPassword", mlPassword);
+
+        // Need to include this so that when running tests in parallel, this doesn't default back to localhost
+        props.setProperty("mlHost", getHubConfig().getHost());
+
         getHubConfig().applyProperties(new SimplePropertySource(props));
     }
 

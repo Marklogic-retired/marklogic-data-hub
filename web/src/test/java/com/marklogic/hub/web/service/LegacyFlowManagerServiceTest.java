@@ -29,6 +29,7 @@ import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.web.AbstractWebTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
+public class LegacyFlowManagerServiceTest extends AbstractWebTest {
 
     private static String ENTITY = "test-entity";
 
@@ -60,8 +61,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     public void setup() {
         try {
             scaffolding.createEntity(ENTITY);
-        }
-        catch (DataHubProjectException e) {
+        } catch (DataHubProjectException e) {
             // Entity is already present
         }
 
@@ -135,7 +135,9 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @Test
     public void getFlowMlcpOptionsFromFile() throws Exception {
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": " + getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
+        String expected = "{ \"input_file_path\":\"" + getHubProject().getProjectDirString() + "\"}";
+        String actual = new ObjectMapper().writeValueAsString(options);
+        JSONAssert.assertEquals(expected, actual, true);
     }
 
     @Test
@@ -152,11 +154,10 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         LegacyFlow flow = flowManager.getFlow(ENTITY, flowName, FlowType.HARMONIZE);
 
         Object monitor = new Object();
-        JobTicket jobTicket = fm.runFlow(flow, 1, 1, null, new LegacyFlowStatusListener(){
+        JobTicket jobTicket = fm.runFlow(flow, 1, 1, null, new LegacyFlowStatusListener() {
             @Override
             public void onStatusChange(String jobId, int percentComplete, String message) {
-                if (percentComplete == 100)
-                {
+                if (percentComplete == 100) {
                     synchronized (monitor) {
                         monitor.notify();
                     }
@@ -165,8 +166,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         });
 
         // Wait for the flow to finish
-        synchronized (monitor)
-        {
+        synchronized (monitor) {
             monitor.wait();
         }
 
@@ -189,11 +189,10 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         options.put("test-option", OPT_VALUE);
 
         Object monitor = new Object();
-        JobTicket jobTicket = fm.runFlow(flow, 1, 1, options, new LegacyFlowStatusListener(){
+        JobTicket jobTicket = fm.runFlow(flow, 1, 1, options, new LegacyFlowStatusListener() {
             @Override
             public void onStatusChange(String jobId, int percentComplete, String message) {
-                if (percentComplete == 100)
-                {
+                if (percentComplete == 100) {
                     synchronized (monitor) {
                         monitor.notify();
                     }
@@ -202,8 +201,7 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
         });
 
         // Wait for the flow to finish
-        synchronized (monitor)
-        {
+        synchronized (monitor) {
             monitor.wait();
         }
 

@@ -2,23 +2,15 @@ package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowInputs;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.step.MarkLogicStepDefinitionProvider;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
@@ -29,34 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
-public class FlowRunnerImpl implements FlowRunner{
+public class FlowRunnerImpl implements FlowRunner {
 
     @Autowired
     private HubConfig hubConfig;
@@ -64,7 +38,6 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private FlowManager flowManager;
 
-    @Autowired
     private StepRunnerFactory stepRunnerFactory;
 
     private HubClient hubClient;
@@ -250,7 +223,16 @@ public class FlowRunnerImpl implements FlowRunner{
             threadPool = new CustomPoolExecutor(2, maxPoolSize, 0L, TimeUnit.MILLISECONDS
                 , new LinkedBlockingQueue<Runnable>());
         }
-        threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId));
+
+        // If this is used in a Spring context, ensure that the StepRunnerFactory is initialized before running any
+        // steps
+        if (stepRunnerFactory == null) {
+            synchronized (this) {
+                stepRunnerFactory = new StepRunnerFactory(hubConfig);
+            }
+        }
+
+        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
     }
 
     public void stopJob(String jobId) {
@@ -280,7 +262,7 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     private class FlowRunnerTask implements Runnable {
-        final private StepRunnerFactory stepRunnerFactory;
+
         private String jobId;
         private Flow flow;
         private Queue<String> stepQueue;
@@ -289,14 +271,12 @@ public class FlowRunnerImpl implements FlowRunner{
             return stepQueue;
         }
 
-        FlowRunnerTask(StepRunnerFactory stepRunnerFactory, Flow flow, String jobId) {
-            this.stepRunnerFactory = stepRunnerFactory;
+        FlowRunnerTask(Flow flow, String jobId) {
             this.jobId = jobId;
             this.flow = flow;
         }
 
-        FlowRunnerTask(StepRunnerFactory stepRunnerFactory, Flow flow, String jobId, Queue<String> stepQueue) {
-            this.stepRunnerFactory = stepRunnerFactory;
+        FlowRunnerTask(Flow flow, String jobId, Queue<String> stepQueue) {
             this.jobId = jobId;
             this.flow = flow;
             this.stepQueue = stepQueue;
@@ -334,7 +314,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Initializing stepBatchSize to default flow batch size
 
                 try {
-                    stepRunner = this.stepRunnerFactory.getStepRunner(runningFlow, stepNum)
+                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
                         .withOptions(optsMap)
                         .onItemComplete((jobID, itemID) -> {
@@ -544,7 +524,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Run the next step
                 else {
                     if (threadPool != null && !threadPool.isTerminating()) {
-                        threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
+                        threadPool.execute(new FlowRunnerTask(runningFlow, runningJobId));
                     }
                 }
             }

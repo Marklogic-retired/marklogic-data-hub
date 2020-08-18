@@ -95,7 +95,10 @@ public class DataHubImpl implements DataHub, InitializingBean {
     private Versions versions;
 
     @Autowired
-    private FlowRunner flowRunner;
+    FlowRunner flowRunner;
+
+    @Autowired
+    FlowManager flowManager;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -900,7 +903,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
             }
 
             hubConfig.initHubProject();
-            hubConfig.getHubProject().upgradeProject();
+            hubConfig.getHubProject().upgradeProject(flowManager);
             System.out.println("Starting in version 5.2.0, the default value of mlModulePermissions has been changed to \"data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute\". " +
                 "It is recommended to remove this property from gradle.properties unless you must customize the value." );
 

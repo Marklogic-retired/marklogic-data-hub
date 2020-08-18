@@ -24,6 +24,7 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-class TraceServiceTest extends AbstractServiceTest {
+class TraceServiceTest extends AbstractWebTest {
 
     private DatabaseClient traceClient;
     private static String ENTITY = "test-entity";
@@ -58,7 +59,8 @@ class TraceServiceTest extends AbstractServiceTest {
         traceClient = getDataHubAdminConfig().newJobDbClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
         LegacyFlow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
-        flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
+        flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> {
+        });
     }
 
     @Test

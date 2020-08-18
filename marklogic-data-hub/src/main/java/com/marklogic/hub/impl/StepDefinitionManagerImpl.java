@@ -18,12 +18,16 @@ package com.marklogic.hub.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
+import com.marklogic.hub.step.StepDefinitionProvider;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.hub.util.json.JSONObject;
 import com.marklogic.hub.util.json.JSONStreamWriter;
@@ -39,16 +43,24 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Component
-public class StepDefinitionManagerImpl extends LoggingObject implements StepDefinitionManager {
+public class StepDefinitionManagerImpl extends LoggingObject implements StepDefinitionManager, StepDefinitionProvider {
 
     @Autowired
     private HubConfig hubConfig;
+
+    private HubClient hubClient;
+    private HubProject hubProject;
 
     public StepDefinitionManagerImpl() {}
 
     public StepDefinitionManagerImpl(HubConfig hubConfig) {
         this();
         this.hubConfig = hubConfig;
+    }
+
+    public StepDefinitionManagerImpl(HubClient hubClient, HubProject hubProject) {
+        this.hubClient = hubClient;
+        this.hubProject = hubProject;
     }
 
     @Override
@@ -63,7 +75,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
                 stepDefinition.incrementVersion();
             }
 
-            Path dir = resolvePath(hubConfig.getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
+            Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
             }
@@ -83,7 +95,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
     @Override
     public void deleteStepDefinition(StepDefinition stepDefinition) {
         final String name = stepDefinition.getName();
-        Path dir = resolvePath(hubConfig.getStepDefinitionPath(stepDefinition.getType()), name);
+        Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), name);
         if (dir.toFile().exists()) {
             try {
                 logger.info(format("Deleting step definition with name '%s' in directory: %s", name, dir.toFile()));
@@ -108,7 +120,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
     //TODO: Should this look into db first ?
     @Override
     public StepDefinition getStepDefinition(String name, StepDefinition.StepDefinitionType type) {
-        Path stepPath = resolvePath(hubConfig.getStepDefinitionPath(type), name);
+        Path stepPath = resolvePath(getHubProject().getStepDefinitionPath(type), name);
 
         try {
             String targetFileName = name + STEP_DEFINITION_FILE_EXTENSION;
@@ -143,7 +155,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
 
     @Override
     public ArrayList<String> getStepDefinitionNamesByType(StepDefinition.StepDefinitionType type) {
-        return (ArrayList<String>) FileUtil.listDirectFolders(hubConfig.getStepDefinitionPath(type));
+        return (ArrayList<String>) FileUtil.listDirectFolders(getHubProject().getStepDefinitionPath(type));
     }
 
     @Override
@@ -178,7 +190,12 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         return path.resolve(more);
     }
 
+    private HubProject getHubProject() {
+        return hubProject != null ? hubProject : hubConfig.getHubProject();
+    }
+
     private ArtifactService getArtifactService() {
-        return ArtifactService.on(hubConfig.newStagingClient(null));
+        DatabaseClient client = hubClient != null ? hubClient.getStagingClient() : hubConfig.newStagingClient(null);
+        return ArtifactService.on(client);
     }
 }

@@ -110,4 +110,8 @@ public class ProjectsController {
         settings.setProjectDir(project.path);
         return settings;
     }
+
+    public void setHubConfig(HubConfigImpl hubConfig) {
+        this.hubConfig = hubConfig;
+    }
 }

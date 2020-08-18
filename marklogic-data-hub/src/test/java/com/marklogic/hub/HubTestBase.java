@@ -43,7 +43,6 @@ import com.marklogic.hub.deploy.commands.LoadHubModulesCommand;
 import com.marklogic.hub.error.DataHubConfigurationException;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.legacy.LegacyDebugging;
 import com.marklogic.hub.legacy.LegacyTracing;
@@ -54,6 +53,7 @@ import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.test.AbstractHubTest;
+import com.marklogic.hub.test.HubConfigInterceptor;
 import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
@@ -62,16 +62,13 @@ import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -80,7 +77,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
@@ -89,16 +85,19 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 
 @SuppressWarnings("deprecation")
-@Component
-public class HubTestBase extends AbstractHubTest implements InitializingBean {
+/**
+ * Do not extend this class - extend AbstractHubCoreTest for core tests, and for subprojects that depend on the core
+ * project, check the subproject for an existing extension of this that you should extend.
+ */
+public class HubTestBase extends AbstractHubTest {
 
-    private static final String PROJECT_PATH = "ye-olde-project";
+    @Autowired
+    protected HubConfigInterceptor hubConfigInterceptor;
 
     /**
      * This is a misleading name; it's really "the current HubConfig being used by tests". It's actually rarely a user
@@ -158,7 +157,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
     public static SSLContext certContext;
     static SSLContext flowDevelopercertContext;
     static SSLContext flowOperatorcertContext;
-    private Properties properties = new Properties();
     public GenericDocumentManager stagingDocMgr;
     public GenericDocumentManager flowRunnerDocMgr;
     public GenericDocumentManager finalDocMgr;
@@ -192,19 +190,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         return getHubProject().getProjectDir().toFile();
     }
 
-
-    /**
-     * Some subclasses of this may have tests that need to change the user of the ManageClient instance. But since many
-     * other tests depend on this object having the flow-developer user as its user, we need to set the adminHubConfig
-     * back to that user.
-     */
-    @AfterEach
-    void resetManageClientBackToFlowDeveloper() {
-        if (adminHubConfig != null) {
-            applyMlUsernameAndMlPassword(user, password);
-        }
-    }
-
     protected void sleep(long ms) {
         try {
             Thread.sleep(ms);
@@ -213,42 +198,23 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         }
     }
 
-    protected void basicSetup() {
-        XMLUnit.setIgnoreWhitespace(true);
-        createProjectDir();
+    @AfterEach
+    protected void afterEachHubTestBaseTest() {
+        hubConfigInterceptor.releaseHubConfig(Thread.currentThread().getName());
     }
 
-    protected void init() {
-        createProjectDir();
-        adminHubConfig.createProject(PROJECT_PATH);
-        if (!getHubProject().isInitialized()) {
-            adminHubConfig.initHubProject();
-        }
-        // note the app config loads dhf defaults from classpath
-        InputStream p2 = null;
-        try {
-            Properties p = new Properties();
-            p2 = new FileInputStream("gradle.properties");
-            p.load(p2);
-            properties.putAll(p);
-        } catch (IOException e) {
-            System.err.println("Properties file not loaded.");
-        } finally {
-            IOUtils.closeQuietly(p2);
-        }
+    /**
+     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
+     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
+     * <p>This method allows the bean instance to perform validation of its overall
+     * configuration and final initialization when all bean properties have been set.
+     */
+    @BeforeEach
+    protected void beforeEachHubTestBaseTest() {
+        hubConfigInterceptor.claimHubConfig(Thread.currentThread().getName());
 
-        // try to load the local environment overrides file
-        InputStream is = null;
-        try {
-            Properties p = new Properties();
-            is = new FileInputStream("gradle-local.properties");
-            p.load(is);
-            properties.putAll(p);
-        } catch (IOException e) {
-            System.err.println("gradle-local.properties file not loaded.");
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+        Properties properties = hubConfigInterceptor.getGradleProperties();
+
         boolean sslStaging = Boolean.parseBoolean(properties.getProperty("mlStagingSimpleSsl"));
         boolean sslJob = Boolean.parseBoolean(properties.getProperty("mlJobSimpleSsl"));
         boolean sslFinal = Boolean.parseBoolean(properties.getProperty("mlFinalSimpleSsl"));
@@ -256,7 +222,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             setSslRun(true);
         }
 
-        host = properties.getProperty("mlHost");
+        // Need to use the host from the HubConfigImpl that we just obtained, not from properties
+        host = getHubConfig().getHost();
+
         stagingPort = Integer.parseInt(properties.getProperty("mlStagingPort"));
         jobPort = Integer.parseInt(properties.getProperty("mlJobPort"));
         finalPort = Integer.parseInt(properties.getProperty("mlFinalPort"));
@@ -272,7 +240,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         if (isHostLB != null) {
             isHostLoadBalancer = Boolean.parseBoolean(isHostLB);
         }
-
 
         //TODO refactor to new JCL Security context
         String auth = properties.getProperty("mlStagingAuth");
@@ -299,6 +266,9 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             setCertAuth(true);
         }
 
+        // Until we can get rid of all the state below, need to construct these objects as a flow-developer
+        runAsFlowDeveloper();
+
         try {
             stagingClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, user, password, stagingAuthMethod);
             flowRunnerClient = getClient(host, stagingPort, HubConfig.DEFAULT_STAGING_NAME, flowRunnerUser, flowRunnerPassword, stagingAuthMethod);
@@ -311,16 +281,13 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             jobClient = getClient(host, jobPort, HubConfig.DEFAULT_JOB_NAME, user, password, jobAuthMethod);
             jobModulesClient = getClient(host, stagingPort, HubConfig.DEFAULT_MODULES_DB_NAME, manageUser, managePassword, jobAuthMethod);
         } catch (Exception e) {
-            System.err.println("client objects not created.");
-            e.printStackTrace();
+            throw new RuntimeException("Unable to create client objects: " + e.getMessage(), e);
         }
         stagingDocMgr = stagingClient.newDocumentManager();
         flowRunnerDocMgr = flowRunnerClient.newDocumentManager();
         finalDocMgr = finalClient.newDocumentManager();
         jobDocMgr = jobClient.newJSONDocumentManager();
         modMgr = stagingModulesClient.newDocumentManager();
-
-        adminHubConfig.applyProperties(new SimplePropertySource(properties));
 
         if (isSslRun() || isCertAuth()) {
             certInit();
@@ -512,57 +479,14 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         return dataHub;
     }
 
-
-    public void createProjectDir() {
-        createProjectDir(PROJECT_PATH);
-    }
-
-    // this method creates a project dir and copies the gradle.properties in.
-    public void createProjectDir(String projectDirName) {
-        File projectDir = new File(projectDirName);
-        if (!projectDir.isDirectory() || !projectDir.exists()) {
-            projectDir.mkdirs();
-        }
-
-        // force module loads for new test runs.
-        File timestampDirectory = new File(projectDir + "/.tmp");
-        if (timestampDirectory.exists()) {
-            try {
-                FileUtils.forceDelete(timestampDirectory);
-            } catch (Exception ex) {
-                logger.warn("Unable to delete .tmp directory: " + ex.getMessage());
-            }
-        }
-
-        File finalTimestampDirectory = new File("build/ml-javaclient-util");
-        if (finalTimestampDirectory.exists()) {
-            try {
-                FileUtils.forceDelete(finalTimestampDirectory);
-            } catch (Exception ex) {
-                logger.warn("Unable to delete build/ml-javaclient-util directory: " + ex.getMessage());
-            }
-        }
-
-        try {
-            Path devProperties = Paths.get(".").resolve("gradle.properties");
-            Path projectProperties = projectDir.toPath().resolve("gradle.properties");
-            Files.copy(devProperties, projectProperties, REPLACE_EXISTING);
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        // note at this point the properties from the project have not been  read.  maybe
-        // props reading should be in this directory...
-    }
-
     private void certInit() {
         adminHubConfig.setMlUsername(user);
         adminHubConfig.setMlPassword(password);
 
         appConfig = adminHubConfig.getAppConfig();
-        manageConfig = ((HubConfigImpl) adminHubConfig).getManageConfig();
-        manageClient = ((HubConfigImpl) adminHubConfig).getManageClient();
-        adminConfig = ((HubConfigImpl) adminHubConfig).getAdminConfig();
+        manageConfig = adminHubConfig.getManageConfig();
+        manageClient = adminHubConfig.getManageClient();
+        adminConfig = adminHubConfig.getAdminConfig();
 
         if (isCertAuth()) {
 
@@ -1131,20 +1055,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
-    }
-
-    /**
-     * Invoked by the containing {@code BeanFactory} after it has set all bean properties
-     * and satisfied {@link BeanFactoryAware}, {@code ApplicationContextAware} etc.
-     * <p>This method allows the bean instance to perform validation of its overall
-     * configuration and final initialization when all bean properties have been set.
-     *
-     * @throws Exception in the event of misconfiguration (such as failure to set an
-     *                   essential property) or if initialization fails for any other reason
-     */
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        init();
     }
 
     /**
