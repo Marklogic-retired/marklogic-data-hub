@@ -1,4 +1,4 @@
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FlowMigratorTest extends AbstractHubCoreTest {
+class FlowConverterTest extends AbstractHubCoreTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -50,55 +50,55 @@ class FlowMigratorTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void setUp() {
-        installProjectInFolder("flow-migration-test");
+        installProjectInFolder("flow-conversion-test");
     }
 
     @Test
-    void migrateFlows() {
+    void convertFlows() {
         HubConfig hubConfig = getHubConfig();
         MappingManager mappingManager = new MappingManagerImpl(hubConfig);
         FlowManager flowManager = new FlowManagerImpl(hubConfig, mappingManager);
         flowManager.getLocalFlows().forEach(flow ->flowMap.put(flow.getName(), flow));
         mappingManager.getMappings().forEach(mapping -> mappingMap.put(mapping.getName(), mapping));
 
-        FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
+        FlowConverter flowConverter = new FlowConverter(hubConfig);
 
-        flowMigrator.migrateFlows();
+        flowConverter.convertFlows();
         verifyLegacyMappingsStillExistInMarkLogic();
-        verifyFlowsWereMigrated();
+        verifyFlowsWereConverted();
 
-        flowMigrator.deleteLegacyMappings();
+        flowConverter.deleteLegacyMappings();
         verifyLegacyMappingsWereDeletedFromMarkLogic();
     }
 
     @Test
-    void migrateFlowsTwice() {
+    void convertFlowsTwice() {
         HubConfig hubConfig = getHubConfig();
         MappingManager mappingManager = new MappingManagerImpl(hubConfig);
         FlowManager flowManager = new FlowManagerImpl(hubConfig, mappingManager);
         flowManager.getLocalFlows().forEach(flow ->flowMap.put(flow.getName(), flow));
         mappingManager.getMappings().forEach(mapping -> mappingMap.put(mapping.getName(), mapping));
 
-        FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
+        FlowConverter converter = new FlowConverter(hubConfig);
 
-        flowMigrator.migrateFlows();
-        // migrateFlows() should be a no-op the 2nd time
-        flowMigrator.migrateFlows();
+        converter.convertFlows();
+        // convertFlows() should be a no-op the 2nd time
+        converter.convertFlows();
 
         verifyLegacyMappingsStillExistInMarkLogic();
-        verifyFlowsWereMigrated();
+        verifyFlowsWereConverted();
     }
 
-    private void verifyFlowsWereMigrated() {
+    private void verifyFlowsWereConverted() {
         HubProject hubProject = getHubConfig().getHubProject();
 
-        Path migratedFlows = hubProject.getProjectDir().resolve("migrated-flows");
+        Path convertedFlows = hubProject.getProjectDir().resolve("converted-flows");
 
-        assertTrue(migratedFlows.toFile().exists());
+        assertTrue(convertedFlows.toFile().exists());
         assertFalse(hubProject.getHubMappingsDir().toFile().exists());
 
-        assertTrue(migratedFlows.resolve("flows").toFile().listFiles().length > 0);
-        assertTrue(migratedFlows.resolve("mappings").toFile().listFiles().length > 0);
+        assertTrue(convertedFlows.resolve("flows").toFile().listFiles().length > 0);
+        assertTrue(convertedFlows.resolve("mappings").toFile().listFiles().length > 0);
 
         verifyFlows(hubProject);
         verifyIngestionSteps(hubProject, flowMap);
@@ -290,7 +290,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
             fieldNotExpected = Set.of("outputFormat");
         }
         // in case of custom steps, "collections" have been tested separately,"outputFormat", "targetEntity" properties
-        // are removed from migrated steps
+        // are removed from converted steps
         else {
             fieldNotExpected = Set.of("outputFormat", "targetEntity", "collections");
         }
@@ -342,7 +342,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
     private void verifyLegacyMappingsStillExistInMarkLogic() {
         Stream.of(getHubClient().getStagingClient().newJSONDocumentManager(), getHubClient().getFinalClient().newJSONDocumentManager()).forEach(mgr -> {
             legacyMappingUris.forEach(uri -> {
-                assertNotNull(mgr.exists(uri), "Migrating the flows only affects the project files and does not impact " +
+                assertNotNull(mgr.exists(uri), "Converting the flows only affects the project files and does not impact " +
                     "what's deployed to ML; did not find URI: " + uri);
             });
         });
@@ -356,7 +356,7 @@ class FlowMigratorTest extends AbstractHubCoreTest {
             });
 
             expectedStepUris.forEach(uri -> {
-                assertNotNull(mgr.exists(uri), "Expected each migrated step to still exist: " + uri);
+                assertNotNull(mgr.exists(uri), "Expected each converted step to still exist: " + uri);
             });
 
             assertEquals(1, expectOneOfTheseStepUris.stream().filter(uri -> mgr.exists(uri) != null).count(),

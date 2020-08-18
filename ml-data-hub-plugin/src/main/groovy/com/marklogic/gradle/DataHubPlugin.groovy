@@ -29,7 +29,7 @@ import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
 import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
-import com.marklogic.hub.gradle.task.MigrateProjectForHubCentralTask
+import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
@@ -114,12 +114,12 @@ class DataHubPlugin implements Plugin<Project> {
                 "deleting all such user configuration files in the project directory, "+
                 "and finally extracting the contents of the downloaded zip into the project directory.")
 
-        String hubMigrationGroup = "Data Hub Migration"
-        project.task("hubDeleteLegacyMappings", group: hubMigrationGroup, type: DeleteLegacyMappingsTask,
+        String hubConversionGroup = "Data Hub Conversion"
+        project.task("hubDeleteLegacyMappings", group: hubConversionGroup, type: DeleteLegacyMappingsTask,
             description: "Delete installed legacy mappings, which are mappings that have not been converted into the format required by Hub Central"
         ).mustRunAfter("hubDeployUserArtifacts")
-        project.task("hubMigrateForHubCentral", group: hubMigrationGroup, type: MigrateProjectForHubCentralTask,
-            description: "Migrate flows, mappings and entity models in the local project that were created before version 5.3.0 into the new format required for usage within Hub Central"
+        project.task("hubConvertForHubCentral", group: hubConversionGroup, type: ConvertForHubCentralTask,
+            description: "Convert flows, mappings and entity models in the local project that were created before version 5.3.0 into the new format required for usage within Hub Central"
         ).finalizedBy(["hubSaveIndexes"])
 
         String scaffoldGroup = "MarkLogic Data Hub Scaffolding"

@@ -1,4 +1,4 @@
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -15,9 +15,9 @@ import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class FlowMigratorUnitTest {
+public class FlowConverterUnitTest {
 
-    FlowMigrator migrator = new FlowMigrator(new HubConfigImpl());
+    FlowConverter converter = new FlowConverter(new HubConfigImpl());
     ObjectMapper objectMapper = new ObjectMapper();
     MappingImpl mapping;
 
@@ -79,7 +79,7 @@ public class FlowMigratorUnitTest {
         inlineStep.getOptions().put("sourceCollection", "something");
         inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.CUSTOM);
         step = buildStepArtifact();
-        assertTrue(step.has("sourceCollection"), "we don't care about options set in custom step and migrate them as is");
+        assertTrue(step.has("sourceCollection"), "we don't care about options set in custom step and convert them as is");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class FlowMigratorUnitTest {
     }
 
     @Test
-    void migrateMappingWithVersion0() {
+    void convertMappingWithVersion0() {
         mapping = new MappingImpl("MappingVersion0");
         mapping.setVersion(0);
         inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
@@ -104,7 +104,7 @@ public class FlowMigratorUnitTest {
     void getMappingArtifact() {
         //Ensure null is returned when step options doesn't have 'mapping'
         inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        assertNull(migrator.getMappingArtifact("dummyFlow", inlineStep));
+        assertNull(converter.getMappingArtifact("dummyFlow", inlineStep));
     }
 
     @Test
@@ -143,7 +143,7 @@ public class FlowMigratorUnitTest {
         inlineStep.getOptions().put("targetEntity", "");
 
         ObjectNode step = buildStepArtifact();
-        assertTrue(step.has("targetEntityType"), "targetEntity should have been converted to targetEntityType since custom steps are being migrated");
+        assertTrue(step.has("targetEntityType"), "targetEntity should have been converted to targetEntityType since custom steps are being converted");
         assertEquals("", step.get("targetEntityType").asText());
     }
 
@@ -243,6 +243,6 @@ public class FlowMigratorUnitTest {
     }
 
     private ObjectNode buildStepArtifact() {
-        return migrator.buildStepArtifact(inlineStep, mapping, "myFlow");
+        return converter.buildStepArtifact(inlineStep, mapping, "myFlow");
     }
 }

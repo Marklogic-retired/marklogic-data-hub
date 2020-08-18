@@ -29,4 +29,4 @@ fi
         ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
         ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
         ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2' --info --stacktrace
-        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=migratedFlow --info --stacktrace
+        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=convertedFlow --info --stacktrace
