@@ -38,6 +38,8 @@ describe("Results Table view component", () => {
         expect(getByText('Ellerslie2')).toBeInTheDocument();
         expect(getByTestId('101-detailOnSeparatePage')).toBeInTheDocument();
         expect(getByTestId('101-sourceOnSeparatePage')).toBeInTheDocument();
+        expect(getByText('""')).toBeInTheDocument();
+        expect(getByText('null')).toBeInTheDocument();
 
         //Check if the tooltip on 'Detail on separate page' icon works fine.
         fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))

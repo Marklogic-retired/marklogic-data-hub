@@ -123,13 +123,14 @@ const ResultsTabularView = (props) => {
                         if (Array.isArray(value)) {
                             let values = new Array();
                             value.forEach(item => {
-                                if (item) {
-                                    let title = item.toString();
-                                    if (title && title.length > 0) {
+                                let val = item === null ? 'null' : item === "" ? '""' : item;
+                                if (val !== undefined) {
+                                    let title = val.toString();
+                                    if (title) {
                                         values.push(
                                             <MLTooltip
                                                 title={title}>
-                                                <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{item}</div>
+                                                <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{title}</div>
                                             </MLTooltip>
                                         )
                                     }
