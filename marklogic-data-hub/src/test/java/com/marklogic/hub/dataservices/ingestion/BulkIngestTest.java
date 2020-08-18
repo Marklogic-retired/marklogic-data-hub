@@ -74,7 +74,7 @@ public class BulkIngestTest extends HubTestBase {
     void checkResults(String uri) {
         JSONDocumentManager jd = db.newJSONDocumentManager();
         JsonNode doc = jd.read(uri, new JacksonHandle()).get();
-        assertNotNull("Could not find file "+uri);
-        assertNotNull("document "+uri+" is null "+doc);
+        assertNotNull("Could not find file ",uri);
+        assertNotNull("document "+uri+" is null ",doc);
     }
 }
