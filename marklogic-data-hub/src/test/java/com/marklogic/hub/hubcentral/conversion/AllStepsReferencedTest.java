@@ -1,38 +1,27 @@
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.marklogic.client.document.JSONDocumentManager;
-import com.marklogic.client.eval.EvalResult;
-import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.hub.*;
-import com.marklogic.hub.dataservices.FlowService;
-import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.impl.FlowManagerImpl;
-import com.marklogic.hub.impl.MappingManagerImpl;
-import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepDefinition;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class AllStepsReferencedTest extends AbstractHubCoreTest {
-
-    ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     FlowRunner flowRunner;
@@ -44,21 +33,21 @@ class AllStepsReferencedTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void validateMigratedFlowsAndSteps() {
+    void validateConvertedFlowsAndSteps() {
         HubConfig hubConfig = getHubConfig();
 
-        FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
-        flowMigrator.migrateFlows();
+        FlowConverter flowConverter = new FlowConverter(hubConfig);
+        flowConverter.convertFlows();
 
         validateFullyReferencedFlowsAndSteps();
     }
 
     @Test
-    void migrateAndRunCompleteFlow() {
+    void convertAndRunCompleteFlow() {
         HubConfig hubConfig = getHubConfig();
 
-        FlowMigrator flowMigrator = new FlowMigrator(hubConfig);
-        flowMigrator.migrateFlows();
+        FlowConverter flowConverter = new FlowConverter(hubConfig);
+        flowConverter.convertFlows();
         installUserArtifacts();
 
         RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("CurateCustomerJSON", "1", "2", "3", "4"));

@@ -1,4 +1,4 @@
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EntityModelMigratorTest extends AbstractHubCoreTest {
+public class EntityModelConverterTest extends AbstractHubCoreTest {
 
     private static final List<String> customerFacetableProperties = Arrays.asList("name", "nicknames", "birthDate", "status");
 
@@ -29,7 +29,7 @@ public class EntityModelMigratorTest extends AbstractHubCoreTest {
         HubProject hubProject = hubConfig.getHubProject();
         File testProjectDir = null;
         try {
-            testProjectDir = new ClassPathResource("entity-migration-test").getFile();
+            testProjectDir = new ClassPathResource("entity-conversion-test").getFile();
             File entitiesDir = new File(testProjectDir, "entities");
             if (entitiesDir.exists()) {
                 FileUtils.copyDirectory(entitiesDir, hubProject.getHubEntitiesDir().toFile());
@@ -40,106 +40,106 @@ public class EntityModelMigratorTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void testEntityModelValidForMigration() {
+    void testEntityModelValidForConversion() {
         HubProject hubProject = getHubConfig().getHubProject();
-        HubCentralMigrator hubCentralMigrator = new HubCentralMigrator(getHubConfig());
+        HubCentralConverter hubCentralConverter = new HubCentralConverter(getHubConfig());
         Path entitiesDir = hubProject.getHubEntitiesDir();
 
         String currentFileName = "Customer.entity.json";
         JsonNode customerEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) customerEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) customerEntity));
 
         currentFileName = "NoInfo.entity.json";
         JsonNode noInfoEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noInfoEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noInfoEntity));
 
         currentFileName = "NoInfoTitle.entity.json";
         JsonNode noInfoTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noInfoTitleEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noInfoTitleEntity));
 
         currentFileName = "EmptyTitle.entity.json";
         JsonNode emptyTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) emptyTitleEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) emptyTitleEntity));
 
         currentFileName = "NoDefinitions.entity.json";
         JsonNode noDefinitionsEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noDefinitionsEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noDefinitionsEntity));
 
         currentFileName = "NoEntityType.entity.json";
         JsonNode noEntityTypeEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noEntityTypeEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noEntityTypeEntity));
 
         currentFileName = "NoProperties.entity.json";
         JsonNode noPropertiesEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noPropertiesEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noPropertiesEntity));
 
         currentFileName = "NoIndexArrays.entity.json";
         JsonNode noIndexArraysEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) noIndexArraysEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noIndexArraysEntity));
 
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
 
         currentFileName = "EmptyFile.entity.json";
         JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelValidForMigration(currentFileName, (ObjectNode) emptyFileEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) emptyFileEntity));
     }
 
     @Test
-    void testEntityModelRequiresMigration() {
+    void testEntityModelRequiresConversion() {
         HubProject hubProject = getHubConfig().getHubProject();
-        HubCentralMigrator hubCentralMigrator = new HubCentralMigrator(getHubConfig());
+        HubCentralConverter hubCentralConverter = new HubCentralConverter(getHubConfig());
         Path entitiesDir = hubProject.getHubEntitiesDir();
 
         String currentFileName = "Customer.entity.json";
         JsonNode customerEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) customerEntity));
+        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) customerEntity));
 
         currentFileName = "NoInfo.entity.json";
         JsonNode noInfoEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noInfoEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noInfoEntity));
 
         currentFileName = "NoInfoTitle.entity.json";
         JsonNode noInfoTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noInfoTitleEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noInfoTitleEntity));
 
         currentFileName = "EmptyTitle.entity.json";
         JsonNode emptyTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) emptyTitleEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) emptyTitleEntity));
 
         currentFileName = "NoDefinitions.entity.json";
         JsonNode noDefinitionsEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noDefinitionsEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noDefinitionsEntity));
 
         currentFileName = "NoEntityType.entity.json";
         JsonNode noEntityTypeEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noEntityTypeEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noEntityTypeEntity));
 
         currentFileName = "NoProperties.entity.json";
         JsonNode noPropertiesEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noPropertiesEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noPropertiesEntity));
 
         currentFileName = "NoIndexArrays.entity.json";
         JsonNode noIndexArraysEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) noIndexArraysEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noIndexArraysEntity));
 
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
+        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
 
         currentFileName = "EmptyFile.entity.json";
         JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralMigrator.entityModelRequiresMigration(currentFileName, (ObjectNode) emptyFileEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) emptyFileEntity));
     }
 
     @Test
-    void migrateEntityModels() {
+    void convertEntityModels() {
         HubProject hubProject = getHubConfig().getHubProject();
-        HubCentralMigrator hubCentralMigrator = new HubCentralMigrator(getHubConfig());
-        hubCentralMigrator.migrateEntityModels();
+        HubCentralConverter hubCentralConverter = new HubCentralConverter(getHubConfig());
+        hubCentralConverter.convertEntityModels();
 
-        File backupDir = hubProject.getProjectDir().resolve("migrated-entities").toFile();
+        File backupDir = hubProject.getProjectDir().resolve("converted-entities").toFile();
         assertTrue(backupDir.exists());
 
         verifyCustomerEntityModel(hubProject);

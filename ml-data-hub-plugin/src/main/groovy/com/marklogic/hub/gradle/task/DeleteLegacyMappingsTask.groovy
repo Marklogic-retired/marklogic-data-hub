@@ -1,13 +1,13 @@
 package com.marklogic.hub.gradle.task
 
 import com.marklogic.gradle.task.AbstractConfirmableHubTask
-import com.marklogic.hub.hubcentral.migration.FlowMigrator
+import com.marklogic.hub.hubcentral.conversion.FlowConverter
 
 class DeleteLegacyMappingsTask extends AbstractConfirmableHubTask {
 
     @Override
     void executeIfConfirmed() {
-        new FlowMigrator(getProject().property("hubConfig")).deleteLegacyMappings()
+        new FlowConverter(getProject().property("hubConfig")).deleteLegacyMappings()
     }
 
 }

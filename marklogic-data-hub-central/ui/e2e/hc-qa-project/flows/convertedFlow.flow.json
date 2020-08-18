@@ -1,5 +1,5 @@
 {
-  "name" : "migratedFlow",
+  "name" : "convertedFlow",
   "steps" : {
     "1" : {
       "stepId" : "ingest-orders-ingestion"

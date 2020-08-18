@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,23 +51,23 @@ import java.util.stream.Stream;
 
 
 /**
- * Class for migrating pre-5.3.0 flows to  5.3.0 and above versions
+ * Class for converting pre-5.3.0 artifacts to 5.3.0 and above versions
  */
-public class FlowMigrator extends LoggingObject {
+public class FlowConverter extends LoggingObject {
 
     private MappingManager mappingManager;
     private FlowManager flowManager;
     private HubConfig hubConfig;
     private ObjectMapper mapper = new ObjectMapper();
 
-    public FlowMigrator(HubConfig hubConfig) {
+    public FlowConverter(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
         this.mappingManager = new MappingManagerImpl(hubConfig);
         this.flowManager = new FlowManagerImpl(hubConfig, mappingManager);
     }
 
     /**
-     * After flows have been migrated, a user needs to delete any legacy mappings that exist, as these have now been
+     * After flows have been converted, a user needs to delete any legacy mappings that exist, as these have now been
      * converted to mapping steps. Fortunately, a delete trigger exists on these to also delete the xml/xslt documents
      * associated with them.
      */
@@ -93,29 +93,29 @@ public class FlowMigrator extends LoggingObject {
     }
 
     /**
-     * Migrate the flow files in a user's local project. Does not make any changes to what's stored in MarkLogic.
+     * Convert the flow files in a user's local project. Does not make any changes to what's stored in MarkLogic.
      */
-    public void migrateFlows() {
+    public void convertFlows() {
         HubProject hubProject = hubConfig.getHubProject();
         final File flowsDir = hubProject.getFlowsDir().toFile();
         if (!flowsDir.exists()) {
-            logger.warn("No flows directory exists, so no flows will be migrated");
+            logger.warn("No flows directory exists, so no flows will be converted");
             return;
         }
 
-        logger.warn("Beginning migration of flows containing ingestion, mapping or any of the custom steps");
+        logger.warn("Beginning conversion of flows containing ingestion, mapping or any of the custom steps");
 
         //Backup flows and mappings
-        Path migratedFlowsPath = hubProject.getProjectDir().resolve("migrated-flows");
+        Path convertedFlowsPath = hubProject.getProjectDir().resolve("converted-flows");
         try {
-            migratedFlowsPath.toFile().mkdirs();
-            FileUtils.copyDirectory(flowsDir, migratedFlowsPath.resolve("flows").toFile());
+            convertedFlowsPath.toFile().mkdirs();
+            FileUtils.copyDirectory(flowsDir, convertedFlowsPath.resolve("flows").toFile());
             File mappingsDir = hubProject.getHubMappingsDir().toFile();
             if (mappingsDir.exists()) {
-                FileUtils.copyDirectory(mappingsDir, migratedFlowsPath.resolve("mappings").toFile());
+                FileUtils.copyDirectory(mappingsDir, convertedFlowsPath.resolve("mappings").toFile());
             }
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't migrate flows as backing up flows failed : " + e.getMessage(), e);
+            throw new RuntimeException("Couldn't convert flows as backing up flows failed : " + e.getMessage(), e);
         }
 
         Path stepsDir = hubProject.getProjectDir().resolve("steps");
@@ -134,7 +134,7 @@ public class FlowMigrator extends LoggingObject {
             mappingDir.toFile().mkdirs();
             customStepDir.toFile().mkdirs();
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't migrate flows as creation of step artifact directories failed : " + e.getMessage(), e);
+            throw new RuntimeException("Couldn't convert flows as creation of step artifact directories failed : " + e.getMessage(), e);
         }
 
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
@@ -142,7 +142,7 @@ public class FlowMigrator extends LoggingObject {
 
         for (Flow flow : flowManager.getLocalFlows()) {
             Map<String, Step> steps = flow.getSteps();
-            logger.warn(format("Migrating flow '%s'", flow.getName()));
+            logger.warn(format("Converting flow '%s'", flow.getName()));
 
             ObjectNode newFlow = nodeFactory.objectNode();
             newFlow.put("name", flow.getName());
@@ -173,7 +173,7 @@ public class FlowMigrator extends LoggingObject {
                         stepId= String.join("-", step.getName(), StepDefinitionType.MASTERING.toString());
                     }
                     else{
-                        logger.warn(format("The mastering step '%s' will be migrated to a custom step (step with " +
+                        logger.warn(format("The mastering step '%s' will be converted to a custom step (step with " +
                             "step definition type 'custom') as a valid mapping can't be found.", step.getName()));
                         targetDir = customStepDir;
                         stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
@@ -187,7 +187,7 @@ public class FlowMigrator extends LoggingObject {
                         stepId= String.join("-", step.getName(), StepDefinitionType.MAPPING.toString());
                     }
                     else{
-                        logger.warn(format("The custom mapping step '%s' will be migrated to a custom step (step with " +
+                        logger.warn(format("The custom mapping step '%s' will be converted to a custom step (step with " +
                             "step definition type 'custom') as a valid mapping can't be found.", step.getName()));
                         targetDir = customStepDir;
                         stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
@@ -199,7 +199,7 @@ public class FlowMigrator extends LoggingObject {
                     targetDir = customStepDir;
                     stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
                     if (! StepDefinitionType.CUSTOM.equals(step.getStepDefinitionType())){
-                        logger.warn(format("The custom mastering step '%s' will be migrated to a custom step (step with " +
+                        logger.warn(format("The custom mastering step '%s' will be converted to a custom step (step with " +
                             "step definition type 'custom')", step.getName()));
                     }
                     // Change step definition type to "custom" for all other step types(custom mastering, custom steps)
@@ -236,13 +236,13 @@ public class FlowMigrator extends LoggingObject {
             File flowFile = Paths.get(hubProject.getFlowsDir().toString(), flow.getName() + FlowManager.FLOW_FILE_EXTENSION).toFile();
             try {
                 writer.writeValue(flowFile, newFlow);
-                logger.warn(format("Flow '%s' was successfully migrated", flowFile));
+                logger.warn(format("Flow '%s' was successfully converted", flowFile));
             } catch (IOException e) {
-                logger.error(format("Flow '%s' migration failed; cause: %s", flowFile, e.getMessage()), e);
+                logger.error(format("Flow '%s' conversion failed; cause: %s", flowFile, e.getMessage()), e);
             }
         }
 
-        logger.warn("The original flows and mappings have been backed up to the migrated-flows/flows and migrated-flows/mappings directories respectively");
+        logger.warn("The original flows and mappings have been backed up to the converted-flows/flows and converted-flows/mappings directories respectively");
         if (hubProject.getHubMappingsDir().toFile().exists()) {
             try {
                 logger.warn("Removing 'mappings' directory from the project as it is no longer needed");
@@ -252,9 +252,9 @@ public class FlowMigrator extends LoggingObject {
             }
         }
         logger.warn("");
-        logger.warn("Finished migrating flows.");
-        logger.warn("Please examine the migrated flow and step artifact to verify their contents, particularly the collections of each step.");
-        logger.warn("The migration process ensures that steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
+        logger.warn("Finished converting flows.");
+        logger.warn("Please examine the converted flow and step artifact to verify their contents, particularly the collections of each step.");
+        logger.warn("The conversion process ensures that steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
     }
 
     protected Mapping getMappingArtifact(String flowName, Step inlineStep){
@@ -262,7 +262,7 @@ public class FlowMigrator extends LoggingObject {
         JsonNode mappingNode = (JsonNode) inlineStep.getOptions().get("mapping");
         if(mappingNode != null){
             if (!mappingNode.has("name")) {
-                logger.warn(format("Unable to migrate mapping in flow '%s' because it does not have a 'name' property"));
+                logger.warn(format("Unable to convert mapping in flow '%s' because it does not have a 'name' property"));
             } else {
                 String mappingName = mappingNode.get("name").asText();
                 int version = 0;
@@ -306,12 +306,12 @@ public class FlowMigrator extends LoggingObject {
     protected ObjectNode buildStepArtifact(Step inlineStep, Mapping mapping, String flowName) {
         ObjectNode stepArtifact = mapper.valueToTree(inlineStep);
 
-        // Migrate all options to top-level properties in the step
+        // Convert all options to top-level properties in the step
         stepArtifact.remove("options");
         JsonNode options = mapper.valueToTree(inlineStep.getOptions());
         if (options != null) {
             Set<String> fieldsNotToBeCopied = Set.of("mapping", "sourceCollection");
-            //Don't remove any properties from 'options' for custom steps and migrate them as is
+            //Don't remove any properties from 'options' for custom steps and convert them as is
             options.fields().forEachRemaining(kv -> {
                 if (!fieldsNotToBeCopied.contains(kv.getKey()) || inlineStep.getStepDefinitionType().equals(StepDefinitionType.CUSTOM)) {
                     JsonNode value = kv.getValue();
@@ -435,10 +435,10 @@ public class FlowMigrator extends LoggingObject {
     }
 
     /**
-     * To avoid making flow migration depend on connecting to ML, we're implementing a simple approach here to try to
+     * To avoid making flow conversion depend on connecting to ML, we're implementing a simple approach here to try to
      * extract the entity name that should work most of the time. Since the user will be instructed to inspect the
-     * mapping collections after the flow migration is performed, we assume that the user will verify that the
-     * collections are correct after the migration is completed.
+     * mapping collections after the flow conversion is performed, we assume that the user will verify that the
+     * collections are correct after the conversion is completed.
      *
      * @param targetEntityType
      * @return

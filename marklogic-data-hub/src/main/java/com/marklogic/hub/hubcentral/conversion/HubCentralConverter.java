@@ -1,4 +1,4 @@
-package com.marklogic.hub.hubcentral.migration;
+package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -13,57 +13,53 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
-public class HubCentralMigrator extends LoggingObject {
+public class HubCentralConverter extends LoggingObject {
+
     private static final List<String> removableIndexArrays = Arrays.asList("elementRangeIndex", "rangeIndex", "pathRangeIndex");
     private HubConfig hubConfig;
-    private EntityManagerImpl entityManager;
-    private FlowMigrator flowMigrator;
+    private FlowConverter flowConverter;
     private ObjectMapper mapper = new ObjectMapper();
 
-    public HubCentralMigrator(HubConfig hubConfig) {
+    public HubCentralConverter(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
-        this.entityManager = new EntityManagerImpl(hubConfig);
-        this.flowMigrator = new FlowMigrator(this.hubConfig);
+        this.flowConverter = new FlowConverter(this.hubConfig);
     }
 
     /**
-     * Migrate the entity model, flow and mapping files in a user's local project. Does not make any changes to what's stored in MarkLogic.
+     * Convert the entity model, flow and mapping files in a user's local project.
+     * Does not make any changes to what's stored in MarkLogic.
      */
-    public void migrateUserArtifacts() {
-        flowMigrator.migrateFlows();
-        migrateEntityModels();
+    public void convertUserArtifacts() {
+        flowConverter.convertFlows();
+        convertEntityModels();
     }
 
     /**
-     * Migrate the entity model files in a user's local project. Does not make any changes to what's stored in MarkLogic.
+     * Convert the entity model files in a user's local project. Does not make any changes to what's stored in MarkLogic.
      */
-    protected void migrateEntityModels() {
+    protected void convertEntityModels() {
         HubProject hubProject = hubConfig.getHubProject();
         final File entityModelsDir = hubProject.getHubEntitiesDir().toFile();
         if (!entityModelsDir.exists()) {
-            logger.warn("No entities directory exists, so no entity models will be migrated");
+            logger.warn("No entities directory exists, so no entity models will be converted");
             return;
         }
 
-        logger.warn("Beginning migration of entity models in entities directory");
+        logger.warn("Beginning conversion of entity models in entities directory");
 
-        Path migratedEntitiesPath = hubProject.getProjectDir().resolve("migrated-entities");
+        Path convertedEntitiesPath = hubProject.getProjectDir().resolve("converted-entities");
         try {
-            migratedEntitiesPath.toFile().mkdirs();
-            FileUtils.copyDirectory(entityModelsDir, migratedEntitiesPath.toFile());
+            convertedEntitiesPath.toFile().mkdirs();
+            FileUtils.copyDirectory(entityModelsDir, convertedEntitiesPath.toFile());
         } catch (Exception e) {
-            throw new RuntimeException("Couldn't migrate entity models as backing up models failed : " + e.getMessage(), e);
+            throw new RuntimeException("Couldn't convert entity models as backing up models failed : " + e.getMessage(), e);
         }
 
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
-        boolean atLeastOneEntityModelWasMigrated = false;
+        boolean atLeastOneEntityModelWasConverted = false;
         File[] entityModelDefs = entityModelsDir.listFiles((dir, name) -> name.endsWith(EntityManagerImpl.ENTITY_FILE_EXTENSION));
 
         for (File entityModelDef : entityModelDefs) {
@@ -78,7 +74,7 @@ public class HubCentralMigrator extends LoggingObject {
                 logger.error(e.getMessage());
             }
 
-            if (entityModelRequiresMigration(fileName, entityModelNode)) {
+            if (entityModelRequiresConversion(fileName, entityModelNode)) {
                 String title = entityModelNode.get("info").get("title").asText();
                 ObjectNode entityTypeNode = (ObjectNode) entityModelNode.get("definitions").get(title);
 
@@ -95,7 +91,7 @@ public class HubCentralMigrator extends LoggingObject {
                 if (entityTypePropertiesNode == null) {
                     logger.warn("entityTypePropertiesNode is null");
                     entityTypeNode.remove(removableIndexArrays);
-                    atLeastOneEntityModelWasMigrated = true;
+                    atLeastOneEntityModelWasConverted = true;
                     continue;
                 }
 
@@ -111,25 +107,25 @@ public class HubCentralMigrator extends LoggingObject {
 
                 try {
                     writer.writeValue(entityModelDef, entityModelNode);
-                    logger.warn(format("Entity Model '%s' was successfully migrated", entityModelDef));
-                    atLeastOneEntityModelWasMigrated = true;
+                    logger.warn(format("Entity Model '%s' was successfully converted", entityModelDef));
+                    atLeastOneEntityModelWasConverted = true;
                 } catch (IOException e) {
-                    logger.error(format("Entity Model '%s' migration failed; cause: %s", entityModelDef, e.getMessage()), e);
+                    logger.error(format("Entity Model '%s' conversion failed; cause: %s", entityModelDef, e.getMessage()), e);
                 }
             }
         }
 
-        if (atLeastOneEntityModelWasMigrated) {
-            logger.warn("Finished migrating entity models.");
+        if (atLeastOneEntityModelWasConverted) {
+            logger.warn("Finished converting entity models.");
             logger.warn("Please examine your entity model files to verify that properties that were listed in the rangeIndex, pathRangeIndex, or elementRangeIndex arrays " +
                     "now have \"facetable\":true in their property definition.\n");
         } else {
-            logger.warn("No entity models required migration, so no project files were modified");
+            logger.warn("No entity models required conversion, so no project files were modified");
         }
     }
 
-    protected boolean entityModelRequiresMigration(String fileName, ObjectNode entityModelNode) {
-        if (!entityModelValidForMigration(fileName, entityModelNode)) {
+    protected boolean entityModelRequiresConversion(String fileName, ObjectNode entityModelNode) {
+        if (!entityModelValidForConversion(fileName, entityModelNode)) {
             return false;
         }
         String firstLevelEntityTypeName = entityModelNode.get("info").get("title").asText();
@@ -138,30 +134,30 @@ public class HubCentralMigrator extends LoggingObject {
                 entityModelNode.get("pathRangeIndex") != null;
     }
 
-    protected boolean entityModelValidForMigration(String fileName, ObjectNode entityModelNode) {
+    protected boolean entityModelValidForConversion(String fileName, ObjectNode entityModelNode) {
         if (entityModelNode == null) {
-            logger.warn(format("No content exist in the entity model definition %s and can not be migrated", fileName));
+            logger.warn(format("No content exist in the entity model definition %s and can not be converted", fileName));
             return false;
         }
 
         if (!entityModelNode.has("info")) {
-            logger.warn(format("Info doesn't exist in the entity model definition %s and can not be migrated", fileName));
+            logger.warn(format("Info doesn't exist in the entity model definition %s and can not be converted", fileName));
             return false;
         }
 
         if (!entityModelNode.get("info").has("title")) {
-            logger.warn(format("Title doesn't exist in the entity model definition %s in the info and can not be migrated", fileName));
+            logger.warn(format("Title doesn't exist in the entity model definition %s in the info and can not be converted", fileName));
             return false;
         }
 
         if (entityModelNode.get("info").get("title") == null || entityModelNode.get("info").get("title").asText().isEmpty()) {
-            logger.warn(format("Title is empty in the entity model definition %s in the info and can not be migrated", fileName));
+            logger.warn(format("Title is empty in the entity model definition %s in the info and can not be converted", fileName));
             return false;
         }
         String title = entityModelNode.get("info").get("title").asText();
 
         if (!entityModelNode.has("definitions")) {
-            logger.warn(format("No definitions found in the entity model definition %s and can not be migrated", fileName));
+            logger.warn(format("No definitions found in the entity model definition %s and can not be converted", fileName));
             return false;
         }
 
