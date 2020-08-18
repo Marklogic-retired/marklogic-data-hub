@@ -31,6 +31,7 @@ public class DeployEntityIndexesTest extends AbstractHubCoreTest {
 
         // Reset the path range indexes on final and staging
         Stream.of(DatabaseKind.STAGING, DatabaseKind.FINAL).forEach(databaseKind -> {
+            logger.warn("SAVING DATABASE; manage config: " + hubConfig.getManageClient().getManageConfig());
             Database db = new Database(new API(hubConfig.getManageClient()), hubConfig.getDbName(databaseKind));
             db.setRangePathIndex(new ArrayList<>());
             db.save();

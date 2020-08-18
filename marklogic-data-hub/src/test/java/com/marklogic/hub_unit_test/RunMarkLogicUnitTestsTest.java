@@ -29,7 +29,7 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
      */
     @Override
     @BeforeEach
-    public void beforeEachHubTestBaseTest() {
+    public void beforeEachHubTestBaseTest(TestInfo testInfo) {
         if (!initialized) {
             // Need to do these things just once, before the first test module is run
             resetHubProject();

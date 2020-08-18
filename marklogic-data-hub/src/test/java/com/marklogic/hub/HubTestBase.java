@@ -210,7 +210,8 @@ public class HubTestBase extends AbstractHubTest {
      * configuration and final initialization when all bean properties have been set.
      */
     @BeforeEach
-    protected void beforeEachHubTestBaseTest() {
+    protected void beforeEachHubTestBaseTest(TestInfo testInfo) {
+        logger.warn("Starting test: " + testInfo.getDisplayName());
         hubConfigInterceptor.claimHubConfig(Thread.currentThread().getName());
 
         Properties properties = hubConfigInterceptor.getGradleProperties();
