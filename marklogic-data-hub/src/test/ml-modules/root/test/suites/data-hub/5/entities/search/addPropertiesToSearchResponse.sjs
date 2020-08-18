@@ -937,6 +937,44 @@ function verifyEntityNameNotInCollectionFacet() {
   ]);
 }
 
+function testEntitySourcesInSearchResponse() {
+  let entityName = null;
+  const response = {
+    "snippet-format": "snippet",
+    "total": 4,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sally.json",
+      },
+      {
+        "index": 2,
+        "uri": "/content/sally.xml",
+      },
+      {
+        "index": 3,
+        "uri": "/content/mergedJsonInstance.json"
+      },
+      {
+        "index": 4,
+        "uri": "/content/mergedXmlInstance.xml"
+      },
+      {
+        "index": 5,
+        "uri": "/content/jane.json"
+      }
+    ]
+  };
+  entitySearchLib.addPropertiesToSearchResponse(entityName, response);
+  return [
+    test.assertEqual([{"name":"loadData"},{"name":"someOtherName"}], response.results[0].sources),
+    test.assertEqual([{"name":["loadCustomers","loadCustomersXml"]}], response.results[1].sources),
+    test.assertEqual([{"name":"loadCustomersJSON"}], response.results[2].sources),
+    test.assertEqual([{"$ref":""},{"name":"persons"},{"name":"persons"}], response.results[3].sources),
+    test.assertEqual([], response.results[4].sources)
+  ];
+}
+
 []
   .concat(verifySimpleSelectedPropertiesResults())
   .concat(verifyStructuredFirstLevelSelectedPropertiesResults())
@@ -952,4 +990,5 @@ function verifyEntityNameNotInCollectionFacet() {
   .concat(verifyIdentifierWithoutDefinedPrimaryKey())
   .concat(verifyEntityInstanceResults())
   .concat(verifyEntityInstanceResultsForAllEntities())
-  .concat(verifyEntityNameNotInCollectionFacet());
+  .concat(verifyEntityNameNotInCollectionFacet())
+  .concat(testEntitySourcesInSearchResponse());
