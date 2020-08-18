@@ -14,8 +14,7 @@ import javax.ws.rs.core.MediaType;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -270,6 +269,15 @@ public class FlowControllerTest extends AbstractMvcTest {
         rawDoc = getFinalDoc("/customers/file2.json");
         assertEquals("John", rawDoc.get("envelope").get("instance").get("name").asText(),
             "Verifying that 2 docs were ingested into the final database");
+
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", "ingestToFinal", "2")
+            .session(mockHttpSession))
+            .andExpect(status().isOk());
+
+        JsonNode mappedDoc = getStagingDoc("/customers/file1.json");
+        assertNotNull(mappedDoc);
+        mappedDoc = getStagingDoc("/customers/file2.json");
+        assertNotNull(mappedDoc);
     }
 
     private FlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {
