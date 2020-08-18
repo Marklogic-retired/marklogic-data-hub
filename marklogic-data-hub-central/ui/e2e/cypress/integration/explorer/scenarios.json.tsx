@@ -45,18 +45,18 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
     })
-      //Verify page number persists when navigating back from detail view
-     browsePage.clickPaginationItem(2);
-     browsePage.search('10256');
-     browsePage.getTotalDocuments().should('be.equal', 1);
-     browsePage.getInstanceViewIcon().click();
-     detailPage.getInstanceView().should('exist');
-     detailPage.getDocumentTable().should('exist');
-     detailPage.clickBackButton();
-     browsePage.getSelectedEntity().should('contain', 'All Entities');
-     browsePage.getSelectedPaginationNumber().should('contain', '1');
-     browsePage.getSearchText().should('have.value', '10256')
-     browsePage.getFacetView().should('have.css', 'background-color', 'rgb(68, 73, 156)')
+    //Verify page number persists when navigating back from detail view
+    browsePage.clickPaginationItem(2);
+    browsePage.search('10256');
+    browsePage.getTotalDocuments().should('be.equal', 1);
+    browsePage.getInstanceViewIcon().click();
+    detailPage.getInstanceView().should('exist');
+    detailPage.getDocumentTable().should('exist');
+    detailPage.clickBackButton();
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
+    browsePage.getSelectedPaginationNumber().should('contain', '1');
+    browsePage.getSearchText().should('have.value', '10256')
+    browsePage.getFacetView().should('have.css', 'background-color', 'rgb(68, 73, 156)')
   });
 
   it('select Person entity and verify entity, docs, hub/entity properties', () => {
@@ -331,7 +331,7 @@ describe('json scenario for table on browse documents page', () => {
     // detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
     // detailPage.getDocumentFileType().should('contain', 'json');
 
-    cy.waitUntil(() => detailPage.clickBackButton()); //Click on Back button to navigate back to the browse table view.
+    detailPage.clickBackButton(); //Click on Back button to navigate back to the browse table view.
 
     //Verify navigating back from detail view should persist search options
     browsePage.getSelectedEntity().should('contain', 'Customer');
@@ -379,32 +379,32 @@ describe('json scenario for table on browse documents page', () => {
 
 
 describe('Verify numeric facet can be applied', () => {
-    //login with valid account and go to /browse page
-    beforeEach(() => {
-        cy.visit('/');
-        cy.contains(Application.title);
-        cy.loginAsTestUserWithRoles("pii-reader","hub-central-developer").withRequest();
-        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-        cy.waitUntil(() => browsePage.getExploreButton()).click();
-        browsePage.waitForSpinnerToDisappear();
-        browsePage.waitForTableToLoad();
-    });
+  //login with valid account and go to /browse page
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
 
-    it('Apply numeric facet values multiple times, clears the previous values and applies the new one', () => {
-        browsePage.selectEntity('Customer');
-        browsePage.getSelectedEntity().should('contain', 'Customer');
-        browsePage.waitForSpinnerToDisappear();
-        browsePage.changeNumericSlider('2273');
-        browsePage.getGreyRangeFacet(2273).should('exist');
-        browsePage.getFacetApplyButton().click();
-        browsePage.getRangeFacet(2273).should('exist');
-        browsePage.getClearAllButton().should('exist');
-        browsePage.changeNumericSlider('3024');
-        browsePage.getGreyRangeFacet(3024).should('exist');
-        browsePage.getFacetApplyButton().should('exist');
-        browsePage.getFacetApplyButton().click();
-        browsePage.getRangeFacet(3024).should('exist');
-        browsePage.getClearAllButton().should('exist');
-    });
+  it('Apply numeric facet values multiple times, clears the previous values and applies the new one', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.changeNumericSlider('2273');
+    browsePage.getGreyRangeFacet(2273).should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getRangeFacet(2273).should('exist');
+    browsePage.getClearAllButton().should('exist');
+    browsePage.changeNumericSlider('3024');
+    browsePage.getGreyRangeFacet(3024).should('exist');
+    browsePage.getFacetApplyButton().should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getRangeFacet(3024).should('exist');
+    browsePage.getClearAllButton().should('exist');
+  });
 
 });

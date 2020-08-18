@@ -7,15 +7,15 @@ class BrowsePage {
   }
 
   getSpinner() {
-      return cy.findByTestId('spinner');
+    return cy.findByTestId('spinner');
   }
 
   waitForSpinnerToDisappear() {
-      cy.waitUntil(() => this.getSpinner().should('not.be.visible'));
+    cy.waitUntil(() => this.getSpinner().should('not.be.visible'));
   }
 
   waitForTableToLoad() {
-      cy.waitUntil(() => this.getTableRows().should('have.length.gt',0));
+    cy.waitUntil(() => this.getTableRows().should('have.length.gt', 0));
   }
 
   selectEntity(entity: string) {
@@ -27,8 +27,8 @@ class BrowsePage {
 
   getTotalDocuments() {
     this.waitForSpinnerToDisappear();
-    return cy.get('[data-cy=total-documents]').then( value => {
-        return parseInt(value.first().text().replace(/,/, ""));
+    return cy.get('[data-cy=total-documents]').then(value => {
+      return parseInt(value.first().text().replace(/,/, ""));
     });
   }
 
@@ -36,8 +36,8 @@ class BrowsePage {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click();
   }
 
-  getSelectedPaginationNumber(){
-      return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text')
+  getSelectedPaginationNumber() {
+    return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text')
   }
 
   getInstanceViewIcon() {
@@ -61,7 +61,7 @@ class BrowsePage {
   }
 
   getDocumentPKey(index: number) {
-      return this.getDocument(index).find('[data-cy=primary-key]').invoke('text');
+    return this.getDocument(index).find('[data-cy=primary-key]').invoke('text');
   }
 
   getDocumentPKeyValue(index: number) {
@@ -153,12 +153,12 @@ class BrowsePage {
     return cy.get('[data-cy=clear-all-button]', { timeout: 10000 });
   }
 
-  getGreyRangeFacet(lowerBound: number){
-    return cy.get('#selected-facets [data-cy="clear-grey-'+ lowerBound +'"]');
+  getGreyRangeFacet(lowerBound: number) {
+    return cy.get('#selected-facets [data-cy="clear-grey-' + lowerBound + '"]');
   }
 
-  getRangeFacet(lowerBound: number){
-   return cy.get('#selected-facets [data-cy="clear-'+ lowerBound +'"]');
+  getRangeFacet(lowerBound: number) {
+    return cy.get('#selected-facets [data-cy="clear-' + lowerBound + '"]');
   }
 
   applyDatePickerSelection(facet: string) {
@@ -173,12 +173,12 @@ class BrowsePage {
     this.waitForSpinnerToDisappear();
   }
 
-  changeNumericSlider(val: string){
-   cy.get('#min-numeric-value .ant-input-number input').clear().type(val)
+  changeNumericSlider(val: string) {
+    cy.get('#min-numeric-value .ant-input-number input').clear().type(val)
   }
 
-  getSearchText(){
-     return cy.get('[data-cy=search-bar]');
+  getSearchText() {
+    return cy.get('[data-cy=search-bar]');
   }
 
   getShowMoreLink() {
@@ -186,7 +186,8 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    return cy.get("#hub-properties > div").eq(1).invoke('show').click();
+    cy.wait(3000)
+    return cy.get("#hub-properties > div > i").click();
   }
 
   getExpandableSnippetView() {
@@ -200,11 +201,11 @@ class BrowsePage {
     return cy.get('[data-cy=facet-view]').click();
   }
 
-  getFacetView(){
+  getFacetView() {
     return cy.get('[data-cy=facet-view]');
   }
 
-  getTableView(){
+  getTableView() {
     return cy.get('[data-cy=table-view]');
   }
 
@@ -217,7 +218,7 @@ class BrowsePage {
   getSideBarCollapseIcon() {
     return cy.get('#sidebar-collapse-icon');
   }
-  
+
   //table
   getColumnTitle(index: number) {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');
@@ -227,11 +228,11 @@ class BrowsePage {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).click();
   }
 
-  getSortIndicatorAsc(){
+  getSortIndicatorAsc() {
     return cy.get(`.ant-table-column-sorter-up.on`);
   }
 
-  getSortIndicatorDesc(){
+  getSortIndicatorDesc() {
     return cy.get(`.ant-table-column-sorter-down.on`);
   }
 
@@ -280,7 +281,7 @@ class BrowsePage {
   }
 
   getColumnSelectorCancel() {
-      return cy.get('button span').contains('Cancel');
+    return cy.get('button span').contains('Cancel');
   }
 
   //popover
@@ -476,10 +477,9 @@ class BrowsePage {
     return cy.get('#query-selector');
   }
 
-  getQueryByName(query:string) {
+  getQueryByName(query: string) {
     return cy.get(`[data-cy=query-option-${query}]`);
   }
-
 
   //data export modal
   getStructuredDataWarning() {
