@@ -1,5 +1,5 @@
 {
-  "endpoint": "/bulkInputCallerImpl.sjs",
+  "endpoint": "/data-hub/5/data-services/ingestion/bulkInputCallerImpl.sjs",
   "params": [ {
     "name":     "endpointState",
     "datatype": "jsonDocument",

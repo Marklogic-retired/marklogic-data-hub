@@ -18,10 +18,13 @@ xdmp.documentInsert(
     (state.prefix)+'/'+(work.taskId)+'/'+(state.next)+'.json',
     record,
     {permissions:[
-            xdmp.permission('rest-reader', 'read'),
-            xdmp.permission('rest-writer', 'update')
-        ]})});
-console.log(state.next);
+            xdmp.permission('data-hub-common', 'read'),
+            xdmp.permission('data-hub-common', 'update')
+        ]
+    }
+  )
+});
+
 const returnValue = (fn.count(input) > 0) ? state : null;
 
 returnValue;
