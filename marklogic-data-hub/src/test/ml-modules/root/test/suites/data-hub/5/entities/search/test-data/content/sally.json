@@ -1,5 +1,15 @@
 {
   "envelope": {
+    "headers": {
+      "sources": [
+        {
+          "name": "loadData"
+        },
+        {
+          "name": "someOtherName"
+        }
+      ]
+    },
     "instance": {
       "Customer": {
         "customerId": 101,

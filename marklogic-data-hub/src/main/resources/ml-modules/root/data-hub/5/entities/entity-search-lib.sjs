@@ -17,6 +17,7 @@
 
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const es = require('/MarkLogic/entity-services/entity-services');
+const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
 
 // TODO Will move this to /data-hub/5/entities soon
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
@@ -262,13 +263,29 @@ function getEntityInstance(docUri) {
   return null;
 }
 
-function getEntityInstanceHeaders(docUri) {
-    let doc = cts.doc(docUri);
+function getEntitySources(docUri) {
+  const doc = cts.doc(docUri);
+  let sourcesArr = [];
 
-    if(doc && doc.envelope && doc.envelope.headers && doc.envelope.header.sources) {
-        return doc.envelope.header.sources;
+  if(!doc) {
+    console.log(`Unable to obtain entity instance from document with URI '${docUri}'`);
+    return sourcesArr;
+  }
+
+  if(doc instanceof Element || doc instanceof XMLDocument) {
+    const sources = doc.xpath("/*:envelope/*:headers/*:sources");
+    if(!fn.empty(sources)) {
+      for (var srcDoc of sources) {
+        const currNode = new NodeBuilder().startDocument().addNode(srcDoc).endDocument().toNode();
+        sourcesArr.push(esInstance.canonicalJson(currNode).toObject()["sources"]);
+      }
     }
-    return null;
+  }
+
+  if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.headers && doc.toObject().envelope.headers.sources) {
+    sourcesArr = doc.toObject().envelope.headers.sources;
+  }
+  return sourcesArr;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
@@ -370,7 +387,7 @@ function addEntitySpecificProperties(result, entityInfo, selectedPropertyMetadat
     console.log(`Unable to obtain document with URI '${result.uri}'; will not add document metadata to its search result`);
   }
   result.entityInstance = entityInstance;
-  result.sources = getEntityInstanceHeaders(result.uri) ? getEntityInstanceHeaders(result.uri) : result.sources;
+  result.sources = getEntitySources(result.uri);
   result.entityName = entityTitle;
 }
 
@@ -423,7 +440,7 @@ function addGenericEntityProperties(result) {
     "propertyValue": identifierValue
   };
   result.entityInstance = entityInstance;
-  result.sources = getEntityInstanceHeaders(result.uri) ? getEntityInstanceHeaders(result.uri) : result.sources;
+  result.sources = getEntitySources(result.uri);
   result.entityName = entityTitle;
 }
 

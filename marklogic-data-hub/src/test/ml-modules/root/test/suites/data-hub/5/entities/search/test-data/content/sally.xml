@@ -1,5 +1,11 @@
 <?xml  version="1.0" encoding="UTF-8"?>
 <envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources>
+            <name>loadCustomers</name>
+            <name>loadCustomersXml</name>
+        </sources>
+    </headers>
     <instance>
         <Customer xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="">
             <customerId xsi:type="xs:integer">101</customerId>
