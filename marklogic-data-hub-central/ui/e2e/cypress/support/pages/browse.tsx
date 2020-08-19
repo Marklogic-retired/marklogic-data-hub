@@ -493,6 +493,11 @@ class BrowsePage {
     return cy.findByTestId('export-warning');
   }
 
+  //get snippet view result list
+  getSnippetViewResult() {
+    return cy.get('#snippetViewResult');
+  }
+
 }
 
 const browsePage = new BrowsePage();

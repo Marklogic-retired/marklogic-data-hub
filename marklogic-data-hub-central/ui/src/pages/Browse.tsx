@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
 import axios from 'axios';
 import { Layout } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
@@ -63,6 +63,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   const getEntityModel = async () => {
     try {
@@ -241,13 +242,28 @@ const Browse: React.FC<Props> = ({ location }) => {
     setCollapsed(!collapse);
   }
 
-  useScrollPosition(({ currPos }) => {
-    if (currPos.endOfScroll && !endScroll) {
-      setEndScroll(true);
-    } else if (!currPos.endOfScroll && endScroll) {
-      setEndScroll(false);
+  useLayoutEffect(() => {
+    if (endScroll && data.length) {
+      if (resultsRef.current) {
+        resultsRef.current['style']['boxShadow'] = '0px 4px 4px -4px #999, 0px -4px 4px -4px #999'
+      }
+    } else if (!endScroll) {
+      if (resultsRef.current) {
+        resultsRef.current['style']['boxShadow'] = 'none'
+      }
     }
-  }, [endScroll], null);
+  }, [endScroll])
+
+  const onResultScroll = (event) => {
+    if (resultsRef && resultsRef.current) {
+      const bottom = event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight;
+      if (resultsRef.current.scrollTop > 0 && !bottom) {
+        setEndScroll(true);
+      } else if (resultsRef.current.scrollTop === 0 || bottom) {
+        setEndScroll(false);
+      }
+    }
+  }
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
@@ -267,6 +283,10 @@ const Browse: React.FC<Props> = ({ location }) => {
       tableView = 'table';
     }
     setUserPreferences(tableView);
+
+    if(resultsRef && resultsRef.current) {
+    resultsRef.current['style']['boxShadow'] = 'none'	
+    }
   }
 
   if (searchOptions.zeroState) {
@@ -351,7 +371,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   entityDefArray={entityDefArray}
                 />
               </div>
-              <div>
+              <div className={styles.viewContainer} >
               <div className={styles.fixedView} >
                 {tableView ?
                   <div>
@@ -366,7 +386,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                       tableView={tableView}
                     />
                   </div>
-                  : <SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} />
+                  : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={ onResultScroll }><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
                 }
               </div>
               <br />

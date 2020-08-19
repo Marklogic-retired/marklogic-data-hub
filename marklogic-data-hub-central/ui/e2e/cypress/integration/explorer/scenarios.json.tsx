@@ -45,6 +45,15 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
     })
+
+     //Verify shadow effect upon scrolling within the snippet view
+     browsePage.getSnippetViewResult().should('have.css','box-shadow','none'); //No shadow effect in place when no scroll.
+     browsePage.getSnippetViewResult().scrollTo('center'); //Scrolling within the div
+     //Checking if the shadow style is applied when scroll in effect
+     browsePage.getSnippetViewResult().should('have.css','box-shadow','rgb(153, 153, 153) 0px 4px 4px -4px, rgb(153, 153, 153) 0px -4px 4px -4px');
+     browsePage.getSnippetViewResult().scrollTo('bottom'); //Scrolling within the div, to the bottom of the list
+     browsePage.getSnippetViewResult().should('have.css','box-shadow','none'); //No shadow effect because end of scroll.
+
       //Verify page number persists when navigating back from detail view
      browsePage.clickPaginationItem(2);
      browsePage.search('10256');
