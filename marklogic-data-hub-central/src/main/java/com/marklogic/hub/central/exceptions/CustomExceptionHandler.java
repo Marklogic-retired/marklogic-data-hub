@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -36,11 +38,13 @@ import javax.servlet.http.HttpServletResponse;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
+    private final static Logger logger = LoggerFactory.getLogger(CustomExceptionHandler.class);
     ObjectMapper mapper = new ObjectMapper();
 
     @ExceptionHandler(FailedRequestException.class)
-    protected ResponseEntity<JsonNode> handleFailedRequestExceptionRequest(
-        FailedRequestException failedRequestException) {
+    protected ResponseEntity<JsonNode> handleFailedRequestExceptionRequest(FailedRequestException failedRequestException) {
+        logger.error(failedRequestException.getMessage(), failedRequestException);
+
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", failedRequestException.getServerStatusCode());
         errJson.put("message", failedRequestException.getServerStatus());
@@ -51,8 +55,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    protected ResponseEntity<JsonNode> handleHttpClientErrorExceptionRequest(
-        HttpClientErrorException httpClientErrorException) {
+    protected ResponseEntity<JsonNode> handleHttpClientErrorExceptionRequest(HttpClientErrorException httpClientErrorException) {
+        logger.error(httpClientErrorException.getMessage(), httpClientErrorException);
+
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", httpClientErrorException.getRawStatusCode());
         errJson.put("message", httpClientErrorException.getMessage());
@@ -63,6 +68,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     protected ResponseEntity<JsonNode> handleAccessDeniedException(AccessDeniedException exception) {
+        logger.error(exception.getMessage(), exception);
+
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 403);
         errJson.put("message", exception.getMessage());
@@ -71,16 +78,20 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    public ResponseEntity<JsonNode> handleMaxSizeException(MaxUploadSizeExceededException exc, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<JsonNode> handleMaxSizeException(MaxUploadSizeExceededException exception, HttpServletRequest request, HttpServletResponse response) {
+        logger.error(exception.getMessage(), exception);
+
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 400);
         errJson.put("message", "The total size of all files in a single upload must be 100MB or less.");
         errJson.put("suggestion", "Upload files of size < 100 MB");
         return new ResponseEntity<>(errJson, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<JsonNode> handleExceptionRequest(
-        Exception exception) {
+    protected ResponseEntity<JsonNode> handleExceptionRequest(Exception exception) {
+        logger.error(exception.getMessage(), exception);
+
         ObjectNode errJson = mapper.createObjectNode();
         errJson.put("code", 500);
         errJson.put("message", exception.getMessage());
