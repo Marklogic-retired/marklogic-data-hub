@@ -41,7 +41,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     );
 
     const checkCurrentQueryChange = (e) => {
-        if(props.isSaveQueryChanged()){
+        if(props.isSaveQueryChanged() && searchOptions.selectedQuery !== 'select a query'){
            toggleConfirmation(true);
            setSwitchedQueryName(e);
        }
