@@ -251,7 +251,7 @@ const Query = (props) => {
     const resetIconClicked = () => {
         const resetQueryEditedConfirmation = props.isSavedQueryUser && props.queries.length > 0
                                             && searchOptions.selectedQuery !== 'select a query' && isSaveQueryChanged()
-        const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 &&
+        const resetQueryNewConfirmation = props.isSavedQueryUser && props.queries.length > 0 && searchOptions.entityTypeIds.length > 0 &&
                                           (props.selectedFacets.length > 0 || searchOptions.query.length > 0
                                           || searchOptions.sortOrder.length > 0)
                                           && searchOptions.selectedQuery === 'select a query'
@@ -272,6 +272,7 @@ const Query = (props) => {
                 sortOrder: []
             }
             applySaveQuery(options);
+            clearAllGreyFacets();
         }
     }
 
@@ -288,7 +289,7 @@ const Query = (props) => {
 
 
     useEffect(() => {
-        if (isSaveQueryChanged()) {
+        if (isSaveQueryChanged() && searchOptions.selectedQuery !== 'select a query') {
             toggleSaveChangesIcon(true);
             toggleDiscardIcon(true);
             toggleSaveNewIcon(false);

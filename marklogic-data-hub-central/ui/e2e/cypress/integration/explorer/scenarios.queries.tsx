@@ -424,6 +424,19 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getFacetApplyButton().should('be.visible')
     })
 
+
+    it('Check grey facets does not persist when clear query icon is clicked',() => {
+        browsePage.getFacetItemCheckbox('collection', 'Person').click();
+        browsePage.getFacetItemCheckbox('collection', 'Person').should('be.checked');
+        browsePage.getGreySelectedFacets('Person').should('exist');
+        browsePage.getResetQueryButton().click();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        browsePage.getFacetItemCheckbox('collection', 'Person').should('not.be.checked');
+        browsePage.getGreySelectedFacets('Person').should('not.exist');
+    })
+
 });
 
 
@@ -460,6 +473,7 @@ describe('manage queries modal scenarios, developer role', () => {
         queryComponent.getManageQueryModal().should('not.be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.getSelectedQueryDescription().should('contain', '');
+        browsePage.getResetQueryButton().should('be.visible');
     });
 });
 
