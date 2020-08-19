@@ -46,10 +46,12 @@
     }
 }
 
-
-
 .sourceTableRows{
     line-height: 1px;
+}
+
+.sourceName{
+    white-space: nowrap;
 }
 
 .filterContainer {
@@ -247,7 +249,7 @@ hr {
 .sourceValue{
     margin-top: -6px;
     margin-bottom: -20px;
-    white-space: pre-wrap;
+    white-space: pre;
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: normal;
