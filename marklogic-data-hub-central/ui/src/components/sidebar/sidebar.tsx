@@ -82,6 +82,7 @@ const Sidebar: React.FC<Props> = (props) => {
         props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties','entityProperties']);
       }
 
+      let entityFacets: any[] = []
       if (props.selectedEntities.length) {
         let newEntityFacets = parsedFacets.filter(facet => facet.facetName.split('.')[0] === props.selectedEntities[0]);
         const entityDef = props.entityDefArray.find(entity => entity.name === props.selectedEntities[0]);
@@ -94,8 +95,10 @@ const Sidebar: React.FC<Props> = (props) => {
             newEntityFacets[i].propertyPath = entityFacetName.length > 1 ? entityFacetName.pop() : entityFacetName[0];
           }
         }
-        setEntityFacets(newEntityFacets ? newEntityFacets.filter(item => item !== false) : []);
+        entityFacets = newEntityFacets ? newEntityFacets.filter(item => item !== false) : [];
+        setEntityFacets(entityFacets);
       }
+
       if (Object.entries(searchOptions.selectedFacets).length !== 0) {
         let selectedFacets: any[] = [];
         for (let constraint in searchOptions.selectedFacets) {

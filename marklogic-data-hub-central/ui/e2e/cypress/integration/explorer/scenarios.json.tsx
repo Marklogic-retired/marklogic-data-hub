@@ -308,6 +308,10 @@ describe('json scenario for table on browse documents page', () => {
   it('verify source view of the document', () => {
     browsePage.selectEntity('Customer');
     browsePage.search('Adams Cole');
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
+    browsePage.getFacetItemCheckbox('email', 'coleadams39@nutralab.com').click();
+    browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('exist');
+    browsePage.getGreySelectedFacets('coleadams39@nutralab.com').should('exist');
     browsePage.getHubPropertiesExpanded();
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
     browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
@@ -320,6 +324,10 @@ describe('json scenario for table on browse documents page', () => {
     //Verify if the facet, search text and view persists.
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getClearFacetSearchSelection('mapCustomersJSON').should('exist');
+    browsePage.getAppliedFacets('adamscole@nutralab.com').should('exist');
+    browsePage.getAppliedFacets('coleadams39@nutralab.com').should('exist');
+    browsePage.getAppliedFacetName('adamscole@nutralab.com').should('be.equal', 'email: adamscole@nutralab.com');
+    browsePage.getAppliedFacetName('coleadams39@nutralab.com').should('be.equal', 'email: coleadams39@nutralab.com');
     browsePage.getSearchText().should('have.value', 'Adams Cole');
     browsePage.getTableView().should('have.css', 'background-color', 'rgb(68, 73, 156)');
 
