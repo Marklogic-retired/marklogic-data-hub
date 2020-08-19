@@ -133,10 +133,10 @@ Cypress.Commands.add('uploadFile', (filePath) => {
 Cypress.Commands.add('verifyStepRunResult', (jobStatus, stepType, stepName) => {
   if(jobStatus === 'success') {
     cy.waitUntil(() => cy.get('[data-icon="check-circle"]').should('be.visible'));
-    cy.get('span p').should('contain.text',`${stepType} step ${stepName} ran successfully`);
+    cy.get('span p').should('contain.text',`The ${stepType.toLowerCase()} step ${stepName} completed successfully`);
   } else {
-    cy.waitUntil(() => cy.get('[data-icon="close-circle"]').should('be.visible'));
-    cy.get('span p').should('contain.text',`${stepType} step ${stepName} failed`);
+    cy.waitUntil(() => cy.get('[data-icon="exclamation-circle"]').should('be.visible'));
+    cy.get('span p').should('contain.text',`The ${stepType.toLowerCase()} step ${stepName} failed`);
     cy.get('#error-list').should('contain.text', "Message:");
   }
 })
