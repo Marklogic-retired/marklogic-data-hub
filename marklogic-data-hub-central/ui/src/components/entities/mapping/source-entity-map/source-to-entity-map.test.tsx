@@ -758,6 +758,26 @@ describe('RTL Source-to-entity map tests', () => {
 
     });
 
+    test('URI nav index resets on close of mapping',  async() => {
+        const { getByLabelText, getByTestId } = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+
+        // URI index starts at 1
+        let uriIndex = within(getByLabelText('uriIndex'));
+        expect(uriIndex.getByText('1')).toBeInTheDocument();
+
+        // Click next, URI index is 2
+        fireEvent.click(getByTestId('navigate-uris-right'));
+        uriIndex = within(getByLabelText('uriIndex'));
+        expect(uriIndex.getByText('2')).toBeInTheDocument();
+
+        // Close mapping modal
+        fireEvent.click(getByLabelText('icon: close'));
+
+        // URI index reset to 1
+        uriIndex = within(getByLabelText('uriIndex'));
+        expect(uriIndex.getByText('1')).toBeInTheDocument();
+    });
+
 });
 
 describe('Enzyme Source-to-entity map tests', () => {
