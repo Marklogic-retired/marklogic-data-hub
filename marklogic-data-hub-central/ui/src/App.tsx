@@ -9,7 +9,6 @@ import ModelingProvider from './util/modeling-context';
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
 import Login from './pages/Login';
-import Home from './pages/Home';
 import TilesView from './pages/TilesView';
 import NoMatchRedirect from './pages/noMatchRedirect';
 import NoResponse from './pages/NoResponse';
@@ -92,9 +91,6 @@ const App: React.FC<Props> = ({history, location}) => {
             <Switch>
               <Route path="/" exact component={Login}/>
               <Route path="/noresponse" exact component={NoResponse} />
-              <PrivateRoute path="/home" exact>
-                <Home/>
-              </PrivateRoute>
               <PrivateRoute path="/tiles" exact>
                 <TilesView/>
               </PrivateRoute>
