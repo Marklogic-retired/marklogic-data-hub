@@ -14,6 +14,9 @@
  limitations under the License.
  */
 'use strict';
+
+// No privilege required: This endpoint is called by the spark connector.
+
 var endpointState; // jsonDocument?
 
 var input;         // jsonDocument*
