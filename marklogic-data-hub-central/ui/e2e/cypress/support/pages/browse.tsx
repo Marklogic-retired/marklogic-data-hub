@@ -140,6 +140,10 @@ class BrowsePage {
     return cy.get('#selected-facets [data-cy="clear-' + facet + '"]');
   }
 
+  getAppliedFacetName(facet: string) {
+    return cy.get('#selected-facets [data-testid="clear-' + facet + '"] span').invoke('text');
+  }
+
   getClearGreyFacets() {
     return cy.get('[data-cy=clear-all-grey-button]');
   }
