@@ -259,45 +259,6 @@ public class Versions extends LoggingObject {
 
     }
 
-    public boolean isVersionCompatibleWithES() {
-        final MarkLogicVersion mlVersion = getMLVersion();
-        return isVersionCompatibleWithESNightly(mlVersion) || isVersionCompatibleWithESServer(mlVersion);
-    }
-
-    private boolean isVersionCompatibleWithESNightly(Versions.MarkLogicVersion serverVersion) {
-        if (serverVersion.isNightly()) {
-            try {
-                if (serverVersion.getMajor() == 9) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.AUGUST, 24).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
-                    if (date.before(minDate)) {
-                        return false;
-                    }
-                }
-                //Support all 10.0-nightly on or after 6/11/2019
-                if (serverVersion.getMajor() == 10) {
-                    Date minDate = new GregorianCalendar(2019, Calendar.AUGUST, 24).getTime();
-                    Date date = new SimpleDateFormat("y-M-d").parse(serverVersion.getDateString());
-                    if (date.before(minDate)) {
-                        return false;
-                    }
-                }
-            } catch (Exception e) {
-                return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean isVersionCompatibleWithESServer(Versions.MarkLogicVersion serverVersion) {
-        if (!serverVersion.isNightly()) {
-            return ((serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 200) ||
-                (serverVersion.getMajor() == 9 && serverVersion.getMinor() >= 1100));
-        }
-        return false;
-    }
-
     public static int compare(String v1, String v2) {
         if (v1 == null || v2 == null) {
             return 1;

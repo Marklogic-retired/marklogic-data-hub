@@ -454,25 +454,6 @@ function getErrorMessage(e) {
   return errorMessage;
 }
 
-function versionIsCompatibleWithES(version = xdmp.version()) {
-  let numberSensitiveCollation = 'http://marklogic.com/collation//MO';
-  let isNightly = /^[0-9]+\.[0-9]+-[0-9]{8}$/.test(version);
-  if (isNightly) {
-    var nightlyDate = /^[0-9]+\.[0-9]+-([0-9]{8})$/.exec(version)[1];
-    return fn.compare(nightlyDate, '20190824', numberSensitiveCollation) >= 0;
-  }
-  else {
-    var major = /^([0-9]+)\..*$/.exec(version)[1];
-    if (major === "9") {
-      return fn.compare(version, '9.0-11', numberSensitiveCollation) >= 0;
-    }
-    else if (major === "10"){
-      return fn.compare(version, '10.0-2', numberSensitiveCollation) >= 0;
-    }
-  }
-  return false;
-}
-
 function extractInstance(docNode) {
   let instance = docNode.xpath('/*:envelope/(object-node("instance")|*:instance/(element() except *:info))');
   if (fn.empty(instance)) {
@@ -575,7 +556,6 @@ module.exports = {
   getXpathMappingFunctions,
   // Exporting retrieveFunctionImports for unit test
   retrieveFunctionImports,
-  versionIsCompatibleWithES,
   validateMapping,
   validateAndRunMapping
 };

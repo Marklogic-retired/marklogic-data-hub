@@ -13,13 +13,11 @@ function checkAssertions(person) {
 }
 
 let assertions = [];
-if (mappingLib.versionIsCompatibleWithES()) {
-  let result = lib.invokeTestMapping("/content/person2.json", "PersonMapping", "3");
-  let person = result.Person;
-  assertions = assertions.concat(checkAssertions(person));
-  result = lib.invokeTestMapping("/content/person3.xml", "PersonMapping", "4");
-  person = result.Person;
-  assertions = assertions.concat(checkAssertions(person));
-}
+let result = lib.invokeTestMapping("/content/person2.json", "PersonMapping", "3");
+let person = result.Person;
+assertions = assertions.concat(checkAssertions(person));
+result = lib.invokeTestMapping("/content/person3.xml", "PersonMapping", "4");
+person = result.Person;
+assertions = assertions.concat(checkAssertions(person));
 
 assertions;

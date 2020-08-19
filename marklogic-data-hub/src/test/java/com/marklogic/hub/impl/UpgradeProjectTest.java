@@ -161,14 +161,12 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     }
 
     @Test
-    public void testUpgradeTo510MappingStep() {
-        Assumptions.assumingThat(versions.isVersionCompatibleWithES(), () -> {
-            FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
-            FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
-            getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
-            Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
-            Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
-        });
+    public void testUpgradeTo510MappingStep() throws IOException{
+        FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
+        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
+        getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
+        Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
+        Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
     }
 
     private void verifyDirContents(File dir, int expectedCount) {

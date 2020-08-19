@@ -5,59 +5,52 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 
 function mlGenerateFunctionMetadata(context, params, content) {
-  if (esMappingLib.versionIsCompatibleWithES()) {
-    let uri = context.uri;
-    let pattern = '^(.*)\.(sjs|mjs|xqy)$';
-    let match = new RegExp(pattern).exec(uri);
-    let metadataXml;
-    if (match !== null) {
-      let uriVal = match[1];
-      // The namespace for custom xqy functions should be "http://marklogic.com/mapping-functions/custom"
-      if(uri.includes("/custom-modules/mapping-functions/") && uri.endsWith('.xqy')){
-        metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
-      }
-      else {
-        metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
-      }
-      metadataXml = addMapNamespaceToMetadata(metadataXml);
-      let collection = 'http://marklogic.com/entity-services/function-metadata';
-      let permissions = xdmp.defaultPermissions().concat([
-        xdmp.permission(datahub.config.FLOWOPERATORROLE, 'execute'),
-        xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'execute'),
-        xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'update'),
-        xdmp.permission(datahub.config.FLOWOPERATORROLE, 'read'),
-        xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'read'),
-        xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'execute'),
-        xdmp.permission(datahub.consts.DATA_HUB_MODULE_WRITER_ROLE, 'update'),
-        xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'read'),
-        xdmp.permission("data-hub-module-reader", "execute"),
-        // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
-        // actual problem is that a mapping will fail if the XML or XSLT representation of a custom mapping function library
-        // does not have this permission on it, which is expected to be on every other DHF module.
-        xdmp.permission("rest-extension-user", "execute")
-      ]);
-      let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
-      if (writeInfo && fn.exists(writeInfo.transaction)) {
-        // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
-        try {
-          es.functionMetadataPut(uriVal + ".xml");
-        } catch (e) {
-          if (/(prefix|XSLT-UNBPRFX)/ig.test(e.message)) {
-            xdmp.moduleCacheClear();
-            es.functionMetadataPut(uriVal + ".xml");
-          } else {
-            throw e;
-          }
-        }
-      } else {
-        datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
-      }
+  let uri = context.uri;
+  let pattern = '^(.*)\.(sjs|mjs|xqy)$';
+  let match = new RegExp(pattern).exec(uri);
+  let metadataXml;
+  if (match !== null) {
+    let uriVal = match[1];
+    // The namespace for custom xqy functions should be "http://marklogic.com/mapping-functions/custom"
+    if(uri.includes("/custom-modules/mapping-functions/") && uri.endsWith('.xqy')){
+      metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate("http://marklogic.com/mapping-functions/custom", uri));
     }
-  } else {
-    datahub.debug.log({
-      message: `Uploading declarative mapping library (${content.uri}) to incompatible MarkLogic version (${xdmp.version()}).`,
-      type: 'notice'
-    });
+    else {
+      metadataXml = es.functionMetadataValidate(es.functionMetadataGenerate(uri));
+    }
+    metadataXml = addMapNamespaceToMetadata(metadataXml);
+    let collection = 'http://marklogic.com/entity-services/function-metadata';
+    let permissions = xdmp.defaultPermissions().concat([
+      xdmp.permission(datahub.config.FLOWOPERATORROLE, 'execute'),
+      xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'execute'),
+      xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'update'),
+      xdmp.permission(datahub.config.FLOWOPERATORROLE, 'read'),
+      xdmp.permission(datahub.config.FLOWDEVELOPERROLE, 'read'),
+      xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'execute'),
+      xdmp.permission(datahub.consts.DATA_HUB_MODULE_WRITER_ROLE, 'update'),
+      xdmp.permission(datahub.consts.DATA_HUB_MODULE_READER_ROLE, 'read'),
+      xdmp.permission("data-hub-module-reader", "execute"),
+      // In the absence of this, ML will report an error about standard-library.xqy not being found. This is misleading; the
+      // actual problem is that a mapping will fail if the XML or XSLT representation of a custom mapping function library
+      // does not have this permission on it, which is expected to be on every other DHF module.
+      xdmp.permission("rest-extension-user", "execute")
+    ]);
+    let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
+    if (writeInfo && fn.exists(writeInfo.transaction)) {
+      // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
+      try {
+        es.functionMetadataPut(uriVal + ".xml");
+      } catch (e) {
+        if (/(prefix|XSLT-UNBPRFX)/ig.test(e.message)) {
+          xdmp.moduleCacheClear();
+          es.functionMetadataPut(uriVal + ".xml");
+        } else {
+          throw e;
+        }
+      }
+    } else {
+      datahub.debug.log({message: `No write for function metadata. (${xdmp.describe(writeInfo)})`, type: 'notice'});
+    }
   }
   return content;
 }

@@ -31,7 +31,6 @@ public class MappingTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        Assumptions.assumeTrue(versions.isVersionCompatibleWithES());
         installProjectInFolder("mapping-test");
     }
 

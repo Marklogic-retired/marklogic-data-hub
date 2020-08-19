@@ -17,10 +17,6 @@ declare function local:verify-stylesheet-has-map-namespace-declared($path as xs:
   )
 };
 
-let $enabled := xdmp:javascript-eval('require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs").versionIsCompatibleWithES()')
-where $enabled = fn:true()
-return (
-  local:verify-stylesheet-has-map-namespace-declared("/data-hub/5/mapping-functions/core.xml.xslt"),
-  local:verify-stylesheet-has-map-namespace-declared("/custom-modules/mapping-functions/custom-mapping-functions.xml.xslt")
-)
+local:verify-stylesheet-has-map-namespace-declared("/data-hub/5/mapping-functions/core.xml.xslt"),
+local:verify-stylesheet-has-map-namespace-declared("/custom-modules/mapping-functions/custom-mapping-functions.xml.xslt")
 

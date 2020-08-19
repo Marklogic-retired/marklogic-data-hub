@@ -6,7 +6,7 @@ const test = require("/test/test-helper.xqy");
 
 const datahub = DataHubSingleton.instance();
 
-if (lib.canTestJsonSchemaValidation() && esMappingLib.versionIsCompatibleWithES()) {
+if (lib.canTestJsonSchemaValidation()) {
   const content = ["/content/invalid-customer.json", "/content/valid-customer.json"].map(uri => {
     return {
       uri: uri,

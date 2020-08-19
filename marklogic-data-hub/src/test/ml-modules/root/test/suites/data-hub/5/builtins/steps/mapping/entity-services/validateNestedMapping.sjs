@@ -60,9 +60,5 @@ function invalidProperty() {
   ];
 }
 
-if (esMappingLib.versionIsCompatibleWithES()) {
-  invalidProperty();
-} else {
-  [];
-}
+invalidProperty();
 

@@ -2,10 +2,10 @@ const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services
 const lib = require("lib/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
-if (lib.canTestJsonSchemaValidation() && esMappingLib.versionIsCompatibleWithES()) {
+if (lib.canTestJsonSchemaValidation()) {
   const envelope = lib.mapInstance("/content/invalid-customer.json", "accept", "json").value.root.envelope;
   let errors = envelope.headers.datahub.validationErrors;
-  
+
   [
     test.assertEqual("XDMP-VALIDATEERRORS", fn.string(errors.name)),
     test.assertTrue(fn.string(errors.data[0]).indexOf("Required FirstName property not found") > -1),
