@@ -26,6 +26,17 @@
   margin-right: 12px;
 }
 
+.viewContainer {
+  padding-top: 5px;
+}
+
+.snippetViewResult {
+  border-top: 1px solid #d0d1d5;
+  border-bottom: 1px solid #d0d1d5;
+  max-height: 55vh;
+  overflow: auto;
+}
+
 .switchViews {
   width: 100%;
   display: flex;
