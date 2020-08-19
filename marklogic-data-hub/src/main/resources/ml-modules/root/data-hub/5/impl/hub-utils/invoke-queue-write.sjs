@@ -50,10 +50,11 @@ for (let content of writeQueue) {
             if (metadata) {
                 delete metadata.temporalDocURI;
             }
+            const collectionsReservedForTemporal = ['latest', content.uri];
             temporal.documentInsert(temporalCollection, content.uri, content.value,
                 {
                     permissions: fullPermissions,
-                    collections: collections.filter((col) => !temporalCollections[col]),
+                    collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
                     metadata
                 }
             );

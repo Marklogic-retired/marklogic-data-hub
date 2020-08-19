@@ -2,7 +2,8 @@
   "role-name": "data-hub-common-writer",
   "description": "Contains a common set of privileges/roles needed for Data Hub 5+ write operations",
   "role": [
-    "data-hub-common"
+    "data-hub-common",
+    "temporal-admin"
   ],
   "privilege": [
     {
