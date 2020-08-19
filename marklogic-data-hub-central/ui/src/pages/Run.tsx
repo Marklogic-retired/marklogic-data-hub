@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import styles from './Run.module.scss';
 import Flows from '../components/flows/flows';
-import { Modal, Collapse } from 'antd';
+import { Modal, Collapse, Icon } from 'antd';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
@@ -188,10 +188,10 @@ const Run = (props) => {
         }
     }
 
-    function formatStepType(stepType){
-        stepType = stepType.toLowerCase();
-        return stepType[0].toUpperCase() + stepType.substr(1);
-    }
+    // function formatStepType(stepType){
+    //     stepType = stepType.toLowerCase();
+    //     return stepType[0].toUpperCase() + stepType.substr(1);
+    // }
 
     const goToExplorer = (entityName, jobId) => {
         history.push({pathname: "/tiles/explore",
@@ -213,7 +213,8 @@ const Run = (props) => {
 
     function showSuccess(stepName, stepType, entityName, jobId) {
          Modal.success({
-              title:<div><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> ran successfully</p></div>,
+              title:<div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
+               icon: <Icon type="check-circle" theme="filled"/>, 
                okText: 'Close',
                mask: false,
                width:650,
@@ -242,8 +243,8 @@ const Run = (props) => {
             <span className={styles.errorVal}> {jobResp['successfulBatches']}</span> succeeded and
             <span className={styles.errorVal}> {jobResp['failedBatches']}</span> failed.
             {(jobResp['failedBatches'] > maxErrors) ?
-                <span> Error messages for the first {maxErrors} failures are displayed below.</span> :
-                <span> Error messages are displayed below.</span>}
+                <span> The first {maxErrors} error messages are listed below.</span> :
+                <span> The error messages are listed below.</span>}
             </span>);
     }
 
@@ -255,7 +256,8 @@ const Run = (props) => {
 
     function showErrors(stepName, stepType, errors, response, entityName, jobId) {
          Modal.error({
-            title: <p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> completed with errors</p>,
+            title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
+            icon: <Icon type="exclamation-circle" theme="filled"/>, 
             content: (
                 <div id="error-list">
                     {stepType.toLowerCase() === 'mapping' && entityName ?
@@ -281,7 +283,8 @@ const Run = (props) => {
 
     function showFailed(stepName, stepType, errors) {
         Modal.error({
-            title: <div id="error-title"><p style={{fontWeight: 400}}>{formatStepType(stepType)} step <strong>{stepName}</strong> failed</p></div>,
+            title: <div id="error-title"><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> failed</p></div>,
+            icon: <Icon type="exclamation-circle" theme="filled"/>, 
             content: (
                 <div id="error-list">
                     {errors.map((e, i) => {
