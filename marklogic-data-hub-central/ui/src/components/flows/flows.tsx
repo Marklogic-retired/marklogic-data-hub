@@ -85,6 +85,9 @@ const Flows: React.FC<Props> = (props) => {
                 getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
             }
         }
+        if (activeKeys === undefined) {
+            setActiveKeys([]);
+        }
     }, [props.flows])
 
     useEffect(() => {
@@ -172,6 +175,12 @@ const Flows: React.FC<Props> = (props) => {
 
     const onAddStepOk = (stepName, flowName, stepType) => {
         props.addStepToFlow(stepName, flowName, stepType);
+        // Open flow panel if not open
+        const flowIndex = props.flows.findIndex(f => f.name === flowName);
+        if (!activeKeys.includes(flowIndex)) {
+            let newActiveKeys = [...activeKeys, flowIndex];
+            setActiveKeys(newActiveKeys);
+        }
         setAddStepDialogVisible(false);
     }
 

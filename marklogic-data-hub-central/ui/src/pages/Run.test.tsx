@@ -333,8 +333,6 @@ describe('Verify step running', () => {
 
 });
 
-
-
 describe('Verify step display', () => {
 
     afterEach(() => {
@@ -690,6 +688,34 @@ describe('Verify Add Step function', () => {
         let addStep = getByText('Add Step');
         fireEvent.click(addStep);
         expect(queryByText(data.steps.data['ingestionSteps'][0].name)).not.toBeInTheDocument();
+
+    })
+
+    test('Verify a flow panel that is closed when a step is added to it is then opened', async () => {
+        mocks.runAddStepAPI(axiosMock);
+        const { getByText, getByLabelText, queryByText } = await render(<MemoryRouter>
+            <AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>
+        </MemoryRouter>);
+
+        // Panel is closed
+        expect(queryByText(data.flows.data[0].steps[1].stepName)).not.toBeInTheDocument();
+
+        // Click to open Add Step menu and click a step
+        let addStep = getByText('Add Step');
+        fireEvent.click(addStep);
+        let step = getByText(data.steps.data['ingestionSteps'][0].name);
+        fireEvent.click(step);
+
+        // Click to confirm the add in the dialog
+        expect(getByText(`Are you sure you want to add step "${data.steps.data['ingestionSteps'][0].name}" to flow "${data.flows.data[0].name}"?`)).toBeInTheDocument();
+        let confirm = getByLabelText('Yes');
+        fireEvent.click(confirm);
+        await wait(() => {
+            expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data['ingestionSteps'][0].name});
+        })
+
+        // Panel is open
+        expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
 
     })
 
