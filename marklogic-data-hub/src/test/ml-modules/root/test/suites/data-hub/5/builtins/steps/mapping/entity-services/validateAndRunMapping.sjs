@@ -91,21 +91,16 @@ function testValidateAndRunMappingWithErrors() {
   ];
 }
 
-if (esMappingLib.versionIsCompatibleWithES()) {
-  []
-    .concat(validMapping())
-    .concat(unrecognizedProperty())
-    .concat(missingFunctionReference())
-    .concat(incorrectNumberOfFunctionArguments())
-    .concat(testValidateAndRunMapping())
-    .concat(testValidateAndRunMappingArrayValues())
-    .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
-    // Test JSON to XML scenario
-    .concat(testValidateAndRunMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
-    .concat(testValidateAndRunMappingWithErrors())
-  ;
-}
-else {
-  []
-}
+[]
+  .concat(validMapping())
+  .concat(unrecognizedProperty())
+  .concat(missingFunctionReference())
+  .concat(incorrectNumberOfFunctionArguments())
+  .concat(testValidateAndRunMapping())
+  .concat(testValidateAndRunMappingArrayValues())
+  .concat(testValidateAndRunMapping("/mappings/PersonNsMapping/PersonNsMapping-1.mapping.json", "/content/person-ns.xml"))
+  // Test JSON to XML scenario
+  .concat(testValidateAndRunMapping("/mappings/PersonMapping/PersonMapping-3.mapping.json", "/content/json-to-xml.xml"))
+  .concat(testValidateAndRunMappingWithErrors())
+;
 

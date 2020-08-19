@@ -59,9 +59,7 @@ function testMapping() {
           test.assertEqual(165.05, fn.number(instance.OrderType.orderCost))]);
 }
 
-if (mappingLib.versionIsCompatibleWithES()) {
-  runMapping();
-  runMappingJsonToXml();
-  testMapping();
-}
+runMapping();
+runMappingJsonToXml();
+testMapping();
 assertions;

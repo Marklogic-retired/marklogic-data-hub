@@ -24,7 +24,7 @@ public class ScaffoldingImplTest {
 
     @Test
     public void buildFlowFromDefaultFlow() throws Exception {
-        String flow = new ScaffoldingImpl().buildFlowFromDefaultFlow(customTokens, true);
+        String flow = new ScaffoldingImpl().buildFlowFromDefaultFlow(customTokens);
         JsonNode json = new ObjectMapper().readTree(flow);
 
         assertEquals("my-flow", json.get("name").asText());
@@ -39,15 +39,5 @@ public class ScaffoldingImplTest {
             "Per DHFPROD-2811, we now want to scaffold out a mapping step with " +
                 "validateEntity:false. That way, entity validation is not turned on, but a " +
                 "user can see that the feature is available.");
-    }
-
-    @Test
-    public void buildFlowWhenNotSupportingEntityServicesMapping() throws Exception {
-        String flow = new ScaffoldingImpl().buildFlowFromDefaultFlow(customTokens, false);
-        JsonNode json = new ObjectMapper().readTree(flow);
-
-        JsonNode stepTwo = json.get("steps").get("2");
-        assertEquals("default-mapping", stepTwo.get("stepDefinitionName").asText(),
-            "When ES mapping is not supported, the mapping step should use the 'default-mapping' step definition");
     }
 }

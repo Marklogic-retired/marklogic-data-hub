@@ -210,7 +210,7 @@ public class DhsDeployer extends LoggingObject {
         LoadUserModulesCommand loadUserModulesCommand = new LoadUserModulesCommand(hubConfig);
         loadUserModulesCommand.setForceLoad(true);
         commands.add(loadUserModulesCommand);
-        commands.add(new GenerateFunctionMetadataCommand(hubConfig, true));
+        commands.add(new GenerateFunctionMetadataCommand(hubConfig));
 
         commands.add(new DeployTemporalAxesCommand());
         commands.add(new DeployTemporalCollectionsCommand());

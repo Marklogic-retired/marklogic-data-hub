@@ -54,8 +54,6 @@ public class EnvironmentConfig {
 
     private String DHFVersion;
 
-    private boolean isVersionCompatibleWithES;
-
     public InstallInfo getInstallInfo() {
         return installInfo;
     }
@@ -92,10 +90,6 @@ public class EnvironmentConfig {
         return DHFVersion;
     }
 
-    public boolean isVersionCompatibleWithES() {
-        return isVersionCompatibleWithES;
-    }
-
     @JsonIgnore
     public void checkIfInstalled() {
         projectDir = mlSettings.getHubProject().getProjectDirString();
@@ -110,7 +104,6 @@ public class EnvironmentConfig {
         // with the one caveat being that if it cannot be identified, then 2.0.0 is used as a fallback, and QS likely
         // does not want to display that to the user.
         this.DHFVersion = versions.getLocalProjectVersion();
-        this.isVersionCompatibleWithES = versions.isVersionCompatibleWithES();
 
         // Replace "-SNAPSHOT" in version with ".0" as QS compares versions and fails if version number contains text
         installedVersion = installedVersion.replace("-SNAPSHOT", ".0");

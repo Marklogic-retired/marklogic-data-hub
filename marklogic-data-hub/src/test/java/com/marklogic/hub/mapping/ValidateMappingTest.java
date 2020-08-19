@@ -72,37 +72,34 @@ public class ValidateMappingTest extends AbstractHubCoreTest {
 
     @Test
     public void validMapping() {
-        if (versions.isVersionCompatibleWithES()) {
-            JsonNode response = mgr.validateJsonMapping("{\n" +
-                "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
-                "  \"properties\": {\n" +
-                "    \"id\": {\n" +
-                "      \"sourcedFrom\": \"id\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}", "/validate/test.json");
+        JsonNode response = mgr.validateJsonMapping("{\n" +
+            "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
+            "  \"properties\": {\n" +
+            "    \"id\": {\n" +
+            "      \"sourcedFrom\": \"id\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}", "/validate/test.json");
 
-            assertNull(response.get("properties").get("id").get("errorMessage"),
-                "The mapping is valid, and thus there shouldn't be an errorMessage property");
-            System.out.println(response);
-            assertTrue(response.get("properties").get("id").get("output").textValue().equals("10260"));
-        }
+        assertNull(response.get("properties").get("id").get("errorMessage"),
+            "The mapping is valid, and thus there shouldn't be an errorMessage property");
+        System.out.println(response);
+        assertTrue(response.get("properties").get("id").get("output").textValue().equals("10260"));
     }
 
     @Test
     public void invalidMapping() {
-        if (versions.isVersionCompatibleWithES()) {
-            JsonNode response = mgr.validateJsonMapping("{\n" +
-                "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
-                "  \"properties\": {\n" +
-                "    \"id\": {\n" +
-                "      \"sourcedFrom\": \"concat(id, ')\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}", "/validate/test.json");
+        JsonNode response = mgr.validateJsonMapping("{\n" +
+            "  \"targetEntityType\": \"http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType\",\n" +
+            "  \"properties\": {\n" +
+            "    \"id\": {\n" +
+            "      \"sourcedFrom\": \"concat(id, ')\"\n" +
+            "    }\n" +
+            "  }\n" +
+            "}", "/validate/test.json");
 
-            assertEquals("Invalid XPath expression: concat(id, ')", response.get("properties").get("id").get("errorMessage").asText(),
-                "The id mapping expression has an error, and thus it should be reported");
-        }
+        assertEquals("Invalid XPath expression: concat(id, ')", response.get("properties").get("id").get("errorMessage").asText(),
+            "The id mapping expression has an error, and thus it should be reported");
+
     }
 }

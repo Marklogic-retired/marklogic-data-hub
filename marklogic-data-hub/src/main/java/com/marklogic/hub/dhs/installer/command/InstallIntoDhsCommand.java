@@ -94,7 +94,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         // DHS is known to be compatible with entity-services-based mapping. Setting this field avoids the need to make
         // another DatabaseClient, which the Versions class will do.
-        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig, true);
+        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = new GenerateFunctionMetadataCommand(hubConfig);
         generateFunctionMetadataCommand.setCatchExceptionsForUserModules(true);
         commands.add(generateFunctionMetadataCommand);
 

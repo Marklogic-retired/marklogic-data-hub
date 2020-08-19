@@ -50,36 +50,32 @@ public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
 
     @Test
     void testMetaDataGeneration() {
-        if (versions.isVersionCompatibleWithES()) {
-            generateFunctionMetadataCommand.execute(newCommandContext());
+        generateFunctionMetadataCommand.execute(newCommandContext());
 
-            String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
-            DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-            BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
-            assertNotEquals(0, handle.get().length);
-            DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
-            assertTrue(permissions.get("data-hub-module-reader").contains(READ));
-            assertTrue(permissions.get("data-hub-module-reader").contains(EXECUTE));
-            assertTrue(permissions.get("data-hub-module-writer").contains(UPDATE));
-        }
+        String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
+        assertNotEquals(0, handle.get().length);
+        DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
+        assertTrue(permissions.get("data-hub-module-reader").contains(READ));
+        assertTrue(permissions.get("data-hub-module-reader").contains(EXECUTE));
+        assertTrue(permissions.get("data-hub-module-writer").contains(UPDATE));
     }
 
     @Test
     void updateModule() {
-        if (versions.isVersionCompatibleWithES()) {
-            installReferenceModelProject().createRawCustomer(2, "CustomerTwo");
+        installReferenceModelProject().createRawCustomer(2, "CustomerTwo");
 
-            // Run the flow first to make sure it succeeds
-            RunFlowResponse response = runFlow(new FlowInputs("simpleMapping", "1"));
-            assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
+        // Run the flow first to make sure it succeeds
+        RunFlowResponse response = runFlow(new FlowInputs("simpleMapping", "1"));
+        assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
 
-            // Now generate function metadata. If the mapping transforms aren't re-generated as well, then
-            // the flow will fail. So we'll then run the flow to make sure it still succeeds.
-            new GenerateFunctionMetadataCommand(getHubConfig(), true).generateFunctionMetadata();
-            response = runFlow(new FlowInputs("simpleMapping", "1"));
-            assertEquals("finished", response.getJobStatus());
-            assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
-        }
+        // Now generate function metadata. If the mapping transforms aren't re-generated as well, then
+        // the flow will fail. So we'll then run the flow to make sure it still succeeds.
+        new GenerateFunctionMetadataCommand(getHubConfig()).generateFunctionMetadata();
+        response = runFlow(new FlowInputs("simpleMapping", "1"));
+        assertEquals("finished", response.getJobStatus());
+        assertEquals(1, response.getStepResponses().get("1").getSuccessfulEvents());
     }
 }
 

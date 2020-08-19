@@ -256,10 +256,8 @@ public class ScaffoldingImpl implements Scaffolding {
             customTokens.put("%%mlFinalDbName%%", hubConfig.getDbName(DatabaseKind.FINAL));
             customTokens.put("%%mlFlowName%%", flowName);
 
-            boolean supportsEntityServicesMapping = getVersions().isVersionCompatibleWithES();
-
             try {
-                String fileContents = buildFlowFromDefaultFlow(customTokens, supportsEntityServicesMapping);
+                String fileContents = buildFlowFromDefaultFlow(customTokens);
                 try (FileWriter writer = new FileWriter(flowFile)) {
                     writer.write(fileContents);
                 }
@@ -271,7 +269,7 @@ public class ScaffoldingImpl implements Scaffolding {
         return flowFile;
     }
 
-    protected String buildFlowFromDefaultFlow(Map<String, String> customTokens, boolean supportsEntityServicesMapping) throws IOException {
+    protected String buildFlowFromDefaultFlow(Map<String, String> customTokens) throws IOException {
         String flowSrcFile = "scaffolding/defaultFlow.flow.json";
         String fileContents = null;
         try (InputStream inputStream = ScaffoldingImpl.class.getClassLoader().getResourceAsStream(flowSrcFile)) {
@@ -284,11 +282,6 @@ public class ScaffoldingImpl implements Scaffolding {
                 }
             }
         }
-
-        if (!supportsEntityServicesMapping) {
-            fileContents = fileContents.replaceAll("entity-services-mapping", "default-mapping");
-        }
-
         return fileContents;
     }
 

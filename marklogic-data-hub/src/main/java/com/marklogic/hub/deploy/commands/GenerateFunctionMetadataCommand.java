@@ -28,7 +28,6 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
     private final static String DH_FUNCTION_MODULE_PATH = "/data-hub/5/mapping-functions/";
     private final static String USER_FUNCTION_MODULE_PATH = "/custom-modules/mapping-functions/";
 
-    private boolean isCompatibleWithES;
     private boolean catchExceptionsForUserModules = false;
 
     // Need no-arg constructor for Spring
@@ -45,15 +44,6 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
         this.hubConfig = hubConfig;
     }
 
-    /**
-     * @param hubConfig
-     * @param isCompatibleWithES if it's known that the version of ML supports mapping based on Entity Services, then
-     *                           can set this to true
-     */
-    public GenerateFunctionMetadataCommand(HubConfig hubConfig, boolean isCompatibleWithES) {
-        this(hubConfig);
-        this.isCompatibleWithES = isCompatibleWithES;
-    }
 
     @Override
     public void execute(CommandContext context) {
@@ -61,64 +51,60 @@ public class GenerateFunctionMetadataCommand extends AbstractCommand {
     }
 
     public void generateFunctionMetadata() {
-        if (isCompatibleWithES || new Versions(hubConfig).isVersionCompatibleWithES()) {
-            DatabaseClient modulesClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
-            DataMovementManager dataMovementManager = modulesClient.newDataMovementManager();
-            final List<Throwable> caughtExceptions = new ArrayList<>();
+        DatabaseClient modulesClient = hubConfig.newStagingClient(hubConfig.getDbName(DatabaseKind.MODULES));
+        DataMovementManager dataMovementManager = modulesClient.newDataMovementManager();
+        final List<Throwable> caughtExceptions = new ArrayList<>();
 
-            ApplyTransformListener transformListener = new ApplyTransformListener()
-                .withTransform(new ServerTransform("mlGenerateFunctionMetadata"))
-                .withApplyResult(ApplyTransformListener.ApplyResult.IGNORE)
-                .onFailure((batch, throwable) -> {
-                    boolean throwException = true;
-                    if (this.catchExceptionsForUserModules && batch.getItems().length > 0) {
-                        final String moduleUri = batch.getItems()[0];
-                        if (moduleUri != null && moduleUri.startsWith(USER_FUNCTION_MODULE_PATH)) {
-                            logger.info("Caught error while generating function metadata for user module: " + throwable.getMessage()
-                                + "; will not rethrow this as the user is expected to fix this themselves and then regenerate " +
-                                "function metadata once the error is resolved.");
-                            throwException = false;
-                        }
+        ApplyTransformListener transformListener = new ApplyTransformListener()
+            .withTransform(new ServerTransform("mlGenerateFunctionMetadata"))
+            .withApplyResult(ApplyTransformListener.ApplyResult.IGNORE)
+            .onFailure((batch, throwable) -> {
+                boolean throwException = true;
+                if (this.catchExceptionsForUserModules && batch.getItems().length > 0) {
+                    final String moduleUri = batch.getItems()[0];
+                    if (moduleUri != null && moduleUri.startsWith(USER_FUNCTION_MODULE_PATH)) {
+                        logger.info("Caught error while generating function metadata for user module: " + throwable.getMessage()
+                            + "; will not rethrow this as the user is expected to fix this themselves and then regenerate " +
+                            "function metadata once the error is resolved.");
+                        throwException = false;
                     }
+                }
 
-                    if (throwException) {
-                        logger.error("Caught error while generating function metadata: " + throwable.getMessage());
-                        caughtExceptions.add(throwable);
-                    }
-                });
+                if (throwException) {
+                    logger.error("Caught error while generating function metadata: " + throwable.getMessage());
+                    caughtExceptions.add(throwable);
+                }
+            });
 
-            QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(
-                modulesClient.newQueryManager().newStructuredQueryBuilder().directory(true, DH_FUNCTION_MODULE_PATH, USER_FUNCTION_MODULE_PATH)
-            )
-                .withBatchSize(1)
-                .withThreadCount(4)
-                .onUrisReady(batch -> logger.info("Processing: " + Arrays.asList(batch.getItems())))
-                .onUrisReady(transformListener);
+        QueryBatcher queryBatcher = dataMovementManager.newQueryBatcher(
+            modulesClient.newQueryManager().newStructuredQueryBuilder().directory(true, DH_FUNCTION_MODULE_PATH, USER_FUNCTION_MODULE_PATH)
+        )
+            .withBatchSize(1)
+            .withThreadCount(4)
+            .onUrisReady(batch -> logger.info("Processing: " + Arrays.asList(batch.getItems())))
+            .onUrisReady(transformListener);
 
-            dataMovementManager.startJob(queryBatcher);
-            //Stop batcher if transform takes more than 2 minutes.
-            try {
-                queryBatcher.awaitCompletion(2L, TimeUnit.MINUTES);
-            } catch (InterruptedException e) {
-                logger.error("Loading function metadata timed out, took longer than 2 minutes");
-            }
-            dataMovementManager.stopJob(queryBatcher);
+        dataMovementManager.startJob(queryBatcher);
+        //Stop batcher if transform takes more than 2 minutes.
+        try {
+            queryBatcher.awaitCompletion(2L, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            logger.error("Loading function metadata timed out, took longer than 2 minutes");
+        }
+        dataMovementManager.stopJob(queryBatcher);
 
-            // Trigger regeneration of mapping transforms, as they are now out-of-date and will not work
-            // Do this before throwing an exception, as the exception may only impact one mapping, and we don't
-            // want none of them to work
-            DatabaseClient stagingClient = hubConfig.newStagingClient(null);
-            try {
-                MappingService.on(stagingClient).generateMappingTransforms();
-            } finally {
-                stagingClient.release();
-            }
+        // Trigger regeneration of mapping transforms, as they are now out-of-date and will not work
+        // Do this before throwing an exception, as the exception may only impact one mapping, and we don't
+        // want none of them to work
+        DatabaseClient stagingClient = hubConfig.newStagingClient(null);
+        try {
+            MappingService.on(stagingClient).generateMappingTransforms();
+        } finally {
+            stagingClient.release();
+        }
 
-            if (!caughtExceptions.isEmpty()) {
-                throw new RuntimeException(caughtExceptions.get(0));
-            }
-        } else {
-            logger.info("Not generating function metadata for mapping libraries, as it's not supported by this version of MarkLogic");
+        if (!caughtExceptions.isEmpty()) {
+            throw new RuntimeException(caughtExceptions.get(0));
         }
     }
 

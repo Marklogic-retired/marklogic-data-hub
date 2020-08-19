@@ -37,9 +37,7 @@ function verifyMappingContainsUriParam() {
   ]
 }
 
-if (mappingLib.versionIsCompatibleWithES()) {
-  []
-    .concat(verifyUriIsResolvedByMappingStep())
-    .concat(verifyUriResolvedWhenTestingMapping())
-    .concat(verifyMappingContainsUriParam());
-}
+[]
+  .concat(verifyUriIsResolvedByMappingStep())
+  .concat(verifyUriResolvedWhenTestingMapping())
+  .concat(verifyMappingContainsUriParam());

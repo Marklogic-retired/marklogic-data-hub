@@ -83,9 +83,6 @@ public class HubProjectImpl implements HubProject {
     @Autowired @Lazy
     private FlowManagerImpl flowManager;
 
-    @Autowired @Lazy
-    private Versions versions;
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubProjectImpl(){
@@ -635,17 +632,16 @@ public class HubProjectImpl implements HubProject {
 
     protected void updateStepDefinitionTypeForInlineMappingSteps() {
         try {
-            if (versions.isVersionCompatibleWithES()) {
-                flowManager.getLocalFlows().forEach(flow -> {
-                    flow.getSteps().values().forEach((step) -> {
-                        if ((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
-                            step.getStepDefinitionName().equalsIgnoreCase("default-mapping")) {
-                            step.setStepDefinitionName("entity-services-mapping");
-                        }
-                    });
-                    flowManager.saveLocalFlow(flow);
+            flowManager.getLocalFlows().forEach(flow -> {
+                flow.getSteps().values().forEach((step) -> {
+                    if ((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
+                        step.getStepDefinitionName().equalsIgnoreCase("default-mapping")) {
+                        step.setStepDefinitionName("entity-services-mapping");
+                    }
                 });
-            }
+                flowManager.saveLocalFlow(flow);
+            });
+
         } catch (Exception ex) {
             logger.warn("Error occurred while attempting to upgrade mapping steps to use 'entity-services-mapping' " +
                 "stepDefinitionType instead of 'default-mapping'; error: " + ex.getMessage());

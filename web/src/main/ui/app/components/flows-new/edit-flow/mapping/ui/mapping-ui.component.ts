@@ -1,17 +1,11 @@
 import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges, ViewChild, ViewChildren, QueryList, ViewEncapsulation } from '@angular/core';
 import { Entity } from '../../../../../models/index';
 import { MdlDialogService } from '@angular-mdl/core';
-
 import * as _ from 'lodash';
-import * as moment from 'moment';
 import { Mapping } from "../../../../mappings/mapping.model";
 import { EnvironmentService } from '../../../../../services/environment';
-import { EntityTableUiComponent } from './entity-table-ui.component';
-
 import {MatDialog, MatPaginator, MatSort, MatTable, MatTableDataSource} from "@angular/material";
 import { Step } from '../../../models/step.model';
-import {animate, state, style, transition, trigger} from '@angular/animations';
-
 import { ManageFlowsService } from "../../../services/manage-flows.service";
 
 @Component({
@@ -42,17 +36,11 @@ export class MappingUiComponent implements OnChanges {
   @Output() updateURI = new EventEmitter();
   @Output() updateMap = new EventEmitter();
 
-  private uriOrig: string = '';
   private connsOrig: object = {};
 
   public valMaxLen: number = 25;
-  public isVersionCompatibleWithES: boolean = false;
-
-  public filterFocus: object = {};
-  public filterText: object = {};
 
   public editingURI: boolean = false;
-  public editingSourceContext: boolean = false;
   public isTestClicked: boolean = false;
 
   displayedColumns = ['key', 'val'];
@@ -71,17 +59,8 @@ export class MappingUiComponent implements OnChanges {
 
   dataSource: MatTableDataSource<any>;
   mapExpresions = {};
-  mapExpValue: Array<any> = [];
-  runningStatus = false;
-  nestedEntityStatus: boolean = false;
-  entName: string = '';
-  isExpansionDetailRow : boolean = false;
-  expandedElement: any;
-  public fncLst: Object;
-  dataSourceEntity: Array<any> = [];
 
-    uriIndex = 0;
-    currEntity:string;
+  uriIndex = 0;
 
   @ViewChild(MatTable)
   table: MatTable<any>;
@@ -102,7 +81,6 @@ export class MappingUiComponent implements OnChanges {
     if(_.isEmpty(this.mapExpresions)) {
       this.mapExpresions = this.conns;
     }
-    this.isVersionCompatibleWithES = this.envService.settings.isVersionCompatibleWithES;
   }
 
   ngAfterViewInit() {
@@ -169,7 +147,7 @@ export class MappingUiComponent implements OnChanges {
       this.editURIVal = this.docUris[index];
       this.onUpdateURINewUI();
 
-    } // At beginning of range 
+    } // At beginning of range
     else if (index === 0) {
       this.disableURINavLeft = true;
       if (end > 0) {
@@ -191,7 +169,7 @@ export class MappingUiComponent implements OnChanges {
       // Before beginning of range
       if (index < 0) {
         this.disableURINavLeft = true;
-      } 
+      }
       // After end of range
       else {
         this.disableURINavRight = true;
@@ -261,12 +239,7 @@ export class MappingUiComponent implements OnChanges {
    */
   keyPressURI(event) {
     if (event.key === 'Enter') {
-      if(this.isVersionCompatibleWithES) {
-        this.onUpdateURINewUI();
-      }
-      else {
-        this.onUpdateURI();
-      }
+      this.onUpdateURINewUI();
     }
   }
 
@@ -312,12 +285,12 @@ export class MappingUiComponent implements OnChanges {
     }
     if (changes.sampleDocSrcProps){
       this.renderRows();
-    } 
+    }
     if (changes.entityNested && changes.entityNested.currentValue){
       // Get props from target entity for passing to child
-      this.entityProps = 
+      this.entityProps =
         this.entityNested.definitions[this.targetEntity.info.title].properties;
-    } 
+    }
   }
 
   handleSelection(name, expr, nested): void {
@@ -338,40 +311,6 @@ export class MappingUiComponent implements OnChanges {
     this.handleSelection(event.name, event.expr, true);
   }
 
-  /**
-   * Clear a property selection from source menu
-   * @param event Event object, used to stop propagation
-   * @param entityPropName Entity property name mapping to clear
-   */
-  clearSelection(event, entityPropName): void {
-    if (this.conns[entityPropName])
-      delete this.conns[entityPropName];
-    if (!_.isEqual(this.conns, this.connsOrig)) {
-      this.onSaveMap(false);
-    }
-    this.editingURI = false; // close edit box if open
-    event.stopPropagation();
-  }
-
-  /**
-   * Get property objects of source document
-   * @param entityPropName Entity property name mapping to lookup
-   * @param srcKey 'key', 'val' or 'type'
-   * @returns {String} Value of the src data requested
-   */
-  getConnSrcData(entityPropName, srcKey): string {
-    let data;
-    let propertyKey = this.conns[entityPropName];
-
-    if (this.sampleDocSrcProps.length > 0 && this.conns[entityPropName]) {
-      let obj = _.find(this.sampleDocSrcProps, function(o) { return o && (o.key === propertyKey); });
-      if (obj) {
-        data = obj[srcKey];
-      }
-    }
-
-    return (data) ? String(data) : data;
-  }
 
   /**
    * Handle save event by emitting connection object.
@@ -384,45 +323,6 @@ export class MappingUiComponent implements OnChanges {
     this.connsOrig = _.cloneDeep(this.conns);
   }
 
-  /**
-   * Have there been new selections since last map save?
-   * @returns {boolean}
-   */
-  mapChanged() {
-    return !_.isEqual(this.conns, this.connsOrig);
-  }
-
-  /**
-   * Interpret the datatype of a property value
-   * Recognize all JSON types: array, object, number, boolean, null
-   * Also do a basic interpretation of dates (ISO 8601, RFC 2822)
-   * @param value Property value
-   * @returns {string} datatype ("array"|"object"|"number"|"date"|"boolean"|"null")
-   */
-  getType(value: any): string {
-    let result = '';
-    let RFC_2822 = 'ddd, DD MMM YYYY HH:mm:ss ZZ';
-    if (_.isArray(value)) {
-      result = 'array';
-    } else if (_.isObject(value)) {
-      result = 'object';
-    }
-    // Quoted numbers (example: "123") are not recognized as numbers
-    else if (_.isNumber(value)) {
-      result = 'number';
-    }
-    // Do not recognize ordinal dates (example: "1981095")
-    else if (moment(value, [moment.ISO_8601, RFC_2822], true).isValid() && !/^\d+$/.test(value)) {
-      result = 'date';
-    } else if (_.isBoolean(value)) {
-      result = 'boolean';
-    } else if (_.isNull(value)) {
-      result = 'null';
-    } else {
-      result = 'string';
-    }
-    return result;
-  }
 
   /**
    * Should datatype be displayed with quotes?
@@ -473,60 +373,6 @@ export class MappingUiComponent implements OnChanges {
      return result;
    }
 
-  /**
-   * Does entity property have an element range index set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasElementRangeIndex(name) {
-    return _.includes(this.targetEntity.definition.elementRangeIndex, name);
-  }
-
-  /**
-   * Does entity property have a path range index set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasRangeIndex(name) {
-    return _.includes(this.targetEntity.definition.rangeIndex, name);
-  }
-
-  /**
-   * Does entity property have a word lexicon set?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  hasWordLexicon(name) {
-    return _.includes(this.targetEntity.definition.wordLexicon, name);
-  }
-
-  /**
-   * Is an entity property required?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  isRequired(name) {
-    return _.includes(this.targetEntity.definition.required, name);
-  }
-
-  /**
-   * Is an entity property personally identifiable information?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  isPII(name) {
-    return _.includes(this.targetEntity.definition.pii, name);
-  }
-
-      /**
-   * Is an entity property the primary key?
-   * @param name Name of property
-   * @returns {boolean}
-   */
-  isPrimaryKey(name) {
-    return _.includes(this.targetEntity.definition.primaryKey, name);
-  }
-
   OpenFullSourceQuery() {
     let result = this.dialogService.alert(
       this.step.options.sourceQuery,
@@ -540,7 +386,7 @@ export class MappingUiComponent implements OnChanges {
   IndentCondition(prop) {
     let count = prop.split('/').length - 1;
     let indentSize = 12*count;
-  
+
     let style = {'text-indent': indentSize+'px'}
   return style
   }
