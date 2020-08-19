@@ -255,7 +255,7 @@ const SourceToEntityMap = (props) => {
             <Icon type="left" className={styles.navigateIcon} />
         </MLButton>
         &nbsp;
-        <div className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
+        <div aria-label="uriIndex" className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
         &nbsp;
         <MLButton className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
             <Icon type="right" className={styles.navigateIcon} />
@@ -339,12 +339,9 @@ const SourceToEntityMap = (props) => {
         })
     }
 
-    const onOk = () => {
-        props.setMappingVisible(false)
-    }
-
     const onCancel = () => {
         props.setMappingVisible(false)
+        setUriIndex(0);
     }
 
     const convertMapExpToMapArt = (obj, path, val) => {
@@ -1155,7 +1152,6 @@ const SourceToEntityMap = (props) => {
 
     return (<Modal
             visible={props.mappingVisible}
-            onOk={() => onOk()}
             onCancel={() => onCancel()}
             width={'96vw'}
             maskClosable={false}
