@@ -566,7 +566,7 @@ const SourceToEntityMap = (props) => {
             defaultFilteredValue: searchSourceText ? [searchSourceText] : [],
             render: (text) => {
                 let textToSearchInto = text?.split(':').length > 1 ? text?.split(':')[0]+': '+text?.split(':')[1] : text;
-                let valueToDisplay = <span>{text?.split(':').length > 1 ? <span><MLTooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span id="namespace" className={styles.namespace}>{text?.split(':')[0]+': '}</span></MLTooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
+                let valueToDisplay = <span className={styles.sourceName}>{text?.split(':').length > 1 ? <span><MLTooltip title={text?.split(':')[0]+' = "'+props.namespaces[text?.split(':')[0]]+'"'}><span className={styles.namespace}>{text?.split(':')[0]+': '}</span></MLTooltip><span>{text?.split(':')[1]}</span></span> : text}</span>;
                 return getRenderOutput(textToSearchInto,valueToDisplay,'key',searchedSourceColumn,searchSourceText);
             }
         },
