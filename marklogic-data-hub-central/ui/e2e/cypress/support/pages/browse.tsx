@@ -116,6 +116,11 @@ class BrowsePage {
     return cy.get('[data-cy="clear-' + facet + '"]');
   }
 
+  clickClearFacetSearchSelection(facet: string){
+      cy.findByTestId(`clear-${facet}`).click();
+      this.waitForSpinnerToDisappear();
+  }
+
   getFacetSearchSelectionCount(facet: string) {
     return cy.get('[data-cy="' + facet + '-selected-count"]').invoke('text');
   }
@@ -164,6 +169,19 @@ class BrowsePage {
   getRangeFacet(lowerBound: number){
    return cy.get('#selected-facets [data-cy="clear-'+ lowerBound +'"]');
   }
+
+  clickPopoverSearch(facetName: string){
+    cy.findByTestId(`${facetName}-search-input`).click();
+  }
+
+  setInputField(facetName: string,str: string){
+    cy.findByTestId(`${facetName}-popover-input-field`).clear().type(str);
+  }
+
+  getPopOverCheckbox(str: string){
+   return cy.findByTestId(`${str}-popover-checkbox`);
+  }
+
 
   applyDatePickerSelection(facet: string) {
     return cy.get('[data-cy=datepicker-facet-apply-button]').click();

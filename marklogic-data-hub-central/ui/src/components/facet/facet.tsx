@@ -201,6 +201,9 @@ const Facet: React.FC<Props> = (props) => {
               entityTypeId={props.entityTypeId}
               propertyPath={props.propertyPath}
               checkFacetValues={checkFacetValues}
+              popOvercheckedValues={checked}
+              facetValues={checkedFacets}
+              facetName={props.name}
           />
         </div>}
       </div>

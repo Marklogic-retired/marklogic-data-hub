@@ -283,31 +283,67 @@ const Sidebar: React.FC<Props> = (props) => {
       }
       setEntityFacets(newEntityFacets);
     } else if (facetCategory === 'hub') {
-      let newHubFacets = [...hubFacets];
-      let index = newHubFacets.findIndex(facet => facet.facetName === constraint);
+        let newHubFacets = [...hubFacets];
+        let index = newHubFacets.findIndex(facet => facet.facetName === constraint);
 
-      if (index !== -1) {
-        // add item to facetValues
-        let additionalFacetVals = vals.map(item => {
-          return { name: item, count: 0, value: item }
-        });
-        if (Object.entries(newAllSelectedfacets).length === 0) {
-          newAllSelectedfacets = {
-            ...newAllSelectedfacets,
-            [constraint]: {
-              dataType,
-              [valueKey]: vals
+        if (index !== -1) {
+            // add item to facetValues
+            let additionalFacetVals = vals.map(item => {
+                return {name: item, count: 0, value: item}
+            });
+
+            newAllSelectedfacets = {
+                ...newAllSelectedfacets,
+                [constraint]: {
+                    dataType,
+                    [valueKey]: vals
+                }
             }
-          }
-          // selected facet constraint exists
-          if (!newAllSelectedfacets.hasOwnProperty(constraint)) {
-            // facet value doesn't exist
-            newHubFacets[index]['facetValues'].unshift(...additionalFacetVals)
-          }
+            for (let i = 0; i < additionalFacetVals.length; i++) {
+                for (let j = 0; j < newHubFacets[index]['facetValues'].length; j++) {
+                    if (additionalFacetVals[i].name === newHubFacets[index]['facetValues'][j].name) {
+                        newHubFacets[index]['facetValues'].splice(j, 1);
+                        break;
+                    }
+                }
+                newHubFacets[index]['facetValues'].unshift(additionalFacetVals[i]);
+            }
         }
-      }
-      setHubFacets(newHubFacets);
+        setHubFacets(newHubFacets);
     }
+      let type = '';
+      switch (dataType) {
+          case 'xs:string':
+          case 'collection': {
+              type = 'xs:string';
+              valueKey = 'stringValues';
+              break;
+          }
+          case 'xs:integer': {
+              type = 'xs:integer';
+              valueKey = 'rangeValues';
+              break;
+          }
+          case 'xs:decimal': {
+              type = 'xs:decimal';
+              valueKey = 'rangeValues';
+              break;
+          }
+          default:
+              break;
+      }
+      if (vals.length > 0) {
+          newAllSelectedfacets = {
+              ...newAllSelectedfacets,
+              [constraint]: {
+                  dataType: type,
+                  [valueKey]: vals
+              }
+          };
+      } else {
+          delete newAllSelectedfacets[constraint];
+      }
+
     setAllSelectedFacets(newAllSelectedfacets);
     setAllGreyedOptions(newAllSelectedfacets);
   }
