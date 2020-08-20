@@ -380,7 +380,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
-        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
         browsePage.getAppliedFacets('Adams Cole').should('exist');
         browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.getTableCell(1,2).should('contain', '103');

@@ -94,5 +94,7 @@ declare namespace Cypress {
        * @param stepName - name of the step
        */
       verifyStepRunResult(jobStatus: string, stepType: string, stepName: string): Chainable<Element>
+
+      waitForAsyncRequest(): Chainable<WaitXHR>
     }
   }

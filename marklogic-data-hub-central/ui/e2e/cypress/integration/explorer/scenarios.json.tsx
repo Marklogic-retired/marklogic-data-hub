@@ -316,6 +316,8 @@ describe('json scenario for table on browse documents page', () => {
 
     //Navigating to detail view
     browsePage.getTableViewSourceIcon().click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     detailPage.getDocumentJSON().should('exist');
     detailPage.getDocumentEntity().should('contain', 'Customer');
     detailPage.getDocumentTimestamp().should('exist');
