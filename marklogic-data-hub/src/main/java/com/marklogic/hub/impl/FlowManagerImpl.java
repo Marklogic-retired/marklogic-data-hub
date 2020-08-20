@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -111,6 +112,16 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
     @Override
     public Flow getLocalFlow(String flowName) {
+        JsonNode node = getLocalFlowAsJSON(flowName);
+        Flow newFlow = createFlowFromJSON(node);
+        if (newFlow != null && newFlow.getName().length() > 0) {
+            return newFlow;
+        } else {
+            throw new DataHubProjectException(flowName + " is not a valid flow");
+        }
+    }
+
+    public ObjectNode getLocalFlowAsJSON(String flowName) {
         Path flowPath = Paths.get(hubConfig.getFlowsDir().toString(), flowName + FLOW_FILE_EXTENSION);
         InputStream inputStream = null;
         // first, let's check our resources
@@ -124,18 +135,13 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
                 throw new DataHubProjectException(e.getMessage());
             }
         }
-        JsonNode node;
+        ObjectNode node;
         try {
-            node = JSONObject.readInput(inputStream);
+            node = (ObjectNode)JSONObject.readInput(inputStream);
         } catch (IOException e) {
             throw new DataHubProjectException("Unable to read flow: " + e.getMessage());
         }
-        Flow newFlow = createFlowFromJSON(node);
-        if (newFlow != null && newFlow.getName().length() > 0) {
-            return newFlow;
-        } else {
-            throw new DataHubProjectException(flowName + " is not a valid flow");
-        }
+        return node;
     }
 
     @Override
@@ -514,4 +520,12 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
         return flows;
     }
 
+    public List<ObjectNode> getLocalFlowsAsJSON() {
+        List<String> flowNames = getLocalFlowNames();
+        List<ObjectNode> flows = new ArrayList<>();
+        for (String flow : flowNames) {
+            flows.add(getLocalFlowAsJSON(flow));
+        }
+        return flows;
+    }
 }
