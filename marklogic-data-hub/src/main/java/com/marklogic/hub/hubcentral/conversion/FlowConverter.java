@@ -103,7 +103,7 @@ public class FlowConverter extends LoggingObject {
             return;
         }
 
-        logger.warn("Beginning conversion of flows containing ingestion, mapping or any of the custom steps");
+        logger.warn("Beginning conversion of flows");
 
         //Backup flows and mappings
         Path convertedFlowsPath = hubProject.getProjectDir().resolve("converted-flows");
@@ -174,7 +174,7 @@ public class FlowConverter extends LoggingObject {
                     }
                     else{
                         logger.warn(format("The mastering step '%s' will be converted to a custom step (step with " +
-                            "step definition type 'custom') as a valid mapping can't be found.", step.getName()));
+                            "step definition type 'custom').", step.getName()));
                         targetDir = customStepDir;
                         stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
                         // Change step definition type to "custom" for custom mapping step without a valid mapping
