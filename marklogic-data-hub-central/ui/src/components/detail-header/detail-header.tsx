@@ -8,6 +8,7 @@ interface Props {
   contentType: string;
   primaryKey: string;
   uri: string;
+  sources: any;
 };
 
 const DetailHeader: React.FC<Props> = (props) => {
@@ -21,6 +22,16 @@ const DetailHeader: React.FC<Props> = (props) => {
   let timestamp: string = '';
   let sources: string = '';
 
+  if (props.sources && props.sources.length) {
+    if (Array.isArray(props.sources)) {
+      sources = props.sources.map(src => {
+        return src.name;
+      }).join(', ');
+    } else {
+      sources = props.sources.name;
+    }
+  }
+  
   if (fileType === 'json') {
     if (props.document.envelope) {
       envelope = props.document.envelope;
@@ -33,13 +44,6 @@ const DetailHeader: React.FC<Props> = (props) => {
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn[0];
           } else {
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
-          }
-        }
-        if (envelope.headers.hasOwnProperty('sources')) {
-          if (Array.isArray(envelope.headers.sources)) {
-            sources = envelope.headers.sources[0].name;
-          } else {
-            sources = envelope.headers.sources.name;
           }
         }
         if (props.primaryKey) {
@@ -64,7 +68,6 @@ const DetailHeader: React.FC<Props> = (props) => {
       if (envelope && envelope.instance) {
         if (envelope.hasOwnProperty('headers')) {
           timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
-          sources = envelope.headers.hasOwnProperty('sources') && envelope.headers.sources.name;
         }
         if (envelope.instance.hasOwnProperty('info')) {
           title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
@@ -90,7 +93,6 @@ const DetailHeader: React.FC<Props> = (props) => {
         if (esEnvelope) {
           if (esEnvelope.hasOwnProperty('es:headers')) {
             timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn[0];
-            sources = esEnvelope['es:headers'].hasOwnProperty('sources') && esEnvelope['es:headers'].sources[0].name;
           }
           if (esEnvelope['es:instance'].hasOwnProperty('es:info')) {
             title = esEnvelope['es:instance']['es:info'].hasOwnProperty('es:title') && esEnvelope['es:instance']['es:info']['es:title'];

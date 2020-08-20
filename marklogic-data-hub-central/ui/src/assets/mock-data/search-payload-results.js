@@ -52,7 +52,12 @@ const searchPayloadResults = [
       "propertyValue": 876
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:36.479997-07:00"
+    "createdOn": "2019-10-02T12:11:36.479997-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 2,
@@ -106,7 +111,12 @@ const searchPayloadResults = [
       "propertyValue": "/Users/ban/Documents/Projects/dhf-files/store-data/products/games/92a95902-ee18-49b1-bb16-6c4320b02da5.json"
     },
     "entityName": "Product",
-    "createdOn": "2019-10-02T12:11:37.037324-07:00"
+    "createdOn": "2019-10-02T12:11:37.037324-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 3,
@@ -161,7 +171,12 @@ const searchPayloadResults = [
       "propertyValue": 209
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:35.318739-07:00"
+    "createdOn": "2019-10-02T12:11:35.318739-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 4,
@@ -217,7 +232,12 @@ const searchPayloadResults = [
       "propertyValue": "335"
     },
     "entityName": "Order",
-    "createdOn": "2019-10-02T12:11:37.863841-07:00"
+    "createdOn": "2019-10-02T12:11:37.863841-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 5,
@@ -273,7 +293,12 @@ const searchPayloadResults = [
       "propertyValue": "544"
     },
     "entityName": "Order",
-    "createdOn": "2019-10-02T12:11:38.303424-07:00"
+    "createdOn": "2019-10-02T12:11:38.303424-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 6,
@@ -328,7 +353,12 @@ const searchPayloadResults = [
       "propertyValue": 721
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:35.976585-07:00"
+    "createdOn": "2019-10-02T12:11:35.976585-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 7,
@@ -384,7 +414,12 @@ const searchPayloadResults = [
       "propertyValue": "417"
     },
     "entityName": "Order",
-    "createdOn": "2019-10-02T12:11:37.865345-07:00"
+    "createdOn": "2019-10-02T12:11:37.865345-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 8,
@@ -439,7 +474,12 @@ const searchPayloadResults = [
       "propertyValue": 957
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:36.488802-07:00"
+    "createdOn": "2019-10-02T12:11:36.488802-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 9,
@@ -494,7 +534,12 @@ const searchPayloadResults = [
       "propertyValue": 36
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:35.320741-07:00"
+    "createdOn": "2019-10-02T12:11:35.320741-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   },
   {
     "index": 10,
@@ -549,7 +594,12 @@ const searchPayloadResults = [
       "propertyValue": 357
     },
     "entityName": "Customer",
-    "createdOn": "2019-10-02T12:11:35.317848-07:00"
+    "createdOn": "2019-10-02T12:11:35.317848-07:00",
+    "sources": [
+      {
+        "name": "Ingest"
+      }
+    ]
   }
 ];
 

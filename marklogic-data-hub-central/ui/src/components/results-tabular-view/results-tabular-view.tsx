@@ -217,7 +217,8 @@ const ResultsTabularView = (props) => {
                         searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
                         tableView: props.tableView,
-                        sortOrder: searchOptions.sortOrder
+                        sortOrder: searchOptions.sortOrder,
+                        sources: item.sources
                     }
                 }} id={'instance'}
                     data-cy='instance'>
@@ -233,7 +234,8 @@ const ResultsTabularView = (props) => {
                         searchFacets: searchOptions.selectedFacets,
                         query: searchOptions.query,
                         tableView: props.tableView,
-                        sortOrder: searchOptions.sortOrder
+                        sortOrder: searchOptions.sortOrder,
+                        sources: item.sources
                     }
                 }} id={'source'}
                     data-cy='source'>
@@ -253,6 +255,7 @@ const ResultsTabularView = (props) => {
                 createdOn: dateConverter(createdOn),
                 uri: item.uri,
                 primaryKeyPath: path,
+                sources: item.sources,
                 detailView: detailView
             }
         } else {
@@ -260,6 +263,7 @@ const ResultsTabularView = (props) => {
                 primaryKey: primaryKeyValue,
                 uri: item.uri,
                 primaryKeyPath: path,
+                sources: item.sources,
                 detailView: detailView
             }
         }
@@ -317,7 +321,6 @@ const ResultsTabularView = (props) => {
     }, [props.selectedEntities])
 
     const expandedRowRender = (rowId) => {
-
         const nestedColumns = [
             { title: 'Property', dataIndex: 'property', width: '33%' },
             { title: 'Value', dataIndex: 'value', width: '34%' },
@@ -341,7 +344,9 @@ const ResultsTabularView = (props) => {
                                 start: searchOptions.start,
                                 searchFacets: searchOptions.selectedFacets,
                                 query: searchOptions.query,
-                                tableView: props.tableView
+                                tableView: props.tableView,
+                                sortOrder: searchOptions.sortOrder,
+                                sources: rowId.sources
                             }
                         }}
                             data-cy='nested-instance'>

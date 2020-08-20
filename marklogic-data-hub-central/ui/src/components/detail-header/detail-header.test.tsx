@@ -14,6 +14,7 @@ describe("Detail component", () => {
           uri='/Users/ban/Documents/Projects/dhf-files/store-data/products/games/ebb9671e-4c3d-4b33-810f-d57d7c5d5897.json' 
           primaryKey='1000201' 
           contentType="json"
+          sources={jsonDocPayload.content.envelope.headers.sources}
         />);
     });
 
@@ -43,6 +44,7 @@ describe("Detail component", () => {
           uri='/Users/ban/Documents/Projects/dhf-files/store-data/products/games/ebb9671e-4c3d-4b33-810f-d57d7c5d5897.json' 
           primaryKey='' 
           contentType="json"
+          sources={jsonDocPayload.content.envelope.headers.sources}
         />);
     });
 
