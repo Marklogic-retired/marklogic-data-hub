@@ -48,6 +48,7 @@ public interface MasteringService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_getDefaultCollections;
+            private BaseProxy.DBFunctionRequest req_updateMatchOptions;
 
             private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -55,6 +56,8 @@ public interface MasteringService {
 
                 this.req_getDefaultCollections = this.baseProxy.request(
                     "getDefaultCollections.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_updateMatchOptions = this.baseProxy.request(
+                    "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
@@ -71,6 +74,21 @@ public interface MasteringService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode updateMatchOptions(com.fasterxml.jackson.databind.JsonNode options) {
+                return updateMatchOptions(
+                    this.req_updateMatchOptions.on(this.dbClient), options
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode updateMatchOptions(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode options) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("options", false, BaseProxy.JsonDocumentType.fromJsonNode(options))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new MasteringServiceImpl(db, serviceDeclaration);
@@ -83,5 +101,13 @@ public interface MasteringService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getDefaultCollections(String entityType);
+
+  /**
+   * Invokes the updateMatchOptions operation on the database server
+   *
+   * @param options	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode updateMatchOptions(com.fasterxml.jackson.databind.JsonNode options);
 
 }
