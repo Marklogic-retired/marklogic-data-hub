@@ -22,8 +22,9 @@ var permissions,
   baseCollections;
 
 const temporal = require("/MarkLogic/temporal.xqy");
+const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
 
-const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
+const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
     acc[col] = true;
     return acc;
 }, {});
@@ -50,10 +51,11 @@ for (let content of writeQueue) {
             if (metadata) {
                 delete metadata.temporalDocURI;
             }
+            const collectionsReservedForTemporal = ['latest', content.uri];
             temporal.documentInsert(temporalCollection, content.uri, content.value,
                 {
                     permissions: fullPermissions,
-                    collections: collections.filter((col) => !temporalCollections[col]),
+                    collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
                     metadata
                 }
             );

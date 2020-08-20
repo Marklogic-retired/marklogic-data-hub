@@ -58,6 +58,8 @@ import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
+import com.marklogic.mgmt.util.ObjectMapperFactory;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -1161,6 +1163,15 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
             assertEquals(403, ex.getServerStatusCode(), "MarkLogic was expected to throw a 403 Forbidden response for " +
                 "the following reason: " + reason);
             assertEquals("Forbidden", ex.getServerStatus());
+        }
+    }
+
+    protected ObjectNode getDatabaseProperties(String database) {
+        DatabaseManager mgr = new DatabaseManager(adminHubConfig.getManageClient());
+        try {
+            return (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(mgr.getPropertiesAsJson(database));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
