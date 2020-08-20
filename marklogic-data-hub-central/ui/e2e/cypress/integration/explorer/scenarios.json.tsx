@@ -124,7 +124,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 14);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.getClearFacetSearchSelection('Person').click();
+    browsePage.clickClearFacetSearchSelection('Person');
   });
 
   it('apply facet search and clear individual grey facet', () => {
@@ -371,7 +371,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getClearFacetSearchSelection('Adams Cole').should('contain', 'name: Adams Cole');
     browsePage.getClearFacetSearchSelection('adamscole@nutralab.com').should('exist');
     browsePage.getTotalDocuments().should('be.equal', 1);
-    browsePage.getClearFacetSearchSelection('adamscole@nutralab.com').click();
+    browsePage.clickClearFacetSearchSelection('adamscole@nutralab.com');
     browsePage.clickTableView();
     browsePage.getClearFacetSearchSelection('Adams Cole').should('exist');
     browsePage.getTotalDocuments().should('be.equal', 2);
@@ -414,8 +414,8 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getClearFacetSearchSelection('Adams Cole').click();
-    browsePage.getClearFacetSearchSelection('adamscole@nutralab.com').click();
+    browsePage.clickClearFacetSearchSelection('Adams Cole');
+    browsePage.clickClearFacetSearchSelection('adamscole@nutralab.com');
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('not.be.checked');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('not.be.checked');
     browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
@@ -455,6 +455,22 @@ describe('json scenario for table on browse documents page', () => {
       browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
       browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
       browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').should('not.be.checked');
+  })
+
+  it('Verify facets checked from popover search can be unchecked on clicking discard all changes', () => {
+     browsePage.selectEntity('Person');
+     browsePage.getFacetItemCheckbox('fname', 'Alexandra').click();
+     browsePage.getGreySelectedFacets('Alexandra').should('exist');
+     browsePage.waitForSpinnerToDisappear();
+     browsePage.clickPopoverSearch('fname');
+     browsePage.setInputField('fname', 'Al');
+     browsePage.getPopOverCheckbox('Alexandra').click();
+     browsePage.getGreySelectedFacets('Alexandra').should('be.visible');
+     browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
+     browsePage.getClearGreyFacets().click();
+     browsePage.getFacetItemCheckbox('fname', 'Alexandra').should('not.be.checked');
+     browsePage.clickPopoverSearch('fname');
+     browsePage.getPopOverCheckbox('Alexandra').should('not.be.checked');
   })
 
 });

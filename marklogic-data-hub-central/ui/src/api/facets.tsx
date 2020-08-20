@@ -12,3 +12,10 @@ export const rangeFacet = async (props) => {
   });
 }
 
+export const stringSearch = async (data) => {
+    return await axios({
+        method: 'POST',
+        url: `/api/entitySearch/facet-values`,
+        data: data
+    });
+}

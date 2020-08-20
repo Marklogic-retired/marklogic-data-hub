@@ -60,7 +60,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 5);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
-    browsePage.getClearFacetSearchSelection('mapCustomersXML').click();
+    browsePage.clickClearFacetSearchSelection('mapCustomersXML');
   });
 
   it('apply facet search and clear individual grey facet', () => {
