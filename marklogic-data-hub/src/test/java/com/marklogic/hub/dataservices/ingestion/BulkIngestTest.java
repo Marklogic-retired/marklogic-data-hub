@@ -14,7 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class BulkIngestTest extends AbstractHubCoreTest {
 
@@ -32,6 +32,7 @@ public class BulkIngestTest extends AbstractHubCoreTest {
         String endpointState = "{\"next\":" + 0 + ", \"prefix\":\""+prefix+"\"}";
         String workUnit      = "{\"taskId\":"+1+"}";
 
+        runAsDataHubOperator();
         InputEndpoint loadEndpt = InputEndpoint.on(adminHubConfig.newStagingClient(null),
             adminHubConfig.newModulesDbClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle()));
 
@@ -60,5 +61,17 @@ public class BulkIngestTest extends AbstractHubCoreTest {
         JsonNode doc = jd.read(uri, new JacksonHandle()).get();
         assertNotNull("Could not find file ",uri);
         assertNotNull("document "+uri+" is null ",doc);
+        verifyDocumentContents(doc);
+    }
+
+    void verifyDocumentContents(JsonNode doc) {
+        String user = "test-data-hub-operator";
+        if (!isVersionCompatibleWith520Roles()) {
+            user = "flow-operator";
+        }
+        assertNotNull("Could not find createdOn DateTime", doc.get("envelope").get("headers").get("createdOn"));
+        assertEquals(user, doc.get("envelope").get("headers").get("createdBy").asText());
+        assertNotNull("Could not find Triples", doc.get("envelope").get("triples"));
+        assertNotNull("Could not find instance", doc.get("envelope").get("instance"));
     }
 }

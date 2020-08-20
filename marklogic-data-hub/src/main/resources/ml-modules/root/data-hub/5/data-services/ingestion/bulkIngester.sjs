@@ -22,6 +22,8 @@ var endpointState; // jsonDocument?
 var input;         // jsonDocument*
 declareUpdate();
 
+const ingest = require("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
+const consts = require('/data-hub/5/impl/consts.sjs');
 const state  = fn.head(xdmp.fromJSON(endpointState));
 
 const work = fn.head(xdmp.fromJSON(workUnit));
@@ -31,9 +33,13 @@ const inputs =
     (input instanceof Document) ? [fn.head(xdmp.fromJSON(input))] :
                                   [ {UNKNOWN: input} ];
 inputs.forEach(record => {
-state.next = state.next + 1;
-xdmp.documentInsert(
-    (state.prefix)+'/'+(work.taskId)+'/'+(state.next)+'.json',
+  state.next = state.next + 1;
+  const uri =(state.prefix)+'/'+(work.taskId)+'/'+(state.next)+'.json'
+  record = ingest.main({uri: uri, value: record}, {
+       outputFormat: consts.JSON, headers: {createdOn: consts.CURRENT_DATE_TIME, createdBy: consts.CURRENT_USER}
+  }).value;
+  xdmp.documentInsert(
+    uri,
     record,
     {permissions:[
             xdmp.permission('data-hub-common', 'read'),
