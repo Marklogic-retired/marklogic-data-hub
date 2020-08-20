@@ -1,0 +1,8 @@
+{
+  "name": "temporal-test",
+  "steps": {
+    "1": {
+      "stepId": "write-temporal-custom"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "temporal-test",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/custom-modules/custom/temporal-step/main.sjs"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "write-temporal",
+  "stepId": "write-temporal-custom",
+  "stepDefinitionName": "temporal-test",
+  "stepDefinitionType": "CUSTOM",
+  "stepUpdate": true,
+  "sourceQuery": "cts.collectionQuery('testTemporal')",
+  "targetDatabase": "data-hub-STAGING",
+  "sourceDatabase": "data-hub-STAGING",
+  "collections": ["temporal/test"],
+  "permissions": "data-hub-common,read,data-hub-common,update"
+}

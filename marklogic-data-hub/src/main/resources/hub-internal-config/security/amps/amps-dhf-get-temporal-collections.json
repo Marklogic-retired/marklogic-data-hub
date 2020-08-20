@@ -1,0 +1,6 @@
+{
+  "local-name" : "getTemporalCollections",
+  "document-uri" : "/data-hub/5/temporal/hub-temporal.sjs",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "temporal-admin" ]
+}
