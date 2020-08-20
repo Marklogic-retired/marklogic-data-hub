@@ -17,6 +17,7 @@
 package com.marklogic.hub;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.impl.Step;
 
@@ -84,6 +85,13 @@ public interface FlowManager {
      * @return - a list of all flows in a project
      */
     List<Flow> getLocalFlows();
+
+    /**
+     * Retrieves a list of flows in a Data Hub project
+     *
+     * @return - a list of all flows in a project as JSON
+     */
+    List<ObjectNode> getLocalFlowsAsJSON();
 
     /**
      * Retrieves a list of names of flows in the local project
