@@ -30,14 +30,14 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.hub.*;
+import com.marklogic.hub.dataservices.MasteringService;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.MappingManagerImpl;
+import com.marklogic.hub.impl.StepManager;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
-import com.marklogic.hub.step.impl.Step;
-import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 
@@ -58,6 +58,7 @@ public class FlowConverter extends LoggingObject {
 
     private MappingManager mappingManager;
     private FlowManager flowManager;
+    private StepManager stepManager;
     private HubConfig hubConfig;
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -65,6 +66,7 @@ public class FlowConverter extends LoggingObject {
         this.hubConfig = hubConfig;
         this.mappingManager = new MappingManagerImpl(hubConfig);
         this.flowManager = new FlowManagerImpl(hubConfig, mappingManager);
+        this.stepManager = new StepManager(hubConfig);
     }
 
     /**
@@ -115,24 +117,23 @@ public class FlowConverter extends LoggingObject {
             if (mappingsDir.exists()) {
                 FileUtils.copyDirectory(mappingsDir, convertedFlowsPath.resolve("mappings").toFile());
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException("Couldn't convert flows as backing up flows failed : " + e.getMessage(), e);
         }
-
-        Path stepsDir = hubProject.getProjectDir().resolve("steps");
-        Path ingestionDir = stepsDir.resolve(StepDefinitionType.INGESTION.toString());
-        Path matchingDir = stepsDir.resolve(StepDefinitionType.MATCHING.toString());
-        Path mergingDir = stepsDir.resolve(StepDefinitionType.MERGING.toString());
-        Path masteringDir = stepsDir.resolve(StepDefinitionType.MASTERING.toString());
-        Path mappingDir = stepsDir.resolve(StepDefinitionType.MAPPING.toString());
-        Path customStepDir = stepsDir.resolve(StepDefinitionType.CUSTOM.toString());
+        Path ingestionDir = hubProject.getStepsPath(StepDefinitionType.INGESTION);
+        Path mappingDir = hubProject.getStepsPath(StepDefinitionType.MAPPING);
+        Path matchingDir = hubProject.getStepsPath(StepDefinitionType.MATCHING);
+        Path mergingDir = hubProject.getStepsPath(StepDefinitionType.MERGING);
+        Path masteringDir = hubProject.getStepsPath(StepDefinitionType.MASTERING);
+        Path customStepDir = hubProject.getStepsPath(StepDefinitionType.CUSTOM);
 
         try {
             ingestionDir.toFile().mkdirs();
+            mappingDir.toFile().mkdirs();
             matchingDir.toFile().mkdirs();
             mergingDir.toFile().mkdirs();
             masteringDir.toFile().mkdirs();
-            mappingDir.toFile().mkdirs();
             customStepDir.toFile().mkdirs();
         } catch (Exception e) {
             throw new RuntimeException("Couldn't convert flows as creation of step artifact directories failed : " + e.getMessage(), e);
@@ -141,91 +142,117 @@ public class FlowConverter extends LoggingObject {
         ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
         JsonNodeFactory nodeFactory = mapper.getNodeFactory();
 
-        for (Flow flow : flowManager.getLocalFlows()) {
-            Map<String, Step> steps = flow.getSteps();
-            logger.warn(format("Converting flow '%s'", flow.getName()));
+        for (ObjectNode flowNode : flowManager.getLocalFlowsAsJSON()) {
+            String flowName = flowNode.get("name").asText();
+            logger.warn(format("Converting flow '%s'", flowName));
 
-            ObjectNode newFlow = buildCopyOfFlow(flow);
-            newFlow.put("name", flow.getName());
-            ObjectNode newSteps = nodeFactory.objectNode();
-            for (Map.Entry<String, Step> entry : steps.entrySet()) {
-                Step step = entry.getValue();
-                if (step.getStepId() != null) {
-                    newSteps.set(entry.getKey(), nodeFactory.objectNode().put("stepId", step.getStepId()));
+            ObjectNode stepsNode = (ObjectNode) flowNode.get("steps");
+            Iterator<Map.Entry<String, JsonNode>> entryIterator =  stepsNode.fields();
+            while (entryIterator.hasNext()) {
+                Map.Entry<String, JsonNode> entry = entryIterator.next();
+                ObjectNode stepNode = (ObjectNode) entry.getValue();
+
+                // Look for stepId, indicating a previously converted step.
+                if (stepNode.has("stepId")) {
+                    String stepId = stepNode.get("stepId").asText();
+                    String stepDefTypeStr = stepId.substring(stepId.lastIndexOf("-") + 1).toLowerCase();
+                    StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(stepDefTypeStr);
+
+                    // Need to convert match steps to new model, if they have not been already
+                    if (stepDefType.equals(StepDefinitionType.MATCHING) && !stepNode.has("matchRulesets")) {
+                        ObjectNode refStepNode = stepManager.getLocalStepAsJSON(stepId);
+                        transformMatchingOptions(refStepNode);
+                        stepManager.saveLocalStep(refStepNode);
+                        int i = 0;
+                    }
+
                     continue;
                 }
+
                 String stepId;
                 Path targetDir;
-                if (StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
+                String stepName = getStepName(stepNode);
+                StepDefinition.StepDefinitionType stepDefType = StepDefinition.StepDefinitionType.getStepDefinitionType(stepNode.get("stepDefinitionType").asText());
+
+                if (StepDefinitionType.INGESTION.equals(stepDefType)) {
                     targetDir = ingestionDir;
-                    stepId = String.join("-", step.getName(), StepDefinitionType.INGESTION.toString());
+                    stepId = String.join("-", stepName, StepDefinitionType.INGESTION.toString());
                 }
-                else if (StepDefinitionType.MATCHING.equals(step.getStepDefinitionType())){
+                else if (StepDefinitionType.MATCHING.equals(stepDefType)) {
                     targetDir = matchingDir;
-                    stepId= String.join("-", step.getName(), StepDefinitionType.MATCHING.toString());
+                    stepId = String.join("-", stepName, StepDefinitionType.MATCHING.toString());
                 }
-                else if (StepDefinitionType.MERGING.equals(step.getStepDefinitionType())){
+                else if (StepDefinitionType.MERGING.equals(stepDefType)){
                     targetDir = mergingDir;
-                    stepId= String.join("-", step.getName(), StepDefinitionType.MERGING.toString());
+                    stepId = String.join("-", stepName, StepDefinitionType.MERGING.toString());
                 }
-                else if (StepDefinitionType.MASTERING.equals(step.getStepDefinitionType())){
-                    if ("default-mastering".equalsIgnoreCase(step.getStepDefinitionName())){
+                else if (StepDefinitionType.MASTERING.equals(stepDefType)) {
+                    if ("default-mastering".equalsIgnoreCase(stepNode.get("stepDefinitionName").asText())) {
                         targetDir = masteringDir;
-                        stepId= String.join("-", step.getName(), StepDefinitionType.MASTERING.toString());
+                        stepId = String.join("-", stepName, StepDefinitionType.MASTERING.toString());
                     }
-                    else{
+                    else {
                         logger.warn(format("The mastering step '%s' will be converted to a custom step (step with " +
                             "step definition type 'custom').", step.getName()));
                         targetDir = customStepDir;
-                        stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
+                        stepId = String.join("-", stepName, StepDefinitionType.CUSTOM.toString());
                         // Change step definition type to "custom" for custom mapping step without a valid mapping
-                        step.setStepDefinitionType(StepDefinitionType.CUSTOM);
+                        stepNode.put("stepDefinitionType", StepDefinitionType.CUSTOM.toString());
                     }
                 }
-                else if (StepDefinitionType.MAPPING.equals(step.getStepDefinitionType())) {
-                    if ("entity-services-mapping".equalsIgnoreCase(step.getStepDefinitionName()) || getMappingArtifact(flow.getName(), step) != null){
+                else if (StepDefinitionType.MAPPING.equals(stepDefType)) {
+                    if ("entity-services-mapping".equalsIgnoreCase(stepNode.get("stepDefinitionName").asText()) ||
+                        getMappingArtifact(flowName, stepNode) != null)
+                    {
                         targetDir = mappingDir;
-                        stepId= String.join("-", step.getName(), StepDefinitionType.MAPPING.toString());
+                        stepId = String.join("-", stepName, StepDefinitionType.MAPPING.toString());
                     }
-                    else{
+                    else {
                         logger.warn(format("The custom mapping step '%s' will be converted to a custom step (step with " +
-                            "step definition type 'custom') as a valid mapping can't be found.", step.getName()));
+                            "step definition type 'custom') as a valid mapping can't be found.", stepName));
                         targetDir = customStepDir;
-                        stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
+                        stepId = String.join("-", stepName, StepDefinitionType.CUSTOM.toString());
                         // Change step definition type to "custom" for custom mapping step without a valid mapping
-                        step.setStepDefinitionType(StepDefinitionType.CUSTOM);
+                        stepNode.put("stepDefinitionType", StepDefinitionType.CUSTOM.toString());
                     }
                 }
                 else {
                     targetDir = customStepDir;
-                    stepId= String.join("-", step.getName(), StepDefinitionType.CUSTOM.toString());
-                    if (! StepDefinitionType.CUSTOM.equals(step.getStepDefinitionType())){
+                    stepId = String.join("-", stepName, StepDefinitionType.CUSTOM.toString());
+                    if (! StepDefinitionType.CUSTOM.equals(stepDefType)) {
                         logger.warn(format("The custom mastering step '%s' will be converted to a custom step (step with " +
-                            "step definition type 'custom')", step.getName()));
+                            "step definition type 'custom')", stepName));
                     }
                     // Change step definition type to "custom" for all other step types(custom mastering, custom steps)
-                    step.setStepDefinitionType(StepDefinitionType.CUSTOM);
+                    stepNode.put("stepDefinitionType", StepDefinitionType.CUSTOM.toString());
                 }
-                ObjectNode newStepArtifact = createStepArtifact(flow.getName(), step);
-                newSteps.set(entry.getKey(), nodeFactory.objectNode().put("stepId", stepId));
-                String stepFileName = new StringBuilder(step.getName()).append(".step.json").toString();
+                ObjectNode newStepArtifact = createStepArtifact(flowName, stepNode);
+                stepsNode.set(entry.getKey(), nodeFactory.objectNode().put("stepId", stepId));
+
+                String stepFileName = stepName + ".step.json";
                 File stepFile = targetDir.resolve(stepFileName).toFile();
                 logger.info(format("Creating step artifact '%s'", stepFile.toString()));
                 if (stepFile.exists()) {
                     String msg = "Step artifact '" + stepFile.toString() + "' already exists. The step artifact will be written to ";
                     // Update step artifact with new name
-                    String stepName = new StringBuilder(flow.getName()).append("-").append(step.getName()).toString();
+                    stepName = flowName + "-" + stepName;
                     newStepArtifact.put("name", stepName);
                     // Update the filename
-                    stepFileName = new StringBuilder(flow.getName()).append("-").append(stepFileName).toString();
+                    stepFileName = flowName + "-" + stepFileName;
                     stepFile = targetDir.resolve(stepFileName).toFile();
                     logger.warn(msg + stepFile.toString());
-                    stepId = String.join("-", flow.getName(), stepId);
+                    stepId = flowName + "-" + stepId;
                     // Update the stepId in the flow
-                    ((ObjectNode) newSteps.get(entry.getKey())).put("stepId", stepId);
+                    stepsNode.set(entry.getKey(), nodeFactory.objectNode().put("stepId", stepId));
                 }
                 // 'stepId' should be included in every step
                 newStepArtifact.put("stepId", stepId);
+
+                // convert matching step to 5.4 model
+                if (stepDefType.equals(StepDefinitionType.MATCHING)) {
+                    transformMatchingOptions(newStepArtifact);
+                }
+
                 try {
                     writer.writeValue(stepFile, newStepArtifact);
                     logger.warn(format("Step artifact '%s' successfully created", stepFile));
@@ -233,10 +260,9 @@ public class FlowConverter extends LoggingObject {
                     logger.error(format("Step artifact '%s' creation failed; cause: %s.", stepFile, e.getMessage(), e));
                 }
             }
-            newFlow.set("steps", newSteps);
-            File flowFile = Paths.get(hubProject.getFlowsDir().toString(), flow.getName() + FlowManager.FLOW_FILE_EXTENSION).toFile();
+            File flowFile = Paths.get(hubProject.getFlowsDir().toString(), flowName + FlowManager.FLOW_FILE_EXTENSION).toFile();
             try {
-                writer.writeValue(flowFile, newFlow);
+                writer.writeValue(flowFile, flowNode);
                 logger.warn(format("Flow '%s' was successfully converted", flowFile));
             } catch (IOException e) {
                 logger.error(format("Flow '%s' conversion failed; cause: %s", flowFile, e.getMessage()), e);
@@ -258,61 +284,53 @@ public class FlowConverter extends LoggingObject {
         logger.warn("The conversion process ensures that steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
     }
 
-    /**
-     * @param flow
-     * @return a new ObjectNode with every field from the given Flow except for "steps". Ensures that no data is lost
-     * from the flow being converted.
-     */
-    protected ObjectNode buildCopyOfFlow(Flow flow) {
-        JsonNode flowJson;
-        try {
-            flowJson = mapper.readTree(JSONObject.writeValueAsString(flow));
-        } catch (IOException ex) {
-            throw new RuntimeException(format("Unable to read existing flow %s as JSON, cause: %s", flow.getName(), ex.getMessage(), ex));
+    protected String getStepName(ObjectNode stepNode) {
+        String stepName;
+        if (stepNode.has("name")) {
+            stepName = stepNode.get("name").asText();
         }
-
-        ObjectNode newFlow = mapper.createObjectNode();
-        flowJson.fieldNames().forEachRemaining(fieldName -> {
-            if (!"steps".equals(fieldName)) {
-                newFlow.set(fieldName, flowJson.get(fieldName));
-            }
-        });
-        return newFlow;
+        else {
+            stepName = StepDefinition.StepDefinitionType.getStepDefinitionType(stepNode.get("stepDefinitionType").asText()).toString();
+        }
+        return stepName;
     }
 
-    protected Mapping getMappingArtifact(String flowName, Step inlineStep){
+    protected Mapping getMappingArtifact(String flowName, JsonNode inlineStep) {
         Mapping mapping = null;
-        JsonNode mappingNode = (JsonNode) inlineStep.getOptions().get("mapping");
-        if(mappingNode != null){
+        JsonNode mappingNode = (JsonNode) inlineStep.get("options").get("mapping");
+        if (mappingNode != null) {
             if (!mappingNode.has("name")) {
                 logger.warn(format("Unable to convert mapping in flow '%s' because it does not have a 'name' property"));
-            } else {
+            }
+            else {
                 String mappingName = mappingNode.get("name").asText();
                 int version = 0;
                 if (mappingNode.has("version")) {
                     String versionText = mappingNode.get("version").asText();
                     try {
                         version = Integer.parseInt(versionText);
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         logger.warn(format("Unable to parse version '%s' from step '%s' in flow '%s'; will use zero as the version instead",
-                            versionText, inlineStep.getName(), flowName));
+                            versionText, inlineStep.get("name").asText(), flowName));
                     }
                 }
                 try {
                     mapping = mappingManager.getMapping(mappingName, version, false);
-                } catch (DataHubProjectException e) {
+                }
+                catch (DataHubProjectException e) {
                     logger.warn(format("Mapping '%s' with version '%s' was not found; the mapping properties will not be written to the " +
-                        "step artifact named '%s' which was extracted from flow '%s'", mappingName, version, inlineStep.getName(), flowName));
+                        "step artifact named '%s' which was extracted from flow '%s'", mappingName, version, inlineStep.get("name").asText(), flowName));
                 }
             }
         }
         return mapping;
     }
 
-    protected ObjectNode createStepArtifact(String flowName, Step inlineStep) {
+    protected ObjectNode createStepArtifact(String flowName, JsonNode inlineStep) {
         Mapping mapping = null;
         //Obtain mapping for any step whose 'stepDefinitionType' is 'mapping'
-        if (StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType())) {
+        if (stepDefTypeEqual(StepDefinitionType.MAPPING, inlineStep.get("stepDefinitionType"))) {
             mapping = getMappingArtifact(flowName, inlineStep);
         }
         return buildStepArtifact(inlineStep, mapping, flowName);
@@ -326,17 +344,17 @@ public class FlowConverter extends LoggingObject {
      * @param flowName
      * @return
      */
-    protected ObjectNode buildStepArtifact(Step inlineStep, Mapping mapping, String flowName) {
-        ObjectNode stepArtifact = mapper.valueToTree(inlineStep);
+    protected ObjectNode buildStepArtifact(JsonNode inlineStep, Mapping mapping, String flowName) {
+        ObjectNode stepArtifact = inlineStep.deepCopy();
 
         // Convert all options to top-level properties in the step
         stepArtifact.remove("options");
-        JsonNode options = mapper.valueToTree(inlineStep.getOptions());
+        JsonNode options = inlineStep.get("options");
         if (options != null) {
             Set<String> fieldsNotToBeCopied = Set.of("mapping", "sourceCollection");
             //Don't remove any properties from 'options' for custom steps and convert them as is
             options.fields().forEachRemaining(kv -> {
-                if (!fieldsNotToBeCopied.contains(kv.getKey()) || inlineStep.getStepDefinitionType().equals(StepDefinitionType.CUSTOM)) {
+                if (!fieldsNotToBeCopied.contains(kv.getKey()) || inlineStep.get("stepDefinitionType").asText().equals(StepDefinitionType.CUSTOM.toString())) {
                     JsonNode value = kv.getValue();
                     if (value != null) {
                         stepArtifact.set(kv.getKey(), value);
@@ -368,7 +386,7 @@ public class FlowConverter extends LoggingObject {
         stepArtifact.remove("retryLimit");
 
         // Convert fileLocations for ingestion steps
-        JsonNode fileLocations = inlineStep.getFileLocations();
+        JsonNode fileLocations = inlineStep.get("fileLocations");
         if (fileLocations != null) {
             fileLocations.fields().forEachRemaining(field -> stepArtifact.set(field.getKey(), field.getValue()));
             stepArtifact.remove("fileLocations");
@@ -387,8 +405,8 @@ public class FlowConverter extends LoggingObject {
         }
 
         // Convert and/or get rid of targetEntity for a mapping step
-        if ((StepDefinitionType.MAPPING.equals(inlineStep.getStepDefinitionType()) ||
-            StepDefinitionType.CUSTOM.equals(inlineStep.getStepDefinitionType())) &&
+        if ((stepDefTypeEqual(StepDefinitionType.MAPPING, inlineStep.get("stepDefinitionType")) ||
+            stepDefTypeEqual(StepDefinitionType.CUSTOM, inlineStep.get("stepDefinitionType"))) &&
             stepArtifact.has("targetEntity"))
         {
             if (!stepArtifact.has("targetEntityType")) {
@@ -408,6 +426,13 @@ public class FlowConverter extends LoggingObject {
         return stepArtifact;
     }
 
+    private boolean stepDefTypeEqual(StepDefinitionType type, JsonNode node) {
+        if (node == null)
+            return false;
+
+        return node.asText().equalsIgnoreCase(type.toString());
+    }
+
     /**
      * For any step, ensure that the stepName is in the collections array. For a mapping step, also include the
      * value of targetEntityType.
@@ -416,7 +441,7 @@ public class FlowConverter extends LoggingObject {
      * @param inlineStep
      * @param flowName
      */
-    protected void addToCollections(ObjectNode stepArtifact, Step inlineStep, String flowName) {
+    protected void addToCollections(ObjectNode stepArtifact, JsonNode inlineStep, String flowName) {
         ArrayNode collections;
         if (stepArtifact.has("collections")) {
             JsonNode node = stepArtifact.get("collections");
@@ -430,7 +455,7 @@ public class FlowConverter extends LoggingObject {
             collections = mapper.createArrayNode();
         }
 
-        final String stepName = inlineStep.getName();
+        final String stepName = inlineStep.get("name").asText();
         final String targetEntityName = stepArtifact.has("targetEntityType") ? getEntityNameFromEntityType(stepArtifact.get("targetEntityType").asText()) : null;
 
         boolean stepNameExists = false;
@@ -469,5 +494,24 @@ public class FlowConverter extends LoggingObject {
     protected String getEntityNameFromEntityType(String targetEntityType) {
         int index = targetEntityType.lastIndexOf("/");
         return index > -1 ? targetEntityType.substring(index + 1) : targetEntityType;
+    }
+
+    protected void transformMatchingOptions(ObjectNode stepNode) {
+        JsonNode beforeNode = stepNode.get("matchOptions");
+        // if matchOptions is null, this conversion has already run
+        if (beforeNode == null) {
+            return;
+        }
+
+        JsonNode afterNode = MasteringService.on(hubConfig.newHubClient().getStagingClient()).updateMatchOptions(beforeNode);
+        stepNode.remove("matchOptions");
+
+        // copy new keys into step (matchRulesets, thresholds, etc.)
+        Iterator<String> fieldNames = afterNode.fieldNames();
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next();
+            JsonNode node = afterNode.get(fieldName);
+            stepNode.set(fieldName, node);
+        }
     }
 }
