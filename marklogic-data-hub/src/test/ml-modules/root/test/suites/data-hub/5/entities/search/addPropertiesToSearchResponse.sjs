@@ -970,7 +970,7 @@ function testEntitySourcesInSearchResponse() {
     test.assertEqual([{"name":"loadData"},{"name":"someOtherName"}], response.results[0].sources),
     test.assertEqual([{"name":["loadCustomers","loadCustomersXml"]}], response.results[1].sources),
     test.assertEqual([{"name":"loadCustomersJSON"}], response.results[2].sources),
-    test.assertEqual([{"$ref":""},{"name":"persons"},{"name":"persons"}], response.results[3].sources),
+    test.assertEqual([{"name":"persons"}], response.results[3].sources),
     test.assertEqual([], response.results[4].sources)
   ];
 }

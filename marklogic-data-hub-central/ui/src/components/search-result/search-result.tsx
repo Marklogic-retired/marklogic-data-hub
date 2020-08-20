@@ -49,44 +49,20 @@ const SearchResult: React.FC<Props> = (props) => {
         createdOnVal = props.item.createdOn;
     }
 
-    if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
-        if (props.item.extracted.content.length <= 1) {
+    if ((props.item.format === 'json' || props.item.format === 'xml') && props.item.hasOwnProperty('sources')) {
+        if (!props.item.sources.length) {
             // content data does not exist in payload
             setAlertMessage('Error', 'No instance information in payload');
         } else {
-            props.item.extracted.content.forEach(contentObject => {
-                if (Object.keys(contentObject)[0] === 'headers') {
-                    const headerValues = Object.values<any>(contentObject);
-                    if (headerValues[0].hasOwnProperty('sources')) {
-                        if (Array.isArray(headerValues[0].sources)) {
-                            sourcesVal = headerValues[0].sources.map(src => {
-                                return src.name;
-                            }).join(', ');
-                        } else {
-                            sourcesVal = headerValues[0].sources.name;
-                        }
-                    }
-                }
-            });
-        }
-    } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
-        props.item.extracted.content.forEach(contentObject => {
-            let obj = xmlParser(contentObject);
-            if (obj.hasOwnProperty('headers') || obj.hasOwnProperty('es:headers')) {
-                const headerValues = Object.values<any>(obj);
-                if (headerValues[0].hasOwnProperty('sources')) {
-                    if (Array.isArray(headerValues[0].sources)) {
-                        sourcesVal = headerValues[0].sources.map(src => {
-                            return src.name;
-                        }).join(', ');
-                    } else {
-                        sourcesVal = headerValues[0].sources.name;
-                    }
-                }
+            if (Array.isArray(props.item.sources)) {
+                sourcesVal = props.item.sources.map(src => {
+                    return src.name;
+                }).join(', ');
+            } else {
+                sourcesVal = props.item.sources.name;
             }
-        });
+        }
     }
-
 
     function getSnippet() {
         let str = '';
@@ -127,7 +103,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             searchFacets : searchOptions.selectedFacets,
                             query: searchOptions.query,
                             tableView: props.tableView,
-                            sortOrder: searchOptions.sortOrder
+                            sortOrder: searchOptions.sortOrder,
+                            sources: props.item.sources
                         }}} id={'instance'} data-cy='instance' >
                         <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
                     </Link>
@@ -137,7 +114,9 @@ const SearchResult: React.FC<Props> = (props) => {
                             start : searchOptions.start,
                             searchFacets : searchOptions.selectedFacets,
                             query: searchOptions.query,
-                            tableView: props.tableView
+                            tableView: props.tableView,
+                            sortOrder: searchOptions.sortOrder,
+                            sources: props.item.sources
                         }}} id={'source'} data-cy='source' >
                         <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
                     </Link>

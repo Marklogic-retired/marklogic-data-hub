@@ -285,7 +285,7 @@ function getEntitySources(docUri) {
   if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.headers && doc.toObject().envelope.headers.sources) {
     sourcesArr = doc.toObject().envelope.headers.sources;
   }
-  return sourcesArr;
+  return sourcesArr.length ? handleDuplicateSources("name",sourcesArr) : sourcesArr;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {
@@ -466,6 +466,20 @@ function removeEntityNameFromCollection(searchResponse, entityName) {
       searchResponse.facets.Collection.facetValues = updatedFacetValues
     }
   }
+}
+
+function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
+  const deDupedArray = Array.from(
+    arrayWithDuplicates.reduce(
+        (acc, item) => (
+          item && item[propToValidate] && acc.set(item[propToValidate], item),
+          acc
+        ),
+        new Map()
+      )
+      .values()
+  );
+  return deDupedArray;
 }
 
 module.exports = {

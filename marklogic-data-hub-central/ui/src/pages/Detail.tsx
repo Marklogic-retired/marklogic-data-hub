@@ -13,7 +13,7 @@ import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
 import { MLTooltip } from '@marklogic/design-system';
-import { getUserPreferences } from '../services/user-preferences';
+import { getUserPreferences, updateUserPreferences } from '../services/user-preferences';
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -34,6 +34,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
   const [parentPagePreferences, setParentPagePreferences] = useState({});
+  const sources =  location && location.state && location.state['sources'] ? location.state['sources'] : [];
 
   const componentIsMounted = useRef(true);
 
@@ -75,6 +76,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       fetchData();
     }
 
+    updateDetailPagePreferences();
+
     return () => {
       componentIsMounted.current = false;
     }
@@ -109,10 +112,27 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           searchFacets: currPref.query['selectedFacets'] ? currPref.query['selectedFacets'] : {},
           query: currPref.query['searchText'] ? currPref.query['searchText']: '',
           tableView: currPref.hasOwnProperty('tableView') ? currPref['tableView'] : true,
-          sortOrder: currPref['sortOrder'] ? currPref['sortOrder'] : []
+          sortOrder: currPref['sortOrder'] ? currPref['sortOrder'] : [],
+          sources: currPref['sources'] ? currPref['sources'] : []
          }
          setParentPagePreferences({...userPref})
       }
+  }
+
+  const updateDetailPagePreferences = () => {
+    if (location.state && location.state.hasOwnProperty("sources")) {
+      if (location.state["sources"] && location.state["sources"].length) {
+        let currentPref = getUserPreferences(user.name);
+        if (currentPref !== null) {
+          let currPref = JSON.parse(currentPref);
+          let preferencesObject = {
+            ...currPref,
+            sources: location.state["sources"]
+          }
+          updateUserPreferences(user.name, preferencesObject);
+        }
+      }
+    }
   }
 
   const setEntityInstanceFlag = (content) => {
@@ -134,7 +154,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
          searchFacets: location.state && location.state.hasOwnProperty('searchFacets') ? location.state['searchFacets'] : parentPagePreferences['searchFacets'],
          query: location.state && location.state.hasOwnProperty('query')? location.state['query'] : parentPagePreferences['query'],
          tableView: location.state && location.state.hasOwnProperty('tableView') ? location.state['tableView'] : parentPagePreferences['tableView'],
-         sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder']
+         sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder'],
+         sources: location.state && location.state.hasOwnProperty('sources') ? location.state['sources'] : parentPagePreferences['sources']
         }
    }
 
@@ -150,7 +171,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DetailHeader document={data} contentType={contentType} uri={docUri} primaryKey={pkValue} />}
+            {data && <DetailHeader document={data} contentType={contentType} uri={docUri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences['sources']} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu id='subMenu' onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>

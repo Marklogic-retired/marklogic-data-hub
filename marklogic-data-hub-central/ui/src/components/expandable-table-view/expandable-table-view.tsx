@@ -51,7 +51,9 @@ const ExpandableTableView: React.FC<Props> = (props) => {
                   start : searchOptions.start,
                   searchFacets : searchOptions.selectedFacets,
                   query: searchOptions.query,
-                  tableView: props.tableView
+                  tableView: props.tableView,
+                  sortOrder: searchOptions.sortOrder,
+                  sources: props.item.sources
               }}} data-cy='nested-instance'>
             <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></MLTooltip>
