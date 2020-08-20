@@ -31,6 +31,8 @@ public interface HubClient {
 
     DatabaseClient getJobsClient();
 
+    DatabaseClient getModulesClient();
+
     String getDbName(DatabaseKind kind);
 
     /**

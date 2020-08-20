@@ -30,9 +30,11 @@ import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
+import com.marklogic.hub.gradle.task.FixCreatedByStepTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
+import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
 import com.marklogic.hub.gradle.task.PullConfigurationFilesTask
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
@@ -191,6 +193,14 @@ class DataHubPlugin implements Plugin<Project> {
                 "-Pstep=<masteringStepNumber> – optional; The number of the mastering step with settings. Defaults to 1.\n" +
                 "-Ppreview=<true|false> – optional; if true, the merge doc is returned in the response body and not committed to the database; if false, the merged document will be saved. Defaults to false.\n" +
                 "-Poptions=<stepOptionOverrides> – optional; Any overrides to the mastering step options. Defaults to {}.")
+
+        project.task("hubFixCreatedByStep", type: FixCreatedByStepTask, group: runGroup,
+            description: "Fix the value of the datahubCreatedByStep metadata key on documents where the value is a step " +
+                "definition name instead of a step name. Specify the database to perform this in via -Pdatabase=(name of staging or final database).")
+        project.task("hubPreviewFixCreatedByStep", type: PreviewFixCreatedByStepTask, group: runGroup,
+            description: "Previews running hubFixCreatedByStep by printing the number of documents whose datahubCreatedByStep " +
+                "metadata key is a step definition name instead of a step name. " +
+                "Specify the database to perform this in via -Pdatabase=(name of staging or final database).")
 
         String legacyFlowGroup = "Data Hub Legacy Flow"
         project.task("hubCreateHarmonizeFlow", group: legacyFlowGroup, type: CreateHarmonizeLegacyFlowTask)
