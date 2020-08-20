@@ -2,11 +2,11 @@ package com.marklogic.hub.hubcentral.conversion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.step.StepDefinition;
-import com.marklogic.hub.step.impl.Step;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,20 +21,21 @@ public class FlowConverterUnitTest {
     ObjectMapper objectMapper = new ObjectMapper();
     MappingImpl mapping;
 
-    Step inlineStep;
+    ObjectNode inlineStep;
 
     @BeforeEach
     void setup() {
-        inlineStep = new Step();
-        inlineStep.setName("myStep");
-        inlineStep.setOptions(new HashMap<>());
+        JsonNodeFactory nodeFactory = objectMapper.getNodeFactory();
+        inlineStep = nodeFactory.objectNode();
+        inlineStep.put("name", "myStep");
+        inlineStep.set("options", nodeFactory.objectNode());
     }
 
     @Test
     void customHookWithEmptyModule() {
         ObjectNode hook = objectMapper.createObjectNode();
         hook.put("module", "");
-        inlineStep.setCustomHook(hook);
+        inlineStep.set("customHook", hook);
 
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("customHook"), "The customHook should have been removed since module is an empty string; step: " + step);
@@ -42,7 +43,7 @@ public class FlowConverterUnitTest {
 
     @Test
     void customHookWithNoModule() {
-        inlineStep.setCustomHook(objectMapper.createObjectNode());
+        inlineStep.set("customHook", objectMapper.createObjectNode());
 
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("customHook"), "The customHook should have been removed since module doesn't exist");
@@ -52,7 +53,7 @@ public class FlowConverterUnitTest {
     void customHookWithWhitespaceModule() {
         ObjectNode hook = objectMapper.createObjectNode();
         hook.put("module", " ");
-        inlineStep.setCustomHook(hook);
+        inlineStep.set("customHook", hook);
 
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("customHook"), "The customHook should have been removed since module only has whitespace; step: " + step);
@@ -62,7 +63,7 @@ public class FlowConverterUnitTest {
     void customHookWithNonEmptyModule() {
         ObjectNode hook = objectMapper.createObjectNode();
         hook.put("module", "a");
-        inlineStep.setCustomHook(hook);
+        inlineStep.set("customHook", hook);
 
         ObjectNode step = buildStepArtifact();
         assertTrue(step.has("customHook"), "As long as something exists for module, the hook should be retained; step: " + step);
@@ -70,23 +71,23 @@ public class FlowConverterUnitTest {
 
     @Test
     void sourceCollection() {
-        inlineStep.getOptions().put("sourceCollection", "something");
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        ((ObjectNode)inlineStep.get("options")).put("sourceCollection", "something");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("sourceCollection"), "sourceCollection is specific to QS and should be removed to avoid confusion, " +
             "as it doesn't impact the source query; step: " + step);
 
-        inlineStep.getOptions().put("sourceCollection", "something");
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.CUSTOM);
+        ((ObjectNode)inlineStep.get("options")).put("sourceCollection", "something");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.CUSTOM.toString());
         step = buildStepArtifact();
         assertTrue(step.has("sourceCollection"), "we don't care about options set in custom step and convert them as is");
     }
 
     @Test
     void mappingWithoutAVersion() {
-        //New mapping step doesnt have a version. Sp using that to test "mapping without a version" scenario
+        // New mapping step doesnt have a version. Sp using that to test "mapping without a version" scenario
         mapping = new MappingImpl("MappingNoVersion");
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("version"), "a 5.3 mapping step does not include version; step: " + step);
     }
@@ -95,15 +96,15 @@ public class FlowConverterUnitTest {
     void convertMappingWithVersion0() {
         mapping = new MappingImpl("MappingVersion0");
         mapping.setVersion(0);
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("version"), "a 5.3 mapping step does not include version; step: " + step);
     }
 
     @Test
     void getMappingArtifact() {
-        //Ensure null is returned when step options doesn't have 'mapping'
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        // Ensure null is returned when step options doesn't have 'mapping'
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
         assertNull(converter.getMappingArtifact("dummyFlow", inlineStep));
     }
 
@@ -111,7 +112,7 @@ public class FlowConverterUnitTest {
     void sourceContext() {
         mapping = new MappingImpl("myMapping");
         mapping.setSourceContext("/");
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("sourceContext"), "sourceContext is specific to default mappings, and by 5.3, those have " +
             "all been updated to be entity-services mappings; step: " + step);
@@ -119,8 +120,8 @@ public class FlowConverterUnitTest {
 
     @Test
     void targetEntityExistsInsteadOfTargetEntityType() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("targetEntity", "something");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "something");
 
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
@@ -129,8 +130,8 @@ public class FlowConverterUnitTest {
 
     @Test
     void emptyTargetEntityExistsInsteadOfTargetEntityType() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("targetEntity", "");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "");
 
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
@@ -139,8 +140,8 @@ public class FlowConverterUnitTest {
 
     @Test
     void emptyTargetEntityExistsInACustomStep() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.CUSTOM);
-        inlineStep.getOptions().put("targetEntity", "");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.CUSTOM.toString());
+        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "");
 
         ObjectNode step = buildStepArtifact();
         assertTrue(step.has("targetEntityType"), "targetEntity should have been converted to targetEntityType since custom steps are being converted");
@@ -149,8 +150,8 @@ public class FlowConverterUnitTest {
 
     @Test
     void targetEntityAndTargetEntityTypeExist() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("targetEntity", "something");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "something");
         mapping = new MappingImpl("abc");
         mapping.setTargetEntityType("realType");
 
@@ -161,9 +162,9 @@ public class FlowConverterUnitTest {
 
     @Test
     void oneExistingCollection() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("collections", "something");
-        inlineStep.setName("myStep");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).put("collections", "something");
+        inlineStep.put("name", "myStep");
         mapping = new MappingImpl("abc");
         mapping.setTargetEntityType("http://example.org/Customer-1/Customer");
 
@@ -177,9 +178,9 @@ public class FlowConverterUnitTest {
 
     @Test
     void twoExistingCollectionsAndEntityTypeHasNoForwardSlash() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("collections", Arrays.asList("one", "two"));
-        inlineStep.setName("myStep");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).set("collections", objectMapper.valueToTree(Arrays.asList("one", "two")));
+        inlineStep.put("name", "myStep");
         mapping = new MappingImpl("abc");
         mapping.setTargetEntityType("WeirdType");
 
@@ -194,8 +195,8 @@ public class FlowConverterUnitTest {
 
     @Test
     void noExistingCollections() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.setName("myStep");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        inlineStep.put("name", "myStep");
         mapping = new MappingImpl("abc");
         mapping.setTargetEntityType("This/IsValidToo");
 
@@ -208,9 +209,9 @@ public class FlowConverterUnitTest {
 
     @Test
     void stepNameAndEntityTypeAreAlreadyCollections() {
-        inlineStep.setStepDefinitionType(StepDefinition.StepDefinitionType.MAPPING);
-        inlineStep.getOptions().put("collections", Arrays.asList("one", "myStep", "Customer", "two"));
-        inlineStep.setName("myStep");
+        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
+        ((ObjectNode)inlineStep.get("options")).set("collections", objectMapper.valueToTree(Arrays.asList("one", "myStep", "Customer", "two")));
+        inlineStep.put("name", "myStep");
         mapping = new MappingImpl("abc");
         mapping.setTargetEntityType("http://example.org/Customer-1.0.0/Customer");
 
@@ -225,7 +226,7 @@ public class FlowConverterUnitTest {
 
     @Test
     void retryLimit() {
-        inlineStep.setRetryLimit(2);
+        inlineStep.put("retryLimit", 2);
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("retryLimit"), "retryLimit has no impact on anything and thus should be removed");
     }
@@ -235,8 +236,8 @@ public class FlowConverterUnitTest {
      */
     @Test
     void nullBatchSizeAndThreadCount() {
-        inlineStep.setBatchSize(0);
-        inlineStep.setThreadCount(0);
+        inlineStep.put("batchSize", 0);
+        inlineStep.put("threadCount", 0);
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("batchSize"), "If batchSize is zero, it should be removed since that's an invalid amount");
         assertFalse(step.has("threadCount"), "If threadCount is zero, it should be removed since that's an invalid amount");
