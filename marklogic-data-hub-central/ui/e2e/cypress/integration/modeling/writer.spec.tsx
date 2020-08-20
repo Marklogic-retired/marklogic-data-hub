@@ -255,33 +255,35 @@ describe('Entity Modeling: Writer Role', () => {
   });
 
   it('create new entity types, add relationship type, delete entity type with outstanding edits', () => {
+    let entityName1 = 'User2';
+    let entityName2 = 'Product2'
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName('User');
+    entityTypeModal.newEntityName(entityName1);
     entityTypeModal.getAddButton().click();
     cy.waitForModalToDisappear();
 
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName('Product');
+    entityTypeModal.newEntityName(entityName2);
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Product').trigger('mouseover');
+    propertyTable.getAddPropertyButton(entityName2).trigger('mouseover');
     cy.contains(`Click to add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton('Product').click();
+    propertyTable.getAddPropertyButton(entityName2).click();
 
-    // add relation type property for 'User' and save
+    // add relation type property for 'User2' and save
     propertyModal.newPropertyName('user');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Relationship').click();
-    propertyModal.getCascadedTypeFromDropdown('User').click();
+    propertyModal.getCascadedTypeFromDropdown(entityName1).click();
     propertyModal.getSubmitButton().click();
 
     modelPage.getSaveAllButton().click();
     confirmationModal.getYesButton(ConfirmationType.SaveAll).click();
     confirmationModal.getSaveAllEntityText().should('exist');
-    confirmationModal.getSaveAllEntityText().should('not.exist');
+    confirmationModal.getSaveAllEntityText().should('not.exist', {timeout: 25000});
 
     // add basic type property but dont save
-    propertyTable.getAddPropertyButton('Product').click();
+    propertyTable.getAddPropertyButton(entityName2).click();
     propertyModal.newPropertyName('product-id');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('string').click();
@@ -290,22 +292,23 @@ describe('Entity Modeling: Writer Role', () => {
 
 
     // delete 'User' entity type
-    entityTypeTable.getDeleteEntityIcon('User').click();
+    entityTypeTable.getDeleteEntityIcon(entityName1).click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn).click();
+    cy.waitForAsyncRequest();
     confirmationModal.getDeleteEntityRelationshipEditText().should('exist');
-    confirmationModal.getDeleteEntityRelationshipEditText().should('not.exist');
-    entityTypeTable.getEntity('User').should('not.exist');
+    confirmationModal.getDeleteEntityRelationshipEditText().should('not.exist', {timeout: 25000});
+    entityTypeTable.getEntity(entityName1).should('not.exist');
     propertyTable.getProperty('product-id').should('exist');
 
 
     // add 'User' entity type again
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName('User');
+    entityTypeModal.newEntityName(entityName1);
     entityTypeModal.getAddButton().click();
     cy.waitForModalToDisappear();
 
     // add basic type property but dont save
-    propertyTable.getAddPropertyButton('User').click();
+    propertyTable.getAddPropertyButton(entityName1).click();
     propertyModal.newPropertyName('user-id');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('string').click();
@@ -313,28 +316,28 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getProperty('user-id').should('exist');
 
     // delete 'Product' entity type
-    entityTypeTable.getDeleteEntityIcon('Product').click();
+    entityTypeTable.getDeleteEntityIcon(entityName2).click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn).click();
     confirmationModal.getDeleteEntityNoRelationshipEditText().should('exist');
-    confirmationModal.getDeleteEntityNoRelationshipEditText().should('not.exist');
-    entityTypeTable.getEntity('Product').should('not.exist');
+    confirmationModal.getDeleteEntityNoRelationshipEditText().should('not.exist', {timeout: 15000});
+    entityTypeTable.getEntity(entityName2).should('not.exist');
     propertyTable.getProperty('user-id').should('exist');
 
     // finally delete 'User' entity type
-    entityTypeTable.getDeleteEntityIcon('User').click();
+    entityTypeTable.getDeleteEntityIcon(entityName1).click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
     confirmationModal.getDeleteEntityText().should('exist');
-    confirmationModal.getDeleteEntityText().should('not.exist');
-    entityTypeTable.getEntity('User').should('not.exist');
+    confirmationModal.getDeleteEntityText().should('not.exist', {timeout: 15000});
+    entityTypeTable.getEntity(entityName1).should('not.exist');
   });
 
   it('can create entity, can create a structured type, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName('User');
+    entityTypeModal.newEntityName('User3');
     entityTypeModal.newEntityDescription('An entity for User');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('User').click();
+    propertyTable.getAddPropertyButton('User3').click();
     propertyModal.newPropertyName('address');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
@@ -484,26 +487,26 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getProperty('streetAlt').should('exist');
 
     // delete structured property
-    propertyTable.getDeleteStructuredPropertyIcon('User', 'Address', 'streetAlt').click();
+    propertyTable.getDeleteStructuredPropertyIcon('User3', 'Address', 'streetAlt').click();
     confirmationModal.getDeletePropertyWarnText().should('exist');
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty('streetAlt').should('not.exist');
 
-    propertyTable.getDeletePropertyIcon('User', 'alt_address').click();
+    propertyTable.getDeletePropertyIcon('User3', 'alt_address').click();
     confirmationModal.getDeletePropertyWarnText().should('exist');
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty('alt_address').should('not.exist');
 
-    entityTypeTable.getSaveEntityIcon('User').click();
+    entityTypeTable.getSaveEntityIcon('User3').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
     confirmationModal.getSaveEntityText().should('not.exist');
 
-    entityTypeTable.getDeleteEntityIcon('User').click();
+    entityTypeTable.getDeleteEntityIcon('User3').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
     confirmationModal.getDeleteEntityText().should('exist');
     confirmationModal.getDeleteEntityText().should('not.exist');
-    entityTypeTable.getEntity('User').should('not.exist');
+    entityTypeTable.getEntity('User3').should('not.exist');
   });
 
   it('can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, and save all entities', () => {

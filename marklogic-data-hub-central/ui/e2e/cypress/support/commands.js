@@ -126,6 +126,7 @@ Cypress.Commands.add('uploadFile', (filePath) => {
   cy.get('#fileUpload').attachFile(filePath,{ subjectType: 'input', force: true });
   cy.waitUntil(() => cy.findByTestId('spinner').should('be.visible'));
   cy.waitUntil(() => cy.findByTestId('spinner').should('not.be.visible'));
+  cy.waitForAsyncRequest();
   cy.waitUntil(() => cy.get('span p'));
 })
 
@@ -182,6 +183,14 @@ Cypress.Commands.add('deleteSteps', (stepType, ...stepNames) => {
   })
 })
 
+Cypress.Commands.add('waitForAsyncRequest', () => {
+  cy.window().then({
+    timeout: 120000
+  }, win => new Cypress.Promise((resolve, reject) => win.requestIdleCallback(resolve)));
+
+  //cy.waitUntil(() => cy.window().then(win => win.fetch_loading > 0))
+  //cy.waitUntil(() => cy.window().then(win => win.fetch_loading === 0))
+})
 function setTestUserRoles(roles) {
   let role = roles.concat("hub-central-user");
   cy.writeFile("cypress/support/body.json", {"role": role})

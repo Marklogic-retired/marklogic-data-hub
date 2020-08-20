@@ -26,7 +26,7 @@ const AsyncLoader: React.FC = () => {
         onClose={onClose}
       /> 
       :
-      <MLSpin tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
+      <MLSpin data-testid="spinner" tip="Loading..." style={{ margin: '100px auto', width: '100%'}} />
     }
     </>
   )

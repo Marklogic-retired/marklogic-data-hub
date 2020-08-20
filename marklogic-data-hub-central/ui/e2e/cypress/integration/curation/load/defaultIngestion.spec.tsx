@@ -36,7 +36,7 @@ describe('Default ingestion ', () => {
         loadPage.cancelButton().click();
         cy.findByText('Discard changes?').should('be.visible');
         loadPage.confirmationOptions('No').click();
-        loadPage.cancelButton().click();
+        loadPage.cancelButton().click({force: true});
         loadPage.confirmationOptions('Yes').click();
         cy.findByText(stepName).should('not.be.visible');
 
@@ -129,6 +129,7 @@ describe('Default ingestion ', () => {
         loadPage.stepNameInput().should('be.disabled');
         loadPage.stepDescriptionInput().clear().type('UPDATE');
         loadPage.saveButton().click();
+	    cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
 
         //Verify Settings

@@ -22,6 +22,7 @@ class BrowsePage {
     this.waitForSpinnerToDisappear();
     cy.get('#entity-select').click();
     cy.get(`[data-cy="entity-option-${entity}"]`).click();
+    cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
   }
 
@@ -185,7 +186,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    return cy.get("#hub-properties > div").eq(1).invoke('show').click();
+    cy.get("#hub-properties > div > i").click();
   }
 
   getExpandableSnippetView() {
@@ -424,7 +425,8 @@ class BrowsePage {
 
   selectQuery(query: string) {
     this.getSaveQueriesDropdown().click();
-    return cy.get(`[data-cy="query-option-${query}"]`).click();
+    cy.get(`[data-cy="query-option-${query}"]`).click();
+    this.waitForSpinnerToDisappear();
   }
 
   getSelectedQueryDescription() {
