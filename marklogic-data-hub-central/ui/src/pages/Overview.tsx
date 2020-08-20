@@ -31,7 +31,7 @@ const Overview = (props) => {
                         <div className={styles.subtitle}>
                             <i aria-label="model-icon"><FontAwesomeIcon icon={faCube} /></i>Model
                         </div>
-                        <div className={styles.body}>Define entity types that will be leveraged during curation.</div>
+                        <div className={styles.body}>Define entity types to describe curated data.</div>
                     </div>
                     
                     <div className={styles.cardCurate}>
