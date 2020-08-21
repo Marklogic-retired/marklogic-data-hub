@@ -774,7 +774,7 @@ declare function merge-impl:build-headers(
    : replaced by merged values. :)
   let $non-sm-headers :=
     if ($is-xml) then
-      $docs/es:envelope/es:headers/*[fn:empty(self::sm:*)]
+      $docs/es:envelope/es:headers/*[fn:empty(self::sm:*|self::sources)]
     else
       let $sm-keys := ("id", "sources", "merges")
       let $sm-map := fn:data($docs/object-node("envelope")/object-node("headers"))
@@ -817,9 +817,14 @@ declare function merge-impl:build-headers(
               $uri
             }
         }</sm:merges>
-        <sm:sources>{
-          merge-impl:distinct-node-values($docs/es:envelope/es:headers/sm:sources/sm:source)
-        }</sm:sources>
+        {
+          if (fn:exists($docs/es:envelope/es:headers/sm:sources/sm:source)) then
+            <sm:sources>{
+              merge-impl:distinct-node-values($docs/es:envelope/es:headers/sm:sources/sm:source)
+            }</sm:sources>
+          else (),
+          merge-impl:distinct-node-values($docs/es:envelope/es:headers/sources)
+        }
         <sm:merge-options xml:lang="zxx">
           <sm:value>{
             if (fn:exists($merge-options-uri))
