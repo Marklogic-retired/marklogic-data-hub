@@ -1,0 +1,22 @@
+{
+    "endpoint": "/data-hub/5/data-services/bulk/fixCreatedByStep.sjs",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "workUnit",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": false
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true
+    }
+}
