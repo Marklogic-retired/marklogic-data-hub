@@ -113,12 +113,15 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
     @Override
     public Flow getLocalFlow(String flowName) {
         JsonNode node = getLocalFlowAsJSON(flowName);
-        Flow newFlow = createFlowFromJSON(node);
-        if (newFlow != null && newFlow.getName().length() > 0) {
-            return newFlow;
-        } else {
-            throw new DataHubProjectException(flowName + " is not a valid flow");
+        if(node != null) {
+            Flow newFlow = createFlowFromJSON(node);
+            if (newFlow != null && newFlow.getName().length() > 0) {
+                return newFlow;
+            } else {
+                throw new DataHubProjectException(flowName + " is not a valid flow");
+            }
         }
+        return null;
     }
 
     public ObjectNode getLocalFlowAsJSON(String flowName) {
