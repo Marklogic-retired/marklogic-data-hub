@@ -147,7 +147,7 @@ class BrowsePage {
   }
 
   getAppliedFacetName(facet: string) {
-    return cy.get('#selected-facets [data-testid="clear-' + facet + '"] span').invoke('text');
+    return cy.findByTestId(`clear-${facet}`).invoke('text');
   }
 
   getClearGreyFacets() {

@@ -129,6 +129,7 @@ const ResultsTabularView = (props) => {
                                     if (title) {
                                         values.push(
                                             <MLTooltip
+                                                key={title}
                                                 title={title}>
                                                 <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{title}</div>
                                             </MLTooltip>
@@ -262,7 +263,6 @@ const ResultsTabularView = (props) => {
                 detailView: detailView
             }
         }
-
         dataObj = { ...dataObj, ...options };
         if (item?.hasOwnProperty('entityProperties')) {
             if (JSON.stringify(item.entityProperties) !== JSON.stringify([])) {
@@ -283,11 +283,11 @@ const ResultsTabularView = (props) => {
                         dataObj[subItem.propertyPath] = subItem.propertyValue;
                     } else {
                         let dataObjArr: any[] = [];
-                        for (let el of subItem.propertyValue) {
+                        subItem.propertyValue.forEach((el, index) => {
                             if (el) {
-                                dataObjArr.push(generateTableData(el));
+                                dataObjArr.push(generateTableData(el, {key: index}));
                             }
-                        }
+                        })
                         dataObj[subItem.propertyPath] = dataObjArr;
                     }
                 } else {
