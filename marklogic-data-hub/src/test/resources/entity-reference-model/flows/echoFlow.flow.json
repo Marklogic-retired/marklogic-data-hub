@@ -2,7 +2,7 @@
   "name": "echoFlow",
   "steps": {
     "1": {
-      "name": "echoStep",
+      "name": "runEchoStep",
       "stepDefinitionName": "echoStep",
       "stepDefinitionType": "CUSTOM",
       "options": {
