@@ -219,7 +219,7 @@ const Run = (props) => {
                mask: false,
                width:650,
                content: stepType.toLowerCase() === 'mapping' && entityName ?
-                   <div onClick={()=> goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
+                   <div data-testId='explorer-link' onClick={()=> goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
                    <span className={styles.exploreIcon}></span>
                    <span className={styles.exploreText}>Explore Curated Data</span>
                </div> : ''

@@ -607,6 +607,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 </Col> : ''}{props && props.data.length > 0 ? props.data.map((elem,index) => (
                     <Col key={index}>
                         <div
+                            data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                             onMouseOver={(e) => handleMouseOver(e, elem.name)}
                             onMouseLeave={(e) => setShowLinks('')}
                         >
@@ -621,7 +622,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 size="small"
                             >
                                 <div className={styles.formatFileContainer}>
-                                    <span className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
+                                    <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
                                     {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
 
                                 </div><br />
@@ -629,7 +630,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 <br /><br />
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                    <div className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
+                                    <div data-testid={`${elem.name}-stepDetails`} className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
                                     { props.canWriteFlow ? <Link id="tiles-run-add" to={
                                     {pathname: '/tiles/run/add',
                                     state: {
@@ -648,7 +649,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 data-testid={`${elem.name}-flowsList`}
                                             >
                                                 { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                                                    <Option value={f.name} key={i}>{f.name}</Option>
+                                                    <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                                                 )) : null}
                                             </Select>
                                         </div>

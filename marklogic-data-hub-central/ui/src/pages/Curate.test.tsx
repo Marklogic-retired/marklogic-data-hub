@@ -86,8 +86,8 @@ describe('Curate component', () => {
         //test edit
         fireEvent.click(getByTestId('Mapping1-edit'));
         expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
-        expect(getByTestId('Mapping1-edit-save')).not.toBeDisabled();
-        fireEvent.click(getByTestId('Mapping1-edit-cancel'));
+        expect(getByTestId('mapping-dialog-save')).not.toBeDisabled();
+        fireEvent.click(getByTestId('mapping-dialog-cancel'));
 
         // test delete
         fireEvent.click(getByTestId('Mapping1-delete'));

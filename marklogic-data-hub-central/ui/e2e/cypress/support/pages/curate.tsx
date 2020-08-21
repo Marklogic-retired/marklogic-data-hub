@@ -8,8 +8,46 @@ class CuratePage {
         cy.waitUntil(() => cy.findByTestId(entityTypeId)).click();
     }
 
+    getEntityTypePanel(entityTypeId: string) {
+        return cy.findByTestId(entityTypeId);
+    }
+
     noEntityType() {
         return cy.findByTestId('noEntityType');
+    }
+
+    /**
+     * Get Mapping step by entity and step name
+     * @param entityTypeId
+     * @example Order
+     * @param stepName
+     * @example map-orders
+     */
+    getEntityMappingStep(entityTypeId: string, stepName: string) {
+        return cy.findByTestId(`${entityTypeId}-${stepName}-step`);
+    }
+
+    openSourceToEntityMap(entityTypeId: string, stepName: string) {
+      this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
+      cy.findByTestId(`${stepName}-stepDetails`).click();
+    }
+
+    addToNewFlow(entityTypeId: string, stepName: string) {
+      this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
+      cy.findByTestId(`${stepName}-toNewFlow`).click();
+    }
+
+    openExistingFlowDropdown(entityTypeId: string, stepName: string) {
+      this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
+      cy.findByTestId(`${stepName}-flowList`).click();
+    }
+
+    /**
+     * Depends on openExistingFlowDropdown() being called first
+     * @param flowName 
+     */
+    getExistingFlowFromDropdown(flowName: string) {
+      return cy.findByLabelText(`${flowName}-option`);
     }
 
     /**
@@ -48,12 +86,16 @@ class CuratePage {
         cy.findByText(stepName).should('be.visible');
     }
 
-    saveEdit(stepName: string) {
-        return cy.findByTestId(`${stepName}-edit-save`)
+    saveEdit() {
+        return cy.findByTestId('mapping-dialog-save')
     }
 
-    cancelEdit(stepName: string) {
-        return cy.findByTestId(`${stepName}-edit-cancel`)
+    cancelEdit() {
+        return cy.findByTestId('mapping-dialog-cancel')
+    }
+
+    deleteMappingStepButton(stepName: string) {
+        return cy.findByTestId(`${stepName}-delete`)
     }
 
     deleteDisabled() {

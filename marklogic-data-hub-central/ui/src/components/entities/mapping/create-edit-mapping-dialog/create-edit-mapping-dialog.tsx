@@ -415,9 +415,9 @@ const CreateEditMappingDialog = (props) => {
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
-            <MLButton data-testid={`${mapName}-edit-cancel`} onClick={() => onCancel()}>Cancel</MLButton>
+            <MLButton data-testid="mapping-dialog-cancel"  onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} data-testid={`${mapName}-edit-save`} onClick={handleSubmit}>Save</MLButton>
+            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} data-testid="mapping-dialog-save" onClick={handleSubmit}>Save</MLButton>
           </div>
         </Form.Item>
       </Form>

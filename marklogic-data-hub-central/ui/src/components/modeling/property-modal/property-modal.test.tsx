@@ -200,7 +200,7 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('More string types'));
-    userEvent.click(getByText('hexBinary'));
+    userEvent.click(getByText('anyURI'));
 
     userEvent.click(getByText('Cancel'));
     expect(mockAdd).toHaveBeenCalledTimes(0);

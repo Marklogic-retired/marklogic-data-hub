@@ -26,14 +26,6 @@ export const MORE_STRING_TYPES = {
       value: 'anyURI'
     },
     {
-      label: 'base64Binary',
-      value: 'base64Binary'
-    },
-    {
-      label: 'hexBinary',
-      value: 'hexBinary'
-    },
-    {
       label: 'iri',
       value: 'iri'
     }
@@ -120,20 +112,12 @@ export const MORE_DATE_TYPES = {
       value: 'dayTimeDuration'
     },
     {
-      label: 'duration',
-      value: 'duration'
-    },
-    {
-      label: 'gDat',
-      value: 'gDat'
+      label: 'gDay',
+      value: 'gDay'
     },
     {
       label: 'gMonth',
       value: 'gMonth'
-    },
-    {
-      label: 'gMonthDay',
-      value: 'gMonthDay'
     },
     {
       label: 'gYear',
