@@ -188,10 +188,11 @@ describe('Advanced Step Settings dialog', () => {
 
     //Verifying entity validation options select field
     fireEvent.click(getByText('Do not validate'));
-    const entValOptions = getAllByTestId('entityValOpts').map(li => li);
-    expect(entValOptions.map(li => li.textContent).toString()).toEqual('Do not validate,Store validation errors in entity headers,Skip documents with validation  errors');
-    fireEvent.select(entValOptions[1]);
+    fireEvent.select(getByTestId('entityValOpts-1'));
     expect(getByText('Store validation errors in entity headers')).toBeInTheDocument();
+    fireEvent.click(getByText('Store validation errors in entity headers'));
+    fireEvent.select(getByTestId('entityValOpts-2'));
+    expect(getByText('Skip documents with validation errors')).toBeInTheDocument();
 
     //Not able to send input to Additional collections. Test via e2e
     //https://github.com/testing-library/react-testing-library/issues/375

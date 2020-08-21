@@ -482,7 +482,7 @@ const AdvancedSettingsDialog = (props) => {
   const targetDbOptions = databaseOptions.map(d => <Option data-testid={`targetDbOptions-${d}`} key={d}>{d}</Option>);
 
   const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid={`provOptions-${d}`} key={provGranularityOptions[d]}>{d}</Option>);
-  const valEntityOpts = Object.keys(validateEntityOptions).map(d => <Option data-testid={'entityValOpts'} key={validateEntityOptions[d]}>{d}</Option>);
+  const valEntityOpts = Object.keys(validateEntityOptions).map( (d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
   return <Modal
     visible={props.openAdvancedSettings}
     title={null}

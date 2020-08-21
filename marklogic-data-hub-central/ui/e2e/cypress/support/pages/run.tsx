@@ -65,7 +65,9 @@ class RunPage {
         return cy.findByText(`Are you sure you want to delete step "${stepName}" from flow "${flowName}"?`)
     }
 
-
+    explorerLink() {
+      return cy.findByTestId('explorer-link')
+    }
 }
 
 const runPage = new RunPage();

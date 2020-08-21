@@ -192,7 +192,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.newPropertyName('newId');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More string types').click();
-    propertyModal.getCascadedTypeFromDropdown('hexBinary').click();
+    propertyModal.getCascadedTypeFromDropdown('iri').click();
 
     propertyModal.getYesRadio('identifier').click();
     propertyModal.getYesRadio('multiple').click();
@@ -358,8 +358,8 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.getStructuredTypeName().should('have.text', 'Address');
     propertyModal.newPropertyName('street');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('More string types').click();
-    propertyModal.getCascadedTypeFromDropdown('hexBinary').click();
+    propertyModal.getTypeFromDropdown('More date types').click();
+    propertyModal.getCascadedTypeFromDropdown('gDay').click();
 
     propertyModal.getNoRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
@@ -443,8 +443,8 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyModal.newPropertyName('streetAlt');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('More string types').click();
-    propertyModal.getCascadedTypeFromDropdown('base64Binary').click();
+    propertyModal.getTypeFromDropdown('More number types').click();
+    propertyModal.getCascadedTypeFromDropdown('unsignedByte').click();
 
     propertyModal.getYesRadio('idenifier').should('not.exist');
     propertyModal.getYesRadio('multiple').click();
@@ -586,7 +586,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.newPropertyName('testing');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More date types').click();
-    propertyModal.getCascadedTypeFromDropdown('gDat').click();
+    propertyModal.getCascadedTypeFromDropdown('yearMonthDuration').click();
     propertyModal.getSubmitButton().click();
 
     propertyTable.getDeletePropertyIcon('Concept','testing').should('exist');

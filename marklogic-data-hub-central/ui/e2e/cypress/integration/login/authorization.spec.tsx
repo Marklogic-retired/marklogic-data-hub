@@ -145,8 +145,8 @@ describe('login', () => {
       curatePage.cancelSettings(mapStepName).click();
       curatePage.editStep(mapStepName).click();
       curatePage.verifyStepNameIsVisible(mapStepName);
-      curatePage.saveEdit(mapStepName).should('be.disabled');
-      curatePage.cancelEdit(mapStepName).click();
+      curatePage.saveEdit().should('be.disabled');
+      curatePage.cancelEdit().click();
       curatePage.deleteDisabled().should('exist');
       curatePage.noEntityType().should('not.exist');
   });
