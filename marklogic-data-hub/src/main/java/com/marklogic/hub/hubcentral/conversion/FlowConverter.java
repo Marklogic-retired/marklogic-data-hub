@@ -193,7 +193,7 @@ public class FlowConverter extends LoggingObject {
                     }
                     else {
                         logger.warn(format("The mastering step '%s' will be converted to a custom step (step with " +
-                            "step definition type 'custom').", step.getName()));
+                            "step definition type 'custom').", stepName));
                         targetDir = customStepDir;
                         stepId = String.join("-", stepName, StepDefinitionType.CUSTOM.toString());
                         // Change step definition type to "custom" for custom mapping step without a valid mapping
