@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>Source1</name>
+        </sources>
+        <createdOn xmlns="">2020-08-21T16:30:49.760917Z</createdOn>
+        <createdBy xmlns="">admin</createdBy>
+    </headers>
+    <triples/>
+    <instance>
+        <info>
+            <title>Customer</title>
+            <version>0.0.1</version>
+        </info>
+        <Customer xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                  xmlns:entity-services="http://marklogic.com/entity-services" xmlns:custOrderInfo="custOrderInfo"
+                  xmlns:map="http://marklogic.com/xdmp/map" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xmlns="">
+            <customerId xsi:type="xs:integer">205</customerId>
+            <shipping datatype="array">
+                <Address>
+                    <street datatype="array" xsi:type="xs:string">Leonard Street</street>
+                    <city xsi:type="xs:string">Glenville</city>
+                    <zip>
+                        <Zip>
+                            <fiveDigit xsi:type="xs:string">68994</fiveDigit>
+                            <plusFour xsi:type="xs:string">8449</plusFour>
+                        </Zip>
+                    </zip>
+                    <state xsi:type="xs:string">Guam</state>
+                </Address>
+            </shipping>
+            <billing>
+                <Address>
+                    <street datatype="array" xsi:type="xs:string">Tabor Court</street>
+                    <zip>
+                        <Zip>
+                            <fiveDigit xsi:type="xs:string">67317</fiveDigit>
+                            <plusFour xsi:type="xs:string">4661</plusFour>
+                        </Zip>
+                    </zip>
+                    <city xsi:type="xs:string">Stollings</city>
+                    <state xsi:type="xs:string">Pennsylvania</state>
+                </Address>
+            </billing>
+            <name xsi:type="xs:string">Lola Dunn</name>
+            <nicknames datatype="array" xsi:type="xs:string">Lola</nicknames>
+        </Customer>
+    </instance>
+    <attachments>
+        <envelope>
+            <headers>
+                <sources xmlns="">
+                    <name>loadCustomersXML</name>
+                </sources>
+                <createdOn xmlns="">2020-08-21T16:30:49.760917Z</createdOn>
+                <createdBy xmlns="">admin</createdBy>
+            </headers>
+            <triples/>
+            <instance>
+                <CustOrders xmlns="custOrderInfo">
+                    <CustomerID>205</CustomerID>
+                    <Name>
+                        <FirstName>Lola</FirstName>
+                        <LastName>Dunn</LastName>
+                    </Name>
+                    <Email>loladunn@nutralab.com</Email>
+                    <Address>
+                        <Shipping>
+                            <Street>Leonard Street</Street>
+                            <City>Glenville</City>
+                            <State>Guam</State>
+                            <Postal>68994-8449</Postal>
+                        </Shipping>
+                        <Billing>
+                            <Street>Tabor Court</Street>
+                            <City>Stollings</City>
+                            <State>Pennsylvania</State>
+                            <Postal>67317-4661</Postal>
+                        </Billing>
+                    </Address>
+                    <Phone>(955) 511-3261</Phone>
+                    <PIN>2833</PIN>
+                    <Created>2012-01-22T20:07:29</Created>
+                </CustOrders>
+            </instance>
+            <attachments/>
+        </envelope>
+    </attachments>
+</envelope>

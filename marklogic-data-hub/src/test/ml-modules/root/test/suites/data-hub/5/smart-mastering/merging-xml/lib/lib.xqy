@@ -20,6 +20,12 @@ declare variable $NESTED-DATA :=
     map:entry("/nested/doc2.xml", "nested2.xml")
   ));
 
+declare variable $HUB-DATA :=
+  map:new((
+    map:entry("/hub-data/hub-doc1.xml", "hub-doc1.xml"),
+    map:entry("/hub-data/hub-doc2.xml", "hub-doc2.xml")
+  ));
+
 declare variable $OPTIONS-NAME := "test-options";
 
 declare variable $ONE-FIRST-OPTIONS := "one-first-options";
