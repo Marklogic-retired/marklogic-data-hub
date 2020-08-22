@@ -8,20 +8,10 @@
       "stepId": "testMap2-mapping"
     },
     "3": {
-      "name": "matching-step",
-      "stepDefinitionName": "default-matching",
-      "stepDefinitionType": "matching",
-      "options": {
-        "targetEntity": "Entity2"
-      }
+      "stepId": "matching-step-matching"
     },
     "4": {
-      "name": "merging-step",
-      "stepDefinitionName": "default-merging",
-      "stepDefinitionType": "merging",
-      "options": {
-        "targetEntity": "Entity1"
-      }
+      "stepId": "merging-step-merging"
     }
   }
 }

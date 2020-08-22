@@ -219,13 +219,13 @@ const PropertyModal: React.FC<Props> = (props) => {
         let newConfirmType = ConfirmationType.DeletePropertyWarn;
         let boldText = [name]
 
-        if (response['data']['stepAndMappingNames'].length > 0) {
+        if (response['data']['stepNames'].length > 0) {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
           boldText.push(props.entityName);
         }
         setConfirmBoldTextArray(boldText);
         setConfirmType(newConfirmType);
-        setStepValuesArray(response['data']['stepAndMappingNames']);
+        setStepValuesArray(response['data']['stepNames']);
       }
     } catch (error) {
       handleError(error)

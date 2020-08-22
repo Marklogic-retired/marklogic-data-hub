@@ -42,10 +42,10 @@ public class DeleteModelTest extends AbstractModelTest {
     private void getModelReferences() {
         JsonNode jsonNode = controller.getModelReferences("Entity2").getBody();
         assertNotNull(jsonNode);
-        assertEquals(2, jsonNode.get("stepAndMappingNames").size());
+        assertEquals(2, jsonNode.get("stepNames").size());
         assertEquals(1, jsonNode.get("entityNames").size());
         Stream.of("testMap2", "matching-step")
-                .forEach(s -> assertTrue(jsonNode.get("stepAndMappingNames").toString().contains(s)));
+                .forEach(s -> assertTrue(jsonNode.get("stepNames").toString().contains(s)));
         assertTrue(jsonNode.get("entityNames").toString().contains("Entity1"));
     }
 
@@ -65,7 +65,7 @@ public class DeleteModelTest extends AbstractModelTest {
     }
 
     private void removeReferencesToEntity() {
-        removeDocuments("/flows/testFlow.flow.json", "/steps/mapping/testMap2.step.json");
+        removeDocuments("/steps/matching/matching-step.step.json", "/steps/mapping/testMap2.step.json");
     }
 
     private void verifyReferencesToEntity2DontExistInEntity1() {
@@ -96,7 +96,7 @@ public class DeleteModelTest extends AbstractModelTest {
 
     private void deleteEntity1Model() {
         runAsDataHubDeveloper();
-        removeDocuments("/steps/mapping/testMap1.step.json");
+        removeDocuments("/steps/mapping/testMap1.step.json", "/steps/merging/merging-step.step.json");
         runAsTestUserWithRoles("hub-central-entity-model-writer");
 
         assertDoesNotThrow(() -> controller.deleteModel("Entity1"), "Should be ok since we deleted the references" +

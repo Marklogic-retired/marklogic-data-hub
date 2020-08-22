@@ -34,8 +34,8 @@ if (!entityModel) {
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
 const entityModelUri = entityLib.getModelUri(entityName);
 
-const stepAndMappingNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
+const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
 const entityNames = entityLib.findModelReferencesInOtherModels(entityModelUri, entityTypeId);
-const result = {stepAndMappingNames, entityNames};
+const result = {stepNames, entityNames};
 
 result;

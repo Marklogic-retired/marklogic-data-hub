@@ -1,0 +1,6 @@
+{
+  "name": "merging-step",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "targetEntity": "Entity1"
+}
