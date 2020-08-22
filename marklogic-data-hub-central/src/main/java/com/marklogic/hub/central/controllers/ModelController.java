@@ -259,7 +259,7 @@ public class ModelController extends BaseController {
     }
 
     public static class ModelReferencesInfo {
-        public List<String> stepAndMappingNames;
+        public List<String> stepNames;
         public List<String> entityNames;
     }
 

@@ -88,9 +88,9 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           setArrayValues(modelingOptions.modifiedEntitiesArray.map(entity => entity.entityName));
         }
 
-        if (response['data']['stepAndMappingNames'].length > 0) {
+        if (response['data']['stepNames'].length > 0) {
           newConfirmType = ConfirmationType.DeleteEntityStepWarn;
-          setArrayValues(response['data']['stepAndMappingNames']);
+          setArrayValues(response['data']['stepNames']);
         } else if (response['data']['entityNames'].length > 0) {
           if (isAnyEntityModified) {
             newConfirmType = ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn;

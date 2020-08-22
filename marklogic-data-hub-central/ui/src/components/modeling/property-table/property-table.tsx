@@ -586,14 +586,14 @@ const PropertyTable: React.FC<Props> = (props) => {
         let newConfirmType = ConfirmationType.DeletePropertyWarn;
         let boldText: string[] = [record.propertyName]
 
-        if (response['data']['stepAndMappingNames'].length > 0) {
+        if (response['data']['stepNames'].length > 0) {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
           boldText.push(text);
         }
 
         setDeletePropertyOptions({ definitionName: definitionName, propertyName: record.propertyName });
         setConfirmBoldTextArray(boldText);
-        setStepValuesArray(response['data']['stepAndMappingNames']);
+        setStepValuesArray(response['data']['stepNames']);
         setConfirmType(newConfirmType);
         toggleConfirmModal(true);
       }

@@ -33,9 +33,9 @@ if (!entityModel) {
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);
 const entityModelUri = entityLib.getModelUri(entityName);
 
-const stepAndMappingNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
-if (stepAndMappingNames.length) {
-  ds.throwServerError(`Cannot delete the entity type '${entityName}' because it is referenced by the following step and/or mapping names: ${stepAndMappingNames}`);
+const stepNames = entityLib.findModelReferencesInSteps(entityName, entityTypeId);
+if (stepNames.length) {
+  ds.throwServerError(`Cannot delete the entity type '${entityName}' because it is referenced by the following step names: ${stepNames}`);
 }
 
 entityLib.deleteModel(entityName);

@@ -854,21 +854,21 @@ export const entityDefinitionsArray = [
 ]
 
 export const referencePayloadEmpty = {
-  "stepAndMappingNames": [],
+  "stepNames": [],
   "entityNames": []
 }
 
 export const referencePayloadSteps = {
-  "stepAndMappingNames": ['Order-Load', 'Order-Map'],
+  "stepNames": ['Order-Load', 'Order-Map'],
   "entityNames": []
 }
 
 export const referencePayloadRelationships = {
-  "stepAndMappingNames": [],
+  "stepNames": [],
   "entityNames": ['Protein']
 }
 
 export const referencePayloadStepRelationships = {
-  "stepAndMappingNames": ['Order-Load', 'Order-Map'],
+  "stepNames": ['Order-Load', 'Order-Map'],
   "entityNames": ['Protein']
 }

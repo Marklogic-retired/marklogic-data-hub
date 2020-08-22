@@ -218,31 +218,12 @@ function deleteModel(entityName) {
  * @returns {[]}
  */
 function findModelReferencesInSteps(entityName, entityTypeId) {
-  let steps = [];
-
-  const mappingQuery = cts.andQuery([
-    cts.collectionQuery('http://marklogic.com/data-hub/mappings'),
-    cts.jsonPropertyValueQuery("targetEntityType", [entityName, entityTypeId])
+  const stepQuery = cts.andQuery([
+    cts.collectionQuery('http://marklogic.com/data-hub/steps'),
+    cts.jsonPropertyValueQuery(["targetEntityType", "targetEntity"], [entityName, entityTypeId])
   ]);
-  steps = cts.search(mappingQuery).toArray().map(mapping => mapping.toObject().name);
 
-
-  const flowQuery = cts.andQuery([
-    cts.collectionQuery('http://marklogic.com/data-hub/flow'),
-    cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)),
-    cts.jsonPropertyValueQuery("targetEntity", entityName)
-  ]);
-  cts.search(flowQuery).toArray()
-    .map(flow => flow.toObject())
-    .filter(flow => flow.steps)
-    .forEach(flow => {
-      const flowSteps = flow.steps;
-      Object.keys(flowSteps)
-        .filter(stepNumber => flowSteps[stepNumber].options && flowSteps[stepNumber].options.targetEntity === entityName)
-        .forEach(stepNumber => steps.push(flowSteps[stepNumber].name));
-    });
-
-  return steps;
+  return cts.search(stepQuery).toArray().map(step => step.toObject().name);
 }
 
 /**

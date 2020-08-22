@@ -1,0 +1,6 @@
+{
+  "name": "matching-step",
+  "stepDefinitionName": "default-matching",
+  "stepDefinitionType": "matching",
+  "targetEntity": "Entity2"
+}

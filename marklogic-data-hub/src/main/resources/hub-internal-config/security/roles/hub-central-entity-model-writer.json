@@ -5,6 +5,8 @@
     "hub-central-entity-model-reader",
     "data-hub-entity-model-writer",
     "data-hub-mapping-reader",
+    "data-hub-match-merge-reader",
+    "data-hub-custom-reader",
     "data-hub-flow-reader",
     "tde-admin"
   ],
