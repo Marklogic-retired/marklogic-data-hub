@@ -175,7 +175,7 @@ def runCypressE2e(){
             rm -rf $M2_LOCAL_REPO || true
             mkdir -p $M2_LOCAL_REPO
             cd $WORKSPACE/data-hub;
-            ./gradlew marklogic-data-hub:publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO
+            ./gradlew publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/
             '''
         )
         sh(script:'''
@@ -187,6 +187,8 @@ def runCypressE2e(){
           cd $WORKSPACE/data-hub;
           rm -rf $GRADLE_USER_HOME/caches;
           cd marklogic-data-hub-central/ui/e2e;
+          repo="maven {url '"$M2_LOCAL_REPO"'}"
+          sed -i "/repositories {/a$repo" hc-qa-project/build.gradle
           chmod +x setup.sh;
           ./setup.sh dhs=false mlHost=localhost;
           '''
