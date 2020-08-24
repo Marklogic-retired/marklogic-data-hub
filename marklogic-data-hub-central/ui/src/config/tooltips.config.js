@@ -88,7 +88,8 @@ const AdvMergeTooltips = {
 
 const RunToolTips =  {
   'ingestionStep' : 'Run this step to select and ingest files, up to a total of 100MB.',
-  'otherSteps' : 'Run this step.'
+  'otherSteps' : 'Run this step.',
+  'removeStep' : 'Remove step from flow.'
 }
 
 const NewCustomLoadTooltips = {}
