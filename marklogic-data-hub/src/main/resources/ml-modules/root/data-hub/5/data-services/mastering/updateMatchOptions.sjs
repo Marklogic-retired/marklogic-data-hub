@@ -15,6 +15,8 @@
  */
 'use strict';
 
+// No privilege required: This options transform does not make any modifications to DB or project.
+
 const updateMatchOptionsLib = require("/data-hub/5/data-services/mastering/updateMatchOptionsLib.sjs");
 
 var options = fn.head(xdmp.fromJSON(options));
