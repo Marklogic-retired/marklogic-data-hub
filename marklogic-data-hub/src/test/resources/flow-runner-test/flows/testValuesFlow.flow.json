@@ -10,6 +10,16 @@
         "targetDatabase": "data-hub-FINAL",
         "sourceQueryIsScript": true
       }
+    },
+    "2": {
+      "name": "expectsArrayStep",
+      "stepDefinitionName": "expectArray",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceDatabase": "data-hub-FINAL",
+        "targetDatabase": "data-hub-FINAL",
+        "sourceQueryIsScript": true
+      }
     }
   }
 }

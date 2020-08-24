@@ -17,7 +17,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
 
     @Test
     public void testRunFlow() {
-        setupProjectForRunningTestFlow();
+        installProjectInFolder("flow-runner-test");
         runAsDataHubOperator();
 
         final String flowName = "testFlow";
@@ -38,7 +38,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
 
     @Test
     public void testURIPrefix() {
-        setupProjectForRunningTestFlow();
+        installProjectInFolder("flow-runner-test");
         runAsDataHubOperator();
 
         final String flowName = "runXqyFuncFlow";

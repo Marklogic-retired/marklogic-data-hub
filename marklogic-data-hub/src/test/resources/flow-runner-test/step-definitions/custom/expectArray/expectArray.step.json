@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "expectArray",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/custom-modules/custom/value-step/expectArray.sjs"
+}

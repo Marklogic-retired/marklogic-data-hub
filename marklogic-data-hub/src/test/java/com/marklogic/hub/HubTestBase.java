@@ -1049,31 +1049,6 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         return strHandle.get();
     }
 
-    protected void setupProjectForRunningTestFlow() {
-        try {
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/entities/e2eentity.entity.json"),
-                adminHubConfig.getHubEntitiesDir().toFile());
-            FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
-            FileUtils.copyDirectory(getResourceFile("flow-runner-test/input"),
-                adminHubConfig.getHubProjectDir().resolve("input").toFile());
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-ingestion.step.json"),
-                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.INGESTION).resolve("json-ingestion").toFile());
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/json-mapping.step.json"),
-                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("json-mapping").toFile());
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/step-definitions/value-step.step.json"),
-                adminHubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM).resolve("value-step").toFile());
-            FileUtils.copyDirectory(getResourceFile("flow-runner-test/mappings"),
-                adminHubConfig.getHubMappingsDir().resolve("e2e-mapping").toFile());
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/custom-modules/custom/value-step/main.sjs"),
-                adminHubConfig.getModulesDir().resolve("root/custom-modules/custom/value-step").toFile());
-            FileUtils.copyFileToDirectory(getResourceFile("flow-runner-test/mapping-functions/add-function.xqy"),
-                adminHubConfig.getModulesDir().resolve("root/custom-modules/mapping-functions/").toFile());
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-        installUserModules(getDataHubAdminConfig(), true);
-    }
-
     /**
      * This is needed for running flows without a HubProject because if the paths are relative (which they are by
      * default), then a HubProject is needed to resolve them into absolute paths.

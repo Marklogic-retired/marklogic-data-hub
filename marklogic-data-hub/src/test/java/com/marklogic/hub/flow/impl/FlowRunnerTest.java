@@ -16,6 +16,8 @@
 
 package com.marklogic.hub.flow.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
@@ -49,7 +51,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setupEach() {
-        setupProjectForRunningTestFlow();
+        installProjectInFolder("flow-runner-test");
     }
 
     @Test
@@ -58,7 +60,6 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
-        System.out.println("Logging response to help with debugging this failure on Jenkins: " + resp);
         verifyCollectionCountsFromRunningTestFlow();
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         XMLDocumentManager docMgr = stagingClient.newXMLDocumentManager();
@@ -135,12 +136,15 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         // cts.elementValueCoOccurrences
         options.put("sourceQuery", "cts.elementValueCoOccurrences(xs.QName('PersonGivenName'), xs.QName('PersonSurName'), null, cts.collectionQuery('collector-test-input'))");
-        resp = runFlow(flowName, "1", UUID.randomUUID().toString(), options, null);
+        resp = runFlow(flowName, "2", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
         assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus());
         assertEquals(2, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "collector-test-output"),
             "Both test documents should return a co-occurrence. Note that this array will be passed as a string to the " +
                 "endpoint for running a flow. It can be converted into an array via xdmp.eval .");
+        ObjectNode processedDoc = readJsonObject(getHubClient().getFinalClient().newServerEval().javascript("fn.collection('collector-test-output').toArray()[0]").evalAs(String.class));
+        JsonNode contentValue = processedDoc.get("envelope").get("instance").get("contentValue");
+        assertEquals(2, contentValue.size(), "The string item should have been converted into an array");
         deleteCollectorTestOutput();
 
         // cts.valueTuples
