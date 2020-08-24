@@ -125,6 +125,8 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.editProperty('fname');
     cy.waitUntil(() => propertyModal.getToggleStepsButton().should('exist')).click();
     cy.contains('mapPersonJSON').should('be.visible');
+    cy.contains('match-person').should('be.visible');
+    cy.contains('merge-person').should('be.visible');
     cy.contains('master-person').should('be.visible');
     cy.contains('Hide Steps...').should('be.visible');
 
@@ -135,6 +137,8 @@ describe('Entity Modeling: Writer Role', () => {
     cy.contains('Show Steps...').should('be.visible');
 
     cy.contains('mapPersonJSON').should('not.be.visible');
+    cy.contains('match-person').should('not.be.visible');
+    cy.contains('merge-person').should('not.be.visible');
     cy.contains('master-person').should('not.be.visible');
     cy.contains('Hide Steps...').should('not.be.visible');
     propertyModal.getCancelButton().click();
