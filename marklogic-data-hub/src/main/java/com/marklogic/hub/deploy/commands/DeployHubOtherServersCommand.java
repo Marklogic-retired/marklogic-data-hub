@@ -19,6 +19,7 @@ package com.marklogic.hub.deploy.commands;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.resource.ResourceManager;
 import org.springframework.http.HttpStatus;
@@ -33,27 +34,34 @@ import java.util.Map;
 public class DeployHubOtherServersCommand extends DeployOtherServersCommand {
 
     private String serverVersion;
+    private HubConfig hubConfig;
+
+    /**
+     * @param hubConfig required so that a connection can be made to ML, regardless of whether DHF has been installed yet
+     *                  or not
+     */
+    public DeployHubOtherServersCommand(HubConfig hubConfig) {
+        this.hubConfig = hubConfig;
+    }
 
     @Override
     public void execute(CommandContext context) {
+        addServerVersionToCustomTokens(context);
+        super.execute(context);
+    }
+
+    protected void addServerVersionToCustomTokens(CommandContext context) {
         AppConfig appConfig = context.getAppConfig();
         Map<String, String> customTokens = appConfig.getCustomTokens();
-        //set the server version for the rewriter
         final String token = "%%mlServerVersion%%";
         try {
-            final String version = serverVersion != null ? serverVersion : new Versions().getMarkLogicVersion();
+            final String version = serverVersion != null ? serverVersion : new Versions(hubConfig).getMarkLogicVersion();
             customTokens.put(token, version.replaceAll("([^.]+)\\..*", "$1"));
         } catch (Exception ex) {
             logger.warn("Unable to determine the server version; cause: " + ex.getMessage());
             logger.warn("Will set mlServerVersion to 9 as a fallback");
             customTokens.put(token, "9");
         }
-        appConfig.setCustomTokens(customTokens);
-        Map<String, Object> contextMap = context.getContextMap();
-        contextMap.put("AppConfig", appConfig);
-        context.setContextMap(contextMap);
-
-        super.execute(context);
     }
 
     @Override

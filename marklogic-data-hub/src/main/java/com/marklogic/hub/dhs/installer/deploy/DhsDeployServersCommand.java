@@ -1,6 +1,8 @@
 package com.marklogic.hub.dhs.installer.deploy;
 
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.deploy.commands.DeployHubOtherServersCommand;
 
 import java.io.File;
@@ -10,6 +12,10 @@ import java.io.File;
  * accidentally change e.g. a port number or the authentication mechanism.
  */
 public class DhsDeployServersCommand extends DeployHubOtherServersCommand {
+
+    public DhsDeployServersCommand(HubConfig hubConfig) {
+        super(hubConfig);
+    }
 
     @Override
     protected String adjustPayloadBeforeSavingResource(CommandContext context, File f, String payload) {
