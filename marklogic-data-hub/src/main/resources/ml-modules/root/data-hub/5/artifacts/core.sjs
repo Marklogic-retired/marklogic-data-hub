@@ -48,11 +48,9 @@ function getArtifacts(artifactType, groupByEntityType = entityServiceDrivenArtif
     const queries = [];
     const artifactLibrary =  getArtifactTypeLibrary(artifactType);
 
-    // This is a temporary hack during the shift to mapping steps; it ensures that mapping.sjs can specify multiple
-    // collections, but only the first one is used for finding artifacts so that ./mappings mappings are still found.
     const artifactCollections = artifactLibrary.getCollections();
     if (artifactCollections != null && artifactCollections.length > 0) {
-      queries.push(cts.collectionQuery(artifactCollections[0]));
+      queries.push(cts.andQuery(artifactCollections.map(coll => cts.collectionQuery(coll))));
     }
 
     if (queries.length) {
