@@ -502,10 +502,10 @@ const Flows: React.FC<Props> = (props) => {
                                     </div>
                                 }
                                 {props.canWriteFlow ?
-                                    <MLTooltip title={'Delete Step'} placement="bottom">
+                                    <MLTooltip title={RunToolTips.removeStep} placement="bottom">
                                         <div className={styles.delete} aria-label={`deleteStep-${step.stepName}`} onClick={() => handleStepDelete(flowName, step)}><Icon type="close" /></div>
                                     </MLTooltip> :
-                                    <MLTooltip title={'Delete Step'} placement="bottom">
+                                    <MLTooltip title={RunToolTips.removeStep} placement="bottom">
                                         <div className={styles.disabledDelete} aria-label={`deleteStepDisabled-${step.stepName}`} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}><Icon type="close" /></div>
                                     </MLTooltip>
                                 }
