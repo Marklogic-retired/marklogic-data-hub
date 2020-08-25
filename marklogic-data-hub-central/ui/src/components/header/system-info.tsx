@@ -1,11 +1,14 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styles from './system-info.module.scss';
-import {Button, Card, Col, Row, Modal, Alert, Spin} from 'antd';
+import {Button, Card, Col, Row, Modal, Alert, Spin, Icon} from 'antd';
 import axios from 'axios';
 import { UserContext } from '../../util/user-context';
 import { AuthoritiesContext } from "../../util/authorities";
 import Axios from "axios";
 import { MLButton, MLSpin } from '@marklogic/design-system';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+
 
 
 const SystemInfo = (props) => {
@@ -18,6 +21,7 @@ const SystemInfo = (props) => {
 
     const [message, setMessage] = useState({show: false});
     const [isLoading, setIsLoading] = useState(false);
+    const [clearDataVisible, setClearDataVisible] = useState(false);
 
     useEffect(() => {
         if (!user.authenticated && props.systemInfoVisible) {
@@ -65,7 +69,35 @@ const SystemInfo = (props) => {
         props.setSystemInfoVisible(false);
     }
 
+    const onClearOk = () => {
+        clear();
+        setClearDataVisible(false);
+      }
+    
+    const onClearCancel = () => {
+        setClearDataVisible(false);
+    }
+    
+    const handleClearData = () => {
+        setClearDataVisible(true);
+    }
 
+    const clearDataConfirmation = <Modal
+        visible={clearDataVisible}
+        okText={<div aria-label="Yes">Yes</div>}
+        okType='primary'
+        cancelText={<div aria-label="No">No</div>}
+        onOk={() => onClearOk()}
+        onCancel={() => onClearCancel()}
+        bodyStyle={{textAlign: 'left'}}
+        width={550}
+        maskClosable={false}
+        closable={false}
+        destroyOnClose={true}
+    >
+        <div style = {{display: 'flex'}}><div style={{padding: '24px 0px 0px 15px'}}><FontAwesomeIcon icon={faExclamationTriangle} size = "lg" style={{color: 'rgb(188, 129, 29)'}}></FontAwesomeIcon></div><div style={{fontSize: '16px', padding: '20px 20px 20px 20px'}}>Are you sure you want to clear all user data? This action will reset your instance to a state similar to a newly created DHS instance with your project artifacts.</div></div>
+    </Modal>;
+    
     return (
         <Modal
             visible={props.systemInfoVisible}
@@ -120,7 +152,7 @@ const SystemInfo = (props) => {
                                             type="primary"
                                             aria-label="Clear"
                                             disabled = {! authorityService.canClearUserData()}
-                                            onClick={clear}
+                                            onClick={handleClearData}
                                         >Clear</MLButton>
                                     </div>
                                 </Card>
@@ -130,6 +162,7 @@ const SystemInfo = (props) => {
                     </div>
                 </div>
             </div>
+            {clearDataConfirmation}
         </Modal>
     )
 }
