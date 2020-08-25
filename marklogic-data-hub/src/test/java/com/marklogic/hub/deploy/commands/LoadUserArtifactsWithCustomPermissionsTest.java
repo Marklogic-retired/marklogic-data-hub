@@ -38,7 +38,7 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
             metadata.assertHasPermission("data-hub-common", DocumentMetadataHandle.Capability.READ);
             metadata.assertHasPermission("data-hub-common", DocumentMetadataHandle.Capability.UPDATE);
 
-            metadata = getMetadata(client, "/step-definitions/custom/echoStep/echoStep.step.json");
+            metadata = getMetadata(client, "/step-definitions/custom/echo-step/echo-step.step.json");
             metadata.assertInCollection("http://marklogic.com/data-hub/step-definition");
             metadata.assertHasPermission("data-hub-module-reader", DocumentMetadataHandle.Capability.READ);
             metadata.assertHasPermission("data-hub-module-writer", DocumentMetadataHandle.Capability.UPDATE);
@@ -69,7 +69,7 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
             metadata.assertHasPermission("data-hub-flow-reader", DocumentMetadataHandle.Capability.READ);
             metadata.assertHasPermission("data-hub-flow-writer", DocumentMetadataHandle.Capability.UPDATE);
 
-            metadata = getMetadata(client, "/step-definitions/custom/echoStep/echoStep.step.json");
+            metadata = getMetadata(client, "/step-definitions/custom/echo-step/echo-step.step.json");
             metadata.assertHasPermission("data-hub-step-definition-reader", DocumentMetadataHandle.Capability.READ);
             metadata.assertHasPermission("data-hub-step-definition-writer", DocumentMetadataHandle.Capability.UPDATE);
 

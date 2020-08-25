@@ -93,7 +93,7 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         createdByStepFixer.fixInDatabase(finalDatabaseName);
 
         DocumentMetadataHandle metadata = getHubClient().getFinalClient().newDocumentManager().readMetadata(customerUris.get(0), new DocumentMetadataHandle());
-        assertEquals("echoStep", metadata.getMetadataValues().get(CREATED_BY_STEP),
+        assertEquals("echo-step", metadata.getMetadataValues().get(CREATED_BY_STEP),
             "When no wasInfluencedBy triple exists - likely because provenance data was either disabled when the step was run, " +
                 "or deleted afterwards - then the metadata value cannot be fixed");
         assertEquals(0, getFinalDocCount(FIXED_COLLECTION));
@@ -109,11 +109,11 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
             DocumentMetadataHandle metadata = mgr.readMetadata(uri, new DocumentMetadataHandle());
             assertEquals("runEchoStep", metadata.getMetadataValues().get(CREATED_BY_STEP),
                 "Verifying the correct value is in place before we revert");
-            metadata.getMetadataValues().add(CREATED_BY_STEP, "echoStep");
+            metadata.getMetadataValues().add(CREATED_BY_STEP, "echo-step");
             mgr.write(uri, metadata, null);
 
             metadata = mgr.readMetadata(uri, new DocumentMetadataHandle());
-            assertEquals("echoStep", metadata.getMetadataValues().get(CREATED_BY_STEP), "Just verifying the update worked");
+            assertEquals("echo-step", metadata.getMetadataValues().get(CREATED_BY_STEP), "Just verifying the update worked");
         });
     }
 

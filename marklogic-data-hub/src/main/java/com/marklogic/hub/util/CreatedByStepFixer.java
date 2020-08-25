@@ -47,7 +47,7 @@ public class CreatedByStepFixer extends LoggingObject {
         DatabaseClient client = determineClient(databaseName);
         String script = "const stepDefinitionNames = fn.collection('http://marklogic.com/data-hub/step-definition')\n" +
             "  .toArray().map(stepDef => stepDef.toObject().name);\n" +
-            "cts.estimate(cts.fieldRangeQuery('datahubCreatedByStep', '=', stepDefinitionNames))";
+            "cts.estimate(cts.fieldValueQuery('datahubCreatedByStep', stepDefinitionNames))";
         long count = Long.parseLong(client.newServerEval().javascript(script).evalAs(String.class));
         if (count == 0) {
             return Pair.of(0l, null);
@@ -55,7 +55,7 @@ public class CreatedByStepFixer extends LoggingObject {
 
         script = "const stepDefinitionNames = fn.collection('http://marklogic.com/data-hub/step-definition')\n" +
             "  .toArray().map(stepDef => stepDef.toObject().name);\n" +
-            "fn.head(cts.uris(null, ['limit=1'], cts.fieldRangeQuery('datahubCreatedByStep', '=', stepDefinitionNames)))";
+            "fn.head(cts.uris(null, ['limit=1'], cts.fieldValueQuery('datahubCreatedByStep', stepDefinitionNames)))";
         String uri = client.newServerEval().javascript(script).evalAs(String.class);
         return Pair.of(count, uri);
     }

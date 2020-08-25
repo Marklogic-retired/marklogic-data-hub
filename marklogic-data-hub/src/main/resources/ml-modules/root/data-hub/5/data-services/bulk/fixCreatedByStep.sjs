@@ -39,7 +39,8 @@ const stepDefinitionNames = fn.collection('http://marklogic.com/data-hub/step-de
   .toArray().map(stepDef => stepDef.toObject().name);
 
 const documentQueries = [
-  cts.fieldRangeQuery("datahubCreatedByStep", "=", stepDefinitionNames),
+  // Have to use a value query so that queries match on names with hyphens in them
+  cts.fieldValueQuery("datahubCreatedByStep", stepDefinitionNames),
   cts.notQuery(cts.collectionQuery(fixedCollection))
 ];
 
