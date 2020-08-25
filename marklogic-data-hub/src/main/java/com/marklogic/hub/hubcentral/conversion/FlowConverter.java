@@ -165,7 +165,13 @@ public class FlowConverter extends LoggingObject {
                         stepManager.saveLocalStep(refStepNode);
                         int i = 0;
                     }
-
+                    // Need to convert merge steps to new model, if they have not been already
+                    else if (stepDefType.equals(StepDefinitionType.MERGING) && !stepNode.has("mergeRules")) {
+                        ObjectNode refStepNode = stepManager.getLocalStepAsJSON(stepId);
+                        transformMergingOptions(refStepNode);
+                        stepManager.saveLocalStep(refStepNode);
+                        int i = 0;
+                    }
                     continue;
                 }
 
@@ -251,6 +257,10 @@ public class FlowConverter extends LoggingObject {
                 // convert matching step to 5.4 model
                 if (stepDefType.equals(StepDefinitionType.MATCHING)) {
                     transformMatchingOptions(newStepArtifact);
+                }
+                // convert merging step to 5.4 model
+                else if (stepDefType.equals(StepDefinitionType.MERGING)) {
+                    transformMergingOptions(newStepArtifact);
                 }
 
                 try {
@@ -507,6 +517,25 @@ public class FlowConverter extends LoggingObject {
         stepNode.remove("matchOptions");
 
         // copy new keys into step (matchRulesets, thresholds, etc.)
+        Iterator<String> fieldNames = afterNode.fieldNames();
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next();
+            JsonNode node = afterNode.get(fieldName);
+            stepNode.set(fieldName, node);
+        }
+    }
+
+    protected void transformMergingOptions(ObjectNode stepNode) {
+        JsonNode beforeNode = stepNode.get("mergeOptions");
+        // if mergeOptions is null, this conversion has already run
+        if (beforeNode == null) {
+            return;
+        }
+
+        JsonNode afterNode = MasteringService.on(hubConfig.newHubClient().getStagingClient()).updateMergeOptions(beforeNode);
+        stepNode.remove("mergeOptions");
+
+        // copy new keys into step (mergeStrategies, mergeRulesets, etc.)
         Iterator<String> fieldNames = afterNode.fieldNames();
         while (fieldNames.hasNext()) {
             String fieldName = fieldNames.next();
