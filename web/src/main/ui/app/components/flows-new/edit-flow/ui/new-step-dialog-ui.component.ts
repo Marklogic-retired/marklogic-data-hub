@@ -353,6 +353,9 @@ export class NewStepDialogUiComponent implements OnInit {
       if(this.newStep.stepDefType === StepType.MAPPING ){
         this.newStep.stepDefinitionName = 'entity-services-' + (this.newStep.stepDefType || '').toLowerCase();
       }
+      else {
+        this.newStep.stepDefinitionName = 'default-' + (this.newStep.stepDefType || '').toLowerCase();
+      }
     }
 
     this.newStep.description = this.newStepForm.value.description;
