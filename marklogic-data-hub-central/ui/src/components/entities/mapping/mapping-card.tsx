@@ -377,7 +377,19 @@ const MappingCard: React.FC<Props> = (props) => {
                         parentNamespace = tempNS;
                     }
                 } else if (val && Array.isArray(val)) {
-                    if (val[0].constructor.name === "String") {
+                    if (val.length === 0) {
+                        sourceTableKeyIndex = sourceTableKeyIndex + 1;
+                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
+                        let propty = {
+                            rowKey: sourceTableKeyIndex,
+                            key: finalKey,
+                            val: '[ ]',
+                            array: true,
+                            datatype: getValDatatype(val)
+                        };
+                        nestedDoc.push(propty);
+                    }
+                    else if (val[0].constructor.name === "String") {
                             let stringValues = val.join(', ')
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
                             let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
