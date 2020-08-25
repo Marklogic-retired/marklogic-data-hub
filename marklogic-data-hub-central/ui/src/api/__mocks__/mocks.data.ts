@@ -252,6 +252,20 @@ const noResponseAPI = (axiosMock) => {
   })
 };
 
+const clearUserDataAPI = (axiosMock) => {
+  return axiosMock.post['mockImplementation']((url) => {
+    switch (url) {
+        case '/api/environment/clearUserData':
+            return Promise.resolve({
+                "data": {},
+                "status": 200
+            });
+        default:
+            return Promise.reject(new Error('not found'));
+    }
+  })
+};
+
 const mocks = {
   loadAPI: loadAPI,
   curateAPI: curateAPI,
@@ -264,6 +278,7 @@ const mocks = {
   advancedAPI: advancedAPI,
   systemInfoAPI: systemInfoAPI,
   noResponseAPI: noResponseAPI,
+  clearUserDataAPI: clearUserDataAPI
 };
 
 export default mocks;
