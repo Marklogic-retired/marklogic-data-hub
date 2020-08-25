@@ -179,7 +179,8 @@ const jsonSourceData = [
   { rowKey: 10, key: 'nullValue', val: 'null', datatype: 'null' },
   { rowKey: 11, key: 'numberValue', val: '321', datatype: 'number' },
   { rowKey: 12, key: 'booleanValue', val: 'true', datatype: 'boolean' },
-  { rowKey: 13, key: 'whitespaceValue', val: ' ', datatype: 'string' }
+  { rowKey: 13, key: 'whitespaceValue', val: ' ', datatype: 'string' },
+  { rowKey: 14, key: 'emptyArrayValue', val: '[ ]', datatype: 'object' },
 ];
 
 const entityTypeProperties = [
