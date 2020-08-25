@@ -3,7 +3,7 @@
   "steps": {
     "1": {
       "name": "runEchoStep",
-      "stepDefinitionName": "echoStep",
+      "stepDefinitionName": "echo-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
         "sourceQuery": "cts.collectionQuery('customer-input')",

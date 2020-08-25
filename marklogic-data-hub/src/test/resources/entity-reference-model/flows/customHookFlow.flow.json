@@ -3,7 +3,7 @@
   "steps": {
     "1": {
       "name": "beforeHook",
-      "stepDefinitionName": "echoStep",
+      "stepDefinitionName": "echo-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
         "sourceQuery": "cts.collectionQuery('customer-input')",
@@ -21,7 +21,7 @@
     },
     "2": {
       "name": "afterHook",
-      "stepDefinitionName": "echoStep",
+      "stepDefinitionName": "echo-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
         "sourceQuery": "cts.collectionQuery('customer-input')",
