@@ -248,7 +248,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               </MLTooltip>
             )
         })}
-        {props.showApply &&
+        {props.greyFacets.length > 0 &&
         <MLTooltip title={'Apply all changes'}>
             <FontAwesomeIcon
                 icon={faCheckSquare}
