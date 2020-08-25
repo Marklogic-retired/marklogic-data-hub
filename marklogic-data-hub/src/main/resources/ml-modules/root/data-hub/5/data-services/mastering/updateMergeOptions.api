@@ -1,0 +1,15 @@
+{
+    "functionName": "updateMergeOptions",
+    "params": [
+        {
+         "name": "options",
+         "datatype": "jsonDocument",
+         "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
+
