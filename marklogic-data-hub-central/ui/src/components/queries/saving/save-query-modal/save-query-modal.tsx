@@ -6,7 +6,6 @@ import { UserContext } from "../../../../util/user-context";
 import { QueryOptions } from '../../../../types/query-types';
 import { MLButton } from '@marklogic/design-system';
 
-
 interface Props {
     setSaveModalVisibility: () => void;
     saveNewQuery: (queryName: string, queryDescription: string, facets: {}) => void;
@@ -15,10 +14,12 @@ interface Props {
     toggleApplyClicked: (clicked: boolean) => void;
     currentQueryName: string;
     setCurrentQueryName: (name: string) => void;
-    setSaveNewIconVisibility: (clicked: boolean) => void;
+    setSaveNewIconVisibility: (state: boolean) => void;
     currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
     resetYesClicked: boolean;
+    toggleSaveNewIcon: (clicked: boolean) => void;
+    setColumnSelectorTouched: (state: boolean) => void;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -30,7 +31,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         searchOptions,
         applySaveQuery,
         setAllGreyedOptions,
-        setZeroState
+        setZeroState,
+        setEntity
     } = useContext(SearchContext);
 
     const {
@@ -110,6 +112,10 @@ const SaveQueryModal: React.FC<Props> = (props) => {
             } else {
                 handleError(error);
             }
+        } finally {
+            props.toggleSaveNewIcon(false);
+            props.setColumnSelectorTouched(false);
+            setEntity(searchOptions.nextEntityType);
         }
     }
 
