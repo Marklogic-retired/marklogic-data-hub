@@ -502,9 +502,11 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
         queryComponent.getEditQueryDescription().clear();
         queryComponent.getEditQueryDescription().type('edited-query-description');
         queryComponent.getSubmitButton().click();
-        //apply query
+        // apply query and verify discard/apply icons are not shown after applying
         queryComponent.getQueryByName('edited-query').click();
         browsePage.waitForSpinnerToDisappear();
+        browsePage.getClearGreyFacets().should('not.be.visible')
+        browsePage.getFacetApplyButton().should('not.be.visible')
         browsePage.getSelectedQuery().should('contain', 'edited-query');
         browsePage.getSelectedQueryDescription().should('contain', 'edited-query-description');
         //remove query
