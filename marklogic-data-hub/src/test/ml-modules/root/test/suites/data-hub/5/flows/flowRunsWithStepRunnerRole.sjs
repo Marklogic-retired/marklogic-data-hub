@@ -31,6 +31,13 @@ function flowWorksWithValues() {
     }));
 }
 
+const assertions = [];
 
-[]
-    .concat(flowWorksWithValues());
+if (xdmp.version().startsWith("9")) {
+  console.log("A bug in ML 9 prevents amps from working on exported SJS functions correctly, " +
+    "such that job/batch documents cannot be updated unless the user has flow-operator-role or greater");
+  assertions;
+} else {
+  assertions.concat(flowWorksWithValues());
+}
+
