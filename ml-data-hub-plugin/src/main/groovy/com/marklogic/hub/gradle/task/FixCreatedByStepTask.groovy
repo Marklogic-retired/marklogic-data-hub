@@ -28,6 +28,7 @@ class FixCreatedByStepTask extends HubTask {
         }
 
         println "Fixing datahubCreatedByStep metadata in database: " + database
+        println "Only documents with the necessary provenance data to determine the correct step name will be fixed"
         fixer.fixInDatabase(database)
         println "Finished fixing datahubCreatedByStep metadata"
     }

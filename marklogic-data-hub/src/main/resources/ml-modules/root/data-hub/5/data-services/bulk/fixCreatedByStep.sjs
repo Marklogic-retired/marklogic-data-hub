@@ -33,7 +33,7 @@ var workUnit = fn.head(xdmp.fromJSON(workUnit));
 
 const batchSize = workUnit.batchSize ? workUnit.batchSize : 50;
 
-const fixedCollection = "datahubCreatedByStep-fixed"
+const fixedCollection = "datahubCreatedByStep-fixed";
 
 const stepDefinitionNames = fn.collection('http://marklogic.com/data-hub/step-definition')
   .toArray().map(stepDef => stepDef.toObject().name);
@@ -70,18 +70,50 @@ if (uris.length == 0) {
 
       // Every stepDef should have a type, but in case it doesn't, we can't do anything further
       if (stepDefType) {
-        const subject = metadata.datahubCreatedByJob + metadata.datahubCreatedInFlow + stepDefType.toLowerCase() + uri;
+        const datahubCreatedByJob = metadata.datahubCreatedByJob;
+        if (datahubCreatedByJob) {
+          // This can have multiple space-delimited values; we need the most recent one
+          const jobIds = datahubCreatedByJob.split(' ');
+          const latestJobId = jobIds[jobIds.length - 1];
+          const flowName = metadata.datahubCreatedInFlow;
+          const stepDefinitionName = stepDef.toObject().name;
 
-        // Odd - xdmp.eval works, but xdmp.invokeFunction returns no results
-        const script = "var subject, predicate; cts.triples(subject, predicate, null)";
-        const influencedByTriple = fn.head(xdmp.eval(script,
-          {subject: sem.iri(subject), predicate: sem.iri("http://www.w3.org/ns/prov#wasInfluencedBy")},
-          {database: xdmp.database(config.JOBDATABASE)}
-        ));
+          // This is based on the pattern used in prov.sjs
+          const subject = latestJobId + flowName + stepDefType.toLowerCase() + uri;
 
-        // It is not unusual for the triple to not exist, e.g provenance may have been disabled
-        if (influencedByTriple) {
-          const stepName = sem.tripleObject(influencedByTriple);
+          let stepName = null;
+          // Try wasInfluencedBy first; it won't exist for ingestion steps, but there should be only one occurrence of
+          // it if it does exist
+          // Also - xdmp.eval works, but xdmp.invokeFunction returns no results; not sure why
+          const influencedByTriple = fn.head(xdmp.eval("var subject, predicate; cts.triples(subject, predicate, null)",
+            {subject: sem.iri(subject), predicate: sem.iri("http://www.w3.org/ns/prov#wasInfluencedBy")},
+            {database: xdmp.database(config.JOBDATABASE)}
+          ));
+          if (influencedByTriple) {
+            console.log("Using influencedBy!");
+            stepName = sem.tripleObject(influencedByTriple);
+          }
+
+          // If no luck with wasInfluencedBy, try wasAssociatedWith
+          if (stepName === null) {
+            console.log("trying associated");
+            const associatedWithTriples = xdmp.eval("var subject, predicate; cts.triples(subject, predicate, null)",
+              {subject: sem.iri(subject), predicate: sem.iri("http://www.w3.org/ns/prov#wasAssociatedWith")},
+              {database: xdmp.database(config.JOBDATABASE)}
+            );
+            if (associatedWithTriples) {
+              for (var triple of associatedWithTriples) {
+                const object = sem.tripleObject(triple);
+                if (object != flowName && object != stepDefinitionName) {
+                  console.log("Using associatedWith!");
+                  stepName = object;
+                  break;
+                }
+              }
+            }
+          }
+
+          // It is not unusual for triples to not exist, e.g provenance may have been disabled
           if (stepName) {
             xdmp.documentPutMetadata(uri, {datahubCreatedByStep: stepName});
             xdmp.documentAddCollections(uri, fixedCollection);
