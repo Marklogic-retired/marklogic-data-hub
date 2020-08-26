@@ -25,14 +25,13 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
     private List<String> customerUris = new ArrayList<>();
     private CreatedByStepFixer createdByStepFixer;
     private String finalDatabaseName;
+    private HubClient developerClient;
 
     @BeforeEach
     void beforeEach() {
-        HubClient hubDeveloperClient = getHubClient();
-
-        finalDatabaseName = hubDeveloperClient.getDbName(DatabaseKind.FINAL);
-
-        createdByStepFixer = new CreatedByStepFixer(hubDeveloperClient);
+        developerClient = getHubClient();
+        finalDatabaseName = developerClient.getDbName(DatabaseKind.FINAL);
+        createdByStepFixer = new CreatedByStepFixer(developerClient);
         // Using a batch size to force multiple calls for each forest, just to verify that the Bulk code is working correctly
         createdByStepFixer.setBatchSize(10);
     }
@@ -59,6 +58,8 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
         assertEquals(0, preview.getLeft(), "Since DHFPROD-5380 fixed the bug, datahubCreatedByStep should be correct and have step name as its value");
         assertNull(preview.getRight());
         assertEquals(0, getFinalDocCount(FIXED_COLLECTION));
+
+        addAnotherJobIdToSomeDocuments();
 
         revertCreatedByStep();
         preview = createdByStepFixer.previewFixingDocuments(finalDatabaseName);
@@ -125,5 +126,19 @@ public class FixCreatedByStepTest extends AbstractHubCoreTest {
                 "The fix script should have found the triple that identifies the step name that last modified the document, " +
                     "and that should now be the value of datahubCreatedByStep");
         });
+    }
+
+    /**
+     * This simulates documents that have been processed by multiple jobs. DHF will store multiple values in the
+     * datahubCreatedByJob metadata key, delimited by spaces. This ensures that the code for fixing datahubCreatedByStep
+     * uses the last job ID in the datahubCreatedByJob key.
+     */
+    private void addAnotherJobIdToSomeDocuments() {
+        for (int i = 1; i <= 10; i++) {
+            String script = "declareUpdate(); const uri = '/echo/customer" + i + ".json'; " +
+                "const jobId = xdmp.documentGetMetadataValue(uri, 'datahubCreatedByJob'); " +
+                "xdmp.documentPutMetadata(uri, {datahubCreatedByJob: 'fakeJob ' + jobId});";
+            developerClient.getFinalClient().newServerEval().javascript(script).evalAs(String.class);
+        }
     }
 }

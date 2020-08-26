@@ -70,21 +70,29 @@ if (uris.length == 0) {
 
       // Every stepDef should have a type, but in case it doesn't, we can't do anything further
       if (stepDefType) {
-        const subject = metadata.datahubCreatedByJob + metadata.datahubCreatedInFlow + stepDefType.toLowerCase() + uri;
+        const datahubCreatedByJob = metadata.datahubCreatedByJob;
+        if (datahubCreatedByJob) {
+          // This can have multiple space-delimited values; we need the most recent one
+          const jobIds = datahubCreatedByJob.split(' ');
+          const latestJobId = jobIds[jobIds.length - 1];
 
-        // Odd - xdmp.eval works, but xdmp.invokeFunction returns no results
-        const script = "var subject, predicate; cts.triples(subject, predicate, null)";
-        const influencedByTriple = fn.head(xdmp.eval(script,
-          {subject: sem.iri(subject), predicate: sem.iri("http://www.w3.org/ns/prov#wasInfluencedBy")},
-          {database: xdmp.database(config.JOBDATABASE)}
-        ));
+          // This is based on the pattern used in prov.sjs
+          const subject = latestJobId + metadata.datahubCreatedInFlow + stepDefType.toLowerCase() + uri;
 
-        // It is not unusual for the triple to not exist, e.g provenance may have been disabled
-        if (influencedByTriple) {
-          const stepName = sem.tripleObject(influencedByTriple);
-          if (stepName) {
-            xdmp.documentPutMetadata(uri, {datahubCreatedByStep: stepName});
-            xdmp.documentAddCollections(uri, fixedCollection);
+          // Odd - xdmp.eval works, but xdmp.invokeFunction returns no results
+          const script = "var subject, predicate; cts.triples(subject, predicate, null)";
+          const influencedByTriple = fn.head(xdmp.eval(script,
+            {subject: sem.iri(subject), predicate: sem.iri("http://www.w3.org/ns/prov#wasInfluencedBy")},
+            {database: xdmp.database(config.JOBDATABASE)}
+          ));
+
+          // It is not unusual for the triple to not exist, e.g provenance may have been disabled
+          if (influencedByTriple) {
+            const stepName = sem.tripleObject(influencedByTriple);
+            if (stepName) {
+              xdmp.documentPutMetadata(uri, {datahubCreatedByStep: stepName});
+              xdmp.documentAddCollections(uri, fixedCollection);
+            }
           }
         }
       }
