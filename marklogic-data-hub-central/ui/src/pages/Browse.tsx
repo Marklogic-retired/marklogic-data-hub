@@ -57,7 +57,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
-  const [columns, setColumns] = useState<string[]>();
+  const [columns, setColumns] = useState<string[]>([]);
   const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
   const [queries, setQueries] = useState<any>([]);
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
@@ -292,7 +292,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} />
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched}/>
         <ZeroStateExplorer entities={entities} setEntity={setEntity} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
@@ -368,6 +368,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   selectedFacets={selectedFacets}
                   greyFacets={greyFacets}
                   isColumnSelectorTouched={isColumnSelectorTouched}
+                  setColumnSelectorTouched={setColumnSelectorTouched}
                   entityDefArray={entityDefArray}
                 />
               </div>

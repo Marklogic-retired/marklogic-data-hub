@@ -103,9 +103,9 @@ const ColumnSelector: React.FC<Props> = (props) => {
           let pkTitle = <MLTooltip title='The column identified as the unique identifier must always be displayed.' placement="top">
             <div data-testid='pk-tooltip'>{title}</div>
             </MLTooltip>
-          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} />
+          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`}/>
         } else {
-          return <TreeNode title={title} key={item.key} />;
+          return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`}/>;
         }
       }
     });

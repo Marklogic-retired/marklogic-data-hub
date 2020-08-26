@@ -303,9 +303,21 @@ class BrowsePage {
     return cy.get('[data-cy=column-selector] > div > svg');
   }
 
+  getColumnSelectorSearch() {
+    return cy.get('input[placeholder=Search]');
+  }
+
+  selectColumnSelectorProperty(name:string) {
+    return cy.get('li[data-testid=node-' + name + '] .ant-tree-checkbox').click();
+  }
+
   getDataExportIcon() {
     return cy.get('[data-cy=query-export] > div > svg');
   }
+
+  getColumnSelectorApply() {
+    return cy.get('button span').contains('Apply');
+}
 
   getColumnSelectorCancel() {
       return cy.get('button span').contains('Cancel');
