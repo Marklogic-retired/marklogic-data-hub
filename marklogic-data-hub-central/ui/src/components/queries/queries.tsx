@@ -18,9 +18,21 @@ import { QueryOptions } from '../../types/query-types';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import { getUserPreferences } from '../../services/user-preferences';
 
+interface Props {
+    queries: any[];
+    isSavedQueryUser: boolean;
+    columns: string[];
+    entities: any[];
+    selectedFacets: any[];
+    greyFacets: any[];
+    isColumnSelectorTouched: boolean;
+    entityDefArray: any[];
+    setColumnSelectorTouched: (state: boolean) => void;
+    setQueries: (state: boolean) => void;
+    setIsLoading: (state: boolean) => void;
+};
 
-
-const Query = (props) => {
+const Query: React.FC<Props> = (props) => {
 
     const {
         user,
@@ -134,7 +146,7 @@ const Query = (props) => {
                 (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
                 (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
                 (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
-                (props.greyFacets.length > 0)) {
+                (props.greyFacets.length > 0) || props.isColumnSelectorTouched) {
                 return true;
             }
         }
@@ -246,6 +258,7 @@ const Query = (props) => {
         applySaveQuery(options);
         toggleResetQueryEditedConfirmation(false);
         toggleResetQueryNewConfirmation(false);
+        props.setColumnSelectorTouched(false);
     }
 
     const resetIconClicked = () => {
@@ -341,6 +354,7 @@ const Query = (props) => {
                                     currentQueryDescription={currentQueryDescription}
                                     setCurrentQueryDescription={setCurrentQueryDescription}
                                     resetYesClicked={resetYesClicked}
+                                    setColumnSelectorTouched={props.setColumnSelectorTouched}
                                 />}
                         </div>
                     </div>}
@@ -384,6 +398,7 @@ const Query = (props) => {
                                     entityQueryUpdate={entityQueryUpdate}
                                     toggleEntityQueryUpdate={()=>toggleEntityQueryUpdate(false)}
                                     resetYesClicked={resetYesClicked}
+                                    setColumnSelectorTouched={props.setColumnSelectorTouched}
                                 />}
                         </div>
                     </div>}
@@ -480,6 +495,7 @@ const Query = (props) => {
                             currentQueryDescription={currentQueryDescription}
                             setCurrentQueryDescription={setCurrentQueryDescription}
                             resetYesClicked={resetYesClicked}
+                            setColumnSelectorTouched={props.setColumnSelectorTouched}
                         />}
                 </div>}
             { resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&
@@ -541,7 +557,6 @@ const Query = (props) => {
                 />
             </div>
             <QueryModal
-                hasStructured={props.hasStructured}
                 canExportQuery={canExportQuery}
                 queries={props.queries}
                 setQueries={props.setQueries}

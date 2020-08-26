@@ -26,6 +26,7 @@ interface Props {
     entityQueryUpdate: boolean;
     toggleEntityQueryUpdate: () => void;
     resetYesClicked: boolean
+    setColumnSelectorTouched: (state: boolean) => void;
 }
 
 const SaveChangesModal: React.FC<Props> = (props) => {
@@ -91,6 +92,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
                 props.toggleApplyClicked(true);
                 props.toggleApply(false);
         }
+        props.setColumnSelectorTouched(false)
         try {
             currentQuery.savedQuery.name = queryName.trim();
             currentQuery.savedQuery.description = queryDescription;

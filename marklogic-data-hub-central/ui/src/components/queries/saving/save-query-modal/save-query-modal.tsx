@@ -19,6 +19,7 @@ interface Props {
     currentQueryDescription: string;
     setCurrentQueryDescription: (description: string) => void;
     resetYesClicked: boolean;
+    setColumnSelectorTouched: (state: boolean) => void;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -100,6 +101,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 }
                 applySaveQuery(options);
             }
+            props.setColumnSelectorTouched(false);
+
         } catch (error) {
             if (error.response.status === 400) {
                 if (error.response.data.hasOwnProperty('message')) {

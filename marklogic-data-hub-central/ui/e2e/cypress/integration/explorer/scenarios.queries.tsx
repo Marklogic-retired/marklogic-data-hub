@@ -387,15 +387,30 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getTableCell(2,2).should('contain', '102');
     });
 
-    it('Show Reset query button, clicking reset icon navigates to zero state', () => {
+    it('Show Reset query button, verify confirmation modal displays if only selected columns changed, clicking reset icon navigates to zero state', () => {
         // Select saved query, make changes, click on reset opens a confirmation
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getSaveQueriesDropdown().should('be.visible');
+        browsePage.selectQuery('reset-query');
+        //changing the selecte column list should trigger modal confirmation
+        browsePage.getColumnSelectorIcon().click();
+        browsePage.getColumnSelector().should('be.visible');
+        browsePage.selectColumnSelectorProperty('status')
+        browsePage.getColumnSelectorApply().click({force: true});
+        browsePage.getResetQueryButton().click();
+        //verifying the confirmation modal appearing and selection cancel
+        browsePage.getResetConfirmationNoClick();
+        // browsePage.getResetQueryButton().click();
+        browsePage.getExploreButton().should('be.visible');
+        browsePage.getExploreButton().click();
+        //verify no confirmation modal after reset. 
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.selectQuery('reset-query');
         browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
-        browsePage.getExploreButton().click();
     })
 
     it('verify export array/structured data warning', () => {
