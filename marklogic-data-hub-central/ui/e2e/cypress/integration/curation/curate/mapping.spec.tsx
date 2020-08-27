@@ -34,7 +34,7 @@ describe('Mapping', () => {
     const stepProcessors = '[{{}"path":"/custom-modules/step-processors/addHeaders.sjs","when":"beforeContentPersisted","vars":{{}"exampleVariable":"testValue"{}} {}},{{}"path":"/org.example/addPermissions.sjs","when":"beforeContentPersisted"{}}]'
 
     curatePage.toggleEntityTypeId('Order');
-    curatePage.addNewMapStep().click();
+    cy.waitUntil(() => curatePage.addNewMapStep().click());
 
     // create mapping step
     createEditMappingDialog.setMappingName('order-processors');
@@ -54,7 +54,7 @@ describe('Mapping', () => {
 
     // map source to entity
     curatePage.openSourceToEntityMap('Order', 'order-processors');
-    sourceToEntityMap.expandCollapseEntity().should('be.visible').click();
+    cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should('be.visible')).click();
     sourceToEntityMap.setXpathExpressionInput('orderId', 'OrderID');
     sourceToEntityMap.setXpathExpressionInput('address', '/');
     sourceToEntityMap.setXpathExpressionInput('city', 'ShipCity');

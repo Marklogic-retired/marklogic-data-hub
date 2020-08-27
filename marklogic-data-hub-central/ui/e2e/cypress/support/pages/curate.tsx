@@ -29,12 +29,12 @@ class CuratePage {
 
     openSourceToEntityMap(entityTypeId: string, stepName: string) {
       this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
-      cy.findByTestId(`${stepName}-stepDetails`).click();
+      cy.waitUntil(() => cy.findByTestId(`${stepName}-stepDetails`)).click();
     }
 
     addToNewFlow(entityTypeId: string, stepName: string) {
       this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
-      cy.findByTestId(`${stepName}-toNewFlow`).click();
+      cy.waitUntil(() => cy.findByTestId(`${stepName}-toNewFlow`)).click();
     }
 
     openExistingFlowDropdown(entityTypeId: string, stepName: string) {
