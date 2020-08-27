@@ -349,43 +349,43 @@ describe('RTL Source-to-entity map tests', () => {
 
       //Check the sort order of Name column rows before enforcing sort order
       let srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue', 'emptyArrayValue'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue', 'emptyArrayValue', 'numberArray', 'booleanArray'], 'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Ascending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['booleanValue', 'emptyArrayValue', 'emptyString', 'nullValue', 'numberValue', 'nutFreeName', 'proteinCat', 'proteinDog', 'proteinId', 'proteinType', 'whitespaceValue'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['booleanArray', 'booleanValue', 'emptyArrayValue', 'emptyString', 'nullValue', 'numberArray', 'numberValue', 'nutFreeName', 'proteinCat', 'proteinDog', 'proteinId', 'proteinType', 'whitespaceValue'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column to sort the rows by Descending order
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['whitespaceValue', 'proteinType','proteinId', 'proteinDog', 'proteinCat', 'nutFreeName', 'numberValue', 'nullValue', 'emptyString', 'emptyArrayValue', 'booleanValue'],  'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['whitespaceValue', 'proteinType','proteinId', 'proteinDog', 'proteinCat', 'nutFreeName', 'numberValue', 'numberArray', 'nullValue', 'emptyString', 'emptyArrayValue', 'booleanValue', 'booleanArray'],  'key', data.mapProps.sourceData);
 
       //Click on the Name column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableNameSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue', 'emptyArrayValue'], 'key', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['proteinId', 'proteinType', 'nutFreeName', 'proteinCat', 'proteinDog', 'emptyString', 'nullValue', 'numberValue', 'booleanValue', 'whitespaceValue', 'emptyArrayValue', 'numberArray', 'booleanArray'], 'key', data.mapProps.sourceData);
 
       /* Validate sorting on Values column in source table */
 
       //Check the sort order of Values column rows before enforcing sort order
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' ', '[ ]'], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' ', '[ ]', '1, 2, 3', 'true, false, true'], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Ascending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['', ' ', '[ ]', '123EAC', '321', 'commercial', 'home', 'null', 'retriever, golden, labrador', 'true', undefined], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['', ' ', '[ ]', '1, 2, 3', '123EAC', '321', 'commercial', 'home', 'null', 'retriever, golden, labrador', 'true', 'true, false, true', undefined], 'val', data.mapProps.sourceData);
 
       //Click on the Values column to sort the rows by Descending order
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['true', 'retriever, golden, labrador', 'null', 'home', 'commercial', '123EAC', undefined, '321', '[ ]', ' ', ''], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['true', 'retriever, golden, labrador', 'null', 'home', 'commercial', '123EAC', undefined, 'true, false, true', '321', '1, 2, 3', '[ ]', ' ', ''], 'val', data.mapProps.sourceData);
 
       //Click on the Value column again to remove the applied sort order and check if its removed
       fireEvent.click(sourceTableValueSort);
       srcTable = document.querySelectorAll('#srcContainer .ant-table-row-level-0');
-      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' ', '[ ]' ], 'val', data.mapProps.sourceData);
+      validateMappingTableRow(srcTable, ['123EAC', 'home', undefined, 'commercial', 'retriever, golden, labrador', '', 'null', '321', 'true', ' ', '[ ]', '1, 2, 3', 'true, false, true'], 'val', data.mapProps.sourceData);
 
       /* Validate sorting in Entity table columns */
       const entityTableNameSort = getByTestId('entityTableName'); // For value column sorting
