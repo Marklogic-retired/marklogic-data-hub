@@ -45,6 +45,8 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated){
       if (location.pathname === '/') {
         history.push(user.pageRoute);
+      } else if (location.pathname === '/tiles/run/add'){
+        history.push('/tiles/run');
       } else {
         history.push(location.pathname);
       }

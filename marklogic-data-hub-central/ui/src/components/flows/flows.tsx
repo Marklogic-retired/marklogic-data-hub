@@ -73,6 +73,7 @@ const Flows: React.FC<Props> = (props) => {
     const [activeKeys, setActiveKeys] = useState(JSON.stringify(props.newStepToFlowOptions?.flowsDefaultKey) !== JSON.stringify(["-1"]) ? props.newStepToFlowOptions?.flowsDefaultKey : ['-1']);
     const [showLinks, setShowLinks] = useState('');
     const [latestJobData, setLatestJobData] = useState<any>({});
+    const [createAdd, setCreateAdd] = useState(true);
 
 
     useEffect(() => {
@@ -110,6 +111,7 @@ const Flows: React.FC<Props> = (props) => {
     };
 
     const OpenAddNewDialog = () => {
+        setCreateAdd(false);
         setTitle('New Flow');
         setNewFlow(true);
     }
@@ -584,6 +586,7 @@ const Flows: React.FC<Props> = (props) => {
                     title={title}
                     setNewFlow={setNewFlow}
                     createFlow={props.createFlow}
+                    createAdd={createAdd}
                     updateFlow={props.updateFlow}
                     flowData={flowData}
                     canWriteFlow={props.canWriteFlow}
