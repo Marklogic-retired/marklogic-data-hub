@@ -99,6 +99,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.visible')
     browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked')
     browsePage.selectEntity('Customer');
+    browsePage.getEntityConfirmationNoClick().click();
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible')
     browsePage.getHubPropertiesExpanded();

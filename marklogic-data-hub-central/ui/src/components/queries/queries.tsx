@@ -44,7 +44,8 @@ const Query: React.FC<Props> = (props) => {
         clearAllGreyFacets,
         setEntity,
         setNextEntity,
-        setZeroState
+        setZeroState,
+        setQuery
     } = useContext(SearchContext);
 
     const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -53,7 +54,7 @@ const Query: React.FC<Props> = (props) => {
     const [openEditDetail, setOpenEditDetail] = useState(false);
     const [currentQuery, setCurrentQuery] = useState<any>({});
     const [hoverOverDropdown, setHoverOverDropdown] = useState(false);
-    const [showSaveNewIcon, toggleSaveNewIcon] = useState(true);
+    const [showSaveNewIcon, toggleSaveNewIcon] = useState(false);
     const [showSaveChangesIcon, toggleSaveChangesIcon] = useState(false);
     const [openSaveChangesModal, setOpenSaveChangesModal] = useState(false);
     const [showDiscardIcon, toggleDiscardIcon] = useState(false);
@@ -69,6 +70,7 @@ const Query: React.FC<Props> = (props) => {
     const [showResetQueryNewConfirmation, toggleResetQueryNewConfirmation] = useState(false);
     const [showResetQueryEditedConfirmation, toggleResetQueryEditedConfirmation] = useState(false);
 
+    const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false);
     const [resetYesClicked, toggleResetYesClicked] = useState(false);
     const authorityService = useContext(AuthoritiesContext);
     const canExportQuery = authorityService.canExportEntityInstances();
@@ -142,11 +144,24 @@ const Query: React.FC<Props> = (props) => {
 
     const isSaveQueryChanged = () => {
         if (currentQuery && currentQuery.hasOwnProperty('savedQuery') && currentQuery.savedQuery.hasOwnProperty('query')) {
-            if ((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
+            if (((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
                 (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
                 (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
                 (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
-                (props.greyFacets.length > 0) || props.isColumnSelectorTouched) {
+                (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && 
+                searchOptions.selectedQuery !== 'select a query')   {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const isNewQueryChanged = () => {
+        if (currentQuery && Object.keys(currentQuery).length === 0) {
+            if (props.isSavedQueryUser && searchOptions.entityTypeIds.length > 0 &&
+                (props.selectedFacets.length > 0 || searchOptions.query.length > 0
+                    || searchOptions.sortOrder.length > 0 || props.isColumnSelectorTouched)
+                && searchOptions.selectedQuery === 'select a query') {
                 return true;
             }
         }
@@ -175,7 +190,7 @@ const Query: React.FC<Props> = (props) => {
     useEffect(() => {
             if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
                 // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
-                if (isSaveQueryChanged() && !searchOptions.zeroState) {
+                if ((isSaveQueryChanged() || isNewQueryChanged()) && !searchOptions.zeroState) {
                     toggleEntityConfirmation(true);
                 } else {
                     setCurrentQueryOnEntityChange();
@@ -211,13 +226,21 @@ const Query: React.FC<Props> = (props) => {
     }
 
     const onOk = () => {
+    if (Object.keys(currentQuery).length === 0) {
+        toggleEntityConfirmation(false);
+        toggleExistingQueryYesClicked(true);
+        setOpenSaveModal(true);
+    } else {
         setOpenSaveChangesModal(true);
         toggleEntityConfirmation(false);
         toggleEntityQueryUpdate(true);
+        }
     }
 
     const setCurrentQueryOnEntityChange = () => {
         setEntity(searchOptions.nextEntityType);
+        toggleSaveNewIcon(false);
+        props.setColumnSelectorTouched(false)
         setCurrentQuery({});
         setCurrentQueryName('select a query');
         setCurrentQueryDescription('');
@@ -355,6 +378,7 @@ const Query: React.FC<Props> = (props) => {
                                     setCurrentQueryDescription={setCurrentQueryDescription}
                                     resetYesClicked={resetYesClicked}
                                     setColumnSelectorTouched={props.setColumnSelectorTouched}
+                                    existingQueryYesClicked={existingQueryYesClicked}
                                 />}
                         </div>
                     </div>}
@@ -496,6 +520,7 @@ const Query: React.FC<Props> = (props) => {
                             setCurrentQueryDescription={setCurrentQueryDescription}
                             resetYesClicked={resetYesClicked}
                             setColumnSelectorTouched={props.setColumnSelectorTouched}
+                            existingQueryYesClicked={existingQueryYesClicked}
                         />}
                 </div>}
             { resetQueryIcon && props.isSavedQueryUser && props.queries.length > 0 &&

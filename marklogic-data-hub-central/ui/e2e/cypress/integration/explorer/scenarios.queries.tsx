@@ -388,6 +388,16 @@ describe('save/manage queries scenarios, developer role', () => {
     });
 
     it('Show Reset query button, verify confirmation modal displays if only selected columns changed, clicking reset icon navigates to zero state', () => {
+        //verifying the confirmation modal displays if no query selected and selected columns changed
+        browsePage.selectEntity('Customer');
+        browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getColumnSelectorIcon().click();
+        browsePage.getColumnSelector().should('be.visible');
+        browsePage.selectColumnSelectorProperty('status')
+        browsePage.getColumnSelectorApply().click({force: true});
+        browsePage.selectEntity('Person');
+        //verifying the confirmation modal appearing and selection cancel
+        browsePage.getEntityConfirmationNoClick().click();
         // Select saved query, make changes, click on reset opens a confirmation
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');

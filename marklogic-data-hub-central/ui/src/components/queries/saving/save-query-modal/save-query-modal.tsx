@@ -20,6 +20,7 @@ interface Props {
     setCurrentQueryDescription: (description: string) => void;
     resetYesClicked: boolean;
     setColumnSelectorTouched: (state: boolean) => void;
+    existingQueryYesClicked: boolean;
 }
 
 const SaveQueryModal: React.FC<Props> = (props) => {
@@ -31,7 +32,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         searchOptions,
         applySaveQuery,
         setAllGreyedOptions,
-        setZeroState
+        setZeroState,
+        setEntity
     } = useContext(SearchContext);
 
     const {
@@ -52,6 +54,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         props.setSaveModalVisibility();
     }
     const onOk = async () => {
+        console.log('ON OKAY')
         let facets = { ...searchOptions.selectedFacets };
         let selectedFacets = facets;
         let greyedFacets = greyedOptions.selectedFacets;
@@ -102,7 +105,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 applySaveQuery(options);
             }
             props.setColumnSelectorTouched(false);
-
+            props.existingQueryYesClicked && setEntity(searchOptions.nextEntityType);
         } catch (error) {
             if (error.response.status === 400) {
                 if (error.response.data.hasOwnProperty('message')) {
