@@ -446,6 +446,9 @@ describe('json scenario for table on browse documents page', () => {
       browsePage.getFacetApplyButton().click();
       browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
       browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
+      browsePage.clickPopoverSearch('name');
+      browsePage.setInputField('name', 'Mc');
+      browsePage.getPopOverCheckbox('Mcgee Burch').should('be.checked');
       browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
       browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
       browsePage.waitForSpinnerToDisappear();
