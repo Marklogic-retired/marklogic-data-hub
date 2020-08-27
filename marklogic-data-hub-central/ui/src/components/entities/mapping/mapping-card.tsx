@@ -389,16 +389,16 @@ const MappingCard: React.FC<Props> = (props) => {
                         };
                         nestedDoc.push(propty);
                     }
-                    else if (val[0].constructor.name === "String") {
-                            let stringValues = val.join(', ')
+                    else if (val[0].constructor.name !== "Object") {
+                            let joinValues = val.join(', ')
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
                             let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
                             let propty = {
                                 rowKey: sourceTableKeyIndex,
                                 key: finalKey,
-                                val: stringValues,
+                                val: joinValues,
                                 array: true,
-                                datatype: getValDatatype(stringValues)
+                                datatype: val[0].constructor.name.toLowerCase()
                             };
                             nestedDoc.push(propty);
                     } else {
