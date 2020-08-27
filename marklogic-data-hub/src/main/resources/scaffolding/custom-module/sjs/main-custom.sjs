@@ -73,13 +73,19 @@ function main(content, options) {
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
+  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getInstance(doc)
   let instance = datahub.flow.flowUtils.getInstanceAsObject(doc) || {};
 
   // get triples, return null if empty or cannot be found
+  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getTriples(doc)
   let triples = datahub.flow.flowUtils.getTriplesAsObject(doc) || [];
 
   //gets headers, return null if cannot be found
+  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getHeaders(doc)
   let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
+
+  //If your instance is xml and you want to set attachments, you will first want to convert it to json.
+  //instance = datahub.flow.flowUtils.xmlToJson(instance);
 
   //If you want to set attachments, uncomment here
   // instance['$attachments'] = doc;
