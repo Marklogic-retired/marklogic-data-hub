@@ -36,7 +36,9 @@ let $entity-base-uri := $entity-def/info/baseUri
 let $entity-title := $entity-def/info/title
 let $entity-version := $entity-def/info/version
 let $tde-uri := "/tde/" || $entity-title || "-" || $entity-version || ".tdex"
+
 return (
+
   let $definitions := $entity-def-map => map:get("definitions")
   (: Find definition references :)
   let $properties-with-refs :=
@@ -52,6 +54,7 @@ return (
       else if ($property-items instance of map:map and $property-items => map:contains("$ref")) then
         $property-items
       else ()
+
   (: Search for supporting entities for uber model :)
   let $supporting-entity-defs :=
     for $prop in $properties-with-refs
@@ -90,34 +93,45 @@ return (
         else
           $prop => map:put("$ref", $entity-uri)
     )
+
   let $info-map as map:map := $entity-def-map => map:get("info")
   (: build uber model with original info :)
   let $uber-model := hent:uber-model((xdmp:to-json($entity-def-map)/object-node(), $supporting-entity-defs)) => map:with("info", $info-map)
   let $valid-entity-model := xdmp:to-json(es:model-validate($uber-model))
+
+  let $schemas := es:schema-generate($uber-model)
+  let $schema-collection := "ml-data-hub-xml-schema"
+
   return (
-    (: Insert entity model into SCHEMA db :)
-  xdmp:invoke-function(
-    function() {
-      xdmp:document-insert(
-        fn:replace($trgr:uri, "\.json$", ".xsd"),
-        es:schema-generate($uber-model),
-        $schema-permissions,
-        "ml-data-hub-xml-schema"
-      ),
-      xdmp:document-insert(
-        fn:replace($trgr:uri, "\.json$", ".schema.json"),
-        hent:json-schema-generate($entity-title, $uber-model),
-        $schema-permissions,
-        "ml-data-hub-json-schema"
-      ),
-      xdmp:document-insert(
-        $trgr:uri,
-        $valid-entity-model,
-        $schema-permissions,
-        $ENTITY-MODEL-COLLECTION
-      )
-    }, map:entry("database", xdmp:schema-database())
-  ),
+    xdmp:invoke-function(
+      function() {
+        if (fn:count($schemas) = 1) then
+          xdmp:document-insert(fn:replace($trgr:uri, "\.json$", ".xsd"), $schemas, $schema-permissions, $schema-collection)
+        else
+          for $schema in $schemas
+          let $uri :=
+            (: The last xs:element is expected to be the name of the entity type. Unfortunately there's not a more
+            reliable way to determine this from the output of es:schema-generate :)
+            let $entity-type-name := $schema/xs:element[fn:last()]/@name/fn:string()
+            return "/entities/" || $entity-type-name || ".entity.xsd"
+          return xdmp:document-insert($uri, $schema, $schema-permissions, $schema-collection),
+
+        xdmp:document-insert(
+          fn:replace($trgr:uri, "\.json$", ".schema.json"),
+          hent:json-schema-generate($entity-title, $uber-model),
+          $schema-permissions,
+          "ml-data-hub-json-schema"
+        ),
+
+        xdmp:document-insert(
+          $trgr:uri,
+          $valid-entity-model,
+          $schema-permissions,
+          $ENTITY-MODEL-COLLECTION
+        )
+      }, map:entry("database", xdmp:schema-database())
+    ),
+
   (: Attempt to generate TDE :)
   if (local:should-write-tde($tde-uri)) then
     try {
