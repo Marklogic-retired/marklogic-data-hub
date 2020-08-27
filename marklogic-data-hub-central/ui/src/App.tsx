@@ -112,7 +112,7 @@ const App: React.FC<Props> = ({history, location}) => {
               <PrivateRoute path="/tiles/explore" exact>
                 <TilesView id='explore'/>
               </PrivateRoute>
-              <PrivateRoute path="/tiles/explore/detail/:pk/:uri" exact>
+              <PrivateRoute path="/tiles/explore/detail">
                  <TilesView id='explore'/>
               </PrivateRoute>
               <Route component={NoMatchRedirect}/>

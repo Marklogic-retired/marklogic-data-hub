@@ -4,9 +4,8 @@ import styles from './search-result.module.scss';
 import ReactHtmlParser from 'react-html-parser';
 import { UserContext } from '../../util/user-context';
 import { dateConverter } from '../../util/date-conversion';
-import { xmlParser } from '../../util/xml-parser';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
-import { Icon, Tooltip } from "antd";
+import { Icon } from "antd";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
 import { MLTooltip } from '@marklogic/design-system';
@@ -31,15 +30,12 @@ const SearchResult: React.FC<Props> = (props) => {
     let primaryKeyValue: any = '-';
     let createdOnVal: string = '';
     let sourcesVal: string = '';
-    let detailPath: any = '-'
     let fileTypeVal: string = props.item.format;
-    let uri: string = encodeURIComponent(props.item.uri);
 
     if (Object.keys(props.item.primaryKey).length) {
         primaryKeyValue = props.item.primaryKey.propertyValue;
         primaryKey = props.item.primaryKey.propertyPath;
     }
-
 
     if (props.item.hasOwnProperty("entityName")) {
         itemEntityName = props.item.entityName;
@@ -79,16 +75,10 @@ const SearchResult: React.FC<Props> = (props) => {
         return <p>{ReactHtmlParser(str)}</p>;
     }
 
-
     const snippet = getSnippet();
 
     function showTableEntityProperties() {
         toggleShow(!show);
-    }
-
-    // detailPath is the identifier used to route to detail view
-    if (primaryKey !== "uri") {
-        detailPath = encodeURIComponent(primaryKeyValue)
     }
 
     return (
@@ -96,7 +86,7 @@ const SearchResult: React.FC<Props> = (props) => {
             <div className={styles.title} onClick={() => showTableEntityProperties()}>
                 <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined} />
                 <div className={styles.redirectIcons}>
-                    <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {selectedValue:'instance',
+                    <Link to={{pathname: "/tiles/explore/detail",state: {selectedValue:'instance',
                             entity : searchOptions.entityTypeIds ,
                             pageNumber : searchOptions.pageNumber,
                             start : searchOptions.start,
@@ -104,11 +94,13 @@ const SearchResult: React.FC<Props> = (props) => {
                             query: searchOptions.query,
                             tableView: props.tableView,
                             sortOrder: searchOptions.sortOrder,
-                            sources: props.item.sources
+                            sources: props.item.sources,
+                            primaryKey: primaryKeyValue,
+                            uri: props.item.uri
                         }}} id={'instance'} data-cy='instance' >
                         <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
                     </Link>
-                    <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {selectedValue:'source',
+                    <Link to={{pathname: "/tiles/explore/detail",state: {selectedValue:'source',
                             entity : searchOptions.entityTypeIds ,
                             pageNumber : searchOptions.pageNumber,
                             start : searchOptions.start,
@@ -116,7 +108,9 @@ const SearchResult: React.FC<Props> = (props) => {
                             query: searchOptions.query,
                             tableView: props.tableView,
                             sortOrder: searchOptions.sortOrder,
-                            sources: props.item.sources
+                            sources: props.item.sources,
+                            primaryKey: primaryKeyValue,
+                            uri: props.item.uri
                         }}} id={'source'} data-cy='source' >
                         <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
                     </Link>

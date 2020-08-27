@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
-import { RouteComponentProps, withRouter, Link } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import styles from './Detail.module.scss';
 import TableView from '../components/table-view/table-view';
@@ -23,18 +23,25 @@ const { Content } = Layout;
 const Detail: React.FC<Props> = ({ history, location }) => {
 
   const { user, handleError } = useContext(UserContext);
-  const uriSplit = location.pathname.replace('/tiles/explore/detail/', '');
-  const pkValue = uriSplit.split('/')[0] === '-' ? '' : decodeURIComponent(uriSplit.split('/')[0]);
-  const uri = decodeURIComponent(uriSplit.split('/')[1]).replace(/ /g, "%2520");
-  const docUri = uri.replace(/%25/g, "%");
+  const [parentPagePreferences, setParentPagePreferences] = useState({});
+  const getPreferences = () => {
+    let currentPref = getUserPreferences(user.name);
+    if (currentPref !== null) {
+      return JSON.parse(currentPref);
+    }
+    return currentPref;
+  }
+  
+  const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
+  const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
+  const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
   const [selected, setSelected] = useState();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
-  const [parentPagePreferences, setParentPagePreferences] = useState({});
-  const sources =  location && location.state && location.state['sources'] ? location.state['sources'] : [];
+  const sources = location && location.state && location.state['sources'] ? location.state['sources'] : [];
 
   const componentIsMounted = useRef(true);
 
@@ -93,45 +100,51 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       if(location.state === undefined){
         location.state = {};
       }
-      setSelected('instance');
+      setSelected(detailPagePreferences['selected'] ? detailPagePreferences['selected'] : 'instance');
       handleUserPreferences();
     }
-    
   }, []);
 
   //Apply user preferences on each page render
   const handleUserPreferences = () => {
-    let currentPref = getUserPreferences(user.name);
-      if (currentPref !== null) {
-        let currPref = JSON.parse(currentPref);
-        let userPref:any = {
-          zeroState: false,
-          entity: currPref.query['entityTypeIds'] ? currPref.query['entityTypeIds'] : '',
-          pageNumber: currPref['pageNumber'] ? currPref['pageNumber'] : 1,
-          start: currPref['start'] ? currPref['start'] : 1,
-          searchFacets: currPref.query['selectedFacets'] ? currPref.query['selectedFacets'] : {},
-          query: currPref.query['searchText'] ? currPref.query['searchText']: '',
-          tableView: currPref.hasOwnProperty('tableView') ? currPref['tableView'] : true,
-          sortOrder: currPref['sortOrder'] ? currPref['sortOrder'] : [],
-          sources: currPref['sources'] ? currPref['sources'] : []
-         }
-         setParentPagePreferences({...userPref})
-      }
+    let userPref: any = {
+      zeroState: false,
+      entity: detailPagePreferences.query['entityTypeIds'] ? detailPagePreferences.query['entityTypeIds'] : '',
+      pageNumber: detailPagePreferences['pageNumber'] ? detailPagePreferences['pageNumber'] : 1,
+      start: detailPagePreferences['start'] ? detailPagePreferences['start'] : 1,
+      searchFacets: detailPagePreferences.query['selectedFacets'] ? detailPagePreferences.query['selectedFacets'] : {},
+      query: detailPagePreferences.query['searchText'] ? detailPagePreferences.query['searchText'] : '',
+      tableView: detailPagePreferences.hasOwnProperty('tableView') ? detailPagePreferences['tableView'] : true,
+      sortOrder: detailPagePreferences['sortOrder'] ? detailPagePreferences['sortOrder'] : [],
+      sources: detailPagePreferences['sources'] ? detailPagePreferences['sources'] : [],
+      primaryKey: detailPagePreferences['primaryKey'] ? detailPagePreferences['primaryKey'] : '',
+      uri: detailPagePreferences['uri'] ? detailPagePreferences['uri'] : ''
+    }
+    setParentPagePreferences({ ...userPref })
   }
 
   const updateDetailPagePreferences = () => {
-    if (location.state && location.state.hasOwnProperty("sources")) {
+    if (location.state && (location.state.hasOwnProperty("sources") || location.state.hasOwnProperty("uri") || location.state.hasOwnProperty("primaryKey"))) {
+      let sources: any = [];
+      let primaryKey: any = '';
+      let uri: any = '';
       if (location.state["sources"] && location.state["sources"].length) {
-        let currentPref = getUserPreferences(user.name);
-        if (currentPref !== null) {
-          let currPref = JSON.parse(currentPref);
-          let preferencesObject = {
-            ...currPref,
-            sources: location.state["sources"]
-          }
-          updateUserPreferences(user.name, preferencesObject);
-        }
+        sources = location.state["sources"];
       }
+      if (location.state["primaryKey"]) {
+        primaryKey = location.state["primaryKey"];
+      }
+      if (location.state["uri"] && location.state["uri"].length) {
+        uri = location.state["uri"];
+      }
+      let preferencesObject = {
+        ...detailPagePreferences,
+        sources: sources,
+        primaryKey: primaryKey,
+        uri: uri,
+        selected: location.state['selectedValue'] && location.state['selectedValue'] === 'source' ? 'full' : 'instance'
+      }
+      updateUserPreferences(user.name, preferencesObject);
     }
   }
 
@@ -142,6 +155,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   const handleClick = (event) => {
     setSelected(event.key);
+
+    //Set the selected view property in user preferences.
+    let preferencesObject = {
+      ...detailPagePreferences,
+      selected: event.key
+    };
+    updateUserPreferences(user.name, preferencesObject);
   }
 
   const selectedSearchOptions = {
@@ -171,7 +191,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         </div>
         <div className={styles.header}>
           <div className={styles.heading}>
-            {data && <DetailHeader document={data} contentType={contentType} uri={docUri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences['sources']} />}
+            {data && <DetailHeader document={data} contentType={contentType} uri={uri} primaryKey={pkValue} sources={sources.length ? sources : parentPagePreferences['sources']} />}
           </div>
           <div id='menu' className={styles.menu}>
             <Menu id='subMenu' onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>

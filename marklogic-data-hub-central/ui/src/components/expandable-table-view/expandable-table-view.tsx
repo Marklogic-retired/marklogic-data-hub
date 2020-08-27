@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { Table, Tooltip } from 'antd';
+import { Table } from 'antd';
 import { xmlParser } from "../../util/xml-parser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
@@ -22,17 +22,10 @@ const ExpandableTableView: React.FC<Props> = (props) => {
 
   let primaryKeyValue: any = '-';
   let primaryKey: any = '-';
-  let detailPath: any = '-'
-  let uri: string = encodeURIComponent(props.item.uri);
 
   if (Object.keys(props.item.primaryKey).length !== 0) {
       primaryKeyValue = props.item.primaryKey.propertyValue;
       primaryKey = props.item.primaryKey.propertyPath;
-  }
-
-  // detailPath is the identifier used to route to detail view
-  if (primaryKey !== "uri") {
-      detailPath = primaryKeyValue
   }
 
   let data = new Array();
@@ -45,7 +38,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           key: counter++,
           property: i,
           children: parseJson(obj[i]),
-          view: <Link to={{pathname: `/tiles/explore/detail/${detailPath}/${uri}`,state: {id:obj[i],
+          view: <Link to={{pathname: "/tiles/explore/detail",state: {id:obj[i],
                   entity : searchOptions.entityTypeIds,
                   pageNumber : searchOptions.pageNumber,
                   start : searchOptions.start,
@@ -53,7 +46,9 @@ const ExpandableTableView: React.FC<Props> = (props) => {
                   query: searchOptions.query,
                   tableView: props.tableView,
                   sortOrder: searchOptions.sortOrder,
-                  sources: props.item.sources
+                  sources: props.item.sources,
+                  primaryKey: primaryKeyValue,
+                  uri: props.item.uri
               }}} data-cy='nested-instance'>
             <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></MLTooltip>

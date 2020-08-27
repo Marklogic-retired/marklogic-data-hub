@@ -203,8 +203,10 @@ const ResultsTabularView = (props) => {
         let dataObj = {};
         let primaryKeyValue = item.primaryKey?.propertyValue;
         let isUri = item.primaryKey?.propertyPath === 'uri';
-        let uri = encodeURIComponent(item.uri);
-        let path = { pathname: `/tiles/explore/detail/${isUri ? '-' : encodeURIComponent(primaryKeyValue)}/${uri}` };
+        let path = {
+            pathname: "/tiles/explore/detail", 
+            primaryKey: isUri ? '' : primaryKeyValue
+        };
         let options = {};
         let detailView =
             <div className={styles.redirectIcons}>
@@ -218,7 +220,9 @@ const ResultsTabularView = (props) => {
                         query: searchOptions.query,
                         tableView: props.tableView,
                         sortOrder: searchOptions.sortOrder,
-                        sources: item.sources
+                        sources: item.sources,
+                        primaryKey: path.primaryKey,
+                        uri: item.uri
                     }
                 }} id={'instance'}
                     data-cy='instance'>
@@ -235,7 +239,9 @@ const ResultsTabularView = (props) => {
                         query: searchOptions.query,
                         tableView: props.tableView,
                         sortOrder: searchOptions.sortOrder,
-                        sources: item.sources
+                        sources: item.sources,
+                        primaryKey: path.primaryKey,
+                        uri: item.uri
                     }
                 }} id={'source'}
                     data-cy='source'>
@@ -346,7 +352,9 @@ const ResultsTabularView = (props) => {
                                 query: searchOptions.query,
                                 tableView: props.tableView,
                                 sortOrder: searchOptions.sortOrder,
-                                sources: rowId.sources
+                                sources: rowId.sources,
+                                primaryKey: rowId.primaryKeyPath.primaryKey,
+                                uri: rowId.uri
                             }
                         }}
                             data-cy='nested-instance'>

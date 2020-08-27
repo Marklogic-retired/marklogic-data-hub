@@ -46,7 +46,7 @@ const DetailHeader: React.FC<Props> = (props) => {
             timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
           }
         }
-        if (props.primaryKey) {
+        if (props.primaryKey && props.primaryKey !== props.uri) {
           Object.keys(props.document.envelope.instance).forEach(instance => {
             if (instance !== 'info') {
               Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
@@ -72,7 +72,7 @@ const DetailHeader: React.FC<Props> = (props) => {
         if (envelope.instance.hasOwnProperty('info')) {
           title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
         }
-        if (props.primaryKey) {
+        if (props.primaryKey && props.primaryKey !== props.uri) {
           Object.keys(props.document.content.envelope.instance).forEach(instance => {
             if (instance !== 'info') {
               Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
@@ -122,7 +122,7 @@ const DetailHeader: React.FC<Props> = (props) => {
           <>
             <Text data-cy="document-title">{title} </Text>
             <Icon style={{ fontSize: '12px' }} type="right" />
-            {props.primaryKey ? (
+            {primaryKey ? (
               <>
                 <Text type="secondary"> {primaryKey}: </Text>
                 <Text data-cy="document-id">{id}</Text>

@@ -166,7 +166,7 @@ describe('Entity Modeling: Writer Role', () => {
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName('Person');
     entityTypeModal.getAddButton().click();
-    cy.contains('An entity type already exists with a name of Person').should('be.visible');
+    cy.waitUntil(() => cy.contains('An entity type already exists with a name of Person').should('be.visible'));
     entityTypeModal.getAddButton().should('not.be.disabled');
 
     entityTypeModal.clearEntityName();
@@ -498,11 +498,13 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getProperty('alt_address').should('not.exist');
 
     entityTypeTable.getSaveEntityIcon('User3').click();
+    cy.waitForAsyncRequest();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
     confirmationModal.getSaveEntityText().should('not.exist');
 
     entityTypeTable.getDeleteEntityIcon('User3').click();
+    cy.waitForAsyncRequest();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
     confirmationModal.getDeleteEntityText().should('exist');
     confirmationModal.getDeleteEntityText().should('not.exist');

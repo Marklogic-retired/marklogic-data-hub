@@ -321,6 +321,7 @@ describe('json scenario for table on browse documents page', () => {
 
     //Refresh the browser page at Browse table view.
     cy.reload();
+    cy.waitForAsyncRequest();
 
     //Verify if the facet, search text and view persists.
     browsePage.getSelectedEntity().should('contain', 'Customer');
@@ -333,7 +334,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTableView().should('have.css', 'background-color', 'rgb(68, 73, 156)');
 
     //Navigating to detail view
-    browsePage.getTableViewSourceIcon().click();
+    cy.waitUntil(() => browsePage.getTableViewSourceIcon()).click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     detailPage.getDocumentJSON().should('exist');
@@ -343,16 +344,19 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.getDocumentFileType().should('contain', 'json');
 
     //Refresh the browser page at Detail view.
-    // cy.reload();
-
+    cy.reload();
+    cy.waitForAsyncRequest();
+    
     //Verify if the detail view is intact after page refresh
-    // detailPage.getDocumentEntity().should('contain', 'Customer');
-    // detailPage.getDocumentTimestamp().should('exist');
-    // detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
-    // detailPage.getDocumentFileType().should('contain', 'json');
+    detailPage.getDocumentEntity().should('contain', 'Customer');
+    detailPage.getDocumentTimestamp().should('exist');
+    detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
+    detailPage.getDocumentFileType().should('contain', 'json');
 
     cy.waitUntil(() => detailPage.clickBackButton()); //Click on Back button to navigate back to the browse table view.
 
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getClearFacetSearchSelection('mapCustomersJSON').should('exist');
