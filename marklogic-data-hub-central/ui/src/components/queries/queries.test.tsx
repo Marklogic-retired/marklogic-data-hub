@@ -13,6 +13,7 @@ describe('Queries Component', () => {
                 {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             greyFacets={[{constraint: "lastname", facet: "paul", displayName: ''},
                 {constraint: "lastname", facet: "avalon", displayName: ''}]}
+            setColumnSelectorTouched={jest.fn()}
         />);
         expect(queryByTitle('save-query')).not.toBeInTheDocument();
     });
@@ -25,6 +26,7 @@ describe('Queries Component', () => {
             selectedFacets={[{constraint: "lastname", facet: "Adams", displayName: ''},
                 {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             greyFacets={[]}
+            setColumnSelectorTouched={jest.fn()}
         />);
         expect(queryByTitle('edit-query')).not.toBeInTheDocument();
     });
@@ -38,6 +40,7 @@ describe('Queries Component', () => {
                 {constraint: "lastname", facet: "Coleman", displayName: ''}]}
             greyFacets={[{constraint: "lastname", facet: "paul", displayName: ''},
                 {constraint: "lastname", facet: "avalon", displayName: ''}]}
+            setColumnSelectorTouched={jest.fn()}
         />);
         expect(queryByTitle('discard-changes')).not.toBeInTheDocument();
     });
@@ -49,6 +52,7 @@ describe('Queries Component', () => {
             isSavedQueryUser={false}
             selectedFacets={[]}
             greyFacets={[]}
+            setColumnSelectorTouched={jest.fn()}
         />);
         expect(queryByTitle('save-changes')).not.toBeInTheDocument();
     });
@@ -60,6 +64,7 @@ describe('Queries Component', () => {
             isSavedQueryUser={false}
             selectedFacets={[]}
             greyFacets={[]}
+            setColumnSelectorTouched={jest.fn()}
         />);
         expect(queryByTitle('reset-changes')).not.toBeInTheDocument();
     });

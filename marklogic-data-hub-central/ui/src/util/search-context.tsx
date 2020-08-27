@@ -194,6 +194,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setSearchOptions({
       ...searchOptions,
       start: 1,
+      query: '',
       pageNumber: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
@@ -205,6 +206,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     setGreyedOptions({
       ...greyedOptions,
       start: 1,
+      query: '',
       pageNumber: 1,
       selectedFacets: {},
       entityTypeIds: entityOptions,
