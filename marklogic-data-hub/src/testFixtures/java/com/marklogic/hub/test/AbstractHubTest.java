@@ -103,6 +103,12 @@ public abstract class AbstractHubTest extends TestObject {
         hubClient.getStagingClient().newServerEval().xquery(xquery).evalAs(String.class);
         hubClient.getFinalClient().newServerEval().xquery(xquery).evalAs(String.class);
         hubClient.getJobsClient().newServerEval().xquery(xquery).evalAs(String.class);
+
+        HubConfig hubConfig = getHubConfig();
+        hubConfig.getAppConfig().newAppServicesDatabaseClient(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS))
+            .newServerEval().xquery(xquery).evalAs(String.class);
+        hubConfig.getAppConfig().newAppServicesDatabaseClient(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS))
+            .newServerEval().xquery(xquery).evalAs(String.class);
     }
 
     protected HubConfigImpl runAsDataHubDeveloper() {
