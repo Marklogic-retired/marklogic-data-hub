@@ -46,7 +46,16 @@ const PopOverSearch: React.FC<Props> = (props) => {
   }
 
   const onSelectCheckboxes = (e) => {
-    setCheckedValues([...checkedValues, e.target.value]);
+      let index = checkedValues.indexOf(e.target.value)
+      if(index == -1) {
+          setCheckedValues([...checkedValues, e.target.value]);
+      }
+      else{
+          let newChecked = checkedValues.filter(function(el){
+              return (el !== e.target.value)
+          });
+          setCheckedValues(newChecked);
+      }
   }
 
   const addFacetValues = () => {
@@ -63,10 +72,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
   }
 
    useEffect(()=>{
-      let newChecked = checkedValues.filter(function(el){
-           return !(props.popOvercheckedValues.indexOf(el) < 0)
-       });
-        setCheckedValues(newChecked);
+        setCheckedValues(props.popOvercheckedValues);
    },[props.popOvercheckedValues])
 
 
