@@ -323,7 +323,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 propty = {
                     rowKey: sourceTableKeyIndex,
                     key: key,
-                    val: obj['#text'],
+                    val: String(obj['#text']),
                     datatype: getValDatatype(obj['#text'])
                 }
             } else {
@@ -331,7 +331,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 propty = {
                     rowKey: sourceTableKeyIndex,
                     key: key,
-                    val: obj['#text'],
+                    val: String(obj['#text']),
                     'children': [],
                     datatype: getValDatatype(obj['#text'])
                 }

@@ -659,19 +659,24 @@ const SourceToEntityMap = (props) => {
     }
 
     const getTextforSourceValue = (text, row) => {
-        let arr = text.split(', ')
-        if (arr.length >= 2){
-            let xMore = <span className="moreVal">{'(' + (arr.length - 2) + ' more)'}</span>;
-            let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
-            let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], 14, '...')}</span>;
-            let fullItem = <span>{itemOne}{'\n'}{itemTwo}</span>;
-            if (arr.length == 2){
-                return <p>{fullItem}</p>;
-            } else {
-                return <p>{fullItem}{'\n'}{xMore}</p>;
+        let arr = typeof(text) === 'string' ? text.split(', ') : text;
+        if (Array.isArray(arr)){
+            if(arr.length >= 2){
+                let xMore = <span className="moreVal">{'(' + (arr.length - 2) + ' more)'}</span>;
+                let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
+                let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], 14, '...')}</span>;
+                let fullItem = <span>{itemOne}{'\n'}{itemTwo}</span>;
+                if (arr.length == 2){
+                    return <p>{fullItem}</p>;
+                } else {
+                    return <p>{fullItem}{'\n'}{xMore}</p>;
+                }
+            }else{
+                return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
             }
+            
         } else {
-            return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
+            return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, 14, '...')}</span>;
         }
     }
 
