@@ -43,6 +43,7 @@ expectedStep.collections = [stepName, "Customer"];
 expectedStep.validateEntity = "doNotValidate";
 expectedStep.provenanceGranularityLevel = "coarse";
 expectedStep.permissions = "data-hub-common,read,data-hub-common,update";
+expectedStep.targetFormat = "json";
 
 assertions.push(
   test.assertEqual("{}", JSON.stringify(serviceResponse.headers)),
