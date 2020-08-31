@@ -611,7 +611,7 @@ describe('RTL Source-to-entity map tests', () => {
 
     test('CollapseAll/Expand All feature in JSON Source data table and Entity table', () => {
 
-        const { getByTestId, getByText, queryByText } = render(<SourceToEntityMap {...data.mapProps}
+        const { getByTestId, getByText, queryByText, rerender, getByLabelText } = render(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
         />);
 
@@ -622,19 +622,19 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText('FirstNamePreferred')).toBeInTheDocument();
         expect(getByText('LastName')).toBeInTheDocument();
 
-        let expandCollapseBtn = getByTestId('expandCollapseBtn-source');
+        let expandCollapseBtnSrc = getByTestId('expandCollapseBtn-source');
 
-        expect(expandCollapseBtn.textContent).toBe('Expand'); // Validating the button label
+        expect(expandCollapseBtnSrc.textContent).toBe('Expand'); // Validating the button label
 
-        fireEvent.click(expandCollapseBtn); //Expanding all nested levels
-        expect(expandCollapseBtn.textContent).toBe('Collapse'); // Validating the button label
+        fireEvent.click(expandCollapseBtnSrc); //Expanding all nested levels
+        expect(expandCollapseBtnSrc.textContent).toBe('Collapse'); // Validating the button label
         expect(getByText('suffix')).toBeInTheDocument();
 
         //Check if indentation is right
         expect(getByText('suffix').closest('td')?.firstElementChild).toHaveStyle("padding-left: 40px;");
 
-        fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
-        expect(expandCollapseBtn.textContent).toBe('Expand'); // Validating the button label
+        fireEvent.click(expandCollapseBtnSrc); //Collapsing back to the default view (root and 1st level)
+        expect(expandCollapseBtnSrc.textContent).toBe('Expand'); // Validating the button label
         expect(onClosestTableRow(getByText('suffix'))?.style.display).toBe('none'); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
 
         /* Validate collapse-expand in Entity table */
@@ -644,7 +644,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByText('itemTypes')).toBeInTheDocument();
         expect(getByText('itemCategory')).toBeInTheDocument();
 
-        expandCollapseBtn = getByTestId('expandCollapseBtn-entity');
+        let expandCollapseBtn = getByTestId('expandCollapseBtn-entity');
 
         expect(expandCollapseBtn.textContent).toBe('Expand');
 
@@ -658,6 +658,19 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
         expect(expandCollapseBtn.textContent).toBe('Expand');
         expect(onClosestTableRow(getByText('artCraft'))?.style.display).toBe('none'); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
+   
+        //Verify Expand/Collapse button for source and entity tables resets to 'Expand' when Modal is closed and reoponed
+        fireEvent.click(expandCollapseBtn); 
+        expect(expandCollapseBtn.textContent).toBe('Collapse');
+        fireEvent.click(expandCollapseBtnSrc); 
+        expect(expandCollapseBtnSrc.textContent).toBe('Collapse');
+        fireEvent.click(getByLabelText('Close'));
+        rerender(<SourceToEntityMap {...data.mapProps}
+            mappingVisible={true}
+        />);
+        expect(expandCollapseBtn.textContent).toBe('Expand');  
+        expect(expandCollapseBtnSrc.textContent).toBe('Expand');        
+   
     });
 
     test('CollapseAll/Expand All feature in XML Source data table', () => {
