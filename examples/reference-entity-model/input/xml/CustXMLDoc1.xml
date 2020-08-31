@@ -4,6 +4,11 @@
     <FirstName>Randolph</FirstName>
     <LastName>Gonzales</LastName>
   </Name>
+  <Nicknames>
+    <nickname>Ran</nickname>
+    <nickname></nickname>
+    <nickname>Gonz</nickname>
+  </Nicknames>
   <Email>randolphgonzales@nutralab.com</Email>
   <Address>
     <Shipping>

@@ -4,6 +4,10 @@
     <FirstName>Bowman</FirstName>
     <LastName>Hale</LastName>
   </Name>
+  <Nicknames>
+    <nickname>Bow</nickname>
+    <nickname>Hal</nickname>
+  </Nicknames>
   <Email>bowmanhale@nutralab.com</Email>
   <Address>
     <Shipping>
