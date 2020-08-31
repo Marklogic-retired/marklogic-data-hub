@@ -47,7 +47,7 @@
           "default-mapping",
           "mdm-content"
         ],
-        "targetEntityType": "Change this to a valid entity type IRI; e.g. http://example.org/Customer-1.0.0/Customer",
+        "targetEntity": "Change this to a valid entity type name; e.g. Customer",
         "mapping": {
           "name": "mapping-name",
           "version": 1
