@@ -152,6 +152,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
+    setUser({...user, name: '', authenticated: false});
     resetSessionMonitor().then(() => {
       localStorage.setItem('dataHubUser', '');
       localStorage.setItem('serviceName', '');
@@ -159,7 +160,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       localStorage.setItem('hubCentralSessionToken', '');
       authoritiesService.setAuthorities([]);
       resetEnvironment();
-      setUser({...user, name: '', authenticated: false}); //, redirect: true});
     });
   };
 
