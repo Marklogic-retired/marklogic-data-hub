@@ -102,7 +102,8 @@ else {
     const stepDefOptions = stepDef.options;
     Object.keys(stepDefOptions).forEach(key => {
       // Step artifact libraries are expected to apply their own concept of default collections
-      if (!stepProperties[key] && key !== "collections") {
+      // And outputFormat should not be included because HC expects to use targetFormat instead
+      if (!stepProperties[key] && key !== "collections" && key !== "outputFormat") {
         stepProperties[key] = stepDefOptions[key];
       }
     });
