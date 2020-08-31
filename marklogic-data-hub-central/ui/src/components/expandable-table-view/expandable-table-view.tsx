@@ -48,7 +48,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
                   sortOrder: searchOptions.sortOrder,
                   sources: props.item.sources,
                   primaryKey: primaryKeyValue,
-                  uri: props.item.uri
+                  uri: props.item.uri,
+                  entityInstance: props.item.entityInstance
               }}} data-cy='nested-instance'>
             <MLTooltip title={'Show nested detail on a separate page'}><FontAwesomeIcon icon={faExternalLinkAlt}
                                                                                size="sm"/></MLTooltip>
@@ -66,23 +67,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     return parsedData;
   }
 
-  if (props.item.format === 'json' && props.item.hasOwnProperty('extracted')) {
-    (props.item.extracted.content).forEach(contentObject => {
-      Object.values(props.item.extracted.content[1]).forEach((content: any) => {
-        data = parseJson(content);
-      });
-    })
-  } else if (props.item.format === 'xml' && props.item.hasOwnProperty('extracted')) {
-    (props.item.extracted.content).forEach(contentObject => {
-      let obj = xmlParser(contentObject);
-      let mappedObj = xmlParser(Object.values(props.item.extracted.content)[1]);
-      let propertyValues = Object.values<any>(mappedObj);
-      propertyValues.forEach((item: Object) => {
-        data = parseJson(item);
-      })
-    })
-  }
-
+  data = parseJson(props.item.entityInstance);
 
   const columns = [
     {

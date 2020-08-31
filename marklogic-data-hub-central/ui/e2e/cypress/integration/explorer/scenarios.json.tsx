@@ -100,6 +100,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked')
     browsePage.selectEntity('Customer');
     browsePage.getEntityConfirmationNoClick().click();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible')
     browsePage.getHubPropertiesExpanded();
@@ -346,7 +347,7 @@ describe('json scenario for table on browse documents page', () => {
     //Refresh the browser page at Detail view.
     cy.reload();
     cy.waitForAsyncRequest();
-    
+    browsePage.waitForSpinnerToDisappear();
     //Verify if the detail view is intact after page refresh
     detailPage.getDocumentEntity().should('contain', 'Customer');
     detailPage.getDocumentTimestamp().should('exist');
