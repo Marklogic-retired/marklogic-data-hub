@@ -62,6 +62,14 @@ const EntityTiles = (props) => {
         setViewData([...tempView])
     }
 
+    const updateIsLoadingFlag = () => {
+      if(isLoading){
+        setIsLoading(false);
+      } else {
+        setIsLoading(true);
+      }
+    }
+
     const getMappingArtifacts = async () => {
         try {
             if (canReadMapping) {
@@ -99,26 +107,22 @@ const EntityTiles = (props) => {
 
     const deleteMappingArtifact = async (mapName) => {
         try {
-            setIsLoading(true);
             let response = await axios.delete(`/api/steps/mapping/${mapName}`);
 
             if (response.status === 200) {
-              setIsLoading(false);
+              updateIsLoadingFlag();
             }
           } catch (error) {
               let message = error.response.data.message;
               console.error('Error while deleting the mapping!', message);
-              setIsLoading(false);
           }
     }
 
     const createMappingArtifact = async (mapping) => {
         try {
-            setIsLoading(true);
-
             let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
-              setIsLoading(false);
+              updateIsLoadingFlag();
               return {code: response.status};
             } else {
                 return {code: response.status};
@@ -128,7 +132,6 @@ const EntityTiles = (props) => {
             let code = error.response.data.code;
             let details = error.response.data.details
             console.error('Error while creating the mapping!', message)
-            setIsLoading(false);
             let err={code: code,
                     message: details}
             return err;
@@ -169,31 +172,26 @@ const EntityTiles = (props) => {
 
     const deleteMatchingArtifact = async (matchingName) => {
         try {
-            setIsLoading(true);
             let response = await axios.delete(`/api/artifacts/matching/${matchingName}`);
 
             if (response.status === 200) {
-              setIsLoading(false);
+              updateIsLoadingFlag();
             }
           } catch (error) {
               let message = error.response.data.message;
               console.error('Error while deleting matching artifact.', message);
-              setIsLoading(false);
           }
     }
 
     const createMatchingArtifact = async (matchingObj) => {
         try {
-            setIsLoading(true);
-
             let response = await axios.post(`/api/artifacts/matching/${matchingObj.name}`, matchingObj);
             if (response.status === 200) {
-              setIsLoading(false);
+              updateIsLoadingFlag();
             }
           } catch (error) {
             let message = error.response.data.message;
             console.error('Error While creating the matching artifact!', message)
-            setIsLoading(false);
           }
     }
 

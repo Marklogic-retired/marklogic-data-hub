@@ -208,7 +208,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    cy.get("#hub-properties > div > i").click();
+    cy.waitUntil(() => cy.get("#hub-properties > div > i")).click();
   }
 
   getExpandableSnippetView() {
