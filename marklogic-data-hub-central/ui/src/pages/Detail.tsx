@@ -35,6 +35,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
   const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
   const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
+  const entityInstance = location.state && location.state['entityInstance'] ? location.state['entityInstance'] : detailPagePreferences["entityInstance"];
   const [selected, setSelected] = useState();
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -124,10 +125,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   }
 
   const updateDetailPagePreferences = () => {
-    if (location.state && (location.state.hasOwnProperty("sources") || location.state.hasOwnProperty("uri") || location.state.hasOwnProperty("primaryKey"))) {
+    if (location.state && (location.state.hasOwnProperty("sources") || location.state.hasOwnProperty("uri") || location.state.hasOwnProperty("primaryKey") || location.state.hasOwnProperty("entityInstance"))) {
       let sources: any = [];
       let primaryKey: any = '';
       let uri: any = '';
+      let entityInstance: any = {};
       if (location.state["sources"] && location.state["sources"].length) {
         sources = location.state["sources"];
       }
@@ -137,12 +139,16 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       if (location.state["uri"] && location.state["uri"].length) {
         uri = location.state["uri"];
       }
+      if (location.state["entityInstance"] && Object.keys(location.state["entityInstance"]).length) {
+        entityInstance = location.state["entityInstance"];
+      }
       let preferencesObject = {
         ...detailPagePreferences,
         sources: sources,
         primaryKey: primaryKey,
         uri: uri,
-        selected: location.state['selectedValue'] && location.state['selectedValue'] === 'source' ? 'full' : 'instance'
+        selected: location.state['selectedValue'] && location.state['selectedValue'] === 'source' ? 'full' : 'instance',
+        entityInstance: entityInstance
       }
       updateUserPreferences(user.name, preferencesObject);
     }
@@ -218,9 +224,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             </div>
               :
               contentType === 'json' ?
-                selected === 'instance' ? (data && <TableView document={isEntityInstance ? data : {}} contentType={contentType} location={location.state ? location.state['id']: {}} />) : (data && <JsonView document={data} />)
+                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}} />) : (data && <JsonView document={data} />)
                 :
-                selected === 'instance' ? (data && <TableView document={isEntityInstance ? data : {}} contentType={contentType} location={location.state ? location.state['id']: {}}/>) : (data  && <XmlView document={xml} />)
+                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}}/>) : (data  && <XmlView document={xml} />)
           }
         </div>
       </Content>

@@ -222,7 +222,8 @@ const ResultsTabularView = (props) => {
                         sortOrder: searchOptions.sortOrder,
                         sources: item.sources,
                         primaryKey: path.primaryKey,
-                        uri: item.uri
+                        uri: item.uri,
+                        entityInstance: item.entityInstance
                     }
                 }} id={'instance'}
                     data-cy='instance'>
@@ -241,7 +242,8 @@ const ResultsTabularView = (props) => {
                         sortOrder: searchOptions.sortOrder,
                         sources: item.sources,
                         primaryKey: path.primaryKey,
-                        uri: item.uri
+                        uri: item.uri,
+                        entityInstance: item.entityInstance
                     }
                 }} id={'source'}
                     data-cy='source'>
@@ -262,6 +264,7 @@ const ResultsTabularView = (props) => {
                 uri: item.uri,
                 primaryKeyPath: path,
                 sources: item.sources,
+                entityInstance: item.entityInstance,
                 detailView: detailView
             }
         } else {
@@ -270,6 +273,7 @@ const ResultsTabularView = (props) => {
                 uri: item.uri,
                 primaryKeyPath: path,
                 sources: item.sources,
+                entityInstance: item.entityInstance,
                 detailView: detailView
             }
         }
@@ -354,7 +358,8 @@ const ResultsTabularView = (props) => {
                                 sortOrder: searchOptions.sortOrder,
                                 sources: rowId.sources,
                                 primaryKey: rowId.primaryKeyPath.primaryKey,
-                                uri: rowId.uri
+                                uri: rowId.uri,
+                                entityInstance: rowId.entityInstance
                             }
                         }}
                             data-cy='nested-instance'>

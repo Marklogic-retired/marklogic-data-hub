@@ -96,7 +96,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             sortOrder: searchOptions.sortOrder,
                             sources: props.item.sources,
                             primaryKey: primaryKeyValue,
-                            uri: props.item.uri
+                            uri: props.item.uri,
+                            entityInstance: props.item.entityInstance
                         }}} id={'instance'} data-cy='instance' >
                         <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
                     </Link>
@@ -110,7 +111,8 @@ const SearchResult: React.FC<Props> = (props) => {
                             sortOrder: searchOptions.sortOrder,
                             sources: props.item.sources,
                             primaryKey: primaryKeyValue,
-                            uri: props.item.uri
+                            uri: props.item.uri,
+                            entityInstance: props.item.entityInstance
                         }}} id={'source'} data-cy='source' >
                         <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
                     </Link>

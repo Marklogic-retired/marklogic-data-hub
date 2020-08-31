@@ -35,32 +35,8 @@ const TableView: React.FC<Props> = (props) => {
   }
 
   if (props.document) {
-    if (props.contentType === 'json') {
-      if(props.document.envelope){
-        Object.keys(props.document.envelope.instance).forEach(instance => {
-          if (instance !== 'info') {
-            data = parseJson(props.document.envelope.instance[instance]);
-          }
-        });
-      }
-    } else if (props.contentType === 'xml') {
-      if(props.document.content.envelope){
-        Object.keys(props.document.content.envelope.instance).forEach(instance => {
-          if (instance !== 'info') {
-            data = parseJson(props.document.content.envelope.instance[instance]);
-          }
-        });
-      }
-      else{
-        Object.keys(props.document.content['es:envelope']['es:instance']).forEach(instance => {
-          if (instance !== 'info') {
-            data = parseJson(props.document.content['es:envelope']['es:instance'][instance]);
-          }
-        });
-      }
-    }
+      data = parseJson(props.document);
   }
-
 
   const handleClick = () => {
     expanded === false ? setExpanded(true) : setExpanded(false)
