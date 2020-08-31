@@ -340,7 +340,9 @@ const SourceToEntityMap = (props) => {
     }
 
     const onCancel = () => {
-        props.setMappingVisible(false)
+        setExpandedSourceFlag(false);
+        setExpandedEntityFlag(false);
+        props.setMappingVisible(false);
         setUriIndex(0);
     }
 
