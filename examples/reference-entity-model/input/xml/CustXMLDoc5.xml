@@ -4,6 +4,10 @@
     <FirstName>Lola</FirstName>
     <LastName>Dunn</LastName>
   </Name>
+  <Nicknames>
+    <nickname>Lola</nickname>
+    <nickname>Dun</nickname>
+  </Nicknames>
   <Email>loladunn@nutralab.com</Email>
   <Address>
     <Shipping>

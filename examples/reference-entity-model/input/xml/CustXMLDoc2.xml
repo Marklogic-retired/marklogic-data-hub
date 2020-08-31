@@ -4,6 +4,10 @@
     <FirstName>Mcgee</FirstName>
     <LastName>Burch</LastName>
   </Name>
+  <Nicknames>
+    <nickname>Mcgee</nickname>
+    <nickname>Bur</nickname>
+  </Nicknames>
   <Email type="work">mcgeeburch@nutralab.com</Email>
   <Address xmlns:add="custAddress">
     <add:Shipping>

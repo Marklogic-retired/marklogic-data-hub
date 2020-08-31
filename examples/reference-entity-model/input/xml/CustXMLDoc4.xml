@@ -4,6 +4,10 @@
     <FirstName>Jacqueline</FirstName>
     <LastName>Knowles</LastName>
   </Name>
+  <Nicknames>
+    <nickname>Jack</nickname>
+    <nickname>Sparrow</nickname>
+  </Nicknames>
   <Email>jacquelineknowles@nutralab.com</Email>
   <Address>
     <Shipping>
