@@ -633,9 +633,11 @@ public class HubProjectImpl implements HubProject {
     protected void updateStepDefinitionTypeForInlineMappingSteps() {
         try {
             flowManager.getLocalFlows().forEach(flow -> {
-                flow.getSteps().values().forEach((step) -> {
-                    if ((step.getStepDefinitionType().equals(StepDefinition.StepDefinitionType.MAPPING)) &&
-                        step.getStepDefinitionName().equalsIgnoreCase("default-mapping")) {
+                flow.getSteps().values().forEach(step -> {
+                    if (
+                        StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType()) &&
+                            "default-mapping".equalsIgnoreCase(step.getStepDefinitionName()))
+                    {
                         step.setStepDefinitionName("entity-services-mapping");
                     }
                 });
