@@ -353,7 +353,7 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.getDocumentSource().should('contain', 'loadCustomersJSON');
     detailPage.getDocumentFileType().should('contain', 'json');
 
-    cy.waitUntil(() => detailPage.clickBackButton()); //Click on Back button to navigate back to the browse table view.
+    detailPage.clickBackButton(); //Click on Back button to navigate back to the browse table view.
 
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();

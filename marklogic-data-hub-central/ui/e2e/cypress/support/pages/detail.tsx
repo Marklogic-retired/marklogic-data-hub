@@ -45,7 +45,7 @@ class DetailPage {
     }
 
     clickBackButton() {
-        return cy.get('#back-button').click();
+        return cy.waitUntil(() => cy.get('#back-button')).click();
     }
 
 }
