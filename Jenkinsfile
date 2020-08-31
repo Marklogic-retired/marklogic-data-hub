@@ -156,7 +156,7 @@ def PRDraftCheck(){
 
 def runCypressE2e(){
     script{
-        copyRPM 'Release','10.0-4.2'
+        copyRPM 'Release','10.0-4.4'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         sh 'rm -rf *central*.rpm || true'
         copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
@@ -297,7 +297,7 @@ pipeline{
 			steps{
 			script{
 			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-4.2'
+				 copyRPM 'Release','10.0-4.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
 				junit '**/TEST-*.xml'
@@ -706,7 +706,7 @@ pipeline{
              stage('rh7_cluster_10.0-4'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests("10.0-4.2","Release");
+                    dhflinuxTests("10.0-4.4","Release");
                }
                post{
                  always{
@@ -739,7 +739,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-4.2'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -776,7 +776,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                       sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-4.2'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -814,7 +814,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-4.2'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -852,7 +852,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-4.2'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -957,7 +957,7 @@ pipeline{
         			agent { label 'dhfWinCluster'}
         			steps{
                             script{
-                                copyMSI "Release","10.0-4.2";
+                                copyMSI "Release","10.0-4.4";
                                 def pkgOutput=bat(returnStdout:true , script: '''
                         	                    cd xdmp/src
                         	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -1061,7 +1061,7 @@ pipeline{
         		stage('qs_rh7_10-release'){
                 			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                                 dhfqsLinuxTests("10.0-4.2","Release")
+                                 dhfqsLinuxTests("10.0-4.4","Release")
                 			}
                 			post{
 
