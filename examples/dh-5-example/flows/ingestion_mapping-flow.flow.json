@@ -38,6 +38,7 @@
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceQuery": "cts.collectionQuery('mapping-flow-ingestion-json')",
+        "targetEntity" : "Order",
         "mapping": {
           "name": "OrderMappingJson",
           "version": 1
@@ -89,6 +90,7 @@
           "name": "OrderMappingXml",
           "version": 1
         },
+        "targetEntity" : "Order",
         "sourceDatabase": "data-hub-STAGING",
         "collections": [
           "mapping-flow-mapping-xml"
