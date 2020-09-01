@@ -165,7 +165,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
         <MLDivider className={styles.divider} />
         <div className={styles.footer}>
           <MLButton size="small" onClick={onClose} >Cancel</MLButton>
-          <MLButton size="small" onClick={onApply} >Apply</MLButton>
+          <MLButton size="small" onClick={onApply} disabled={!checkedKeys.length} >Apply</MLButton>
         </div>
       </footer>
     </div>
