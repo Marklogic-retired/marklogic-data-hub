@@ -53,27 +53,26 @@ const App: React.FC<Props> = ({history, location}) => {
     } else {
       if (user.error.type !== '') {
         history.push('/error');
-      } else {
-        if (location.pathname !== '/' && location.pathname !== '/noresponse') {
-          user.pageRoute = location.pathname;
-        }
-        history.push('/');
+      } else if (location.pathname !== '/' && location.pathname !== '/noresponse') {
+        user.pageRoute = location.pathname;
       }
     }
   }, [user]);
 
   useEffect(() => {
     // On route change...
-    axios.get('/api/environment/systemInfo')
-        .then(res => {})
-        // Timeouts throw 401s and are caught here
-        .catch(err => {
-            if (err.response) {
-              handleError(err);
-            } else {
-              history.push('/noresponse');
-            }
-        })
+    if (user.authenticated) {
+      axios.get('/api/environment/systemInfo')
+      .then(res => {})
+      // Timeouts throw 401s and are caught here
+      .catch(err => {
+          if (err.response) {
+            handleError(err);
+          } else {
+            history.push('/noresponse');
+          }
+      })
+    }
   }, [location.pathname]);
 
   const path = location['pathname'];
