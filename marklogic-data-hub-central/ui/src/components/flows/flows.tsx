@@ -277,6 +277,7 @@ const Flows: React.FC<Props> = (props) => {
                     className={styles.addStep}
                     size="default"
                     aria-label={props.canWriteFlow ? 'addStep-'+i : 'addStepDisabled-'+i}
+                    style={!props.canWriteFlow ?  { backgroundColor: '#f5f5f5', borderColor: '#f5f5f5'} : {}}
                     type="primary"
                     disabled={!props.canWriteFlow}
                 >Add Step <DownOutlined /></MLButton>
@@ -568,7 +569,7 @@ const Flows: React.FC<Props> = (props) => {
             <>
                 <div className={styles.createContainer}>
                     <MLButton
-                        className={styles.createButton} size="default"
+                        className={!props.canWriteFlow ? styles.createButtonDisabled : styles.createButton} size="default"
                         type="primary" onClick={OpenAddNewDialog}
                         disabled={!props.canWriteFlow}
                         aria-label={'create-flow' + (!props.canWriteFlow ? '-disabled' : '')}
