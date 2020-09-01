@@ -328,7 +328,7 @@ const ResultsTabularView = (props) => {
                 entity.primaryKey && setPrimaryKey(entity.primaryKey);
             }
         }))
-    }, [props.selectedEntities])
+    }, [props.selectedEntities, searchOptions.selectedTableProperties])
 
     const expandedRowRender = (rowId) => {
         const nestedColumns = [
