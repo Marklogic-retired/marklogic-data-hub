@@ -26,7 +26,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
+import javax.servlet.DispatcherType;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 /**
  * Configures Spring Security for the central web application.
@@ -55,7 +59,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .addFilterAfter(new AuthenticationFilter(hubCentral, hubClientProvider), LogoutFilter.class)
             .csrf().disable()
             // Need to setStatus, sendError causes issues. see https://stackoverflow.com/a/34911131
-            .exceptionHandling().authenticationEntryPoint(((request, response, authException) -> response.setStatus(HttpServletResponse.SC_UNAUTHORIZED)))
+            .exceptionHandling().authenticationEntryPoint(((request, response, authException) -> {
+                if (request.getRequestURI().startsWith("/api/") || request.getRequestURI().startsWith("/websocket/")) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                } else {
+                    response.sendRedirect("/?from=" + URLEncoder.encode(request.getRequestURI(), "UTF-8"));
+                }
+            }))
             .and()
             // Define requests that are always permitted, regardless of whether the user is authenticated or not
             .authorizeRequests()

@@ -41,6 +41,16 @@ const App: React.FC<Props> = ({history, location}) => {
     )}/>
   );
 
+  const getPageRoute = (loc) => {
+    if (loc.search && loc.search.startsWith("?from=")) {
+      return decodeURIComponent(loc.search.substring(6));
+    } else if (loc.pathname !== '/' && loc.pathname !== '/noresponse') {
+      return loc.pathname
+    } else {
+      return user.pageRoute;
+    }
+  }
+
   useEffect(() => {
     if (user.authenticated){
       if (location.pathname === '/') {
@@ -53,9 +63,8 @@ const App: React.FC<Props> = ({history, location}) => {
     } else {
       if (user.error.type !== '') {
         history.push('/error');
-      } else if (location.pathname !== '/' && location.pathname !== '/noresponse') {
-        user.pageRoute = location.pathname;
       }
+      user.pageRoute = getPageRoute(location);
     }
   }, [user]);
 

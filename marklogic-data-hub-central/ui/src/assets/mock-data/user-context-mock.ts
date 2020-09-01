@@ -34,7 +34,7 @@ export const userAuthenticated: IUserContextInterface = Object.assign(defaultUse
     error : {
       type: ''
     },
-    pageRoute: '/',
+    pageRoute: '/tiles',
     maxSessionTime: 300
   }
 })

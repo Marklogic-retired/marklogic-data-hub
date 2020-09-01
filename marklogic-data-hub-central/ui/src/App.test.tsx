@@ -29,8 +29,6 @@ describe('App component', () => {
   test('Verify header title links return to overview', async () => {
       mocks.loadAPI(axiosMock);
       const firstTool = Object.keys(tiles)[0];
-      // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
-      history.push('/tiles');
       const { getByLabelText, queryByText } = render(<Router history={history}>
           <AuthoritiesContext.Provider value={mockDevRolesService}>
             <UserContext.Provider value={userAuthenticated}><App/></UserContext.Provider>
