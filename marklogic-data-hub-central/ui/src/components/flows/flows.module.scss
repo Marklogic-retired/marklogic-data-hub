@@ -5,9 +5,16 @@
         width: 100%;
         display: flex;
         justify-content: flex-end;
-        .createButton {
+        .createButton,.createButtonDisabled {
             width: 110px;
             margin-bottom: 20px;
+        }
+        .createButtonDisabled{
+            border-color: #f5f5f5;
+        }
+        .createButtonDisabled:hover {
+            background-color: #f5f5f5;
+            border-color: #f5f5f5;
         }
     }
 
