@@ -14,14 +14,14 @@ const NoMatchRedirect = ({history}) => {
   }, []);
 
   const backToHomePage = () => {
-    return user.authenticated ? history.push('/home') : history.push('/');
+    return user.authenticated ? history.push('/tiles') : history.push('/');
   }
   return (
       <Result
           status={404}
           title="404"
           subTitle="Sorry, the page you visited does not exist."
-          extra={<MLButton type="primary" onClick={backToHomePage}>Back Home</MLButton>}
+          extra={<MLButton type="primary" aria-label="back home" onClick={backToHomePage}>Back Home</MLButton>}
       />
   )
 }

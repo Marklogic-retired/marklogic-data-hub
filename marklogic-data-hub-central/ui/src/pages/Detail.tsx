@@ -50,6 +50,11 @@ const Detail: React.FC<Props> = ({ history, location }) => {
     setIsLoading(true);
 
     const fetchData = async () => {
+      // When Detail URI is undefined, redirect to Explore
+      if (!uri) {
+        history.push('/tiles/explore');
+        return;
+      }
       try {
         const result = await axios(`/api/entitySearch?docUri=${uri}`);
         if (!result.data) {
