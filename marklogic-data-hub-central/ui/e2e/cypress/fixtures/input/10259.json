@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10259",
+  "CustomerID" : "Johnny",
+  "EmployeeID" : "10",
+  "OrderDate" : "2000-07-15T02:11:50",
+  "RequiredDate" : "1996-08-12T09:52:09",
+  "ShippedDate" : "1996-07-17T00:28:30",
+  "ShipVia" : "1",
+  "Freight" : "18.9700",
+  "ShipName" : "John Doe",
+  "ShipAddress" : "100 Main Street",
+  "ShipCity" : "Houston",
+  "ShipRegion" : [ "region1", "region4" ],
+  "ShipPostalCode" : "08737-363",
+  "ShipCountry" : "USA",
+  "OrderDetails" : [
+    {
+      "ProductID" : "77",
+      "UnitPrice" : "70.4000",
+      "Quantity" : "72",
+      "Discount" : "0"
+    }
+  ]
+}

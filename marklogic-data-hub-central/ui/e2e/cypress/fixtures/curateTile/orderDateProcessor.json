@@ -1,0 +1,9 @@
+[
+  {
+    "path": "/custom-modules/step-processors/addOrderDate.sjs",
+    "when": "beforeContentPersisted",
+    "vars": {
+      "mappedOrderDate": "1996-07-08T16:46:22"
+    }
+  }
+]

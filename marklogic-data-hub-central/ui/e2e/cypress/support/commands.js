@@ -183,6 +183,17 @@ Cypress.Commands.add('deleteSteps', (stepType, ...stepNames) => {
   })
 })
 
+Cypress.Commands.add('deleteEntities', (...entityNames) => {
+  entityNames.forEach(entity => {
+    cy.request({
+      method: 'DELETE',
+      url: `/api/models/${entity}`
+    }).then(response => {
+      console.log(`DELETE ENTITY ${entity}: ${JSON.stringify(response.statusText)}`);
+    });
+  })
+})
+
 Cypress.Commands.add('waitForAsyncRequest', () => {
   cy.window().then({
     timeout: 120000

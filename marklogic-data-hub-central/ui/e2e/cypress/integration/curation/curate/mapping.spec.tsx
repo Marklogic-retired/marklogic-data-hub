@@ -5,6 +5,7 @@ import {
   createEditMappingDialog,
   sourceToEntityMap
 } from '../../../support/components/mapping/index';
+import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
@@ -15,7 +16,7 @@ describe('Mapping', () => {
   beforeEach(() => {
     cy.visit('/');
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer").withRequest();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
   });
@@ -26,34 +27,65 @@ describe('Mapping', () => {
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps('mapping', 'order-processors');
+    cy.deleteSteps('ingestion', 'loadOrderProcessor');
+    cy.deleteSteps('mapping', 'mapOrderProcessor');
     cy.deleteFlows( 'orderFlow');
   })
 
-  it('can create mapping with processors, create new flow, add mapping step, run flow and verify processors', () => {
-    const stepProcessors = '[{{}"path":"/custom-modules/step-processors/addHeaders.sjs","when":"beforeContentPersisted","vars":{{}"exampleVariable":"testValue"{}} {}},{{}"path":"/org.example/addPermissions.sjs","when":"beforeContentPersisted"{}}]'
+  it('can create load step with processors, can create mapping step with processors, can create new flow, run both steps, and verify processors', () => {
+    const flowName = 'orderFlow'
+    const loadStep = 'loadOrderProcessor';
+    const mapStep = 'mapOrderProcessor';
+    // create load step
+    toolbar.getLoadToolbarIcon().click();
+    cy.waitUntil(() => loadPage.stepName('ingestion-step').should('be.visible'));
+    loadPage.addNewButton('card').click();
+    loadPage.stepNameInput().type(loadStep);
+    loadPage.stepDescriptionInput().type('load order with processors');
+    loadPage.confirmationOptions('Save').click();
+    cy.findByText(loadStep).should('be.visible');
+    loadPage.stepSettings(loadStep).click();
 
+    // add processor to load step
+    advancedSettingsDialog.setStepProcessor('loadTile/orderCategoryCodeProcessor');
+    advancedSettingsDialog.saveSettings(loadStep).click();
+    advancedSettingsDialog.saveSettings(loadStep).should('not.be.visible');
+    
+    // add step to new flow
+    loadPage.addStepToNewFlow(loadStep);
+    cy.findByText('New Flow').should('be.visible');
+    runPage.setFlowName(flowName);
+    runPage.setFlowDescription(`${flowName} description`);
+    loadPage.confirmationOptions('Save').click();
+    cy.verifyStepAddedToFlow('Load', loadStep);
+
+    //Run the ingest with JSON
+    runPage.runStep(loadStep).click();
+    cy.uploadFile('input/10259.json');
+    cy.verifyStepRunResult('success','Ingestion', loadStep);
+    tiles.closeRunMessage().click();
+
+    // create mapping step
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
     curatePage.toggleEntityTypeId('Order');
     cy.waitUntil(() => curatePage.addNewMapStep().click());
 
-    // create mapping step
-    createEditMappingDialog.setMappingName('order-processors');
+    createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription('An order mapping with custom processors');
     createEditMappingDialog.setSourceRadio('Query');
-    createEditMappingDialog.setQueryInput("cts.collectionQuery(['ingest-orders'])")
+    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`)
     createEditMappingDialog.saveButton().click(); 
-    curatePage.verifyStepNameIsVisible('order-processors');
+    curatePage.verifyStepNameIsVisible(mapStep);
 
     // add processors
-    curatePage.stepSettings('order-processors').click();
-    advancedSettingsDialog.toggleProcessors();
-    advancedSettingsDialog.getProcessors().clear();
-    advancedSettingsDialog.setProcessors(stepProcessors);
-    advancedSettingsDialog.saveSettings('order-processors').click();
-    advancedSettingsDialog.saveSettings('order-processors').should('not.be.visible');
+    curatePage.stepSettings(mapStep).click();
+    advancedSettingsDialog.setStepProcessor('curateTile/orderDateProcessor');
+    advancedSettingsDialog.saveSettings(mapStep).click();
+    advancedSettingsDialog.saveSettings(mapStep).should('not.be.visible');
 
     // map source to entity
-    curatePage.openSourceToEntityMap('Order', 'order-processors');
+    curatePage.openSourceToEntityMap('Order', mapStep);
     cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should('be.visible')).click();
     sourceToEntityMap.setXpathExpressionInput('orderId', 'OrderID');
     sourceToEntityMap.setXpathExpressionInput('address', '/');
@@ -69,13 +101,16 @@ describe('Mapping', () => {
     // close modal
     cy.get('body').type('{esc}');
 
-    curatePage.addToNewFlow('Order', 'order-processors');
-    runPage.setFlowName('orderFlow');
-    runPage.editSave().click();
-    runPage.runStep('order-processors').click();
-    cy.verifyStepRunResult('success','Mapping', 'order-processors');
+    curatePage.openExistingFlowDropdown('Order', mapStep);
+    curatePage.getExistingFlowFromDropdown(flowName).click();
+    curatePage.addStepToFlowConfirmationMessage(mapStep, flowName);
+    curatePage.confirmAddStepToFlow(mapStep, flowName)
+
+    runPage.runStep(mapStep).click();
+    cy.verifyStepRunResult('success','Mapping', mapStep);
     runPage.explorerLink().click()
     browsePage.getTableViewSourceIcon().click();
-    cy.contains('mappedOrderDate')
+    cy.contains('mappedOrderDate');
+    cy.contains('categoryCode');
   })
 })
