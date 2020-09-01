@@ -38,6 +38,7 @@
       "stepDefinitionType": "MAPPING",
       "options": {
         "sourceQuery": "cts.collectionQuery('mastering-flow-ingest-json')",
+        "targetEntity" : "Order",
         "mapping": {
           "name": "OrderMappingJson",
           "version": 1
