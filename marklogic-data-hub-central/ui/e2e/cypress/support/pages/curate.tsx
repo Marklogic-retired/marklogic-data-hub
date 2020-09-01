@@ -39,7 +39,7 @@ class CuratePage {
 
     openExistingFlowDropdown(entityTypeId: string, stepName: string) {
       this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
-      cy.findByTestId(`${stepName}-flowList`).click();
+      cy.findByTestId(`${stepName}-flowsList`).click();
     }
 
     /**
@@ -100,6 +100,14 @@ class CuratePage {
 
     deleteDisabled() {
         return cy.get('[role="disabled-delete-mapping button"]');
+    }
+
+    addStepToFlowConfirmationMessage(stepName: string, flowName: string) {
+      return cy.findByText(`Are you sure you want to add "${stepName}" to flow "${flowName}"?`)
+    }
+
+    confirmAddStepToFlow(stepName: string, flowName: string) {
+      cy.findByTestId(`${stepName}-to-${flowName}-Confirm`).click();
     }
 }
 

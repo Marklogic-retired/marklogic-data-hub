@@ -1,0 +1,9 @@
+[
+  {
+    "path": "/custom-modules/step-processors/addOrderCategoryCode.sjs",
+    "when": "beforeContentPersisted",
+    "vars": {
+      "categoryCode": "A"
+    }
+  }
+]

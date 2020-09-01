@@ -26,7 +26,8 @@ describe('Entity Modeling: Writer Role', () => {
   });
 
   after(() => {
-      //resetting the test user back to only have 'hub-central-user' role
+      cy.loginAsDeveloper().withRequest();
+      cy.deleteEntities('User', 'Patient');
       cy.resetTestUser();
   });
 
@@ -245,7 +246,7 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeTable.getSaveEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
-    confirmationModal.getSaveEntityText().should('not.exist');
+    confirmationModal.getSaveEntityText().should('not.exist', { timeout: 15000 });
 
     entityTypeTable.getDeleteEntityIcon('Product').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
@@ -255,8 +256,8 @@ describe('Entity Modeling: Writer Role', () => {
   });
 
   it('create new entity types, add relationship type, delete entity type with outstanding edits', () => {
-    let entityName1 = 'User2';
-    let entityName2 = 'Product2'
+    let entityName1 = 'User';
+    let entityName2 = 'Product'
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName(entityName1);
     entityTypeModal.getAddButton().click();
@@ -322,13 +323,6 @@ describe('Entity Modeling: Writer Role', () => {
     confirmationModal.getDeleteEntityNoRelationshipEditText().should('not.exist', {timeout: 15000});
     entityTypeTable.getEntity(entityName2).should('not.exist');
     propertyTable.getProperty('user-id').should('exist');
-
-    // finally delete 'User' entity type
-    entityTypeTable.getDeleteEntityIcon(entityName1).click();
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    confirmationModal.getDeleteEntityText().should('exist');
-    confirmationModal.getDeleteEntityText().should('not.exist', {timeout: 15000});
-    entityTypeTable.getEntity(entityName1).should('not.exist');
   });
 
   it('can create entity, can create a structured type, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
@@ -658,11 +652,5 @@ describe('Entity Modeling: Writer Role', () => {
 
     entityTypeTable.getEntity('Concept').should('not.exist');
     propertyTable.getProperty('conceptType').should('not.exist');
-
-    entityTypeTable.getDeleteEntityIcon('Patient').click();
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    confirmationModal.getDeleteEntityText().should('exist');
-    confirmationModal.getDeleteEntityText().should('not.exist');
-    entityTypeTable.getEntity('Patient').should('not.exist');
   });
 });
