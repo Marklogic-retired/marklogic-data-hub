@@ -85,7 +85,7 @@ describe('RTL Source-to-entity map tests', () => {
         expect(queryByText('forSearch')).not.toBeInTheDocument();
     });
 
-    test('Mapping expression for a nested entity property with same name should be saved apprpriately', async () => {
+    test('Mapping expression for a nested entity property with same name should be saved appropriately', async () => {
         const nestedEntityWithSameName = [
             { key: 1, name: 'propId', type: 'int' },
             { key: 2, name: 'propName', type: 'parent-Name', children: [

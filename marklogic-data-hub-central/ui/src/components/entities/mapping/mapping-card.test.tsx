@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
-import {fireEvent, render, waitForElement, wait} from '@testing-library/react';
+import {fireEvent, render, waitForElement, wait, getByTestId} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
@@ -97,6 +97,42 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
+  });
+
+  test('Mapping card parses XML appropriately', async () => {
+    let entityModel = data.primaryEntityTypes.data[0];
+    let mapping = data.mappings.data[0].artifacts;
+    let getByText, getByTestId;
+    const noopFun = () => {};
+    const mappingArtifactByNameFunction = () => {
+      return { sourceDatabase: 'data-hub-STAGING' };
+    };
+    const deleteMappingArtifact = jest.fn(() => {});
+    await act(async () => {
+      const renderResults = render(
+        <Router><MappingCard data={mapping}
+                             flows={data.flows}
+                             entityTypeTitle={entityModel.entityName}
+                             getMappingArtifactByMapName={mappingArtifactByNameFunction}
+                             deleteMappingArtifact={deleteMappingArtifact}
+                             createMappingArtifact={noopFun}
+                             updateMappingArtifact={noopFun}
+                             canReadOnly={true}
+                             canReadWrite={true}
+                             canWriteFlow={false}
+                             entityModel={entityModel}
+                             addStepToFlow={noopFun}
+                             addStepToNew={noopFun}/></Router>);
+      getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
+    });
+    await act(async () => {
+      await fireEvent.click(getByTestId("Mapping1-stepDetails"));
+    });
+    const orderDetailsNode = getByText("OrderDetails");
+    expect(orderDetailsNode).toBeInTheDocument();
+    console.log(orderDetailsNode.parentNode);
+    expect(orderDetailsNode.parentNode).toHaveTextContent('OrderNS:');
   });
 
   test('Open Advanced Step settings', async () => {
