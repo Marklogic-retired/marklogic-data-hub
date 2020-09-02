@@ -250,36 +250,36 @@ const MappingCard: React.FC<Props> = (props) => {
         setMapData({...dataPayload});
     }
 
+    const getNamespaceKey = (namespace) => {
+        let indCheck = namespace.lastIndexOf('/');
+        let ind = indCheck !== -1 ? indCheck + 1 : 0;
+        return namespace.slice(ind);
+    }
     //Generate namespaces for source properties
-    const getNamespace = (key, val, parentNamespace) => {
+    const getNamespace = (key, val, parentNamespacePrefix, defaultNamespace = '') => {
         let objWithNmspace = '';
-        if (key.split(':').length > 1) {
-            let arr = key.split(':');
-            if (nmspaces.hasOwnProperty(arr[0]) && nmspaces[arr[0]] !== arr[0]) {
-                let indCheck = nmspaces[arr[0]].lastIndexOf('/');
-                let ind = indCheck !== -1 ? indCheck + 1 : 0;
-                objWithNmspace = nmspaces[arr[0]].slice(ind) + ':' + arr[1];
-            }
-        }
-
+        let keyParts = key.split(':');
+        let currentPrefix = keyParts.length > 1 ? keyParts[0] : '';
+        // set context namespaces first
         if (val && val.constructor && val.constructor.name === 'Object') {
             let valObject = Object.keys(val).filter((el) => /^@xmlns/.test(el));
+            defaultNamespace = valObject.filter((ns) => val === '@xmlns')[0] || defaultNamespace;
             let count = valObject.length;
             if (count === 1) {
                 valObject.map(el => {
-                    let nsObj = getNamespaceObject(val,el);
-
-                    if (objWithNmspace === '') {
-                        if (key.split(':').length > 1) {
-                            let keyArr = key.split(':');
-                            objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + keyArr[1] : keyArr[1];
-                        } else {
-                            objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + key : key;
+                    let nsObj = getNamespaceObject(val, el);
+                    if (el === '@xmlns' || el === `@xmlns:${currentPrefix}`) {
+                        if (objWithNmspace === '') {
+                            if (keyParts.length > 1) {
+                                let keyArr = key.split(':');
+                                objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + keyArr[1] : keyArr[1];
+                            } else {
+                                objWithNmspace = nsObj.nmspace ? nsObj.nmspace + ':' + key : key;
+                            }
                         }
                     }
-
-                    nmspaces = { ...nmspaces, ...nsObj.obj };
-                    setNamespaces({ ...nmspaces, ...nsObj.obj })
+                    nmspaces = {...nmspaces, ...nsObj.obj};
+                    setNamespaces({...nmspaces, ...nsObj.obj})
                 })
             } else if (count > 1) {
                 valObject.map(el => {
@@ -289,7 +289,13 @@ const MappingCard: React.FC<Props> = (props) => {
                 })
             }
         }
-        return objWithNmspace === '' ? (parentNamespace !== '' ? parentNamespace +':'+ key : key) : objWithNmspace;
+        if (keyParts.length > 1) {
+            if (nmspaces.hasOwnProperty(keyParts[0]) && nmspaces[keyParts[0]] !== keyParts[0]) {
+                objWithNmspace = getNamespaceKey(nmspaces[keyParts[0]]) + ':' + keyParts[1];
+            }
+        }
+        currentPrefix = defaultNamespace !== '' && objWithNmspace === '' ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
+        return objWithNmspace === '' ? (currentPrefix !== '' ? currentPrefix +':'+ key : key) : objWithNmspace;
     }
 
     const getNamespaceObject = (val, el) => {
@@ -354,23 +360,23 @@ const MappingCard: React.FC<Props> = (props) => {
     }
 
     // construct infinitely nested source Data
-    const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString) => {
+    const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString, defaultNamespace = '') => {
         Object.keys(respData).map(key => {
             let val = respData[key];
+            let currentDefaultNamespace = defaultNamespace;
             if (val !== null && val !== "") {
 
                 if (val && val.constructor && val.constructor.name === "Object") {
                     let tempNS = parentNamespace;
-
                     if(val.hasOwnProperty('@xmlns')){
                         parentNamespace = updateParentNamespace(val);
-
+                        currentDefaultNamespace = val['@xmlns'];
                     }
 
-                    let finalKey = getNamespace(key, val, parentNamespace);
+                    let finalKey = getNamespace(key, val, parentNamespace, currentDefaultNamespace);
                     let propty = getPropertyObject(finalKey, val);
 
-                    generateNestedDataSource(val, propty.children, parentNamespace);
+                    generateNestedDataSource(val, propty.children, parentNamespace, currentDefaultNamespace);
                     nestedDoc.push(propty);
 
                     if(parentNamespace !== tempNS){
@@ -379,7 +385,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 } else if (val && Array.isArray(val)) {
                     if (val.length === 0) {
                         sourceTableKeyIndex = sourceTableKeyIndex + 1;
-                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
+                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
                         let propty = {
                             rowKey: sourceTableKeyIndex,
                             key: finalKey,
@@ -392,7 +398,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     else if (val[0].constructor.name !== "Object") {
                             let joinValues = val.join(', ')
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
-                            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
+                            let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
                             let propty = {
                                 rowKey: sourceTableKeyIndex,
                                 key: finalKey,
@@ -404,13 +410,15 @@ const MappingCard: React.FC<Props> = (props) => {
                     } else {
                         val.forEach(obj => {
                             let tempNS = parentNamespace;
+                            let childDefaultNamespace = currentDefaultNamespace;
                             if(obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')){
                                 parentNamespace = updateParentNamespace(obj);
+                                childDefaultNamespace = obj['@xmlns'];
                             }
-                            let finalKey = getNamespace(key, obj, parentNamespace);
+                            let finalKey = getNamespace(key, obj, parentNamespace, childDefaultNamespace);
                             let propty = getPropertyObject(finalKey, obj);
 
-                            generateNestedDataSource(obj, propty.children, parentNamespace);
+                            generateNestedDataSource(obj, propty.children, parentNamespace, childDefaultNamespace);
                             nestedDoc.push(propty);
                             if(parentNamespace !== tempNS){
                                 parentNamespace = tempNS;
@@ -421,7 +429,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 } else {
 
                     if (key !== '#text' && !/^@xmlns/.test(key)) {
-                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace) : key;
+                        let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
                         let propty: any;
                         sourceTableKeyIndex = sourceTableKeyIndex + 1;
                         propty = {
@@ -438,7 +446,7 @@ const MappingCard: React.FC<Props> = (props) => {
             // val is null or ""
             else {
                 if (!/^@xmlns/.test(key)) {
-                    let finalKey = getNamespace(key, val, parentNamespace);
+                    let finalKey = getNamespace(key, val, parentNamespace, currentDefaultNamespace);
 
                     sourceTableKeyIndex = sourceTableKeyIndex + 1;
                     let propty = {

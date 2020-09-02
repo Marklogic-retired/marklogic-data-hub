@@ -46,6 +46,7 @@ const curateAPI = (axiosMock) => {
       case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name:
         return Promise.resolve(loadData.genericSuccess);
       default:
+        console.log('no DELETE defined: ' + url);
         return Promise.reject(new Error('not found'))
     }
   });
@@ -56,7 +57,15 @@ const curateAPI = (axiosMock) => {
                 "data": {},
                 "status": 200
             });
+      case '/api/map-search/sjsSearch':
+        return Promise.resolve({
+          "data": [
+            { "uri": "/testdoc.xml" }
+          ],
+          "status": 200
+        });
         default:
+            console.log('no POST defined: ' + url);
             return Promise.reject(new Error('not found'));
     }
   });
@@ -76,13 +85,50 @@ const curateAPI = (axiosMock) => {
         return Promise.resolve(curateData.mappings);
       case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name:
         return Promise.resolve(curateData.mappingSettings);
+      case '/api/artifacts/mapping/functions':
+        return Promise.resolve({status:200, data:{}});
       case '/api/artifacts/matching':
         return Promise.resolve(curateData.matchings);
       case '/api/steps/custom':
           return Promise.resolve(curateData.customSteps);
       case '/api/steps/custom/customJSON':
           return Promise.resolve({status:200, data:commonData.customData[0]});
+      case '/api/artifacts/mapping/entity/Customer':
+        return Promise.resolve({status:200, data:{}});
+      case `/api/map-search/doc?database=STAGING&docUri=${encodeURIComponent('/testdoc.xml')}`:
+        return Promise.resolve({status:200, data:`<Order xmlns="https://www.w3schools.com/OrderNS">
+  <RequiredDate>1996-09-23T13:27:06</RequiredDate>
+  <ShipName>B's Beverages</ShipName>
+  <OrderDetails xmlns:y="https://www.w3schools.com/OD">
+    <OrderDetail xmlns:r="https://www.w3schools.com/Washington">
+      <r:UnitPrice>26.6000</r:UnitPrice>
+      <r:Discount>0</r:Discount>
+      <r:Quantity>9</r:Quantity>
+      <r:ProductID>64</r:ProductID>
+    </OrderDetail>
+    <OrderDetail xmlns:n="https://www.w3schools.com/California">
+      <n:UnitPrice>27.2000</n:UnitPrice>
+      <n:Discount>0</n:Discount>
+      <n:Quantity>40</n:Quantity>
+      <n:ProductID xmlns:k="https://www.w3schools.com/ProductNS">60</n:ProductID> 
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate xmlns:l="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>
+  <ShippedDate xmlns:l="https://www.w3schools.com/SD2">1997-02-13T120:15:26</ShippedDate>
+  <ShipCity>London</ShipCity>
+  <CustomerID>BSBEV</CustomerID>
+  <ShipVia xmlns="https://www.w3schools.com/SV">3</ShipVia>
+  <ShipPostalCode>EC2 5NT</ShipPostalCode>
+  <OrderID>10289</OrderID>
+  <OrderDate>1996-08-26T07:24:10</OrderDate>
+  <ShipRegion>null</ShipRegion>
+  <ShipAddress>Fauntleroy Circus</ShipAddress>
+  <ShipCountry>UK</ShipCountry>
+  <EmployeeID>7</EmployeeID>
+  <Freight>22.7700</Freight>
+</Order>`});
       default:
+        console.log('no GET defined: ' + url);
         return Promise.reject(new Error('not found'));
     }
   })
