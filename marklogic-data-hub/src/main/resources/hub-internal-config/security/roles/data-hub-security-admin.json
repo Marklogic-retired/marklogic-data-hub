@@ -24,6 +24,21 @@
       "privilege-name": "role-set-external-names",
       "action": "http://marklogic.com/xdmp/privileges/role-set-external-names",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "create-amp",
+      "action": "http://marklogic.com/xdmp/privileges/create-amp",
+      "kind": "execute"
+    },
+    {
+      "privilege-name": "remove-amp",
+      "action": "http://marklogic.com/xdmp/privileges/remove-amp",
+      "kind":"execute"
+    },
+    {
+      "privilege-name": "get-amp",
+      "action": "http://marklogic.com/xdmp/privileges/get-amp",
+      "kind":"execute"
     }
   ]
 }

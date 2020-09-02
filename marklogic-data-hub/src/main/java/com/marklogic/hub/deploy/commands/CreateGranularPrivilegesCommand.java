@@ -147,6 +147,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         final String jobsDbName = hubConfig.getDbName(DatabaseKind.JOB);
         final String finalTriggersDbName = hubConfig.getDbName(DatabaseKind.FINAL_TRIGGERS);
         final String stagingTriggersDbName = hubConfig.getDbName(DatabaseKind.STAGING_TRIGGERS);
+        final String modulesDbName = hubConfig.getDbName(DatabaseKind.MODULES);
 
         DatabaseManager dbMgr = new DatabaseManager(manageClient);
         ResourcesFragment databases = dbMgr.getAsXml();
@@ -155,6 +156,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         final String jobsDbId = databases.getIdForNameOrId(jobsDbName);
         final String finalTriggersDbId = databases.getIdForNameOrId(finalTriggersDbName);
         final String stagingTriggersDbId = databases.getIdForNameOrId(stagingTriggersDbName);
+        final String modulesDbId = databases.getIdForNameOrId(modulesDbName);
 
         final String adminRole = "data-hub-admin";
         final String clearUserDataRole = "hub-central-clear-user-data";
@@ -210,6 +212,10 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         p = newPrivilege("admin-database-alerts-" + finalDbName, developerRole);
         p.setAction("http://marklogic.com/xdmp/privileges/admin/database/alerts/$$database-id(" + finalDbName + ")");
         granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + finalDbId, p);
+
+        p = newPrivilege("admin-database-amp-" + modulesDbName, "data-hub-security-admin");
+        p.setAction("http://marklogic.com/xdmp/privileges/admin/database/amp/$$database-id(" + modulesDbName + ")");
+        granularPrivilegeMap.put("http://marklogic.com/xdmp/privileges/admin/database/amp/" + modulesDbId, p);
 
         final ResourcesFragment existingGroups = new GroupManager(manageClient).getAsXml();
         getGroupNamesForScheduledTaskPrivileges().forEach(groupName -> {
