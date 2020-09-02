@@ -24,6 +24,7 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.dhs.installer.deploy.DeployHubAmpsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
 
@@ -186,6 +187,7 @@ public class DhsDeployer extends LoggingObject {
         List<Command> commands = new ArrayList<>();
         commands.add(new DeployPrivilegesCommand());
         commands.add(new DeployRolesCommand());
+        commands.add(new DeployHubAmpsCommand());
         return commands;
     }
 

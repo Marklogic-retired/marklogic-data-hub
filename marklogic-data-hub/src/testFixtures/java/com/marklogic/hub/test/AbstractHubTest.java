@@ -115,6 +115,10 @@ public abstract class AbstractHubTest extends TestObject {
         return runAsUser("test-data-hub-developer", "password");
     }
 
+    protected HubConfigImpl runAsDataHubSecurityAdmin() {
+        return runAsUser("test-data-hub-security-admin", "password");
+    }
+
     protected HubConfigImpl runAsDataHubOperator() {
         return runAsUser("test-data-hub-operator", "password");
     }

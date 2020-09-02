@@ -829,7 +829,7 @@ public class HubTestBase extends AbstractHubTest implements InitializingBean {
         handle.close();
     }
 
-    private DocumentMetadataHandle getPermissionsMetaDataHandle() {
+    protected DocumentMetadataHandle getPermissionsMetaDataHandle() {
         DocumentMetadataHandle permissions = new DocumentMetadataHandle();
         DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
         documentPermissionsParser.parsePermissions(getDataHubAdminConfig().getModulePermissions(), permissions.getPermissions());
