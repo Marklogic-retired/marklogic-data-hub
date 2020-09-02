@@ -54,6 +54,7 @@ public interface ModelsService {
             private BaseProxy.DBFunctionRequest req_getPrimaryEntityTypes;
             private BaseProxy.DBFunctionRequest req_deleteModel;
             private BaseProxy.DBFunctionRequest req_createModel;
+            private BaseProxy.DBFunctionRequest req_saveModels;
             private BaseProxy.DBFunctionRequest req_getModelReferences;
             private BaseProxy.DBFunctionRequest req_updateModelEntityTypes;
             private BaseProxy.DBFunctionRequest req_getLatestJobData;
@@ -76,6 +77,8 @@ public interface ModelsService {
                     "deleteModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_createModel = this.baseProxy.request(
                     "createModel.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_saveModels = this.baseProxy.request(
+                    "saveModels.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getModelReferences = this.baseProxy.request(
                     "getModelReferences.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateModelEntityTypes = this.baseProxy.request(
@@ -181,6 +184,19 @@ public interface ModelsService {
             }
 
             @Override
+            public void saveModels(com.fasterxml.jackson.databind.JsonNode models) {
+                saveModels(
+                    this.req_saveModels.on(this.dbClient), models
+                    );
+            }
+            private void saveModels(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode models) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("models", false, BaseProxy.JsonDocumentType.fromJsonNode(models))
+                          ).responseNone();
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode getModelReferences(String entityName) {
                 return getModelReferences(
                     this.req_getModelReferences.on(this.dbClient), entityName
@@ -283,6 +299,14 @@ public interface ModelsService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode createModel(com.fasterxml.jackson.databind.JsonNode input);
+
+  /**
+   * Save an array of entity models
+   *
+   * @param models	The array of entity models
+   * 
+   */
+    void saveModels(com.fasterxml.jackson.databind.JsonNode models);
 
   /**
    * Returns a json containing the names of the models and steps that reference the given entity model.
