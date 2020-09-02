@@ -43,7 +43,7 @@ public class CollectionsService {
 
         collectionsNode.fieldNames().forEachRemaining(collection -> {
             // Exclude internal collections
-            if (!collection.startsWith("http://marklogic.com/")) {
+            if (!(collection.startsWith("http://marklogic.com/") || "hub-core-artifact".equalsIgnoreCase(collection))) {
                 collectionList.add(collection);
             }
         });
