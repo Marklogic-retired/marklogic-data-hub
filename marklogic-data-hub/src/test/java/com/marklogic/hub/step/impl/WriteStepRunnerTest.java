@@ -158,7 +158,9 @@ public class WriteStepRunnerTest extends AbstractHubCoreTest {
         wsr.outputURIPrefix = null;
         wsr.outputFormat = "json";
 
-        assertThat(wsr.generateUriForCsv("/abc", SystemUtils.OS_NAME.toLowerCase()), matchesPattern(expectedPattern("/abc", wsr)));
+        if(!SystemUtils.OS_NAME.toLowerCase().contains("windows")){
+            assertThat(wsr.generateUriForCsv("/abc", SystemUtils.OS_NAME.toLowerCase()), matchesPattern(expectedPattern("/abc", wsr)));
+        }
         assertThat(wsr.generateUriForCsv("C:\\abc\\def", "windows 10"), matchesPattern(expectedPattern("/C/abc/def", wsr)));
 
         wsr.outputURIReplacement = ".*abc,''";

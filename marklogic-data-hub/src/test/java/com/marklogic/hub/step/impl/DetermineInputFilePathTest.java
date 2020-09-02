@@ -1,6 +1,7 @@
 package com.marklogic.hub.step.impl;
 
 import com.marklogic.hub.impl.HubProjectImpl;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
@@ -16,7 +17,12 @@ public class DetermineInputFilePathTest {
         project.createProject("build");
 
         Path path = new WriteStepRunner(null, project).determineInputFilePath("/absolute/path");
-        assertEquals("/absolute/path", path.toString());
+        String winAbsolutePath = System.getProperty("user.dir")+"\\build\\absolute\\path";
+        if(SystemUtils.OS_NAME.toLowerCase().contains("windows")) {
+            assertEquals(winAbsolutePath, path.toString());
+        } else {
+            assertEquals("/absolute/path", path.toString());
+        }
     }
 
     @Test
