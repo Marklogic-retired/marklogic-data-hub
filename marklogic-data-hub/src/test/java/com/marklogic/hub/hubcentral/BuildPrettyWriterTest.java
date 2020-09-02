@@ -20,7 +20,7 @@ public class BuildPrettyWriterTest {
         node.putArray("oneItem").add("one");
         node.putArray("multipleItems").add("one").add("two");
 
-        String json = writer.writeValueAsString(node);
+        String json = writer.writeValueAsString(node).replaceAll("\\r", "");
         assertEquals("{\n" +
                 "  \"hello\": \"world\",\n" +
                 "  \"noItems\": [ ],\n" +
