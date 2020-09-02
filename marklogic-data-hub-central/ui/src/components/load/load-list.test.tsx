@@ -8,6 +8,7 @@ import loadData from "../../assets/mock-data/ingestion.data";
 import { AdvancedSettingsMessages } from '../../config/messages.config';
 import {MemoryRouter} from "react-router-dom";
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
+import { validateTableRow } from '../../util/test-utils';
 
 jest.mock('axios');
 
@@ -46,9 +47,8 @@ describe('Load data component', () => {
   })
 
   test('Verify Load list view renders correctly with data', () => {
-    const { getByText, getAllByLabelText } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
+    const { getByText, getAllByLabelText, getByTestId } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
     const dataRow = within(getByText('testLoadXML').closest('tr'));
-
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
@@ -57,7 +57,56 @@ describe('Load data component', () => {
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-settings`)).toBeInTheDocument();
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-delete`)).toBeInTheDocument();
 
-    expect(getAllByLabelText('icon: setting').length).toBe(2);
+    expect(getAllByLabelText('icon: setting').length).toBe(3);
+
+    //verify load list table enforces last updated sort order by default
+    let loadTable: any = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoadXML', 'testLoadXMLtoJSON','testLoad']);
+
+    //verify load list table enforces sorting by ascending date updated as well
+    let loadTableSort = getByTestId('loadTableDate');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoad', 'testLoad123', 'testLoadXML']);
+
+    //verify load list table enforces sorting by name alphabetically in ascending order
+    loadTableSort = getByTestId('loadTableName');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoad', 'testLoad123', 'testLoadXML']);
+
+    //verify load list table enforces sorting by name alphabetically in descending order
+    loadTableSort = getByTestId('loadTableName');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad123', 'testLoad']);
+
+    //verify load list table enforces sorting by source format alphabetically in ascending order
+    loadTableSort = getByTestId('loadTableSourceFormat');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
+
+    //verify load list table enforces sorting by source format alphabetically in descending order
+    loadTableSort = getByTestId('loadTableSourceFormat');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
+
+    //verify load list table enforces sorting by target format alphabetically in ascending order
+    loadTableSort = getByTestId('loadTableTargetFormat');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
+
+    //verify load list table enforces sorting by target format alphabetically in descending order
+    loadTableSort = getByTestId('loadTableTargetFormat');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
+
+    //verify load list table enforces sorting by Description alphabetically in ascending order
+    loadTableSort = getByTestId('loadTableDescription');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
+
+    //verify load list table enforces sorting by Description alphabetically in descending order
+    loadTableSort = getByTestId('loadTableDescription');
+    fireEvent.click(loadTableSort);
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
   })
 
   test('Verify Load settings from list view renders correctly', async () => {

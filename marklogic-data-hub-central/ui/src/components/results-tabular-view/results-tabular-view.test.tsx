@@ -4,7 +4,7 @@ import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, en
 import ResultsTabularView from "./results-tabular-view";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router } from 'react-router-dom';
-import { validateExplorerResultsTableRow } from '../../util/test-utils';
+import { validateTableRow } from '../../util/test-utils';
 
 describe("Results Table view component", () => {
     test('Results table with data renders', async () => {
@@ -173,39 +173,39 @@ describe("Results Table view component", () => {
         /* Validate sorting on name column in results*/
         //Check the sort order of Name column rows before enforcing sort order
         let resultsTable: any = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisDefault);
+        validateTableRow(resultsTable, urisDefault);
 
         //Click on the Name column to sort the rows by Ascending order
         fireEvent.click(nameColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisBasedOnAscendingName);
+        validateTableRow(resultsTable, urisBasedOnAscendingName);
 
         //Click on the Name column to sort the rows by Descending order
         fireEvent.click(nameColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingName);
+        validateTableRow(resultsTable, urisBasedOnDescendingName);
 
         /* Validate sorting on customerId column in results*/
         //Click on the CustomerId column to sort the rows by Ascending order
         fireEvent.click(customerIdColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisDefault);
+        validateTableRow(resultsTable, urisDefault);
 
         //Click on the CustomerId column to sort the rows by Descending order
         fireEvent.click(customerIdColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingCustomerId);
+        validateTableRow(resultsTable, urisBasedOnDescendingCustomerId);
 
         /* Validate sorting on nicknames column in results*/
         //Click on the nicknames column to sort the rows by Ascending order
         fireEvent.click(nickNamesColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisBasedOnAscendingNickNames);
+        validateTableRow(resultsTable, urisBasedOnAscendingNickNames);
 
         //Click on the nicknames column to sort the rows by Descending order
         fireEvent.click(nickNamesColumnSort);
         resultsTable = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-        validateExplorerResultsTableRow(resultsTable, urisBasedOnDescendingNickNames);
+        validateTableRow(resultsTable, urisBasedOnDescendingNickNames);
 
     });
 })

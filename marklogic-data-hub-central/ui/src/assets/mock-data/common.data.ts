@@ -57,6 +57,15 @@ const loadData = {
       outputURIReplacement: "",
       inputFilePath: "/xml-test/data-sets/testLoad",
       lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+    },
+    {
+      name: "testLoad123",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
     }
   ],
   deleteLoadArtifact: jest.fn(),

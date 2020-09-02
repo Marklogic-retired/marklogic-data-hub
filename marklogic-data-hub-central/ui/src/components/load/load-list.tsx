@@ -8,6 +8,7 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { MLButton } from '@marklogic/design-system';
+import  moment  from 'moment';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import {AdvLoadTooltips} from "../../config/tooltips.config";
@@ -170,24 +171,24 @@ const LoadList: React.FC<Props> = (props) => {
         <span style={{ fontSize: '16px' }}>Are you sure you want to delete this?</span>
     </Modal>;
 
-    const columns = [
+    const columns: any = [
         {
-          title: 'Name',
+          title: <span data-testid="loadTableName">Name</span>,
           dataIndex: 'name',
           key: 'name',
           render: (text: any,record: any) => (
               <span><span onClick={() => OpenEditStepDialog(record)} className={styles.editLoadConfig}>{text}</span> </span>
           ),
-          sorter: (a:any, b:any) => a.name.length - b.name.length,
+          sorter: (a:any, b:any) => a.name.localeCompare(b.name),
         },
         {
-          title: 'Description',
+          title: <span data-testid="loadTableDescription">Description</span>,
           dataIndex: 'description',
           key: 'description',
-          sorter: (a:any, b:any) => a.description.length - b.description.length,
+          sorter: (a:any, b:any) => a.description?.localeCompare(b.description)
         },
         {
-            title: 'Source Format',
+            title: <span data-testid="loadTableSourceFormat">Source Format</span>,
             dataIndex: 'sourceFormat',
             key: 'sourceFormat',
             render: (text, row) => (
@@ -196,22 +197,24 @@ const LoadList: React.FC<Props> = (props) => {
                     {row.sourceFormat === 'csv' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
                 </div>
             ),
-            sorter: (a:any, b:any) => a.sourceFormat.length - b.sourceFormat.length,
+            sorter: (a:any, b:any) => a.sourceFormat.localeCompare(b.sourceFormat),
         },
         {
-            title: 'Target Format',
+            title: <span data-testid="loadTableTargetFormat">Target Format</span>,
             dataIndex: 'targetFormat',
             key: 'targetFormat',
-            sorter: (a:any, b:any) => a.targetFormat.length - b.targetFormat.length,
+            sorter: (a:any, b:any) => a.targetFormat.localeCompare(b.targetFormate),
         },
         {
-            title: 'Last Updated',
+            title: <span data-testid="loadTableDate">Last Updated</span>,
             dataIndex: 'lastUpdated',
             key: 'lastUpdated',
             render: (text) => (
                 <div>{convertDateFromISO(text)}</div>
             ),
-            sorter: (a:any, b:any) => a.lastUpdated.length - b.lastUpdated.length,
+            sorter: (a:any, b:any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
+            sortDirections: ["descend", "ascend"],
+            defaultSortOrder: "descend"
         },
         {
             title: 'Action',
