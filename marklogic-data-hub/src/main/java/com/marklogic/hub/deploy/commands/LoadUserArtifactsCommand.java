@@ -17,6 +17,7 @@ package com.marklogic.hub.deploy.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
@@ -32,6 +33,7 @@ import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
@@ -115,62 +117,72 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * class is used outside a deployment context.
      */
     public void loadUserArtifacts() {
-        DatabaseClient stagingClient = hubConfig.newStagingClient(null);
+        HubClient hubClient = hubConfig.newHubClient();
 
         try {
-            // Models are loaded via their own DS endpoint
-            loadModels(stagingClient);
+            long start = System.currentTimeMillis();
+            loadModels(hubClient);
+            logger.info("Loaded models, time: " + (System.currentTimeMillis() - start) + "ms");
 
-            // Supports pre-5.3 mappings
-            loadMappingsViaRestApi(stagingClient);
-
-            loadFlows(stagingClient);
-            loadStepDefinitions(stagingClient);
-            loadSteps(stagingClient);
+            start = System.currentTimeMillis();
+            loadLegacyMappings(hubClient);
+            loadFlows(hubClient);
+            loadStepDefinitions(hubClient);
+            loadSteps(hubClient);
+            logger.info("Loaded flows, mappings, step definitions and steps, time: " + (System.currentTimeMillis() - start) + "ms");
         }
         catch (IOException e) {
             throw new RuntimeException("Unable to load user artifacts, cause: " + e.getMessage(), e);
         }
     }
 
-    protected void loadModels(DatabaseClient stagingClient) throws IOException {
+    /**
+     * Due to significant performance issues with loading entity models via xdmp.invoke plus the existence of pre and
+     * post commit triggers on entity models, separate calls are made to the staging and final app servers for saving
+     * entity models. This avoids the performance issue, as the saveModels endpoint will not use an xdmp.invoke to
+     * save each model.
+     *
+     * @param hubClient
+     * @throws IOException
+     */
+    private void loadModels(HubClient hubClient) throws IOException {
         final Path modelsPath = hubConfig.getHubEntitiesDir();
         if (modelsPath.toFile().exists()) {
-            ModelsService modelsService = ModelsService.on(stagingClient);
+            ArrayNode modelsArray = objectMapper.createArrayNode();
             EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
             Files.walkFileTree(modelsPath, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)  {
                     logger.info("Loading models from directory " + dir);
                     modulesFinder.findModules(dir.toString()).getAssets().forEach(r -> {
-                        JsonNode model;
                         try {
-                            model = objectMapper.readTree(r.getInputStream());
+                            logger.info("Loading model from file: " + r.getFilename());
+                            modelsArray.add(objectMapper.readTree(r.getInputStream()));
                         } catch (IOException e) {
                             throw new RuntimeException("Unable to read model as JSON; model filename: " + r.getFilename(), e);
                         }
-                        modelsService.saveModel(model);
-                        logger.info("Loaded model from file " + r.getFilename());
                     });
                     return FileVisitResult.CONTINUE;
                 }
             });
+            if (modelsArray.size() > 0) {
+                ModelsService.on(hubClient.getStagingClient()).saveModels(modelsArray);
+                ModelsService.on(hubClient.getFinalClient()).saveModels(modelsArray);
+            }
         }
     }
 
     /**
-     * TODO The ArtifactService isn't loading all mappings the way that this method does, so we still need it in place
-     * for mappings created prior to 5.3.0.
+     * "Legacy" = pre-5.3 mappings that are stored in documents outside of flows, but are not mapping steps.
      *
-     * @param stagingClient
+     * @param hubClient
      * @throws IOException
      */
-    protected void loadMappingsViaRestApi(DatabaseClient stagingClient) throws IOException {
+    private void loadLegacyMappings(HubClient hubClient) throws IOException {
         Path mappingsPath = hubConfig.getHubMappingsDir();
         if (mappingsPath.toFile().exists()) {
-            DatabaseClient finalClient = hubConfig.newFinalClient();
-            JSONDocumentManager finalDocMgr = finalClient.newJSONDocumentManager();
-            JSONDocumentManager stagingDocMgr = stagingClient.newJSONDocumentManager();
+            JSONDocumentManager finalDocMgr = hubClient.getFinalClient().newJSONDocumentManager();
+            JSONDocumentManager stagingDocMgr = hubClient.getStagingClient().newJSONDocumentManager();
             DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
             DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
 
@@ -282,14 +294,14 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * Loads steps, where the assumption is that the name of each directory under the steps path corresponds to a step
      * definition type. And thus each .step.json file in that directory should be loaded as a step.
      *
-     * @param stagingClient
+     * @param hubClient
      * @throws IOException
      */
-    private void loadSteps(DatabaseClient stagingClient) throws IOException {
+    private void loadSteps(HubClient hubClient) throws IOException {
         final Path stepsPath = hubConfig.getHubProject().getStepsPath();
         if (stepsPath.toFile().exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            StepService stepService = StepService.on(stagingClient);
+            StepService stepService = StepService.on(hubClient.getStagingClient());
             for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepType = stepTypeDir.getName();
                 for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
@@ -305,11 +317,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void loadFlows(DatabaseClient stagingClient) throws IOException {
+    private void loadFlows(HubClient hubClient) throws IOException {
         final Path flowsPath = hubConfig.getHubProject().getFlowsDir();
         if (flowsPath.toFile().exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            ArtifactService service = ArtifactService.on(stagingClient);
+            ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
                 JsonNode flow = objectMapper.readTree(file);
                 if (!flow.has("name")) {
@@ -322,11 +334,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void loadStepDefinitions(DatabaseClient stagingClient) throws IOException {
+    private void loadStepDefinitions(HubClient hubClient) throws IOException {
         final Path stepDefsPath = hubConfig.getHubProject().getStepDefinitionsDir();
         if (stepDefsPath.toFile().exists()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            ArtifactService service = ArtifactService.on(stagingClient);
+            ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File typeDir : stepDefsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepDefType = typeDir.getName();
                 for (File defDir : typeDir.listFiles(File::isDirectory)) {

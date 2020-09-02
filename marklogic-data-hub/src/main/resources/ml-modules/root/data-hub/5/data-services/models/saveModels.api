@@ -1,0 +1,12 @@
+{
+    "functionName": "saveModels",
+    "desc": "Save an array of entity models to only the database associated with the app server that receives this request",
+    "params": [
+        {
+            "name": "models",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "desc": "The array of entity models"
+        }
+    ]
+}

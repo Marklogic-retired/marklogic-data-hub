@@ -128,6 +128,13 @@ function getEntityTypeId(model, entityTypeTitle) {
   return getModelId(model) + "/" + entityTypeTitle;
 }
 
+function getModelName(model) {
+  if (model.info) {
+    return model.info.title;
+  }
+  return null;
+}
+
 /**
  * @param model
  * @return a map (object) where each key is an EntityTypeId and the value is the EntityType
@@ -245,7 +252,7 @@ function findModelReferencesInOtherModels(entityModelUri, entityTypeId) {
           Object.keys(properties)
             .some(property => {
               if (properties[property]["$ref"] === entityTypeId || (properties[property]["datatype"] === "array" && properties[property]["items"]["$ref"] === entityTypeId)) {
-                affectedModels.add(model.info.title);
+                affectedModels.add(getModelName(model));
               }
             });
         });
@@ -279,7 +286,18 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
         });
     });
 
-  [...affectedModels].forEach(model => writeModel(model.info.title, model));
+  const dataHub = DataHubSingleton.instance();
+  const permissions = getModelPermissions();
+
+  // This does not reuse writeModel because we do not want to hit the xdmp.documentInsert line. This requires the
+  // deleteModel.sjs endpoint to then have declareUpdate. But when that is added, the call to deleteDocument then hangs.
+  const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
+  [...affectedModels].forEach(model => {
+    databases.forEach(db => {
+      const entityName = getModelName(model);
+      dataHub.hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+    });
+  });
 }
 
 /**
@@ -290,6 +308,19 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
  * @param model
  */
 function writeModel(entityName, model) {
+  const dataHub = DataHubSingleton.instance();
+  writeModelToDatabases(entityName, model, [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE]);
+}
+
+/**
+ * Writes models to the given databases. Added to allow for the saveModels endpoint to only write to the database
+ * associated with the app server by which it is invoked.
+ *
+ * @param entityName
+ * @param model
+ * @param databases
+ */
+function writeModelToDatabases(entityName, model, databases) {
   if (model.info) {
     if (!model.info.version) {
       model.info.version = "1.0.0";
@@ -307,15 +338,28 @@ function writeModel(entityName, model) {
 
   dataHub.hubUtils.replaceLanguageWithLang(model);
 
+  const permissions = getModelPermissions();
+
+  databases.forEach(db => {
+    // It is significantly faster to use xdmp.documentInsert due to the existence of pre and post commit triggers.
+    // Using xdmp.invoke results in e.g. 20 models being saved in several seconds as opposed to well under a second
+    // when calling xdmp.documentInsert directly.
+    if (db === xdmp.databaseName(xdmp.database())) {
+      xdmp.documentInsert(entityLib.getModelUri(entityName), model, permissions, getModelCollection());
+    } else {
+      dataHub.hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+    }
+  });
+}
+
+function getModelPermissions() {
+  const dataHub = DataHubSingleton.instance();
+
   let permsString = "%%mlEntityModelPermissions%%";
   permsString = permsString.indexOf("%mlEntityModelPermissions%") > -1 ?
     "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update" :
     permsString;
-  const permissions = dataHub.hubUtils.parsePermissions(permsString);
-
-  [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE].forEach(db => {
-    dataHub.hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db);
-  });
+  return dataHub.hubUtils.parsePermissions(permsString);
 }
 
 function validateModelDefinitions(definitions) {
@@ -352,5 +396,6 @@ module.exports = {
   getModelCollection,
   getModelUri,
   validateModelDefinitions,
-  writeModel
+  writeModel,
+  writeModelToDatabases
 };
