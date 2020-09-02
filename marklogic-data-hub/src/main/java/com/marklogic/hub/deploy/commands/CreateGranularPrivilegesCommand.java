@@ -1,5 +1,7 @@
 package com.marklogic.hub.deploy.commands;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.SortOrderConstants;
@@ -10,7 +12,12 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.configuration.Configuration;
+import com.marklogic.mgmt.api.configuration.Configurations;
 import com.marklogic.mgmt.api.security.Privilege;
+import com.marklogic.mgmt.api.security.Role;
+import com.marklogic.mgmt.api.security.RolePrivilege;
+import com.marklogic.mgmt.cma.ConfigurationManager;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.mapper.ResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -247,50 +254,57 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
      * @param granularPrivileges
      */
     protected void saveGranularPrivileges(ManageClient manageClient, Map<String, Privilege> granularPrivileges) {
-        final PrivilegeManager privilegeManager = new PrivilegeManager(manageClient);
-        final API manageApi = new API(manageClient);
+        final ResourceMapper resourceMapper = new DefaultResourceMapper(new API(manageClient));
+        final RoleManager roleManager = new RoleManager(manageClient);
 
-        // For performance, grab all the privileges and build a map of them with action as the key
+        // Build a map of all existing privileges with the action as the key. This is an efficient mechanism for
+        // determining which granular privileges already exist.
         final Map<String, String> actionToNameMap = buildExistingPrivilegeActionToNameMap(manageClient);
-        final ResourceMapper resourceMapper = new DefaultResourceMapper(manageApi);
 
+        final Configuration privilegeConfig = new Configuration();
+        final Map<String, Role> roleMap = new HashMap<>();
+
+        // Iterate over each granular privilege and determine what privileges to create and which roles to update
         granularPrivileges.keySet().forEach(actionWithId -> {
-            Privilege granularPrivilege = granularPrivileges.get(actionWithId);
-            granularPrivilege.setAction(actionWithId);
-            final String granularPrivilegeName = granularPrivilege.getPrivilegeName();
-            if (actionToNameMap.containsKey(actionWithId)) {
-                final String existingPrivilegeName = actionToNameMap.get(actionWithId);
-                String json = privilegeManager.getAsJson(existingPrivilegeName, "kind", "execute");
-                Privilege existingPrivilege = resourceMapper.readResource(json, Privilege.class);
-                List<String> existingRoles = existingPrivilege.getRole();
-                if (existingRoles != null) {
-                    boolean needsToBeSaved = false;
-                    for (String role : granularPrivilege.getRole()) {
-                        if (!existingRoles.contains(role)) {
-                            existingRoles.add(role);
-                            needsToBeSaved = true;
-                        }
-                    }
-                    if (needsToBeSaved) {
-                        logger.info(format("For granular privilege '%s', adding roles %s to existing privilege '%s'",
-                            granularPrivilegeName, granularPrivilege.getRole(), existingPrivilegeName));
-                        existingPrivilege.save();
-                    } else {
-                        logger.info(format("Not updating privilege '%s', it already has roles %s",
-                            existingPrivilegeName, granularPrivilege.getRole()));
-                    }
-                } else {
-                    granularPrivilege.getRole().forEach(role -> existingPrivilege.addRole(role));
-                    logger.info(format("For granular privilege '%s', adding roles %s to existing privilege '%s'",
-                        granularPrivilegeName, granularPrivilege.getRole(), existingPrivilegeName));
-                    existingPrivilege.save();
-                }
-            } else {
-                logger.info(format("Creating new granular privilege '%s'", granularPrivilegeName));
-                granularPrivilege.setApi(manageApi);
-                granularPrivilege.save();
+            Privilege privilege = granularPrivileges.get(actionWithId);
+
+            // If the privilege doesn't exist yet, we'll create it - but without its roles. Roles will instead specify
+            // privileges. This ensures that we don't lose any existing roles associated with the existing privilege.
+            if (!actionToNameMap.containsKey(actionWithId)) {
+                ObjectNode node = privilege.toObjectNode();
+                node.remove("role");
+                privilegeConfig.addPrivilege(node);
             }
+
+            // For each role associated with the privilege, read in the existing role and add the privilege to it
+            privilege.getRole().forEach(roleName -> {
+                Role role;
+                if (roleMap.containsKey(roleName)) {
+                    role = roleMap.get(roleName);
+                } else {
+                    role = resourceMapper.readResource(roleManager.getPropertiesAsJson(roleName), Role.class);
+                    if (role.getPrivilege() == null) {
+                        role.setPrivilege(new ArrayList<>());
+                    }
+                    roleMap.put(roleName, role);
+                }
+                role.getPrivilege().add(new RolePrivilege(privilege.getPrivilegeName(), privilege.getAction(), privilege.getKind()));
+            });
         });
+
+        Configurations configs = new Configurations();
+        if (privilegeConfig.getPrivileges() != null && privilegeConfig.getPrivileges().size() > 0) {
+            configs.addConfig(privilegeConfig);
+        }
+        Configuration roleConfig = new Configuration();
+        for (String roleName : roleMap.keySet()) {
+            roleConfig.addRole(roleMap.get(roleName).toObjectNode());
+        }
+        configs.addConfig(roleConfig);
+
+        logger.info("Submitting CMA config containing privileges and roles");
+        configs.submit(manageClient);
+        logger.info("Finished submitting CMA config containing privileges and roles");
     }
 
     /**

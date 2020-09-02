@@ -51,28 +51,28 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
         Privilege p = resourceMapper.readResource(mgr.getAsJson("admin-database-clear-data-hub-STAGING", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/clear/" + stagingDbId, p.getAction());
-        assertEquals("data-hub-admin", p.getRole().get(0));
-        assertEquals("hub-central-clear-user-data", p.getRole().get(1));
+        assertTrue(p.getRole().contains("data-hub-admin"));
+        assertTrue(p.getRole().contains("hub-central-clear-user-data"));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-clear-data-hub-FINAL", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/clear/" + finalDbId, p.getAction());
-        assertEquals("data-hub-admin", p.getRole().get(0));
-        assertEquals("hub-central-clear-user-data", p.getRole().get(1));
+        assertTrue(p.getRole().contains("data-hub-admin"));
+        assertTrue(p.getRole().contains("hub-central-clear-user-data"));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-clear-data-hub-JOBS", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/clear/" + jobsDbId, p.getAction());
-        assertEquals("data-hub-admin", p.getRole().get(0));
-        assertEquals("hub-central-clear-user-data", p.getRole().get(1));
+        assertTrue(p.getRole().contains("data-hub-admin"));
+        assertTrue(p.getRole().contains("hub-central-clear-user-data"));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-STAGING", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + stagingDbId, p.getAction());
-        assertEquals("data-hub-developer", p.getRole().get(0));
-        assertEquals("hub-central-entity-model-writer", p.getRole().get(1));
+        assertTrue(p.getRole().contains("data-hub-developer"));
+        assertTrue(p.getRole().contains("hub-central-entity-model-writer"));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-FINAL", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + finalDbId, p.getAction());
-        assertEquals("data-hub-developer", p.getRole().get(0));
-        assertEquals("hub-central-entity-model-writer", p.getRole().get(1));
+        assertTrue(p.getRole().contains("data-hub-developer"));
+        assertTrue(p.getRole().contains("hub-central-entity-model-writer"));
 
         p = resourceMapper.readResource(mgr.getAsJson("admin-database-index-data-hub-JOBS", "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/index/" + jobsDbId, p.getAction());
