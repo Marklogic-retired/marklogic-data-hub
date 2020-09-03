@@ -17,7 +17,6 @@ public class ConstrainSourceQueryToJobTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
 
         final String flowName = "ingestToFinal";
-        makeInputFilePathsAbsoluteInFlow(flowName);
 
         RunFlowResponse flowResponse = runFlow(new FlowInputs(flowName, "1").withJobId("job1"));
         RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
