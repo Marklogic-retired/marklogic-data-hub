@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect} from 'react';
 import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 import styles from './search-result.module.scss';
 import ReactHtmlParser from 'react-html-parser';
@@ -31,6 +31,10 @@ const SearchResult: React.FC<Props> = (props) => {
     let createdOnVal: string = '';
     let sourcesVal: string = '';
     let fileTypeVal: string = props.item.format;
+
+    useEffect(() => {
+        toggleShow(false);
+    }, [searchOptions.pageNumber, searchOptions.entityTypeIds])
 
     if (Object.keys(props.item.primaryKey).length) {
         primaryKeyValue = props.item.primaryKey.propertyValue;
@@ -84,7 +88,7 @@ const SearchResult: React.FC<Props> = (props) => {
     return (
         <div style={{ width: '100%' }}>
             <div className={styles.title} onClick={() => showTableEntityProperties()}>
-                <Icon className={styles.expandableIcon} data-cy='expandable-icon' type='right' rotate={show ? 90 : undefined} />
+                <Icon className={styles.expandableIcon} data-cy='expandable-icon' data-testid="expandable-icon" type='right' rotate={show ? 90 : undefined} />
                 <div className={styles.redirectIcons}>
                     <Link to={{pathname: "/tiles/explore/detail",state: {selectedValue:'instance',
                             entity : searchOptions.entityTypeIds ,
