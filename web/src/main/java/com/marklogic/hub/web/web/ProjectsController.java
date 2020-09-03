@@ -110,4 +110,9 @@ public class ProjectsController {
         settings.setProjectDir(project.path);
         return settings;
     }
+
+    // Included only for use by an automated test
+    public void setHubConfig(HubConfigImpl hubConfig) {
+        this.hubConfig = hubConfig;
+    }
 }
