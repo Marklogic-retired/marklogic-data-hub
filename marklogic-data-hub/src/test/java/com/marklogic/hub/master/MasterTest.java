@@ -13,7 +13,6 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MasteringManager;
 import com.marklogic.hub.flow.FlowInputs;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,9 +27,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MasterTest extends AbstractHubCoreTest {
-
-    @Autowired
-    FlowRunner flowRunner;
 
     @Autowired
     MasteringManager masteringManager;
@@ -67,8 +63,7 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testMatchEndpoint() {
-        flowRunner.runFlow(new FlowInputs("myNewFlow", "1", "2"));
-        flowRunner.awaitCompletion();
+        runFlow(new FlowInputs("myNewFlow", "1", "2"));
         JsonNode matchResp = masteringManager.match("/person-1.json", "myNewFlow", "3", Boolean.TRUE, new ObjectMapper().createObjectNode()).get("results");
         assertEquals(7, matchResp.get("total").asInt(), "There should 7 match results");
         assertEquals(7, matchResp.get("result").size(), "There should 7 match results");
@@ -76,8 +71,7 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testMasterStep() {
-        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("myNewFlow", "1", "2", "3"));
-        flowRunner.awaitCompletion();
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "1", "2", "3"));
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess(), "Mastering job failed!");
         assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
@@ -106,8 +100,7 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testMatchMergeSteps() {
-        RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs("myMatchMergeFlow", "1", "2", "3"));
-        flowRunner.awaitCompletion();
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("myMatchMergeFlow", "1", "2", "3"));
         RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
         assertTrue(matchJob.isSuccess(), "Matching job failed!");
         assertEquals(3, getFinalDocCount("datahubMasteringMatchSummary"), "3 match summaries should be created!");
@@ -118,8 +111,7 @@ public class MasterTest extends AbstractHubCoreTest {
             "))";
         assertTrue(existsByQuery(summaryQueryText, HubConfig.DEFAULT_FINAL_NAME), "Missing valid matching summary document!");
 
-        RunFlowResponse flowMergeResponse = flowRunner.runFlow(new FlowInputs("myMatchMergeFlow", "4"));
-        flowRunner.awaitCompletion();
+        RunFlowResponse flowMergeResponse = runFlow(new FlowInputs("myMatchMergeFlow", "4"));
         RunStepResponse mergeJob = flowMergeResponse.getStepResponses().get("4");
         assertTrue(mergeJob.isSuccess(), "Merging job failed!");
         assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
@@ -142,8 +134,7 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testManualMerge() {
-        flowRunner.runFlow(new FlowInputs("myNewFlow", "1", "2"));
-        flowRunner.awaitCompletion();
+        runFlow(new FlowInputs("myNewFlow", "1", "2"));
         List<String> docsToMerge = Arrays.asList("/person-1.json", "/person-1-1.json", "/person-1-2.json", "/person-1-3.json");
         JsonNode mergeResults = masteringManager.merge(docsToMerge, "myNewFlow", "3", Boolean.FALSE, new ObjectMapper().createObjectNode());
         assertEquals(1, getFinalDocCount("sm-person-merged"), "One merge should have occurred");

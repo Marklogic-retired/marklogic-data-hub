@@ -3,6 +3,7 @@ package com.marklogic.hub.web.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.SJSSearchQuery;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 
-class SearchServiceTest extends AbstractServiceTest {
+class SearchServiceTest extends AbstractWebTest {
 
-    @Autowired
     SearchService searchService;
 
     @BeforeEach
     void before() {
+        searchService = new SearchService(getHubConfig());
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("UrisOnly");
         meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);

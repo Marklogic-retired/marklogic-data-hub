@@ -148,8 +148,6 @@ public class FlowManagerService {
 
     public void deleteFlow(String flowName) {
         flowManager.deleteFlow(flowName);
-        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.STAGING);
-        dataHubService.deleteDocument("/flows/" + flowName + FLOW_FILE_EXTENSION, DatabaseKind.FINAL);
     }
 
     public List<StepModel> getSteps(String flowName) {

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubProject;
 import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.impl.StepDefinitionManagerImpl;
 import com.marklogic.hub.step.impl.QueryStepRunner;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.step.impl.WriteStepRunner;
@@ -14,18 +16,24 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Optional;
 
-@Component
 public class StepRunnerFactory {
 
-    @Autowired
-    private HubConfig hubConfig;
-
     private HubClient hubClient;
-
-    @Autowired
+    private HubProject hubProject;
     private StepDefinitionProvider stepDefinitionProvider;
 
-    public StepRunnerFactory() {
+    /**
+     * The one difference between this and the HubClient-based constructor is that by having access to a HubProject
+     * via HubConfig, the WriteStepRunner instances created by this class will be able to resolve relative file input
+     * paths based on the project directory. If that capability is not needed, then use the constructor that only
+     * requires a HubClient.
+     *
+     * @param hubConfig
+     */
+    public StepRunnerFactory(HubConfig hubConfig) {
+        this.hubClient = hubConfig.newHubClient();
+        this.hubProject = hubConfig.getHubProject();
+        this.stepDefinitionProvider = new StepDefinitionManagerImpl(hubClient, hubConfig.getHubProject());
     }
 
     public StepRunnerFactory(HubClient hubClient) {
@@ -39,13 +47,11 @@ public class StepRunnerFactory {
         Step step = steps.get(stepNum);
         StepDefinition stepDef = stepDefinitionProvider.getStepDefinition(step.getStepDefinitionName(), step.getStepDefinitionType());
 
-        final HubClient theHubClient = hubClient != null ? hubClient : hubConfig.newHubClient();
-
         StepRunner stepRunner;
         if (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
-            stepRunner = hubConfig != null ? new WriteStepRunner(hubConfig.newHubClient(), hubConfig.getHubProject()) : new WriteStepRunner(hubClient, null);
+            stepRunner = new WriteStepRunner(hubClient, hubProject);
         } else {
-            stepRunner = new QueryStepRunner(theHubClient);
+            stepRunner = new QueryStepRunner(hubClient);
         }
 
         stepRunner = stepRunner.withFlow(flow)
@@ -84,9 +90,9 @@ public class StepRunnerFactory {
                 targetDatabase = ((TextNode) stepDef.getOptions().get("targetDatabase")).asText();
             } else {
                 if (StepDefinition.StepDefinitionType.INGESTION.equals(step.getStepDefinitionType())) {
-                    targetDatabase = theHubClient.getDbName(DatabaseKind.STAGING);
+                    targetDatabase = hubClient.getDbName(DatabaseKind.STAGING);
                 } else {
-                    targetDatabase = theHubClient.getDbName(DatabaseKind.FINAL);
+                    targetDatabase = hubClient.getDbName(DatabaseKind.FINAL);
                 }
             }
             ((WriteStepRunner)stepRunner).withDestinationDatabase(targetDatabase);

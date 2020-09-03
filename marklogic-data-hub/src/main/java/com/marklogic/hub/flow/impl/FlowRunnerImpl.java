@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
-public class FlowRunnerImpl implements FlowRunner{
+public class FlowRunnerImpl implements FlowRunner {
 
     @Autowired
     private HubConfig hubConfig;
@@ -38,9 +38,7 @@ public class FlowRunnerImpl implements FlowRunner{
     @Autowired
     private FlowManager flowManager;
 
-    @Autowired
-    private StepRunnerFactory stepRunnerFactory;
-
+    // Only populated when constructed with a HubClient, which implies that a HubProject is not available
     private HubClient hubClient;
 
     private AtomicBoolean isRunning = new AtomicBoolean(false);
@@ -74,6 +72,17 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     /**
+     * Simulates construction of this object via Spring, where the Autowired objects are set manually.
+     *
+     * @param hubConfig
+     * @param flowManager
+     */
+    public FlowRunnerImpl(HubConfig hubConfig, FlowManager flowManager) {
+        this.hubConfig = hubConfig;
+        this.flowManager = flowManager;
+    }
+
+    /**
      * Convenience constructor for running flows with no dependency on project files on the filesystem, and where a
      * user can authenticate with just a username and a password.
      *
@@ -98,7 +107,6 @@ public class FlowRunnerImpl implements FlowRunner{
      */
     public FlowRunnerImpl(HubClient hubClient) {
         this.hubClient = hubClient;
-        this.stepRunnerFactory = new StepRunnerFactory(hubClient);
         this.flowManager = new FlowManagerImpl(hubClient);
     }
 
@@ -206,12 +214,16 @@ public class FlowRunnerImpl implements FlowRunner{
         //add jobId to a queue
         jobQueue.add(jobId);
         if(!isRunning.get()){
-            initializeFlow(jobId);
+            // Construct a stepRunnerFactory for the execution of this flow. It will be passed to additional instances
+            // of FlowRunnerTask that need to be created.
+            StepRunnerFactory stepRunnerFactory = hubClient != null ?
+                new StepRunnerFactory(hubClient) : new StepRunnerFactory(hubConfig);
+            initializeFlow(stepRunnerFactory, jobId);
         }
         return response;
     }
 
-    private void initializeFlow(String jobId) {
+    private void initializeFlow(StepRunnerFactory stepRunnerFactory, String jobId) {
         //Reset the states to initial values before starting a flow run
         isRunning.set(true);
         isJobSuccess.set(true);
@@ -228,6 +240,7 @@ public class FlowRunnerImpl implements FlowRunner{
             threadPool = new CustomPoolExecutor(2, maxPoolSize, 0L, TimeUnit.MILLISECONDS
                 , new LinkedBlockingQueue<Runnable>());
         }
+
         threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId));
     }
 
@@ -257,7 +270,8 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     private class FlowRunnerTask implements Runnable {
-        final private StepRunnerFactory stepRunnerFactory;
+
+        private StepRunnerFactory stepRunnerFactory;
         private String jobId;
         private Flow flow;
         private Queue<String> stepQueue;
@@ -270,13 +284,6 @@ public class FlowRunnerImpl implements FlowRunner{
             this.stepRunnerFactory = stepRunnerFactory;
             this.jobId = jobId;
             this.flow = flow;
-        }
-
-        FlowRunnerTask(StepRunnerFactory stepRunnerFactory, Flow flow, String jobId, Queue<String> stepQueue) {
-            this.stepRunnerFactory = stepRunnerFactory;
-            this.jobId = jobId;
-            this.flow = flow;
-            this.stepQueue = stepQueue;
         }
 
         @Override
@@ -311,7 +318,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Initializing stepBatchSize to default flow batch size
 
                 try {
-                    stepRunner = this.stepRunnerFactory.getStepRunner(runningFlow, stepNum)
+                    stepRunner = stepRunnerFactory.getStepRunner(runningFlow, stepNum)
                         .withJobId(jobId)
                         .withOptions(optsMap)
                         .onItemComplete((jobID, itemID) -> {
@@ -460,7 +467,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 flowMap.remove(jobId);
                 flowResp.remove(runningJobId);
                 if (!jobQueue.isEmpty()) {
-                    initializeFlow((String) jobQueue.peek());
+                    initializeFlow(stepRunnerFactory, jobQueue.peek());
                 } else {
                     isRunning.set(false);
                     threadPool.shutdownNow();
@@ -508,11 +515,12 @@ public class FlowRunnerImpl implements FlowRunner{
             }
             if (t != null) {
                 logger.error(t.getMessage());
+                FlowRunnerTask flowRunnerTask = (FlowRunnerTask)r;
                 //Run the next queued flow if stop-on-error is set or if the step queue is empty
-                if(((FlowRunnerTask)r).getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
+                if (flowRunnerTask.getStepQueue().isEmpty() || runningFlow.isStopOnError()) {
                     jobQueue.remove();
                     if (!jobQueue.isEmpty()) {
-                        initializeFlow((String) jobQueue.peek());
+                        initializeFlow(flowRunnerTask.stepRunnerFactory, jobQueue.peek());
                     } else {
                         isRunning.set(false);
                         threadPool.shutdownNow();
@@ -521,7 +529,7 @@ public class FlowRunnerImpl implements FlowRunner{
                 //Run the next step
                 else {
                     if (threadPool != null && !threadPool.isTerminating()) {
-                        threadPool.execute(new FlowRunnerTask(stepRunnerFactory, runningFlow, runningJobId,((FlowRunnerTask)r).getStepQueue()));
+                        threadPool.execute(new FlowRunnerTask(flowRunnerTask.stepRunnerFactory, runningFlow, runningJobId));
                     }
                 }
             }

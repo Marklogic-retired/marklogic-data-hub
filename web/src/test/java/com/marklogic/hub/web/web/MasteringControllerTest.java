@@ -2,16 +2,13 @@ package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.AbstractWebTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {WebApplication.class})
-class MasteringControllerTest extends AbstractHubCoreTest {
+class MasteringControllerTest extends AbstractWebTest {
 
     @Autowired
     MasteringController controller;

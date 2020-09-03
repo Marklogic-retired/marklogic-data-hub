@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -17,17 +15,11 @@ import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 
 public class JobDocManagerTest extends AbstractHubCoreTest {
 
-    private JobDocManager jobDocManager;
-
-    @BeforeEach
-    public void setup() {
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
-        addJobDocs();
-        jobDocManager = new JobDocManager(adminHubConfig.newJobDbClient());
-    }
-
     @Test
     public void testGetLatestJobDocumentForFlows() {
+        addJobDocs();
+        JobDocManager jobDocManager = new JobDocManager(adminHubConfig.newJobDbClient());
+
         ArrayNode latestJobsForFlows = (ArrayNode) jobDocManager.getLatestJobDocumentForFlows(Collections.emptyList());
         Assertions.assertEquals(3, latestJobsForFlows.size(), "There should be a latest job for the 3 flows when an empty collection is passed.");
         JsonNode latestJobsForFlowsJson = jobDocManager.getLatestJobDocumentForFlows(Arrays.asList("hub1", "hub2"));
@@ -41,7 +33,6 @@ public class JobDocManagerTest extends AbstractHubCoreTest {
     }
 
     private void addJobDocs() {
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("Jobs");
         meta.getCollections().add("Job");

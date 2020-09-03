@@ -22,7 +22,6 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
 import com.marklogic.hub.MasteringManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,9 +32,6 @@ import java.util.List;
 public class MasteringManagerImpl implements MasteringManager {
     @Autowired
     protected HubConfig hubConfig;
-
-    @Autowired
-    protected HubProject hubProject;
 
     @Override
     public JsonNode unmerge(String mergeURI, Boolean retainAuditTrail, Boolean blockFutureMerges) {
