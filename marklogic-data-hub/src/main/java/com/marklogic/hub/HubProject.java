@@ -247,7 +247,7 @@ public interface HubProject {
      *
      * @throws IOException if problem happens with the on-disk project.
      */
-    void upgradeProject() throws IOException;
+    void upgradeProject(FlowManager flowManager) throws IOException;
 
     /**
      * Exports the project content to disk

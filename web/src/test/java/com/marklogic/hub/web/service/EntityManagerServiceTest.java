@@ -26,6 +26,7 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.FlowModel;
 import com.marklogic.hub.web.model.entity_services.EntityModel;
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +42,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class EntityManagerServiceTest extends AbstractServiceTest {
+public class EntityManagerServiceTest extends AbstractWebTest {
 
     private static String ENTITY = "test-entity";
     private static String ENTITY2 = "test-entity2";
@@ -233,9 +234,5 @@ public class EntityManagerServiceTest extends AbstractServiceTest {
         assertEquals(RENAMED_ENTITY, inputFlows.get(0).entityName);
         assertTrue(flowNameList.contains(FLOW_NAME));
         assertEquals(FlowType.INPUT, inputFlows.get(0).flowType);
-
-        //cleanup.
-        entityMgrService.deleteEntity(RENAMED_ENTITY);
-        entityMgrService.deleteEntity(ENTITY);
     }
 }

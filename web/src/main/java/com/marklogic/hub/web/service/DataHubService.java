@@ -124,7 +124,6 @@ public class DataHubService {
         PerformanceLogger.logTimeInsideMethod(startTime, "DataHubService.reinstallUserModules");
     }
 
-    @Async
     public void deleteDocument(String uri, DatabaseKind databaseKind) {
         dataHub.deleteDocument(uri, databaseKind);
     }

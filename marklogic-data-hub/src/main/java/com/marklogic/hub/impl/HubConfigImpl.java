@@ -45,8 +45,6 @@ import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -63,11 +61,10 @@ import java.util.function.Consumer;
 @JsonAutoDetect(
     fieldVisibility = JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC,
     getterVisibility = JsonAutoDetect.Visibility.ANY,
-    setterVisibility = JsonAutoDetect.Visibility.ANY)
-@Component
+    setterVisibility = JsonAutoDetect.Visibility.ANY
+)
 public class HubConfigImpl implements HubConfig
 {
-    @Autowired
     private HubProject hubProject;
 
     protected String host;
@@ -217,6 +214,9 @@ public class HubConfigImpl implements HubConfig
      * *Config objects - e.g. AppConfig - will be instantiated. It is thus expected, though not required, that the
      * given Properties object defines mlUsername and mlPassword.
      *
+     * Also note that because a HubProject is not being provided via this method, any initialization logic pertaining
+     * to the existence of a project will not be applied.
+     *
      * @param props
      * @return
      */
@@ -245,8 +245,19 @@ public class HubConfigImpl implements HubConfig
     }
 
     /**
-     * Applies properties in the given property source in this instance. Will create new AppConfig, ManageConfig, and
+     * Applies properties in the given properties to this instance. Will create new AppConfig, ManageConfig, and
      * AdminConfig objects based on these properties.
+     *
+     * @param properties
+     */
+    public void applyProperties(Properties properties) {
+        applyProperties(new SimplePropertySource(properties));
+    }
+
+    /**
+     * Applies properties in the given property source to this instance. Will create new AppConfig, ManageConfig, and
+     * AdminConfig objects based on these properties.
+     *
      * @param propertySource
      */
     public void applyProperties(com.marklogic.mgmt.util.PropertySource propertySource) {
