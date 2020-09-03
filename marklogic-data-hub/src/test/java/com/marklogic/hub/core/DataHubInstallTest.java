@@ -66,7 +66,6 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
         File srcDir = new File(path);
         File projectDir = getHubProject().getProjectDir().toFile();
 
-        createProjectDir(path);
         FileUtils.cleanDirectory(projectDir);
         FileUtils.copyDirectory(srcDir, projectDir);
         HubConfig hubConfig = getDataHubAdminConfig();

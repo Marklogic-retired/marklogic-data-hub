@@ -28,4 +28,10 @@ If you ever want to generate the Java interfaces for all data services, you can 
 
     ../gradlew generateDataServiceInterfaces
     
+## Running tests in parallel
+
+Tests under src/test/java will automatically run in parallel, using the [support in JUnit5](http://antkorwin.com/junit5/junit5_parallel_execution.html) for this. 
+Parallel test execution can be configured via src/test/resources/junit-platform.properties. 
+
+For more information on how parallelization is enabled, please see the HubConfigInterceptor and HubConfigObjectFactory classes. 
 

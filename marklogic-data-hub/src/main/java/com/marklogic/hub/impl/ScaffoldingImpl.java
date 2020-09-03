@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.extensions.ResourceServices;
 import com.marklogic.client.io.StringHandle;
@@ -52,24 +53,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class ScaffoldingImpl implements Scaffolding {
+public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
 
     @Autowired
     HubConfig hubConfig;
 
     Versions versions;
 
-    @Autowired
-    private ScaffoldingValidator validator;
-
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     public ScaffoldingImpl() {}
 
     public ScaffoldingImpl(HubConfig hubConfig) {
         this();
         this.hubConfig = hubConfig;
-        this.validator = new ScaffoldingValidator(hubConfig.getHubProject());
     }
 
     public static String getAbsolutePath(String first, String... more) {
@@ -382,7 +377,7 @@ public class ScaffoldingImpl implements Scaffolding {
                                               FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(extensionName);
 
-        if(!validator.isUniqueRestServiceExtension(extensionName)) {
+        if(!new ScaffoldingValidator(hubConfig.getHubProject()).isUniqueRestServiceExtension(extensionName)) {
             throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
         }
         String scaffoldRestServicesPath = "scaffolding/rest/services/";
@@ -395,7 +390,7 @@ public class ScaffoldingImpl implements Scaffolding {
     @Override public void createRestTransform(String entityName, String transformName,
                                               FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
         logger.info(transformName);
-        if(!validator.isUniqueRestTransform(transformName)) {
+        if(!new ScaffoldingValidator(hubConfig.getHubProject()).isUniqueRestTransform(transformName)) {
             throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
         }
         String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
