@@ -236,7 +236,7 @@ class DataHubPlugin implements Plugin<Project> {
         ctx.refresh()
 
         hubConfig = ctx.getBean(HubConfigImpl.class)
-        hubProject = ctx.getBean(HubProjectImpl.class)
+        hubProject = hubConfig.getHubProject()
         dataHub = ctx.getBean(DataHubImpl.class)
         scaffolding = ctx.getBean(ScaffoldingImpl.class)
         loadHubModulesCommand = ctx.getBean(LoadHubModulesCommand.class)
