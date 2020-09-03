@@ -29,6 +29,7 @@ import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.web.AbstractWebTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
+public class LegacyFlowManagerServiceTest extends AbstractWebTest {
 
     private static String ENTITY = "test-entity";
 
@@ -135,7 +136,9 @@ public class LegacyFlowManagerServiceTest extends AbstractServiceTest {
     @Test
     public void getFlowMlcpOptionsFromFile() throws Exception {
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        JSONAssert.assertEquals("{ \"input_file_path\": " + getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
+        String expected = "{\"input_file_path\":\"" + getHubProject().getProjectDirString() + "\"}";
+        String actual = new ObjectMapper().writeValueAsString(options);
+        JSONAssert.assertEquals("Options differ; expected: " + expected + "; actual: " + actual, expected, actual, true);
     }
 
     @Test
