@@ -10,24 +10,21 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.flow.FlowInputs;
-import com.marklogic.hub.flow.FlowRunner;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MappingTest extends AbstractHubCoreTest {
-
-    @Autowired
-    FlowRunner flowRunner;
 
     @BeforeEach
     void beforeEach() {
@@ -242,6 +239,7 @@ public class MappingTest extends AbstractHubCoreTest {
     public void testCustomFunction() throws Exception{
         createMappingFromConfig("testCustomFunction1.json");
         installUserArtifacts();
+        new GenerateFunctionMetadataCommand(getHubConfig()).execute(newCommandContext());
 
         runAsDataHubOperator();
         RunStepResponse mappingJob = runFlow("OrderJSON", "1","2").getStepResponses().get("2");
@@ -300,7 +298,16 @@ public class MappingTest extends AbstractHubCoreTest {
         return testMap;
     }
 
+    /**
+     * Constructs a FlowRunnerImpl in the same fashion as it would be in a Spring container, where it has access to a
+     * HubProject.
+     *
+     * @param flowName
+     * @param stepIds
+     * @return
+     */
     protected RunFlowResponse runFlow(String flowName, String... stepIds) {
+        FlowRunnerImpl flowRunner = new FlowRunnerImpl(getHubConfig(), new FlowManagerImpl(getHubConfig()));
         RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs(flowName, stepIds));
         flowRunner.awaitCompletion();
         return flowResponse;

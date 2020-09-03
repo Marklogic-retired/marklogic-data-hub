@@ -38,6 +38,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -100,6 +102,8 @@ class FinalCounts {
     }
 }
 
+// TestFactory doesn't play nice with support for parallel tests yet, so forcing same thread execution
+@Execution(ExecutionMode.SAME_THREAD)
 public class EndToEndFlowTests extends AbstractHubCoreTest {
 
     private static final String ENTITY = "e2eentity";

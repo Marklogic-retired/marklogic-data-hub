@@ -1,19 +1,14 @@
 package com.marklogic.hub_unit_test;
 
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.junit5.MarkLogicUnitTestArgumentsProvider;
 import com.marklogic.test.unit.TestManager;
 import com.marklogic.test.unit.TestModule;
 import com.marklogic.test.unit.TestResult;
 import com.marklogic.test.unit.TestSuiteResult;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.springframework.test.context.ContextConfiguration;
 
 /**
  * Runs all marklogic-unit-test tests located under src/test/ml-modules/root/test.
@@ -23,18 +18,32 @@ import org.springframework.test.context.ContextConfiguration;
  * <p>
  * After running this, you can also access the marklogic-unit-test runner at host:8011/test/default.xqy.
  */
-@ContextConfiguration(classes = {TestConfig.class})
 @TestInstance(Lifecycle.PER_CLASS)
 public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
 
     private static boolean initialized = false;
 
-    @BeforeAll
-    public void prepareDatabasesBeforeAnyTestsRun() {
-        applyDatabasePropertiesForTests(adminHubConfig);
+    /**
+     * We don't need to claim a HubConfig, as one was already claimed by DataHubArgumentsProvider. And all the test
+     * modules will be run on the same thread.
+     */
+    @Override
+    @BeforeEach
+    public void beforeEachHubTestBaseTest(TestInfo testInfo) {
+        if (!initialized) {
+            // Need to do these things just once, before the first test module is run
+            resetHubProject();
+            applyDatabasePropertiesForTests(getHubConfig());
+            resetDatabases();
+            runAsDataHubDeveloper();
+            initialized = true;
+        }
+    }
 
-        resetDatabases();
-        runAsDataHubDeveloper();
+    @BeforeEach
+    @Override
+    protected void beforeEachHubCoreTest() {
+        // Don't need to do anything here, as we're doing a one-time initialization in beforeEachHubTestBaseTest
     }
 
     /**
@@ -42,20 +51,16 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
      * behind that could break the next test in the suite.
      */
     @AfterAll
-    public void resetDatabasesAfterAllTestsHaveRun() {
+    public void resetDatabasesAfterAllTestsHaveRun(TestInfo testInfo) {
         resetDatabases();
+        super.afterEachHubTestBaseTest(testInfo);
     }
 
-    /**
-     * This is overridden so that the test class is only initialized once, which is sufficient. Otherwise, it's invoked
-     * for every unit test module, which is unnecessary.
-     */
+    @AfterEach
     @Override
-    protected void init() {
-        if (!initialized) {
-            super.init();
-            initialized = true;
-        }
+    protected void afterEachHubTestBaseTest(TestInfo testInfo) {
+        // We don't want to release, as all tests run on the same thread
+        // The AfterAll method will release the HubConfig
     }
 
     /**
@@ -64,11 +69,12 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
      * @param testModule
      */
     @ParameterizedTest
-    @ArgumentsSource(MarkLogicUnitTestArgumentsProvider.class)
+    @ArgumentsSource(DataHubArgumentsProvider.class)
     public void test(TestModule testModule) {
         // Ensure we run as data-hub-developer, which has the hub-central-developer role, which flow-developer does not
         runAsDataHubDeveloper();
-        TestSuiteResult result = new TestManager(adminHubConfig.newFinalClient()).run(testModule);
+        logger.info("Running test: " + testModule.getTest() + "; thread: " + Thread.currentThread().getName() + "; host: " + getHubConfig().getHost());
+        TestSuiteResult result = new TestManager(getHubConfig().newFinalClient()).run(testModule);
         for (TestResult testResult : result.getTestResults()) {
             String failureXml = testResult.getFailureXml();
             if (failureXml != null) {
