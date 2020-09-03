@@ -16,26 +16,38 @@
  */
 package com.marklogic.hub.web;
 
+import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.HubProjectImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
-
 
 @SpringBootApplication
 @EnableAsync
 @ComponentScan(basePackages = "com.marklogic.hub")
 public class WebApplication extends SpringBootServletInitializer {
 
+    /**
+     * This is declared as a Bean here instead of via e.g. a Component annotation on the class. This allows for
+     * different ways of managing HubConfigImpl in Hub Central and in JUnit tests.
+     *
+     * @return
+     */
+    @Bean
+    HubConfigImpl hubConfigImpl() {
+        return new HubConfigImpl(new HubProjectImpl());
+    }
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(WebApplication.class);
     }
 
-    public static void main(String[] args) throws Exception {
-            SpringApplication.run(WebApplication.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(WebApplication.class, args);
     }
 }
