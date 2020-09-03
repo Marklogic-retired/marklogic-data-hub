@@ -18,6 +18,8 @@ package com.marklogic.hub.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.step.StepDefinition;
@@ -63,11 +65,7 @@ import java.util.zip.ZipOutputStream;
 import static com.marklogic.hub.HubConfig.HUB_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 import static com.marklogic.hub.HubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
-/**
- * Class for creating a hub Project
- */
-@Component
-public class HubProjectImpl implements HubProject {
+public class HubProjectImpl extends LoggingObject implements HubProject {
 
     public static final String ENTITY_CONFIG_DIR = PATH_PREFIX + "entity-config";
     public static final String MODULES_DIR = PATH_PREFIX + "ml-modules";
@@ -80,11 +78,6 @@ public class HubProjectImpl implements HubProject {
     private String userModulesDeployTimestampFile = USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES;
 
     private String[] artifactTypes = new String[]{"entities", "step-definitions", "steps"};
-
-    @Autowired @Lazy
-    private FlowManagerImpl flowManager;
-
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public HubProjectImpl(){
     }
@@ -425,7 +418,7 @@ public class HubProjectImpl implements HubProject {
         InputStream inputStream = null;
         try {
             if (overwrite || !dstFile.toFile().exists()) {
-                logger.info("Getting file with Replace: " + srcFile);
+                logger.debug("Getting file with replace: " + srcFile);
                 inputStream = HubProject.class.getClassLoader().getResourceAsStream(srcFile);
 
                 String fileContents = IOUtils.toString(inputStream);
@@ -449,7 +442,7 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override
-    public void upgradeProject() throws IOException {
+    public void upgradeProject(FlowManager flowManager) throws IOException {
         Path oldEntitiesDir = this.getLegacyHubEntitiesDir();
         Path oldMappingsDir = this.getLegacyHubMappingsDir();
         Path newEntitiesDirPath = this.getHubEntitiesDir();
@@ -496,7 +489,7 @@ public class HubProjectImpl implements HubProject {
 
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
         addPathRangeIndexesToFinalDatabase();
-        updateStepDefinitionTypeForInlineMappingSteps();
+        updateStepDefinitionTypeForInlineMappingSteps(flowManager);
     }
 
     private void addPathRangeIndexesToFinalDatabase() {
@@ -635,7 +628,7 @@ public class HubProjectImpl implements HubProject {
         IOUtils.closeQuietly(fin);
     }
 
-    protected void updateStepDefinitionTypeForInlineMappingSteps() {
+    protected void updateStepDefinitionTypeForInlineMappingSteps(FlowManager flowManager) {
         try {
             flowManager.getLocalFlows().forEach(flow -> {
                 flow.getSteps().values().forEach(step -> {
@@ -648,7 +641,6 @@ public class HubProjectImpl implements HubProject {
                 });
                 flowManager.saveLocalFlow(flow);
             });
-
         } catch (Exception ex) {
             logger.warn("Error occurred while attempting to upgrade mapping steps to use 'entity-services-mapping' " +
                 "stepDefinitionType instead of 'default-mapping'; error: " + ex.getMessage());
