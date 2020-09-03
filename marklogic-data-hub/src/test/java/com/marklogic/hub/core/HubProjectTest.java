@@ -2,10 +2,8 @@ package com.marklogic.hub.core;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -19,19 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class HubProjectTest extends AbstractHubCoreTest {
 
-    @BeforeEach
-    void beforeEach() {
-        deleteProjectDir();
-    }
-
-    @AfterEach
-    public void cleanup() {
-        resetProperties();
-    }
-
     @Test
     public void testInit() throws IOException {
-        HubConfig config = adminHubConfig;
+        HubConfigImpl config = new HubConfigImpl(getHubProject());
         config.setHttpName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setDbName(DatabaseKind.STAGING, "my-crazy-test-staging");
         config.setForestsPerHost(DatabaseKind.STAGING, 100);
@@ -55,6 +43,7 @@ public class HubProjectTest extends AbstractHubCoreTest {
         config.setFlowOperatorRoleName("myrole");
         config.setFlowOperatorUserName("myuser");
 
+        deleteTestProjectDirectory();
         config.initHubProject();
 
         String projectPath = getHubProject().getProjectDirString();
@@ -174,11 +163,12 @@ public class HubProjectTest extends AbstractHubCoreTest {
     public void testUserModulesDeployTimestampFilePath() {
         String envName = "dev";
 
-        adminHubConfig.withPropertiesFromEnvironment(envName);
-        adminHubConfig.refreshProject();
+        HubConfigImpl hubConfig = new HubConfigImpl(getHubProject());
+        hubConfig.withPropertiesFromEnvironment(envName);
+        hubConfig.refreshProject();
 
-        String expectedPath = Paths.get(getHubProject().getProjectDirString(), ".tmp", envName + "-" + adminHubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
+        String expectedPath = Paths.get(getHubProject().getProjectDirString(), ".tmp", envName + "-" + hubConfig.USER_MODULES_DEPLOY_TIMESTAMPS_PROPERTIES).toString();
 
-        assertEquals(expectedPath, adminHubConfig.getHubProject().getUserModulesDeployTimestampFile());
+        assertEquals(expectedPath, hubConfig.getHubProject().getUserModulesDeployTimestampFile());
     }
 }

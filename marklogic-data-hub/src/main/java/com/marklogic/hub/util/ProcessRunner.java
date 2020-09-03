@@ -27,15 +27,10 @@ public class ProcessRunner extends Thread {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private HubConfig hubConfig;
     private ArrayList<String> processOutput = new ArrayList<>();
 
     private List<String> args;
     private Consumer<String> consumer;
-
-    public HubConfig getHubConfig() {
-        return hubConfig;
-    }
 
     public String getProcessOutput() {
         return String.join("\n", processOutput);
@@ -51,11 +46,6 @@ public class ProcessRunner extends Thread {
 
     public ProcessRunner withArgs(List<String> args) {
         this.args = args;
-        return this;
-    }
-
-    public ProcessRunner withHubconfig(HubConfig hubConfig) {
-        this.hubConfig = hubConfig;
         return this;
     }
 
