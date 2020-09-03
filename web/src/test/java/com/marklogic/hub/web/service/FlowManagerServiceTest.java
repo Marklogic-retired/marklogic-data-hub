@@ -21,16 +21,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.DocumentPage;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.hub.FlowManager;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.step.impl.Step;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.MappingModel;
 import com.marklogic.hub.web.model.StepModel;
 import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FlowManagerServiceTest extends AbstractServiceTest {
+class FlowManagerServiceTest extends AbstractWebTest {
 
     private static String FLOW = "testFlow";
     private static String FLOWWITHCOMMONSTEPS = "testFlowWithStepsInOtherFlow";
@@ -80,19 +79,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
 
     @BeforeEach
     void setUp() {
-        Path flowDir = getHubProject().getFlowsDir();
-
-        FileUtil.copy(getResourceStream("flow-manager/flows/testFlow.flow.json"), flowDir.resolve("testFlow.flow.json").toFile());
-        FileUtil.copy(getResourceStream("flow-manager/flows/testFlowWithStepsInOtherFlow.flow.json"), flowDir.resolve("testFlowWithStepsInOtherFlow.flow.json").toFile());
-
-        installUserModules(getDataHubAdminConfig(), true);
-    }
-
-    @AfterEach
-    void teardownProject() {
-        clearUserModules();
-        deleteProjectDir();
-        clearDatabases(HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_JOB_NAME);
+        installProjectInFolder("flow-manager");
     }
 
     @Test
@@ -181,7 +168,7 @@ class FlowManagerServiceTest extends AbstractServiceTest {
         Step step = stepMap.get("5");
         assertTrue(step.isMappingStep());
         step.setName(mappingName);
-        ((ObjectNode)step.getOptions().get("mapping")).put("name", mappingName);
+        ((ObjectNode) step.getOptions().get("mapping")).put("name", mappingName);
         flowManager.saveFlow(flow);
 
         // Install artifacts so we can verify that the mappings are deleted

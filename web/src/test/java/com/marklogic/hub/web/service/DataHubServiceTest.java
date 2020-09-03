@@ -1,5 +1,6 @@
 package com.marklogic.hub.web.service;
 
+import com.marklogic.hub.web.AbstractWebTest;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 
-public class DataHubServiceTest extends AbstractServiceTest {
+public class DataHubServiceTest extends AbstractWebTest {
 
     @Autowired
     DataHubService dataHubService;
