@@ -36,6 +36,8 @@ import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -43,7 +45,11 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
+/**
+ * FlowRunnerImpl is not a thread-safe class due to all of the state that it stores. So these tests must be run in
+ * the same thread.
+ */
+@Execution(ExecutionMode.SAME_THREAD)
 public class FlowRunnerTest extends AbstractHubCoreTest {
 
     @Autowired
@@ -191,6 +197,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         long count = Math.toIntExact((long) res.getNumber());
         Assertions.assertEquals(count, 25);
         if(! isCertAuth() ) {
+            runAsDataHubDeveloper();
            EvalResultIterator itr = client.newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").eval();
            if(itr != null && itr.hasNext()) {
                Assertions.assertEquals(25, itr.next().getNumber().intValue());

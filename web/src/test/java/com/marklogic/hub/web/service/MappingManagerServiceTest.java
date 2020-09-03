@@ -20,6 +20,7 @@ package com.marklogic.hub.web.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.MappingModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ import java.io.IOException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class MappingManagerServiceTest extends AbstractServiceTest {
+public class MappingManagerServiceTest extends AbstractWebTest {
 
     private static String ENTITY = "test-entity";
 
