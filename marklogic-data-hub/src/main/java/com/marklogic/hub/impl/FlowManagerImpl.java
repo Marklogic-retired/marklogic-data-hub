@@ -338,7 +338,7 @@ public class FlowManagerImpl extends LoggingObject implements FlowManager {
 
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(flowFile, flow);
-            return Pair.of(flowFile, "Added step '" + stepName + "' to flow '" + flowName + "'.");
+            return Pair.of(flowFile, "Added step '" + stepName + "' to flow '" + flowName + "' in staging and final databases.");
         } catch (IOException e) {
             throw new RuntimeException("Unable to write flow to file: " + flowFile.getAbsolutePath() + "; cause: " + e.getMessage(), e);
         }

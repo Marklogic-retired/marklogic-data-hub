@@ -143,14 +143,14 @@ class DataHubPlugin implements Plugin<Project> {
                 "a type (either 'ingestion' or 'custom'; defaults to 'custom') via -PstepDefType=ingestion|custom, " +
                 "and a format (either 'sjs' or 'xqy'; defaults to 'sjs') via -Pformat=sjs|xqy")
         project.task("hubCreateStep", group: developGroup, type: CreateStepTask,
-            description: "Create a new step file in staging,final databases and write it to your project; specify a step name via -PstepName=YourStepName, and specify " +
-                "a step type via -PstepType=(ingestion|mapping|custom)")
+            description: "Create a new step file and write it to the staging and final databases and to your project; specify a step name via -PstepName=YourStepName, " +
+                "a step type via -PstepType=(ingestion|mapping|custom|matching|merging)")
         project.task("hubAddStepToFlow", group: developGroup, type: AddStepToFlowTask,
-            description: "Add a step to a flow in staging,final databases and write it to your project; specify a flow name via -PflowName=YourFlowName" +
-                "step name via -PstepName=YourStepName, and specify a step type via -PstepType=(ingestion|mapping|custom)")
+            description: "Add a step to a flow in staging and final databases and write it to your project; specify a flow name via -PflowName=YourFlowName, " +
+                "step name via -PstepName=YourStepName and a step type via -PstepType=(ingestion|mapping|custom|matching|merging|mastering)")
         project.task("hubCreateEntity", group: developGroup, type: CreateEntityTask)
         project.task("hubCreateFlow", group: developGroup, type: CreateFlowTask,
-            description: "Create a new flow file in your project; specify a flow name with -PflowName=YourFlowName, and " +
+            description: "Create a new flow file and write it to the staging and final database and to your project; specify a flow name with -PflowName=YourFlowName and " +
                 "optionally generate a default set of inline steps by including -PwithInlineSteps=true")
         project.task("hubGeneratePii", group: developGroup, type: GeneratePiiTask,
             description: "Generates Security Configuration for all Entity Properties marked 'pii'")
