@@ -30,10 +30,9 @@ group = 'com.marklogic'
 sourceCompatibility = "9"
 targetCompatibility = "9"
 
-ext.junit4Version        = '4.12'
-ext.junitVintageVersion  = '4.12.0-RC3'
-ext.junitPlatformVersion = '1.4.0'
-ext.junitJupiterVersion  = '5.4.0'
+// Something changed with 5.5.0 such that "test --tests" doesn't work with Gradle 6.2 or 6.5
+ext.junitPlatformVersion = '1.4.2'
+ext.junitJupiterVersion  = '5.4.2'
 
 dependencies {
     // Forcing use of 1.3.61 - which is what OkHttp 4.4.0 wants - so that 1.2.x versions don't come onto the classpath
@@ -82,6 +81,9 @@ dependencies {
     testRuntime "org.junit.platform:junit-platform-launcher:${junitPlatformVersion}"
 
     testCompile group: 'org.springframework', name: 'spring-test', version: '5.1.16.RELEASE'
+
+    // For managing a pool of HubConfigImpl objects
+    testFixturesApi "org.apache.commons:commons-pool2:2.8.1"
 
     testFixturesApi 'xmlunit:xmlunit:1.3'
     testCompile 'org.skyscreamer:jsonassert:1.5.0'
@@ -390,10 +392,12 @@ propFile.withInputStream { props.load(it) }
 
 task bootstrap(type: JavaExec) {
     classpath = sourceSets.test.runtimeClasspath
-    main = 'com.marklogic.bootstrap.Installer'
+    main = 'com.marklogic.bootstrap.TestAppInstaller'
+    systemProperty "mlHost", mlHost
 }
 
 test {
+    systemProperty "mlHost", mlHost
     useJUnitPlatform()
     minHeapSize = "128m"
     maxHeapSize = "256m"
@@ -402,6 +406,7 @@ test {
 }
 
 task testAcceptance(type: Test) {
+    systemProperty "mlHost", mlHost
     useJUnitPlatform  {
         include 'com/marklogic/hub_unit_test/RunMarkLogicUnitTestsTest*'
         include 'com/marklogic/hub/**'
@@ -412,6 +417,7 @@ task testAcceptance(type: Test) {
 }
 
 task testIntegration(type: Test) {
+    systemProperty "mlHost", mlHost
     useJUnitPlatform  {
         include 'com/marklogic/hub_integration/**'
     }
