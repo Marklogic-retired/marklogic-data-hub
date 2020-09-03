@@ -62,7 +62,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         // context of this test. So instead, some of the methods called by that method are called directly here.
         dataHub.prepareProjectBeforeUpgrading(hubProject, "5.0.3");
         hubProject.init(new HashMap<>());
-        hubProject.upgradeProject();
+        hubProject.upgradeProject(flowManager);
 
         File mappingDir = new File(projectDir, "mappings");
         File entitiesDir = new File(projectDir, "entities");
@@ -164,7 +164,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     public void testUpgradeTo510MappingStep() throws IOException{
         FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
-        getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
+        getHubProject().updateStepDefinitionTypeForInlineMappingSteps(flowManager);
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
     }

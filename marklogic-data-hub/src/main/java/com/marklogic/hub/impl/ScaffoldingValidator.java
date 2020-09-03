@@ -27,19 +27,13 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.List;
 
-@Component
 public class ScaffoldingValidator extends SimpleFileVisitor<Path> {
 
    private static String UNIQUE_KEY = "unique";
 
-   // can be autowired instead
-   @Autowired
    private HubProject project;
 
-   public ScaffoldingValidator() {}
-
    public ScaffoldingValidator(HubProject hubProject) {
-       this();
        this.project = hubProject;
    }
 

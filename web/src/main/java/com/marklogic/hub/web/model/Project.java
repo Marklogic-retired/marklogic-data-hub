@@ -16,6 +16,7 @@
  */
 package com.marklogic.hub.web.model;
 
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class Project {
     public String path;
 
     @Autowired
-    private HubProject hubProject;
+    HubConfig hubConfig;
 
     public void setId(int id) {
         this.id = id;
@@ -43,8 +44,8 @@ public class Project {
     }
 
     public boolean isInitialized() {
-        hubProject.createProject(this.path);
-        return hubProject.isInitialized();
+        hubConfig.getHubProject().createProject(this.path);
+        return hubConfig.getHubProject().isInitialized();
     }
 
     public List<String> getEnvironments() {

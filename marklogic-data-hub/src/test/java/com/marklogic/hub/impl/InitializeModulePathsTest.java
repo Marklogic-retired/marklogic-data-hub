@@ -1,7 +1,6 @@
 package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.AppConfig;
-import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,19 +10,24 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InitializeModulePathsTest extends AbstractHubCoreTest {
+public class InitializeModulePathsTest {
 
     private final static String DEFAULT_MODULES_PATH = String.join(File.separator, "src", "main", "ml-modules");
 
     private static String OS = System.getProperty("os.name").toLowerCase();
-    // Uses a "fresh" AppConfig object so no other test class is impacted
+
     private AppConfig appConfig = new AppConfig();
+    private HubConfigImpl hubConfig;
 
     private String projectModulesPath;
 
     @BeforeEach
     void beforeEach() {
-        projectModulesPath = String.join(File.separator, getHubProject().getProjectDir().toFile().getName(), DEFAULT_MODULES_PATH);
+        HubProjectImpl project = new HubProjectImpl();
+        project.createProject("build");
+        hubConfig = new HubConfigImpl(project);
+
+        projectModulesPath = String.join(File.separator, hubConfig.getHubProject().getProjectDir().toFile().getName(), DEFAULT_MODULES_PATH);
     }
 
     @Test
@@ -35,7 +39,7 @@ public class InitializeModulePathsTest extends AbstractHubCoreTest {
          */
         assertEquals("src/main/ml-modules", modulePaths.get(0));
 
-        adminHubConfig.initializeModulePaths(appConfig);
+        hubConfig.initializeModulePaths(appConfig);
 
         modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(), "Should still just have a single modules path");
@@ -53,14 +57,14 @@ public class InitializeModulePathsTest extends AbstractHubCoreTest {
         appConfig.getModulePaths().clear();
         appConfig.getModulePaths().add("src/main/ml-modules");
         appConfig.getModulePaths().add("src/test/ml-modules");
-        adminHubConfig.initializeModulePaths(appConfig);
+        hubConfig.initializeModulePaths(appConfig);
 
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(2, modulePaths.size(), "Should have both module paths");
         assertTrue(modulePaths.get(0).endsWith(projectModulesPath),
             "The first path should be the default path, relative to the project");
 
-        String testModulesPath = String.join(File.separator, getHubProject().getProjectDirString(), "src", "test", "ml-modules");
+        String testModulesPath = String.join(File.separator, hubConfig.getHubProject().getProjectDirString(), "src", "test", "ml-modules");
         assertTrue(modulePaths.get(1).endsWith(testModulesPath),
             "And the custom path should also be relative to the project");
     }
@@ -69,7 +73,7 @@ public class InitializeModulePathsTest extends AbstractHubCoreTest {
     public void absoluteCustomPaths() {
         appConfig.getModulePaths().clear();
         appConfig.getModulePaths().add("/some/absolute/path");
-        adminHubConfig.initializeModulePaths(appConfig);
+        hubConfig.initializeModulePaths(appConfig);
 
         List<String> modulePaths = appConfig.getModulePaths();
         assertEquals(1, modulePaths.size(),
