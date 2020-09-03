@@ -18,15 +18,15 @@
 package com.marklogic.hub.web.service;
 
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.JobQuery;
 import org.junit.jupiter.api.Test;
 
-public class JobServiceTest extends AbstractHubCoreTest {
+public class JobServiceTest extends AbstractWebTest {
 
     @Test
     public void getJobs() {
-        DatabaseClient jobClient = getDataHubAdminConfig().newJobDbClient();
+        DatabaseClient jobClient = getHubConfig().newJobDbClient();
         JobService jobService = new JobService(jobClient);
         JobQuery jobQuery = new JobQuery();
         jobQuery.start = Long.valueOf(1);
