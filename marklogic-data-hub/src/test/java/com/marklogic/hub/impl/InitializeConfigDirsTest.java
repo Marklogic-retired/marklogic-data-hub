@@ -2,7 +2,7 @@ package com.marklogic.hub.impl;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
-import com.marklogic.hub.AbstractHubCoreTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -11,12 +11,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InitializeConfigDirsTest extends AbstractHubCoreTest {
+public class InitializeConfigDirsTest {
 
     private final static String DEFAULT_CONFIG_PATH = String.join(File.separator, "src", "main", "ml-config");
     private static String OS = System.getProperty("os.name").toLowerCase();
-    // Uses a "fresh" AppConfig object so no other test class is impacted
+
     private AppConfig appConfig = new AppConfig();
+    private HubConfigImpl hubConfig;
+
+    @BeforeEach
+    void beforeEach() {
+        HubProjectImpl project = new HubProjectImpl();
+        project.createProject("build");
+        hubConfig = new HubConfigImpl(project);
+    }
 
     @Test
     public void defaultConfigDirs() {
@@ -24,7 +32,7 @@ public class InitializeConfigDirsTest extends AbstractHubCoreTest {
         assertEquals(1, configDirs.size(), "ml-app-deployer defaults to one ConfigDir");
         assertTrue(configDirs.get(0).getBaseDir().getAbsolutePath().endsWith(DEFAULT_CONFIG_PATH));
 
-        adminHubConfig.initializeConfigDirs(appConfig);
+        hubConfig.initializeConfigDirs(appConfig);
         configDirs = appConfig.getConfigDirs();
         assertEquals(2, configDirs.size(),
             "When only one ConfigDir exists, and it ends with the default config path, DHF should modify it to use " +
@@ -37,7 +45,7 @@ public class InitializeConfigDirsTest extends AbstractHubCoreTest {
         appConfig.getConfigDirs().add(new ConfigDir(new File("src/test/ml-config")));
         appConfig.getConfigDirs().add(new ConfigDir(new File("custom/ml-config")));
 
-        adminHubConfig.initializeConfigDirs(appConfig);
+        hubConfig.initializeConfigDirs(appConfig);
 
         List<ConfigDir> configDirs = appConfig.getConfigDirs();
         assertEquals(2, configDirs.size());
@@ -55,7 +63,7 @@ public class InitializeConfigDirsTest extends AbstractHubCoreTest {
         appConfig.getConfigDirs().clear();
         appConfig.getConfigDirs().add(new ConfigDir(new File("/some/absolute/path")));
 
-        adminHubConfig.initializeConfigDirs(appConfig);
+        hubConfig.initializeConfigDirs(appConfig);
 
         List<ConfigDir> configDirs = appConfig.getConfigDirs();
         assertEquals(1, configDirs.size());
