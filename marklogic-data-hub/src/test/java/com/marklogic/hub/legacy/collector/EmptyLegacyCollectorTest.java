@@ -34,9 +34,6 @@ public class EmptyLegacyCollectorTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        resetProperties();
-        adminHubConfig.refreshProject();
-
         scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);

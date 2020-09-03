@@ -24,6 +24,7 @@ import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.scaffold.Scaffolding;
+import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.TraceQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-class TraceServiceTest extends AbstractServiceTest {
+class TraceServiceTest extends AbstractWebTest {
 
     private DatabaseClient traceClient;
     private static String ENTITY = "test-entity";
