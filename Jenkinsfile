@@ -102,7 +102,7 @@ pipeline{
 	DMC_USER     = credentials('MLBUILD_USER')
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
-	parameters{ 
+	parameters{
 	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,aebadira@marklogic.com,mwooldri@marklogic.com', description: 'Who should I say send the email to?')
 	}
 	stages{
@@ -159,7 +159,7 @@ pipeline{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author 
+                    	 email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -173,7 +173,7 @@ pipeline{
 			steps{
 			script{
 			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-3'
+				 copyRPM 'Release','10.0-4.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
@@ -209,7 +209,7 @@ pipeline{
                       def email;
                     if(env.CHANGE_AUTHOR){
                     	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author 
+                    	 email=getEmailFromGITUser author
                     }else{
                     email=Email
                     }
@@ -245,7 +245,7 @@ pipeline{
                         emailList+=email+',';
                     }
                       sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-                     
+
                  }
 			}
 			try{
@@ -297,7 +297,7 @@ pipeline{
                         emailList+=email+',';
                     }
                       sendMail emailList,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is waiting for the code-review to complete. Please click on proceed button if all the reviewers approved the code here. \n\n ${BUILD_URL}input ',false,'Waiting for code review $BRANCH_NAME '
-                     
+
                  }
     					sleep time: 30, unit: 'MINUTES'
     					throw new Exception("Waiting for all the status checks to pass");
@@ -326,7 +326,7 @@ pipeline{
                     println("Merge Successful")
                     script{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    def email=getEmailFromGITUser author 
+                    def email=getEmailFromGITUser author
 					sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is merged and it will run the end to end tests in the next stage',false,'  $BRANCH_NAME is Merged'
 					}
                    }
@@ -334,7 +334,7 @@ pipeline{
                       println("Retried 5times")
                       script{
                     def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    def email=getEmailFromGITUser author 
+                    def email=getEmailFromGITUser author
                       sendMail email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n $BRANCH_NAME is not merged into the target branch. Please check the merge status of the PR if there are any merge conflicts or if the code is not reviewed. \n\n Click on the link Restart PR below to retry merge if the merge state is clean i.e., Code is reviewed and there are no merge conflicts with the target branch. \n\n ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID',false,' $BRANCH_NAME Cannot be Merged'
                       }
                   }
@@ -352,7 +352,7 @@ pipeline{
 			steps{
 			 script{
                 props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','9.0-12'
+				copyRPM 'Release','9.0-11'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:test -Dorg.gradle.jvmargs=-Xmx1g || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;sleep 10s;./gradlew marklogic-data-hub:testBootstrap || true;sleep 10s;./gradlew ml-data-hub:testFullCycle || true;'
 				junit '**/TEST-*.xml'
@@ -373,7 +373,7 @@ pipeline{
                   success {
                     println("End-End Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests of the branch $BRANCH_NAME passed and the next stage is to run all the end-end tests on multiple platforms in parallel',false,'rh7-singlenode Tests for $BRANCH_NAME Passed'
-                    
+
                    }
                    unstable {
                       println("End-End Tests Failed")
@@ -435,7 +435,7 @@ pipeline{
 		}
 		stage('rh7_cluster_9.0-11'){
 			agent { label 'dhfLinuxAgent'}
-			steps{ 
+			steps{
 		    dhflinuxTests("9.0-11","Release")
 			}
 			post{
@@ -452,40 +452,40 @@ pipeline{
                   }
                   }
 		}
-        stage('rh7_cluster_9.0-12'){
+        stage('rh7_cluster_9.0-13'){
 			agent { label 'dhfLinuxAgent'}
 			steps{
-		    dhflinuxTests("9.0-12","Release")
+		    dhflinuxTests("9.0-13","Release")
 			}
 			post{
 				always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("rh7_cluster_9.0-12 Tests Completed")
+                    println("rh7_cluster_9.0-13 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_9.0-12 Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("rh7_cluster_9.0-12 Tests Failed")
+                      println("rh7_cluster_9.0-13 Tests Failed")
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-12 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_9.0-12 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
-         stage('rh7_cluster_10.0-3'){
+         stage('rh7_cluster_10.0-4'){
                agent { label 'dhfLinuxAgent'}
                steps{
-                    dhflinuxTests("10.0-3","Release");
+                    dhflinuxTests("10.0-4.4","Release");
                }
                post{
                  always{
                      sh 'rm -rf $WORKSPACE/xdmp'
                    }
                            success {
-                             println("rh7_cluster_10.0-3 Tests Completed")
+                             println("rh7_cluster_10.0-4 Tests Completed")
                              sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on rh7 cluster 10.0-3 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'rh7_cluster_10.0-3 Tests for $BRANCH_NAME Passed'
                             }
                             unstable {
-                               println("rh7_cluster_10.0-3 Tests Failed")
+                               println("rh7_cluster_10.0-4 Tests Failed")
                                sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-3 rh7 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'rh7_cluster_10.0-3 Tests for $BRANCH_NAME Failed'
                            }
                            }
@@ -514,7 +514,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -551,7 +551,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                       sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -589,7 +589,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -627,7 +627,7 @@ pipeline{
                  agent { label 'dhfLinuxAgent'}
                 steps{
                      sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-3'
+                     copyRPM 'Release','10.0-4.4'
                      script{
                         props = readProperties file:'data-hub/pipeline.properties';
                         def dockerhost=setupMLDockerCluster 3
@@ -727,7 +727,7 @@ pipeline{
         		stage('qs_rh7_10-release'){
                 			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                                 dhfqsLinuxTests("10.0-3","Release")
+                                 dhfqsLinuxTests("10.0-4.4","Release")
                 			}
                 			post{
 
@@ -792,30 +792,30 @@ pipeline{
                   }
                   }
 		}
-		stage('w12_SN_9.0-12'){
+		stage('w12_SN_9.0-11'){
 			agent { label 'dhfWinagent'}
 			steps{
-                dhfWinTests("9.0-12","Release")
+                dhfWinTests("9.0-11","Release")
 			}
 			post{
 				always{
                        bat 'RMDIR /S/Q xdmp'
 				  }
                   success {
-                    println("w12_SN_9.0-12 Tests Completed")
+                    println("w12_SN_9.0-11 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 SN 9.0-12 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_SN_9.0-12 Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("w12_SN_9.0-12 Tests Failed")
+                      println("w12_SN_9.0-11 Tests Failed")
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 9.0-12 w2k12 SN failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_SN_9.0-12 Tests for $BRANCH_NAME Failed'
                   }
                   }
 		}
-		stage('w12_cluster_10.0-3'){
+		stage('w12_cluster_10.0-4'){
 			agent { label 'dhfWinCluster'}
 			steps{
                     script{
-                        copyMSI "Release","10.0-3";
+                        copyMSI "Release","10.0-4.4";
                         def pkgOutput=bat(returnStdout:true , script: '''
                 	                    cd xdmp/src
                 	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -849,11 +849,11 @@ pipeline{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
 				  }
                   success {
-                    println("w12_cluster_10.0-3 Tests Completed")
+                    println("w12_cluster_10.0-4 Tests Completed")
                     sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n All the End to End tests on W2k12 cluster 10.0-3 of the branch $BRANCH_NAME passed and the next stage is to merge it to release branch if all the end-end tests pass',false,'w12_cluster_10.0-3 Tests for $BRANCH_NAME Passed'
                    }
                    unstable {
-                      println("w12_cluster_10.0-3 Tests Failed")
+                      println("w12_cluster_10.0-4 Tests Failed")
                       sendMail Email,'Check the Pipeline View Here: ${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID  \n\n\n Check Console Output Here: ${BUILD_URL}/console \n\n\n Some of the End to End tests of the branch $BRANCH_NAME on 10.0-3 w2k12 cluster failed. Please fix the tests and create a PR or create a bug for the failures.',false,'w12_cluster_10.0-3 Tests for $BRANCH_NAME Failed'
                   }
                   }
@@ -902,7 +902,7 @@ pipeline{
 		post{
                   success {
                     println("Automated PR For Release branch created")
-           
+
                    }
                    failure {
                       println("Creation of Automated PR Failed")
@@ -921,7 +921,7 @@ pipeline{
 			steps{
 			script{
 			    props = readProperties file:'data-hub/pipeline.properties';
-				copyRPM 'Release','10.0-3'
+				copyRPM 'Release','10.0-4.4'
 				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
 				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew clean;./gradlew marklogic-data-hub:test || true;sleep 10s;./gradlew ml-data-hub:test || true;sleep 10s;./gradlew web:test || true;'
 				junit '**/TEST-*.xml'
