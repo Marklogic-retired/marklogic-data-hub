@@ -23,11 +23,9 @@ import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.LegacyFlow;
 import com.marklogic.hub.legacy.flow.LegacyFlowStatusListener;
 import com.marklogic.hub.legacy.job.Job;
-import com.marklogic.hub.legacy.job.LegacyJobManager;
 import com.marklogic.hub.legacy.job.JobStatus;
+import com.marklogic.hub.legacy.job.LegacyJobManager;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +35,6 @@ import java.util.stream.Collectors;
 
 public class MlcpRunner extends ProcessRunner {
 
-    private static Logger logger = LoggerFactory.getLogger(MlcpRunner.class);
     private LegacyJobManager jobManager;
     private LegacyFlow flow;
     private JsonNode mlcpOptions;
@@ -50,14 +47,25 @@ public class MlcpRunner extends ProcessRunner {
     private DatabaseClient databaseClient;
     private String database = null;
 
+    private Boolean isHostLoadBalancer;
+    private String username;
+    private String password;
+
+    /**
+     * This constructor is currently only used for testing. And to support running parallel tests, this stores whether
+     * a load balancer is being used or not. That avoids having to access the HubConfig on a separate thread, which is
+     * not possible when running parallel tests.
+     *
+     * @param mainClass
+     * @param hubConfig
+     * @param mlcpOptions
+     */
     public MlcpRunner(String mainClass, HubConfig hubConfig, JsonNode mlcpOptions) {
         this(null, mainClass, hubConfig, null, null, mlcpOptions, null);
     }
 
     public MlcpRunner(String mlcpPath, String mainClass, HubConfig hubConfig, LegacyFlow flow, DatabaseClient databaseClient, JsonNode mlcpOptions, LegacyFlowStatusListener statusListener) {
         super();
-
-        this.withHubconfig(hubConfig);
 
         this.jobManager = LegacyJobManager.create(hubConfig.newJobDbClient());
         this.flowStatusListener = statusListener;
@@ -66,17 +74,23 @@ public class MlcpRunner extends ProcessRunner {
         this.mlcpPath = mlcpPath;
         this.mainClass = mainClass;
         this.databaseClient = databaseClient;
+
+        // Grab the needed data from HubConfig no reference to it needs to be held
+        // This allows for running tests on this class in parallel
+        this.isHostLoadBalancer = hubConfig.getIsHostLoadBalancer();
+        if (this.isHostLoadBalancer == null) {
+            this.isHostLoadBalancer = false;
+        }
+        this.username = hubConfig.getAppConfig().getAppServicesUsername();
+        this.password = hubConfig.getAppConfig().getAppServicesPassword();
     }
 
     public String getJobId() {
         return jobId;
     }
 
-    // TODO: add destination database here
     @Override
     public void run() {
-        HubConfig hubConfig = getHubConfig();
-
         Job job = null;
         if (flow != null) {
             job = Job.withFlow(flow)
@@ -97,8 +111,8 @@ public class MlcpRunner extends ProcessRunner {
 
             if (!"copy".equals(bean.getCommand().toLowerCase())) {
                 // Assume that the HTTP credentials will work for mlcp
-                bean.setUsername(hubConfig.getAppConfig().getAppServicesUsername());
-                bean.setPassword(hubConfig.getAppConfig().getAppServicesPassword());
+                bean.setUsername(this.username);
+                bean.setPassword(this.password);
             }
 
             if (mlcpOptions.has("input_file_path")) {
@@ -113,7 +127,7 @@ public class MlcpRunner extends ProcessRunner {
 
             bean.setModules_root("/");
 
-            if (hubConfig.getIsHostLoadBalancer()) {
+            if (this.isHostLoadBalancer) {
                 bean.setRestrict_hosts(true);
             }
 
