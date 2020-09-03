@@ -1,5 +1,6 @@
 package com.marklogic.gradle.task
 
+import com.marklogic.client.DatabaseClient
 import com.marklogic.hub.HubConfig
 import groovy.json.JsonSlurper
 import org.gradle.testkit.runner.UnexpectedBuildFailure
@@ -11,10 +12,18 @@ import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class CreateFlowTaskTest extends BaseTest {
+    DatabaseClient stagingClient
+
     def setupSpec() {
         createGradleFiles()
         runTask('hubInit')
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+    }
+
+    def setup(){
+        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME)
+        if (stagingClient == null){
+            stagingClient = hubConfig().newHubClient().stagingClient
+        }
     }
 
     def "create flow with no name"() {
@@ -48,6 +57,7 @@ class CreateFlowTaskTest extends BaseTest {
         def data = jsonSlurper.parse(Paths.get(testProjectDir.root.toString(), "flows", "mySimpleFlow.flow.json").toFile());
         data.name == "mySimpleFlow"
         data.description == "Flow description"
+        stagingClient.newServerEval().javascript("fn.head(cts.doc(\"/flows/mySimpleFlow.flow.json\"))").eval().hasNext()
     }
 
     def "create flow with inline steps"() {
@@ -79,6 +89,7 @@ class CreateFlowTaskTest extends BaseTest {
         data.steps.'3'.options.permissions == expectedPermissions
         data.steps.'4'.name == 'merging-step'
         data.steps.'4'.options.permissions == expectedPermissions
+        stagingClient.newServerEval().javascript("fn.head(cts.doc(\"/flows/myTestFlow.flow.json\"))").eval().hasNext()
     }
 
     def "create flow with existing name"() {

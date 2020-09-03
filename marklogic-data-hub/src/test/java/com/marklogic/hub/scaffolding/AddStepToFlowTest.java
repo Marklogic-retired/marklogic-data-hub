@@ -76,7 +76,7 @@ public class AddStepToFlowTest extends AbstractHubCoreTest {
 
     private void verifyMessages(String message, String flowName, String stepName){
         StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append("Added step '" + stepName + "' to flow '" + flowName + "'.");
+        messageBuilder.append("Added step '" + stepName + "' to flow '" + flowName + "' in staging and final databases.");
         assertEquals(messageBuilder.toString(), message);
     }
 

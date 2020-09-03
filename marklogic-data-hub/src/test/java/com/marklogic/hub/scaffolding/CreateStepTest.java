@@ -202,7 +202,7 @@ public class CreateStepTest extends AbstractHubCoreTest {
                 + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs" + ". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
-        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. It will need to be modified before usage.");
+        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. The step has been deployed to staging and final databases.");
         assertEquals(messageBuilder.toString(), message);
     }
 
