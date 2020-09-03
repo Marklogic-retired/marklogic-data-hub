@@ -13,6 +13,8 @@ import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -50,6 +52,10 @@ import java.util.List;
  */
 @TestPropertySource("classpath:application-test.properties")
 @SpringBootTest(classes = {Application.class})
+// For some reason, the junit-platform.properties file that was in this subproject is ignored in favor of
+// the one in ./marklogic-data-hub. Parallel tests aren't supported yet on this subproject, so they're
+// explicitly disabled via this annotation.
+@Execution(ExecutionMode.SAME_THREAD)
 public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
     protected TestConstants testConstants;
