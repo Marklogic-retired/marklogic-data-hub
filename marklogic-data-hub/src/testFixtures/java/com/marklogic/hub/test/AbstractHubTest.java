@@ -1,6 +1,7 @@
 package com.marklogic.hub.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
@@ -85,8 +86,8 @@ public abstract class AbstractHubTest extends TestObject {
         if (projectDir != null && projectDir.exists()) {
             try {
                 FileUtils.deleteDirectory(projectDir);
-            } catch (IOException ex) {
-                logger.warn("Unable to delete the project directory", ex);
+            } catch (Exception ex) {
+                logger.warn("Unable to delete the project directory: " + ex.getMessage());
             }
         }
     }
@@ -181,6 +182,10 @@ public abstract class AbstractHubTest extends TestObject {
         Properties props = new Properties();
         props.setProperty("mlUsername", mlUsername);
         props.setProperty("mlPassword", mlPassword);
+
+        // Need to include this so that when running tests in parallel, this doesn't default back to localhost
+        props.setProperty("mlHost", getHubConfig().getHost());
+
         getHubConfig().applyProperties(new SimplePropertySource(props));
     }
 
@@ -360,10 +365,10 @@ public abstract class AbstractHubTest extends TestObject {
             new GenerateFunctionMetadataCommand(hubConfig).generateFunctionMetadata();
         } catch (Exception ex) {
             logger.warn("Unable to generate function metadata. Catching this by default, as at least one test " +
-                    "- GetPrimaryEntityTypesTest - is failing in Jenkins because it cannot generate metadata for a module " +
-                    "for unknown reasons (the test passes locally). That test does not depend on metadata. If your test " +
-                    "does depend on knowing that metadata generation failed, consider overriding this to allow for the " +
-                    "exception to propagate; cause: " + ex.getMessage(), ex);
+                "- GetPrimaryEntityTypesTest - is failing in Jenkins because it cannot generate metadata for a module " +
+                "for unknown reasons (the test passes locally). That test does not depend on metadata. If your test " +
+                "does depend on knowing that metadata generation failed, consider overriding this to allow for the " +
+                "exception to propagate; cause: " + ex.getMessage(), ex);
         }
 
         LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
@@ -382,16 +387,16 @@ public abstract class AbstractHubTest extends TestObject {
         String baseDirStr = hubConfig.getProjectDir();
         AppConfig appConfig = hubConfig.getAppConfig();
         List<ConfigDir> configDirs = appConfig.getConfigDirs();
-        for (ConfigDir configDir:configDirs) {
+        for (ConfigDir configDir : configDirs) {
             String configPath = configDir.getBaseDir().getPath();
             if (!configPath.contains(baseDirStr)) {
                 configDir.setBaseDir(Paths.get(baseDirStr, configPath).toFile());
             }
         }
         List<String> modulePaths = appConfig.getModulePaths();
-        for (String modulePath: modulePaths) {
+        for (String modulePath : modulePaths) {
             if (!modulePath.contains(baseDirStr)) {
-                modulePaths.set(modulePaths.indexOf(modulePath),Paths.get(baseDirStr,modulePath).toString());
+                modulePaths.set(modulePaths.indexOf(modulePath), Paths.get(baseDirStr, modulePath).toString());
             }
         }
     }
@@ -518,6 +523,7 @@ public abstract class AbstractHubTest extends TestObject {
      * @return
      */
     protected RunFlowResponse runFlow(FlowInputs flowInputs) {
+        makeInputFilePathsAbsoluteInFlow(flowInputs.getFlowName());
         FlowRunnerImpl flowRunner = new FlowRunnerImpl(getHubClient());
         RunFlowResponse response = flowRunner.runFlow(flowInputs);
         flowRunner.awaitCompletion();
@@ -525,6 +531,52 @@ public abstract class AbstractHubTest extends TestObject {
     }
 
     protected HubProjectImpl getHubProject() {
-        return (HubProjectImpl)getHubConfig().getHubProject();
+        return (HubProjectImpl) getHubConfig().getHubProject();
+    }
+
+    /**
+     * This is needed for running flows without a HubProject because if the paths are relative (which they are by
+     * default), then a HubProject is needed to resolve them into absolute paths.
+     */
+    protected void makeInputFilePathsAbsoluteInFlow(String flowName) {
+        final String flowFilename = flowName + ".flow.json";
+        try {
+            Path projectDir = getHubProject().getProjectDir();
+            final File flowFile = projectDir.resolve("flows").resolve(flowFilename).toFile();
+            JsonNode flow = objectMapper.readTree(flowFile);
+            makeInputFilePathsAbsoluteForFlow(flow, projectDir.toFile().getAbsolutePath());
+            objectMapper.writeValue(flowFile, flow);
+
+            // Have to run as a developer in order to update the flow document
+            runAsDataHubDeveloper();
+            JSONDocumentManager mgr = getHubClient().getStagingClient().newJSONDocumentManager();
+            final String uri = "/flows/" + flowFilename;
+            if (mgr.exists(uri) != null) {
+                DocumentMetadataHandle metadata = mgr.readMetadata("/flows/" + flowFilename, new DocumentMetadataHandle());
+                mgr.write("/flows/" + flowFilename, metadata, new JacksonHandle(flow));
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    protected void makeInputFilePathsAbsoluteForFlow(JsonNode flow, String projectDir) {
+        JsonNode steps = flow.get("steps");
+        steps.fieldNames().forEachRemaining(name -> {
+            JsonNode step = steps.get(name);
+            if (step.has("fileLocations")) {
+                ObjectNode fileLocations = (ObjectNode) step.get("fileLocations");
+                makeInputFilePathsAbsolute(fileLocations, projectDir);
+            }
+        });
+    }
+
+    protected void makeInputFilePathsAbsolute(ObjectNode fileLocations, String projectDir) {
+        if (fileLocations.has("inputFilePath")) {
+            String currentPath = fileLocations.get("inputFilePath").asText();
+            if (!Paths.get(currentPath).isAbsolute()) {
+                fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
+            }
+        }
     }
 }

@@ -23,7 +23,6 @@ public class IngestToFinalTest extends AbstractHubCoreTest {
         final String flowName = "ingestToFinal";
 
         installReferenceModelProject();
-        makeInputFilePathsAbsoluteInFlow(flowName);
         String jobId = runFlow(new FlowInputs(flowName)).getJobId();
 
         JsonNode rawDoc = getFinalDoc("/customers/customer1.json");

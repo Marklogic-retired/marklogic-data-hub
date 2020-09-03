@@ -3,9 +3,9 @@ package com.marklogic.hub.flow;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
-import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -24,11 +24,17 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void setUp() {
-        runAsDataHubDeveloper();
+        // In theory, a data-hub-developer should be able to deploy these temporal resources. But when run in the
+        // full suite, this test sometimes fails, presumably due to changes made by a previous test to the databases.
+        // Since the purpose of this test is to verify that temporal documents can be written as an operator and not
+        // to verify that a developer can deploy these things (we have other tests for that), admin is used here
+        runAsAdmin();
         installProjectInFolder("test-projects/temporal-test");
         addFieldAndIndexes();
-        new SimpleAppDeployer(new DeployTemporalAxesCommand(), new DeployTemporalCollectionsCommand())
-            .deploy(adminHubConfig.getAppConfig());
+        CommandContext context = newCommandContext();
+        new DeployTemporalAxesCommand().execute(context);
+        new DeployTemporalCollectionsCommand().execute(context);
+
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("testTemporal");
         meta.getPermissions().add("data-hub-common", READ, UPDATE, EXECUTE);
@@ -40,8 +46,9 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
 
     @AfterEach
     void tearDown(){
+        runAsAdmin();
         removeIndexesAndFields();
-        new DatabaseManager(runAsAdmin().getManageClient()).clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+        new DatabaseManager(getHubConfig().getManageClient()).clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
     }
 
     @Test
@@ -88,7 +95,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
             "        config = admin.databaseDeleteField(config, dbid, 'systemStart');\n" +
             "        config = admin.databaseDeleteField(config, dbid, 'systemEnd');\n" +
             "        admin.saveConfigurationWithoutRestart(config);";
-        runAsAdmin().newStagingClient().newServerEval().javascript(indexesDeletion).eval();
+        getHubConfig().newStagingClient().newServerEval().javascript(indexesDeletion).eval();
     }
 
     private void addFieldAndIndexes() {
@@ -125,6 +132,6 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         systemEndIndex.put("field-name", "systemEnd");
         systemEndIndex.put("invalid-values", "reject");
         systemEndIndex.put("range-value-positions", false);
-        new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
+        new DatabaseManager(getHubConfig().getManageClient()).save(newNode.toString());
     }
 }

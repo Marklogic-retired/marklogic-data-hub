@@ -62,7 +62,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         // context of this test. So instead, some of the methods called by that method are called directly here.
         dataHub.prepareProjectBeforeUpgrading(hubProject, "5.0.3");
         hubProject.init(new HashMap<>());
-        hubProject.upgradeProject();
+        hubProject.upgradeProject(flowManager);
 
         File mappingDir = new File(projectDir, "mappings");
         File entitiesDir = new File(projectDir, "entities");
@@ -168,7 +168,7 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         long testCsvLoadDataFlowLastModified =  testCsvLoadDataFile.lastModified();
         File testFlowFile = getHubConfig().getHubProject().getFlowsDir().resolve("testFlow.flow.json").toFile();
         long testFlowLastModified =  testFlowFile.lastModified();
-        getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
+        getHubProject().updateStepDefinitionTypeForInlineMappingSteps(flowManager);
         //Flow is not saved unless it has been modified(i.e. mapping step with step def "default-mapping")
         Assertions.assertEquals(testCsvLoadDataFlowLastModified, testCsvLoadDataFile.lastModified());
         Assertions.assertNotEquals(testFlowLastModified, testFlowFile.lastModified());

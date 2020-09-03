@@ -45,11 +45,12 @@ public class ScaffoldingValidatorTest extends AbstractHubCoreTest {
    @Autowired
    Scaffolding scaffolding;
 
-   @Autowired
-   ScaffoldingValidator validator;
+   private ScaffoldingValidator validator;
 
    @BeforeEach
    public void setup() throws IOException {
+       validator = new ScaffoldingValidator(getHubProject());
+
        createPlugins(TEST_ENTITY_NAME, FlowType.INPUT, CodeFormat.XQUERY);
        createPlugins(TEST_ENTITY_NAME, FlowType.HARMONIZE, CodeFormat.XQUERY);
    }
@@ -119,7 +120,7 @@ public class ScaffoldingValidatorTest extends AbstractHubCoreTest {
    }
 
    @Test
-   public void testIsUniqueRestServiceExtension() throws IOException {
+   public void testIsUniqueRestServiceExtension() {
        String restServiceExtensionName = "test-rest-service";
        boolean isUnique = validator.isUniqueRestServiceExtension(restServiceExtensionName);
        assertTrue(isUnique, "The rest service extension "+ restServiceExtensionName + " is not yet existing so it should be unique.");
