@@ -22,19 +22,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
-import com.marklogic.hub.web.WebApplication;
+import com.marklogic.hub.web.AbstractWebTest;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -45,8 +43,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {WebApplication.class})
-class EntitiesControllerTest extends AbstractHubCoreTest {
+class EntitiesControllerTest extends AbstractWebTest {
 
     private static String ENTITY = "test-entity";
 
@@ -62,14 +59,11 @@ class EntitiesControllerTest extends AbstractHubCoreTest {
     @Test
     public void getInputFlowOptions() throws Exception {
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
-        JSONAssert.assertEquals("{ \"input_file_path\": " + hubConfig.getHubProject().getProjectDirString() + " }", new ObjectMapper().writeValueAsString(options), true);
+        JSONAssert.assertEquals("{ \"input_file_path\":\"" + hubConfig.getHubProject().getProjectDirString() + "\"}", new ObjectMapper().writeValueAsString(options), true);
     }
 
     @Test
-    public void runHarmonizeNoOptions() throws IOException, InterruptedException {
-        deleteProjectDir();
-        createProjectDir();
-
+    public void runHarmonizeNoOptions() throws IOException {
         Path projectDir = getHubProject().getProjectDir();
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
@@ -92,7 +86,7 @@ class EntitiesControllerTest extends AbstractHubCoreTest {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
-        Thread.sleep(3000);
+        sleep(3000);
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
