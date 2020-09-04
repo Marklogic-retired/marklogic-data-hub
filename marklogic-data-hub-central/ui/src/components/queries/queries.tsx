@@ -148,7 +148,7 @@ const Query: React.FC<Props> = (props) => {
                 (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
                 (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
                 (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
-                (props.greyFacets.length > 0) || props.isColumnSelectorTouched) && 
+                (props.greyFacets.length > 0) || props.isColumnSelectorTouched) &&
                 searchOptions.selectedQuery !== 'select a query')   {
                 return true;
             }
@@ -206,9 +206,11 @@ const Query: React.FC<Props> = (props) => {
         if (defaultPreferences !== null) {
             let parsedPreferences = JSON.parse(defaultPreferences);
             if (parsedPreferences.selectedQuery !== 'select a query' && JSON.stringify(parsedPreferences) !== JSON.stringify([])) {
-                let queryObject = parsedPreferences.queries.find(obj => parsedPreferences.selectedQuery === obj.savedQuery?.name);
-                if (queryObject?.savedQuery && queryObject.savedQuery.hasOwnProperty('description') && queryObject.savedQuery.description) {
-                     setCurrentQueryDescription(queryObject?.savedQuery.description);
+                if (parsedPreferences.queries && Array.isArray(parsedPreferences.queries)) {
+                    let queryObject = parsedPreferences.queries.find(obj => parsedPreferences.selectedQuery === obj.savedQuery?.name);
+                    if (queryObject?.savedQuery && queryObject.savedQuery.hasOwnProperty('description') && queryObject.savedQuery.description) {
+                        setCurrentQueryDescription(queryObject?.savedQuery.description);
+                    }
                 }
             }
         }
@@ -222,6 +224,7 @@ const Query: React.FC<Props> = (props) => {
     }
 
     const onNoClick  = () => {
+        toggleEntityConfirmation(false);
         setCurrentQueryOnEntityChange();
     }
 
@@ -244,7 +247,6 @@ const Query: React.FC<Props> = (props) => {
         setCurrentQuery({});
         setCurrentQueryName('select a query');
         setCurrentQueryDescription('');
-        toggleEntityConfirmation(false);
     }
 
    // Reset confirmation modal buttons when making changes to saved query

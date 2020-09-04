@@ -216,7 +216,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.waitForSpinnerToDisappear()
         browsePage.getHubPropertiesExpanded();
-        browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
+        cy.waitUntil(() => browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON')).click();
         browsePage.getFacetApplyButton().click();
         browsePage.search('Adams Cole');
         browsePage.getSaveModalIcon().click();

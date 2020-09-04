@@ -21,7 +21,7 @@ class BrowsePage {
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
     cy.get('#entity-select').click();
-    cy.get(`[data-cy="entity-option-${entity}"]`).click();
+    cy.get(`[data-cy="entity-option-${entity}"]`).click({force:true});
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
   }
@@ -208,7 +208,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    cy.waitUntil(() => cy.get("#hub-properties > div > i")).click();
+    cy.get("#hub-properties > div > i").click();
   }
 
   getExpandableSnippetView() {
