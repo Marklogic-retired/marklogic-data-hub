@@ -140,7 +140,7 @@ describe('xml scenario for table on browse documents page', () => {
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
+    cy.waitUntil(() => browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML')).click();
     browsePage.getGreySelectedFacets('mapCustomersXML').should('exist');
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should('be.gte', 5)
