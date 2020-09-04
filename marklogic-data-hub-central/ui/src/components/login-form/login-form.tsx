@@ -41,7 +41,6 @@ const LoginForm: React.FC = () => {
       else if (error.response.status === 403) {
         message = 'User does not have the required permissions to run Data Hub.';
       }
-      console.log('LOGIN ERROR', error.response);
       setIsLoading(false);
       setMessage({show: true, text: message});
     }
