@@ -15,6 +15,7 @@
  */
 package com.marklogic.hub_integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
@@ -26,6 +27,7 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
@@ -122,22 +124,28 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
     Scaffolding scaffolding;
 
     private EntitiesValidator ev = null;
+    private DatabaseClient flowRunnerClient;
 
     @BeforeEach
     public void setupEach() {
+        runAsFlowDeveloper();
         enableTracing();
         enableDebugging();
 
+        runAsFlowOperator();
+        flowRunnerClient = getHubClient().getStagingClient();
+
+        runAsDataHubDeveloper();
         flowRunnerDataMovementManager = flowRunnerClient.newDataMovementManager();
 
         scaffolding.createEntity(ENTITY);
 
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
     private JsonNode validateUserModules() {
         if (ev == null) {
-            ev = EntitiesValidator.create(getDataHubAdminConfig().newStagingClient());
+            ev = EntitiesValidator.create(getHubClient().getStagingClient());
         }
         return ev.validateAll();
     }
@@ -279,7 +287,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     int testSize = 50000;
                     tests.add(DynamicTest.dynamicTest("Big Count: " + flowName + " wait", () -> {
                         FinalCounts finalCounts = new FinalCounts(testSize, testSize, testSize + 1, 1, testSize, 0, testSize, 0, testSize / BATCH_SIZE, 0, "FINISHED");
-                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, stagingClient, HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, testSize);
+                        testHarmonizeFlow(prefix, codeFormat, dataFormat, useEs, options, getHubClient().getStagingClient(), HubConfig.DEFAULT_FINAL_NAME, finalCounts, true, testSize);
                     }));
                 }
             }
@@ -411,7 +419,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
                 createFlow(prefix, codeFormat, dataFormat, flowType, useEs, null);
                 clearUserModules();
-                installUserModules(getDataHubAdminConfig(), true);
+                installUserModules(runAsFlowDeveloper(), true);
 
                 JsonNode actual = validateUserModules();
 
@@ -435,7 +443,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     copyFile(srcDir + "content-syntax-error." + codeFormat1.toString(), flowDir.resolve("content." + codeFormat1.toString()));
                 });
                 clearUserModules();
-                installUserModules(getDataHubAdminConfig(), true);
+                installUserModules(runAsFlowDeveloper(), true);
                 JsonNode actual = validateUserModules();
 
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -472,7 +480,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     copyFile(srcDir + "headers-syntax-error." + codeFormat.toString(), flowDir.resolve("headers." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getDataHubAdminConfig(), true);
+                installUserModules(runAsFlowDeveloper(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"headers\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/headers.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -501,7 +509,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     copyFile(srcDir + "triples-syntax-error." + codeFormat.toString(), flowDir.resolve("triples." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getDataHubAdminConfig(), true);
+                installUserModules(runAsFlowDeveloper(), true);
                 JsonNode actual = validateUserModules();
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                     String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"triples\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/triples.sjs\",\"line\":16,\"column\":2}}}}}";
@@ -530,7 +538,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                     copyFile(srcDir + "main-syntax-error." + codeFormat.toString(), flowDir.resolve("main." + codeFormat.toString()));
                 });
                 clearUserModules();
-                installUserModules(getDataHubAdminConfig(), true);
+                installUserModules(runAsFlowDeveloper(), true);
                 JsonNode actual = validateUserModules();
                 String expected;
                 if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -560,7 +568,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                         copyFile(srcDir + "collector-syntax-error." + codeFormat.toString(), flowDir.resolve("collector." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getDataHubAdminConfig(), true);
+                    installUserModules(runAsFlowDeveloper(), true);
                     JsonNode actual = validateUserModules();
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
                         String expected = "{\"errors\":{\"e2eentity\":{\"" + flowName + "\":{\"collector\":{\"msg\":\"JS-JAVASCRIPT: =-00=--\\\\8\\\\sthifalkj;; -- Error running JavaScript request: SyntaxError: Unexpected token =\",\"uri\":\"/entities/e2eentity/" + flowType.toString() + "/" + flowName + "/collector.sjs\",\"line\":13,\"column\":2}}}}}";
@@ -594,7 +602,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                         copyFile(srcDir + "writer-syntax-error." + codeFormat.toString(), flowDir.resolve("writer." + codeFormat.toString()));
                     });
                     clearUserModules();
-                    installUserModules(getDataHubAdminConfig(), true);
+                    installUserModules(runAsFlowDeveloper(), true);
                     JsonNode actual = validateUserModules();
                     String expected;
                     if (codeFormat.equals(CodeFormat.JAVASCRIPT)) {
@@ -695,7 +703,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             Path flowDir = entityDir.resolve(flowType.toString()).resolve(flowName);
             copyFile(srcDir + "es-content-" + flowType.toString() + "-" + dataFormat.toString() + "." + codeFormat.toString(), flowDir.resolve("content." + codeFormat.toString()));
         }
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
     private void createFlows(String prefix, CreateFlowListener listener) {
@@ -712,7 +720,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         if (useEs) {
             Path entityDir = getHubProject().getProjectDir().resolve("entities");
             copyFile("e2e-test/" + ENTITY + ".entity.json", entityDir.resolve(ENTITY + ".entity.json"));
-            installUserModules(getDataHubAdminConfig(), true);
+            installUserModules(runAsFlowDeveloper(), true);
         }
 
         scaffolding.createLegacyFlow(ENTITY, flowName, flowType, codeFormat, dataFormat, useEs);
@@ -741,7 +749,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         if (listener != null) {
             listener.onFlowCreated(codeFormat, dataFormat, flowType, srcDir, flowDir, useEs);
         }
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
     private void copyFile(String srcDir, Path dstDir) {
@@ -784,11 +792,9 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         assertFalse(installDocsFailed, "Doc install failed: " + installDocError);
     }
 
-    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException, TransformerException {
-    	if(isCertAuth() || isSslRun()) {
-    		return;
-    	}
-    	clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+    private void testInputFlowViaMlcp(String prefix, String fileSuffix, DatabaseClient databaseClient, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, Map<String, Object> options, FinalCounts finalCounts) throws InterruptedException {
+    	resetDatabases();
+    	runAsFlowDeveloper();
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
 
@@ -834,7 +840,11 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         int existingStagingCount = getStagingDocCount();
 
         MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", runAsFlowOperator(), flow, databaseClient, mlcpOptions, null);
-        mlcpRunner.setDatabase(databaseClient.getDatabase());
+        if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING)) {
+            mlcpRunner.setDatabase(getHubConfig().getDbName(DatabaseKind.STAGING));
+        } else {
+            mlcpRunner.setDatabase(getHubConfig().getDbName(DatabaseKind.FINAL));
+        }
         mlcpRunner.start();
         try {
             mlcpRunner.join();
@@ -850,7 +860,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             }
         }
 
-        if (databaseClient.getDatabase().equals(HubConfig.DEFAULT_STAGING_NAME) && finalCounts.stagingCount == 1) {
+        if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING) && finalCounts.stagingCount == 1) {
             String filename = "final";
             if (useEs && prefix.equals("triples-array")) {
                 filename = "input/input-es-trips";
@@ -867,6 +877,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             		filename = filename+"-js";
             	}
             }
+
+            GenericDocumentManager stagingDocMgr = getHubClient().getStagingClient().newDocumentManager();
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
@@ -874,16 +886,15 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             } else {
                 Document expected = getXmlFromResource("e2e-test/" + filename + "." + dataFormat.toString());
                 Document actual = stagingDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new DOMHandle()).get();
-                //debugOutput(expected);
-                //debugOutput(actual);
                 assertXMLEqual(expected, actual);
             }
         }
-        else if (databaseClient.getDatabase().equals(HubConfig.DEFAULT_FINAL_NAME) && finalCounts.finalCount == 1) {
+        else if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.FINAL) && finalCounts.finalCount == 1) {
             String filename = "final";
             if (prefix.equals("scaffolded")) {
                 filename = "staged";
             }
+            GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = finalDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
@@ -896,7 +907,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         }
 
         // inspect the job json
-        JsonNode node = jobDocMgr.read("/jobs/" + mlcpRunner.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        JsonNode node = getHubClient().getJobsClient().newDocumentManager().read("/jobs/" + mlcpRunner.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(mlcpRunner.getJobId(), node.get("jobId").asText());
         assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
         assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
@@ -906,7 +917,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
     }
 
     private void testInputFlowViaREST(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
 
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
 
@@ -936,6 +948,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         }
         handle.setFormat(format);
 
+        runAsFlowOperator();
+        GenericDocumentManager flowRunnerDocMgr = getHubClient().getStagingClient().newDocumentManager();
         try {
         	flowRunnerDocMgr.write("/input" + fileSuffix + "." + dataFormat.toString(), handle, serverTransform);
             if (finalCounts.stagingCount == 0) {
@@ -984,7 +998,9 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
     }
 
     private void testInputFlowViaDMSDK(String prefix, String fileSuffix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs, boolean passJobId, Map<String, Object> options, FinalCounts finalCounts) {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
+
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.INPUT, useEs);
         final int existingStagingCount = getStagingDocCount();
         final int existingFinalCount = getFinalDocCount();
@@ -1047,6 +1063,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             		filename = filename+"-js";
             	}
             }
+
+            GenericDocumentManager flowRunnerDocMgr = getHubClient().getStagingClient().newDocumentManager();
             if (dataFormat.equals(DataFormat.JSON)) {
                 String expected = getResource("e2e-test/" + filename + "." + dataFormat.toString());
                 String actual = flowRunnerDocMgr.read("/input" + fileSuffix + "." + dataFormat.toString()).next().getContent(new StringHandle()).get();
@@ -1075,7 +1093,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         DatabaseClient srcClient, String destDb,
         boolean useEs, boolean waitForCompletion, int testSize)
     {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
 
         installDocs(dataFormat, ENTITY, srcClient, useEs, testSize);
         runAsFlowOperator();
@@ -1105,8 +1124,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
                 throw new RuntimeException(e);
             }
         }
-        //Reset HubConfig to hubadmin user/password
-        getDataHubAdminConfig();
+        runAsFlowDeveloper();
         return new Tuple<>(flowRunner, jobTicket);
     }
 
@@ -1121,7 +1139,8 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         String prefix, CodeFormat codeFormat, DataFormat dataFormat, boolean useEs,
         Map<String, Object> options, DatabaseClient srcClient, String destDb,
         FinalCounts finalCounts, boolean waitForCompletion, int testSize) throws InterruptedException {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
         String flowName = getFlowName(prefix, codeFormat, dataFormat, FlowType.HARMONIZE, useEs);
 
         Vector<String> completed = new Vector<>();
@@ -1143,10 +1162,9 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             assertEquals(finalCounts.completedCount, completed.size());
             assertEquals(finalCounts.failedCount, failed.size());
 
-            GenericDocumentManager mgr = finalDocMgr;
-            if (destDb.equals(HubConfig.DEFAULT_STAGING_NAME)) {
-                mgr = stagingDocMgr;
-            }
+            GenericDocumentManager mgr = destDb.equals(HubConfig.DEFAULT_STAGING_NAME) ?
+                getHubClient().getStagingClient().newDocumentManager() :
+                getHubClient().getFinalClient().newDocumentManager();
 
             String filename = "final";
             if (useEs && prefix.equals("triples-array")) {
@@ -1173,7 +1191,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
             }
 
             // inspect the job json
-            JsonNode node = jobDocMgr.read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+            JsonNode node = getHubClient().getJobsClient().newDocumentManager().read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
             assertEquals(tuple.y.getJobId(), node.get("jobId").asText());
             assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
             assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
@@ -1215,7 +1233,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         assertEquals(finalCounts.failedCount, failed.size());
 
         // inspect the job json
-        JsonNode node = jobDocMgr.read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        JsonNode node = getHubClient().getJobsClient().newDocumentManager().read("/jobs/" + tuple.y.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(tuple.y.getJobId(), node.get("jobId").asText());
         assertEquals(finalCounts.jobSuccessfulEvents, node.get("successfulEvents").asInt());
         assertEquals(finalCounts.jobFailedEvents, node.get("failedEvents").asInt());
@@ -1223,4 +1241,12 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
         assertEquals(finalCounts.jobFailedBatches, node.get("failedBatches").asInt());
         assertEquals(finalCounts.jobStatus, node.get("status").asText());
    }
+
+    private String toJsonString(Object value) {
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
