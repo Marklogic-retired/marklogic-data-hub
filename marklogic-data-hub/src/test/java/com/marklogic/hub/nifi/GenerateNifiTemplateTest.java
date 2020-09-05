@@ -19,7 +19,7 @@ public class GenerateNifiTemplateTest extends AbstractHubCoreTest {
      */
     @Test
     public void smokeTest() {
-        NifiTemplateGenerator generator = new NifiTemplateGenerator(stagingClient);
+        NifiTemplateGenerator generator = new NifiTemplateGenerator(getHubClient().getStagingClient());
         XmlNode template = new XmlNode(generator.generateNifiTemplateFromJson(FLOW_JSON));
 
         template.assertElementValue("/template/description", "NiFi template for DHF flow ingestion_mapping_mastering-flow");

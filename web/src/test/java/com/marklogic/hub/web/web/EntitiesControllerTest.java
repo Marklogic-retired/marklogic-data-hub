@@ -20,6 +20,7 @@ package com.marklogic.hub.web.web;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.document.DocumentRecord;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubConfig;
@@ -73,7 +74,7 @@ class EntitiesControllerTest extends AbstractWebTest {
         InputStream inputStream = getResourceStream("legacy-flow-manager/sjs-harmonize-flow/headers.sjs");
         FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
         IOUtils.closeQuietly(inputStream);
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -87,6 +88,7 @@ class EntitiesControllerTest extends AbstractWebTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
         sleep(3000);
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
@@ -96,7 +98,7 @@ class EntitiesControllerTest extends AbstractWebTest {
     }
 
     @Test
-    public void runHarmonizeFlowWithOptions() throws IOException, InterruptedException {
+    public void runHarmonizeFlowWithOptions() throws IOException {
         Path projectDir = getHubProject().getProjectDir();
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-harmonization-flow", FlowType.HARMONIZE,
@@ -107,7 +109,7 @@ class EntitiesControllerTest extends AbstractWebTest {
         FileUtil.copy(inputStream, harmonizeDir.resolve("sjs-json-harmonization-flow/headers.sjs").toFile());
         IOUtils.closeQuietly(inputStream);
 
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
 
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add(ENTITY);
@@ -121,7 +123,8 @@ class EntitiesControllerTest extends AbstractWebTest {
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         // document takes a moment to arrive.
-        Thread.sleep(3000);
+        sleep(3000);
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         DocumentRecord doc = finalDocMgr.read("/staged.json").next();
         JsonNode root = doc.getContent(new JacksonHandle()).get();
         JsonNode env = root.path("envelope");
