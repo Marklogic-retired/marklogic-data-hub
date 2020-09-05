@@ -26,7 +26,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
             String count = adminHubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
             assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
         } finally {
-            installHubArtifacts(adminHubConfig, true);
+            installHubArtifacts();
         }
     }
 
@@ -50,7 +50,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
             String count = adminHubConfig.newFinalClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
             assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
         } finally {
-            installHubArtifacts(adminHubConfig, true);
+            installHubArtifacts();
         }
     }
 
