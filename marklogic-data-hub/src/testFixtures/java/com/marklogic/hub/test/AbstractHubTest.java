@@ -432,11 +432,7 @@ public abstract class AbstractHubTest extends TestObject {
         logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
         while (taskCount > 0 && tries < maxTries) {
             tries++;
-            try {
-                Thread.sleep(sleepPeriod);
-            } catch (Exception ex) {
-                // ignore
-            }
+            sleep(sleepPeriod);
             taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
             logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
         }

@@ -89,19 +89,20 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         clearUserModules();
         installEntities();
 
+        runAsAdmin();
         Path dir = getHubProject().getEntityConfigDir();
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
 
+        runAsDataHubDeveloper();
         entityManager.deployQueryOptions();
 
-        //Change to admin config
-        getDataHubAdminConfig();
-        //Search options files not written to modules db but created.
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        // Gotta user admin in order to have read permission
+        runAsAdmin();
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
     }
@@ -111,7 +112,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
     public void testSaveDbIndexes() throws IOException {
         installEntities();
 
-        Path dir = getDataHubAdminConfig().getEntityDatabaseDir();
+        Path dir = getHubProject().getEntityDatabaseDir();
 
         assertFalse(dir.resolve("final-database.json").toFile().exists());
         assertFalse(dir.resolve("staging-database.json").toFile().exists());
