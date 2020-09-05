@@ -53,10 +53,9 @@ class TraceServiceTest extends AbstractWebTest {
         scaffolding.createLegacyFlow(ENTITY, "xqy-xml-harmonize-flow", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
-        installUserModules(getDataHubAdminConfig(), true);
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        installUserModules(runAsFlowDeveloper(), true);
 
-        traceClient = getDataHubAdminConfig().newJobDbClient();
+        traceClient = getHubClient().getJobsClient();
         final String FLOW_NAME = "sjs-json-harmonize-flow";
         LegacyFlow flow = flowMgrService.getServerFlow(ENTITY, FLOW_NAME, FlowType.HARMONIZE);
         flowMgrService.runFlow(flow, 1, 1, new HashMap<String, Object>(), (jobId, percentComplete, message) -> { });
