@@ -21,7 +21,7 @@ class SearchServiceTest extends AbstractWebTest {
         searchService = new SearchService(getHubConfig());
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("UrisOnly");
-        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getHubConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee2.json", meta, "integration-test-data/input/input-2.json");
     }
 
