@@ -19,6 +19,7 @@ package com.marklogic.hub.flow.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -42,8 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * FlowRunnerImpl is not a thread-safe class due to all of the state that it stores. So these tests must be run in
@@ -68,7 +68,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
         verifyCollectionCountsFromRunningTestFlow();
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        XMLDocumentManager docMgr = stagingClient.newXMLDocumentManager();
+        XMLDocumentManager docMgr = getHubClient().getStagingClient().newXMLDocumentManager();
         DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
         docMgr.readMetadata("/ingest-xml.xml", metadataHandle);
         DocumentMetadataHandle.DocumentPermissions permissions = metadataHandle.getPermissions();
@@ -121,6 +121,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.getCollections().add("collector-test-input");
         metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         finalDocMgr.write("/collector-test1.json", metadata, new BytesHandle("{\"PersonGivenName\":\"Jane\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
         finalDocMgr.write("/collector-test2.json", metadata, new BytesHandle("{\"PersonGivenName\":\"John\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
 
@@ -163,20 +164,14 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     }
 
     private void deleteCollectorTestOutput() {
-        final QueryManager queryManager = finalClient.newQueryManager();
+        final QueryManager queryManager = getHubClient().getFinalClient().newQueryManager();
         final DeleteQueryDefinition deleteQueryDefinition = queryManager.newDeleteDefinition();
         deleteQueryDefinition.setCollections("collector-test-output");
         queryManager.delete(deleteQueryDefinition);
     }
 
     @Test
-    public void testIngestCSVasXML() throws Exception {
-        //prov docs cannot be read by "flow-developer-user", so creating a client using 'secUser' which is 'admin'
-        DatabaseClient client = getClient(host,jobPort, HubConfig.DEFAULT_JOB_NAME, secUser, secPassword, jobAuthMethod);
-        //don't have 'admin' certs, so excluding from cert-auth tests
-        if(! isCertAuth() ) {
-            client.newServerEval().xquery("cts:uris() ! xdmp:document-delete(.)").eval();
-        }
+    public void testIngestCSVasXML() {
         Map<String,Object> opts = new HashMap<>();
         opts.put("outputFormat","xml");
 
@@ -190,22 +185,14 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         runAsDataHubOperator();
         RunFlowResponse resp = runFlow("testFlow", "3", UUID.randomUUID().toString(),opts, stepConfig);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll") == 25);
-        Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        EvalResultIterator resultItr = runInDatabase("fn:count(cts:uri-match(\"/prefix-output/*.xml\"))", HubConfig.DEFAULT_STAGING_NAME);
-        EvalResult res = resultItr.next();
-        long count = Math.toIntExact((long) res.getNumber());
-        Assertions.assertEquals(count, 25);
-        if(! isCertAuth() ) {
-            runAsDataHubDeveloper();
-           EvalResultIterator itr = client.newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").eval();
-           if(itr != null && itr.hasNext()) {
-               Assertions.assertEquals(25, itr.next().getNumber().intValue());
-           }
-           else {
-               Assertions.fail("Server response was null or empty");
-           }
-        }
+
+        runAsDataHubDeveloper();
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"));
+        assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
+        String count = getHubClient().getStagingClient().newServerEval().xquery("fn:count(cts:uri-match('/prefix-output/*.xml'))").evalAs(String.class);
+        assertEquals(25, Integer.parseInt(count));
+        count = getHubClient().getJobsClient().newServerEval().xquery("xdmp:estimate(fn:collection('http://marklogic.com/provenance-services/record'))").evalAs(String.class);
+        assertEquals(25, Integer.parseInt(count));
      }
 
     @SuppressWarnings("deprecation")
@@ -496,5 +483,14 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
             "Expected job status of first response to be 'finished', but was: " + resp.getJobStatus());
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp1.getJobStatus()),
             "Expected job status of second response to be 'finished', but was: " + resp1.getJobStatus());
+    }
+
+    private void verifyCollectionCountsFromRunningTestFlow() {
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-coll"));
+        assertEquals(25, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "csv-tab-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
     }
 }
