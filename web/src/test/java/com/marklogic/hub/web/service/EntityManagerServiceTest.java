@@ -68,7 +68,7 @@ public class EntityManagerServiceTest extends AbstractWebTest {
 
         String entityFilename = ENTITY + EntityManagerService.ENTITY_FILE_EXTENSION;
         FileUtil.copy(getResourceStream(entityFilename), entityDir.resolve(entityFilename).toFile());
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
 
         scaffolding.createLegacyFlow(ENTITY, "sjs-json-input-flow", FlowType.INPUT,
             CodeFormat.JAVASCRIPT, DataFormat.JSON);
@@ -98,7 +98,7 @@ public class EntityManagerServiceTest extends AbstractWebTest {
         FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/content-input.xqy"), inputDir.resolve("xqy-xml-input-flow/content.xqy").toFile());
         FileUtil.copy(getResourceStream("legacy-flow-manager/xqy-flow/triples.xqy"), inputDir.resolve("xqy-xml-input-flow/triples.xqy").toFile());
 
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class EntityManagerServiceTest extends AbstractWebTest {
     }
 
     @Test
-    public void deleteEntity() throws IOException, InterruptedException {
+    public void deleteEntity() throws IOException {
         List<EntityModel> entities = entityMgrService.getEntities();
         assertEquals(1, entities.size());
 
@@ -140,12 +140,9 @@ public class EntityManagerServiceTest extends AbstractWebTest {
         entities = entityMgrService.getEntities();
         assertEquals(0, entities.size());
 
-        // Adding sleep to delete artifacts from the db via async call
-        Thread.sleep(1000);
-
-        DocumentPage doc = finalDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        DocumentPage doc = getHubClient().getFinalClient().newDocumentManager().read("/entities/" + ENTITY + ".entity.json");
         assertFalse(doc.hasNext());
-        doc = stagingDocMgr.read("/entities/" + ENTITY + ".entity.json");
+        doc = getHubClient().getStagingClient().newDocumentManager().read("/entities/" + ENTITY + ".entity.json");
         assertFalse(doc.hasNext());
     }
 
