@@ -17,17 +17,25 @@ package com.marklogic.hub.deploy.commands;
 
 import com.marklogic.appdeployer.command.modules.LoadModulesCommand;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.impl.Versions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
 
+    @Autowired
+    Versions versions;
+
     @Test
     public void verifyHubVersion() {
-        assertEquals(adminHubConfig.getJarVersion(), versions.getInstalledVersion(),
-            "Jar version must match version in config.xqy/config.sjs after installation");
+        final String message = "Jar version must match version in config.xqy/config.sjs after installation";
+
+        assertEquals(adminHubConfig.getJarVersion(), versions.getInstalledVersion(), message);
+        assertEquals(adminHubConfig.getJarVersion(), new Versions(getHubClient()).getInstalledVersion(), message);
+        assertEquals(adminHubConfig.getJarVersion(), new Versions(getHubConfig()).getInstalledVersion(), message);
     }
 
     @Test

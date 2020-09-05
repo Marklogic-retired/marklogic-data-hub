@@ -21,8 +21,11 @@ import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.*;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
@@ -32,6 +35,12 @@ public class EmptyLegacyCollectorTest extends AbstractHubCoreTest {
 
     private static final String ENTITY = "streamentity";
 
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    LegacyFlowManagerImpl legacyFlowManager;
+
     @BeforeEach
     public void setup() {
         scaffolding.createEntity(ENTITY);
@@ -39,20 +48,19 @@ public class EmptyLegacyCollectorTest extends AbstractHubCoreTest {
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getDataHubAdminConfig(), true);
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
 
     @Test
     public void runCollector() {
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
 
         // a sneaky attempt to test passing options. this value makes the collector work.
         options.put("returnStuff", true);
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
             .withThreadCount(1)
@@ -61,7 +69,7 @@ public class EmptyLegacyCollectorTest extends AbstractHubCoreTest {
         JobTicket ticket = flowRunner.run();
         flowRunner.awaitCompletion();
 
-        JsonNode node = jobDocMgr.read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        JsonNode node = getHubClient().getJobsClient().newDocumentManager().read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(ticket.getJobId(), node.get("jobId").asText());
         assertEquals(0, node.get("successfulEvents").asInt());
         assertEquals(0, node.get("failedEvents").asInt());
