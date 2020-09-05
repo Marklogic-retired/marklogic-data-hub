@@ -2,12 +2,17 @@ package com.marklogic.hub.dhs.installer.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.impl.Versions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class CanInstallDhsCommandTest extends AbstractHubCoreTest {
 
     private InstallIntoDhsCommand installIntoDhsCommand = new InstallIntoDhsCommand();
+
+    @Autowired
+    Versions versions;
 
     @Test
     void testCanInstallDhs() {
