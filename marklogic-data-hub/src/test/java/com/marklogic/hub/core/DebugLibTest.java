@@ -35,7 +35,7 @@ public class DebugLibTest extends AbstractHubCoreTest {
     public void setup() {
         scaffolding.createLegacyFlow(entityName, flowName, FlowType.INPUT, CodeFormat.XQUERY, DataFormat.XML, false);
 
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
     }
 
     // testing https://github.com/marklogic/marklogic-data-hub/issues/516
@@ -55,7 +55,6 @@ public class DebugLibTest extends AbstractHubCoreTest {
     }
 
     private void run516() {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME);
         final int currentCount = getStagingDocCount();
 
         ServerTransform runFlow = new ServerTransform("mlInputFlow");
@@ -63,7 +62,7 @@ public class DebugLibTest extends AbstractHubCoreTest {
         runFlow.addParameter("flow-name", flowName);
         runFlow.addParameter("job-id", UUID.randomUUID().toString());
 
-        DataMovementManager dataMovementManager = stagingClient.newDataMovementManager();
+        DataMovementManager dataMovementManager = getHubClient().getStagingClient().newDataMovementManager();
 
         runFlowFailed = false;
         WriteBatcher batcher = dataMovementManager.newWriteBatcher();
