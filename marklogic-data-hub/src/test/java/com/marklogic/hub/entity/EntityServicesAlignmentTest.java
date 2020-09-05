@@ -4,12 +4,12 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.expression.PlanBuilder;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -22,20 +22,12 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
 
-    @BeforeEach
-    void beforeEach() {
-        runAsFlowDeveloper();
-    }
-
     @Test
     public void testDeployTDEWithNoEntities() {
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(getHubConfig(), true);
 
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
@@ -43,9 +35,6 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     @Test
     public void testDeployTDE() throws Exception {
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
@@ -54,6 +43,7 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
+        runAsFlowOperator();
         DatabaseClient finalClient = getHubClient().getFinalClient();
 
         GenericDocumentManager docMgr = finalClient.newDocumentManager();

@@ -31,7 +31,7 @@ public class RunFlowRunnerTestsWithoutProjectTest extends FlowRunnerTest {
 
         // Need to avoid instantiating this twice for the benefit of the MultipleJobs test in the parent class
         if (myFlowRunner == null) {
-            myFlowRunner = new FlowRunnerImpl(host, flowRunnerUser, flowRunnerPassword);
+            myFlowRunner = new FlowRunnerImpl(getHubConfig().getHost(), getHubConfig().getMlUsername(), getHubConfig().getMlPassword());
         }
         flowRunner = myFlowRunner;
 
