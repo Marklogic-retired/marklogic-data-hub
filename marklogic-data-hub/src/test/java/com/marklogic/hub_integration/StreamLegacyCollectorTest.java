@@ -24,6 +24,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.flow.*;
@@ -59,6 +60,9 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
     @Autowired
     Scaffolding scaffolding;
 
+    @Autowired
+    DataHub dataHub;
+
     @BeforeEach
     public void setup() throws IOException {
         // it triggers installation of staging db before staging schemas db exists.
@@ -70,20 +74,23 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
         // disable tracing because trying to trace the 3 million ids to a doc will fail.
         disableDebugging();
         disableTracing();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
+
         scaffolding.createEntity(ENTITY);
         scaffolding.createLegacyFlow(ENTITY, "testharmonize", FlowType.HARMONIZE,
             CodeFormat.XQUERY, DataFormat.XML, false);
 
         clearUserModules();
-        installUserModules(getDataHubAdminConfig(), true);
-        getDataHub().updateIndexes();
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        installUserModules(runAsFlowDeveloper(), true);
+        dataHub.updateIndexes();
+        resetDatabases();
+        runAsFlowDeveloper();
 
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/collector.xqy", "stream-collector-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy", "stream-collector-test/content.xqy");
 
-        DataMovementManager stagingDataMovementManager = stagingClient.newDataMovementManager();
+        DataMovementManager stagingDataMovementManager = getHubClient().getStagingClient().newDataMovementManager();
 
         WriteBatcher writeBatcher = stagingDataMovementManager.newWriteBatcher()
             .withBatchSize(2000)
@@ -122,7 +129,7 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
         // there is a custom content plugin that throws an error. This code uses the stopOnFailure
         // option to halt execution. This allows us to test that the collector runs to completion while not
         // having to wait for the entire harmonize flow to finish.
-        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getHubConfig().getIsProvisionedEnvironment());
         LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
             FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
@@ -138,7 +145,7 @@ public class StreamLegacyCollectorTest extends AbstractHubCoreTest {
         JobTicket ticket = flowRunner.run();
         flowRunner.awaitCompletion();
 
-        JsonNode node = jobDocMgr.read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
+        JsonNode node = getHubClient().getJobsClient().newDocumentManager().read("/jobs/" + ticket.getJobId() + ".json").next().getContent(new JacksonHandle()).get();
         assertEquals(ticket.getJobId(), node.get("jobId").asText());
         assertEquals(0, node.get("successfulEvents").asInt());
         assertEquals(10, node.get("failedEvents").asInt());
