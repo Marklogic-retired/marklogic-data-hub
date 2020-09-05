@@ -8,6 +8,8 @@ import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from
 import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
 import { MLTooltip } from '@marklogic/design-system';
 
+import MultiSlider from './multi-slider/multi-slider';
+
 
 interface Props {
     data: any;
@@ -58,16 +60,46 @@ const MatchingCard: React.FC<Props> = (props) => {
     const handleCardDelete = (name) => {
         setDialogVisible(true);
         setLoadArtifactName(name);
-      }
+    }
 
-      const onOk = (name) => {
+    const onOk = (name) => {
         props.deleteMatchingArtifact(name)
         setDialogVisible(false);
-      }
+    }
 
-      const onCancel = () => {
+    const onCancel = () => {
         setDialogVisible(false);
-      }
+    }
+
+    // TODO get match options from backend
+    const matchOptions = [
+        {
+            props: [{
+                prop: 'First',
+                type: 'Exact'
+            }],
+            value: 0
+        },
+        {
+            props: [{
+                prop: 'DOB',
+                type: 'Exact'
+            }],
+            value: 0
+        },
+        {
+            props: [{
+                prop: 'Foo',
+                type: 'Bar'
+            }],
+            value: 0
+        },
+    ];
+
+    const handleSlider = (values) => {
+        // TODO put match options to backend
+        console.log('handleSlider', values);
+    }
 
     const deleteConfirmation = <Modal
         visible={dialogVisible}
@@ -114,6 +146,9 @@ const MatchingCard: React.FC<Props> = (props) => {
                         <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                     </Card></Col>
                 )) : <span></span> }</Row>
+
+                <MultiSlider options={matchOptions} handleSlider={handleSlider} />
+
                 <CreateEditMatchingDialog
                 newMatching={newMatching}
                 title={title}
