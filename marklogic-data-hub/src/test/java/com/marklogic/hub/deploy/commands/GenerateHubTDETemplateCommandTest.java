@@ -36,7 +36,7 @@ public class GenerateHubTDETemplateCommandTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getDataHubAdminConfig());
+        GenerateHubTDETemplateCommand = new GenerateHubTDETemplateCommand(getHubConfig());
     }
 
 
