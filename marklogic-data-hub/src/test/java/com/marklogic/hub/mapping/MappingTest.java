@@ -4,12 +4,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.dataservices.OutputEndpoint;
+import com.marklogic.client.eval.EvalResult;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.impl.NodeConverter;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.io.marker.AbstractReadHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
@@ -19,12 +24,17 @@ import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MappingTest extends AbstractHubCoreTest {
+
+    @Autowired
+    MappingManager mappingManager;
 
     @BeforeEach
     void beforeEach() {
@@ -282,7 +292,7 @@ public class MappingTest extends AbstractHubCoreTest {
         // test map for permissions
         String uri = "/mappings/" + testMap.getName() + "/" + testMap.getName() + "-" + testMap.getVersion() + ".mapping.xml.xslt";
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
+        BytesHandle handle = getHubClient().getModulesClient().newDocumentManager().read(uri, metadata, new BytesHandle());
         Assertions.assertNotEquals(0, handle.get().length);
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
         Assertions.assertTrue(permissions.get("data-hub-common").contains(DocumentMetadataHandle.Capability.READ));
@@ -311,5 +321,32 @@ public class MappingTest extends AbstractHubCoreTest {
         RunFlowResponse flowResponse = flowRunner.runFlow(new FlowInputs(flowName, stepIds));
         flowRunner.awaitCompletion();
         return flowResponse;
+    }
+
+    private JsonNode outputToJson(List<String> stepOutput, int index, String field) throws Exception {
+        JsonNode jsonOutput = objectMapper.readTree(stepOutput.toString());
+        return jsonOutput.get(index).get(field);
+    }
+
+    private JsonNode getQueryResults(String query, String database) {
+        AbstractReadHandle res = runInDatabase(query, database, new JacksonHandle());
+        return ((JacksonHandle) res).get();
+    }
+
+    private int getDocCountByQuery(String database, String query) {
+        int count = 0;
+        EvalResultIterator resultItr = runInDatabase("xdmp:estimate(cts:search(fn:collection()," + query + "))", database);
+        if (resultItr == null || !resultItr.hasNext()) {
+            return count;
+        }
+        EvalResult res = resultItr.next();
+        count = Math.toIntExact((long) res.getNumber());
+        return count;
+    }
+
+    private String getTimezoneString() {
+        StringHandle strHandle = new StringHandle();
+        runInDatabase("sem:timezone-string(fn:current-dateTime())", HubConfig.DEFAULT_FINAL_NAME, strHandle);
+        return strHandle.get();
     }
 }

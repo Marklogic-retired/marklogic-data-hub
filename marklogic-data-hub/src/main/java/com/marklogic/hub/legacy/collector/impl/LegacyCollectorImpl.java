@@ -118,16 +118,22 @@ public class LegacyCollectorImpl implements LegacyCollector {
 
             RestTemplate template = newRestTemplate(  ((HubConfigImpl) hubConfig).getMlUsername(), ( (HubConfigImpl) hubConfig).getMlPassword());
             String uriString = String.format(
-                "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s&database=%s",
+                "%s://%s:%d%s?job-id=%s&entity-name=%s&flow-name=%s",
                 client.getSecurityContext().getSSLContext() != null ? "https" : "http",
                 client.getHost(),
                 client.getPort(),
                 "/v1/internal/hubcollector",
                 URLEncoder.encode(jobId, "UTF-8"),
                 URLEncoder.encode(entity, "UTF-8"),
-                URLEncoder.encode(flow, "UTF-8"),
-                URLEncoder.encode(client.getDatabase(), "UTF-8")
+                URLEncoder.encode(flow, "UTF-8")
             );
+
+            // Database isn't always set; i.e. for a DatabaseClient constructed to talk to Data Services, it won't be
+            // set. In that case, we expect the database associated with the app server specified by the DatabaseClient
+            // port to be the target database. But if database is set, then it's added to the URL.
+            if (client.getDatabase() != null) {
+                uriString += "&database=" + URLEncoder.encode(client.getDatabase(), "UTF-8");
+            }
 
             if (options != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
