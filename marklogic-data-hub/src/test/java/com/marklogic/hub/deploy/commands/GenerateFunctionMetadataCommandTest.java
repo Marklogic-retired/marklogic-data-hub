@@ -2,6 +2,7 @@ package com.marklogic.hub.deploy.commands;
 
 
 import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
@@ -23,6 +24,7 @@ public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void writeTestMappingFunctionLibraryToModulesDatabase() {
+        GenericDocumentManager modMgr = getHubClient().getModulesClient().newDocumentManager();
         DocumentWriteSet writeSet = modMgr.newWriteSet();
         StringHandle handle = new StringHandle("'use strict';\n" +
             "\n" +
@@ -54,7 +56,7 @@ public class GenerateFunctionMetadataCommandTest extends AbstractHubCoreTest {
 
         String uri = "/custom-modules/mapping-functions/testModule.xml.xslt";
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        BytesHandle handle = modMgr.read(uri, metadata, new BytesHandle());
+        BytesHandle handle = getHubClient().getModulesClient().newDocumentManager().read(uri, metadata, new BytesHandle());
         assertNotEquals(0, handle.get().length);
         DocumentMetadataHandle.DocumentPermissions permissions = metadata.getPermissions();
         assertTrue(permissions.get("data-hub-module-reader").contains(READ));
