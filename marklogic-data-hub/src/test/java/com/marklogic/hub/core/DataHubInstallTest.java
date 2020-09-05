@@ -20,10 +20,13 @@ import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,14 +39,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class DataHubInstallTest extends AbstractHubCoreTest {
 
+    @Autowired
+    DataHub dataHub;
+
     @Test
     public void testInstallHubModules() {
-        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
-        assertTrue(getDataHub().isInstalled().isInstalled());
+        Assumptions.assumeFalse(getHubConfig().getIsProvisionedEnvironment());
+        assertTrue(dataHub.isInstalled().isInstalled());
 
         assertTrue(getModulesFile("/com.marklogic.hub/config.xqy").startsWith(getResource("data-hub-test/core-modules/config.xqy")));
 
-        QueryOptionsManager jobsOptMgr = jobClient.newServerConfigManager().newQueryOptionsManager();
+        QueryOptionsManager jobsOptMgr = getHubClient().getJobsClient().newServerConfigManager().newQueryOptionsManager();
         StringHandle strJobTracesHandle = new StringHandle();
         jobsOptMgr.readOptions("traces", strJobTracesHandle);
         assertTrue(strJobTracesHandle.get().length() > 0, "traces options not installed");
@@ -51,16 +57,16 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
         jobsOptMgr.readOptions("jobs", strJobssHandle);
         assertTrue(strJobssHandle.get().length() > 0, "jobs options not installed");
         StringHandle strStagingHandle = new StringHandle();
-        stagingClient.newServerConfigManager().newQueryOptionsManager().readOptions("default", strStagingHandle);
+        getHubClient().getStagingClient().newServerConfigManager().newQueryOptionsManager().readOptions("default", strStagingHandle);
         assertTrue(strStagingHandle.get().length() > 0, "staging options not installed");
         StringHandle strFinalHandle = new StringHandle();
-        finalClient.newServerConfigManager().newQueryOptionsManager().readOptions("default", strFinalHandle);
+        getHubClient().getFinalClient().newServerConfigManager().newQueryOptionsManager().readOptions("default", strFinalHandle);
         assertTrue(strFinalHandle.get().length() > 0, "final options not installed");
     }
 
     @Test
     public void testInstallUserModules() throws IOException, URISyntaxException {
-        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(runAsFlowDeveloper().getIsProvisionedEnvironment());
         URL url = DataHubInstallTest.class.getClassLoader().getResource("data-hub-test");
         String path = Paths.get(url.toURI()).toFile().getAbsolutePath();
         File srcDir = new File(path);
@@ -68,9 +74,8 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
 
         FileUtils.cleanDirectory(projectDir);
         FileUtils.copyDirectory(srcDir, projectDir);
-        HubConfig hubConfig = getDataHubAdminConfig();
 
-        installUserModules(hubConfig, false);
+        installUserModules(runAsFlowDeveloper(), false);
 
         assertEquals(
             getResource("data-hub-test/plugins/entities/test-entity/harmonize/final/collector.xqy"),
@@ -125,15 +130,12 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
             getXmlFromResource("data-hub-test/hl7.xml"),
             getModulesDocument("/entities/test-entity/input/hl7/hl7.xml"));
 
+        // This used to test the finalClient as well, but that was misleading because that client was still talking
+        // to the staging port
         QueryOptionsManager stagingQueryOptMgr = getClientByName(HubConfig.DEFAULT_STAGING_NAME).newServerConfigManager().newQueryOptionsManager();
         assertXMLEqual(
             getXmlFromResource("data-hub-test/plugins/entities/test-entity/input/REST/options/doctors.xml"),
             stagingQueryOptMgr.readOptions("doctors", new DOMHandle()).get());
-
-        QueryOptionsManager finalQueryOptMgr = getClientByName(HubConfig.DEFAULT_FINAL_NAME).newServerConfigManager().newQueryOptionsManager();
-        assertXMLEqual(
-            getXmlFromResource("data-hub-test/plugins/entities/test-entity/harmonize/REST/options/patients.xml"),
-            finalQueryOptMgr.readOptions("doctors", new DOMHandle()).get());
 
         assertXMLEqual(
             getXmlFromResource("data-hub-helpers/test-conf-metadata.xml"),
@@ -156,7 +158,7 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
          * as currently these 2 commands share the timestamp file
          */
 
-        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
+        String timestampFile = getHubProject().getUserModulesDeployTimestampFile();
         PropertiesModuleManager propsManager = new PropertiesModuleManager(timestampFile);
         propsManager.initialize();
 
@@ -176,5 +178,9 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File(pluginsDir, "entities/test-entity/input/REST/options/doctors.xml")));
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File(pluginsDir, "entities/test-entity/harmonize/REST/options/patients.xml")));
         assertFalse(propsManager.hasFileBeenModifiedSinceLastLoaded(new File(pluginsDir, "entities/test-entity/input/REST/transforms/test-input-transform.xqy")));
+    }
+
+    private Document getModulesDocument(String uri) {
+        return getHubClient().getModulesClient().newDocumentManager().read(uri).next().getContent(new DOMHandle()).get();
     }
 }
