@@ -41,7 +41,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode sourceNode = mapper.createObjectNode();
         sourceNode.put("content", "v1-content");
-        stagingClient.newJSONDocumentManager().write("/test.json", meta, new JacksonHandle(sourceNode));
+        getHubClient().getStagingClient().newJSONDocumentManager().write("/test.json", meta, new JacksonHandle(sourceNode));
     }
 
     @AfterEach
