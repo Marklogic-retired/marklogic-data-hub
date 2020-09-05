@@ -15,16 +15,23 @@
  */
 package com.marklogic.hub.legacy.flow;
 
+import com.marklogic.client.document.DocumentWriteSet;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.error.DataHubProjectException;
 import com.marklogic.hub.legacy.LegacyFlowManager;
 import com.marklogic.hub.legacy.collector.LegacyCollector;
 import com.marklogic.hub.main.MainPlugin;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,13 +39,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLStreamException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
@@ -110,19 +116,17 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
     }
 
     private void addStagingDocs() {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getHubConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installStagingDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installStagingDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
 
     private void addFinalDocs() {
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("tester");
-        meta.getPermissions().add(getDataHubAdminConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
+        meta.getPermissions().add(getHubConfig().getFlowOperatorRoleName(), READ, UPDATE, EXECUTE);
         installFinalDoc("/employee1.xml", meta, "flow-manager-test/input/employee1.xml");
         installFinalDoc("/employee2.xml", meta, "flow-manager-test/input/employee2.xml");
     }
@@ -288,7 +292,9 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = finalDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
@@ -311,7 +317,9 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
+        GenericDocumentManager stagingDocMgr = getHubClient().getStagingClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized1.xml"), stagingDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized/harmonized2.xml"), stagingDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
         DocumentMetadataHandle metadata = stagingDocMgr.readMetadata("/employee1.xml", new DocumentMetadataHandle());
@@ -341,7 +349,9 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-header/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -371,9 +381,11 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
         assertEquals(stagingCount, getStagingDocCount());
         assertEquals(2 + finalCount, getFinalDocCount());
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-all/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -401,7 +413,9 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
@@ -429,10 +443,38 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized1.xml"), finalDocMgr.read("/employee1.xml").next().getContent(new DOMHandle()).get());
         assertXMLEqual(getXmlFromResource("flow-manager-test/harmonized-with-ns-xml/harmonized2.xml"), finalDocMgr.read("/employee2.xml").next().getContent(new DOMHandle()).get());
 
         runInModules("xdmp:directory-delete(\"/entities/test/harmonize/my-test-flow-ns-xml-xqy/\")");
+    }
+
+    private void installModules(Map<String, String> modules) {
+        GenericDocumentManager modMgr = getHubClient().getModulesClient().newDocumentManager();
+        DocumentWriteSet writeSet = modMgr.newWriteSet();
+        modules.forEach((String path, String localPath) -> {
+            InputStreamHandle handle = new InputStreamHandle(HubTestBase.class.getClassLoader().getResourceAsStream(localPath));
+            String ext = FilenameUtils.getExtension(path);
+            switch (ext) {
+                case "xml":
+                    handle.setFormat(Format.XML);
+                    break;
+                case "json":
+                    handle.setFormat(Format.JSON);
+                    break;
+                default:
+                    handle.setFormat(Format.TEXT);
+            }
+
+            writeSet.add(path, buildMetadataWithModulePermissions(), handle);
+        });
+        modMgr.write(writeSet);
+        writeSet.parallelStream().forEach((writeOp) -> {
+            IOUtils.closeQuietly((InputStreamHandle) writeOp.getContent());
+        });
+        clearFlowCache();
     }
 }
