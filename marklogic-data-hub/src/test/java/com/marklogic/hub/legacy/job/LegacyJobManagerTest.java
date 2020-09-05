@@ -20,9 +20,12 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.legacy.flow.*;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
+import com.marklogic.hub.scaffold.Scaffolding;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +48,12 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     private static final String HARMONIZE_FLOW_JSON = "testharmonize-json";
     private List<String> jobIds = Collections.synchronizedList(new ArrayList<String>());
 
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    LegacyFlowManagerImpl legacyFlowManager;
+
     private LegacyJobManager jobManager;
 
     private LegacyFlowItemCompleteListener flowItemCompleteListener =
@@ -52,9 +61,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setupStuff() {
-        // One more clear to try to get these tests working
-        clearDatabases(getHubConfig().getDbName(DatabaseKind.JOB));
-
+        runAsFlowDeveloper();
         enableDebugging();
         enableTracing();
 
@@ -65,7 +72,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
         scaffolding.createLegacyFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.JSON, false);
 
         clearUserModules();
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(runAsFlowDeveloper(), false);
 
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/collector.xqy", "flow-runner-test/collector.xqy");
         installModule("/entities/" + ENTITY + "/harmonize/" + HARMONIZE_FLOW_XML + "/content.xqy", "flow-runner-test/content-for-options.xqy");
@@ -74,12 +81,12 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
 
         // Run a flow a couple times to generate some job/trace data.
         jobIds.clear();
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, HARMONIZE_FLOW_XML, FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
         runAsFlowOperator();
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
             .withThreadCount(1)
@@ -91,8 +98,8 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
         flowRunner.run();
         flowRunner.awaitCompletion();
 
-        harmonizeFlow = fm.getFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE);
-        flowRunner = fm.newFlowRunner()
+        harmonizeFlow = legacyFlowManager.getFlow(ENTITY, HARMONIZE_FLOW_JSON, FlowType.HARMONIZE);
+        flowRunner = legacyFlowManager.newFlowRunner()
             .withFlow(harmonizeFlow)
             .withBatchSize(10)
             .withThreadCount(1)
@@ -249,7 +256,8 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     @Test
     public void exportNoJobs() {
         Path exportPath = getHubProject().getProjectDir().resolve("exportNoJobs.zip");
-        clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowOperator();
 
         // if the jobs database is empty, do not produce a zip file.
         File zipFile = exportPath.toFile();
@@ -264,7 +272,8 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
     public void importJobs() throws URISyntaxException, IOException {
         URL url = LegacyJobManagerTest.class.getClassLoader().getResource("job-manager-test/jobexport.zip");
 
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
+        resetDatabases();
+        runAsFlowDeveloper();
 
         assertEquals(0, getJobDocCount());
         assertEquals(0, getTracingDocCount());
