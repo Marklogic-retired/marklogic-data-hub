@@ -1,6 +1,5 @@
 package com.marklogic.hub.dhs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.DocumentManager;
@@ -20,6 +19,7 @@ import com.marklogic.rest.util.ResourcesFragment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 
 public class DeployUserAmpsTest extends AbstractHubCoreTest {
-    ObjectMapper mapper = new ObjectMapper();
+
     HubClient operatorHubClient;
     HubClient adminHubClient;
 
@@ -82,9 +82,9 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         assertFalse(fetchPiiData().hasNext());
 
         //create custom role having "data-hub-developer/operator" as "data-hub-security-admin"
-        ObjectNode roleNode = mapper.createObjectNode();
+        ObjectNode roleNode = objectMapper.createObjectNode();
         roleNode.put("role-name", "test-custom-role");
-        roleNode.set("role", mapper.createArrayNode().add("data-hub-developer").add("pii-reader"));
+        roleNode.set("role", objectMapper.createArrayNode().add("data-hub-developer").add("pii-reader"));
         writePayLoadToFileAndDeploy(getHubConfig().getUserSecurityDir().resolve("roles"), "customRole.json", roleNode);
         ResourcesFragment amps;
         try {
@@ -143,11 +143,11 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     }
 
     private ObjectNode getAmpNode(String dbName, String ... roleNames){
-        ObjectNode ampNode = mapper.createObjectNode();
+        ObjectNode ampNode = objectMapper.createObjectNode();
         ampNode.put("local-name", "getPiiData");
         ampNode.put("document-uri", "/ampTest/testModule.sjs");
         ampNode.put("modules-database", dbName);
-        ArrayNode roleNode = mapper.createArrayNode();
+        ArrayNode roleNode = objectMapper.createArrayNode();
         for(String roleName: roleNames){
             roleNode.add(roleName);
         }
@@ -160,7 +160,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             path.toFile().mkdirs();
         }
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(path.resolve(fileName).toFile(), payload);
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(path.resolve(fileName).toFile(), payload);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -182,7 +182,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             "  }\n" +
             ");");
         handle.setFormat(Format.TEXT);
-        writeSet.add("/ampTest/testModule.sjs", getPermissionsMetaDataHandle(), handle);
+        writeSet.add("/ampTest/testModule.sjs", buildMetadataWithModulePermissions(), handle);
         moduleDocManager.write(writeSet);
 
         handle = new StringHandle("{\"ssn\": \"123-456-7890\"}");
