@@ -22,6 +22,7 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.MappingManager;
 import com.marklogic.hub.util.FileUtil;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -35,6 +36,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MappingManagerTest extends AbstractHubCoreTest {
 
     private String mappingName = "my-fun-test";
+
+    @Autowired
+    MappingManager mappingManager;
 
     @Test
     public void createMapping() {
@@ -58,7 +62,7 @@ public class MappingManagerTest extends AbstractHubCoreTest {
 
         //now let's see if it's on disk!
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getHubProject().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
@@ -170,21 +174,23 @@ public class MappingManagerTest extends AbstractHubCoreTest {
         assertTrue(testMap != null);
         //check to make sure its on disk
         String mappingFileName = testMap.getName() + "-" + testMap.getVersion() + MappingManager.MAPPING_FILE_EXTENSION;
-        assertTrue(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertTrue(Paths.get((getHubProject().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
         //now let's delete it
         mappingManager.deleteMapping(mappingName);
 
         //make sure it's gone off disk
-        assertFalse(Paths.get((getDataHubAdminConfig().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
+        assertFalse(Paths.get((getHubProject().getHubMappingsDir().toString()), mappingName, mappingFileName).toFile().exists());
 
     }
 
     private void copyTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION),
+            getHubProject().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-1" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 
     private void copySecondTestMap() {
-        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION), getDataHubAdminConfig().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
+        FileUtil.copy(getResourceStream("scaffolding-test/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION),
+            getHubProject().getHubMappingsDir().resolve(mappingName + "/" + mappingName + "-2" + MappingManager.MAPPING_FILE_EXTENSION).toFile());
     }
 }
