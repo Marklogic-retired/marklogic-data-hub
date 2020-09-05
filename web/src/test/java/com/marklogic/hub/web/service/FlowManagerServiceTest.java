@@ -83,7 +83,7 @@ class FlowManagerServiceTest extends AbstractWebTest {
     }
 
     @Test
-    void deleteFlow() throws InterruptedException {
+    void deleteFlow() {
         List<String> flowList = flowManagerService.getFlowNames();
         assertEquals(2, flowList.size());
 
@@ -93,12 +93,9 @@ class FlowManagerServiceTest extends AbstractWebTest {
         flowList = flowManagerService.getFlowNames();
         assertEquals(0, flowList.size());
 
-        // Adding sleep to delete artifacts from the db via async call
-        Thread.sleep(1000);
-
-        DocumentPage doc = stagingDocMgr.read("/flows/" + FLOW + ".flow.json");
+        DocumentPage doc = getHubClient().getStagingClient().newDocumentManager().read("/flows/" + FLOW + ".flow.json");
         assertFalse(doc.hasNext());
-        doc = finalDocMgr.read("/flows/" + FLOW + ".flow.json");
+        doc = getHubClient().getFinalClient().newDocumentManager().read("/flows/" + FLOW + ".flow.json");
         assertFalse(doc.hasNext());
     }
 
@@ -172,12 +169,12 @@ class FlowManagerServiceTest extends AbstractWebTest {
         flowManager.saveFlow(flow);
 
         // Install artifacts so we can verify that the mappings are deleted
-        installHubArtifacts(getHubConfig(), true);
+        installHubArtifacts();
         installUserModules(getHubConfig(), true);
 
         // Verify the mappings exist
-        GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
-        GenericDocumentManager finalDocumentManager = finalClient.newDocumentManager();
+        GenericDocumentManager stagingDocumentManager = getHubClient().getStagingClient().newDocumentManager();
+        GenericDocumentManager finalDocumentManager = getHubClient().getFinalClient().newDocumentManager();
         final String expectedMappingUri = "/mappings/testMapping/testMapping-1.mapping.json";
         assertNotNull(stagingDocumentManager.exists(expectedMappingUri));
         assertNotNull(finalDocumentManager.exists(expectedMappingUri));
@@ -195,7 +192,7 @@ class FlowManagerServiceTest extends AbstractWebTest {
         String customStepName = "myTestCustomStep";
         InputStream inputStream = getResourceStream(
             "scaffolding-test/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION);
-        FileUtil.copy(inputStream, getDataHubAdminConfig().getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM)
+        FileUtil.copy(inputStream, getHubProject().getStepDefinitionPath(StepDefinition.StepDefinitionType.CUSTOM)
             .resolve(customStepName + "/" + customStepName + StepDefinitionManager.STEP_DEFINITION_FILE_EXTENSION).toFile());
         IOUtils.closeQuietly(inputStream);
         assertEquals(1, stepDefinitionManager.getStepDefinitions().size(),
@@ -212,12 +209,12 @@ class FlowManagerServiceTest extends AbstractWebTest {
         flowManager.saveFlow(flow);
 
         // Install artifacts so we can verify that the step definition can be deleted
-        installHubArtifacts(getHubConfig(), true);
+        installHubArtifacts();
         installUserModules(getHubConfig(), true);
 
         // Verify the step exists
-        GenericDocumentManager stagingDocumentManager = stagingClient.newDocumentManager();
-        GenericDocumentManager finalDocumentManager = finalClient.newDocumentManager();
+        GenericDocumentManager stagingDocumentManager = getHubClient().getStagingClient().newDocumentManager();
+        GenericDocumentManager finalDocumentManager = getHubClient().getFinalClient().newDocumentManager();
         final String expectedStepUri = "/step-definitions/custom/myTestCustomStep/myTestCustomStep.step.json";
         assertNotNull(stagingDocumentManager.exists(expectedStepUri));
         assertNotNull(finalDocumentManager.exists(expectedStepUri));
