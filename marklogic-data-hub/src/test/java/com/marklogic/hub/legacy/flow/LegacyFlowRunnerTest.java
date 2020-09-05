@@ -15,21 +15,24 @@
  */
 package com.marklogic.hub.legacy.flow;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MappingManager;
+import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
+import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.util.FileUtil;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -47,8 +50,18 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
     private static final String ENTITY = "e2eentity";
     private Path projectDir;
 
+    @Autowired
+    Scaffolding scaffolding;
+
+    @Autowired
+    MappingManager mappingManager;
+
+    @Autowired
+    LegacyFlowManagerImpl legacyFlowManager;
+
     @BeforeEach
     public void setup(){
+        runAsFlowDeveloper();
         projectDir = getHubProject().getProjectDir();
         // Specific to this test - must also delete legacy entities in the modules database
         runInModules("cts:uri-match('/entities/**') ! xdmp:document-delete(.)");
@@ -70,15 +83,15 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(runAsFlowDeveloper(), false);
 
 
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize",
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, "testharmonize",
                 FlowType.HARMONIZE);
         HashMap<String, Object> options = new HashMap<>();
         options.put("name", "Bob Smith");
         options.put("age", 55);
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
                 .withFlow(harmonizeFlow)
                 .withBatchSize(10)
                 .withThreadCount(1)
@@ -110,7 +123,7 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                         "  <attachments><original xmlns=\"\">data</original></attachments>\n" +
                         "</envelope>";
 
-        String actual = finalDocMgr.read("1.xml").next().getContent(new StringHandle()).get();
+        String actual = getHubClient().getFinalClient().newDocumentManager().read("1.xml").next().getContent(new StringHandle()).get();
 
         assertXMLEqual(expected, actual);
     }
@@ -128,25 +141,21 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-json/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(runAsFlowDeveloper(), false);
 
 
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-json",
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, "testharmonize-sjs-json",
                 FlowType.HARMONIZE);
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
                 .withFlow(harmonizeFlow)
                 .withBatchSize(10)
                 .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         JsonNode jsonEnvelope = finalDocMgr.read("1.json").next().getContent(new JacksonHandle()).get();
 
-        try {
-            logger.debug(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonEnvelope));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
         assertNull(jsonEnvelope.get("envelope").get("instance").get("Person").get("$attachments"));
         assertNotNull(jsonEnvelope.get("envelope").get("attachments"));
     }
@@ -164,24 +173,20 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-xqy-json/content.xqy"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(runAsFlowDeveloper(), false);
 
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-xqy-json",
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, "testharmonize-xqy-json",
                 FlowType.HARMONIZE);
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
                 .withFlow(harmonizeFlow)
                 .withBatchSize(10)
                 .withThreadCount(1);
         flowRunner.run();
         flowRunner.awaitCompletion();
 
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         JsonNode jsonEnvelope = finalDocMgr.read("2.json").next().getContent(new JacksonHandle()).get();
 
-        try {
-            logger.debug(new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(jsonEnvelope));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
         assertNull(jsonEnvelope.get("envelope").get("instance").get("Person").get("$attachments"));
         assertNotNull(jsonEnvelope.get("envelope").get("attachments"));
     }
@@ -199,12 +204,12 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                 projectDir.resolve("plugins/entities/" + ENTITY + "/harmonize/testharmonize-sjs-xml/content.sjs"),
                 StandardCopyOption.REPLACE_EXISTING);
 
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(runAsFlowDeveloper(), false);
 
 
-        LegacyFlow harmonizeFlow = fm.getFlow(ENTITY, "testharmonize-sjs-xml",
+        LegacyFlow harmonizeFlow = legacyFlowManager.getFlow(ENTITY, "testharmonize-sjs-xml",
                 FlowType.HARMONIZE);
-        LegacyFlowRunner flowRunner = fm.newFlowRunner()
+        LegacyFlowRunner flowRunner = legacyFlowManager.newFlowRunner()
                 .withFlow(harmonizeFlow)
                 .withBatchSize(10)
                 .withThreadCount(1);
@@ -230,16 +235,14 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
                         "  <attachments><and xmlns=\"\">originaldochere</and></attachments>\n" +
                         "</envelope>";
 
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         String actual = finalDocMgr.read("2.xml").next().getContentAs(String.class);
-        //logger.debug(expected);
-        //logger.debug(actual);
         XMLAssert.assertXMLEqual(expected, actual);
-
     }
 
     @Test
     public void testCreateandDeployFlowWithHubUser() throws IOException {
-        Assumptions.assumeFalse(getDataHubAdminConfig().getIsProvisionedEnvironment());
+        Assumptions.assumeFalse(getHubConfig().getIsProvisionedEnvironment());
 
         scaffolding.createLegacyFlow(ENTITY, "FlowWithHubUser", FlowType.HARMONIZE,
                 CodeFormat.XQUERY, DataFormat.JSON, false);
@@ -266,10 +269,11 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
         catch(Exception e) {
             Assert.assertTrue(e.getMessage().toUpperCase().contains("SEC-URIPRIV:") || e.getMessage().toLowerCase().contains("do not have permission"));
         }
-        getDataHubAdminConfig();
+
+        runAsFlowDeveloper();
         assertNull(getModulesFile("/entities/"+ENTITY+".entity.json"));
         //deploys the entity to final db
-        installUserModules(getDataHubAdminConfig(), false);
+        installUserModules(getHubConfig(), false);
 
         Mapping testMap = Mapping.create("test");
         testMap.setDescription("This is a test.");
@@ -288,9 +292,10 @@ public class LegacyFlowRunnerTest extends AbstractHubCoreTest {
         }
 
         // Mapping should not be deployed
+        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
         assertFalse(finalDocMgr.read("/mappings/test/test-1.mapping.json").hasNext());
         // Deploys mapping to final db
-        installUserModules(getDataHubAdminConfig(), true);
+        installUserModules(runAsFlowDeveloper(), true);
 
         scaffolding.createLegacyFlow(ENTITY, "MappingFlowWithHubUser", FlowType.HARMONIZE, CodeFormat.JAVASCRIPT, DataFormat.XML, true, "test-1");
         try {
