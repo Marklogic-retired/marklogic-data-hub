@@ -18,7 +18,6 @@ class JobMonitorTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
         addJobDocs();
         jobMonitor = new JobMonitorImpl(adminHubConfig.newJobDbClient());
     }
@@ -77,7 +76,6 @@ class JobMonitorTest extends AbstractHubCoreTest {
     }
 
     private void addJobDocs() {
-        clearDatabases(HubConfig.DEFAULT_JOB_NAME);
         DocumentMetadataHandle meta = new DocumentMetadataHandle();
         meta.getCollections().add("Jobs");
         meta.getCollections().add("Job");
