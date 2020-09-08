@@ -9,7 +9,6 @@ fi
 DHS=`echo $1 | cut -d'=' -f 2`
 mlHost=`echo $2 | cut -d'=' -f 2`
 env=local
-#credentials='-PmlUsername=hc-developer -PmlPassword=password'
 
 cd hc-qa-project
 ./gradlew hubInit
@@ -17,16 +16,21 @@ cd hc-qa-project
 if $DHS
 then
         env=dhs
-        perl -i -pe"s/mlHost=/mlHost=$mlHost/g" gradle-dhs.properties
-        ./gradlew hubDeployAsDeveloper -PenvironmentName=$env --info --stacktrace
+        perl -i -pe"s/mlHost=.*/mlHost=$mlHost/g" gradle-dhs.properties
+        ./gradlew hubDeploy -PenvironmentName=$env --info --stacktrace
 else
         cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
 
         ./gradlew mlDeploy -PmlUsername=admin -PmlPassword=admin --info --stacktrace
-        ./gradlew hubDeployAsDeveloper --info --stacktrace
+        ./gradlew hubDeploy --info --stacktrace
 fi
 
-        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
-        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
-        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2' --info --stacktrace
-        ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=convertedFlow --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=convertedFlow --info --stacktrace
+
+#Verify flow was run successfully based on record count in staging and final database.
+#The task would fail if there was a count mismatch
+./gradlew verifyStagingCounts -q
+./gradlew verifyFinalCounts -q

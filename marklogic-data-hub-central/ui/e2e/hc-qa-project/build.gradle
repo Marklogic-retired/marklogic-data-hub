@@ -1,3 +1,6 @@
+import com.marklogic.gradle.task.HubTask;
+import com.marklogic.client.DatabaseClient;
+
 buildscript {
     repositories {
         mavenLocal()
@@ -49,3 +52,31 @@ task loadThesaurus(type: com.marklogic.gradle.task.MlcpTask) {
 }
 
 hubDeployAsDeveloper.finalizedBy("loadThesaurus")
+
+class DocCount extends HubTask {
+    DatabaseClient client
+    String script
+    @TaskAction
+    def getDocCount() {
+        try {
+            int result = Integer.parseInt(client.newServerEval().javascript(script).evalAs(String.class));
+            if(result != 34) {
+                throw new GradleException("Record count did not match. Expected 34 in ${client.getDatabase()} database, got "+ result)
+            } else {
+                println("Flow/steps were run successfully and got expected number of records in ${client.getDatabase()} database")
+            }
+        } finally {
+            client.release()
+        }
+    }
+}
+
+task verifyStagingCounts(type: DocCount) {
+    client = hubConfig.newStagingClient()
+    script = "fn.count(fn.collection(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON']))"
+}
+
+task verifyFinalCounts(type: DocCount) {
+    client = hubConfig.newFinalClient()
+    script = "fn.count(fn.collection(['mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
+}
