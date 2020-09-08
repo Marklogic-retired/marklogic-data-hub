@@ -89,7 +89,9 @@ const AdvMergeTooltips = {
 const RunToolTips =  {
   'ingestionStep' : 'Run this step to select and ingest files, up to a total of 100MB.',
   'otherSteps' : 'Run this step.',
-  'removeStep' : 'Remove step from flow.'
+  'removeStep' : 'Remove step from flow.',
+  'createFlow' : 'Create a new flow.',
+  'addStep' : 'Add step to flow.'
 }
 
 const NewCustomLoadTooltips = {}
@@ -121,6 +123,7 @@ const ModelingTooltips = {
   entityDescription: 'Description for the entity.',
   saveIcon: 'Save changes to this entity type.',
   revertIcon: 'Discard changes made to this entity type since the last Save operation.',
+  deleteIcon: 'Delete entity.',
   identifier: 'Uniquely identifies each instance of this type. Restricted to only one property per entity type.',
   multiple: 'Allows an array of values.',
   pii: "Indicates that the property's value must be safeguarded and handled according to Personally Identifiable Information (PII) protection rules and policies.",
@@ -129,8 +132,12 @@ const ModelingTooltips = {
   wildcard: 'Enables wildcard search.',
   addStructuredProperty: 'Click to add properties within this structured property.',
   entityEditedAlert: 'Editing or deleting an entity type that has been used could trigger a reindexing of your data or affect processes that are in progress.',
-  noWriteAccess: 'Contact your security administrator to get the roles and permissions required to access this functionality.',
+  noWriteAccess: 'Contact your security administrator for access.',
   addProperty: 'Click to add properties to this entity type.'
+}
+
+const SecurityTooltips = {
+  missingPermission: 'Contact your security administrator for access.'
 }
 
 export {
@@ -147,5 +154,6 @@ export {
     ModelingTooltips,
     RunToolTips,
     NewCustomTooltips,
-    AdvCustomTooltips
+    AdvCustomTooltips,
+    SecurityTooltips
 }

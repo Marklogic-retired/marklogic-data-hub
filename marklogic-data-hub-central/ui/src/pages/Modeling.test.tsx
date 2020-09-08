@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, screen } from '@testing-library/react';
+import { render, wait, screen, fireEvent } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router } from 'react-router-dom';
 
@@ -83,6 +83,15 @@ describe("Modeling Page", () => {
     expect(getByText('Last Processed')).toBeInTheDocument();
 
     expect(getByLabelText("add-entity")).toBeDisabled();
+
+    // test add, save, revert icons display correct tooltip when disabled
+    fireEvent.mouseOver(getByText('Add'));
+    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    fireEvent.mouseOver(getByText('Save All'));
+    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    fireEvent.mouseOver(getByText('Revert All'));
+    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+
     expect(getByLabelText("save-all")).toBeDisabled();
     expect(queryByLabelText('entity-modified-alert')).toBeNull();
   });

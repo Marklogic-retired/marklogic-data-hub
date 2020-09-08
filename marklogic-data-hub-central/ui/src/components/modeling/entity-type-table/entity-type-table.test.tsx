@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { render, wait, screen, within } from '@testing-library/react';
+import { render, wait, screen, within, fireEvent } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import EntityTypeTable from './entity-type-table';
+import {ModelingTooltips, SecurityTooltips} from '../../../config/tooltips.config';
 
 import { 
   entityReferences,
@@ -54,7 +55,7 @@ describe('EntityTypeModal Component', () => {
     expect(getByText('Last Processed')).toBeInTheDocument();
   });
 
-  test('Table renders with mock data, no writer role', () => {
+  test('Table renders with mock data, no writer role', async () => {
     const { getByText, getByTestId, getAllByRole, getByLabelText } =  render(
       <Router>
         <EntityTypeTable 
@@ -77,6 +78,14 @@ describe('EntityTypeModal Component', () => {
     expect(getByTestId('Customer-save-icon')).toHaveClass('iconSaveReadOnly');
     expect(getByTestId('Customer-revert-icon')).toHaveClass('iconRevertReadOnly');
     expect(getByTestId('Customer-trash-icon')).toHaveClass('iconTrashReadOnly');
+
+    // test save, delete, trash icons display correct tooltip when disabled
+    fireEvent.mouseOver(getByTestId('Customer-save-icon'));
+    await wait (() => expect(getByText('Save Entity: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId('Customer-revert-icon'));
+    await wait (() => expect(getByText('Discard Changes: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId('Customer-trash-icon'));
+    await wait (() => expect(getByText('Delete Entity: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     expect(getByText(/Order/i)).toBeInTheDocument();
     expect(getByText(/2,384/i)).toBeInTheDocument();
@@ -139,6 +148,10 @@ describe('EntityTypeModal Component', () => {
           updateSavedEntity={jest.fn()}
         />
       </Router>);
+
+      // check if delete tooltip appears
+      fireEvent.mouseOver(getByTestId('Order-trash-icon'));
+      await wait (() => expect(screen.getByText(ModelingTooltips.deleteIcon)).toBeInTheDocument());
 
       userEvent.click(getByTestId('Order-trash-icon'));
       expect(mockEntityReferences).toBeCalledWith('Order');

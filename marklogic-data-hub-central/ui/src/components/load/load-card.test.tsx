@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait, cleanup, waitForElement } from '@testing-library/react';
+import {render, fireEvent, wait, cleanup, waitForElement, screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
 import data from '../../assets/mock-data/common.data';
@@ -7,6 +7,7 @@ import ingestionData from '../../assets/mock-data/ingestion.data';
 import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
+import {ModelingTooltips, SecurityTooltips} from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -103,6 +104,10 @@ describe('Load Card component', () => {
     expect(getByTestId('testLoadXML-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
     expect(getByTestId('testLoadXML-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
+    // check if delete tooltip appears
+    fireEvent.mouseOver(getByTestId('testLoadXML-delete'));
+    await wait (() => expect(getByText('Delete')).toBeInTheDocument());
+
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId('testLoadXML-toNewFlow'));
 
@@ -160,6 +165,10 @@ describe('Load Card component', () => {
     fireEvent.mouseOver(getByText(data.loadData.data[0].name));
 
     const loadStepName = data.loadData.data[0].name;
+
+    // test delete icon displays correct tooltip when disabled
+    fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-delete'));
+    await wait (() => expect(screen.getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
     // adding to new flow
     fireEvent.mouseOver(getByText(loadStepName));
     // test adding to existing flow

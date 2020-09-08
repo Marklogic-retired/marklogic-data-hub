@@ -9,7 +9,7 @@ import sourceFormatOptions from '../../config/formats.config';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
-import { AdvLoadTooltips } from '../../config/tooltips.config';
+import { AdvLoadTooltips, SecurityTooltips } from '../../config/tooltips.config';
 
 import { AuthoritiesContext } from "../../util/authorities";
 import { Link } from 'react-router-dom';
@@ -197,7 +197,7 @@ const LoadCard: React.FC<Props> = (props) => {
                             actions={[
                             <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)}/></MLTooltip>,
                             <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                props.canReadWrite ?<MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <i data-testid={elem.name+'-disabled-delete'}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                props.canReadWrite ?<MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i data-testid={elem.name+'-disabled-delete'}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
                             ]}
                             className={styles.cardStyle}
                             size="small"

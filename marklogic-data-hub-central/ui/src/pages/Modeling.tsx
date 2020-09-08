@@ -123,6 +123,34 @@ const Modeling: React.FC = () => {
     className={!canWriteEntityModel && styles.disabledButton}
   >Add</MLButton>
 
+  const saveAllButton = <MLButton
+    disabled={!modelingOptions.isModified}
+    aria-label="save-all"
+    onClick={() => {
+      setConfirmType(ConfirmationType.SaveAll);
+      toggleConfirmModal(true);
+    }}
+  >
+    <span className={styles.publishIcon}></span>
+    Save All
+  </MLButton>
+
+  const revertAllButton = <MLButton
+    disabled={!modelingOptions.isModified}
+    aria-label="revert-all"
+    onClick={() => {
+      setConfirmType(ConfirmationType.RevertAll);
+      toggleConfirmModal(true)
+    }}
+  >
+    <FontAwesomeIcon
+      className={styles.icon}
+      icon={faUndo}
+      size="sm"
+    />
+    Revert All
+  </MLButton>
+
   if (canReadEntityModel) {
     return (
       <div className={styles.modelContainer}>
@@ -136,40 +164,28 @@ const Modeling: React.FC = () => {
               <MLTooltip title={ModelingTooltips.addNewEntity}>
                 {addButton}
               </MLTooltip>
-              : 
+              :
               canWriteEntityModel ?
                 addButton
                 :
-                <MLTooltip title={'Add Entity Type: ' + ModelingTooltips.noWriteAccess}>
+                <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
                   <span>{addButton}</span>
                 </MLTooltip>
             }
-            <MLButton 
-              disabled={!modelingOptions.isModified} 
-              aria-label="save-all"
-              onClick={() => {
-                setConfirmType(ConfirmationType.SaveAll);
-                toggleConfirmModal(true);
-              }}
-            >
-              <span className={styles.publishIcon}></span>
-              Save All
-            </MLButton>
-            <MLButton 
-              disabled={!modelingOptions.isModified}
-              aria-label="revert-all" 
-              onClick={() => {
-                setConfirmType(ConfirmationType.RevertAll);
-                toggleConfirmModal(true)
-              }}
-            >
-              <FontAwesomeIcon 
-                className={styles.icon} 
-                icon={faUndo} 
-                size="sm"
-              />
-              Revert All
-            </MLButton>
+            {canWriteEntityModel ?
+              saveAllButton
+              :
+              <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
+                <span style={{marginLeft: '5px'}}>{saveAllButton}</span>
+              </MLTooltip>
+            }
+            {canWriteEntityModel ?
+              revertAllButton
+              :
+              <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
+                <span style={{marginLeft: '5px'}}>{revertAllButton}</span>
+              </MLTooltip>
+            }
           </div>
         </div>
         <ConfirmationModal

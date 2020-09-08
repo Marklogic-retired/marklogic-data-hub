@@ -9,7 +9,7 @@ import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-ma
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
-import { AdvMapTooltips } from '../../../config/tooltips.config';
+import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
 import {AuthoritiesContext} from "../../../util/authorities";
 import { getNestedEntities } from '../../../util/manageArtifacts-service';
 import axios from 'axios';
@@ -636,7 +636,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                     <span></span>,
                                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
                                     <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i>,
+                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"
