@@ -11,7 +11,8 @@
       ],
       "properties": {
         "customerId": {
-          "datatype": "integer"
+          "datatype": "integer",
+          "sortable": true
         },
         "name": {
           "datatype": "string",

@@ -1,18 +1,29 @@
 const search = require('/MarkLogic/appservices/search/search');
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
-const op = require('/MarkLogic/optic');
 
-const queryOptions = '<options xmlns="http://marklogic.com/appservices/search"/>';
+const queryOptions = `<options xmlns="http://marklogic.com/appservices/search"/>`;
 
-function invokeOpticPlanService(schemaName, viewName, limit, structuredQuery, searchText, sortOrder, columns, retries=0) {
-    try {
-        // Need to clear the modules cache or unrelated error could be thrown. Investigating to file a bugtrack.
-        if (retries === 0) {
-            xdmp.moduleCacheClear();
+// This is a simple CSV parser intended for simplifying tests only.
+function basicCsvParser(csv) {
+    const lines = csv.split('\n').map((line) => fn.normalizeSpace(line)).filter((line) => line !== '');
+    const results = [];
+    const headers = lines[0].split(',').map((header) => fn.normalizeSpace(header));
+    for (const line of lines.slice(1)) {
+        const obj = {};
+        let properties = line.split(',').map((val) => fn.normalizeSpace(val));
+        for (let i = 0; i < properties.length; i++) {
+            obj[headers[i]] = properties[i];
         }
+        results.push(obj);
+    }
+    return Sequence.from(results);
+}
+
+function invokeExportSearchService(schemaName, viewName, limit, structuredQuery, searchText, sortOrder, columns, retries=0) {
+    try {
         return fn.head(xdmp.invoke(
-            "/data-hub/5/data-services/entitySearch/getOpticPlan.sjs",
+            "/data-hub/5/data-services/entitySearch/exportSearchAsCSV.sjs",
             {
                 schemaName,
                 viewName,
@@ -32,7 +43,7 @@ function invokeOpticPlanService(schemaName, viewName, limit, structuredQuery, se
                 xdmp.sleep(500);
             }
             xdmp.log(`Optic retry: ${retries}`);
-            return invokeOpticPlanService(schemaName, viewName, limit, structuredQuery, searchText, sortOrder, columns, ++retries);
+            return invokeExportSearchService(schemaName, viewName, limit, structuredQuery, searchText, sortOrder, columns, ++retries);
         } else {
             throw e;
         }
@@ -41,13 +52,13 @@ function invokeOpticPlanService(schemaName, viewName, limit, structuredQuery, se
 
 function testValidAscendingPlan() {
     const structuredQuery = xdmp.quote(search.parse(''));
-    const plan = invokeOpticPlanService(
+    const searchExport = invokeExportSearchService(
         'EntitySearchEntity',
         'EntitySearchEntity', 10,
         structuredQuery, '',
         [{'propertyName':'searchEntityProp1', 'sortDirection':'ascending'}],
         ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
-    const result = op.import(plan).result();
+    const result = basicCsvParser(searchExport);
     const firstItem = fn.head(result);
     return [
         test.assertTrue(fn.exists(firstItem), `There should be results returned. ${xdmp.describe(firstItem, Sequence.from([]), Sequence.from([]))}`),
@@ -58,13 +69,13 @@ function testValidAscendingPlan() {
 
 function testValidDescendingPlan() {
     const structuredQuery = xdmp.quote(search.parse(''));
-    const plan = invokeOpticPlanService(
+    const searchExport = invokeExportSearchService(
         'EntitySearchEntity',
         'EntitySearchEntity', 10,
         structuredQuery, '',
         [{'propertyName':'searchEntityProp1', 'sortDirection':'descending'}],
         ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
-    const result = op.import(plan).result();
+    const result = basicCsvParser(searchExport);
     const firstItem = fn.head(result);
     return [
         test.assertTrue(fn.exists(firstItem), `There should be results returned. ${xdmp.describe(firstItem, Sequence.from([]), Sequence.from([]))}`),
@@ -77,13 +88,12 @@ function testPlanWithBadSortOrder() {
     const structuredQuery = xdmp.quote(search.parse(''));
     let err = null;
     try {
-        const plan = invokeOpticPlanService(
+        const plan = invokeExportSearchService(
             'EntitySearchEntity',
             'EntitySearchEntity', 10,
             structuredQuery, '',
             [{'propertyName':'colDoesNotExist', 'sortDirection':'descending'}],
             ['searchEntityProp1','searchEntityProp2', 'hyphenated-property']);
-        const result = op.import(plan).result();
     } catch (e) {
         err = e;
     }

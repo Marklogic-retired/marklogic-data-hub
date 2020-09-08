@@ -94,11 +94,11 @@ schemaName = replaceHyphenWithUnderscore(schemaName);
 
 const newOptions = fn.head(xdmp.xsltEval(stylesheet, queryOptions)).root;
 
-const searchResponse = search.resolve(structuredQuery, newOptions);
-const searchTxtResponse = search.parse(searchText, newOptions);
+const searchResponse = fn.head(search.resolve(structuredQuery, newOptions));
+const searchTxtResponse = fn.head(search.parse(searchText, newOptions));
 
-const qry = cts.query(fn.head(searchResponse).xpath('./*/*'));
-const qryTxt = cts.query(fn.head(searchTxtResponse));
+const qry = cts.query(searchResponse.xpath('./*/*'));
+const qryTxt = cts.query(searchTxtResponse);
 
 const ctsQry = cts.andQuery([qry, qryTxt]);
 
@@ -115,13 +115,17 @@ if (sortOrder) {
   }
 }
 const columnIdentifiers = columns.map((colName) => op.col(colName));
-// Workaround since there's a bug in the bridge between v8 and ML builtin functions
-const qryString = xdmp.describe(ctsQry, null, null);
-const opticPlan = eval(`op.fromView(schemaName, viewName)
-  .where(${qryString})
-  ${orderDefinitions.length ? '.orderBy(orderDefinitions)': ''}
-  .limit(limit)
-  .select(columnIdentifiers)
-  .export()`);
-
-opticPlan;
+let opticPlan = op.fromView(schemaName, viewName).where(ctsQry);
+if (limit) {
+  opticPlan = opticPlan.limit(limit);
+}
+if (orderDefinitions.length > 0) {
+  opticPlan = opticPlan.orderBy(orderDefinitions);
+}
+opticPlan = opticPlan.select(columnIdentifiers);
+// Not using the rows REST API due to https://bugtrack.marklogic.com/55338
+let result = opticPlan.result('object');
+if (!(result instanceof Sequence)) {
+  result = Sequence.from(result);
+}
+xdmp.quote(result, {method:'sparql-results-csv'});

@@ -245,9 +245,85 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
             });
     }
 
-    private void assertRowsAndColumns(int limit, int totalColumns, String response) {
+    @Test
+    void testRowExportWithPathRangeQuery() throws Exception {
+        runAsDataHubDeveloper();
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+        deployEntityIndexes(getHubConfig());
+
+        Customer customer1 = new Customer();
+        customer1.setCustomerId(1);
+        customer1.setName("Jane");
+        customer1.setCustomerNumber(123456789);
+        customer1.setCustomerSince("2012-05-16");
+        project.createCustomerInstance(customer1);
+
+        Customer customer2 = new Customer();
+        customer2.setCustomerId(2);
+        customer2.setName("John");
+        customer2.setCustomerNumber(987654321);
+        customer2.setCustomerSince("2013-06-16");
+        project.createCustomerInstance(customer2);
+
+        String json = "{\n" +
+                "    \"savedQuery\": {\n" +
+                "        \"id\": \"\",\n" +
+                "        \"name\": \"some-query\",\n" +
+                "        \"description\": \"some-query-description\",\n" +
+                "        \"query\": {\n" +
+                "            \"searchText\": \"Customer.customerId:2\",\n" +
+                "            \"entityTypeIds\": [\n" +
+                "                \"Customer\"\n" +
+                "            ],\n" +
+                "            \"selectedFacets\": {\n" +
+                "                \"Collection\": {\n" +
+                "                    \"dataType\": \"xs:string\",\n" +
+                "                    \"stringValues\": [\n" +
+                "                        \"Customer\"\n" +
+                "                    ]\n" +
+                "                }\n" +
+                "            }\n" +
+                "        },\n" +
+                "        \"propertiesToDisplay\": [\n" +
+                "            \"customerId\",\n" +
+                "            \"name\",\n" +
+                "            \"customerNumber\",\n" +
+                "            \"shipping\",\n" +
+                "            \"orders\"\n" +
+                "        ],\n" +
+                "        \"sortOrder\": [\n" +
+                "          { \"propertyName\":  \"customerId\",\n" +
+                "            \"sortDirection\": \"ascending\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        // Even though "propertiesToDisplay" has 5 columns we only export 3 since we dont export object and array type properties for now.
+        int totalColumns = 3;
+        int limit = 99;
+        int expectedCount = 1;
+        Object[] customer2Info = {customer2.getCustomerId(), customer2.getName(), customer2.getCustomerNumber()};
+
+        // Log in with role "hub-central-entity-exporter"
+        loginAsTestUserWithRoles("hub-central-entity-exporter");
+
+        // Export using query document
+        postWithParams(EXPORT_PATH, getRequestParams(limit, json))
+                .andExpect(request().asyncStarted())
+                .andDo(MvcResult::getAsyncResult)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    String response = result.getResponse().getContentAsString();
+                    Set<Integer> actualRowSet = calculateHash(response);
+                    assertRowsAndColumns(expectedCount, totalColumns, response);
+                    assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
+                });
+    }
+
+    private void assertRowsAndColumns(int expectedRowCount, int totalColumns, String response) {
         int headerRow = 1;
-        int totalRows = limit + headerRow;
+        int totalRows = expectedRowCount + headerRow;
 
         assertEquals(totalRows, response.chars().filter(i -> i == '\n').count() + 1);
         assertEquals(totalColumns, response.substring(0, response.indexOf("\n")).chars().filter(i -> i == ',').count() + 1);

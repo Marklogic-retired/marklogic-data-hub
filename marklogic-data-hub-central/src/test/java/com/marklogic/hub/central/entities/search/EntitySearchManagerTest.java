@@ -63,6 +63,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     void searchWithTransform() {
         runAsDataHubDeveloper();
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+        deployEntityIndexes(getHubConfig());
         project.createCustomerInstance(new Customer(1, "Jane"));
         project.createCustomerInstance(new Customer(2, "Sally"));
 
