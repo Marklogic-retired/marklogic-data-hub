@@ -6,7 +6,7 @@ import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import { MLButton } from '@marklogic/design-system';
 import NewFlowDialog from './new-flow-dialog/new-flow-dialog';
 import sourceFormatOptions from '../../config/formats.config';
-import {RunToolTips} from '../../config/tooltips.config';
+import {RunToolTips, SecurityTooltips} from '../../config/tooltips.config';
 import styles from './flows.module.scss';
 import { MLTooltip, MLSpin, MLUpload } from '@marklogic/design-system';
 import { AuthoritiesContext } from "../../util/authorities";
@@ -273,14 +273,28 @@ const Flows: React.FC<Props> = (props) => {
                 disabled={!props.canWriteFlow}
                 overlayClassName='stepMenu'
             >
-                <MLButton
+                {props.canWriteFlow ?
+                  <MLButton
                     className={styles.addStep}
                     size="default"
-                    aria-label={props.canWriteFlow ? 'addStep-'+i : 'addStepDisabled-'+i}
-                    style={!props.canWriteFlow ?  { backgroundColor: '#f5f5f5', borderColor: '#f5f5f5'} : {}}
+                    aria-label={'addStep-'+i}
+                    style={{}}
                     type="primary"
-                    disabled={!props.canWriteFlow}
-                >Add Step <DownOutlined /></MLButton>
+                  >Add Step <DownOutlined /></MLButton>
+                  :
+                  <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '175px'}} placement="bottom">
+                      <span>
+                          <MLButton
+                            className={styles.addStep}
+                            size="default"
+                            aria-label={'addStepDisabled-'+i}
+                            style={{ backgroundColor: '#f5f5f5', borderColor: '#f5f5f5'}}
+                            type="primary"
+                            disabled={!props.canWriteFlow}
+                          >Add Step <DownOutlined /></MLButton>
+                      </span>
+                  </MLTooltip>
+                 }
             </Dropdown>
             <span className={styles.deleteFlow}>
                 {props.canWriteFlow ?
@@ -293,8 +307,9 @@ const Flows: React.FC<Props> = (props) => {
                                 className={styles.deleteIcon}
                                 size="lg"/>
                         </i>
-                    </MLTooltip> :
-                    <MLTooltip title={'Delete'} placement="bottom">
+                    </MLTooltip>
+                  :
+                    <MLTooltip title={'Delete Flow: ' + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '225px'}} placement="bottom">
                         <i aria-label={`deleteFlowDisabled-${name}`}>
                             <FontAwesomeIcon
                                 icon={faTrashAlt}
@@ -568,12 +583,25 @@ const Flows: React.FC<Props> = (props) => {
         {props.canReadFlow || props.canWriteFlow ?
             <>
                 <div className={styles.createContainer}>
-                    <MLButton
+                    {props.canWriteFlow ?
+                      <MLButton
                         className={!props.canWriteFlow ? styles.createButtonDisabled : styles.createButton} size="default"
                         type="primary" onClick={OpenAddNewDialog}
                         disabled={!props.canWriteFlow}
                         aria-label={'create-flow' + (!props.canWriteFlow ? '-disabled' : '')}
-                    >Create Flow</MLButton>
+                      >Create Flow</MLButton>
+                      :
+                      <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '175px'}}>
+                          <span>
+                              <MLButton
+                                className={!props.canWriteFlow ? styles.createButtonDisabled : styles.createButton} size="default"
+                                type="primary" onClick={OpenAddNewDialog}
+                                disabled={!props.canWriteFlow}
+                                aria-label={'create-flow' + (!props.canWriteFlow ? '-disabled' : '')}
+                              >Create Flow</MLButton>
+                          </span>
+                      </MLTooltip>
+                    }
                 </div>
                 <Collapse
                     className={styles.collapseFlows}

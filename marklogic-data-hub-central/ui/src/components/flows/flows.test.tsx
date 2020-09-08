@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router } from 'react-router';
-import { render, fireEvent, wait, within, cleanup, waitForElement, getByTestId } from '@testing-library/react';
+import {render, fireEvent, wait, within, cleanup, waitForElement, getByTestId, screen} from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom/extend-expect'
 import { createMemoryHistory } from 'history';
@@ -8,6 +8,7 @@ const history = createMemoryHistory();
 import axiosMock from 'axios';
 import data from '../../assets/mock-data/flows.data';
 import Flows from './flows';
+import {ModelingTooltips, SecurityTooltips} from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -71,7 +72,7 @@ describe('Flows component', () => {
         });
     })
 
-    it('user with flow read, write, and operator privileges can view, edit, and run', () => {
+    it('user with flow read, write, and operator privileges can view, edit, and run', async () => {
         const {getByText, getByLabelText} = render(
             <Router history={history}><Flows 
                 {...flowsProps}
@@ -86,6 +87,11 @@ describe('Flows component', () => {
         expect(getByLabelText('create-flow')).toBeInTheDocument();
         expect(getByLabelText('deleteFlow-'+flowName)).toBeInTheDocument();
 
+        // check if delete tooltip appears
+        fireEvent.mouseOver(getByLabelText('deleteFlow-'+flowName));
+        await wait (() => expect(getByText('Delete Flow')).toBeInTheDocument());
+
+
         // Open flow
         fireEvent.click(flowButton);
         expect(getByText(flowStepName)).toBeInTheDocument();
@@ -99,7 +105,7 @@ describe('Flows component', () => {
 
     });
 
-    it('user without flow write privileges cannot edit', () => {
+    it('user without flow write privileges cannot edit', async () => {
         const {getByText, getByLabelText, queryByLabelText} = render(
             <Router history={history}><Flows 
                 {...flowsProps}
@@ -113,6 +119,14 @@ describe('Flows component', () => {
         expect(getByText(flowName)).toBeInTheDocument();
         expect(getByLabelText('create-flow-disabled')).toBeInTheDocument();
         expect(getByLabelText('deleteFlowDisabled-'+flowName)).toBeInTheDocument();
+
+        // test delete, create flow, add step buttons display correct tooltip when disabled
+        fireEvent.mouseOver(getByLabelText('deleteFlowDisabled-'+flowName));
+        await wait (() => expect(getByText('Delete Flow: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+        fireEvent.mouseOver(getByLabelText('addStepDisabled-0'));
+        await wait (() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+        fireEvent.mouseOver(getByLabelText('create-flow-disabled'));
+        await wait (() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
 
         // Open flow
         fireEvent.click(flowButton);

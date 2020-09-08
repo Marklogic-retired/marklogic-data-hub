@@ -13,7 +13,6 @@
 .iconRevertReadOnly, .iconTrashReadOnly {
   font-size: 21px;
   cursor: not-allowed;
-  pointer-events: none;
   margin-right: 8px;
   margin-bottom: 2px;
   color: #cccccc;
@@ -31,8 +30,7 @@
 .iconSaveReadOnly:before {       
   content: "\70";
   cursor: not-allowed;
-  pointer-events: none;      
-  font-family: MLCustomFont; 
+  font-family: MLCustomFont;
   color: #cccccc;
   font-size: 22px;
   padding: 8px;

@@ -13,7 +13,7 @@ import { UserContext } from '../../../util/user-context';
 import { ModelingContext } from '../../../util/modeling-context';
 import { queryDateConverter, relativeTimeConverter } from '../../../util/date-conversion';
 import { numberConverter } from '../../../util/number-conversion';
-import { ModelingTooltips } from '../../../config/tooltips.config';
+import { ModelingTooltips, SecurityTooltips } from '../../../config/tooltips.config';
 
 type Props = {
   allEntityTypesData: any[];
@@ -318,8 +318,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       width: 100,
       render: text => {
 
-        const saveIcon = props.canWriteEntityModel ? (
-          <MLTooltip title={ModelingTooltips.saveIcon}>
+        const saveIcon =
+          <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.saveIcon : 'Save Entity: ' + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '225px'}}>
             <span
               data-testid={text + '-save-icon'}
               className={!modelingOptions.isModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
@@ -332,18 +332,17 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               }}
             />
           </MLTooltip>
-        ) : <span data-testid={text + '-save-icon'} className={styles.iconSaveReadOnly}/>
 
         return (
           <div className={styles.iconContainer}>
             {saveIcon}
-            <MLTooltip title={ModelingTooltips.revertIcon}>
+            <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.revertIcon : 'Discard Changes: ' + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '225px'}}>
               <FontAwesomeIcon
                 data-testid={text + '-revert-icon'} 
                 className={(!props.canWriteEntityModel && props.canReadEntityModel) || !modelingOptions.isModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
                 icon={faUndo}
                 onClick={(event) => {
-                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                  if (!props.canWriteEntityModel && props.canReadEntityModel || !isEntityModified(text)) {
                     return event.preventDefault()
                   } else {
                     confirmRevertEntity(text);
@@ -352,19 +351,21 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 size="2x"
               />
             </MLTooltip>
-            <FontAwesomeIcon
-              data-testid={text + '-trash-icon'}
-              className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
-              icon={faTrashAlt}
-              onClick={(event) => {
-                if (!props.canWriteEntityModel && props.canReadEntityModel) {
-                  return event.preventDefault()
-                } else {
-                  getEntityReferences(text);
-                }
-              }}
-              size="2x"
-            />
+            <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.deleteIcon : 'Delete Entity: ' + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '225px'}}>
+              <FontAwesomeIcon
+                data-testid={text + '-trash-icon'}
+                className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
+                icon={faTrashAlt}
+                onClick={(event) => {
+                  if (!props.canWriteEntityModel && props.canReadEntityModel) {
+                    return event.preventDefault()
+                  } else {
+                    getEntityReferences(text);
+                  }
+                }}
+                size="2x"
+              />
+            </MLTooltip>
           </div>
         )
       }

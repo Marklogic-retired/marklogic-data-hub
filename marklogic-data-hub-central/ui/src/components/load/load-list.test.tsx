@@ -9,6 +9,7 @@ import { AdvancedSettingsMessages } from '../../config/messages.config';
 import {MemoryRouter} from "react-router-dom";
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
 import { validateTableRow } from '../../util/test-utils';
+import { SecurityTooltips } from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -46,7 +47,7 @@ describe('Load data component', () => {
     expect(getByText('No Data')).toBeInTheDocument();
   })
 
-  test('Verify Load list view renders correctly with data', () => {
+  test('Verify Load list view renders correctly with data', async () => {
     const { getByText, getAllByLabelText, getByTestId } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
     const dataRow = within(getByText('testLoadXML').closest('tr'));
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
@@ -56,6 +57,10 @@ describe('Load data component', () => {
     expect(dataRow.getByText('04/15/2020 2:22PM')).toBeInTheDocument();
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-settings`)).toBeInTheDocument();
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-delete`)).toBeInTheDocument();
+
+    // check if delete tooltip appears
+    fireEvent.mouseOver(getByTestId(data.loadData.data[1].name + '-delete'));
+    await wait (() => expect(getByText('Delete')).toBeInTheDocument());
 
     expect(getAllByLabelText('icon: setting').length).toBe(3);
 
@@ -305,8 +310,10 @@ describe('Load data component', () => {
       flows={data.flows}/>
     </AuthoritiesContext.Provider></MemoryRouter>);
     const loadStepName = data.loadData.data[0].name;
-    // adding to new flow
+    // adding to new flow icon is disabled and shows correct tooltip
     fireEvent.mouseOver(getByLabelText(`${loadStepName}-disabled-add-icon`));
+    await wait (() => expect(getByText('Add to Flow: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+
 
     // test adding to existing flow option does not appear
     expect(queryByTestId(`${loadStepName}-toExistingFlow`)).not.toBeInTheDocument();
@@ -314,6 +321,10 @@ describe('Load data component', () => {
 
     // test adding to new flow option does not appear
     expect(queryByTestId(`${loadStepName}-toNewFlow`)).not.toBeInTheDocument();
+
+    // test delete icon displays correct tooltip when disabled
+    fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-delete'));
+    await wait (() => expect(getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
   })
 
 });

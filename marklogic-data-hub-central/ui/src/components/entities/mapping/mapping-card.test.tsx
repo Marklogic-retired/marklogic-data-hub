@@ -8,6 +8,7 @@ import data from "../../../assets/mock-data/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
 import mocks from '../../../api/__mocks__/mocks.data';
+import {SecurityTooltips} from "../../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -32,7 +33,7 @@ describe("Mapping Card component", () => {
   test('Mapping card does not allow edit without writeMapping authority', async () => {
     let entityModel = data.primaryEntityTypes.data[0];
     let mapping = data.mappings.data[0].artifacts;
-    let queryAllByText, getByRole, queryAllByRole;
+    let queryAllByText, getByRole, queryAllByRole, getByText;
     const noopFun = () => {};
     const deleteMappingArtifact = jest.fn(() => {});
     await act(async () => {
@@ -53,12 +54,18 @@ describe("Mapping Card component", () => {
       queryAllByText = renderResults.queryAllByText;
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
+      getByText = renderResults.getByText;
     });
 
     expect(getByRole("edit-mapping")).toBeInTheDocument();
     expect(getByRole("settings-mapping")).toBeInTheDocument();
     expect(queryAllByRole('delete-mapping')).toHaveLength(0);
     expect(getByRole('disabled-delete-mapping')).toBeInTheDocument();
+
+    // test delete icon displays correct tooltip when disabled
+    fireEvent.mouseOver(getByRole('disabled-delete-mapping'));
+    await wait (() => expect(getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+
     await fireEvent.click(getByRole('disabled-delete-mapping'));
     expect(queryAllByText('Yes')).toHaveLength(0);
     expect(deleteMappingArtifact).not.toBeCalled();
@@ -94,6 +101,9 @@ describe("Mapping Card component", () => {
     expect(getByRole("settings-mapping")).toBeInTheDocument();
     expect(queryAllByRole('disabled-delete-mapping')).toHaveLength(0);
     expect(getByRole('delete-mapping')).toBeInTheDocument();
+    // check if delete tooltip appears
+    fireEvent.mouseOver(getByRole('delete-mapping'));
+    await wait (() => expect(getByText('Delete')).toBeInTheDocument());
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
