@@ -1,13 +1,21 @@
-declareUpdate();
+(: Using XQuery to simplify using multiple transactions :)
+xquery version "1.0-ml";
+import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
-const defaultPermissions = xdmp.defaultPermissions().concat([xdmp.permission('data-hub-common','read'),xdmp.permission('data-hub-common','update')]);
-const helper = require('/test/data-hub-test-helper.xqy');
-const test = require('/test/test-helper.xqy');
+hub-test:load-entities($test:__CALLER_FILE__);
 
-helper.loadEntities(test['__CALLER_FILE__']);
-// Inserting documents into final database
-xdmp.documentInsert("/exp/doc1",
-    {
+xquery version "1.0-ml";
+import module namespace hub-test = "http://marklogic.com/data-hub/test" at "/test/data-hub-test-helper.xqy";
+import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
+
+declare variable $default-permissions := (
+  xdmp:default-permissions((),'objects'),xdmp:permission('data-hub-common','read','object'),xdmp:permission('data-hub-common','update','object')
+);
+(: Inserting documents into final database :)
+(: Do not add commas to the values in these documents as it may break the simple CSV parser used for testing export :)
+xdmp:document-insert("/exp/doc1",
+    xdmp:unquote('{
       "envelope": {
         "headers": {
           "sources": [
@@ -66,18 +74,19 @@ xdmp.documentInsert("/exp/doc1",
           }
         }
       }
-    },
-    {
-      permissions: defaultPermissions,
-      collections: "doc1",
-      metadata: {
-        "datahubCreatedInFlow": "my-flow-1",
-        "datahubCreatedByStep": "my-step-1"
-      }
-    });
+    }'),
+    map:map()
+      => map:with("permissions", $default-permissions)
+      => map:with("collections", "doc1")
+      => map:with("metadata",
+        map:map()
+          => map:with("datahubCreatedInFlow", "my-flow-1")
+          => map:with("datahubCreatedByStep", "my-step-1")
 
-xdmp.documentInsert("/exp/doc2",
-    {
+        )
+    ),
+xdmp:document-insert("/exp/doc2",
+    xdmp:unquote('{
       "envelope": {
         "headers": {
           "sources": [
@@ -136,12 +145,12 @@ xdmp.documentInsert("/exp/doc2",
           }
         }
       }
-    },
-    {
-      permissions: defaultPermissions,
-      collections: "doc2",
-      metadata: {
-        "datahubCreatedInFlow": "my-flow-2",
-        "datahubCreatedByStep": "my-step-2"
-      }
-    });
+    }'),
+    map:map()
+      => map:with("permissions", $default-permissions)
+      => map:with("collections", "doc2")
+      => map:with("metadata",
+        map:map()
+          => map:with("datahubCreatedInFlow", "my-flow-2")
+          => map:with("datahubCreatedByStep", "my-step-2")
+        ));

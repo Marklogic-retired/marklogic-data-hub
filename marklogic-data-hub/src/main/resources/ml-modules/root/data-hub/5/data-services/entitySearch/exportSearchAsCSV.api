@@ -1,5 +1,6 @@
 {
-    "functionName": "getOpticPlan",
+    "functionName": "exportSearchAsCSV",
+    "description": "Export the results of a saved query as CSV",
     "params": [
         {
             "name": "structuredQuery",
@@ -39,8 +40,8 @@
         }
     ],
     "return": {
-        "datatype": "jsonDocument",
-        "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
-        "description": "Returns a json representation (AST) of an optic plan."
+        "datatype": "textDocument",
+        "$javaClass": "java.io.Reader",
+        "description": "Returns the CSV results of Optic API search"
     }
 }

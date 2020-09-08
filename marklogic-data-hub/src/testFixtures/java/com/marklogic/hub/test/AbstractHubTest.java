@@ -5,22 +5,18 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.ConfigDir;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.appdeployer.command.databases.DeployOtherDatabasesCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.DatabaseKind;
-import com.marklogic.hub.HubClient;
-import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.HubProject;
-import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
-import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
-import com.marklogic.hub.deploy.commands.LoadUserArtifactsCommand;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.*;
+import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
@@ -40,6 +36,7 @@ import org.springframework.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -384,6 +381,24 @@ public abstract class AbstractHubTest extends TestObject {
         // Wait for post-commit triggers to finish
         waitForTasksToFinish();
 
+    }
+
+    protected void deployEntityIndexes(HubConfig hubConfig) {
+        EntityManager entityManager = new EntityManagerImpl(hubConfig);
+        entityManager.saveDbIndexes();
+
+        Path dir = hubConfig.getEntityDatabaseDir();
+        List<String> filePaths = Arrays.asList(HubConfig.FINAL_ENTITY_DATABASE_FILE, HubConfig.STAGING_ENTITY_DATABASE_FILE);
+        for (String filePath: filePaths) {
+            File dbFile = Paths.get(dir.toString(), filePath).toFile();
+            DeployHubDatabaseCommand dbCommand = new DeployHubDatabaseCommand(hubConfig, dbFile, dbFile.getName());
+            dbCommand.setMergeEntityConfigFiles(true);
+            dbCommand.setPostponeForestCreation(true);
+            dbCommand.execute(newCommandContext());
+        }
+
+        // Deploy Query Options
+        entityManager.deployQueryOptions();
     }
 
     private void resolveAppConfigDirectories(HubConfig hubConfig) {

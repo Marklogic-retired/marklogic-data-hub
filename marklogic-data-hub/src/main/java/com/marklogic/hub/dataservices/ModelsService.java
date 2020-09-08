@@ -301,7 +301,7 @@ public interface ModelsService {
     com.fasterxml.jackson.databind.JsonNode createModel(com.fasterxml.jackson.databind.JsonNode input);
 
   /**
-   * Save an array of entity models
+   * Save an array of entity models to only the database associated with the app server that receives this request
    *
    * @param models	The array of entity models
    * 

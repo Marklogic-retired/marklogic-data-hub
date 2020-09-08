@@ -34,7 +34,6 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.central.entities.search.impl.CollectionFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.CreatedOnFacetHandler;
@@ -50,10 +49,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.FileCopyUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class EntitySearchManager {
 
@@ -246,17 +249,13 @@ public class EntitySearchManager {
         List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
         ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
 
-
-        JsonNode opticPlanNode = EntitySearchService.on(finalDatabaseClient).getOpticPlan(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
-        StringHandle stringHandle = new StringHandle(opticPlanNode.toString());
-        RowManager rowManager = finalDatabaseClient.newRowManager();
-        try (ReaderHandle readerHandle = new ReaderHandle()) {
-            rowManager.resultDoc(rowManager.newRawPlanDefinition(stringHandle), readerHandle.withMimetype(CSV_CONTENT_TYPE));
-            readerHandle.write(out);
+        EntitySearchService entitySearchService = EntitySearchService.on(finalDatabaseClient);
+        // Exporting directly from Data Service to avoid bug https://bugtrack.marklogic.com/55338 related to namespaced path range indexes
+        Reader export = entitySearchService.exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
+        try {
+            FileCopyUtils.copy(export, new OutputStreamWriter(out));
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } finally {
-            IOUtils.closeQuietly(out);
         }
     }
 
