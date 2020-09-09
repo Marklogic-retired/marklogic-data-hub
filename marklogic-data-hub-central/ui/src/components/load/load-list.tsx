@@ -168,7 +168,7 @@ const LoadList: React.FC<Props> = (props) => {
         maskClosable={false}
         destroyOnClose={true}
     >
-        <span style={{ fontSize: '16px' }}>Are you sure you want to delete this?</span>
+        <span style={{ fontSize: '16px' }}>Are you sure you want to delete the <strong>{loadArtifactName}</strong> step?</span>
     </Modal>;
 
     const columns: any = [
