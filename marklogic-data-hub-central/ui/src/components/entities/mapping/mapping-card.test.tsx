@@ -21,6 +21,15 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+const getSubElements=(content,node, title)=>{
+    const hasText = node => node.textContent === title;
+    const nodeHasText = hasText(node);
+    const childrenDontHaveText = Array.from(node.children).every(
+        child => !hasText(child)
+    );
+    return nodeHasText && childrenDontHaveText;
+}
+
 describe("Mapping Card component", () => {
   beforeEach(() => {
     mocks.curateAPI(axiosMock);
@@ -113,6 +122,9 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
+      expect(await(waitForElement(() => getByText((content, node) => {
+          return getSubElements(content, node,"Are you sure you want to delete the Mapping1 step?")
+      })))).toBeInTheDocument();
   });
 
   test('Mapping card parses XML appropriately', async () => {

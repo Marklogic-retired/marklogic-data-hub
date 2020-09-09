@@ -208,7 +208,7 @@ describe('Tiles View component tests for Developer user', () => {
     test('Verify Run tile displays from toolbar', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readFlow','writeFlow','runStep']);
-        const {getByLabelText, getByText, queryByText, getByTestId} = await render(<Router history={history}>
+        const {getByLabelText, getByText, queryByText, getByTestId, getAllByText} = await render(<Router history={history}>
             <AuthoritiesContext.Provider value={ authorityService}>
                 <SearchContext.Provider value={setViewRunFunction}>
                     <TilesView id='run'/>
@@ -227,7 +227,7 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByLabelText("title-run")).toBeInTheDocument();
         expect(document.querySelector('#flows-container')).toBeInTheDocument();
         expect(getByText('Create Flow')).toBeInTheDocument();
-        expect(getByText('testFlow')).toBeInTheDocument();
+        expect(getAllByText('testFlow')[0]).toBeInTheDocument();
         // delete should work
         fireEvent.click(getByTestId('deleteFlow-testFlow'));
         // testing that confirmation modal appears
@@ -235,7 +235,7 @@ describe('Tiles View component tests for Developer user', () => {
         fireEvent.click(getByText('No'));
 
         // test description
-        fireEvent.click(getByText('testFlow'));
+        fireEvent.click(getAllByText('testFlow')[0]);
         expect(getByText('Save')).not.toBeDisabled();
         fireEvent.click(getByText('Cancel'));
         // test run
