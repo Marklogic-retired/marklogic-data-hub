@@ -73,10 +73,10 @@ class DocCount extends HubTask {
 
 task verifyStagingCounts(type: DocCount) {
     client = hubConfig.newStagingClient()
-    script = "fn.count(fn.collection(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON']))"
+    script = "cts.estimate(cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON']))"
 }
 
 task verifyFinalCounts(type: DocCount) {
     client = hubConfig.newFinalClient()
-    script = "fn.count(fn.collection(['mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
+    script = "cts.estimate(cts.collectionQuery(['mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
 }

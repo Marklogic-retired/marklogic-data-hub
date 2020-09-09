@@ -32,5 +32,5 @@ fi
 
 #Verify flow was run successfully based on record count in staging and final database.
 #The task would fail if there was a count mismatch
-./gradlew verifyStagingCounts -q
-./gradlew verifyFinalCounts -q
+./gradlew verifyStagingCounts -PenvironmentName=$env -q
+./gradlew verifyFinalCounts -PenvironmentName=$env -q
