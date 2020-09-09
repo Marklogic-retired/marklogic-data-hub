@@ -72,7 +72,7 @@ class LoadPage {
     }
 
     deleteStepConfirmationMessage(stepName: string) {
-        return cy.findByText(`Are you sure you want to delete "${stepName}"`);
+        return cy.findByText(`Are you sure you want to delete the ${stepName} step`);
     }
 
     addStepToFlowConfirmationMessage(stepName: string, flowName: string) {
