@@ -43,22 +43,6 @@
   justify-content: flex-end;
 }
 
-.toggleView {
-  float: right;
-  padding: 8px;
-  border: 1px solid #666;
-  cursor: pointer;
-}
-
-.toggled {
-  background-color: #44499c;
-  float: right;
-  padding: 8px;
-  border: 1px solid #666;
-  cursor: pointer;
-  color: white;
-}
-
 .sideBarExpanded {
   position: absolute;
   margin-left: auto;

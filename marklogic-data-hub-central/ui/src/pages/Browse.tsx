@@ -21,7 +21,8 @@ import { AuthoritiesContext } from "../util/authorities";
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
-import { MLTooltip, MLSpin } from '@marklogic/design-system';
+import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
+
 
 interface Props extends RouteComponentProps<any> {
 }
@@ -117,7 +118,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     } catch (error) {
-        console.error('error', error)
+      console.error('error', error)
       handleError(error);
     } finally {
       setIsLoading(false);
@@ -170,9 +171,9 @@ const Browse: React.FC<Props> = ({ location }) => {
       manageQueryModal: false,
       sortOrder: []
     }
-     applySaveQuery(options);
+    applySaveQuery(options);
   }
-    
+
   const initializeUserPreferences = async () => {
     if (location.state) {
       if (location.state['tileIconClicked']) {
@@ -284,15 +285,15 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
     setUserPreferences(tableView);
 
-    if(resultsRef && resultsRef.current) {
-    resultsRef.current['style']['boxShadow'] = 'none'	
+    if (resultsRef && resultsRef.current) {
+      resultsRef.current['style']['boxShadow'] = 'none'
     }
   }
 
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched}/>
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} />
         <ZeroStateExplorer entities={entities} setEntity={setEntity} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
@@ -318,8 +319,8 @@ const Browse: React.FC<Props> = ({ location }) => {
 
           <div className={styles.collapseIcon} id='sidebar-collapse-icon'>
             {collapse ?
-            <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
-            <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
+              <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
+              <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
           </div>
 
           {user.error.type === 'ALERT' ?
@@ -346,16 +347,24 @@ const Browse: React.FC<Props> = ({ location }) => {
                 </div>
                 <div className={styles.spinViews}>
                   <div className={styles.switchViews}>
-                  {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
-                    <div className={!tableView ? styles.toggled : styles.toggleView}
-                      data-cy="facet-view" id={'snippetView'}
-                      onClick={() => handleViewChange('snippet')}>
-                      <MLTooltip title={'Snippet View'}><FontAwesomeIcon icon={faStream} size="lg" /></MLTooltip>
-                    </div>
-                    <div className={tableView ? styles.toggled : styles.toggleView}
-                      data-cy="table-view" id={'tableView'}
-                      onClick={() => handleViewChange('table')}>
-                      <MLTooltip title={'Table View'}><FontAwesomeIcon className={styles.tableIcon} icon={faTable} size="lg" /></MLTooltip>
+                    {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
+                    <div aria-label="switch-view" >
+                      <MLRadio.MLGroup
+                        buttonStyle="outline"
+                        name="radiogroup"
+                        size="large"
+                      >
+                        <MLRadio.MLButton aria-label="switch-view-snippet" onClick={() => handleViewChange('snippet')} data-cy="facet-view" id={'snippetView'}>
+                          <i><MLTooltip title={'Snippet View'}>
+                            {!tableView ? <FontAwesomeIcon icon={faStream} /> : <FontAwesomeIcon icon={faStream} style={{ color: '#CCC' }} />}
+                          </MLTooltip></i>
+                        </MLRadio.MLButton>
+                        <MLRadio.MLButton aria-label="switch-view-table" onClick={() => handleViewChange('table')} data-cy="table-view" id={'tableView'}>
+                          <i><MLTooltip title={'Table View'}>{
+                            tableView ? <FontAwesomeIcon icon={faTable} /> : <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} />}
+                          </MLTooltip></i>
+                        </MLRadio.MLButton>
+                      </MLRadio.MLGroup>
                     </div>
                   </div>
                 </div>
@@ -373,39 +382,39 @@ const Browse: React.FC<Props> = ({ location }) => {
                 />
               </div>
               <div className={styles.viewContainer} >
-              <div className={styles.fixedView} >
-                {tableView ?
-                  <div>
-                    <ResultsTabularView
-                      data={data}
-                      entityPropertyDefinitions={entityPropertyDefinitions}
-                      selectedPropertyDefinitions={selectedPropertyDefinitions}
-                      entityDefArray={entityDefArray}
-                      columns={columns}
-                      selectedEntities={searchOptions.entityTypeIds}
-                      setColumnSelectorTouched={setColumnSelectorTouched}
-                      tableView={tableView}
-                    />
-                  </div>
-                  : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={ onResultScroll }><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                }
-              </div>
-              <br />
-              <div>
-                <SearchSummary
-                  total={totalDocuments}
-                  start={searchOptions.start}
-                  length={searchOptions.pageLength}
-                  pageSize={searchOptions.pageSize}
-                />
-                <SearchPagination
-                  total={totalDocuments}
-                  pageNumber={searchOptions.pageNumber}
-                  pageSize={searchOptions.pageSize}
-                  pageLength={searchOptions.pageLength}
-                  maxRowsPerPage={searchOptions.maxRowsPerPage}
-                />
-              </div>
+                <div className={styles.fixedView} >
+                  {tableView ?
+                    <div>
+                      <ResultsTabularView
+                        data={data}
+                        entityPropertyDefinitions={entityPropertyDefinitions}
+                        selectedPropertyDefinitions={selectedPropertyDefinitions}
+                        entityDefArray={entityDefArray}
+                        columns={columns}
+                        selectedEntities={searchOptions.entityTypeIds}
+                        setColumnSelectorTouched={setColumnSelectorTouched}
+                        tableView={tableView}
+                      />
+                    </div>
+                    : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                  }
+                </div>
+                <br />
+                <div>
+                  <SearchSummary
+                    total={totalDocuments}
+                    start={searchOptions.start}
+                    length={searchOptions.pageLength}
+                    pageSize={searchOptions.pageSize}
+                  />
+                  <SearchPagination
+                    total={totalDocuments}
+                    pageNumber={searchOptions.pageNumber}
+                    pageSize={searchOptions.pageSize}
+                    pageLength={searchOptions.pageLength}
+                    maxRowsPerPage={searchOptions.maxRowsPerPage}
+                  />
+                </div>
               </div>
             </>
           }

@@ -19,14 +19,13 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?:boolean, toDeleteAll?:boolean) => void;
+  updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?: boolean, toDeleteAll?: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
 
 const Facet: React.FC<Props> = (props) => {
-
   const SHOW_MINIMUM = 3;
-  const {searchOptions, greyedOptions} = useContext(SearchContext);
+  const { searchOptions, greyedOptions } = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
   const [show, toggleShow] = useState(true);
   const [more, toggleMore] = useState(false);
@@ -34,57 +33,57 @@ const Facet: React.FC<Props> = (props) => {
 
   let checkedFacets: any[] = [];
 
-    const setCheckedOptions = (selectedOptions) => {
-        let facetName: string = '';
-        if (selectedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-            facetName = props.constraint;
-        } else if (selectedOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
-            facetName = props.propertyPath;
-        }
-        if (facetName) {
-            if(searchOptions.selectedFacets.length == 0 )
-                setChecked([]);
-            for (let facet in selectedOptions.selectedFacets) {
-                if (facet === facetName) {
-                    let valueType = '';
-                    if (selectedOptions.selectedFacets[facet].dataType === 'xs:string') {
-                        valueType = 'stringValues';
-                    }
-                    // TODO add support for non string facets
-                    const checkedArray = selectedOptions.selectedFacets[facet][valueType];
-                    if (checkedArray && checkedArray.length) {
-                        // checking if arrays are equivalent
-                        if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
-                        } else {
-                            setChecked(checkedArray);
-                        }
-                    }
-                }
-            }
-        }else{
-            setChecked([]);
-        }
+  const setCheckedOptions = (selectedOptions) => {
+    let facetName: string = '';
+    if (selectedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+      facetName = props.constraint;
+    } else if (selectedOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
+      facetName = props.propertyPath;
     }
-
-    useEffect(() => {
-        if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-            setCheckedOptions(searchOptions)
-        } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
-            setChecked([]);
+    if (facetName) {
+      if (searchOptions.selectedFacets.length == 0)
+        setChecked([]);
+      for (let facet in selectedOptions.selectedFacets) {
+        if (facet === facetName) {
+          let valueType = '';
+          if (selectedOptions.selectedFacets[facet].dataType === 'xs:string') {
+            valueType = 'stringValues';
+          }
+          // TODO add support for non string facets
+          const checkedArray = selectedOptions.selectedFacets[facet][valueType];
+          if (checkedArray && checkedArray.length) {
+            // checking if arrays are equivalent
+            if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
+            } else {
+              setChecked(checkedArray);
+            }
+          }
         }
-    }, [searchOptions]);
+      }
+    } else {
+      setChecked([]);
+    }
+  }
 
-    useEffect(() => {
-        if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-            setCheckedOptions(greyedOptions)
-        }else
-            setCheckedOptions(searchOptions)
-    }, [greyedOptions]);
+  useEffect(() => {
+    if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+      setCheckedOptions(searchOptions)
+    } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
+      setChecked([]);
+    }
+  }, [searchOptions]);
 
-    const checkFacetValues = (checkedValues) => {
+  useEffect(() => {
+    if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+      setCheckedOptions(greyedOptions)
+    } else
+      setCheckedOptions(searchOptions)
+  }, [greyedOptions]);
+
+  const checkFacetValues = (checkedValues) => {
     let updatedChecked = [...checked];
-    for(let value of checkedValues){
-      if(updatedChecked.indexOf(value) === -1)
+    for (let value of checkedValues) {
+      if (updatedChecked.indexOf(value) === -1)
         updatedChecked.push(value);
     }
     setChecked(updatedChecked);
@@ -122,16 +121,16 @@ const Facet: React.FC<Props> = (props) => {
     setShowFacets(showNumber);
   }
 
-  if (props.facetValues.length === 0 && checked.length > 0 ) {
-      checkedFacets = checked.map(item => {
-      return {name: item, count: 0, value: item}
+  if (props.facetValues.length === 0 && checked.length > 0) {
+    checkedFacets = checked.map(item => {
+      return { name: item, count: 0, value: item }
     });
   } else if (props.facetValues.length > 0) {
     checkedFacets = props.facetValues;
   }
 
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) =>
-    <div className={styles.checkContainer} key={index} data-cy={stringConverter(props.name) + "-facet-item"}>
+    <div className={styles.checkContainer} key={index} data-testid={facet.value} data-cy={stringConverter(props.name) + "-facet-item"}>
       <MLCheckbox
         value={facet.value}
         onChange={(e) => handleClick(e)}
@@ -139,22 +138,22 @@ const Facet: React.FC<Props> = (props) => {
         className={styles.value}
         data-testid={`${stringConverter(props.name)}-${facet.value}-checkbox`}
       >
-        <MLTooltip title={facet.value}>{facet.value}</MLTooltip>
+        <MLTooltip title={facet.value.length > 21 && facet.value} id={facet.value + '-tooltip'} >{facet.value}</MLTooltip>
       </MLCheckbox>
       <div className={styles.count}
-          data-cy={`${stringConverter(props.name)}-${facet.value}-count`}>{numberConverter(facet.count)}</div>
+        data-cy={`${stringConverter(props.name)}-${facet.value}-count`}>{numberConverter(facet.count)}</div>
     </div>
-    );
+  );
 
-    const formatTitle = () => {
-      let objects = props.name.split('.');
-      if (objects.length > 2) {
-        let first = objects[0];
-        let last = objects.slice(-1);
-        return first + '. ... .' + last;
-      }
-      return props.name;
+  const formatTitle = () => {
+    let objects = props.name.split('.');
+    if (objects.length > 2) {
+      let first = objects[0];
+      let last = objects.slice(-1);
+      return first + '. ... .' + last;
     }
+    return props.name;
+  }
 
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
@@ -165,15 +164,15 @@ const Facet: React.FC<Props> = (props) => {
           data-testid={stringConverter(props.name) + "-facet"}
         >
           <MLTooltip title={props.name}>{formatTitle()}</MLTooltip>
-            <MLTooltip
-              title={props.tooltip} placement="topLeft">
-              {props.tooltip ?
-                <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm"/> : ''}
-            </MLTooltip>
+          <MLTooltip
+            title={props.tooltip} placement="topLeft">
+            {props.tooltip ?
+              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /> : ''}
+          </MLTooltip>
         </div>
         <div className={styles.summary}>
           {checked.length > 0 ? <div className={styles.selected}
-                                     data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div> : ''}
+            data-cy={stringConverter(props.name) + "-selected-count"}>{checked.length} selected</div> : ''}
           <div
             className={(checked.length > 0 ? styles.clearActive : styles.clearInactive)}
             onClick={() => handleClear()}
@@ -181,22 +180,22 @@ const Facet: React.FC<Props> = (props) => {
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
-            <Icon style={{fontSize: '12px'}} type='down' rotate={show ? 0 : 180} />
+            <Icon style={{ fontSize: '12px' }} type='down' rotate={show ? 0 : 180} />
           </div>
         </div>
       </div>
-      <div style={{display: (show) ? 'block' : 'none'}}>
+      <div style={{ display: (show) ? 'block' : 'none' }}>
         {renderValues}
         <div
           className={styles.more}
-          style={{display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none'}}
+          style={{ display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none' }}
           onClick={() => showMore()}
           data-cy="show-more"
           data-testid="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
         {(props.facetType === 'xs:string' || 'collection') &&
-        <div className={styles.searchValues}>
-          <PopOverSearch
+          <div className={styles.searchValues}>
+            <PopOverSearch
               referenceType={props.referenceType}
               entityTypeId={props.entityTypeId}
               propertyPath={props.propertyPath}
@@ -204,8 +203,8 @@ const Facet: React.FC<Props> = (props) => {
               popOvercheckedValues={checked}
               facetValues={checkedFacets}
               facetName={props.name}
-          />
-        </div>}
+            />
+          </div>}
       </div>
     </div>
   )

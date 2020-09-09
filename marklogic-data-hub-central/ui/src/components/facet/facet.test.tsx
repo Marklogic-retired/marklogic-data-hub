@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitForElement } from '@testing-library/react';
 import Facet from './facet';
 import { facetValues } from '../../assets/mock-data/entity-table';
 
 describe("Facet component", () => {
-  it("Facet component renders with data properly" , () => {
+  it("Facet component renders with data properly" , async () => {
     const { getByTestId, getByText } = render(
         <Facet
           name="sales_region"
@@ -27,6 +27,18 @@ describe("Facet component", () => {
     expect(getByText(/50/i)).toBeInTheDocument();
     expect(getByText(/OrderDetail/i)).toBeInTheDocument();
     expect(getByText(/15,000/i)).toBeInTheDocument();
+
+    //checking no tooltip for the facet that is < 21 characters long. 
+    fireEvent.mouseOver(getByText(/Customer/i));
+    await(waitForElement(() => (document.querySelector('#Customer-tooltip'))).then(), {
+      errorMsg: 'Timed out in waitForElement.'
+    });
+    expect(document.querySelector('#Customer-tooltip')).toBeNull();
+
+    //checking tooltip for the facet that is > 21 characters long. 
+    fireEvent.mouseOver(getByText(/ProductGroupLicense.../i));
+    await(waitForElement(() => (document.querySelector('#ProductGroupLicenseFacetValue-tooltip'))));
+    expect(document.querySelector('#ProductGroupLicenseFacetValue-tooltip')).toBeInTheDocument();
 
     fireEvent.click(getByTestId("show-more"));
     // show extra facets
