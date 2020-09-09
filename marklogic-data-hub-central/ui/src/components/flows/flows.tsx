@@ -203,7 +203,7 @@ const Flows: React.FC<Props> = (props) => {
             width={350}
             destroyOnClose={true}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete flow "{flowName}"?</div>
+            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
         </Modal>
     );
 
@@ -218,7 +218,7 @@ const Flows: React.FC<Props> = (props) => {
             width={350}
             destroyOnClose={true}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete step "{stepName}" from flow "{flowName}"?</div>
+            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
         </Modal>
     );
 

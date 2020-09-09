@@ -158,7 +158,7 @@ const MappingCard: React.FC<Props> = (props) => {
         width={350}
         maskClosable={false}
         >
-        <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
+        <span style={{fontSize: '16px'}}>Are you sure you want to delete the <strong>{mappingArtifactName}</strong> step?</span>
         </Modal>;
 
 
@@ -442,7 +442,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     }
                 }
 
-            } 
+            }
             // val is null or ""
             else {
                 if (!/^@xmlns/.test(key)) {
