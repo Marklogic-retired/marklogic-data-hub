@@ -36,7 +36,10 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     @BeforeEach
     void checkIfTestsCanBeRun(){
         Versions.MarkLogicVersion mlVersion = versions.getMLVersion();
-        assumeTrue(mlVersion.isNightly() || (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 440));
+        assumeTrue(
+            (mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
+            (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 440)
+        );
         if(operatorHubClient == null || adminHubClient == null){
             operatorHubClient = runAsDataHubOperator().newHubClient();
             adminHubClient = runAsAdmin().newHubClient();

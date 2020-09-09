@@ -7,6 +7,8 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
+import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
@@ -22,6 +24,7 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
+import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.security.User;
@@ -36,6 +39,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,15 +104,41 @@ public abstract class AbstractHubTest extends TestObject {
         runAsAdmin();
         String xquery = "cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)";
         HubClient hubClient = getHubClient();
-        hubClient.getStagingClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubClient.getFinalClient().newServerEval().xquery(xquery).evalAs(String.class);
-        hubClient.getJobsClient().newServerEval().xquery(xquery).evalAs(String.class);
+        // Running these with primitive retry support, as if a connection cannot be made to ML, this is typically the
+        // first thing that will fail
+        retryIfNecessary(() -> hubClient.getStagingClient().newServerEval().xquery(xquery).evalAs(String.class));
+        retryIfNecessary(() -> hubClient.getFinalClient().newServerEval().xquery(xquery).evalAs(String.class));
+        retryIfNecessary(() -> hubClient.getJobsClient().newServerEval().xquery(xquery).evalAs(String.class));
 
-        HubConfig hubConfig = getHubConfig();
-        hubConfig.getAppConfig().newAppServicesDatabaseClient(hubConfig.getDbName(DatabaseKind.STAGING_SCHEMAS))
-            .newServerEval().xquery(xquery).evalAs(String.class);
-        hubConfig.getAppConfig().newAppServicesDatabaseClient(hubConfig.getDbName(DatabaseKind.FINAL_SCHEMAS))
-            .newServerEval().xquery(xquery).evalAs(String.class);
+        DatabaseManager databaseManager = new DatabaseManager(hubClient.getManageClient());
+        databaseManager.clearDatabase(hubClient.getDbName(DatabaseKind.STAGING_SCHEMAS));
+        databaseManager.clearDatabase(hubClient.getDbName(DatabaseKind.FINAL_SCHEMAS));
+    }
+
+    /**
+     * Adding this to handle some intermittent connection failures that occur when Jenkins runs the tests.
+     * @param r
+     */
+    protected void retryIfNecessary(Runnable r) {
+        int tries = 10;
+        long timeToWait = 1000;
+        for (int i = 1; i <= tries; i++) {
+            try {
+                r.run();
+                break;
+            } catch (MarkLogicIOException ex) {
+                if (ex.getCause() instanceof ConnectException) {
+                    if (i >= tries) {
+                        throw ex;
+                    }
+                    logger.warn("Caught ConnectException: " + ex.getMessage());
+                    sleep(timeToWait);
+                    logger.warn("Retrying, attempt: " + (i + 1) + " out of " + tries);
+                } else {
+                    throw ex;
+                }
+            }
+        }
     }
 
     protected HubConfigImpl runAsDataHubDeveloper() {
