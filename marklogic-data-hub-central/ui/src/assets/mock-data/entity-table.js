@@ -844,9 +844,9 @@ export const facetValues = [
     "value": "Customer"
   },
   {
-    "name": "ProductGroupLicense",
+    "name": "ProductGroupLicenseFacetValue",
     "count": 1200,
-    "value": "ProductGroupLicense"
+    "value": "ProductGroupLicenseFacetValue"
   },
   {
     "name": "OrderDetail",
