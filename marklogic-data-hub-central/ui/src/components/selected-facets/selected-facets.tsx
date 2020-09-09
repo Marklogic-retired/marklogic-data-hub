@@ -98,8 +98,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
           data-cy='clear-all-button'
           data-testid='clear-all-button'
         >
-          <Icon type='close'/>
-          Clear All
+            Clear All
+            <Icon type='close'/>
         </MLButton>
       }
       { props.selectedFacets.map((item, index) => {
@@ -122,8 +122,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
               data-cy='clear-date-facet'
               data-testid='clear-date-facet'
             >
-              <Icon type='close'/>
               { dateValues.join(' ~ ') }
+                <Icon type='close'/>
             </MLButton>
           )
         } else if (item.rangeValues) {
@@ -138,8 +138,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 onClick={()=> clearRangeFacet(item.constraint)}
                 data-cy={`clear-${item.rangeValues.lowerBound}`}
               >
-                <Icon type='close'/>
                 {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
+                  <Icon type='close'/>
               </MLButton>
             )
           } else {
@@ -152,8 +152,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 data-cy={`clear-${item.rangeValues.lowerBound}`}
                 data-testid='clear-range-facet'
               >
-                <Icon type='close'/>
                 {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+                  <Icon type='close'/>
               </MLButton>
             )
           }
@@ -167,8 +167,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-cy={`clear-${item.facet}`}
             data-testid={`clear-${item.facet}`}
           >
-            <Icon type='close'/>
               {facetName + ': ' + item.facet}
+              <Icon type='close'/>
           </MLButton>
         )
       })}
@@ -192,8 +192,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                         data-cy='clear-date-facet'
                         data-testid='clear-date-facet'
                     >
-                        <Icon type='close'/>
                         {dateValues.join(' ~ ')}
+                        <Icon type='close'/>
                     </MLButton>
                 )
             } else if (item.rangeValues) {
@@ -208,8 +208,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             onClick={() => clearGreyRangeFacet(item.constraint)}
                             data-cy={`clear-grey-${item.rangeValues.lowerBound}`}
                         >
-                            <Icon type='close'/>
                             {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
+                            <Icon type='close'/>
                         </MLButton>
                     )
                 } else {
@@ -222,8 +222,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             data-cy='clear-range-facet'
                             data-testid='clear-range-facet'
                         >
-                            <Icon type='close'/>
                             {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
+                            <Icon type='close'/>
                         </MLButton>
                     )
                 }
@@ -242,8 +242,8 @@ const SelectedFacets: React.FC<Props> = (props) => {
                     data-cy={`clear-grey-${item.facet}`}
                     data-testid={`clear-grey-${item.facet}`}
                   >
-                  <Icon type='close'/>
-                  {facetName + ': ' + item.facet}
+                      {facetName + ': ' + item.facet}
+                      <Icon type='close'/>
                 </MLButton>
               </MLTooltip>
             )
