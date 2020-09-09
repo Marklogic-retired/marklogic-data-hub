@@ -179,7 +179,7 @@ const LoadCard: React.FC<Props> = (props) => {
             destroyOnClose={true}
         >
             <div style={{fontSize: '16px', padding: '10px'}}>
-                Are you sure you want to delete "{loadArtifactName}"?
+                Are you sure you want to delete the <strong>{loadArtifactName}</strong> step?
             </div>
         </Modal>
     );
