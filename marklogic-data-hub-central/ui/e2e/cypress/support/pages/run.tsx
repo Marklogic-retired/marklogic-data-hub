@@ -1,3 +1,6 @@
+import React from "react";
+import {waitForElement} from "@testing-library/react";
+
 class RunPage {
 
     createFlowButton() {
@@ -58,11 +61,10 @@ class RunPage {
     }
 
     deleteFlowConfirmationMessage(flowName: string) {
-        return cy.findByText(`Are you sure you want to delete flow "${flowName}"?`)
+       return cy.get('div').should('contain.text',`Are you sure you want to delete the ${flowName} flow?`);
     }
-
     deleteStepConfirmationMessage(stepName: string, flowName: string) {
-        return cy.findByText(`Are you sure you want to delete step "${stepName}" from flow "${flowName}"?`)
+        return cy.get('div').should('contain.text',`Are you sure you want to remove the ${stepName} step from the ${flowName} flow?`);
     }
 
     explorerLink() {
