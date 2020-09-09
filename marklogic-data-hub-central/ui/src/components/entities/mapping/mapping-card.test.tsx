@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
-import {fireEvent, render, wait, cleanup} from '@testing-library/react';
+import {fireEvent, render, wait, cleanup, waitForElement} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
@@ -20,6 +20,15 @@ jest.mock('react-router-dom', () => ({
     push: mockHistoryPush,
   }),
 }));
+
+const getSubElements=(content,node, title)=>{
+    const hasText = node => node.textContent === title;
+    const nodeHasText = hasText(node);
+    const childrenDontHaveText = Array.from(node.children).every(
+        child => !hasText(child)
+    );
+    return nodeHasText && childrenDontHaveText;
+}
 
 describe("Mapping Card component", () => {
 
@@ -55,7 +64,7 @@ describe("Mapping Card component", () => {
     let queryAllByText, getByText, getByRole, queryAllByRole, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard 
+        <Router><MappingCard
           {...mappingProps}
           canReadOnly={true}
           deleteMappingArtifact={deleteMappingArtifact}
@@ -92,7 +101,7 @@ describe("Mapping Card component", () => {
     let getByText, getByRole, queryAllByRole, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard 
+        <Router><MappingCard
           {...mappingProps}
           canReadOnly={true}
           canReadWrite={true}
@@ -117,7 +126,9 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
-
+    expect(await(waitForElement(() => getByText((content, node) => {
+          return getSubElements(content, node,"Are you sure you want to delete the Mapping1 step?")
+    })))).toBeInTheDocument();
   });
 
   test('Mapping card parses XML appropriately', async () => {
@@ -128,7 +139,7 @@ describe("Mapping Card component", () => {
     let getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard 
+        <Router><MappingCard
           {...mappingProps}
           getMappingArtifactByMapName={mappingArtifactByNameFunction}
           canReadOnly={true}
@@ -152,7 +163,7 @@ describe("Mapping Card component", () => {
       authorityService.setAuthorities(['writeMapping', 'readMapping']);
         let mapping = data.mappings.data[0].artifacts;
       const {getByText,getByRole, getByPlaceholderText} = render(
-        <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard 
+        <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard
           {...mappingProps}
           canReadWrite={true}
           canWriteFlow={true}
