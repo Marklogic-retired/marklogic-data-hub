@@ -462,9 +462,6 @@ describe('json scenario for table on browse documents page', () => {
       browsePage.getFacetApplyButton().click();
       browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
       browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
-      browsePage.clickPopoverSearch('name');
-      browsePage.setInputField('name', 'Mc');
-      browsePage.getPopOverCheckbox('Mcgee Burch').should('be.checked');
       browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
       browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
       browsePage.waitForSpinnerToDisappear();
@@ -475,23 +472,6 @@ describe('json scenario for table on browse documents page', () => {
       browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
       browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').should('not.be.checked');
   })
-
-  it('Verify facets checked from popover search can be unchecked on clicking discard all changes', () => {
-     browsePage.selectEntity('Person');
-     browsePage.getFacetItemCheckbox('fname', 'Alexandra').click();
-     browsePage.getGreySelectedFacets('Alexandra').should('exist');
-     browsePage.waitForSpinnerToDisappear();
-     browsePage.clickPopoverSearch('fname');
-     browsePage.setInputField('fname', 'Al');
-     browsePage.getPopOverCheckbox('Alexandra').click();
-     browsePage.getGreySelectedFacets('Alexandra').should('be.visible');
-     browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
-     browsePage.getClearGreyFacets().click();
-     browsePage.getFacetItemCheckbox('fname', 'Alexandra').should('not.be.checked');
-     browsePage.clickPopoverSearch('fname');
-     browsePage.getPopOverCheckbox('Alexandra').should('not.be.checked');
-  })
-
 });
 
 
