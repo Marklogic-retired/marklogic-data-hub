@@ -214,7 +214,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      title: 'Name',
+      title: <span data-testid="entityName">Name</span>,
       dataIndex: 'entityName',
       className: styles.tableText,
       width: 400,
@@ -237,12 +237,13 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           </>
         )
       },
+      sortDirections: ["ascend", "descend", "ascend"],
       sorter: (a, b) => {
         return a['entityName'].split(',')[0].localeCompare(b['entityName'].split(',')[0])
       }
     },
     {
-      title: 'Instances',
+      title: <span data-testid="Instances">Instances</span>,
       dataIndex: 'instances',
       className: styles.rightHeader,
       width: 100,
@@ -269,6 +270,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
          </> 
         )
       },
+      sortDirections: ["ascend", "descend", "ascend"],
       sorter: (a, b) => {
         let splitA = a['instances'].split(',');
         let aCount = parseInt(splitA[1]);
@@ -279,7 +281,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
       }
     },
     {
-      title: 'Last Processed',
+      title: <span data-testid="lastProcessed">Last Processed</span>,
       dataIndex: 'lastProcessed',
       className: styles.tableText,
       width: 100,
@@ -305,6 +307,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
           )
         }
       },
+      sortDirections: ["ascend", "descend", "ascend"],
+      defaultSortOrder: "descend",
       sorter: (a, b) => {
         let splitA = a['lastProcessed'].split(',');
         let splitB = b['lastProcessed'].split(',');
