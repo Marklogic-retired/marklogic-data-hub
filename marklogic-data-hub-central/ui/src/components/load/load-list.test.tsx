@@ -65,53 +65,73 @@ describe('Load data component', () => {
     expect(getAllByLabelText('icon: setting').length).toBe(3);
 
     //verify load list table enforces last updated sort order by default
-    let loadTable: any = document.querySelectorAll('.ant-table-row ant-table-row-level-0');
-    validateTableRow(loadTable, ['testLoadXML', 'testLoadXMLtoJSON','testLoad']);
-
+    let loadTable: any = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad123','testLoad']);
     //verify load list table enforces sorting by ascending date updated as well
     let loadTableSort = getByTestId('loadTableDate');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoad', 'testLoad123', 'testLoadXML']);
+    //verify third click does not return to default, but returns to descending order
+    fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoadXML', 'testLoad123','testLoad']);
 
     //verify load list table enforces sorting by name alphabetically in ascending order
     loadTableSort = getByTestId('loadTableName');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoad', 'testLoad123', 'testLoadXML']);
-
     //verify load list table enforces sorting by name alphabetically in descending order
-    loadTableSort = getByTestId('loadTableName');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoadXML', 'testLoad123', 'testLoad']);
+    //verify third click does not return to default, but returns to ascending order
+    fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoad', 'testLoad123', 'testLoadXML']);
 
     //verify load list table enforces sorting by source format alphabetically in ascending order
     loadTableSort = getByTestId('loadTableSourceFormat');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
-
     //verify load list table enforces sorting by source format alphabetically in descending order
-    loadTableSort = getByTestId('loadTableSourceFormat');
     fireEvent.click(loadTableSort);
-    validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoad', 'testLoadXML', 'testLoad123']);
+    //verify third click does not return to default, but returns to ascending order
+    fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
 
     //verify load list table enforces sorting by target format alphabetically in ascending order
     loadTableSort = getByTestId('loadTableTargetFormat');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
-
     //verify load list table enforces sorting by target format alphabetically in descending order
-    loadTableSort = getByTestId('loadTableTargetFormat');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
+    //verify third click does not return to default, but returns to ascending order
+    fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
 
     //verify load list table enforces sorting by Description alphabetically in ascending order
     loadTableSort = getByTestId('loadTableDescription');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
-
     //verify load list table enforces sorting by Description alphabetically in descending order
-    loadTableSort = getByTestId('loadTableDescription');
     fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
+    //verify third click does not return to default, but returns to ascending order
+    fireEvent.click(loadTableSort);
+    loadTable = document.querySelectorAll('.ant-table-row-level-0');
+    validateTableRow(loadTable, ['testLoad123', 'testLoad', 'testLoadXML']);
   })
 
   test('Verify Load settings from list view renders correctly', async () => {
