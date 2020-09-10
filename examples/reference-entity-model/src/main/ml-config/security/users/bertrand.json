@@ -3,8 +3,6 @@
   "description": "Bertrand is a Business Analyst",
   "password": "%%testPassword%%",
   "role": [
-    "hub-central-mapping-reader",
-    "hub-central-entity-exporter",
-    "hub-central-saved-query-user"
+    "hub-central-explorer"
   ]
 }

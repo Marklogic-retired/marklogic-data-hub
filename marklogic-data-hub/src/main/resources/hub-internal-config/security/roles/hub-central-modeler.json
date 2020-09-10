@@ -1,0 +1,7 @@
+{
+  "role-name": "hub-central-modeler",
+  "description": "Alias for 'hub-central-entity-model-writer' that exists solely as a more user-friendly role name for use in DHS.",
+  "role": [
+    "hub-central-entity-model-writer"
+  ]
+}
