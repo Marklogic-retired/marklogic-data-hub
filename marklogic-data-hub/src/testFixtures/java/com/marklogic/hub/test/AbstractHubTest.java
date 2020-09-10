@@ -102,17 +102,29 @@ public abstract class AbstractHubTest extends TestObject {
     protected void resetDatabases() {
         // Admin is needed to clear out provenance data
         runAsAdmin();
-        String xquery = "cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)";
-        HubClient hubClient = getHubClient();
-        // Running these with primitive retry support, as if a connection cannot be made to ML, this is typically the
-        // first thing that will fail
-        retryIfNecessary(() -> hubClient.getStagingClient().newServerEval().xquery(xquery).evalAs(String.class));
-        retryIfNecessary(() -> hubClient.getFinalClient().newServerEval().xquery(xquery).evalAs(String.class));
-        retryIfNecessary(() -> hubClient.getJobsClient().newServerEval().xquery(xquery).evalAs(String.class));
 
-        DatabaseManager databaseManager = new DatabaseManager(hubClient.getManageClient());
-        databaseManager.clearDatabase(hubClient.getDbName(DatabaseKind.STAGING_SCHEMAS));
-        databaseManager.clearDatabase(hubClient.getDbName(DatabaseKind.FINAL_SCHEMAS));
+        HubClient hubClient = getHubClient();
+        // Running these with primitive retry support, as if a connection cannot be made to ML, this is typically the first thing that will fail
+        clearDatabase(hubClient.getStagingClient());
+        clearDatabase(hubClient.getFinalClient());
+        clearDatabase(hubClient.getJobsClient());
+
+        try {
+            clearDatabase(getHubConfig().newStagingClient(getHubConfig().getDbName(DatabaseKind.STAGING_SCHEMAS)));
+        } catch (Exception ex) {
+            logger.warn("Unable to clear staging schemas database, but will continue: " + ex.getMessage());
+        }
+        try {
+            clearDatabase(getHubConfig().newStagingClient(getHubConfig().getDbName(DatabaseKind.FINAL_SCHEMAS)));
+        } catch (Exception ex) {
+            logger.warn("Unable to clear final schemas database, but will continue: " + ex.getMessage());
+        }
+    }
+
+    private void clearDatabase(DatabaseClient client) {
+        retryIfNecessary(() -> client.newServerEval()
+            .xquery("cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)")
+            .evalAs(String.class));
     }
 
     /**
