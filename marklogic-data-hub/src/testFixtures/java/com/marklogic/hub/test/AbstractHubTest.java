@@ -9,6 +9,8 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.commands.*;
