@@ -35,7 +35,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void checkIfTestsCanBeRun(){
-        Versions.MarkLogicVersion mlVersion = versions.getMLVersion();
+        Versions.MarkLogicVersion mlVersion = new Versions(getHubClient()).getMLVersion();
         assumeTrue(
             (mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
             (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
