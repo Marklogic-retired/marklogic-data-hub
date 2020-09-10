@@ -195,12 +195,14 @@ const LoadList: React.FC<Props> = (props) => {
           render: (text: any,record: any) => (
               <span><span onClick={() => OpenEditStepDialog(record)} className={styles.editLoadConfig}>{text}</span> </span>
           ),
+          sortDirections: ["ascend", "descend", "ascend"],
           sorter: (a:any, b:any) => a.name.localeCompare(b.name),
         },
         {
           title: <span data-testid="loadTableDescription">Description</span>,
           dataIndex: 'description',
           key: 'description',
+          sortDirections: ["ascend", "descend", "ascend"],
           sorter: (a:any, b:any) => a.description?.localeCompare(b.description)
         },
         {
@@ -213,12 +215,14 @@ const LoadList: React.FC<Props> = (props) => {
                     {row.sourceFormat === 'csv' ? <div className={styles.sourceFormatFS}>Field Separator: ( {row.separator} )</div> : ''}
                 </div>
             ),
+            sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => a.sourceFormat.localeCompare(b.sourceFormat),
         },
         {
             title: <span data-testid="loadTableTargetFormat">Target Format</span>,
             dataIndex: 'targetFormat',
             key: 'targetFormat',
+            sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => a.targetFormat.localeCompare(b.targetFormate),
         },
         {
@@ -228,8 +232,8 @@ const LoadList: React.FC<Props> = (props) => {
             render: (text) => (
                 <div>{convertDateFromISO(text)}</div>
             ),
+            sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
-            sortDirections: ["descend", "ascend"],
             defaultSortOrder: "descend"
         },
         {
