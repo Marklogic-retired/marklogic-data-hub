@@ -5,7 +5,7 @@ import { facetValues } from '../../assets/mock-data/entity-table';
 
 describe("Facet component", () => {
   it("Facet component renders with data properly" , () => {
-    const { getByTestId, getByText } = render(
+    const { getByTestId, getByText, queryByLabelText } = render(
         <Facet
           name="sales_region"
           constraint="sales_region"
@@ -36,6 +36,8 @@ describe("Facet component", () => {
     expect(getByText(/607/i)).toBeInTheDocument();
     expect(getByText(/CustomerType/i)).toBeInTheDocument();
     expect(getByText(/999/i)).toBeInTheDocument();
+    // Search link not shown for facets < 20
+    expect(queryByLabelText('popover-search-label')).not.toBeInTheDocument();
   });
 
   it("Facet component renders with nested data properly" , () => {
@@ -95,6 +97,37 @@ describe("Facet component", () => {
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(180deg);');
     fireEvent.click(getByTestId('sales_region-toggle')); 
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(180deg);');
+  });
+
+  it("Search link shown when facet number greater than limit" , () => {
+    const LIMIT =  20;
+    const f = {
+      "name": "facetName",
+      "count": 123,
+      "value": "facetValue"
+    };
+    let facetVals: any = [];
+    for (let i = 0; i < LIMIT; i++) {
+      facetVals.push(f);
+    }
+    const { getByLabelText, debug } = render(
+        <Facet
+          name="sales_region"
+          constraint="sales_region"
+          facetValues={facetVals}
+          key=""
+          tooltip=""
+          facetType="xs:string"
+          facetCategory="entity"
+          updateSelectedFacets={jest.fn()}
+          addFacetValues={jest.fn()}
+          referenceType="element"
+          entityTypeId=""
+          propertyPath="sales_region"
+        />
+    )
+    // Search link shown for facets >= 20
+    expect(getByLabelText('popover-search-label')).toBeInTheDocument();
   });
 
 });

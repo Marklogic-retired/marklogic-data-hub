@@ -26,6 +26,7 @@ interface Props {
 const Facet: React.FC<Props> = (props) => {
 
   const SHOW_MINIMUM = 3;
+  const SEARCH_MINIMUM = 20;
   const {searchOptions, greyedOptions} = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
   const [show, toggleShow] = useState(true);
@@ -194,7 +195,7 @@ const Facet: React.FC<Props> = (props) => {
           data-cy="show-more"
           data-testid="show-more"
         >{(more) ? '<< less' : 'more >>'}</div>
-        {(props.facetType === 'xs:string' || 'collection') &&
+        {(props.facetType === 'xs:string' || 'collection') && (checkedFacets.length >= SEARCH_MINIMUM) && 
         <div className={styles.searchValues}>
           <PopOverSearch
               referenceType={props.referenceType}
