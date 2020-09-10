@@ -3,8 +3,7 @@
   "description": "Stewart is a Data Architect",
   "password": "%%testPassword%%",
   "role": [
-    "hub-central-mapping-reader",
-    "hub-central-downloader",
-    "hub-central-entity-model-writer"
+    "hub-central-modeler",
+    "hub-central-downloader"
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-explorer",
+  "description": "Permits saving queries and exporting query results when you explore data in Hub Central.",
+  "role": [
+    "hub-central-saved-query-user",
+    "hub-central-entity-exporter"
+  ]
+}
