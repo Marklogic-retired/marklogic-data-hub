@@ -32,7 +32,6 @@ const QueryModal = (props) => {
     const [tableData, setTableData] = useState<Object[]>();
     const [query, setQuery] = useState({});
     const [hasStructured, setStructured] = useState<boolean>(false);
-
     const data = new Array();
 
     const getQueries = async () => {
@@ -146,19 +145,23 @@ const QueryModal = (props) => {
         setExportModalVisibility(true);
     };
 
-    const columns = [
+    const columns : any = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             width: 200,
+            sortDirections: ["ascend", "descend", "ascend"],
+            defaultSortOrder: "ascend",
             render: text => <a data-id={text} data-testid={text} className={styles.name} onClick={onApply}>{text}</a>,
         },
         {
             title: 'Description',
             dataIndex: 'description',
             key: 'description',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ["ascend", "descend", "ascend"],
             width: 200,
             render: text => <div className={styles.cell}>{text}</div>,
         },
@@ -166,6 +169,7 @@ const QueryModal = (props) => {
             title: 'Edited',
             dataIndex: 'edited',
             key: 'edited',
+            sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a, b) => a.edited.localeCompare(b.edited),
             width: 200,
             render: text => <div className={styles.cell}>{text}</div>,
