@@ -15,31 +15,43 @@
  */
 package com.marklogic.hub.cloud.aws.glue.Writer;
 
+import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.HubClient;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
 import org.apache.spark.sql.types.StructType;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
-public class MarkLogicDataWriterFactory implements DataWriterFactory<InternalRow> {
-    private Map<String, String> map;
+public class MarkLogicDataWriterFactory extends LoggingObject implements DataWriterFactory<InternalRow> {
+
     private StructType schema;
-    public MarkLogicDataWriterFactory(Map<String, String> map, StructType schema) {
-        this.map = map;
+    private HubClient hubClient;
+    private Map<String, String> params;
+
+    /**
+     * @param params a map of parameters containing both DHF-supported properties (most likely prefixed with ml* or
+     *               hub*) and connector-specific properties. The DHF-supported properties will be used to construct a
+     *               HubClient for communicating with MarkLogic.
+     * @param schema
+     */
+    public MarkLogicDataWriterFactory(Map<String, String> params, StructType schema) {
+        this.params = params;
         this.schema = schema;
+
+        Properties props = new Properties();
+        params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
+        this.hubClient = HubConfigImpl.withProperties(props).newHubClient();
     }
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        System.out.println("************** task id ************** "+ taskId);
-
-        Map<String, String> mapConfig = new HashMap<>();
-        mapConfig.putAll(map);
-        mapConfig.put("taskId",String.valueOf(taskId));
-       // MarkLogicSparkWriteDriver.taskIds.add(taskId);
-
-        return new MarkLogicDataWriter(mapConfig, this.schema);
+        if (logger.isDebugEnabled()) {
+            logger.debug("Task ID: " + taskId);
+        }
+        return new MarkLogicDataWriter(hubClient, taskId, schema, params);
     }
 }

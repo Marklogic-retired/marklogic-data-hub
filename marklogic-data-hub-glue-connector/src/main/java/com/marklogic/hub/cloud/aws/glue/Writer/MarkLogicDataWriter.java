@@ -17,7 +17,7 @@ package com.marklogic.hub.cloud.aws.glue.Writer;
 
 import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.cloud.aws.glue.IOUtil;
+import com.marklogic.hub.HubClient;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.json.JSONOptions;
 import org.apache.spark.sql.catalyst.json.JacksonGenerator;
@@ -36,31 +36,26 @@ import java.util.stream.Stream;
 
 public class MarkLogicDataWriter implements DataWriter<InternalRow> {
 
-    private Map<String, String> map;
     private List<String> records;
-    InputEndpoint.BulkInputCaller loader;
-    private int taskId = 1;
+    private InputEndpoint.BulkInputCaller loader;
     private StructType schema;
+    private int batchSize;
 
-    public MarkLogicDataWriter(Map<String, String> map, StructType schema) {
+    public MarkLogicDataWriter(HubClient hubClient, long taskId, StructType schema, Map<String, String> params) {
         System.out.println("************ Reached MarkLogicDataWriter ****************");
 
-        try {
-            this.map = map;
-            this.records = new ArrayList<>();
-            this.taskId = Integer.valueOf(map.get("taskId"));
-            this.schema = schema;
-            IOUtil ioTestUtil = new IOUtil(map.get("host"), Integer.valueOf(map.get("port")), map.get("user"),
-                    map.get("password"), map.get("moduledatabase"));
-            String endpointState = "{\"next\":" + 0 + ", \"prefix\":\""+map.get("prefixvalue")+"\"}";
-            InputEndpoint loadEndpt = InputEndpoint.on(ioTestUtil.db, ioTestUtil.modDb.newTextDocumentManager().read(map.get("apipath"), new StringHandle()));
-            this.loader = loadEndpt.bulkCaller();
-            String workUnit = "{\"taskId\":" + taskId + "}";
-            loader.setWorkUnit(new ByteArrayInputStream(workUnit.getBytes()));
-            loader.setEndpointState(new ByteArrayInputStream(endpointState.getBytes()));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        this.records = new ArrayList<>();
+        this.schema = schema;
+        this.batchSize = Integer.parseInt(params.get("batchsize"));
+        String endpointState = "{\"next\":" + 0 + ", \"prefix\":\""+params.get("prefixvalue")+"\"}";
+        this.loader = InputEndpoint.on(
+            hubClient.getStagingClient(),
+            hubClient.getModulesClient().newTextDocumentManager().read(params.get("apipath"), new StringHandle())
+        ).bulkCaller();
+
+        String workUnit = "{\"taskId\":" + taskId + "}";
+        loader.setWorkUnit(new ByteArrayInputStream(workUnit.getBytes()));
+        loader.setEndpointState(new ByteArrayInputStream(endpointState.getBytes()));
     }
 
     @Override
@@ -69,7 +64,7 @@ public class MarkLogicDataWriter implements DataWriter<InternalRow> {
 
         records.add(prepareData1(record));
 
-        if(records.size() == Integer.valueOf(map.get("batchsize"))) {
+        if(records.size() == this.batchSize) {
             writeRecords();
         }
     }
@@ -94,12 +89,11 @@ public class MarkLogicDataWriter implements DataWriter<InternalRow> {
         Stream.Builder<InputStream> builder = Stream.builder();
 
         for(int i=0; i< records.size(); i++){
-            builder.add(IOUtil.asInputStream(records.get(i)));
+            builder.add(new ByteArrayInputStream(records.get(i).getBytes()));
         }
         Stream<InputStream> input = builder.build();
         input.forEach(loader::accept);
         loader.awaitCompletion();
-        taskId+= records.size();
         this.records.clear();
     }
 
