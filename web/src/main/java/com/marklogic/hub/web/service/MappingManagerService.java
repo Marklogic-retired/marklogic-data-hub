@@ -83,7 +83,7 @@ public class MappingManagerService {
         return mapping;
     }
 
-    public void deleteMapping(String mapping) throws IOException {
+    public synchronized void deleteMapping(String mapping) throws IOException {
         Path dir = hubConfig.getHubMappingsDir().resolve(mapping);
         if (dir.toFile().exists()) {
             watcherService.unwatch(dir.getParent().toString());
@@ -125,7 +125,7 @@ public class MappingManagerService {
         return mappingValidators.get(db);
     }
 
-    public void unsetMappingValidators() {
+    public synchronized void unsetMappingValidators() {
         mappingValidators = null;
     }
 }

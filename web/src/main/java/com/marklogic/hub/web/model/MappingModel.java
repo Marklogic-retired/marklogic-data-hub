@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.web.model.entity_services.JsonPojo;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Objects;
+
 public class MappingModel extends JsonPojo {
 
     protected String filename;
@@ -189,15 +191,14 @@ public class MappingModel extends JsonPojo {
             return false;
         }
 
-        if (properties == null && that.properties != null || properties != null && that.properties == null ||
-            !properties.equals(that.properties)) {
+        if (!Objects.equals(properties, that.properties)) {
             return false;
         }
 
-        if (namespaces == null && that.namespaces != null || namespaces != null && that.namespaces == null ||
-            !namespaces.equals(that.namespaces)) {
+        if (!Objects.equals(namespaces, that.namespaces)) {
             return false;
         }
+
         return true;
     }
 }

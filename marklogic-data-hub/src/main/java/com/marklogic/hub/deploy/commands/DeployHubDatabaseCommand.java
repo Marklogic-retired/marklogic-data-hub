@@ -63,7 +63,9 @@ public class DeployHubDatabaseCommand extends DeployDatabaseCommand {
         this.databaseFile = databaseFile;
         this.hubConfig = hubConfig;
         this.databaseFilename = databaseFilename;
-        this.setForestFilename(databaseFilename.replace("-database", "-forest"));
+        if (databaseFilename != null) {
+            this.setForestFilename(databaseFilename.replace("-database", "-forest"));
+        }
     }
 
     @Override

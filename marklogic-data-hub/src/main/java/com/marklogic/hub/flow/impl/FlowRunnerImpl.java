@@ -2,23 +2,15 @@ package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.flow.Flow;
-import com.marklogic.hub.flow.FlowInputs;
-import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.FlowStatusListener;
-import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.job.JobDocManager;
 import com.marklogic.hub.job.JobStatus;
-import com.marklogic.hub.step.MarkLogicStepDefinitionProvider;
 import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.step.StepRunner;
 import com.marklogic.hub.step.StepRunnerFactory;
@@ -29,28 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -254,18 +228,17 @@ public class FlowRunnerImpl implements FlowRunner{
     }
 
     public void stopJob(String jobId) {
-        synchronized (stepsMap) {
-            if(stepsMap.get(jobId) != null){
-                stepsMap.get(jobId).clear();
-                stepsMap.remove(jobId);
-                isJobCancelled.set(true);
-            }
-            else {
-                throw new RuntimeException("Job not running");
-            }
+        if (stepsMap.get(jobId) != null) {
+            stepsMap.get(jobId).clear();
+            stepsMap.remove(jobId);
+            isJobCancelled.set(true);
         }
+        else {
+            throw new RuntimeException("Job not running");
+        }
+
         if (jobId.equals(runningJobId)) {
-            if(stepRunner != null){
+            if (stepRunner != null) {
                 stepRunner.stop();
             }
         }

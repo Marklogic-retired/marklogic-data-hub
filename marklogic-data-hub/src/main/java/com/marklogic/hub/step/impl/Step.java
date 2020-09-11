@@ -26,6 +26,7 @@ import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Step {
@@ -170,16 +171,12 @@ public class Step {
         if (StringUtils.isNotEmpty(stepDefinitionName) ? !stepDefinitionName.equals(that.stepDefinitionName) : StringUtils.isNotEmpty(that.stepDefinitionName)) {
             return false;
         }
-        if (options == null && that.options != null || options != null && that.options == null || options.size() != that.options.size()) {
+
+        if (!Objects.equals(options, that.options)) {
             return false;
         }
-        if (options != null && that.options != null) {
-            if (!options.entrySet().stream().allMatch(e -> e.getValue() instanceof JsonNode && ((JsonNode) e.getValue()).equals(that.options.get(e.getKey())))) {
-                return false;
-            }
-        }
-        if (customHook == null && that.customHook != null || customHook != null && that.customHook == null ||
-            !customHook.equals(that.customHook)) {
+
+        if (!Objects.equals(customHook, that.customHook)) {
             return false;
         }
 

@@ -101,7 +101,7 @@ public class WriteStepRunner implements StepRunner {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String step = "1";
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    private static final String DATE_TIME_FORMAT_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private List<StepItemCompleteListener> stepItemCompleteListeners = new ArrayList<>();
     private List<StepItemFailureListener> stepItemFailureListeners = new ArrayList<>();
     private List<StepStatusListener> stepStatusListeners = new ArrayList<>();
@@ -267,7 +267,12 @@ public class WriteStepRunner implements StepRunner {
     @Override
     public RunStepResponse run() {
         boolean disableJobOutput = false;
-        if (options != null && options.containsKey("disableJobOutput")) {
+
+        if (options == null) {
+            options = new HashMap<>();
+        }
+
+        if (options.containsKey("disableJobOutput")) {
             disableJobOutput = Boolean.parseBoolean(options.get("disableJobOutput").toString());
         }
         runningThread = null;
@@ -562,7 +567,7 @@ public class WriteStepRunner implements StepRunner {
         metadataValues.add("datahubCreatedInFlow", flow.getName());
         metadataValues.add("datahubCreatedByStep", flow.getStep(step).getName());
         // TODO createdOn/createdBy data may not be accurate enough. Unfortunately REST transforms don't allow for writing metadata
-        metadataValues.add("datahubCreatedOn", DATE_TIME_FORMAT.format(new Date()));
+        metadataValues.add("datahubCreatedOn", new SimpleDateFormat(DATE_TIME_FORMAT_PATTERN).format(new Date()));
         metadataValues.add("datahubCreatedBy", hubClient.getUsername());
         writeBatcher.withDefaultMetadata(metadataHandle);
         Format format = null;

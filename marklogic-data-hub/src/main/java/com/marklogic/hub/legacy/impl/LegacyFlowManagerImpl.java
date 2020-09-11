@@ -221,11 +221,11 @@ class FlowResource extends ResourceManager {
         Document parent = res.getContent(handle).get();
         NodeList children = parent.getDocumentElement().getChildNodes();
 
-        ArrayList<LegacyFlow> flows = null;
-        if (children.getLength() > 0) {
-            flows = new ArrayList<>();
+        if (children.getLength() <= 0) {
+            return null;
         }
 
+        ArrayList<LegacyFlow> flows = new ArrayList<>();
         Node node;
         for (int i = 0; i < children.getLength(); i++) {
             node = children.item(i);
