@@ -16,8 +16,9 @@
 package com.marklogic.hub.cloud.aws.glue.Writer;
 
 import com.marklogic.client.dataservices.InputEndpoint;
+import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.StringHandle;
-import com.marklogic.hub.cloud.aws.glue.IOUtil;
+import com.marklogic.hub.HubClient;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.json.JSONOptions;
 import org.apache.spark.sql.catalyst.json.JacksonGenerator;
@@ -34,52 +35,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class MarkLogicDataWriter implements DataWriter<InternalRow> {
+public class MarkLogicDataWriter extends LoggingObject implements DataWriter<InternalRow> {
 
-    private Map<String, String> map;
     private List<String> records;
-    InputEndpoint.BulkInputCaller loader;
-    private int taskId = 1;
+    private InputEndpoint.BulkInputCaller loader;
     private StructType schema;
+    private int batchSize;
 
-    public MarkLogicDataWriter(Map<String, String> map, StructType schema) {
-        System.out.println("************ Reached MarkLogicDataWriter ****************");
+    /**
+     *
+     * @param hubClient
+     * @param taskId
+     * @param schema
+     * @param params contains all the params provided by Spark, which will include all connector-specific properties
+     */
+    public MarkLogicDataWriter(HubClient hubClient, long taskId, StructType schema, Map<String, String> params) {
+        this.records = new ArrayList<>();
+        this.schema = schema;
+        this.batchSize = params.containsKey("batchsize") ? Integer.parseInt(params.get("batchsize")) : 100;
 
-        try {
-            this.map = map;
-            this.records = new ArrayList<>();
-            this.taskId = Integer.valueOf(map.get("taskId"));
-            this.schema = schema;
-            IOUtil ioTestUtil = new IOUtil(map.get("host"), Integer.valueOf(map.get("port")), map.get("user"),
-                    map.get("password"), map.get("moduledatabase"));
-            String endpointState = "{\"next\":" + 0 + ", \"prefix\":\""+map.get("prefixvalue")+"\"}";
-            InputEndpoint loadEndpt = InputEndpoint.on(ioTestUtil.db, ioTestUtil.modDb.newTextDocumentManager().read(map.get("apipath"), new StringHandle()));
-            this.loader = loadEndpt.bulkCaller();
-            String workUnit = "{\"taskId\":" + taskId + "}";
-            loader.setWorkUnit(new ByteArrayInputStream(workUnit.getBytes()));
-            loader.setEndpointState(new ByteArrayInputStream(endpointState.getBytes()));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        final String apiModulePath = params.containsKey("apipath") ? params.get("apipath") : "/data-hub/5/data-services/ingestion/bulkIngester.api";
+        logger.info("Will write to endpoint defined by: " + apiModulePath);
+        this.loader = InputEndpoint.on(
+            hubClient.getStagingClient(),
+            hubClient.getModulesClient().newTextDocumentManager().read(apiModulePath, new StringHandle())
+        ).bulkCaller();
+
+        loader.setWorkUnit(new ByteArrayInputStream(("{\"taskId\":" + taskId + "}").getBytes()));
+        loader.setEndpointState(new ByteArrayInputStream(("{\"next\":" + 0 + ", \"prefix\":\"" + params.get("prefix") + "\"}").getBytes()));
     }
 
     @Override
     public void write(InternalRow record) {
-        System.out.println("************ Reached MarkLogicDataWriter.write **************** ");
-
-        records.add(prepareData1(record));
-
-        if(records.size() == Integer.valueOf(map.get("batchsize"))) {
+        records.add(convertRowToJSONString(record));
+        if (records.size() == batchSize) {
+            logger.debug("Writing records as batch size of " + batchSize + " has been reached");
             writeRecords();
         }
     }
 
     @Override
     public WriterCommitMessage commit() {
-        if(!this.records.isEmpty()) {
+        if (!this.records.isEmpty()) {
+            logger.debug("Writing records on commit");
             writeRecords();
         }
-
         return null;
     }
 
@@ -89,29 +89,25 @@ public class MarkLogicDataWriter implements DataWriter<InternalRow> {
     }
 
     private void writeRecords() {
-        System.out.println("************ Reached MarkLogicDataWriter.writeRecords ****************");
-
+        int recordCount = records.size();
         Stream.Builder<InputStream> builder = Stream.builder();
-
-        for(int i=0; i< records.size(); i++){
-            builder.add(IOUtil.asInputStream(records.get(i)));
+        for (int i = 0; i < recordCount; i++) {
+            builder.add(new ByteArrayInputStream(records.get(i).getBytes()));
         }
         Stream<InputStream> input = builder.build();
         input.forEach(loader::accept);
         loader.awaitCompletion();
-        taskId+= records.size();
+        logger.debug("Wrote records, count: " + recordCount);
         this.records.clear();
     }
 
-    private String prepareData1(InternalRow record) {
-
+    private String convertRowToJSONString(InternalRow record) {
         StringWriter jsonObjectWriter = new StringWriter();
-
-        scala.collection.immutable.Map<String,String> emptyMap = scala.collection.immutable.Map$.MODULE$.empty();
+        scala.collection.immutable.Map<String, String> emptyMap = scala.collection.immutable.Map$.MODULE$.empty();
         JacksonGenerator jacksonGenerator = new JacksonGenerator(
-                schema,
-                jsonObjectWriter,
-                new JSONOptions(emptyMap, DateTimeUtils.TimeZoneUTC().getID(), "")
+            schema,
+            jsonObjectWriter,
+            new JSONOptions(emptyMap, DateTimeUtils.TimeZoneUTC().getID(), "")
         );
         jacksonGenerator.write(record);
         jacksonGenerator.flush();

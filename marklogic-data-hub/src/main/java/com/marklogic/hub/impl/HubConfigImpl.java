@@ -1820,6 +1820,18 @@ public class HubConfigImpl implements HubConfig
     }
 
     /**
+     * For clients - such as the spark/glue connector - that must deal with only lowercase property names, this method
+     * can be called to register every property consumer under the lowercased version of its property name.
+     */
+    public void registerLowerCasedPropertyConsumers() {
+        if (propertyConsumerMap == null) {
+            initializePropertyConsumerMap();
+        }
+        Set<String> propertyNames = new HashSet<>(propertyConsumerMap.keySet());
+        propertyNames.forEach(propertyName -> propertyConsumerMap.put(propertyName.toLowerCase(), propertyConsumerMap.get(propertyName)));
+    }
+
+    /**
      *
      * @return
      */

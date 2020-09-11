@@ -1,0 +1,32 @@
+{
+    "endpoint": "/data-hub/5/data-services/ingestion/bulkIngester.sjs",
+    "desc": "This is a prototype and not intended for client use yet",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "workUnit",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "input",
+            "datatype": "jsonDocument",
+            "multiple": true,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true
+    },
+    "$bulk": {
+        "inputBatchSize": 2
+    }
+}

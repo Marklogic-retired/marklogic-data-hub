@@ -236,4 +236,20 @@ public class HubConfigImplTest {
         assertEquals("digest", config.getAuthMethod(DatabaseKind.STAGING));
         assertEquals("digest", config.getAuthMethod(DatabaseKind.JOB));
     }
+
+    @Test
+    void registerLowerCasedPropertyConsumers() {
+        HubConfigImpl config = new HubConfigImpl();
+        config.registerLowerCasedPropertyConsumers();
+
+        Properties props = new Properties();
+        props.setProperty("mlhost", "lower-host");
+        props.setProperty("mlusername", "lower-user");
+        props.setProperty("mlpassword", "lower-password");
+        config.applyProperties(new SimplePropertySource(props));
+
+        assertEquals("lower-host", config.getHost());
+        assertEquals("lower-user", config.getMlUsername());
+        assertEquals("lower-password", config.getMlPassword());
+    }
 }
