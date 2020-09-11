@@ -38,7 +38,7 @@ war {
   }
 
 }
-mainClassName = "com.marklogic.hub.web.WebApplication"
+
 bootWar {
   baseName "marklogic-datahub"
 }

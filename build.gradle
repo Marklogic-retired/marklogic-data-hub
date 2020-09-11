@@ -13,7 +13,6 @@ allprojects {
 subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
-    apply plugin: 'application'
     sourceCompatibility = "9"
     targetCompatibility = "9"
 
@@ -34,12 +33,6 @@ subprojects {
             xml.enabled true
         }
     }
-    task applicationCodeCoverageReport(type:JacocoReport) {
-        executionData run
-        sourceSets sourceSets.main
-    }
-
-
 }
 
 //Task to update versions in files they are hardcoded. If version is hardcoded in any other files in the future,it has to be added to the list

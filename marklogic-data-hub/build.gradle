@@ -16,7 +16,6 @@ plugins {
 // seeing them when running a Gradle task (like publishToMavenLocal) is just useless noise
 javadoc.options.addStringOption('Xdoclint:none', '-quiet')
 
-mainClassName='com.marklogic.hub.ApplicationConfig'
 repositories {
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
