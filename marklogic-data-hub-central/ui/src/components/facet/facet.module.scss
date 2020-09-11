@@ -53,10 +53,11 @@
   .checkContainer {
     display: flex;
     justify-content: space-between;
+    height: 23px;
   }
 
   .value {
-    width: 180px;
+    max-width: 181px;
     padding: 1px 0;
     white-space: nowrap;
     overflow: hidden;

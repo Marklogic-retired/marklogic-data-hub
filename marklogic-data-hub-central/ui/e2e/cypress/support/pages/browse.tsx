@@ -89,12 +89,18 @@ class BrowsePage {
     return this.getDocument(index).find('[data-cy=instance]');
   }
 
-
+  getTooltip(tooltip: string) {
+    return cy.get(`#${tooltip}-tooltip`);
+  }
 
   /**
    * facet search
    * available facets are 'collection', 'created-on', 'job-id', 'flow', 'step'
    */
+
+  getFacetName(facet: string) {
+    return cy.get('.ml-tooltip-container').contains(facet);
+  }
 
   getFacet(facet: string) {
     return cy.get('[data-cy="' + facet + '-facet"]');
@@ -220,12 +226,11 @@ class BrowsePage {
     this.waitForSpinnerToDisappear();
   }
 
-
     //table, facet view
   clickFacetView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
-    return cy.get('[data-cy=facet-view]').click();
+    cy.get('[data-cy=facet-view]').click().trigger('mouseout');
   }
 
   getFacetView(){
@@ -398,7 +403,7 @@ class BrowsePage {
   }
 
   getRadioOptionSelected() {
-    return cy.get('[type="radio"]').first().check();
+    return cy.get('.ant-modal [type="radio"]').first().check();
   }
 
   getEditSaveChangesButton() {
