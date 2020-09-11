@@ -1,0 +1,86 @@
+{
+  "batchSize" : 100,
+  "threadCount" : 1,
+  "sourceDatabase" : "data-hub-FINAL",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetEntity" : "Person",
+  "sourceQuery" : "cts.collectionQuery('mapPersonXML')",
+  "collections" : [ "match-xml-person", "Person" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetFormat" : "xml",
+  "matchOptions" : {
+    "dataFormat" : "xml",
+    "algorithms" : {
+      "algorithm" : [ {
+        "name" : "double-metaphone",
+        "function" : "double-metaphone",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
+      }, {
+        "name" : "thesaurus",
+        "function" : "thesaurus",
+        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
+        "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
+      } ]
+    },
+    "collections" : {
+      "content" : [ ]
+    },
+    "scoring" : {
+      "add" : [ {
+        "propertyName" : "lname",
+        "weight" : "10"
+      }, {
+        "propertyName" : "SSN",
+        "weight" : "20"
+      } ],
+      "expand" : [ {
+        "propertyName" : "fname",
+        "algorithmRef" : "double-metaphone",
+        "weight" : "10",
+        "dictionary" : "/dictionary/first-names.xml",
+        "distanceThreshold" : "100"
+      }, {
+        "propertyName" : "fname",
+        "algorithmRef" : "thesaurus",
+        "weight" : "10",
+        "thesaurus" : "/thesaurus/nicknames.xml"
+      } ]
+    },
+    "actions" : {
+      "action" : [ {
+        "name" : "customMatch",
+        "at" : "/custom-modules/custom/custom-match-action.sjs",
+        "function" : "customMatch"
+      } ]
+    },
+    "thresholds" : {
+      "threshold" : [ {
+        "above" : "19",
+        "label" : "Match",
+        "action" : "merge"
+      }, {
+        "above" : "9",
+        "label" : "Likely Match",
+        "action" : "notify"
+      }, {
+        "above" : "4",
+        "label" : "Slight Match",
+        "action" : "customMatch"
+      } ]
+    },
+    "tuning" : {
+      "maxScan" : 200
+    }
+  },
+  "name" : "match-xml-person",
+  "description" : "",
+  "stepDefinitionType" : "matching",
+  "selectedSource" : "query",
+  "stepDefinitionName" : "default-matching",
+  "stepId" : "match-xml-person-matching",
+  "acceptsBatch" : true,
+  "stepUpdate" : false,
+  "provenanceGranularityLevel" : "fine",
+  "lastUpdated" : "2020-09-02T06:44:58.18577Z"
+}

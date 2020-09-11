@@ -1,0 +1,49 @@
+{
+  "collections": [
+    "mapPersonXML",
+    "Person"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "targetFormat": "XML",
+  "name": "mapPersonXML",
+  "targetEntityType": "http://example.org/Person-0.0.1/Person",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadPersonXML'])",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapPersonXML-mapping",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-09-02T07:29:11.951684Z",
+  "headers": { },
+  "processors": [ ],
+  "customHook": { },
+  "namespaces": {
+    "entity-services": "http://marklogic.com/entity-services"
+  },
+  "properties": {
+    "fname": {
+      "sourcedFrom": "root/FirstName"
+    },
+    "lname": {
+      "sourcedFrom": "root/LastName"
+    },
+    "SSN": {
+      "sourcedFrom": "root/SSN"
+    },
+    "Address": {
+      "sourcedFrom": "root/Address"
+    },
+    "ZipCode": {
+      "sourcedFrom": "root/ZipCode"
+    },
+    "DateOfBirth": {
+      "sourcedFrom": "root/DateOfBirth"
+    }
+  }
+}

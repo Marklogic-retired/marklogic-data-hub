@@ -1,0 +1,18 @@
+{
+  "name": "personXML",
+  "steps": {
+    "1": {
+      "stepId": "loadPersonXML-ingestion"
+    },
+    "2": {
+      "stepId": "mapPersonXML-mapping"
+    },
+    "3": {
+      "stepId": "match-xml-person-matching"
+    },
+    "4": {
+      "stepId": "merge-xml-person-merging"
+    }
+  },
+  "lastUpdated": "2020-09-02T07:29:11.583514Z"
+}

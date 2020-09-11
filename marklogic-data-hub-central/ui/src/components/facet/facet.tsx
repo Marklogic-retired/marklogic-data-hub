@@ -180,7 +180,7 @@ const Facet: React.FC<Props> = (props) => {
           style={{ display: (props.facetValues.length > SHOW_MINIMUM) ? 'block' : 'none' }}
           onClick={() => showMore()}
           data-cy="show-more"
-          data-testid="show-more"
+          data-testid={`show-more-${stringConverter(props.name)}`}
         >{(more) ? '<< less' : 'more >>'}</div>
         {(props.facetType === 'xs:string' || 'collection') &&
           <div className={styles.searchValues}>

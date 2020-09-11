@@ -200,6 +200,14 @@ Cypress.Commands.add('deleteEntities', (...entityNames) => {
   })
 })
 
+Cypress.Commands.add('deleteRecordsInFinal', (...collections) => {
+  collections.forEach( collection => {
+    cy.exec(`curl -X DELETE --anyauth -u test-admin-for-data-hub-tests:password -H "Content-Type:application/json" \
+    '${protocol}://${Cypress.env('mlHost')}:8002/v1/search?database=data-hub-FINAL&collection=${collection}'`)
+    console.log(`DELETE RECORDS IN ${collection} COLLECTION`)
+  })
+})
+
 Cypress.Commands.add('waitForAsyncRequest', () => {
   cy.window().then({
     timeout: 120000

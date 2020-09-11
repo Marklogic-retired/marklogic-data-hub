@@ -160,8 +160,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   }
 
   const setEntityInstanceFlag = (content) => {
-    let instance = content.envelope.instance;
-    setIsEntityInstance(instance.info ? true : (Object.keys(instance).length > 1 ? false : true));
+    let instance = {};
+    let info = {};
+    if(content.envelope && content.envelope.instance) {
+      instance = content.envelope.instance;
+      info = instance["info"] ? instance["info"] : info;
+    }
+    setIsEntityInstance(info ? true : (Object.keys(instance).length > 1 ? false : true));
   }
 
   const handleClick = (event) => {

@@ -369,7 +369,7 @@ describe('json scenario for table on browse documents page', () => {
   it('search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query', () => {
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    //verify the popover doesn't display for the short facet name. 
+    //verify the popover doesn't display for the short facet name.
     browsePage.getFacetName('Adams Cole').trigger('mouseover');
     cy.wait(1000);
     browsePage.getTooltip('Adams Cole').should('not.be.visible');
@@ -524,12 +524,14 @@ describe('Verify numeric/date facet can be applied', () => {
         browsePage.getClearAllButton().should('exist');
         browsePage.getClearAllButton().click();
         //Verify clearing date range facet clears corresponding selected facet
+        let dateInAppliedFacet = browsePage.computeStartDateOfTheWeek();
         browsePage.selectDateRange();
         browsePage.getFacetApplyButton().click();
-        browsePage.getSelectedFacet('birthDate:').should('exist');
+        browsePage.getAppliedFacets(dateInAppliedFacet).should('exist');
         browsePage.getDateFacetPicker().trigger('mouseover');
         cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getFacetApplyButton().should('not.exist')
-        browsePage.getSelectedFacet('birthDate:').should('not.exist');
+        browsePage.getAppliedFacets(dateInAppliedFacet).should('not.exist');
     });
 });

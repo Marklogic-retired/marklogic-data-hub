@@ -27,7 +27,8 @@ fi
 
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerJSON --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=CurateCustomerXML --info --stacktrace
-./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personJSON -Psteps='1,2,3' --info --stacktrace
+./gradlew hubRunFlow -PenvironmentName=$env -PflowName=personXML -Psteps='1' --info --stacktrace
 ./gradlew hubRunFlow -PenvironmentName=$env -PflowName=convertedFlow --info --stacktrace
 
 #Verify flow was run successfully based on record count in staging and final database.

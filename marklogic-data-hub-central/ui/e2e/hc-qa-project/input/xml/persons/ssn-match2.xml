@@ -1,0 +1,8 @@
+<root>
+  <FirstName>Jennifer</FirstName>
+  <LastName>Smyth</LastName>
+  <SSN>111-11-1111</SSN>
+  <DateOfBirth>1982-02-02</DateOfBirth>
+  <Address>22222 Main St</Address>
+  <ZipCode>11122</ZipCode>
+</root>
