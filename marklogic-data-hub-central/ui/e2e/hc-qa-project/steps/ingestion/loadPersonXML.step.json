@@ -2,27 +2,27 @@
   "headers": {
     "sources": [
       {
-        "name": "loadPersonJSON"
+        "name": "loadPersonXML"
       }
     ],
     "createdOn": "currentDateTime",
     "createdBy": "currentUser"
   },
   "collections": [
-    "loadPersonJSON"
+    "loadPersonXML"
   ],
   "permissions": "data-hub-common,read,data-hub-common,update",
   "batchSize": 100,
-  "name": "loadPersonJSON",
+  "name": "loadPersonXML",
   "description": "",
-  "sourceFormat": "json",
-  "targetFormat": "json",
-  "inputFilePath": "input/json/persons",
-  "outputURIPrefix": "/json/persons/",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "inputFilePath": "input/xml/persons",
+  "outputURIPrefix": "/xml/persons/",
   "stepDefinitionName": "default-ingestion",
   "stepDefinitionType": "ingestion",
-  "stepId": "loadPersonJSON-ingestion",
+  "stepId": "loadPersonXML-ingestion",
   "targetDatabase": "data-hub-STAGING",
   "provenanceGranularityLevel": "coarse",
-  "lastUpdated": "2020-08-18T00:14:42.068016Z"
+  "lastUpdated": "2020-09-02T07:29:12.201043Z"
 }

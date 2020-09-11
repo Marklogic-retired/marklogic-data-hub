@@ -56,12 +56,13 @@ hubDeployAsDeveloper.finalizedBy("loadThesaurus")
 class DocCount extends HubTask {
     DatabaseClient client
     String script
+    int expected
     @TaskAction
     def getDocCount() {
         try {
             int result = Integer.parseInt(client.newServerEval().javascript(script).evalAs(String.class));
-            if(result != 34) {
-                throw new GradleException("Record count did not match. Expected 34 in ${client.getDatabase()} database, got "+ result)
+            if(result != expected) {
+                throw new GradleException("Record count did not match. Expected ${expected} in ${client.getDatabase()} database, got "+ result)
             } else {
                 println("Flow/steps were run successfully and got expected number of records in ${client.getDatabase()} database")
             }
@@ -73,10 +74,12 @@ class DocCount extends HubTask {
 
 task verifyStagingCounts(type: DocCount) {
     client = hubConfig.newStagingClient()
-    script = "cts.estimate(cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON']))"
+    script = "cts.estimate(cts.collectionQuery(['loadCustomersJSON', 'loadCustomersXML', 'order-input', 'loadPersonJSON', 'loadPersonXML']))"
+    expected = 40
 }
 
 task verifyFinalCounts(type: DocCount) {
     client = hubConfig.newFinalClient()
-    script = "cts.estimate(cts.collectionQuery(['mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
+    script = "cts.estimate(cts.collectionQuery(['mdm-dictionary', 'mapCustomersJSON', 'mapCustomersXML', 'map-orders', 'mapPersonJSON']))"
+    expected = 35
 }

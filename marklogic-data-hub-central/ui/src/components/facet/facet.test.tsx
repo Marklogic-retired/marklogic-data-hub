@@ -28,7 +28,7 @@ describe("Facet component", () => {
     expect(getByText(/OrderDetail/i)).toBeInTheDocument();
     expect(getByText(/15,000/i)).toBeInTheDocument();
 
-    fireEvent.click(getByTestId("show-more"));
+    fireEvent.click(getByTestId("show-more-sales_region"));
     // show extra facets
     expect(getByText(/ProductDetail/i)).toBeInTheDocument();
     expect(getByText(/4,095/i)).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe("Facet component", () => {
     expect(getByText(/OrderDetail/i)).toBeInTheDocument();
     expect(getByText(/15,000/i)).toBeInTheDocument();
 
-    fireEvent.click(getByTestId("show-more"));
+    fireEvent.click(getByTestId("show-more-sales.sales_region"));
     // show extra facets
     expect(getByText(/ProductDetail/i)).toBeInTheDocument();
     expect(getByText(/4,095/i)).toBeInTheDocument();
@@ -93,7 +93,7 @@ describe("Facet component", () => {
     expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(180deg);');
-    fireEvent.click(getByTestId('sales_region-toggle')); 
+    fireEvent.click(getByTestId('sales_region-toggle'));
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(180deg);');
   });
 

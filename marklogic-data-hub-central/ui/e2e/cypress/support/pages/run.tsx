@@ -9,7 +9,7 @@ class RunPage {
         cy.waitUntil(() => cy.contains('Map'));
     }
 
-    editFlow(flowName: string) {
+    getFlowName(flowName: string) {
         return cy.findByText(flowName);
     }
 

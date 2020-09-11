@@ -79,6 +79,8 @@ declare namespace Cypress {
 
       deleteEntities(...entityNames: any[]): Chainable<Element>
 
+      deleteRecordsInFinal(...collections: any[]): Chainable<Element>
+
       waitForModalToDisappear(): void
 
       verifyStepAddedToFlow(stepType: string, stepName: string): Chainable<Element>

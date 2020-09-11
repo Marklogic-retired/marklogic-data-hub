@@ -144,8 +144,13 @@ class BrowsePage {
     return cy.get('[data-cy=selected-facet-block]');
   }
 
-  getSelectedFacet(facet: string) {
-    return cy.get('#selected-facets > button').contains(facet);
+  computeStartDateOfTheWeek() {
+      //The date calculations below is to get the start date of the week(Sun - Sat) that
+      //shows up in the date picker and as applied facet
+      let curr = new Date;
+      let first = ("0" + (curr.getDate() - curr.getDay())).slice(-2);
+      let month = ("0" + (curr.getMonth() + 1)).slice(-2);
+      return `${curr.getFullYear()}-${month}-${first}`;
   }
 
   getGreySelectedFacets(facet: string) {
@@ -233,6 +238,10 @@ class BrowsePage {
 
   getShowMoreLink() {
     return cy.get('div[data-cy="show-more"][style="display: block;"]');
+  }
+
+  clickMoreLink(facetType: string) {
+      cy.findByTestId(`show-more-${facetType}`).click();
   }
 
   getHubPropertiesExpanded() {

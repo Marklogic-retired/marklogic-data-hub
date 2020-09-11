@@ -391,6 +391,9 @@ const customData = [{
     }
 ];
 
+const namespacedXmlInstance = "<Document><content><es:envelope xmlns:es=\"http://marklogic.com/entity-services\"><es:instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></es:instance></es:envelope></content></Document>";
+const noNamespaceXmlInstance = "<Document><content><envelope xmlns:es=\"http://marklogic.com/entity-services\"><instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></instance></envelope></content></Document>";
+
 const viewCustom = {
     viewCustom: true,
     setViewCustom: jest.fn(),
@@ -421,7 +424,9 @@ const data = {
   JSONSourceDataToTruncate: JSONSourceDataToTruncate,
   truncatedEntityProps: truncatedEntityProps,
   customData: customData,
-  viewCustom: viewCustom
+  viewCustom: viewCustom,
+  namespacedXmlInstance: namespacedXmlInstance,
+  noNamespaceXmlInstance: noNamespaceXmlInstance
 };
 
 export default data;
