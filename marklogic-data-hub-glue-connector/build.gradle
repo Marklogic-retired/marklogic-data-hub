@@ -20,4 +20,12 @@ dependencies {
     compile "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
     compile "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
     compile "org.apache.spark:spark-core_2.11:${sparkVersion}"
+
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+
+    testImplementation(testFixtures(project(":marklogic-data-hub")))
+    // Looks hacky, but seems to be the recommended way to depend on test classes from another project
+    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }

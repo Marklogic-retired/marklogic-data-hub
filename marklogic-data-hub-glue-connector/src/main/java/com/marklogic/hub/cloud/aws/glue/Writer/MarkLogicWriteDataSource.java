@@ -15,21 +15,20 @@
  */
 package com.marklogic.hub.cloud.aws.glue.Writer;
 
+import com.marklogic.client.ext.helper.LoggingObject;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.WriteSupport;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.types.StructType;
 
-import java.util.Map;
 import java.util.Optional;
 
-public class MarkLogicWriteDataSource implements WriteSupport {
+public class MarkLogicWriteDataSource extends LoggingObject implements WriteSupport {
 
     @Override
     public Optional<DataSourceWriter> createWriter(String writeUUID, StructType schema, SaveMode mode, DataSourceOptions options) {
-        System.out.println("************ Reached MLDataSource with schema **************** "+schema);
-        Map<String, String> map = options.asMap();
-        return Optional.of(new MarkLogicWriter(map, schema));
+        logger.info("Creating MarkLogicWriter");
+        return Optional.of(new MarkLogicWriter(options.asMap(), schema));
     }
 }
