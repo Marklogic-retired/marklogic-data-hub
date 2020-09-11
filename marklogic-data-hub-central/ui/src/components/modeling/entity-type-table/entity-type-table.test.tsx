@@ -45,9 +45,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={jest.fn()}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -68,9 +66,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={jest.fn()}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -110,9 +106,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={jest.fn()}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -142,9 +136,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={updateMock}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -178,9 +170,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={updateMock}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -213,9 +203,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={updateMock}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>);
 
@@ -246,9 +234,7 @@ describe('EntityTypeModal Component', () => {
             updateEntities={jest.fn()}
             revertAllEntity={false}
             toggleRevertAllEntity={jest.fn()}
-            modifiedEntityTypesData={[]}
-            useModifiedEntityTypesData={false}
-            toggleModifiedEntityTypesData={jest.fn()}
+            updateSavedEntity={jest.fn()}
           />
         </ModelingContext.Provider>
       </Router>);
@@ -277,9 +263,7 @@ describe('EntityTypeModal Component', () => {
             updateEntities={jest.fn()}
             revertAllEntity={false}
             toggleRevertAllEntity={jest.fn()}
-            modifiedEntityTypesData={[]}
-            useModifiedEntityTypesData={false}
-            toggleModifiedEntityTypesData={jest.fn()}
+            updateSavedEntity={jest.fn()}
           />
         </ModelingContext.Provider>
       </Router>);
@@ -307,9 +291,7 @@ describe('EntityTypeModal Component', () => {
           updateEntities={jest.fn()}
           revertAllEntity={false}
           toggleRevertAllEntity={jest.fn()}
-          modifiedEntityTypesData={[]}
-          useModifiedEntityTypesData={false}
-          toggleModifiedEntityTypesData={jest.fn()}
+          updateSavedEntity={jest.fn()}
         />
       </Router>
       </ModelingContext.Provider>
@@ -342,9 +324,7 @@ describe('EntityTypeModal Component', () => {
             updateEntities={jest.fn()}
             revertAllEntity={false}
             toggleRevertAllEntity={jest.fn()}
-            modifiedEntityTypesData={[]}
-            useModifiedEntityTypesData={false}
-            toggleModifiedEntityTypesData={jest.fn()}
+            updateSavedEntity={jest.fn()}
           />
         </Router>
       </ModelingContext.Provider>

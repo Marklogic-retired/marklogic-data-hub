@@ -27,16 +27,121 @@ describe('Entity Modeling: Writer Role', () => {
 
   after(() => {
       cy.loginAsDeveloper().withRequest();
-      cy.deleteEntities('User', 'Patient');
+      cy.deleteEntities('User', 'Patient', 'Client');
       cy.resetTestUser();
   });
 
-  it('can edit, can navigate and see persisted edits, can see navigation warning when logging out with edits', () => {
+  it('create, edit, and save a new entity, edit entity description, duplicate entity name check, identifier modal check, can save an entity while another entity is edited, can navigate and see persisted edits, can see navigation warning when logging out with edits', () => {
+    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
+    entityTypeModal.newEntityName('Person');
+    entityTypeModal.getAddButton().click();
+    cy.waitUntil(() => cy.contains('An entity type already exists with a name of Person').should('be.visible'));
+    entityTypeModal.getAddButton().should('not.be.disabled');
+
+    entityTypeModal.clearEntityName();
+    entityTypeModal.newEntityName('Client');
+    entityTypeModal.newEntityDescription('An entity for clients');
+    entityTypeModal.getAddButton().click();
+
+    propertyTable.getAddPropertyButton('Client').trigger('mouseover');
+    cy.contains(`Click to add properties to this entity type.`).should('be.visible');
+    propertyTable.getAddPropertyButton('Client').click();
+
+    propertyModal.newPropertyName('user');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getCascadedTypeFromDropdown('Person').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('user').should('exist');
+
+    //Add cascaded type with identifer
+    propertyTable.getAddPropertyButton('Client').click();
+    propertyModal.newPropertyName('newId');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('More string types').click();
+    propertyModal.getCascadedTypeFromDropdown('iri').click();
+
+    propertyModal.getYesRadio('identifier').click();
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getNoRadio('pii').click();
+    //propertyModal.clickCheckbox('wildcard');
+    propertyModal.getSubmitButton().click();
+
+    
+    propertyTable.getIdentifierIcon('newId').should('exist');
+    propertyTable.getMultipleIcon('newId').should('exist');
+    //propertyTable.getWildcardIcon('newId').should('exist');
+
+    // add basic type with identifier, show confirmation modal
+    propertyTable.getAddPropertyButton('Client').click();
+    propertyModal.newPropertyName('client-id');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('string').click();
+
+    propertyModal.getYesRadio('identifier').click();
+    confirmationModal.getYesButton(ConfirmationType.Identifer).click()
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getIdentifierIcon('newId').should('not.exist');
+    propertyTable.getIdentifierIcon('client-id').should('exist');
+
+    // edit property and change type to relationship
+    propertyTable.editProperty('client-id');
+    propertyModal.getToggleStepsButton().should('not.exist')
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('user-id');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getCascadedTypeFromDropdown('Customer').click();
+
+    propertyModal.getYesRadio('idenifier').should('not.exist');
+    propertyModal.getYesRadio('multiple').click();
+    propertyModal.getNoRadio('pii').should('not.exist');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getMultipleIcon('user-id').should('exist');
+    propertyTable.getIdentifierIcon('user-id').should('not.exist');
+    propertyTable.getPiiIcon('user-id').should('not.exist');
+    //propertyTable.getWildcardIcon('user-id').should('not.exist');
+
+    //edit entity decription
+    entityTypeTable.getEntity('Client').click();
+    entityTypeModal.clearEntityDescription();
+    entityTypeModal.newEntityDescription('Description has changed');
+    entityTypeModal.getAddButton().click();
+    entityTypeModal.getAddButton().should('not.be.visible');
+    propertyTable.getAddPropertyButton('Client').should('not.be.visible');
+
+    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Client')).click();
+    propertyTable.editProperty('newId');
+    propertyModal.getDeleteIcon('newId').click();
+    confirmationModal.getDeletePropertyWarnText().should('exist');
+    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
+    propertyTable.getProperty('newId').should('not.exist');
+
+    // edit a different entity
     cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Customer')).click();
     propertyTable.editProperty('nicknames');
     propertyModal.clickCheckbox('facetable');
     propertyModal.clickCheckbox('sortable');
     propertyModal.getSubmitButton().click();
+    propertyTable.getFacetIcon('nicknames').should('exist');
+    propertyTable.getSortIcon('nicknames').should('exist');
+    modelPage.getEntityModifiedAlert().should('exist');
+
+    // check edited entity description
+    entityTypeTable.getEntity('Client').click();
+    entityTypeModal.getEntityDescription().should('have.value', 'Description has changed');
+    entityTypeModal.getCancelButton().click();
+
+    // save new Client entity
+    entityTypeTable.getSaveEntityIcon('Client').click();
+    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
+    confirmationModal.getSaveEntityText().should('exist');
+    confirmationModal.getSaveEntityText().should('not.exist', { timeout: 15000 });
+
     propertyTable.getFacetIcon('nicknames').should('exist');
     propertyTable.getSortIcon('nicknames').should('exist');
     modelPage.getEntityModifiedAlert().should('exist');
@@ -59,7 +164,7 @@ describe('Entity Modeling: Writer Role', () => {
     cy.location('pathname').should('eq', '/');
   });
 
-  it('can add new properties to existing Entity, revert the entity, and delete shows step warning', () => {
+  it('can add new properties to existing Entity, can revert an entity twice, and delete shows step warning', () => {
     // Adding property to Order entity
     entityTypeTable.getExpandEntityIcon('Order').click();
     propertyTable.getAddPropertyButton('Order').click();
@@ -89,6 +194,30 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getPiiIcon('orderID').should('not.exist');
     modelPage.getEntityModifiedAlert().should('not.exist');
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
+    
+    // edit Order type and then revert again
+    propertyTable.editProperty('orderDetails');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('testing');
+    propertyModal.getNoRadio('multiple').click();
+    propertyModal.getYesRadio('pii').click();
+    propertyModal.getSubmitButton().click();
+    
+    propertyTable.getMultipleIcon('testing').should('not.exist');
+    propertyTable.getPiiIcon('testing').should('exist');
+
+    entityTypeTable.getRevertEntityIcon('Order').should('exist');
+    entityTypeTable.getRevertEntityIcon('Order').click();
+    confirmationModal.getYesButton(ConfirmationType.RevertEntity).click();
+    confirmationModal.getRevertEntityText().should('exist');
+    confirmationModal.getRevertEntityText().should('not.exist');
+
+    propertyTable.getProperty('testing').should('not.exist');
+    propertyTable.getProperty('orderDetails').should('exist');
+    propertyTable.getMultipleIcon('orderDetails').should('exist');
+    propertyTable.getPiiIcon('orderDetails').should('not.exist');
+
+    modelPage.getEntityModifiedAlert().should('not.exist');
 
     // Adding property to Person entity
     entityTypeTable.getExpandEntityIcon('Person').click();
@@ -161,98 +290,6 @@ describe('Entity Modeling: Writer Role', () => {
     confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
     confirmationModal.getRevertAllEntityText().should('exist');
     confirmationModal.getRevertAllEntityText().should('not.exist');
-  });
-
-  it('can check for duplicate entity, create a new entity, add relationship type, and add identifier confirmation, delete property from modal, and delete entity', () => {
-    cy.waitUntil(() => modelPage.getAddEntityButton()).click();
-    entityTypeModal.newEntityName('Person');
-    entityTypeModal.getAddButton().click();
-    cy.waitUntil(() => cy.contains('An entity type already exists with a name of Person').should('be.visible'));
-    entityTypeModal.getAddButton().should('not.be.disabled');
-
-    entityTypeModal.clearEntityName();
-    entityTypeModal.newEntityName('Product');
-    entityTypeModal.newEntityDescription('An entity for Products');
-    entityTypeModal.getAddButton().click();
-
-    propertyTable.getAddPropertyButton('Product').trigger('mouseover');
-    cy.contains(`Click to add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton('Product').click();
-
-    propertyModal.newPropertyName('user');
-    propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
-    propertyModal.getCascadedTypeFromDropdown('Person').click();
-    propertyModal.getYesRadio('multiple').click();
-    propertyModal.getSubmitButton().click();
-
-    propertyTable.getMultipleIcon('user').should('exist');
-
-    //Add cascaded type with identifer
-    propertyTable.getAddPropertyButton('Product').click();
-    propertyModal.newPropertyName('newId');
-    propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('More string types').click();
-    propertyModal.getCascadedTypeFromDropdown('iri').click();
-
-    propertyModal.getYesRadio('identifier').click();
-    propertyModal.getYesRadio('multiple').click();
-    propertyModal.getNoRadio('pii').click();
-    //propertyModal.clickCheckbox('wildcard');
-    propertyModal.getSubmitButton().click();
-
-    propertyTable.getIdentifierIcon('newId').should('exist');
-    propertyTable.getMultipleIcon('newId').should('exist');
-    //propertyTable.getWildcardIcon('newId').should('exist');
-
-    // add basic type with identifier, show confirmation modal
-    propertyTable.getAddPropertyButton('Product').click();
-    propertyModal.newPropertyName('product-id');
-    propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('string').click();
-
-    propertyModal.getYesRadio('identifier').click();
-    confirmationModal.getYesButton(ConfirmationType.Identifer).click()
-    propertyModal.getSubmitButton().click();
-
-    propertyTable.getIdentifierIcon('newId').should('not.exist');
-    propertyTable.getIdentifierIcon('product-id').should('exist');
-
-    // edit property and change type to relationship
-    propertyTable.editProperty('product-id');
-    propertyModal.getToggleStepsButton().should('not.exist')
-    propertyModal.clearPropertyName();
-    propertyModal.newPropertyName('user-id');
-    propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
-    propertyModal.getCascadedTypeFromDropdown('Customer').click();
-
-    propertyModal.getYesRadio('idenifier').should('not.exist');
-    propertyModal.getYesRadio('multiple').click();
-    propertyModal.getNoRadio('pii').should('not.exist');
-    propertyModal.getSubmitButton().click();
-
-    propertyTable.getMultipleIcon('user-id').should('exist');
-    propertyTable.getIdentifierIcon('user-id').should('not.exist');
-    propertyTable.getPiiIcon('user-id').should('not.exist');
-    //propertyTable.getWildcardIcon('user-id').should('not.exist');
-
-    propertyTable.editProperty('newId');
-    propertyModal.getDeleteIcon('newId').click();
-    confirmationModal.getDeletePropertyWarnText().should('exist');
-    confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
-    propertyTable.getProperty('newId').should('not.exist');
-
-    entityTypeTable.getSaveEntityIcon('Product').click();
-    confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
-    confirmationModal.getSaveEntityText().should('exist');
-    confirmationModal.getSaveEntityText().should('not.exist', { timeout: 15000 });
-
-    entityTypeTable.getDeleteEntityIcon('Product').click();
-    confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
-    confirmationModal.getDeleteEntityText().should('exist');
-    confirmationModal.getDeleteEntityText().should('not.exist');
-    entityTypeTable.getEntity('Product').should('not.exist');
   });
 
   it('create new entity types, add relationship type, delete entity type with outstanding edits', () => {
@@ -505,7 +542,7 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeTable.getEntity('User3').should('not.exist');
   });
 
-  it('can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, and save all entities', () => {
+  it('can add new properties to existing Entities, revert all entities, add multiple entities, add properties, delete properties, save all entities, delete an entity with relationship warning', () => {
     // Adding property to Order entity
     entityTypeTable.getExpandEntityIcon('Order').click();
     propertyTable.getAddPropertyButton('Order').click();
@@ -544,8 +581,7 @@ describe('Entity Modeling: Writer Role', () => {
     //propertyTable.getWildcardIcon('personID').should('exist');
 
 
-    modelPage.getRevertAllButton().should('exist');
-    modelPage.getRevertAllButton().click();
+    modelPage.getRevertAllButton().should('exist').click();
     confirmationModal.getYesButton(ConfirmationType.RevertAll).click();
     confirmationModal.getRevertAllEntityText().should('exist');
     confirmationModal.getRevertAllEntityText().should('not.exist');
@@ -559,8 +595,7 @@ describe('Entity Modeling: Writer Role', () => {
     modelPage.getEntityModifiedAlert().should('not.exist');
 
     // Create first entity
-    modelPage.getAddEntityButton().should('exist');
-    modelPage.getAddEntityButton().click();
+    modelPage.getAddEntityButton().should('exist').click();
     entityTypeModal.newEntityName('Concept');
     entityTypeModal.newEntityDescription('A concept entity');
     entityTypeModal.getAddButton().click();
@@ -585,8 +620,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.getCascadedTypeFromDropdown('yearMonthDuration').click();
     propertyModal.getSubmitButton().click();
 
-    propertyTable.getDeletePropertyIcon('Concept','testing').should('exist');
-    propertyTable.getDeletePropertyIcon('Concept','testing').click();
+    propertyTable.getDeletePropertyIcon('Concept','testing').should('exist').click();
     confirmationModal.getDeletePropertyWarnText().should('exist');
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty('testing').should('not.exist');
@@ -595,7 +629,6 @@ describe('Entity Modeling: Writer Role', () => {
 
     //create second Entity
     modelPage.getAddEntityButton().should('exist').click();
-    //modelPage.getAddEntityButton().click();
     entityTypeModal.newEntityName('Patient');
     entityTypeModal.newEntityDescription('An entity for patients');
     entityTypeModal.getAddButton().click();
@@ -630,6 +663,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More number types').click();
     propertyModal.getCascadedTypeFromDropdown('byte').click();
+
     propertyModal.getSubmitButton().click();
 
     propertyTable.editProperty('patientId');
@@ -638,12 +672,30 @@ describe('Entity Modeling: Writer Role', () => {
     confirmationModal.getYesButton(ConfirmationType.DeletePropertyWarn).click();
     propertyTable.getProperty('patientId').should('not.exist');
 
+    propertyTable.getAddPropertyButton('Patient').click();
+    propertyModal.newPropertyName('health');
+    propertyModal.openPropertyDropdown();
+    propertyModal.getTypeFromDropdown('More number types').click();
+    propertyModal.getCascadedTypeFromDropdown('negativeInteger').click();
+    propertyModal.clickCheckbox('facetable');
+    propertyModal.clickCheckbox('sortable');
+    propertyModal.getSubmitButton().click();
+
+    propertyTable.getProperty('health').should('exist');
+    propertyTable.getFacetIcon('health').should('exist');
+    propertyTable.getSortIcon('health').should('exist');
+
     modelPage.getSaveAllButton().click();
     confirmationModal.getYesButton(ConfirmationType.SaveAll).click();
     confirmationModal.getSaveAllEntityText().should('exist');
     confirmationModal.getSaveAllEntityText().should('not.exist');
 
     modelPage.getEntityModifiedAlert().should('not.exist');
+
+    propertyTable.getProperty('patientId').should('not.exist');
+    propertyTable.getProperty('health').should('exist');
+    propertyTable.getFacetIcon('health').should('exist');
+    propertyTable.getSortIcon('health').should('exist');
 
     entityTypeTable.getDeleteEntityIcon('Concept').click();
     confirmationModal.getYesButton(ConfirmationType.DeleteEntityRelationshipWarn).click();
