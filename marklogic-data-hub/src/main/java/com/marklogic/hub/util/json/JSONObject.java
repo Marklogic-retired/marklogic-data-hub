@@ -44,11 +44,7 @@ public class JSONObject {
             } else if (dataVal instanceof byte[]) {
                 json = mapper.readValue((byte[]) dataVal, JsonNode.class);
             } else if (dataVal instanceof JsonNode) {
-                if (dataVal == null) {
-                    json = mapper.createObjectNode();
-                } else {
-                    json = (JsonNode) dataVal;
-                }
+                json = (JsonNode) dataVal;
             } else if (dataVal instanceof File) {
                 json = mapper.readValue((File) dataVal, JsonNode.class);
             } else {
@@ -351,10 +347,11 @@ public class JSONObject {
      * @throws JsonProcessingException if problem with processing json
      */
     public String convertMapToJsonString(Map<String, Object> map) throws JsonProcessingException {
-        putMap(map);
         if (map == null) {
-            mapper = new ObjectMapper();
+            return null;
         }
+        putMap(map);
+        mapper = new ObjectMapper();
         return mapper.writeValueAsString(json);
     }
 

@@ -52,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -264,6 +265,10 @@ public class HubProjectImpl implements HubProject {
     }
 
     @Override public void init(Map<String, String> customTokens) {
+        if (customTokens == null) {
+            customTokens = new HashMap<>();
+        }
+
         // Scaffold out artifact directories
         for (String artifactType: artifactTypes) {
             File artifactTypeDir =  getProjectDir().resolve(artifactType).toFile();
@@ -346,7 +351,7 @@ public class HubProjectImpl implements HubProject {
 
         //scaffold schemas
         final String stagingSchemasKey = "%%mlStagingSchemasDbName%%";
-        if (customTokens != null && customTokens.containsKey(stagingSchemasKey)) {
+        if (customTokens.containsKey(stagingSchemasKey)) {
             getUserDatabaseDir().resolve(customTokens.get(stagingSchemasKey)).resolve("schemas").toFile().mkdirs();
         }
         getUserSchemasDir().toFile().mkdirs();

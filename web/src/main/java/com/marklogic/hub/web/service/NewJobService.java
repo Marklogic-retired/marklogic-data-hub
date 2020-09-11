@@ -150,7 +150,7 @@ public class NewJobService {
         return 0;
     }
 
-    public void release() {
+    public synchronized void release() {
         this.client.release();
     }
 }

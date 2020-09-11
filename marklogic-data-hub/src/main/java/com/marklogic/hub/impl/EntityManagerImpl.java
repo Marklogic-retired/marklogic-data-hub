@@ -35,6 +35,7 @@ import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.entity.*;
+import com.marklogic.hub.error.DataHubProjectException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
@@ -404,7 +405,11 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
 
         if (rename) {
             String filename = new File(fullpath).getName();
-            String entityFromFilename = filename.substring(0, filename.indexOf(ENTITY_FILE_EXTENSION));
+            int index = filename.indexOf(ENTITY_FILE_EXTENSION);
+            if (index == -1) {
+                throw new DataHubProjectException("Entity filename must end with file extension: " + ENTITY_FILE_EXTENSION);
+            }
+            String entityFromFilename = filename.substring(0, index);
             if (!entityFromFilename.equals(title)) {
                 // The entity name was changed since the files were created. Update
                 // the path.

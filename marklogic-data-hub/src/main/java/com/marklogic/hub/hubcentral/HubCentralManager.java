@@ -160,9 +160,10 @@ public class HubCentralManager extends LoggingObject {
                 outputFile.getParentFile().mkdirs();
                 try (InputStream inputStream = zip.getInputStream(entry);
                      FileOutputStream fileOut = new FileOutputStream(outputFile)) {
-                    inputStream.read(buffer, 0, entrySize);
-                    logger.info("Writing file: " + outputFile);
-                    FileCopyUtils.copy(buffer, fileOut);
+                    if (inputStream.read(buffer, 0, entrySize) > 0) {
+                        logger.info("Writing file: " + outputFile);
+                        FileCopyUtils.copy(buffer, fileOut);
+                    }
                 }
             }
         } catch (Exception ex) {
