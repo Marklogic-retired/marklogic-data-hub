@@ -24,8 +24,6 @@ apply plugin: "com.github.node-gradle.node"
 apply plugin: "jsonschema2pojo"
 apply from: 'build-rpm.gradle'
 
-mainClassName = "com.marklogic.hub.central.Application"
-
 sourceCompatibility = "9"
 targetCompatibility = "9"
 

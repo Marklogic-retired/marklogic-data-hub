@@ -35,7 +35,6 @@ plugins {
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
 }
 
-mainClassName = "com.marklogic.hub.ApplicationConfig"
 apply plugin: "com.gradle.plugin-publish"
 
 sourceCompatibility = "9"
@@ -74,11 +73,6 @@ dependencies {
         exclude module: "logback-classic"
     }
 }
-
-springBoot {
-    mainClassName = 'com.marklogic.hub.ApplicationConfig'
-}
-
 
 test {
     testLogging {
