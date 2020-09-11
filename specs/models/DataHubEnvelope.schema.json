@@ -1,0 +1,141 @@
+{
+  "title": "DataHubEnvelope",
+  "description": "Defines the envelope structure with DHF-specific additions to headers",
+  "type": "object",
+  "properties": {
+    "headers": {
+      "description": "The unique path to this property. For a structured property, uses dot notation - e.g. billing.street.fiveDigit",
+      "type": "object",
+      "properties": {
+        "createdBy": {
+          "description": "MarkLogic user that created this document",
+          "type": "string"
+        },
+        "createdOn": {
+          "description": "dateTime at which this document was created",
+          "type": "string"
+        },
+        "createdUsingFile": {
+          "description": "Will be set when running an ingestion step via DHF and ingesting CSV files",
+          "type": "string"
+        },
+        "datahub": {
+          "description": "Intended to store all DHF-specific headers in the future",
+          "type": "object",
+          "properties": {
+            "validationErrors": {
+              "description": "Populated by a mapping step that has entity validation enabled",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object"
+                },
+                "message": {
+                  "type": "string"
+                },
+                "formattedMessages": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "id": {
+          "description": "Appears to be set as part of mastering",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "merges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "document-uri": {
+                "type": "string"
+              },
+              "last-merge": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "merge-options": {
+          "type": "object",
+          "properties": {
+            "lang": {
+              "type": "string"
+            },
+            "value": {
+              "type": "string"
+            }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dateTime": {
+                "description": "May be specific to mastering",
+                "type": "string"
+              },
+              "import-id": {
+                "description": "Appears to be specific to mastering",
+                "type": "string"
+              },
+              "name": {
+                "description": "Name of a source that provides instance data in this envelope",
+                "type": "string"
+              },
+              "user": {
+                "description": "May be specific to mastering",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "triples": {
+      "description": "Optional array of triples",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "triple": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": "string"
+              },
+              "predicate": {
+                "type": "string"
+              },
+              "object": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "instance": {
+      "description": "Instance data can be anything a user chooses",
+      "type": "object"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "description": "Each attachment can contain any data a user chooses",
+        "type": "object"
+      }
+    }
+  }
+}
