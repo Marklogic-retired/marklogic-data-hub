@@ -1,13 +1,13 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { Checkbox, Icon, Tooltip } from 'antd';
+import { Icon } from 'antd';
 import { SearchContext } from '../../util/search-context';
+import { FacetName } from './facet-element';
 import styles from './facet.module.scss';
-import { numberConverter } from '../../util/number-conversion';
 import { stringConverter } from '../../util/string-conversion';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PopOverSearch from "../pop-over-search/pop-over-search";
-import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
+import { MLTooltip } from '@marklogic/design-system';
 
 interface Props {
   name: string;
@@ -110,7 +110,6 @@ const Facet: React.FC<Props> = (props) => {
     props.updateSelectedFacets(props.constraint, checked, props.facetType, false, false, true);
   }
 
-
   const showMore = () => {
     let toggle = !more;
     let showNumber = SHOW_MINIMUM;
@@ -129,21 +128,11 @@ const Facet: React.FC<Props> = (props) => {
     checkedFacets = props.facetValues;
   }
 
-  const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) =>
-    <div className={styles.checkContainer} key={index} data-testid={facet.value} data-cy={stringConverter(props.name) + "-facet-item"}>
-      <MLCheckbox
-        value={facet.value}
-        onChange={(e) => handleClick(e)}
-        checked={checked.includes(facet.value)}
-        className={styles.value}
-        data-testid={`${stringConverter(props.name)}-${facet.value}-checkbox`}
-      >
-        <MLTooltip title={facet.value.length > 21 && facet.value} id={facet.value + '-tooltip'} >{facet.value}</MLTooltip>
-      </MLCheckbox>
-      <div className={styles.count}
-        data-cy={`${stringConverter(props.name)}-${facet.value}-count`}>{numberConverter(facet.count)}</div>
-    </div>
-  );
+  const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
+    return (
+      <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} />
+    )
+  });
 
   const formatTitle = () => {
     let objects = props.name.split('.');

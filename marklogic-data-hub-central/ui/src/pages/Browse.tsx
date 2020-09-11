@@ -28,7 +28,6 @@ interface Props extends RouteComponentProps<any> {
 }
 
 const Browse: React.FC<Props> = ({ location }) => {
-
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
   const {
@@ -53,7 +52,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [facets, setFacets] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
-  const [tableView, toggleTableView] = useState(true);
+  const [tableView, toggleTableView] = useState(JSON.parse(getUserPreferences(user.name)).tableView);
   const [endScroll, setEndScroll] = useState(false);
   const [collapse, setCollapsed] = useState(false);
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
@@ -353,14 +352,16 @@ const Browse: React.FC<Props> = ({ location }) => {
                         buttonStyle="outline"
                         name="radiogroup"
                         size="large"
+                        defaultValue={tableView ? 'table' : 'snippet'}
+                        onChange={e => handleViewChange(e.target.value)}
                       >
-                        <MLRadio.MLButton aria-label="switch-view-snippet" onClick={() => handleViewChange('snippet')} data-cy="facet-view" id={'snippetView'}>
-                          <i><MLTooltip title={'Snippet View'}>
+                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} >
+                          <i data-cy="facet-view" id={'snippetView'}><MLTooltip title={'Snippet View'}>
                             {!tableView ? <FontAwesomeIcon icon={faStream} /> : <FontAwesomeIcon icon={faStream} style={{ color: '#CCC' }} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-view-table" onClick={() => handleViewChange('table')} data-cy="table-view" id={'tableView'}>
-                          <i><MLTooltip title={'Table View'}>{
+                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} >
+                          <i data-cy="table-view" id={'tableView'}><MLTooltip title={'Table View'}>{
                             tableView ? <FontAwesomeIcon icon={faTable} /> : <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
