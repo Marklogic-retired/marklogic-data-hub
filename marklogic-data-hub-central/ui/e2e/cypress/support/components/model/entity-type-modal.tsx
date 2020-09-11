@@ -11,6 +11,14 @@ class EntityTypeModal {
     cy.get('#description').type(str);
   }
 
+  clearEntityDescription() {
+    cy.get('#description').focus().clear();
+  }
+
+  getEntityDescription() {
+    return cy.get('#description');
+  }
+
   getCancelButton() {
     return cy.get('#entity-modal-cancel');
   }

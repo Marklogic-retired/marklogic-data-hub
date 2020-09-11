@@ -13,21 +13,19 @@ import { UserContext } from '../util/user-context';
 import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
-import { ConfirmationType } from '../types/modeling-types';
+import { ConfirmationType, EntityModified } from '../types/modeling-types';
 
 const Modeling: React.FC = () => {
   const { handleError } = useContext(UserContext);
   const { modelingOptions, setEntityTypeNamesArray, clearEntityModified } = useContext(ModelingContext);
 
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
-  const [modifiedEntityTypes, setModifiedEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [autoExpand, setAutoExpand] = useState('');
   const [revertAllEntity, toggleRevertAllEntity] = useState(false);
-  const [useModifiedEntityTypesData, toggleModifiedEntityTypesData] = useState(false);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.SaveAll);
@@ -39,51 +37,24 @@ const Modeling: React.FC = () => {
 
   useEffect(() => {
     if (canReadEntityModel) {
-      if (modelingOptions.isModified) {
-        setEntityTypesFromServerAndContext()
-      } else {
-        setEntityTypesFromServer();
-      }
+      setEntityTypesFromServer();
     }
   }, []);
 
   const setEntityTypesFromServer = async () => {
-    const response = await getPrimaryEntityTypes();
-    if (response) {
-      setEntityTypes(response);
-      if (response.length > 0) {
-        setEntityTypeNamesArray(response.map(entity => {
-          return {name: entity.entityName, entityTypeId: entity.entityTypeId}
-        }));
-      }
-    }
-  }
-
-  const setEntityTypesFromServerAndContext = async () => {
-    const response = await getPrimaryEntityTypes();
-    if (response && modelingOptions.modifiedEntitiesArray.length > 0) {
-      let updatedEntityTypes = [...response];
-
-      modelingOptions.modifiedEntitiesArray.forEach( entity => {
-        let index = updatedEntityTypes.findIndex( item => item['entityName'] === entity.entityName );
-        updatedEntityTypes[index]['model']['definitions'] = entity.modelDefinition;
-      });
-
-      setEntityTypes(updatedEntityTypes);
-      if (response.length > 0) {
-        setEntityTypeNamesArray(response.map(entity => {
-          return {name: entity.entityName, entityTypeId: entity.entityTypeId}
-        }));
-      }
-    }
-  }
-
-  const getPrimaryEntityTypes = async () => {
     try {
       const response = await primaryEntityTypes();
-      return response['data'];
+
+      if (response) {
+        setEntityTypes(response['data']);
+        if (response['data'].length > 0) {
+          setEntityTypeNamesArray(response['data'].map(entity => {
+            return {name: entity.entityName, entityTypeId: entity.entityTypeId}
+          }));
+        }
+      }
     } catch (error) {
-      handleError(error)
+      handleError(error);
     }
   }
 
@@ -91,50 +62,30 @@ const Modeling: React.FC = () => {
     try {
       const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
       if (response['status'] === 200) {
-        clearEntityModified();
+        await setEntityTypesFromServer();
       } 
     } catch (error) {
       handleError(error)
     } finally {
+      clearEntityModified();
       toggleConfirmModal(false);
     }
   }
+
+  const updateSavedEntity = (entity: EntityModified) => {
+    let updatedEntityTypes = [...entityTypes];
+    let updateEntityIndex = updatedEntityTypes.findIndex((entityType) => entityType.entityName === entity.entityName);
+
+    updatedEntityTypes[updateEntityIndex]['model']['definitions'] = entity.modelDefinition;
+    setEntityTypes(updatedEntityTypes)
+  };
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
       setAutoExpand(entityName + ',' + description);
     }
     toggleShowEntityModal(false);
-
-    const primaryEntityTypes = await getPrimaryEntityTypes();
-    if (primaryEntityTypes && primaryEntityTypes.length > 0) {
-      const entityNameFilter = (entity) => entity.entityName === entityName;
-      const newEntity = primaryEntityTypes.find(entityNameFilter);
-
-
-      let modifiedEntitiesMap = {};
-      modelingOptions.modifiedEntitiesArray.forEach(entity => {modifiedEntitiesMap[entity.entityName]=entity.modelDefinition});
-
-      let newEntityTypes = [...entityTypes];
-      newEntityTypes.forEach(entity => {
-        if (modifiedEntitiesMap.hasOwnProperty(entity.entityName)){
-          entity.model.definitions = JSON.parse(JSON.stringify(modifiedEntitiesMap[entity.entityName]));
-        }
-      });
-
-      if (newEntityTypes.some(entityNameFilter)) {
-        // edit modal i.e. updated description
-        let updatedModel = newEntityTypes.find(entityNameFilter);
-        updatedModel.model.definitions[entityName].description = newEntity.model.definitions[entityName].description;
-      }
-      else {
-        // add modal
-        newEntityTypes.push(newEntity);
-      }
-      toggleModifiedEntityTypesData(true);
-      await setEntityTypesFromServer();
-      setModifiedEntityTypes(newEntityTypes);
-    }
+    await setEntityTypesFromServer();
   };
 
   const editEntityTypeDescription = (entityTypeName: string, entityTypeDescription: string) => {
@@ -154,12 +105,11 @@ const Modeling: React.FC = () => {
     }
   }
 
-  const resetAllEntityTypes = () => {
-    setEntityTypesFromServer().then(() => {
-      clearEntityModified();
-      toggleRevertAllEntity(true);
-      toggleConfirmModal(false);
-    })
+  const resetAllEntityTypes = async () => {
+    await setEntityTypesFromServer();
+    clearEntityModified();
+    toggleRevertAllEntity(true);
+    toggleConfirmModal(false);
   };
 
   const addButton = <MLButton 
@@ -244,12 +194,10 @@ const Modeling: React.FC = () => {
           allEntityTypesData={entityTypes}
           editEntityTypeDescription={editEntityTypeDescription}
           updateEntities={setEntityTypesFromServer}
+          updateSavedEntity={updateSavedEntity}
           autoExpand={autoExpand}
           revertAllEntity={revertAllEntity}
           toggleRevertAllEntity={toggleRevertAllEntity}
-          modifiedEntityTypesData={modifiedEntityTypes}
-          useModifiedEntityTypesData={useModifiedEntityTypesData}
-          toggleModifiedEntityTypesData={toggleModifiedEntityTypesData}
         />
       </div>
     )
