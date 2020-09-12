@@ -18,14 +18,18 @@ interface Props {
 const DateTimeFacet: React.FC<Props> = (props) => {
   const {
     searchOptions,
+    greyedOptions,
   } = useContext(SearchContext);
-
   const [dateTimePickerValue, setDateTimePickerValue] = useState<any[]>([null, null]);
 
   const onChange = (e) => {
     let isNested = props.constraint === props.propertyPath ? false : true;
-    props.onChange(props.datatype, props.constraint, e, isNested);
-    (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
+    if (e.length) {
+      props.onChange(props.datatype, props.constraint, e, isNested);
+      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
+    } else {
+      props.onChange(props.datatype, props.constraint, e, isNested);
+    }
   }
 
   useEffect(() => {
@@ -35,11 +39,17 @@ const DateTimeFacet: React.FC<Props> = (props) => {
           setDateTimePickerValue([moment(searchOptions.selectedFacets[facet].rangeValues.lowerBound), moment(searchOptions.selectedFacets[facet].rangeValues.upperBound)])
         }
       }
+    } else if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
+      for (let facet in greyedOptions.selectedFacets) {
+        if (facet === props.constraint) {
+          setDateTimePickerValue([moment(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), moment(greyedOptions.selectedFacets[facet].rangeValues.upperBound)])
+        }
+      }
     }
     else {
       setDateTimePickerValue([null, null]);
     }
-  }, [searchOptions]);
+  }, [searchOptions, greyedOptions]);
 
   const formatTitle = () => {
     let objects = props.name.split('.');

@@ -53,7 +53,8 @@
           "$ref": "#/definitions/Address"
         },
         "birthDate": {
-          "datatype": "date"
+          "datatype": "date",
+          "facetable": true
         },
         "status": {
           "datatype": "string"

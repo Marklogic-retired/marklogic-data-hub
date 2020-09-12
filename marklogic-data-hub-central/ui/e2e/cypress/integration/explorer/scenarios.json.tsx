@@ -495,7 +495,7 @@ describe('json scenario for table on browse documents page', () => {
 });
 
 
-describe('Verify numeric facet can be applied', () => {
+describe('Verify numeric/date facet can be applied', () => {
     //login with valid account and go to /browse page
     beforeEach(() => {
         cy.visit('/');
@@ -507,7 +507,7 @@ describe('Verify numeric facet can be applied', () => {
         browsePage.waitForTableToLoad();
     });
 
-    it('Apply numeric facet values multiple times, clears the previous values and applies the new one', () => {
+    it('Apply numeric facet values multiple times, clears the previous values and applies the new one, clearing date range facet clears selected facet', () => {
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.waitForSpinnerToDisappear();
@@ -522,6 +522,14 @@ describe('Verify numeric facet can be applied', () => {
         browsePage.getFacetApplyButton().click();
         browsePage.getRangeFacet(3024).should('exist');
         browsePage.getClearAllButton().should('exist');
+        browsePage.getClearAllButton().click();
+        //Verify clearing date range facet clears corresponding selected facet
+        browsePage.selectDateRange();
+        browsePage.getFacetApplyButton().click();
+        browsePage.getSelectedFacet('birthDate:').should('exist');
+        browsePage.getDateFacetPicker().trigger('mouseover');
+        cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
+        browsePage.getFacetApplyButton().should('not.exist')
+        browsePage.getSelectedFacet('birthDate:').should('not.exist');
     });
-
 });
