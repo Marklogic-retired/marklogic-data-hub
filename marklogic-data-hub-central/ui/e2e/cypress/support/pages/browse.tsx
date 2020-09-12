@@ -138,6 +138,10 @@ class BrowsePage {
     return cy.get('[data-cy=selected-facet-block]');
   }
 
+  getSelectedFacet(facet: string) {
+    return cy.get('#selected-facets > button').contains(facet);
+  }
+
   getGreySelectedFacets(facet: string) {
     return cy.get('#selected-facets [data-cy="clear-grey-' + facet + '"]');
   }
@@ -152,6 +156,24 @@ class BrowsePage {
 
   getClearGreyFacets() {
     return cy.get('[data-cy=clear-all-grey-button]');
+  }
+
+  getDateFacetPicker() {
+    return cy.get('.ant-calendar-picker');
+  }
+
+  selectDateRange() {
+    this.getDateFacetPicker().click();
+    cy.waitUntil(() => cy.get('.ant-calendar-current-week > td:first-child')).click();
+    cy.waitUntil(() => cy.get('.ant-calendar-current-week > td:last-child')).click();
+  }
+
+  getDateFacetClearIcon() {
+    return cy.get('.ant-calendar-picker .ant-calendar-picker-clear');
+  }
+
+  getDateFacetPickerIcon() {
+    return cy.get('.ant-calendar-picker .ant-calendar-picker-icon');
   }
 
   getFacetApplyButton() {
