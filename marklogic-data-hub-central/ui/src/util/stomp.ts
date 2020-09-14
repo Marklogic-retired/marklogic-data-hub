@@ -3,6 +3,7 @@ import React from 'react';
 import SockJS from 'sockjs-client';
 import { Subject ,  BehaviorSubject } from 'rxjs';
 import { Client, Message, Stomp } from 'stompjs/lib/stomp.min';
+import axios from 'axios';
 
 /** possible states for the STOMP service */
 export enum STOMPState {
@@ -160,6 +161,10 @@ export class STOMPService {
         () => {
           this.state.next(STOMPState.CLOSED);
           this._isActive = false;
+          // for Cypress tests only
+          if ((window as any).Cypress) {
+            delete (window as any).stompClientConnected;
+          }
         },
         message
       );
@@ -203,31 +208,44 @@ export class STOMPService {
     // Resolve our Promise to the caller
     this.resolvePromise();
 
+    // for Cypress tests only
+    if ((window as any).Cypress) {
+      (window as any).stompClientConnected = true;
+    }
+
     // Clear callback
     this.resolvePromise = () => {};
   }
 
   // Handle errors from stomp.js
-  public onError = (error: string) => {
-
-    console.error('Error: ' + error);
-
+  public onError = async (error: string, ...other: any[]) => {
+    console.log('STOMP error:', error, other);
     // Check for dropped connection and try reconnecting
     if (this._isActive && error.indexOf('Lost connection') !== -1) {
-
+      this.client = null;
       // Reset state indicator
       this.state.next( STOMPState.CLOSED );
 
-      // Attempt reconnection
-      console.debug('Reconnecting in 5 seconds...');
-      setTimeout(() => {
-        // ensure the
-        if (this.isClosed()) {
-          this.configure(this.endpoint);
-          this.tryConnect();
-        }
-      }, 5000);
-
+      // check to see if it failed due to being logged out
+      axios('/api/environment/systemInfo')
+          .then(() => {
+            // Attempt reconnection
+            console.debug('Reconnecting in 5 seconds...');
+            setTimeout(() => {
+              // ensure the
+              if (this.isClosed()) {
+                this.configure(this.endpoint);
+                this.tryConnect();
+              }
+            }, 5000);
+          })
+          .catch(err => {
+              if (err.response.status === 401) {
+                localStorage.setItem('dataHubUser', '');
+                localStorage.setItem('loginResp', '');
+                window.location.reload();
+              }
+            });
     }
   }
 
