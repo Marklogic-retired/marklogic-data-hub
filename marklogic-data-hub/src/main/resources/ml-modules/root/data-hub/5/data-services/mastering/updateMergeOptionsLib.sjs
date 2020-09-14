@@ -178,16 +178,6 @@ function mergeRule(item, algorithms, properties, namespaces) {
     mr.priorityOrder = priorityOrder;
   }
 
-  if (item.algorithmRef) {
-    let algorithm = algorithms[item.algorithmRef];
-    if (algorithm) {
-      s.mergeModulePath = algorithm.at;
-      s.mergeModuleFunction = algorithm.function;
-      s.mergeModuleNamespace = algorithm.namespace;
-      s.options = {};
-    }
-  }
-
   return mr
 };
 
