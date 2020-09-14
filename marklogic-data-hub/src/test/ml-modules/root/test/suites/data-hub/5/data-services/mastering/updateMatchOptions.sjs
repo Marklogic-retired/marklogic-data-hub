@@ -169,6 +169,7 @@ const normExpected =
       {
         "name": "name - Reduce",
         "weight": 16,
+        "reduce": true,
         "matchRules": [
           {
             "entityPropertyPath": "localnameForName",
@@ -181,6 +182,60 @@ const normExpected =
     "thresholds": []
   };
 
+// -----------------------------------------------
+// reduce/allMatch scenario
+// -----------------------------------------------
+const reduceAllMatchInput =
+  {
+    "propertyDefs": {
+      "property": [
+        {
+          "namespace": "",
+          "localname": "lastName",
+          "name": "lastName"
+        },
+        {
+          "namespace": "",
+          "localname": "address",
+          "name": "address"
+        }
+      ]
+    },
+    "scoring": {
+      "reduce": [
+        {
+          "allMatch": {
+            "property": [ "address", "lastName" ]
+          },
+          "algorithmRef": "standard-reduction",
+          "weight": "5"
+        }
+      ]
+    }
+  };
+const reduceAllMatchExpected =
+  {
+    "matchRulesets": [
+      {
+        "name": "address,lastName - Reduce",
+        "weight": 5,
+        "reduce": true,
+        "matchRules": [
+          {
+            "entityPropertyPath": "address",
+            "matchType": "exact",
+            "options": {}
+          },
+          {
+            "entityPropertyPath": "lastName",
+            "matchType": "exact",
+            "options": {}
+          }
+        ]
+      }
+    ],
+    "thresholds": []
+  };
 
 // -----------------------------------------------
 // large options, tests most cases
@@ -325,6 +380,7 @@ const largeExpected =
       {
         "name": "name - Reduce",
         "weight": 1.5,
+        "reduce": true,
         "matchRules": [
           {
             "entityPropertyPath": "localnameForName",
@@ -353,12 +409,14 @@ const largeExpected =
         "action": "merge",
         "score": 12
       }
-    ]
+    ] 
   };
+
 [
   test.assertEqualJson(exactExpected, invokeService(exactInput), "matchType exact"),
   test.assertEqualJson(zipExpected, invokeService(zipInput), "matchType zip"),
   test.assertEqualJson(normExpected, invokeService(normNegInput), "normalize weights, negative reduce"),
   test.assertEqualJson(normExpected, invokeService(normPosInput), "normalize weights, positive reduce"),
+  test.assertEqualJson(reduceAllMatchExpected, invokeService(reduceAllMatchInput), "reduce allMatch"),
   test.assertEqualJson(largeExpected, invokeService(largeInput), "large options, most cases")
 ];
