@@ -17,6 +17,16 @@ To verify that the application is installed, visit http://localhost:8011 in your
 the users defined in the gradle.properties file in this project. If the application was successfully installed, you'll
 see a "MarkLogic REST Server" page.
 
+## Deploying resources as a data-hub-developer user 
+
+A user with the data-hub-developer role is permitted to deploy the project to DHS. Update the mlUsername and mlPassword
+in gradle-dhs.properties file in this project.
+
+Then deploy the application (the "-i" is for info-level logging, which is helpful to see in case anything goes wrong):
+
+    ./gradlew -i -PenvironmentName=dhs hubDeployAsDeveloper
+ 
+
 ## Authenticating 
 
 This project defines several users in ./src/main/ml-config/security/users that can be used for development and testing. 
