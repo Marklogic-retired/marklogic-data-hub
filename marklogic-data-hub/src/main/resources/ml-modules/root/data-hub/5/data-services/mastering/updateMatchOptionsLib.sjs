@@ -122,18 +122,39 @@ function zipRuleset(item, properties, maxWeight) {
 };
 
 function reduceRuleset(item, properties, maxWeight) {
-  let ruleset = {
-    "name": item.propertyName + " - Reduce",
-    "weight": adjustWeight(Math.abs(Number(item.weight)), maxWeight),
-    "matchRules": [
-      {
-        "entityPropertyPath": properties[item.propertyName].localname,
-        "matchType": "exact",
-        "options": {}
-      }
-    ]
-  };
-  return ruleset
+  if (item.allMatch) {
+    let ruleset = {
+      "name": item.allMatch.property.join(",") + " - Reduce",
+      "weight": adjustWeight(Math.abs(Number(item.weight)), maxWeight),
+      "reduce": true,
+      "matchRules": []
+    };
+    item.allMatch.property.forEach((prop) => {
+      ruleset.matchRules.push(
+        {
+          "entityPropertyPath": properties[prop].localname,
+          "matchType": "exact",
+          "options": {}
+        }
+      )
+    });
+    return ruleset
+  }
+  else {
+    let ruleset = {
+      "name": item.propertyName + " - Reduce",
+      "weight": adjustWeight(Math.abs(Number(item.weight)), maxWeight),
+      "reduce": true,
+      "matchRules": [
+        {
+          "entityPropertyPath": properties[item.propertyName].localname,
+          "matchType": "exact",
+          "options": {}
+        }
+      ]
+    };
+    return ruleset
+  }
 };
 
 function doubleMetaphoneRuleset(item, properties, maxWeight)
