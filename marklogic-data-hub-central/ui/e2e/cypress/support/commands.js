@@ -45,6 +45,9 @@ Cypress.Commands.add('withUI', { prevSubject: 'optional'}, (subject) => {
       loginPage.getLoginButton().click();
     })
     cy.wait(2000)
+    cy.window()
+        .its('stompClientConnected')
+        .should('exist');
   }
 })
 
@@ -77,6 +80,9 @@ Cypress.Commands.add('withRequest', { prevSubject: 'optional'}, (subject) => {
       cy.visit('/tiles')
       cy.location('pathname', { timeout: 10000 }).should('include', '/tiles');
       cy.wait(2000);
+      cy.window()
+          .its('stompClientConnected')
+          .should('exist');
     })
   }
 })
