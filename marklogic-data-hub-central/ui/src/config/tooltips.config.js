@@ -128,10 +128,7 @@ const ModelingTooltips = {
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   wildcard: 'Enables wildcard search.',
   addStructuredProperty: 'Click to add properties within this structured property.',
-  entityEditedAlert: 'You have edited some of the entity types and/or properties. This information has not been saved. '
-  + 'Be sure to Save your changes (by entity type or all together) to make the changes which may include updating indexes. '
-  + 'The Save operation will make live changes that may impact everyone else using Hub Central right now, '
-  + 'so we recommend that as you make changes, you notify your teammates ahead of time.',
+  entityEditedAlert: 'Editing or deleting an entity type that has been used could trigger a reindexing of your data or affect processes that are in progress.',
   noWriteAccess: 'Contact your security administrator to get the roles and permissions required to access this functionality.',
   addProperty: 'Click to add properties to this entity type.'
 }
