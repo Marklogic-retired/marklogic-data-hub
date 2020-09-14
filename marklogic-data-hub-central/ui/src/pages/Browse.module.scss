@@ -6,7 +6,6 @@
   background: #fff;
   padding: 20px 24px 34px 36px;
   width: 100%;
-  max-height: 100vh;
 }
 
 .sideBarFacets {
@@ -33,7 +32,8 @@
 .snippetViewResult {
   border-top: 1px solid #d0d1d5;
   border-bottom: 1px solid #d0d1d5;
-  max-height: 55vh;
+  max-height: 80vh;
+  height: 80vh;
   overflow: auto;
 }
 
@@ -62,7 +62,7 @@
 }
 
 .ant-table-content {
-  height: 400px;
+  //height: 400px;
 }
 
 .collapseIcon {

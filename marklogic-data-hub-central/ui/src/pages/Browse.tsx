@@ -283,7 +283,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       tableView = 'table';
     }
     setUserPreferences(tableView);
-
     if (resultsRef && resultsRef.current) {
       resultsRef.current['style']['boxShadow'] = 'none'
     }
@@ -314,7 +313,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             checkFacetRender={updateCheckedFacets}
           />
         </Sider>
-        <Content className={styles.content}>
+        <Content className={styles.content} style={{overflowX: 'unset'}}>
 
           <div className={styles.collapseIcon} id='sidebar-collapse-icon'>
             {collapse ?

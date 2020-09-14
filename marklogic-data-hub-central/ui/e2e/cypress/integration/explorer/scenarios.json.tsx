@@ -124,6 +124,8 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getFacetApplyButton().should('exist');
     browsePage.getClearGreyFacets().should('exist');
     browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getMosaicContainer().scrollTo('top');
     browsePage.getTotalDocuments().should('be.equal', 14);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
@@ -369,7 +371,7 @@ describe('json scenario for table on browse documents page', () => {
   it('search for multiple facets, switch to snippet view, delete a facet, switch to table view, verify search query', () => {
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    //verify the popover doesn't display for the short facet name. 
+    //verify the popover doesn't display for the short facet name.
     browsePage.getFacetName('Adams Cole').trigger('mouseover');
     cy.wait(1000);
     browsePage.getTooltip('Adams Cole').should('not.be.visible');

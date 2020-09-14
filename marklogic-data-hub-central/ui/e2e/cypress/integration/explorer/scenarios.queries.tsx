@@ -308,6 +308,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // Clicking on reset after selected facets are applied, saves new query and navigates to zero state
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
@@ -354,6 +355,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // Select saved query, make changes, click on reset opens a confirmation
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.getSaveQueriesDropdown().should('be.visible');
@@ -414,9 +416,10 @@ describe('save/manage queries scenarios, developer role', () => {
         // browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
         browsePage.getExploreButton().click();
-        //verify no confirmation modal after reset. 
+        //verify no confirmation modal after reset.
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getSaveQueriesDropdown().should('be.visible');
         browsePage.selectQuery('reset-query');
         browsePage.getResetQueryButton().click();
@@ -426,6 +429,7 @@ describe('save/manage queries scenarios, developer role', () => {
     it('verify export array/structured data warning', () => {
         browsePage.selectEntity('Order');
         browsePage.getSelectedEntity().should('contain', 'Order');
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getDataExportIcon().click();
         browsePage.getStructuredDataWarning().should('be.visible');
     });
@@ -498,6 +502,7 @@ describe('manage queries modal scenarios, developer role', () => {
         queryComponent.getManageQueryModal().should('not.be.visible');
         browsePage.getSelectedQuery().should('contain', 'select a query');
         browsePage.getSelectedQueryDescription().should('contain', '');
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getResetQueryButton().should('be.visible');
     });
 });
