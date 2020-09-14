@@ -168,6 +168,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     switch (error.response.status) {
       case 401: {
         localStorage.setItem('dataHubUser', '');
+        localStorage.setItem('loginResp', '');
         setUser({ ...user, name: '', authenticated: false });
         break;
       }
