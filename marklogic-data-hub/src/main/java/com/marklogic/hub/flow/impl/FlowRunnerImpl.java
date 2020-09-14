@@ -55,7 +55,11 @@ public class FlowRunnerImpl implements FlowRunner{
 
     private StepRunner stepRunner;
 
-    private final Map<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
+    /*
+     * Using concrete type ConcurrentHashMap instead of Map so coverity static scan does not complain about
+     * "modification without proper synchronization" when we call `remove(key)` on the `stepsMap` later in the code.
+     */
+    private final ConcurrentHashMap<String, Queue<String>> stepsMap = new ConcurrentHashMap<>();
     private Map<String, Flow> flowMap = new ConcurrentHashMap<>();
     private Map<String, RunFlowResponse> flowResp = new ConcurrentHashMap<>();
     private Queue<String> jobQueue = new ConcurrentLinkedQueue<>();
