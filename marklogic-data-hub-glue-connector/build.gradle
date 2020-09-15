@@ -1,6 +1,7 @@
 plugins {
     id "net.saliman.properties" version "1.5.1"
     id "java"
+    id 'maven-publish'
 }
 
 repositories {
@@ -9,6 +10,8 @@ repositories {
 
 sourceCompatibility = "9"
 targetCompatibility = "9"
+
+group = 'com.marklogic'
 
 dependencies {
     // Contrary to the marklogic-data-hub-central project, when this project is brought over, the okhttp3 dependencies
@@ -28,4 +31,23 @@ dependencies {
     testImplementation(testFixtures(project(":marklogic-data-hub")))
     // Looks hacky, but seems to be the recommended way to depend on test classes from another project
     testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
+}
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            if (project.hasProperty("mavenUser")) {
+                credentials {
+                    username mavenUser
+                    password mavenPassword
+                }
+            }
+            url publishUrl
+        }
+    }
 }
