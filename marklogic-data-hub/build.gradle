@@ -5,10 +5,7 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.0.4'
-    //id 'com.moowork.node' version '1.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'org.springframework.boot' version '2.1.15.RELEASE'
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'com.marklogic.ml-development-tools' version '5.2.0'
 }
 
@@ -55,9 +52,7 @@ dependencies {
         exclude group: 'com.marklogic', module: 'marklogic-client-api'
     }
 
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.15.RELEASE'
-    compile group: 'org.springframework.integration', name: 'spring-integration-http', version: '5.1.11.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.15.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version: '5.2.8.RELEASE'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
     compile ('com.marklogic:marklogic-data-movement-components:2.0.0') {
@@ -113,11 +108,21 @@ configurations.all {
     exclude group: "log4j", module: "log4j"
 }
 
-// The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
-// This jar is only meant to be used by the DHS team for installing DHF into DHS
-bootJar {
+task installerJar(type: Jar) {
+    description = "Build an executable jar for installing DHF into DHS"
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.dhs.installer.Main"
+    }
     archiveClassifier = "installer"
-    mainClassName = "com.marklogic.hub.dhs.installer.Main"
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    from("src/installer") {
+        include "logback.xml"
+    }
+    with jar
 }
 
 task clientJar(type: Jar) {
@@ -131,7 +136,9 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    exclude "spring-boot*.jar"
+    from("src/installer") {
+        include "logback.xml"
+    }
     with jar
 }
 build.dependsOn clientJar
@@ -186,11 +193,6 @@ task copyUIAssets(type: Copy) {
 processResources {
     filesMatching("**/version.properties") {
         expand(project: project)
-    }
-
-    // Includes installer-specific files into the jar produced by bootJar
-    from ("src/installer") {
-        into "."
     }
 }
 
@@ -255,10 +257,6 @@ jar{
     enabled = true
 }
 
-bootRun {
-    enabled = false
-}
-
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
@@ -304,7 +302,7 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact bootJar
+            artifact installerJar
             artifact clientJar
 
             pom.withXml {

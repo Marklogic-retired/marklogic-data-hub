@@ -25,10 +25,9 @@ import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -40,10 +39,8 @@ public class TestAppInstaller {
 
     private final static Logger logger = LoggerFactory.getLogger(TestAppInstaller.class);
 
-    public static void main(String[] args) throws Exception {
-        SpringApplication app = new SpringApplication(HubCoreTestConfig.class);
-        app.setWebApplicationType(WebApplicationType.NONE);
-        ConfigurableApplicationContext ctx = app.run();
+    public static void main(String[] args) {
+        ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(HubCoreTestConfig.class);
         try {
             HubConfigObjectFactory factory = ctx.getBean(HubConfigInterceptor.class).getHubConfigObjectFactory();
             String[] hosts = factory.getHosts();
@@ -124,8 +121,7 @@ public class TestAppInstaller {
             modulesClient.newServerEval().xquery("cts:uri-match('/custom-modules/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-        }
-        finally {
+        } finally {
             appConfig.setAppServicesPort(originalAppServicesPort);
             appConfig.setModulesLoaderBatchSize(originalBatchSize);
             appConfig.setModulePaths(originalModulePaths);

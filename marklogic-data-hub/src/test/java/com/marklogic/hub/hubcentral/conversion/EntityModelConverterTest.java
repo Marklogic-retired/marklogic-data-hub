@@ -80,10 +80,6 @@ public class EntityModelConverterTest extends AbstractHubCoreTest {
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
         assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
-
-        currentFileName = "EmptyFile.entity.json";
-        JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) emptyFileEntity));
     }
 
     @Test
@@ -127,10 +123,6 @@ public class EntityModelConverterTest extends AbstractHubCoreTest {
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
         assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
-
-        currentFileName = "EmptyFile.entity.json";
-        JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) emptyFileEntity));
     }
 
     @Test
