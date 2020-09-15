@@ -58,7 +58,7 @@ describe('Load Card component', () => {
     //Verify if the flow related options are availble on mouseOver
     expect(getByTestId('testLoadXML-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
     expect(getByTestId('testLoadXML-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
-
+ 
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
@@ -73,10 +73,10 @@ describe('Load Card component', () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
     //TODO- E2E test to check if the Run tile is loaded or not.
-
+    
   });
 
-  test('Load Card - Add step to a new Flow', async () => {
+  test('Load Card - Verify card sort order and Add step to a new Flow', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
     const { getByText, getByLabelText, getByTestId } = render(
@@ -92,6 +92,13 @@ describe('Load Card component', () => {
       </MemoryRouter>
     )
 
+    //Verify cards get sorted by last updated
+    let loadCards: any = document.querySelectorAll('.ant-col');
+    expect(loadCards[0]).toHaveTextContent('Add New');
+    expect(loadCards[1]).toHaveTextContent('testLoadXML');
+    expect(loadCards[2]).toHaveTextContent('testLoad123');
+    expect(loadCards[3]).toHaveTextContent('testLoad');
+  
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
     expect(getByText('testLoadXML')).toBeInTheDocument();

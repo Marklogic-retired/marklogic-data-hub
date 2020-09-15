@@ -1,4 +1,4 @@
-import React, {CSSProperties, useContext, useState} from 'react';
+import React, {CSSProperties, useContext, useState, useEffect} from 'react';
 import styles from './load-card.module.scss';
 import { useHistory } from 'react-router-dom';
 import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
@@ -39,10 +39,16 @@ const LoadCard: React.FC<Props> = (props) => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [addDialogVisible, setAddDialogVisible] = useState(false);
     const [loadArtifactName, setLoadArtifactName] = useState('');
+    const [sortedLoads, setSortedLoads] = useState(props.data);
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
 
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
+
+    useEffect(() => {
+       let sortedArray = sortLoadsByUpdated(props.data)
+       setSortedLoads(sortedArray);
+    }, [props.data])
 
     //To navigate to bench view with parameters
     let history = useHistory();
@@ -56,11 +62,24 @@ const LoadCard: React.FC<Props> = (props) => {
         setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewDataLoad(true);
-    }
+    } 
 
     const OpenLoadSettingsDialog = (index) => {
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenLoadSettings(true);
+    }
+
+    const sortLoadsByUpdated = (loadArray) => {
+        let sortedArray = loadArray.sort((load1, load2) => {
+            if(load1.lastUpdated > load2.lastUpdated){
+                return -1;
+            }
+
+            if(load1.lastUpdated < load2.lastUpdated){
+                return 1;
+            }
+        })
+        return sortedArray;
     }
 
     // Custom CSS for source Format
@@ -187,7 +206,7 @@ const LoadCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col> : ''}{ props && props.data.length > 0 ? props.data.map((elem,index) => (
+                </Col> : ''}{ sortedLoads && sortedLoads.length > 0 ? sortedLoads.map((elem,index) => (
                 <Col key={index}>
                     <div
                         onMouseOver={(e) => handleMouseOver(e, elem.name)}
