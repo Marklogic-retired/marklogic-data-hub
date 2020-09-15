@@ -172,8 +172,8 @@ const PropertyModal: React.FC<Props> = (props) => {
 
           typeDisplayValue = [ type, props.editPropertyOptions.propertyOptions.type ]
 
-        } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Relationship){
-          typeDisplayValue = [ 'relationship', props.editPropertyOptions.propertyOptions.type ]
+        } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.RelatedEntity){
+          typeDisplayValue = [ 'relatedEntity', props.editPropertyOptions.propertyOptions.type ]
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
 
@@ -249,8 +249,8 @@ const PropertyModal: React.FC<Props> = (props) => {
       let newSelectedPropertyOptions = {...selectedPropertyOptions}
 
       switch(value[0]) {
-        case 'relationship':
-          newSelectedPropertyOptions.propertyType = PropertyType.Relationship;
+        case 'relatedEntity':
+          newSelectedPropertyOptions.propertyType = PropertyType.RelatedEntity;
           newSelectedPropertyOptions.identifier = '';
           newSelectedPropertyOptions.pii = '';
           //newSelectedPropertyOptions.wildcard = false;
@@ -393,13 +393,13 @@ const PropertyModal: React.FC<Props> = (props) => {
     let structuredDropdown = createStructuredDropdown(structuredDefinitions);
 
     if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0) {
-      let relationshipDropdown = createRelationshipDropdown();
+      let relatedEntityDropdown = createRelatedEntityDropdown();
 
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER('1'),
         structuredDropdown,
-        relationshipDropdown,
+        relatedEntityDropdown,
         DROPDOWN_PLACEHOLDER('2'),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
@@ -446,13 +446,13 @@ const PropertyModal: React.FC<Props> = (props) => {
       setDropdownOptions(DEFAULT_DROPDOWN_OPTIONS);
 
     } else if ( modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length === 0 ) {
-      let relationshipDropdown = createRelationshipDropdown();
+      let relatedEntityDropdown = createRelatedEntityDropdown();
 
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER('1'),
         DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
-        relationshipDropdown,
+        relatedEntityDropdown,
         DROPDOWN_PLACEHOLDER('2'),
         MORE_STRING_TYPES,
         MORE_NUMBER_TYPES,
@@ -475,13 +475,13 @@ const PropertyModal: React.FC<Props> = (props) => {
       || modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured
       ) {
         let structuredDropdown = createStructuredDropdown(structuredDefinitions);
-        let relationshipDropdown = createRelationshipDropdown();
+        let relatedEntityDropdown = createRelatedEntityDropdown();
 
         setDropdownOptions([
           ...COMMON_PROPERTY_TYPES,
           DROPDOWN_PLACEHOLDER('1'),
           structuredDropdown,
-          relationshipDropdown,
+          relatedEntityDropdown,
           DROPDOWN_PLACEHOLDER('2'),
           MORE_STRING_TYPES,
           MORE_NUMBER_TYPES,
@@ -504,14 +504,14 @@ const PropertyModal: React.FC<Props> = (props) => {
     setEntityPropertyNamesArray([...propertyNamesArray, ...entityNamesArray]);
   }
 
-  const createRelationshipDropdown = () => {
+  const createRelatedEntityDropdown = () => {
     let entityTypes = modelingOptions.entityTypeNamesArray
       .sort((a, b) => a.name.localeCompare(b.name))
       .map( entity => { return { label: entity.name, value: entity.name } });
 
     return {
-      label: 'Relationship',
-      value: 'relationship',
+      label: 'Related Entity',
+      value: 'relatedEntity',
       children: entityTypes
     }
   }

@@ -326,13 +326,13 @@ const PropertyTable: React.FC<Props> = (props) => {
     let facetable = propertyOptions.facetable;
     let sortable = propertyOptions.sortable;
 
-    if (propertyOptions.propertyType === PropertyType.Relationship && !multiple) {
+    if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
       return {
         $ref: externalEntity.entityTypeId,
       }
 
-    } else if (propertyOptions.propertyType === PropertyType.Relationship && multiple) {
+    } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
       let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
       return {
         datatype: 'array',
@@ -456,7 +456,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
 
     } else if (relationshipType) {
-      propertyType = PropertyType.Relationship
+      propertyType = PropertyType.RelatedEntity
       newStructuredTypes.isStructured = false;
       newStructuredTypes.name = '';
       newStructuredTypes.propertyName = '';

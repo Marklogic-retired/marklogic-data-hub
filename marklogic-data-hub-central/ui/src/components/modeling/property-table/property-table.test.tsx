@@ -301,7 +301,7 @@ describe('Entity Modeling Property Table Component', () => {
     userEvent.clear(screen.getByLabelText('input-name'));
     userEvent.type(screen.getByLabelText('input-name'), 'orderRelationship');
     userEvent.click(screen.getByLabelText('type-dropdown'));
-    userEvent.click(screen.getByText('Relationship'));
+    userEvent.click(screen.getByText('Related Entity'));
     userEvent.click(screen.getAllByText('Order')[0]);
     fireEvent.submit(screen.getByLabelText('input-name'));
 
