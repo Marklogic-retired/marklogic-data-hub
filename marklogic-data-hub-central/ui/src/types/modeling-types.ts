@@ -70,7 +70,7 @@ export enum ConfirmationType {
 export enum PropertyType {
   Basic = 'basic',
   Structured = 'structured',
-  Relationship = 'relationship'
+  RelatedEntity = 'relatedEntity'
 }
 
 export interface ModelingOptionsInterface {

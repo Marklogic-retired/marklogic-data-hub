@@ -153,7 +153,7 @@ describe('Property Modal Component', () => {
     userEvent.type(getByPlaceholderText('Enter the property name'), 'Entity-Property');
 
     userEvent.click(getByPlaceholderText('Select the property type'));
-    userEvent.click(getByText('Relationship'));
+    userEvent.click(getByText('Related Entity'));
     userEvent.click(getByText('Concept'));
 
     expect(screen.queryByLabelText('identifier-yes')).toBeNull();
@@ -234,7 +234,7 @@ describe('Property Modal Component', () => {
     userEvent.click(getByText('Structured'));
     userEvent.click(getByText('Address'));
 
-    expect(screen.queryByText('Relationship')).toBeNull();
+    expect(screen.queryByText('Related Entity')).toBeNull();
     expect(screen.queryByLabelText('identifier-yes')).toBeNull();
 
     const multipleRadio = screen.getByLabelText('multiple-no')
@@ -458,7 +458,7 @@ describe('Property Modal Component', () => {
     let editMock = jest.fn();
 
     const relationshipPropertyOptions: PropertyOptions = {
-      propertyType: PropertyType.Relationship,
+      propertyType: PropertyType.RelatedEntity,
       type: 'Order',
       identifier: 'no',
       multiple: 'yes',
@@ -790,7 +790,7 @@ describe('Property Modal Component', () => {
     let deleteMock = jest.fn();
 
     const relationshipPropertyOptions: PropertyOptions = {
-      propertyType: PropertyType.Relationship,
+      propertyType: PropertyType.RelatedEntity,
       type: 'Order',
       identifier: 'no',
       multiple: 'yes',

@@ -49,7 +49,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyModal.newPropertyName('user');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Person').click();
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getSubmitButton().click();
@@ -93,7 +93,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('user-id');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Customer').click();
 
     propertyModal.getYesRadio('idenifier').should('not.exist');
@@ -311,7 +311,7 @@ describe('Entity Modeling: Writer Role', () => {
     // add relation type property for 'User2' and save
     propertyModal.newPropertyName('user');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown(entityName1).click();
     propertyModal.getSubmitButton().click();
 
@@ -493,7 +493,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.newPropertyName('alt_address');
 
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Person').click();
 
     propertyModal.getYesRadio('multiple').click();
@@ -606,7 +606,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyModal.newPropertyName('order');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Order').click();
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getSubmitButton().click();
@@ -651,7 +651,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getAddPropertyButton('Patient').click();
     propertyModal.newPropertyName('conceptType');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Relationship').click();
+    propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Concept').click();
     propertyModal.getSubmitButton().click();
 
