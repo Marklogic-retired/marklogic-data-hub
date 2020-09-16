@@ -22,12 +22,12 @@ public class DeployJobsDatabaseWithExistingUserIndexesTest extends AbstractHubCo
 
     @BeforeEach
     void beforeEach() {
-        originalIsProvisionedEnvironment = adminHubConfig.getIsProvisionedEnvironment();
+        originalIsProvisionedEnvironment = getHubConfig().getIsProvisionedEnvironment();
     }
 
     @AfterEach
     void afterEach() {
-        adminHubConfig.setIsProvisionedEnvironment(originalIsProvisionedEnvironment);
+        getHubConfig().setIsProvisionedEnvironment(originalIsProvisionedEnvironment);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class DeployJobsDatabaseWithExistingUserIndexesTest extends AbstractHubCo
 
     private void whenTheDhfInstallerCommandForDatabasesIsRun() {
         InstallIntoDhsCommand installCommand = new InstallIntoDhsCommand();
-        installCommand.hubConfig = adminHubConfig;
+        installCommand.hubConfig = getHubConfig();
 
         List<Command> commands = installCommand.buildCommandsForDhs(new Options());
         DeployOtherDatabasesCommand dbCommand = null;
