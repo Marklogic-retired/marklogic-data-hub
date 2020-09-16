@@ -319,7 +319,7 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .withFlow(flow1)
             .withBatchSize(10)
             .withThreadCount(1)
-            .withSourceClient(adminHubConfig.newReverseFlowClient())
+            .withSourceClient(getHubConfig().newReverseFlowClient())
             .withDestinationDatabase(HubConfig.DEFAULT_STAGING_NAME);
         flowRunner.run();
         flowRunner.awaitCompletion();
