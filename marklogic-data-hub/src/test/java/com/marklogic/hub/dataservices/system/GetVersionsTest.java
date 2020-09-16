@@ -15,7 +15,7 @@ public class GetVersionsTest extends AbstractHubCoreTest {
 
         DatabaseClient stagingClient = getHubClient().getStagingClient();
         final String expectedMarkLogicVersion = stagingClient.newServerEval().javascript("xdmp.version()").evalAs(String.class);
-        final String expectedHubClientVersion = adminHubConfig.getJarVersion();
+        final String expectedHubClientVersion = getHubConfig().getJarVersion();
         final String expectedClusterName = stagingClient.newServerEval().javascript("xdmp.clusterName()").evalAs(String.class);
 
         VersionInfo versionInfo = VersionInfo.newVersionInfo(getHubClient());

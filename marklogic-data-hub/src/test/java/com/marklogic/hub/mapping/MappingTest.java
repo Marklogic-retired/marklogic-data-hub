@@ -68,8 +68,8 @@ public class MappingTest extends AbstractHubCoreTest {
         runFlow("CustomerXML", "1");
 
         OutputEndpoint.BulkOutputCaller bulkCaller = OutputEndpoint.on(
-            adminHubConfig.newStagingClient(null),
-            adminHubConfig.newModulesDbClient().newJSONDocumentManager().read("/data-hub/5/data-services/stepRunner/runSteps.api", new JacksonHandle())
+            getHubClient().getStagingClient(),
+            getHubClient().getModulesClient().newJSONDocumentManager().read("/data-hub/5/data-services/stepRunner/runSteps.api", new JacksonHandle())
         ).bulkCaller();
 
         ObjectMapper mapper = new ObjectMapper();
