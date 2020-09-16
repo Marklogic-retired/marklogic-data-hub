@@ -1,119 +1,17 @@
 {
-  "name": "CurateCustomerJSON",
-  "steps": {
-    "1": {
-      "stepId": "loadCustomersJSON-ingestion"
+  "name" : "CurateCustomerJSON",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadCustomersJSON-ingestion"
     },
-    "2": {
-      "stepId": "mapCustomersJSON-mapping"
+    "2" : {
+      "stepId" : "mapCustomersJSON-mapping"
     },
-    "3": {
-      "name": "match-customers",
-      "stepDefinitionName": "default-matching",
-      "stepDefinitionType": "MATCHING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('mapCustomersJSON')",
-        "acceptsBatch": true,
-        "targetEntity": "Customer",
-        "sourceDatabase": "data-hub-FINAL",
-        "collections": [
-          "matched-customers"
-        ],
-        "matchOptions": {
-          "dataFormat": "json",
-          "propertyDefs": {
-            "property": [
-              {
-                "localname": "customerId",
-                "name": "customerId"
-              }
-            ]
-          },
-          "scoring": {
-            "add": [
-              {
-                "propertyName": "customerId",
-                "weight": "10"
-              }
-            ]
-          },
-          "thresholds": {
-            "threshold": [
-              {
-                "above": "10",
-                "label": "Definitive Match",
-                "action": "merge"
-              }
-            ]
-          },
-          "tuning": {
-            "maxScan": 200
-          }
-        },
-        "targetDatabase": "data-hub-FINAL"
-      }
+    "3" : {
+      "stepId" : "match-customers-matching"
     },
-    "4": {
-      "name": "merge-customers",
-      "stepDefinitionName": "default-merging",
-      "stepDefinitionType": "MERGING",
-      "options": {
-        "sourceQuery": "cts.collectionQuery('matched-customers')",
-        "targetEntity": "Customer",
-        "sourceDatabase": "data-hub-FINAL",
-        "collections": [
-          "merged-customer"
-        ],
-        "mergeOptions": {
-          "propertyDefs": {
-            "properties": [
-              {
-                "namespace": "",
-                "localname": "customerId",
-                "name": "customerId"
-              },
-              {
-                "namespace": "",
-                "localname": "name",
-                "name": "name"
-              }
-            ]
-          },
-          "algorithms": {
-            "stdAlgorithm": {
-              "timestamp": {
-                "path": ""
-              }
-            },
-            "collections": {
-              "onNoMatch": {
-                "add": {
-                  "collection": [
-                    ""
-                  ]
-                },
-                "remove": {
-                  "collection": [
-                    ""
-                  ]
-                },
-                "set": {
-                  "collection": [
-                    ""
-                  ]
-                }
-              }
-            }
-          },
-          "merging": [
-            {
-              "propertyName": "CustomerID",
-              "sourceWeights": []
-            }
-          ]
-        }
-      }
+    "4" : {
+      "stepId" : "merge-customers-merging"
     }
-  },
-  "lastUpdated": "2020-06-04T23:01:35.566392Z"
+  }
 }
