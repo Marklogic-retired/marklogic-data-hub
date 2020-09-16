@@ -33,9 +33,9 @@ public class LoadHubModulesCommandTest extends AbstractHubCoreTest {
     public void verifyHubVersion() {
         final String message = "Jar version must match version in config.xqy/config.sjs after installation";
 
-        assertEquals(adminHubConfig.getJarVersion(), versions.getInstalledVersion(), message);
-        assertEquals(adminHubConfig.getJarVersion(), new Versions(getHubClient()).getInstalledVersion(), message);
-        assertEquals(adminHubConfig.getJarVersion(), new Versions(getHubConfig()).getInstalledVersion(), message);
+        assertEquals(getHubConfig().getJarVersion(), versions.getInstalledVersion(), message);
+        assertEquals(getHubConfig().getJarVersion(), new Versions(getHubClient()).getInstalledVersion(), message);
+        assertEquals(getHubConfig().getJarVersion(), new Versions(getHubConfig()).getInstalledVersion(), message);
     }
 
     @Test
