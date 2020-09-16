@@ -20,18 +20,18 @@ public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        originalModulePermissions = adminHubConfig.getModulePermissions();
+        originalModulePermissions = getHubConfig().getModulePermissions();
     }
 
     @AfterEach
     public void tearDown() {
-        adminHubConfig.setModulePermissions(originalModulePermissions);
+        getHubConfig().setModulePermissions(originalModulePermissions);
     }
 
     @Test
     public void verifyDefaultPermissions() {
-        LoadHubArtifactsCommand loadHubArtifactsCommand = new LoadHubArtifactsCommand(adminHubConfig);
-        DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow");
+        LoadHubArtifactsCommand loadHubArtifactsCommand = new LoadHubArtifactsCommand(getHubConfig());
+        DocumentMetadataHandle h = loadHubArtifactsCommand.buildMetadata(getHubConfig().getFlowPermissions(), "http://marklogic.com/data-hub/flow");
         assertEquals(2, h.getCollections().size());
         Iterator<String> collections = h.getCollections().iterator();
         assertEquals("http://marklogic.com/data-hub/flow", collections.next());
@@ -43,7 +43,7 @@ public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
         DocumentMetadataHandle.DocumentPermissions perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
 
-        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition");
+        h = loadHubArtifactsCommand.buildMetadata(getHubConfig().getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition");
         assertEquals(2, h.getCollections().size());
         collections = h.getCollections().iterator();
         assertEquals("http://marklogic.com/data-hub/step-definition", collections.next());
@@ -52,7 +52,7 @@ public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
         perms = h.getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-step-definition-reader").iterator().next());
 
-        h = loadHubArtifactsCommand.buildMetadata(adminHubConfig.getModulePermissions(), "hub-core-module");
+        h = loadHubArtifactsCommand.buildMetadata(getHubConfig().getModulePermissions(), "hub-core-module");
         perms = h.getPermissions();
         List<DocumentMetadataHandle.Capability> dhModReader = new ArrayList<>();
         dhModReader.add(perms.get("data-hub-module-reader").iterator().next());
@@ -73,7 +73,7 @@ public class LoadHubArtifactsCommandTest extends AbstractHubCoreTest {
         config.setStepDefinitionPermissions("manage-user,read,manage-admin,update");
         config.setModulePermissions("manage-user,read,manage-admin,update");
 
-        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
+        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(getHubConfig());
 
         DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(config.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
