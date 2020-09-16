@@ -54,7 +54,7 @@ public class DeployProtectedPathsWhenUpdatingIndexesTest extends AbstractHubCore
     private void thenTheProtectedPathIsDeployed() {
         runAsAdmin();
 
-        ProtectedPathManager mgr = new ProtectedPathManager(adminHubConfig.getManageClient());
+        ProtectedPathManager mgr = new ProtectedPathManager(getHubClient().getManageClient());
         assertTrue(
             mgr.exists(TEST_PATH_EXPRESSION),
             "Updating indexes should also result in protected paths being deployed so that when a user marks " +

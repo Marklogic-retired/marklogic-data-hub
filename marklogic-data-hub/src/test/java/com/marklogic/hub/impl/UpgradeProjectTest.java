@@ -162,8 +162,8 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
 
     @Test
     public void testUpgradeTo510MappingStep() throws IOException{
-        FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
-        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
+        FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), getHubProject().getFlowsDir().toFile());
+        FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), getHubProject().getFlowsDir().toFile());
         getHubProject().updateStepDefinitionTypeForInlineMappingSteps(flowManager);
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
