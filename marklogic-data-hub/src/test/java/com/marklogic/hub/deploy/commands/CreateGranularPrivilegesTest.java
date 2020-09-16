@@ -39,10 +39,10 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
      */
     @Test
     void verifyGranularPrivilegesExist() {
-        PrivilegeManager mgr = new PrivilegeManager(adminHubConfig.getManageClient());
-        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(adminHubConfig.getManageClient()));
+        PrivilegeManager mgr = new PrivilegeManager(getHubClient().getManageClient());
+        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(getHubClient().getManageClient()));
 
-        ResourcesFragment databasesXml = new DatabaseManager(adminHubConfig.getManageClient()).getAsXml();
+        ResourcesFragment databasesXml = new DatabaseManager(getHubClient().getManageClient()).getAsXml();
         final String finalDbId = databasesXml.getIdForNameOrId("data-hub-FINAL");
         final String stagingDbId = databasesXml.getIdForNameOrId("data-hub-STAGING");
         final String jobsDbId = databasesXml.getIdForNameOrId("data-hub-JOBS");
@@ -102,8 +102,8 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         assertEquals("http://marklogic.com/xdmp/privileges/admin/database/alerts/" + finalDbId, p.getAction());
         assertEquals("data-hub-developer", p.getRole().get(0));
 
-        String groupName = adminHubConfig.getAppConfig().getGroupName();
-        ResourcesFragment groupsXml = new GroupManager(adminHubConfig.getManageClient()).getAsXml();
+        String groupName = getHubConfig().getAppConfig().getGroupName();
+        ResourcesFragment groupsXml = new GroupManager(getHubClient().getManageClient()).getAsXml();
         final String groupId = groupsXml.getIdForNameOrId(groupName);
         p = resourceMapper.readResource(mgr.getAsJson("admin-group-scheduled-task-" + groupName, "kind", "execute"), Privilege.class);
         assertEquals("http://marklogic.com/xdmp/privileges/admin/group/scheduled-task/" + groupId, p.getAction());
@@ -112,7 +112,7 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
     @Test
     void existingPrivilegeHasSameAction() {
-        ResourcesFragment databasesXml = new DatabaseManager(adminHubConfig.getManageClient()).getAsXml();
+        ResourcesFragment databasesXml = new DatabaseManager(getHubClient().getManageClient()).getAsXml();
         final String finalDbId = databasesXml.getIdForNameOrId("data-hub-FINAL");
 
         // Setup a test privilege that we want to create via the command's logic; it has the same action as one of the
@@ -124,13 +124,13 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         Map<String, Privilege> privileges = new HashMap<>();
         privileges.put(p.getAction(), p);
 
-        final ResourceMapper resourceMapper = new DefaultResourceMapper(new API(adminHubConfig.getManageClient()));
-        final PrivilegeManager privilegeManager = new PrivilegeManager(adminHubConfig.getManageClient());
+        final ResourceMapper resourceMapper = new DefaultResourceMapper(new API(getHubClient().getManageClient()));
+        final PrivilegeManager privilegeManager = new PrivilegeManager(getHubClient().getManageClient());
 
         try {
             // Now apply the logic in the command for saving this test privilege
-            CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
-            command.saveGranularPrivileges(adminHubConfig.getManageClient(), privileges);
+            CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
+            command.saveGranularPrivileges(getHubClient().getManageClient(), privileges);
 
             assertFalse(privilegeManager.exists("aaa-test-privilege"), "The test privilege should not have been created " +
                 "since there's an existing DHF granular privilege with the same action");
@@ -153,19 +153,19 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
     @Test
     void deletePrivilegesOnUndeploy() {
-        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig);
+        final CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig());
         final CommandContext context = newCommandContext();
 
         PrivilegeManager privilegeManager = new PrivilegeManager(context.getManageClient());
         ResourcesFragment existingPrivileges = privilegeManager.getAsXml();
 
-        final Map<String, Privilege> granularPrivileges = command.buildGranularPrivileges(adminHubConfig.getManageClient());
+        final Map<String, Privilege> granularPrivileges = command.buildGranularPrivileges(getHubClient().getManageClient());
         granularPrivileges.values().forEach(priv -> {
             assertTrue(existingPrivileges.resourceExists(priv.getPrivilegeName()));
         });
 
         try {
-            assertEquals(adminHubConfig.getAppConfig().getGroupName(), command.getGroupNamesForScheduledTaskPrivileges().get(0));
+            assertEquals(getHubConfig().getAppConfig().getGroupName(), command.getGroupNamesForScheduledTaskPrivileges().get(0));
 
             command.undo(context);
 
@@ -185,7 +185,7 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
      */
     @Test
     void buildScheduledTaskPrivilegesForMultipleGroups() {
-        CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(adminHubConfig,
+        CreateGranularPrivilegesCommand command = new CreateGranularPrivilegesCommand(getHubConfig(),
             Arrays.asList("A", "B", "C"));
 
         List<String> groupNames = command.getGroupNamesForScheduledTaskPrivileges();
@@ -194,7 +194,7 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
         assertEquals("B", groupNames.get(1));
         assertEquals("C", groupNames.get(2));
 
-        command = new CreateGranularPrivilegesCommand(adminHubConfig);
+        command = new CreateGranularPrivilegesCommand(getHubConfig());
         assertEquals("Default", command.getGroupNamesForScheduledTaskPrivileges().get(0));
     }
 }

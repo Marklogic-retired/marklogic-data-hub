@@ -37,7 +37,7 @@ class SearchServiceTest extends AbstractWebTest {
 
     private void sjsSearch(boolean urisOnly) {
         SJSSearchQuery query = new SJSSearchQuery();
-        query.database = adminHubConfig.getDbName(DatabaseKind.STAGING);
+        query.database = getHubClient().getDbName(DatabaseKind.STAGING);
         query.sourceQuery = "cts.collectionQuery('UrisOnly')";
         query.count = 1;
         query.urisOnly = urisOnly;
