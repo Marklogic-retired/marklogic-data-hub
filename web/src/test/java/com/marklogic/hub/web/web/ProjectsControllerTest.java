@@ -18,11 +18,7 @@
 package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.HubProjectImpl;
-import com.marklogic.hub.test.HubConfigInterceptor;
 import com.marklogic.hub.web.AbstractWebTest;
 import com.marklogic.hub.web.model.HubSettings;
 import com.marklogic.hub.web.model.Project;
@@ -32,8 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.TemporaryFolder;
-import org.springframework.aop.framework.Advised;
-import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
@@ -60,7 +54,7 @@ public class ProjectsControllerTest extends AbstractWebTest {
         temporaryFolder = new TemporaryFolder();
         temporaryFolder.create();
         projectPath = temporaryFolder.newFolder("my-project").toString();
-        adminHubConfig.createProject(projectPath);
+        getHubProject().createProject(projectPath);
     }
 
     @AfterEach
@@ -81,13 +75,13 @@ public class ProjectsControllerTest extends AbstractWebTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void addProject() throws IOException {
+    public void addProject() {
         assertEquals(0, ((Collection<ProjectInfo>)pc.getProjects().get("projects")).size());
 
         Project project = pc.addProject(projectPath);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
+        assertEquals(false, getHubProject().isInitialized());
     }
 
     @Test
@@ -101,7 +95,7 @@ public class ProjectsControllerTest extends AbstractWebTest {
         Project project = pc.getProject(1);
         assertEquals(projectPath, project.path);
         assertEquals(1, project.id);
-        assertEquals(false, adminHubConfig.getHubProject().isInitialized());
+        assertEquals(false, getHubProject().isInitialized());
     }
 
     @Test
