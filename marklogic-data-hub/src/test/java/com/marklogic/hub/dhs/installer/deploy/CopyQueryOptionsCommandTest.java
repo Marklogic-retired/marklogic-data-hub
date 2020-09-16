@@ -21,11 +21,11 @@ public class CopyQueryOptionsCommandTest extends AbstractHubCoreTest {
         // clear user modules to ensure extra options aren't left from other tests
         clearUserModules();
 
-        final String groupName = adminHubConfig.getAppConfig().getGroupName();
-        final String stagingServerName = adminHubConfig.getHttpName(DatabaseKind.STAGING);
-        final String jobsServerName = adminHubConfig.getHttpName(DatabaseKind.JOB);
+        final String groupName = getHubConfig().getAppConfig().getGroupName();
+        final String stagingServerName = getHubConfig().getHttpName(DatabaseKind.STAGING);
+        final String jobsServerName = getHubConfig().getHttpName(DatabaseKind.JOB);
 
-        CopyQueryOptionsCommand command = new CopyQueryOptionsCommand(adminHubConfig,
+        CopyQueryOptionsCommand command = new CopyQueryOptionsCommand(getHubConfig(),
             Arrays.asList(groupName, "testGroup-B", "testGroup-C"),
             Arrays.asList(stagingServerName, "testServer-B", "testServer-C"),
             jobsServerName

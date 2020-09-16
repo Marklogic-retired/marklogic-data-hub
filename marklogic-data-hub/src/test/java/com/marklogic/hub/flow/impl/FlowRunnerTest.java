@@ -91,7 +91,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     void customStepReferencesModulePathThatDoesntExist() {
         // Delete the module that the value-step step-definition points to
         runAsDataHubDeveloper();
-        adminHubConfig.newModulesDbClient().newDocumentManager().delete("/custom-modules/custom/value-step/main.sjs");
+        getHubClient().getModulesClient().newDocumentManager().delete("/custom-modules/custom/value-step/main.sjs");
 
         runAsDataHubOperator();
         Map<String, Object> options = new HashMap<>();
@@ -113,7 +113,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     @Test
     public void sourceQueryReturnsScript() {
         // These indexes are removed by some other test, so need to ensure they're here for this test
-        applyDatabasePropertiesForTests(adminHubConfig);
+        applyDatabasePropertiesForTests(getHubConfig());
 
         final String flowName = "testValuesFlow";
 

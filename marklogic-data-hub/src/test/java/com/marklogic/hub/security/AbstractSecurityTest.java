@@ -39,7 +39,7 @@ public abstract class AbstractSecurityTest extends AbstractHubCoreTest {
     @BeforeEach
     public void setupFlowDeveloperApi() {
         runAsAdmin();
-        adminUserClient = adminHubConfig.getManageClient();
+        adminUserClient = getHubClient().getManageClient();
         adminUserApi = new API(adminUserClient);
         resourceMapper = new DefaultResourceMapper(adminUserApi);
 
@@ -50,7 +50,11 @@ public abstract class AbstractSecurityTest extends AbstractHubCoreTest {
         createUserWithRoleBeingTested();
 
         userWithRoleBeingTestedClient = new ManageClient(
-            new ManageConfig(adminHubConfig.getHost(), 8002, userWithRoleBeingTested.getUserName(), userWithRoleBeingTested.getPassword())
+            new ManageConfig(
+                getHubClient().getManageClient().getManageConfig().getHost(),
+                getHubClient().getManageClient().getManageConfig().getPort(),
+                userWithRoleBeingTested.getUserName(), userWithRoleBeingTested.getPassword()
+            )
         );
         userWithRoleBeingTestedApi = new API(userWithRoleBeingTestedClient);
 

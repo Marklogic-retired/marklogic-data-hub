@@ -19,7 +19,7 @@ class JobMonitorTest extends AbstractHubCoreTest {
     @BeforeEach
     public void setup() {
         addJobDocs();
-        jobMonitor = new JobMonitorImpl(adminHubConfig.newJobDbClient());
+        jobMonitor = new JobMonitorImpl(getHubClient().getJobsClient());
     }
 
     @Test

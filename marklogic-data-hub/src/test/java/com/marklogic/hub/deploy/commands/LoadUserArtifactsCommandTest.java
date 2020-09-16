@@ -39,7 +39,7 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        loadUserArtifactsCommand = new LoadUserArtifactsCommand(adminHubConfig);
+        loadUserArtifactsCommand = new LoadUserArtifactsCommand(getHubConfig());
     }
 
     @Test
@@ -111,16 +111,16 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
 
     @Test
     public void defaultEntityModelPermissions() {
-        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getEntityModelPermissions(), "http://marklogic.com/entity-services/models").getPermissions();
+        DocumentMetadataHandle.DocumentPermissions perms = loadUserArtifactsCommand.buildMetadata(getHubConfig().getEntityModelPermissions(), "http://marklogic.com/entity-services/models").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-entity-model-writer").iterator().next());
 
-        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(getHubConfig().getStepDefinitionPermissions(), "http://marklogic.com/data-hub/step-definition").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-step-definition-writer").iterator().next());
 
-        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getFlowPermissions(), "http://marklogic.com/data-hub/flow").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(getHubConfig().getFlowPermissions(), "http://marklogic.com/data-hub/flow").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-flow-reader").iterator().next());
 
-        perms = loadUserArtifactsCommand.buildMetadata(adminHubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings").getPermissions();
+        perms = loadUserArtifactsCommand.buildMetadata(getHubConfig().getMappingPermissions(), "http://marklogic.com/data-hub/mappings").getPermissions();
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-mapping-reader").iterator().next());
     }
 
