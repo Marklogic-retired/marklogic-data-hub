@@ -51,7 +51,7 @@ public class ValidateMappingTest extends AbstractHubCoreTest {
 
     @BeforeEach
     public void setup() {
-        client = adminHubConfig.newStagingClient(adminHubConfig.getDbName(DatabaseKind.FINAL));
+        client = getHubClient().getFinalClient();
         client.newJSONDocumentManager().write(
             CUSTOMER_URI,
             new DocumentMetadataHandle().withCollections("http://marklogic.com/entity-services/models"),

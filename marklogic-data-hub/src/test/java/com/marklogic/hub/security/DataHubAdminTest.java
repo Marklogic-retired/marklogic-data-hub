@@ -23,7 +23,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(STAGING_DB, false);
-            String count = adminHubConfig.newStagingClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
+            String count = getHubClient().getStagingClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
             assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
         } finally {
             installHubArtifacts();
@@ -47,7 +47,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         try {
             new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(FINAL_DB, false);
-            String count = adminHubConfig.newFinalClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
+            String count = getHubClient().getFinalClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
             assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
         } finally {
             installHubArtifacts();
@@ -70,7 +70,7 @@ public class DataHubAdminTest extends AbstractSecurityTest {
     public void clearJobsDatabase() {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         new DatabaseManager(userWithRoleBeingTestedClient).clearDatabase(JOBS_DB, false);
-        String count = adminHubConfig.newJobDbClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
+        String count = getHubClient().getJobsClient().newServerEval().xquery("xdmp:estimate(fn:doc())").evalAs(String.class);
         assertEquals(0, Integer.parseInt(count), "The database should have been cleared");
     }
 

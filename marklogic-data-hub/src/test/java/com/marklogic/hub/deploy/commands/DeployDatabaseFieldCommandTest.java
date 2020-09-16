@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -63,7 +64,7 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         pathIndex.put("range-value-positions", false);
         pathIndex.put("collation", "http://marklogic.com/collation/");
 
-        new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
+        new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
     }
 
     private void whenTheDatabaseFieldCommandIsExecuted() {
@@ -71,7 +72,7 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
     }
 
     private void thenTheCustomFieldAndIndexesStillExist() {
-        ObjectNode db = getFinalDatabaseProperties();
+        ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.FINAL));
 
         ArrayNode fields = (ArrayNode) db.get("field");
         // There could be other fields, so loop through the list to verify the custom one is there
@@ -108,21 +109,12 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         assertNotNull(myPathIndex, "Expected to find the /myPath range index that was added before executing the command");
     }
 
-    private ObjectNode getFinalDatabaseProperties() {
-        DatabaseManager mgr = new DatabaseManager(adminHubConfig.getManageClient());
-        try {
-            return (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(mgr.getPropertiesAsJson("data-hub-FINAL"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      * This ensures no residue is left behind on the final database.
      */
     @AfterEach
     public void removeCustomFieldAndIndex() {
-        ObjectNode db = getFinalDatabaseProperties();
+        ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.FINAL));
 
         ArrayNode array = (ArrayNode) db.get("field");
         for (int i = 0; i < array.size(); i++) {
@@ -157,6 +149,6 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         newNode.set("range-field-index", db.get("range-field-index"));
         newNode.set("range-path-index", db.get("range-path-index"));
 
-        new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
+        new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
     }
 }
