@@ -2,7 +2,6 @@ package com.marklogic.hub.rewriter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -19,8 +18,7 @@ public class StagingRewriterTest extends AbstractHubCoreTest {
      */
     @Test
     void test() {
-        DatabaseClient client = adminHubConfig.newStagingClient();
-        JSONDocumentManager mgr = client.newJSONDocumentManager();
+        JSONDocumentManager mgr = getHubClient().getStagingClient().newJSONDocumentManager();
 
         final String uri = "/test.json";
         ObjectNode node = new ObjectMapper().createObjectNode();
