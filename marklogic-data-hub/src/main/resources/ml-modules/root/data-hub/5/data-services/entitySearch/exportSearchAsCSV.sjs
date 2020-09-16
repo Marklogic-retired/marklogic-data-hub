@@ -115,14 +115,15 @@ if (sortOrder) {
   }
 }
 const columnIdentifiers = columns.map((colName) => op.col(colName));
-let opticPlan = op.fromView(schemaName, viewName).where(ctsQry);
-if (limit) {
-  opticPlan = opticPlan.limit(limit);
-}
+// Order of the functions applied to the Optic Plan can affect the execution order, so limit must be last for proper sorting
+let opticPlan = op.fromView(schemaName, viewName).select(columnIdentifiers);
 if (orderDefinitions.length > 0) {
   opticPlan = opticPlan.orderBy(orderDefinitions);
 }
-opticPlan = opticPlan.select(columnIdentifiers);
+opticPlan = opticPlan.where(ctsQry);
+if (limit) {
+  opticPlan = opticPlan.limit(limit);
+}
 // Not using the rows REST API due to https://bugtrack.marklogic.com/55338
 let result = opticPlan.result('object');
 if (!(result instanceof Sequence)) {

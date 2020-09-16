@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.central.AbstractMvcTest;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -247,9 +249,10 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     @Test
     void testRowExportWithPathRangeQuery() throws Exception {
-        runAsDataHubDeveloper();
+        // This assumption is due to ML 9 Entity Services options not generating the range index constraints
+        assumeTrue(new Versions(getHubConfig()).getMLVersion().getMajor() == 10);
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
-        deployEntityIndexes(getHubConfig());
+        deployEntityIndexes();
 
         Customer customer1 = new Customer();
         customer1.setCustomerId(1);
