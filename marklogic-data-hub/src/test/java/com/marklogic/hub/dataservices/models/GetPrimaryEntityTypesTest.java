@@ -15,7 +15,7 @@ public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
         installReferenceModelProject().createRawCustomer(1, "Customer One");
         runFlow(new FlowInputs("echoFlow").withJobId("echoFlow-test"));
 
-        ArrayNode entityTypes = (ArrayNode) ModelsService.on(adminHubConfig.newFinalClient(null)).getPrimaryEntityTypes();
+        ArrayNode entityTypes = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
         assertEquals(2, entityTypes.size(), "Expecting an entry for Customer and for Order");
         // The order of types isn't guaranteed here
         entityTypes.forEach(entityType -> {
@@ -39,7 +39,7 @@ public class GetPrimaryEntityTypesTest extends AbstractHubCoreTest {
 
     @Test
     void noEntityModelsExist() {
-        ArrayNode entityTypes = (ArrayNode) ModelsService.on(adminHubConfig.newFinalClient(null)).getPrimaryEntityTypes();
+        ArrayNode entityTypes = (ArrayNode) ModelsService.on(getHubClient().getFinalClient()).getPrimaryEntityTypes();
         assertNotNull(entityTypes);
         assertEquals(0, entityTypes.size());
     }
