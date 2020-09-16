@@ -147,6 +147,7 @@ class FlowConverterTest extends AbstractHubCoreTest {
         assertEquals("custom", customStep2.get("stepDefinitionType").asText().toLowerCase());
         assertEquals("Customer", customStep2.get("targetEntityType").asText());
         assertEquals("json", customStep2.get("targetFormat").asText());
+        assertEquals("exists", customStep2.get("customValue").asText());
         assertEquals("generate-dictionary-custom", customStep2.get("stepId").asText());
 
         assertEquals("custom-mapping-step", customStep3.get("name").asText());

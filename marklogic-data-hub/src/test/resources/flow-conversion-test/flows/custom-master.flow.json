@@ -7,6 +7,7 @@
       "options": {
         "additionalCollections": [],
         "sourceQuery": "cts.documentQuery('/flows/CurateCustomerJSON.flow.json')",
+        "customValue": "exists",
         "targetEntity": "Customer",
         "collections": [
           "generate-dictionary"
