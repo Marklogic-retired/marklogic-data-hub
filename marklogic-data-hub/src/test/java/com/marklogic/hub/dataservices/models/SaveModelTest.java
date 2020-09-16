@@ -16,7 +16,7 @@ public class SaveModelTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        service = ModelsService.on(adminHubConfig.newFinalClient(null));
+        service = ModelsService.on(getHubClient().getFinalClient());
     }
 
     @Test
