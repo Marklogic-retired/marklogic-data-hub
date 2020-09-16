@@ -305,9 +305,13 @@ class FlowConverterTest extends AbstractHubCoreTest {
 
     private void verifyFlows(HubProject hubProject) {
         JsonNode ingMapFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingFlow.flow.json").toFile());
+        logger.info("ING: " + ingMapFlow);
         JsonNode ingMapMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("ingestionMappingMasteringFlow.flow.json").toFile());
         JsonNode custFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom_only-flow.flow.json").toFile());
         JsonNode customMasterFlow = readJsonObject(hubProject.getFlowsDir().resolve("custom-master.flow.json").toFile());
+
+        assertTrue(ingMapFlow.has("description"), "Verifying that the flow has more fields than just name and steps; this is " +
+            "part of the fix for DHFPROD-5978, with FlowConverterUnitTest covering more detail");
 
         boolean duplicateStepName = hubProject.getProjectDir().resolve("steps").resolve("ingestion").resolve("ingestionMappingFlow-ingest-step-json.step.json").toFile().exists();
         if (duplicateStepName){

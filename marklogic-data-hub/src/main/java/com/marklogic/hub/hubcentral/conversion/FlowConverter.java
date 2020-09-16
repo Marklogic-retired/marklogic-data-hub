@@ -37,6 +37,7 @@ import com.marklogic.hub.impl.MappingManagerImpl;
 import com.marklogic.hub.mapping.Mapping;
 import com.marklogic.hub.step.StepDefinition.StepDefinitionType;
 import com.marklogic.hub.step.impl.Step;
+import com.marklogic.hub.util.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.util.StringUtils;
 
@@ -144,7 +145,7 @@ public class FlowConverter extends LoggingObject {
             Map<String, Step> steps = flow.getSteps();
             logger.warn(format("Converting flow '%s'", flow.getName()));
 
-            ObjectNode newFlow = nodeFactory.objectNode();
+            ObjectNode newFlow = buildCopyOfFlow(flow);
             newFlow.put("name", flow.getName());
             ObjectNode newSteps = nodeFactory.objectNode();
             for (Map.Entry<String, Step> entry : steps.entrySet()) {
@@ -255,6 +256,28 @@ public class FlowConverter extends LoggingObject {
         logger.warn("Finished converting flows.");
         logger.warn("Please examine the converted flow and step artifact to verify their contents, particularly the collections of each step.");
         logger.warn("The conversion process ensures that steps have their step name as a collection, and that a mapping (and custom if entity name is present) step has its entity name as a collection.");
+    }
+
+    /**
+     * @param flow
+     * @return a new ObjectNode with every field from the given Flow except for "steps". Ensures that no data is lost
+     * from the flow being converted.
+     */
+    protected ObjectNode buildCopyOfFlow(Flow flow) {
+        JsonNode flowJson;
+        try {
+            flowJson = mapper.readTree(JSONObject.writeValueAsString(flow));
+        } catch (IOException ex) {
+            throw new RuntimeException(format("Unable to read existing flow %s as JSON, cause: %s", flow.getName(), ex.getMessage(), ex));
+        }
+
+        ObjectNode newFlow = mapper.createObjectNode();
+        flowJson.fieldNames().forEachRemaining(fieldName -> {
+            if (!"steps".equals(fieldName)) {
+                newFlow.set(fieldName, flowJson.get(fieldName));
+            }
+        });
+        return newFlow;
     }
 
     protected Mapping getMappingArtifact(String flowName, Step inlineStep){
