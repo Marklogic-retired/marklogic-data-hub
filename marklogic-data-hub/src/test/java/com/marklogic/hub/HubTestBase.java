@@ -75,12 +75,11 @@ public class HubTestBase extends AbstractHubTest {
     protected HubConfigInterceptor hubConfigInterceptor;
 
     /**
-     * This is a misleading name; it's really "the current HubConfig being used by tests". It's actually rarely a user
-     * with the admin role; it's most often a user with the flow-developer-role role, which has the manage-admin role.
-     * But it can be changed at any point by any test.
+     * Autowires in the HubConfig that we expect to be a proxy to enable parallel tests. Subclasses should use
+     * getHubConfig() for access to this.
      */
     @Autowired
-    protected HubConfigImpl adminHubConfig;
+    private HubConfigImpl hubConfig;
 
     // This is set when getHubClient() is called, and it should never be accessed directly.
     private HubClient hubClient;
@@ -98,7 +97,7 @@ public class HubTestBase extends AbstractHubTest {
 
     @Override
     protected HubConfigImpl getHubConfig() {
-        return adminHubConfig;
+        return hubConfig;
     }
 
     @Override
@@ -184,15 +183,13 @@ public class HubTestBase extends AbstractHubTest {
         applyMlUsernameAndMlPassword(mlUsername, mlPassword);
 
         // Re-initializes the Manage API connection
-        getHubConfig().getManageClient().setManageConfig(adminHubConfig.getManageConfig());
+        getHubConfig().getManageClient().setManageConfig(hubConfig.getManageConfig());
 
-        // Turning off CMA for resources that have bugs in ML 9.0-7/8
-        adminHubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployDatabases(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployRoles(false);
-        adminHubConfig.getAppConfig().getCmaConfig().setDeployUsers(false);
+        // We don't want this enabled for tests as some tests will just run a single command, which may result in a
+        // CMA config being constructed but not saved
+        hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
 
-        return adminHubConfig;
+        return hubConfig;
     }
 
     public void deleteProjectDir() {
@@ -450,7 +447,7 @@ public class HubTestBase extends AbstractHubTest {
     }
 
     protected ObjectNode getDatabaseProperties(String database) {
-        DatabaseManager mgr = new DatabaseManager(adminHubConfig.getManageClient());
+        DatabaseManager mgr = new DatabaseManager(hubConfig.getManageClient());
         try {
             return (ObjectNode) objectMapper.readTree(mgr.getPropertiesAsJson(database));
         } catch (IOException e) {
