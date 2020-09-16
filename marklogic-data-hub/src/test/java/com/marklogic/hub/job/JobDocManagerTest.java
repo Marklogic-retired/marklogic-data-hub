@@ -18,7 +18,7 @@ public class JobDocManagerTest extends AbstractHubCoreTest {
     @Test
     public void testGetLatestJobDocumentForFlows() {
         addJobDocs();
-        JobDocManager jobDocManager = new JobDocManager(adminHubConfig.newJobDbClient());
+        JobDocManager jobDocManager = new JobDocManager(getHubClient().getJobsClient());
 
         ArrayNode latestJobsForFlows = (ArrayNode) jobDocManager.getLatestJobDocumentForFlows(Collections.emptyList());
         Assertions.assertEquals(3, latestJobsForFlows.size(), "There should be a latest job for the 3 flows when an empty collection is passed.");
