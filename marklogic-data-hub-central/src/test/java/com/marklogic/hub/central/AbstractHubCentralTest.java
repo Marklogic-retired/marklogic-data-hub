@@ -2,8 +2,12 @@ package com.marklogic.hub.central;
 
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.FileHandle;
+import com.marklogic.hub.EntityManager;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
+import com.marklogic.hub.deploy.commands.DeployHubDatabaseCommand;
+import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.test.AbstractHubTest;
@@ -16,7 +20,11 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Intended base class for any test that wishes to connect to MarkLogic. Tests that do not have any need to connect to
@@ -123,6 +131,21 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         return testHubConfig;
     }
 
+    /**
+     * Updates the test hub config
+     *
+     * @param hubConfig
+     * @return
+     */
+    protected void setTestHubConfig(HubConfigImpl hubConfig) {
+        // Initialize a new HubConfigImpl
+        testHubConfig = hubConfig;
+        testHubConfig.setHubProject(testHubProject);
+
+        // Update the provider with a new HubClient
+        hubClientProvider.setHubClientDelegate(testHubConfig.newHubClient());
+    }
+
     protected void addStagingDoc(String resource, String uri, String... collections) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.getCollections().addAll(collections);
@@ -171,5 +194,31 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     protected void installProjectInFolder(String folderInClasspath) {
         installProjectInFolder(folderInClasspath, false);
+    }
+
+    /**
+     * Deploys indexes related to entities.
+     *
+     */
+    protected void deployEntityIndexes() {
+        HubConfigImpl originalHubConfig = getHubConfig();
+        EntityManager entityManager = new EntityManagerImpl(originalHubConfig);
+        entityManager.saveDbIndexes();
+
+        HubConfig hubConfig = runAsAdmin();
+        Path dir = hubConfig.getEntityDatabaseDir();
+        List<String> filePaths = Arrays.asList(HubConfig.FINAL_ENTITY_DATABASE_FILE, HubConfig.STAGING_ENTITY_DATABASE_FILE);
+        for (String filePath: filePaths) {
+            File dbFile = Paths.get(dir.toString(), filePath).toFile();
+            DeployHubDatabaseCommand dbCommand = new DeployHubDatabaseCommand(hubConfig, dbFile, dbFile.getName());
+            dbCommand.setMergeEntityConfigFiles(true);
+            dbCommand.setPostponeForestCreation(true);
+            dbCommand.execute(newCommandContext());
+        }
+
+        // set HubConfig back after deploying indexes
+        setTestHubConfig(originalHubConfig);
+        // Deploy Query Options
+        entityManager.deployQueryOptions();
     }
 }
