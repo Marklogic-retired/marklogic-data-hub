@@ -107,7 +107,7 @@ public class LegacyJobManagerTest extends AbstractHubCoreTest {
             .onItemComplete(flowItemCompleteListener);
         flowRunner.run();
         flowRunner.awaitCompletion();
-        jobManager = LegacyJobManager.create(adminHubConfig.newJobDbClient());
+        jobManager = LegacyJobManager.create(getHubClient().getJobsClient());
     }
 
     @AfterEach
