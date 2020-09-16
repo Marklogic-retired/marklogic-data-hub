@@ -82,7 +82,7 @@ public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
     @Test
     public void buildCommandList() {
         InstallIntoDhsCommand command = new InstallIntoDhsCommand();
-        command.hubConfig = super.adminHubConfig;
+        command.hubConfig = super.getHubConfig();
 
         Options options = new Options();
         options.setGroupNames("Evaluator,Curator");

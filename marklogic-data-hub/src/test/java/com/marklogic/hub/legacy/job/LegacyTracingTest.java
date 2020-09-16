@@ -58,7 +58,7 @@ public class LegacyTracingTest extends AbstractHubCoreTest {
             new File("src/test/resources/tracing-test/plugins"),
             new File(getHubProject().getProjectDirString() + "/plugins")
         );
-        installUserModules(adminHubConfig, true);
+        installUserModules(getHubConfig(), true);
         //Disable tracing that may have been enabled in previous tests
         LegacyTracing.create(getHubClient().getStagingClient()).disable();
      }

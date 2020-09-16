@@ -25,8 +25,8 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
     @AfterEach
     void afterEach() {
         // dhsDeployer mucks around with appConfig, so gotta reset everything
-        adminHubConfig.applyDefaultPropertyValues();
-        adminHubConfig.refreshProject();
+        getHubConfig().applyDefaultPropertyValues();
+        getHubConfig().refreshProject();
 
         resetFieldsAndIndexes();
     }
@@ -54,15 +54,15 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
     }
 
     private Database readFinalDatabase() {
-        String json = new DatabaseManager(adminHubConfig.getManageClient()).getPropertiesAsJson(adminHubConfig.getDbName(DatabaseKind.FINAL));
-        return new DefaultResourceMapper(new API(adminHubConfig.getManageClient())).readResource(json, Database.class);
+        String json = new DatabaseManager(getHubClient().getManageClient()).getPropertiesAsJson(getHubClient().getDbName(DatabaseKind.FINAL));
+        return new DefaultResourceMapper(new API(getHubClient().getManageClient())).readResource(json, Database.class);
     }
 
     private void resetFieldsAndIndexes() {
         runAsFlowDeveloper();
 
         // Wipe out all fields/indexes
-        Database db = new Database(new API(adminHubConfig.getManageClient()), adminHubConfig.getDbName(DatabaseKind.FINAL));
+        Database db = new Database(new API(getHubClient().getManageClient()), getHubClient().getDbName(DatabaseKind.FINAL));
         db.setField(new ArrayList<>());
         db.setRangeFieldIndex(new ArrayList<>());
         db.setRangePathIndex(new ArrayList<>());
