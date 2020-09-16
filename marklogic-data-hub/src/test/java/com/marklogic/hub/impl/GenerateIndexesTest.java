@@ -65,7 +65,7 @@ public class GenerateIndexesTest extends AbstractHubCoreTest {
     }
 
     private void whenTheIndexesAreBuilt() {
-        indexes = new DbConfigsManager(adminHubConfig.newReverseFlowClient()).generateIndexes(entities);
+        indexes = new DbConfigsManager(getHubConfig().newReverseFlowClient()).generateIndexes(entities);
     }
 
     private void thenTheresOnlyOneRangeIndexForTheSharedProperty(String namespace) {
