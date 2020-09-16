@@ -3,6 +3,7 @@ package com.marklogic.hub.hubcentral.conversion;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.flow.impl.FlowImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.mapping.MappingImpl;
 import com.marklogic.hub.step.StepDefinition;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -240,6 +242,20 @@ public class FlowConverterUnitTest {
         ObjectNode step = buildStepArtifact();
         assertFalse(step.has("batchSize"), "If batchSize is zero, it should be removed since that's an invalid amount");
         assertFalse(step.has("threadCount"), "If threadCount is zero, it should be removed since that's an invalid amount");
+    }
+
+    @Test
+    void buildCopyOfFlow() {
+        FlowImpl flow = new FlowImpl();
+        flow.setName("abc");
+        flow.setSteps(new HashMap<>());
+        flow.setBatchSize(20);
+        ObjectNode newFlow = converter.buildCopyOfFlow(flow);
+
+        assertEquals("abc", newFlow.get("name").asText());
+        assertFalse(newFlow.has("steps"), "Everything but steps should be copied over");
+        assertEquals(20, newFlow.get("batchSize").asInt());
+        assertEquals(0, newFlow.get("threadCount").asInt(), "threadCount is still written since it defaults to zero");
     }
 
     private ObjectNode buildStepArtifact() {
