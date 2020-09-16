@@ -32,7 +32,7 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
 
         installReferenceModelProject();
 
-        Stream.of(adminHubConfig.newStagingClient(), adminHubConfig.newFinalClient()).forEach(client -> {
+        Stream.of(getHubClient().getStagingClient(), getHubClient().getStagingClient()).forEach(client -> {
             DocumentMetadataHelper metadata = getMetadata(client, "/flows/echoFlow.flow.json");
             metadata.assertInCollection("http://marklogic.com/data-hub/flow");
             metadata.assertHasPermission("data-hub-common", DocumentMetadataHandle.Capability.READ);
@@ -64,7 +64,7 @@ public class LoadUserArtifactsWithCustomPermissionsTest extends AbstractHubCoreT
         installHubModules();
         installReferenceModelProject();
 
-        Stream.of(adminHubConfig.newStagingClient(), adminHubConfig.newFinalClient()).forEach(client -> {
+        Stream.of(getHubClient().getStagingClient(), getHubClient().getStagingClient()).forEach(client -> {
             DocumentMetadataHelper metadata = getMetadata(client, "/flows/echoFlow.flow.json");
             metadata.assertHasPermission("data-hub-flow-reader", DocumentMetadataHandle.Capability.READ);
             metadata.assertHasPermission("data-hub-flow-writer", DocumentMetadataHandle.Capability.UPDATE);

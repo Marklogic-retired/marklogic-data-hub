@@ -3,6 +3,7 @@ package com.marklogic.hub.security;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.GeospatialElementIndex;
@@ -261,7 +262,7 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
         Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
         Task task = new Task(userWithRoleBeingTestedApi, null);
         task.setTaskPath("/MarkLogic/flexrep/tasks/push-local-forests.xqy");
-        if (adminHubConfig.getIsProvisionedEnvironment()) {
+        if (getHubConfig().getIsProvisionedEnvironment()) {
             task.setGroupName("Curator");
         } else {
             task.setGroupName("Default");
@@ -326,16 +327,17 @@ public class DataHubDeveloperTest extends AbstractSecurityTest {
 
     @Test
     public void task19LoadModulesAndArtifacts() {
-        final String originalMlUsername = adminHubConfig.getMlUsername();
-        final String originalMlPassword = adminHubConfig.getMlPassword();
+        HubConfigImpl hubConfig = getHubConfig();
+        final String originalMlUsername = hubConfig.getMlUsername();
+        final String originalMlPassword = hubConfig.getMlPassword();
         try {
-            adminHubConfig.setMlUsername(userWithRoleBeingTested.getUserName());
-            adminHubConfig.setMlPassword(userWithRoleBeingTested.getPassword());
+            hubConfig.setMlUsername(userWithRoleBeingTested.getUserName());
+            hubConfig.setMlPassword(userWithRoleBeingTested.getPassword());
 
-            installUserModules(adminHubConfig, true);
+            installUserModules(hubConfig, true);
         } finally {
-            adminHubConfig.setMlUsername(originalMlUsername);
-            adminHubConfig.setMlPassword(originalMlPassword);
+            hubConfig.setMlUsername(originalMlUsername);
+            hubConfig.setMlPassword(originalMlPassword);
         }
     }
 
