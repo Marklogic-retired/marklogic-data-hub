@@ -24,7 +24,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
 
     @BeforeEach
     void beforeEach() {
-        service = ModelsService.on(adminHubConfig.newFinalClient(null));
+        service = ModelsService.on(getHubClient().getFinalClient());
     }
 
     @Test
@@ -102,8 +102,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
      * @param expectedDescription
      */
     private void verifyPersistedModels(String expectedDescription) {
-        JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
-        JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
+        JSONDocumentManager stagingMgr = getHubClient().getStagingClient().newJSONDocumentManager();
+        JSONDocumentManager finalMgr = getHubClient().getFinalClient().newJSONDocumentManager();
 
         verifyModelContents(stagingMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get(), expectedDescription);
         verifyModelContents(finalMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get(), expectedDescription);
@@ -140,8 +140,8 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
                 "    }}}]";
         service.updateModelEntityTypes(readJsonArray(entityTypes));
 
-        JSONDocumentManager stagingMgr = adminHubConfig.newStagingClient().newJSONDocumentManager();
-        JSONDocumentManager finalMgr = adminHubConfig.newFinalClient().newJSONDocumentManager();
+        JSONDocumentManager stagingMgr = getHubClient().getStagingClient().newJSONDocumentManager();
+        JSONDocumentManager finalMgr = getHubClient().getFinalClient().newJSONDocumentManager();
 
         JsonNode model = stagingMgr.read(EXPECTED_CUSTOMER_MODEL_URI, new JacksonHandle()).get();
         assertEquals("string", model.get("definitions").get(CUSTOMER_MODEL_NAME).get("properties").get("someProperty").get("datatype").asText());

@@ -19,7 +19,7 @@ public class FlowManagerImplTest extends AbstractHubCoreTest {
     public void mappingIsReferencedByAFlow() throws IOException {
         FileUtils.copyFileToDirectory(
             getResourceFile("flow-manager-test/test-flow.flow.json"),
-            adminHubConfig.getFlowsDir().toFile()
+            getHubProject().getFlowsDir().toFile()
         );
 
         assertEquals(1, flowManager.getFlows().size());

@@ -30,7 +30,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
             "-password", getHubConfig().getMlPassword(),
             "-flowName", flowName,
             // Including this to verify that -P flags don't break things
-            "-PmlStagingPort=" + adminHubConfig.getPort(DatabaseKind.STAGING)
+            "-PmlStagingPort=" + getHubConfig().getPort(DatabaseKind.STAGING)
         });
 
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
@@ -56,7 +56,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
             "-password", getHubConfig().getMlPassword(),
             "-flowName", flowName,
             // Including this to verify that -P flags don't break things
-            "-PmlStagingPort=" + adminHubConfig.getPort(DatabaseKind.STAGING),
+            "-PmlStagingPort=" + getHubConfig().getPort(DatabaseKind.STAGING),
             "-outputURIPrefix", "/output/"
         });
 
