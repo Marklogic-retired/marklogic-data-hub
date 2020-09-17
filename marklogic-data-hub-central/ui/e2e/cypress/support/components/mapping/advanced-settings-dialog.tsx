@@ -103,12 +103,17 @@ class AdvancedSettingsDialog {
   }
 
   /**
-   * Set custom hook
-   * @param hook
-   * @example {} as valid JSON string
+   * Textarea that takes a file path in fixtures and pastes the json object {} in the text area
+   * @param fixturePath - file path to customHook json config file
+   * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
-  setCustomHook(hook: string) {
-    cy.get('#customHook').type(hook);
+  setCustomHook(fixturePath: string) {
+    cy.findByText('Custom Hook').click();
+    if (fixturePath === '')
+      return cy.get('#customHook').clear();
+    else cy.fixture(fixturePath).then(content => {
+      cy.get('#customHook').clear().type(JSON.stringify(content), { parseSpecialCharSequences: false });
+    });
   }
 
   cancelSettings(stepName: string) {

@@ -1,0 +1,6 @@
+{
+    "module" : "/custom-modules/mapping/MapCustomers/customUriHook.sjs",
+    "parameters" : { },
+    "user" : "hc-test-user",
+    "runBefore" : false
+}

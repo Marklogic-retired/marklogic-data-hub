@@ -27,15 +27,15 @@ describe('Mapping', () => {
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps('ingestion', 'loadOrderProcessor');
-    cy.deleteSteps('mapping', 'mapOrderProcessor');
+    cy.deleteSteps('ingestion', 'loadOrder');
+    cy.deleteSteps('mapping', 'mapOrder');
     cy.deleteFlows( 'orderFlow');
   })
 
-  it('can create load step with processors, can create mapping step with processors, can create new flow, run both steps, and verify processors', () => {
+  it('can create load step with processors & custom hook, can create mapping step with processors & custom hook, can create new flow, run both steps, and verify processors & custom hooks', () => {
     const flowName = 'orderFlow'
-    const loadStep = 'loadOrderProcessor';
-    const mapStep = 'mapOrderProcessor';
+    const loadStep = 'loadOrder';
+    const mapStep = 'mapOrder';
     // create load step
     toolbar.getLoadToolbarIcon().click();
     cy.waitUntil(() => loadPage.stepName('ingestion-step').should('be.visible'));
@@ -48,6 +48,10 @@ describe('Mapping', () => {
 
     // add processor to load step
     advancedSettingsDialog.setStepProcessor('loadTile/orderCategoryCodeProcessor');
+
+    //add cutomHook to load step
+    advancedSettingsDialog.setCustomHook('loadTile/addPrimaryKeyHook');
+
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should('not.be.visible');
     
@@ -81,6 +85,11 @@ describe('Mapping', () => {
     // add processors
     curatePage.stepSettings(mapStep).click();
     advancedSettingsDialog.setStepProcessor('curateTile/orderDateProcessor');
+
+    // add customHook to mapping step
+    //curatePage.stepSettings(mapStep).click();
+    advancedSettingsDialog.setCustomHook('curateTile/customUriHook');
+
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should('not.be.visible');
 
@@ -112,5 +121,9 @@ describe('Mapping', () => {
     browsePage.getTableViewSourceIcon().click();
     cy.contains('mappedOrderDate');
     cy.contains('categoryCode');
+
+    //Verifying the properties added by load and mapping custom hooks respectively
+    cy.contains('primaryKey');
+    cy.contains('uriFromCustomHook');
   })
 })
