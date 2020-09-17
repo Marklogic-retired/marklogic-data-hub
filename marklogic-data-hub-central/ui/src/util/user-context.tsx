@@ -7,6 +7,7 @@ import {AuthoritiesContext} from './authorities';
 import {StompContext, STOMPState} from './stomp';
 import {resetEnvironment, setEnvironment} from '../util/environment';
 import {useInterval} from '../hooks/use-interval';
+import {MAX_SESSION_TIME} from "../config/application.config";
 
 const defaultUserData = {
   name: '',
@@ -17,7 +18,7 @@ const defaultUserData = {
     type: ''
   },
   pageRoute: '/tiles',
-  maxSessionTime: 300
+  maxSessionTime: MAX_SESSION_TIME
 }
 
 export const UserContext = React.createContext<IUserContextInterface>({
@@ -41,7 +42,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const sessionUser = localStorage.getItem('dataHubUser');
   const authoritiesService = useContext(AuthoritiesContext);
   const stompService = useContext(StompContext);
-  const sessionCount = useRef<number>(300);
+  const sessionCount = useRef<number>(MAX_SESSION_TIME);
   let sessionTimer = true;
 
   const setSessionTime = (timeInSeconds) => {

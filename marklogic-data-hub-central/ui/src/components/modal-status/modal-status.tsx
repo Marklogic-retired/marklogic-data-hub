@@ -6,7 +6,7 @@ import axios from "axios";
 import { UserContext } from '../../util/user-context';
 import { ModelingContext} from '../../util/modeling-context';
 import { useInterval } from '../../hooks/use-interval';
-import { SESSION_WARNING_COUNTDOWN } from '../../config/application.config';
+import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from '../../config/application.config';
 
 interface Props extends RouteComponentProps<any>{
 };
@@ -38,7 +38,7 @@ const ModalStatus: React.FC<Props> = (props) => {
   const [sessionWarning, setSessionWarning] = useState(false);
   const location = useLocation();
   const history = useHistory();
-  let sessionCount = 300;
+  let sessionCount = MAX_SESSION_TIME;
 
   useEffect(() => {
     if (user.error.type === 'MODAL') {
