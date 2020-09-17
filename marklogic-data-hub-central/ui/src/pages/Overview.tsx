@@ -1,11 +1,42 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styles from './Overview.module.scss';
+import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLongArrowAltRight, faCube, faCubes, faObjectUngroup, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
 
+interface Props {
+    enabled: any;
+}
 
-const Overview = (props) => {
+const Overview: React.FC<Props> = (props) => {
+
+    const history: any = useHistory();
+
+    const goToTile = (id) => {
+        if (props.enabled && props.enabled.includes(id)) {
+            history.push({
+                pathname: `/tiles/${id}`,
+                state: {
+                    tileIconClicked : true
+                }
+            })
+        }
+    }
+
+    const getClassNames = (id) => {
+        const nameMap = {
+            'load': 'cardLoad',
+            'model': 'cardModel',
+            'curate': 'cardCurate',
+            'explore': 'cardExplore',
+            'run': 'cardRun'
+        }
+        if (props.enabled && props.enabled.includes(id)) {
+            return `${styles[nameMap[id]]} ${styles.enabled}`;
+        } else {
+            return `${styles[nameMap[id]]} ${styles.disabled}`
+        }
+    }
 
     return (
         <div className={styles.overviewContainer} aria-label="overview">
@@ -17,49 +48,65 @@ const Overview = (props) => {
             </div>
             <div className={styles.cardsContainer}>
                 <div className={styles.cards}>
-                    <div className={styles.cardLoad}>
+                    <div className={getClassNames('load')} onClick={() => {goToTile('load')}} aria-label={'load-card'}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
                             <i aria-label="load-icon"><FontAwesomeIcon icon={faLongArrowAltRight} /></i>Load
                         </div>
-                        <div className={styles.body}>Ingest raw data from multiple file types.</div>
+                        <div className={styles.body}>Ingest raw data from multiple file types.
+                            { props.enabled && !props.enabled.includes('load') &&
+                            <div className={styles.permissions}><span>*</span>additional permissions required</div> }
+                        </div>
                     </div>
                     
-                    <div className={styles.cardModel}>
+                    <div className={getClassNames('model')} onClick={() => {goToTile('model')}} aria-label={'model-card'}>
                         <div className={styles.head}></div>
                         <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
                             <i aria-label="model-icon"><FontAwesomeIcon icon={faCube} /></i>Model
                         </div>
-                        <div className={styles.body}>Define entity types to describe curated data.</div>
+                        <div className={styles.body}>Define entity types to describe curated data.
+                            { props.enabled && !props.enabled.includes('model') &&
+                            <div className={styles.permissions}><span>*</span>additional permissions required</div> }
+                        </div>
                     </div>
                     
-                    <div className={styles.cardCurate}>
+                    <div className={getClassNames('curate')} onClick={() => {goToTile('curate')}} aria-label={'curate-card'}>
                         <div className={styles.head}></div>
                         <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
                             <i aria-label="curate-icon"><FontAwesomeIcon icon={faObjectUngroup} /></i>Curate
                         </div>
-                        <div className={styles.body}>Create a 360º view.</div>
+                        <div className={styles.body}>Create a 360º view.
+                            { props.enabled && !props.enabled.includes('curate') &&
+                            <div className={styles.permissionsCurate}><span>*</span>additional permissions required</div> }
+                        </div>
                     </div>
-                    
-                    <div className={styles.cardExplore}>
+
+                    <div className={getClassNames('explore')} onClick={() => {goToTile('explore')}} aria-label={'explore-card'}>
                         <div className={styles.head}>
                             <span className={styles.icon} aria-label="explore-icon"></span> 
                             <div className={styles.subtitle}>Explore</div>
-                            <div className={styles.body}>Search through curated data.</div>
+                            <div className={styles.body}>Search through curated data.
+                                { props.enabled && !props.enabled.includes('explore') &&
+                                <div className={styles.permissionsExplore}><span>*</span>additional permissions required</div> }
+                            </div>
                         </div>
                     </div>
                     
-                    <div className={styles.cardRun}>
+                    <div className={getClassNames('run')} onClick={() => {goToTile('run')}} aria-label={'run-card'}>
                         <div className={styles.head}>
                             <span className={styles.icon}></span> 
                             <div className={styles.subtitle}>
                                 <i aria-label="run-icon"><FontAwesomeIcon icon={faCubes} /></i>Run
                             </div>
-                            <div className={styles.body}>Arrange steps into data flows to test loading and curation.</div>
+                            <div className={styles.body}>Arrange steps into data flows to test loading and curation.
+                                { props.enabled && !props.enabled.includes('run') &&
+                                <div className={styles.permissionsRun}><span>*</span>additional permissions required</div> }
+                            </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
