@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import styles from './toolbar.module.scss';

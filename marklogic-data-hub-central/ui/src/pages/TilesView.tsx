@@ -118,7 +118,7 @@ const TilesView = (props) => {
                     />
                     ) : null }
                 </div> ) :
-                <Overview/>
+                <Overview enabled={enabled}/>
             }
 
         </>
