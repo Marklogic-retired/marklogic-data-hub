@@ -13,26 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.cloud.aws.glue.Writer;
+package com.marklogic.hub.spark.sql.sources.v2;
 
+import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriterFactory;
+import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
+import org.apache.spark.sql.sources.v2.DataSourceOptions;
+import org.apache.spark.sql.sources.v2.WriteSupport;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
 import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.apache.spark.sql.types.StructType;
 
 import java.util.Map;
+import java.util.Optional;
 
-public class MarkLogicWriter implements DataSourceWriter {
+public class HubDataSource extends LoggingObject implements WriteSupport {
+
+    @Override
+    public Optional<DataSourceWriter> createWriter(String writeUUID, StructType schema, SaveMode mode, DataSourceOptions options) {
+        logger.info("Creating HubDataSourceWriter");
+        return Optional.of(new HubDataSourceWriter(options.asMap(), schema){
+
+        });
+    }
+}
+class HubDataSourceWriter implements DataSourceWriter {
     private Map<String, String> map;
     private StructType schema;
-    public MarkLogicWriter(Map<String, String> map, StructType schema) {
+    public HubDataSourceWriter(Map<String, String> map, StructType schema) {
         this.map = map;
         this.schema = schema;
     }
     @Override
     public DataWriterFactory<InternalRow> createWriterFactory() {
-        return new MarkLogicDataWriterFactory(map, this.schema);
+        return new HubDataWriterFactory(map, this.schema);
     }
 
     @Override

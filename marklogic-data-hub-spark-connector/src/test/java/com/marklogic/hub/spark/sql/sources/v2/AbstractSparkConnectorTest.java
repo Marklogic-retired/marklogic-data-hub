@@ -1,4 +1,4 @@
-package com.marklogic.hub.cloud.aws.glue;
+package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.impl.HubConfigImpl;
@@ -13,7 +13,7 @@ import java.util.Properties;
 /**
  * Base class for all glue-connector tests.
  */
-public abstract class AbstractGlueConnectorTest extends AbstractHubTest {
+public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
 
     private HubConfigImpl hubConfig;
     private HubClient hubClient;
