@@ -1,0 +1,15 @@
+{
+  "role-name": "hc-custom-role",
+  "description": "Test out custom roles",
+  "role": [
+    "hub-central-user",
+    "hub-central-entity-model-reader",
+    "hub-central-load-reader",
+    "hub-central-mapping-reader",
+    "hub-central-custom-reader",
+    "hub-central-step-runner",
+    "hub-central-saved-query-user",
+    "hub-central-entity-exporter"
+  ],
+  "privilege": []
+}

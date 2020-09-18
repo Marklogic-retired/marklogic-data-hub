@@ -3,11 +3,16 @@
     "video": true,
     "viewportWidth": 1680,
     "viewportHeight": 1050,
+    "numTestsKeptInMemory": 1,
     "defaultCommandTimeout": 10000,
     "reporter": "junit",
     "reporterOptions": {
       "mochaFile": "results/cypress-report[hash].xml",
       "toConsole": true
+    },
+    "retries": {
+      "runMode": 2,
+      "openMode": 0
     },
     "env": {
       "mlHost": "localhost"
