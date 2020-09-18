@@ -67,6 +67,7 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         input.put("name", MODEL_NAME);
         JsonNode model = controller.createModel(input).getBody();
         assertEquals(MODEL_NAME, model.get("info").get("title").asText());
+        assertSearchOptions(MODEL_NAME, Assertions::assertTrue, true);
 
         // Create a customer in final so we have a way to verify the entity instance count
         new ReferenceModelProject(getHubClient()).createCustomerInstance(new Customer(1, "Jane"));
