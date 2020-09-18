@@ -20,8 +20,11 @@ then
         ./gradlew hubDeploy -PenvironmentName=$env --info --stacktrace
 else
         cp ../cypress/fixtures/users/* src/main/ml-config/security/users/
+        cp ../cypress/fixtures/roles/* src/main/ml-config/security/roles/
 
         ./gradlew mlDeploy -PmlUsername=admin -PmlPassword=admin --info --stacktrace
+        # clean up custom roles so they don't break hubDeploy since roles were created by admin
+        rm -R src/main/ml-config/security/roles/
         ./gradlew hubDeploy --info --stacktrace
 fi
 

@@ -58,7 +58,7 @@ class CuratePage {
      */
     verifyTabs(entityTypeId: string, mapTabShould: string, customTabShould: string) {
         cy.findByTestId(`${entityTypeId}-Map`).should(mapTabShould);
-        cy.findByTestId(`${entityTypeId}-Cusstom`).should(customTabShould);
+        cy.findByTestId(`${entityTypeId}-Custom`).should(customTabShould);
     }
 
     addNewMapStep() {
