@@ -59,13 +59,18 @@ class AdvancedSettingsDialog {
   }
 
   /**
-   * Set custom header content
-   * @param headerContent
-   * @example {} as valid JSON string
+   * Textarea that takes a file path in fixtures and pastes the {} in the text area
+   * @param fixturePath - file path to stepProcessor json config file
+   * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
-  setHeaderContent(headerContent: string) {
-    return cy.get('#headers').type(headerContent);
+  setHeaderContent(fixturePath: string) {
+    if(fixturePath === '')
+        return cy.get('#headers').clear();
+    else cy.fixture(fixturePath).then(content => {
+        cy.get('#headers').clear().type(JSON.stringify(content), { parseSpecialCharSequences: false });
+    });
   }
+
 
   toggleProcessors() {
     cy.findByText('Processors').click();
