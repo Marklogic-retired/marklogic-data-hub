@@ -147,6 +147,9 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
     } else {
       nb.startElement("instance", "http://marklogic.com/entity-services");
       nb.startElement("info", "http://marklogic.com/entity-services");
+      nb.startElement("baseUri", "http://marklogic.com/entity-services");
+      nb.addText(entityInfo.baseUri);
+      nb.endElement();
       nb.startElement("title", "http://marklogic.com/entity-services");
       nb.addText(entityInfo.title);
       nb.endElement();
