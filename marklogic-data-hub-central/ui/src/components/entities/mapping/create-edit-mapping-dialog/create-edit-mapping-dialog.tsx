@@ -392,7 +392,7 @@ const CreateEditMappingDialog = (props) => {
             id="collList"
             //mode="tags"
             className={styles.input}
-            placeholder="Please select"
+            placeholder="Enter collection name"
             value={collections}
             disabled={!props.canReadWrite}
             onChange={handleChange}
@@ -402,7 +402,7 @@ const CreateEditMappingDialog = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
-            placeholder="Enter Source Query"
+            placeholder="Enter source query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
