@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.marklogic.hub.cloud.aws.glue.Writer;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class MarkLogicDataWriter extends LoggingObject implements DataWriter<InternalRow> {
+public class HubDataWriter extends LoggingObject implements DataWriter<InternalRow> {
 
     private List<String> records;
     private InputEndpoint.BulkInputCaller loader;
@@ -49,7 +49,7 @@ public class MarkLogicDataWriter extends LoggingObject implements DataWriter<Int
      * @param schema
      * @param params contains all the params provided by Spark, which will include all connector-specific properties
      */
-    public MarkLogicDataWriter(HubClient hubClient, long taskId, StructType schema, Map<String, String> params) {
+    public HubDataWriter(HubClient hubClient, long taskId, StructType schema, Map<String, String> params) {
         this.records = new ArrayList<>();
         this.schema = schema;
         this.batchSize = params.containsKey("batchsize") ? Integer.parseInt(params.get("batchsize")) : 100;

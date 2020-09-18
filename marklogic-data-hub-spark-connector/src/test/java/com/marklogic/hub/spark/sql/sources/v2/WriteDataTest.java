@@ -1,8 +1,7 @@
-package com.marklogic.hub.cloud.aws.glue;
+package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.io.JacksonHandle;
-import com.marklogic.hub.cloud.aws.glue.Writer.MarkLogicWriteDataSource;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
@@ -23,7 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WriteDataTest extends AbstractGlueConnectorTest {
+public class WriteDataTest extends AbstractSparkConnectorTest {
 
     private final static StructType SCHEMA = new StructType(new StructField[]{
         new StructField("fruitName", DataTypes.StringType, true, Metadata.empty()),
@@ -59,7 +58,7 @@ public class WriteDataTest extends AbstractGlueConnectorTest {
      * @return
      */
     private DataWriter<InternalRow> buildDataWriter(String batchSize, String uriPrefix) {
-        MarkLogicWriteDataSource dataSource = new MarkLogicWriteDataSource();
+        HubDataSource dataSource = new HubDataSource();
         final String writeUUID = "doesntMatter";
         final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
 
