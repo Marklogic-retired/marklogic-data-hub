@@ -1,0 +1,24 @@
+{
+  "OrderID" : "10260",
+  "CustomerID" : "Jill",
+  "EmployeeID" : "11",
+  "OrderDate" : "2000-07-30T02:11:50",
+  "RequiredDate" : "2020-08-12T09:52:09",
+  "ShippedDate" : "2020-07-17T00:28:30",
+  "ShipVia" : "2",
+  "Freight" : "18.9700",
+  "ShipName" : "Jill Park",
+  "ShipAddress" : "500 Fourth Street",
+  "ShipCity" : "San Francisco",
+  "ShipRegion" : [ "region2", "region4" ],
+  "ShipPostalCode" : "94520-363",
+  "ShipCountry" : "USA",
+  "OrderDetails" : [
+    {
+      "ProductID" : "12",
+      "UnitPrice" : "54.4000",
+      "Quantity" : "99",
+      "Discount" : "0"
+    }
+  ]
+}
