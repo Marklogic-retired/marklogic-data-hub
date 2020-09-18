@@ -81,7 +81,13 @@ public class ModelController extends BaseController {
     @ApiImplicitParam(required = true, paramType = "body", dataType = "CreateModelInput")
     @Secured("ROLE_writeEntityModel")
     public ResponseEntity<JsonNode> createModel(@RequestBody @ApiParam(hidden = true) JsonNode input) {
-        return new ResponseEntity<>(newService().createModel(input), HttpStatus.CREATED);
+        JsonNode modelNode = newService().createModel(input);
+
+        JsonNode modelConfigNode = newService().generateModelConfig();
+        logger.info("Deploying search options");
+        deploySearchOptions(modelConfigNode);
+
+        return new ResponseEntity<>(modelNode, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{modelName}/info", method = RequestMethod.PUT)
