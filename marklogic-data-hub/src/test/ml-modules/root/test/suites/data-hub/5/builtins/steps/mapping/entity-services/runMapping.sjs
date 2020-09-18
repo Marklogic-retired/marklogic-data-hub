@@ -39,7 +39,8 @@ function runMappingJsonToXml() {
       test.assertEqual('/test.xml', fn.string(result.uri)),
       test.assertEqual('2019-12-07', fn.string(instance.xpath('*:OrderType/*:purchaseDate'))),
       test.assertEqual(165.05, fn.number(instance.xpath('*:OrderType/*:orderCost'))),
-      test.assertEqual('Female', fn.string(instance.xpath('*:OrderType/*:customer/*:CustomerType/*:gender')), `Ge`)
+      test.assertEqual('Female', fn.string(instance.xpath('*:OrderType/*:customer/*:CustomerType/*:gender')), `Ge`),
+      test.assertEqual('http://marklogic.com/data-hub/example/', fn.string(instance.xpath('*:info/*:baseUri')), `Base URI should be set in the mapped XML`)
     ]);
   } catch (e) {
     assertions.push(
