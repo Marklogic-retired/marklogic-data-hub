@@ -15,7 +15,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
     expect(getByLabelText('Collection')).toBeInTheDocument();
     expect(getByLabelText('Query')).toBeInTheDocument();
-    expect(getByPlaceholderText('Please select')).toBeInTheDocument();
+    expect(getByPlaceholderText('Enter collection name')).toBeInTheDocument();
     expect(getByText('Save')).toBeDisabled();
     expect(getByText('Cancel')).toBeEnabled();
     //Collection radio button should be selected by default
@@ -26,7 +26,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
-    const collInput = getByPlaceholderText('Please select');
+    const collInput = getByPlaceholderText('Enter collection name');
 
     // Enter the value for name input.
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
@@ -62,7 +62,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     fireEvent.change(collInput, { target: {value: ''}});
     expect(saveButton).toBeDisabled(); // Checking if the Save button is disabled again , before updating the value for Query.
     fireEvent.click(getByLabelText('Query'));  //updating the value of Query field now.
-    const queryInput = getByPlaceholderText('Enter Source Query');
+    const queryInput = getByPlaceholderText('Enter source query');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
     expect(saveButton).toBeEnabled(); //Should be disabled since neither Query nor Collection field has any value.
 
@@ -76,7 +76,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
 
     const descInput = getByPlaceholderText('Enter description');
-    const collInput = getByPlaceholderText('Please select');
+    const collInput = getByPlaceholderText('Enter collection name');
     const saveButton = getByText('Save');
     saveButton.onclick = jest.fn();
 
@@ -86,7 +86,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(collInput).toHaveValue('testCollection');
 
     fireEvent.click(getByLabelText('Query'));
-    const queryInput = getByPlaceholderText('Enter Source Query');
+    const queryInput = getByPlaceholderText('Enter source query');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
     expect(queryInput).toHaveTextContent('cts.collectionQuery(["testCollection"])');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery("testCollection")'}});
@@ -151,10 +151,10 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByPlaceholderText('Enter description')).toHaveValue('Description of testMap');
 
     expect(getByLabelText('Collection')).toBeChecked();
-    expect(getByPlaceholderText('Please select')).toHaveValue('map-collection');
+    expect(getByPlaceholderText('Enter collection name')).toHaveValue('map-collection');
 
     fireEvent.click(getByLabelText('Query'));
-    expect(getByPlaceholderText('Enter Source Query')).toHaveTextContent("cts.collectionQuery(['map-collection'])");
+    expect(getByPlaceholderText('Enter source query')).toHaveTextContent("cts.collectionQuery(['map-collection'])");
 
     expect(getByText('Save')).toBeEnabled();
     expect(getByText('Cancel')).toBeEnabled();
@@ -170,7 +170,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByLabelText('Collection')).toBeChecked();
     expect(getByLabelText('Collection')).toBeDisabled();
     expect(getByLabelText('Query')).toBeDisabled();
-    expect(getByPlaceholderText('Please select')).toBeDisabled();
+    expect(getByPlaceholderText('Enter collection name')).toBeDisabled();
 
     expect(getByText('Save')).toBeDisabled();
     expect(getByText('Cancel')).toBeEnabled();

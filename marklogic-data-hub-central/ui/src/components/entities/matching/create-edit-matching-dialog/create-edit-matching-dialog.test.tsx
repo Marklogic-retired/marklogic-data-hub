@@ -17,7 +17,7 @@ describe('Create/Edit Matching artifact component', () => {
         expect(getByLabelText('Collection')).toBeChecked();
         expect(getByLabelText('Collection')).toBeDisabled();
         expect(getByLabelText('Query')).toBeDisabled();
-        expect(getByPlaceholderText('Please select')).toBeDisabled();
+        expect(getByPlaceholderText('Enter collection name')).toBeDisabled();
 
         expect(getByText('Save')).toBeDisabled();
         expect(getByText('Cancel')).toBeEnabled();
@@ -32,7 +32,7 @@ describe('Create/Edit Matching artifact component', () => {
         expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
         expect(getByLabelText('Collection')).toBeInTheDocument();
         expect(getByLabelText('Query')).toBeInTheDocument();
-        expect(getByPlaceholderText('Please select')).toBeInTheDocument();
+        expect(getByPlaceholderText('Enter collection name')).toBeInTheDocument();
         expect(getByText('Save')).toBeDisabled();
         expect(getByText('Cancel')).toBeEnabled();
         //Collection radio button should be selected by default
@@ -57,7 +57,7 @@ describe('Create/Edit Matching artifact component', () => {
         const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMatchingDialog {...data.newMatching} />);
 
         const descInput = getByPlaceholderText('Enter description');
-        const collInput = getByPlaceholderText('Please select');
+        const collInput = getByPlaceholderText('Enter collection name');
         expect(collInput).toBeInTheDocument();
         const saveButton = getByText('Save');
         saveButton.onclick = jest.fn();
@@ -67,7 +67,7 @@ describe('Create/Edit Matching artifact component', () => {
         fireEvent.change(collInput, { target: {value: 'testCollection'}});
         expect(collInput).toHaveValue('testCollection');
         fireEvent.click(getByLabelText('Query'));
-        const queryInput = getByPlaceholderText('Enter Source Query');
+        const queryInput = getByPlaceholderText('Enter source query');
         fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
         expect(queryInput).toHaveTextContent('cts.collectionQuery(["testCollection"])');
         fireEvent.click(saveButton);
@@ -118,10 +118,10 @@ describe('Create/Edit Matching artifact component', () => {
         expect(getByPlaceholderText('Enter description')).toHaveValue('Description of testMatching');
 
         expect(getByLabelText('Collection')).toBeChecked();
-        expect(getByPlaceholderText('Please select')).toHaveValue('matching-collection');
+        expect(getByPlaceholderText('Enter collection name')).toHaveValue('matching-collection');
 
         fireEvent.click(getByLabelText('Query'));
-        expect(getByPlaceholderText('Enter Source Query')).toHaveTextContent("cts.collectionQuery(['matching-collection'])");
+        expect(getByPlaceholderText('Enter source query')).toHaveTextContent("cts.collectionQuery(['matching-collection'])");
 
         expect(getByText('Save')).toBeEnabled();
         expect(getByText('Cancel')).toBeEnabled();
