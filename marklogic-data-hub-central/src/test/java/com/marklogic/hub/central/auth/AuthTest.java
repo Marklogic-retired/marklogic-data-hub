@@ -42,6 +42,14 @@ class AuthTest extends AbstractMvcTest {
     }
 
     @Test
+    void loginWithSecurityAdmin() throws Exception {
+        String payload = buildLoginPayload(testConstants.SECURITY_ADMIN);
+        mockMvc
+            .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
     void loginWithDataHubManagerAndLogout() throws Exception {
         loginAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME).andDo(
             result -> {

@@ -17,7 +17,6 @@ package com.marklogic.hub.central.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
@@ -38,11 +37,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
         String json = node.toString();
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        if (exception instanceof InsufficientAuthenticationException) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write(json);
     }
 }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -26,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class LoginHandler implements AuthenticationSuccessHandler {
 
@@ -45,28 +43,45 @@ public class LoginHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse httpResponse, Authentication authentication) throws IOException {
         AuthenticationToken token = (AuthenticationToken) authentication;
-
+        Collection<GrantedAuthority> grantedAuthorities = token.getAuthorities();
+        final boolean[] hasLoginAuthority = {false};
         ObjectMapper mapper = new ObjectMapper();
 
         ObjectNode jsonResponse = mapper.createObjectNode();
 
         List<TextNode> authorities = new ArrayList<>();
-        token.getAuthorities().forEach(auth -> {
+
+        grantedAuthorities.forEach(auth -> {
             String authority = auth.getAuthority();
             if (authority.length() > 5) { //trim prefix "ROLE_"
-                authorities.add(new TextNode(auth.getAuthority().substring(5, authority.length())));
+                String authorityName = authority.substring(5);
+                hasLoginAuthority[0] = ("loginToHubCentral".equals(authorityName)) || hasLoginAuthority[0];
+                authorities.add(new TextNode(authorityName));
             }
         });
-        jsonResponse.putArray("authorities").addAll(authorities);
 
-        clearAuthenticationAttributes(request);
+        if (!hasLoginAuthority[0]) {
+            sendUnauthorizedResponse(httpResponse);
+        }
+        else{
+            jsonResponse.putArray("authorities").addAll(authorities);
+            clearAuthenticationAttributes(request);
+            httpResponse.setContentType("application/json");
+            httpResponse.getOutputStream().write(mapper.writeValueAsBytes(jsonResponse));
+            // Creating a random UUID for session monitoring via WebSockets
+            HttpSession session = request.getSession();
+            session.setAttribute("hubCentralSessionToken", UUID.randomUUID().toString());
+        }
+    }
 
-        httpResponse.setContentType("application/json");
-        httpResponse.getOutputStream().write(mapper.writeValueAsBytes(jsonResponse));
-
-        // Creating a random UUID for session monitoring via WebSockets
-        HttpSession session = request.getSession();
-        session.setAttribute("hubCentralSessionToken", UUID.randomUUID().toString());
+    private void sendUnauthorizedResponse(HttpServletResponse response) throws IOException{
+        ObjectNode node = new ObjectMapper().createObjectNode();
+        node.put("message", "User doesn't have necessary privileges to access Hub Central");
+        String json = node.toString();
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getWriter().write(json);
     }
 
     private void clearAuthenticationAttributes(HttpServletRequest request) {
