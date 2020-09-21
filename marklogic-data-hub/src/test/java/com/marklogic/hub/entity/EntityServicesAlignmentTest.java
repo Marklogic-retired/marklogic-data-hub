@@ -1,5 +1,6 @@
 package com.marklogic.hub.entity;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
@@ -9,29 +10,31 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.row.RowManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
 
     private static final String TDE_COLLECTION = "http://marklogic.com/xdmp/tde";
+    ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
     void beforeEach() {
         runAsFlowDeveloper();
+        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
+        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
     }
 
     @Test
     public void testDeployTDEWithNoEntities() {
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
-
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
@@ -42,10 +45,48 @@ public class EntityServicesAlignmentTest extends AbstractHubCoreTest {
     }
 
     @Test
-    public void testDeployTDE() throws Exception {
-        getDataHub().clearDatabase(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME);
-        getDataHub().clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
+    public void testDeployInvalidEntity() {
+        String entity = "{\n" +
+            "  \"info\": {\n" +
+            "    \"title\": \"Customer\",\n" +
+            "    \"version\": \"0.0.1\",\n" +
+            "    \"baseUri\": \"http://example.org/\""+
+            "  },\n" +
+            "  \"definitions\": {\n" +
+            "    \"Customer\": {\n" +
+            "      \"properties\": {\n" +
+            "        \"customerId\": {\n" +
+            "          \"datatype\": \"integer\"\n" +
+            "        },\n" +
+            "        \"name\": {\n" +
+            "          \"datatype\": \"string\",\n" +
+            "          \"collation\": \"http://marklogic.com/collation/codepoint\"\n" +
+            "        },\n" +
+            "        \"shipping\": {\n" +
+            "          \"datatype\": \"array\",\n" +
+            "          \"items\": {\n" +
+            "            \"$ref\": \"#/definitions/Address\"\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  }\n" +
+            "}";
+        File entityFile = getHubProject().getHubEntitiesDir().resolve("Customer.entity.json").toFile();
+        System.out.println(entity);
+        try {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(entityFile,  mapper.readTree(entity));
+            installUserArtifacts();
+            fail("Cannot insert invalid entity, expect an exception to be thrown");
+        } catch (Exception e) {
+            logger.info("Caught expected exception due to invalid entity: " + e.getMessage());
+        }
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
+    }
 
+    @Test
+    public void testDeployTDE() throws Exception {
         assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_SCHEMAS_DB_NAME, TDE_COLLECTION));
         assertEquals(0, getDocCount(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME, TDE_COLLECTION));
 
