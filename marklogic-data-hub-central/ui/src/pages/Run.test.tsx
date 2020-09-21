@@ -725,13 +725,25 @@ describe('Verify Add Step function', () => {
 
     })
 
-    test('Verify a flow panel that is closed when a step is added to it is then opened', async () => {
+    test('Verify a flow panel that is closed reopens when a step is added to it', async () => {
         mocks.runAddStepAPI(axiosMock);
-        const { getByText, getByLabelText, queryByText } = await render(<MemoryRouter>
+        axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
+        const { getByText, getByLabelText, queryByText, getByPlaceholderText, getAllByText } = await render(<MemoryRouter>
             <AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider>
         </MemoryRouter>);
 
-        // Panel is closed
+        //Create a flow
+        const newFlowValues = { name: 'newFlow', description: 'newFlow description'};
+        fireEvent.click(getByText('Create Flow'));
+        await(waitForElement(() => getByText('Name:')));
+        fireEvent.change(getByPlaceholderText('Enter name'), { target: { value: newFlowValues.name }});
+        fireEvent.change(getByPlaceholderText('Enter description'), { target: { value: newFlowValues.description }});
+        fireEvent.click(getByLabelText('Save'));
+        await wait(() => {
+            expect(axiosMock.post).toHaveBeenNthCalledWith(1, '/api/flows', { name: newFlowValues.name, description: newFlowValues.description});
+        })
+
+        // Panel is closed after a new flow is created
         expect(queryByText(data.flows.data[0].steps[1].stepName)).not.toBeInTheDocument();
 
         // Click to open Add Step menu and click a step
@@ -745,11 +757,26 @@ describe('Verify Add Step function', () => {
         let confirm = getByLabelText('Yes');
         fireEvent.click(confirm);
         await wait(() => {
-            expect(axiosMock.post).toHaveBeenNthCalledWith(1, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data['ingestionSteps'][0].name});
+            expect(axiosMock.post).toHaveBeenNthCalledWith(2, `/api/flows/${data.flows.data[0].name}/steps`, {"stepDefinitionType": "ingestion", "stepName": data.steps.data['ingestionSteps'][0].name});
         })
 
         // Panel is open
         expect(getByText(data.flows.data[0].steps[1].stepName)).toBeInTheDocument();
+
+        //Run a step
+        let steps = data.flows.data[0].steps;
+        let runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
+        fireEvent.click(runButton);
+        expect(await(waitForElement(() => getAllByText("Running...")[0]))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText((content, node) => {
+            return getSubElements(content, node,`The mapping step ${steps[1].stepName} completed successfully`)
+        })))).toBeInTheDocument();
+        expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
+
+        fireEvent.click(getByText('Close'));
+
+        //expect panel to still be open after step is run
+        expect(getAllByText(data.flows.data[0].steps[1].stepName)).toHaveLength(2);
 
     })
 
