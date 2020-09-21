@@ -116,7 +116,7 @@ const Run = (props) => {
             let response = await axios.post(`/api/flows`, newFlow);
             if (response.status === 201) {
                 setIsLoading(false);
-                setNewFlowName(payload.name);
+                setNewFlowName("");
             }
         }
         catch (error) {
