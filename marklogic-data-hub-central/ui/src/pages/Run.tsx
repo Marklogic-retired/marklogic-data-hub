@@ -344,6 +344,7 @@ const Run = (props) => {
 
     // POST /flows​/{flowId}​/steps​/{stepId}
     const runStep = async (flowId, stepDetails, formData) => {
+        setNewFlowName('');
         const stepNumber = stepDetails.stepNumber;
         const stepName = stepDetails.stepName;
         const stepType = stepDetails.stepDefinitionType;
