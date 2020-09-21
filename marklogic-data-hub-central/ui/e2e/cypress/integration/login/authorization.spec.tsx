@@ -200,7 +200,7 @@ describe('login', () => {
 
   it('should redirect to /tiles/explore when uri is undefined for /detail view bookmark', () => {
       let host = Cypress.config().baseUrl
-      cy.visit(`${host}/?from=%2Ftiles%2Fexplore%2Fdetail`)
+      cy.visit(`${host}?from=%2Ftiles%2Fexplore%2Fdetail`)
       loginPage.getUsername().type('hc-test-user');
       loginPage.getPassword().type('password');
       loginPage.getLoginButton().click();
@@ -212,7 +212,7 @@ describe('login', () => {
   it('should redirect a bookmark to login screen when not authenticated', () => {
       let host = Cypress.config().baseUrl
       //URL from bookmark
-      cy.visit(`${host}/?from=%2Ftiles%2Fcurate`)
+      cy.visit(`${host}?from=%2Ftiles%2Fcurate`)
       //Redirected to login
       loginPage.getUsername().type('hc-developer');
       loginPage.getPassword().type('password');
