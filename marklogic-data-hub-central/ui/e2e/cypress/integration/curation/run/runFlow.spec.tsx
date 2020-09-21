@@ -43,6 +43,8 @@ describe('Run Tile tests', () => {
         browsePage.getFacetItemCheckbox('collection', 'sm-Person-merged').click();
         browsePage.getGreySelectedFacets('sm-Person-merged').should('exist');
         browsePage.getFacetApplyButton().click();
+        //comment below line if there is alternate solution for DHFPROD-5878
+        browsePage.getMosaicContainer().scrollTo('top');
         browsePage.getTotalDocuments().should('be', 2);
         browsePage.getSourceViewIcon().first().click();
         cy.waitForAsyncRequest();
