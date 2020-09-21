@@ -676,7 +676,7 @@ const SourceToEntityMap = (props) => {
             }else{
                 return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
             }
-            
+
         } else {
             return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, 14, '...')}</span>;
         }
@@ -1177,7 +1177,7 @@ const SourceToEntityMap = (props) => {
                         Clear
                     </MLButton>
                 &nbsp;&nbsp;
-                <MLButton id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
+                <MLButton className={styles.btn_test} id="Test-btn" mat-raised-button="true" type="primary" disabled={emptyData || mapExpTouched} onClick={() => getMapValidationResp(srcURI)}>
                         Test
                     </MLButton>
             </span>
