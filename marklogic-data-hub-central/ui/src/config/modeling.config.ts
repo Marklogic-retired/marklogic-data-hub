@@ -1,11 +1,11 @@
 export const COMMON_PROPERTY_TYPES = [
   {
-    label: 'integer',
-    value: 'integer'
-  },
-  {
     label: 'string',
     value: 'string'
+  },
+  {
+    label: 'integer',
+    value: 'integer'
   },
   {
     label: 'dateTime',
