@@ -34,6 +34,7 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
     private HubClient hubClient;
     private Map<String, String> params;
 
+
     /**
      * @param params a map of parameters containing both DHF-supported properties (most likely prefixed with ml* or
      *               hub*) and connector-specific properties. The DHF-supported properties will be used to construct a
@@ -43,13 +44,7 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
     public HubDataWriterFactory(Map<String, String> params, StructType schema) {
         this.params = params;
         this.schema = schema;
-
-        Properties props = new Properties();
-        params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
-        logger.info("Creating HubClient for host: " + props.getProperty("mlHost"));
-        HubConfigImpl hubConfig = new HubConfigImpl();
-        hubConfig.registerLowerCasedPropertyConsumers();
-        hubConfig.applyProperties(new SimplePropertySource(props));
+        HubConfigImpl hubConfig = buildHubConfig(params);
         this.hubClient = hubConfig.newHubClient();
     }
 
@@ -59,5 +54,19 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
             logger.debug("Creating DataWriter with taskId: " + taskId);
         }
         return new HubDataWriter(hubClient, taskId, schema, params);
+    }
+
+    protected HubConfigImpl buildHubConfig(Map<String, String> params) {
+        Properties props = new Properties();
+        // Using Lower case to override the props sent by Spark
+        props.setProperty("hubdhs", "true");
+        props.setProperty("hubssl", "true");
+        // hubDHS and hubSsl passed in the params Map will be overridden.
+        params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
+        logger.info("Creating HubClient for host: " + props.getProperty("mlHost"));
+        HubConfigImpl hubConfig = new HubConfigImpl();
+        hubConfig.registerLowerCasedPropertyConsumers();
+        hubConfig.applyProperties(new SimplePropertySource(props));
+        return hubConfig;
     }
 }

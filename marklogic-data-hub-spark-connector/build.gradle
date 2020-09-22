@@ -51,3 +51,9 @@ publishing {
         }
     }
 }
+
+tasks.withType(Test){
+    systemProperty "mlHost", mlHost
+    systemProperty "isDhs", isDhs
+    useJUnitPlatform()
+}
