@@ -124,8 +124,6 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getFacetApplyButton().should('exist');
     browsePage.getClearGreyFacets().should('exist');
     browsePage.getFacetApplyButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.getMosaicContainer().scrollTo('top');
     browsePage.getTotalDocuments().should('be.equal', 14);
     browsePage.getClearAllButton().should('exist');
     browsePage.getFacetSearchSelectionCount('collection').should('contain', '1');
