@@ -33,10 +33,6 @@ class BrowsePage {
     });
   }
 
-  getMosaicContainer(){
-    return cy.get('.mosaic-window > .mosaic-window-body');
-  }
-
   clickPaginationItem(index: number) {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click();
   }
