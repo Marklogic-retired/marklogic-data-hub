@@ -406,8 +406,16 @@ public class WriteStepRunner implements StepRunner {
             this.withStopOnFailure(Boolean.parseBoolean(stepConfig.get("stopOnFailure").toString()));
         }
 
-        if(outputURIPrefix != null && StringUtils.isNotEmpty(outputURIReplacement)){
-            throw new RuntimeException("'outputURIPrefix' and 'outputURIReplacement' cannot be set simultaneously");
+        if(StringUtils.isNotEmpty(outputURIReplacement)){
+            if(outputURIPrefix != null){
+                throw new RuntimeException("'outputURIPrefix' and 'outputURIReplacement' cannot be set simultaneously");
+            }
+        }
+        else{
+            //set 'outputURIPrefix' to "" if it's not set and 'outputURIReplacement' is also not set
+            if(outputURIPrefix == null){
+                outputURIPrefix = "";
+            }
         }
 
         if (inputFilePath == null || inputFileType == null) {
