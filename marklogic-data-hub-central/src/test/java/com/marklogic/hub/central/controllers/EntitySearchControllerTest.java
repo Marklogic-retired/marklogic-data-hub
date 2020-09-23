@@ -128,123 +128,13 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
     }
 
     @Test
-    void testRowExport() throws Exception {
-        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+    void testRowExportFromFinalDatabase() throws Exception {
+        validateRowExport("final");
+    }
 
-        Customer customer1 = new Customer();
-        customer1.setCustomerId(1);
-        customer1.setName("Jane");
-        customer1.setCustomerNumber(123456789);
-        customer1.setCustomerSince("2012-05-16");
-        project.createCustomerInstance(customer1);
-
-        Customer customer2 = new Customer();
-        customer2.setCustomerId(2);
-        customer2.setName("John");
-        customer2.setCustomerNumber(987654321);
-        customer2.setCustomerSince("2013-06-16");
-        project.createCustomerInstance(customer2);
-
-        String json = "{\n" +
-            "    \"savedQuery\": {\n" +
-            "        \"id\": \"\",\n" +
-            "        \"name\": \"some-query\",\n" +
-            "        \"description\": \"some-query-description\",\n" +
-            "        \"query\": {\n" +
-            "            \"searchText\": \"\",\n" +
-            "            \"entityTypeIds\": [\n" +
-            "                \"Customer\"\n" +
-            "            ],\n" +
-            "            \"selectedFacets\": {\n" +
-            "                \"Collection\": {\n" +
-            "                    \"dataType\": \"xs:string\",\n" +
-            "                    \"stringValues\": [\n" +
-            "                        \"Customer\"\n" +
-            "                    ]\n" +
-            "                }\n" +
-            "            }\n" +
-            "        },\n" +
-            "        \"propertiesToDisplay\": [\n" +
-            "            \"customerId\",\n" +
-            "            \"name\",\n" +
-            "            \"customerNumber\",\n" +
-            "            \"shipping\",\n" +
-            "            \"orders\"\n" +
-            "        ],\n" +
-            "        \"sortOrder\": [\n" +
-            "          { \"propertyName\":  \"customerId\",\n" +
-            "            \"sortDirection\": \"descending\"\n" +
-            "          }\n" +
-            "        ]\n" +
-            "    }\n" +
-            "}";
-
-        // Even though "propertiesToDisplay" has 5 columns we only export 3 since we dont export object and array type properties for now.
-        int totalColumns = 3;
-        int limit = 2;
-        Object[] customer1Info = {customer1.getCustomerId(), customer1.getName(), customer1.getCustomerNumber()};
-        Object[] customer2Info = {customer2.getCustomerId(), customer2.getName(), customer2.getCustomerNumber()};
-
-
-        // Try exporting without the required role "hub-central-entity-exporter"
-        loginAsTestUserWithRoles("hub-central-user");
-        postWithParams(EXPORT_PATH, getRequestParams(limit, json))
-            .andExpect(status().isForbidden());
-        getJson(EXPORT_PATH + "/query/non-existent-query-id", getRequestParams(limit, null))
-            .andExpect(status().isForbidden());
-
-
-        // Log in with role "hub-central-entity-exporter"
-        loginAsTestUserWithRoles("hub-central-entity-exporter");
-
-        // Export using query document
-        postWithParams(EXPORT_PATH, getRequestParams(limit, json))
-            .andExpect(request().asyncStarted())
-            .andDo(MvcResult::getAsyncResult)
-            .andExpect(status().isOk())
-            .andDo(result -> {
-                String response = result.getResponse().getContentAsString();
-                Set<Integer> actualRowSet = calculateHash(response);
-                assertRowsAndColumns(limit, totalColumns, response);
-                assertTrue(actualRowSet.contains(getHashCode(customer1Info)));
-                assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
-            });
-
-
-        // Log in with exporter and saved-query roles
-        loginAsTestUserWithRoles("hub-central-entity-exporter", "hub-central-saved-query-user");
-
-        // Save the query document
-        postJson(SAVED_QUERIES_PATH, json)
-            .andExpect(status().isCreated())
-            .andDo(result -> savedQueryResponse = readJsonObject(result.getResponse().getContentAsString()));
-
-        // Export using queryId
-        getJson(EXPORT_PATH + "/query/" + savedQueryResponse.get("savedQuery").get("id").textValue(), getRequestParams(limit, null))
-            .andExpect(request().asyncStarted())
-            .andDo(MvcResult::getAsyncResult)
-            .andExpect(status().isOk())
-            .andDo(result -> {
-                String response = result.getResponse().getContentAsString();
-                Set<Integer> actualRowSet = calculateHash(response);
-                assertRowsAndColumns(limit, totalColumns, response);
-                assertTrue(actualRowSet.contains(getHashCode(customer1Info)));
-                assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
-            });
-
-
-        // test limit
-        int newLimit = 1;
-        postWithParams(EXPORT_PATH, getRequestParams(newLimit, json))
-            .andExpect(request().asyncStarted())
-            .andDo(MvcResult::getAsyncResult)
-            .andExpect(status().isOk())
-            .andDo(result -> {
-                String response = result.getResponse().getContentAsString();
-                Set<Integer> actualRowSet = calculateHash(response);
-                assertRowsAndColumns(newLimit, totalColumns, response);
-                assertTrue(actualRowSet.contains(getHashCode(customer2Info)), "Sort order should guarantee that customer 2 is returned as the one result. Result: " + response);
-            });
+    @Test
+    void testRowExportFromStagingDatabase() throws Exception {
+        validateRowExport("staging");
     }
 
     @Test
@@ -312,7 +202,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         loginAsTestUserWithRoles("hub-central-entity-exporter");
 
         // Export using query document
-        postWithParams(EXPORT_PATH, getRequestParams(limit, json))
+        postWithParams(EXPORT_PATH, getRequestParams(limit, json, "final"))
                 .andExpect(request().asyncStarted())
                 .andDo(MvcResult::getAsyncResult)
                 .andExpect(status().isOk())
@@ -358,12 +248,131 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         return row.toString().hashCode();
     }
 
-    private MultiValueMap<String, String> getRequestParams(int limit, String json) {
+    private MultiValueMap<String, String> getRequestParams(int limit, String json, String databaseType) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("fileType", "csv");
         params.add("limit", String.valueOf(limit));
         params.add("queryDocument", json);
-
+        params.add("database", databaseType);
         return params;
+    }
+
+    private void validateRowExport(String databaseType) throws Exception {
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+
+        Customer customer1 = new Customer();
+        customer1.setCustomerId(1);
+        customer1.setName("Jane");
+        customer1.setCustomerNumber(123456789);
+        customer1.setCustomerSince("2012-05-16");
+        project.createCustomerInstance(customer1, databaseType);
+
+        Customer customer2 = new Customer();
+        customer2.setCustomerId(2);
+        customer2.setName("John");
+        customer2.setCustomerNumber(987654321);
+        customer2.setCustomerSince("2013-06-16");
+        project.createCustomerInstance(customer2, databaseType);
+
+        String json = "{\n" +
+                "    \"savedQuery\": {\n" +
+                "        \"id\": \"\",\n" +
+                "        \"name\": \"some-query\",\n" +
+                "        \"description\": \"some-query-description\",\n" +
+                "        \"query\": {\n" +
+                "            \"searchText\": \"\",\n" +
+                "            \"entityTypeIds\": [\n" +
+                "                \"Customer\"\n" +
+                "            ],\n" +
+                "            \"selectedFacets\": {\n" +
+                "                \"Collection\": {\n" +
+                "                    \"dataType\": \"xs:string\",\n" +
+                "                    \"stringValues\": [\n" +
+                "                        \"Customer\"\n" +
+                "                    ]\n" +
+                "                }\n" +
+                "            }\n" +
+                "        },\n" +
+                "        \"propertiesToDisplay\": [\n" +
+                "            \"customerId\",\n" +
+                "            \"name\",\n" +
+                "            \"customerNumber\",\n" +
+                "            \"shipping\",\n" +
+                "            \"orders\"\n" +
+                "        ],\n" +
+                "        \"sortOrder\": [\n" +
+                "          { \"propertyName\":  \"customerId\",\n" +
+                "            \"sortDirection\": \"descending\"\n" +
+                "          }\n" +
+                "        ]\n" +
+                "    }\n" +
+                "}";
+
+        // Even though "propertiesToDisplay" has 5 columns we only export 3 since we dont export object and array type properties for now.
+        int totalColumns = 3;
+        int limit = 2;
+        Object[] customer1Info = {customer1.getCustomerId(), customer1.getName(), customer1.getCustomerNumber()};
+        Object[] customer2Info = {customer2.getCustomerId(), customer2.getName(), customer2.getCustomerNumber()};
+
+
+        // Try exporting without the required role "hub-central-entity-exporter"
+        loginAsTestUserWithRoles("hub-central-user");
+        postWithParams(EXPORT_PATH, getRequestParams(limit, json, databaseType))
+                .andExpect(status().isForbidden());
+        getJson(EXPORT_PATH + "/query/non-existent-query-id", getRequestParams(limit, null, databaseType))
+                .andExpect(status().isForbidden());
+
+
+        // Log in with role "hub-central-entity-exporter"
+        loginAsTestUserWithRoles("hub-central-entity-exporter");
+
+        // Export using query document
+        postWithParams(EXPORT_PATH, getRequestParams(limit, json, databaseType))
+                .andExpect(request().asyncStarted())
+                .andDo(MvcResult::getAsyncResult)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    String response = result.getResponse().getContentAsString();
+                    Set<Integer> actualRowSet = calculateHash(response);
+                    assertRowsAndColumns(limit, totalColumns, response);
+                    assertTrue(actualRowSet.contains(getHashCode(customer1Info)));
+                    assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
+                });
+
+
+        // Log in with exporter and saved-query roles
+        loginAsTestUserWithRoles("hub-central-entity-exporter", "hub-central-saved-query-user");
+
+        // Save the query document
+        postJson(SAVED_QUERIES_PATH, json)
+                .andExpect(status().isCreated())
+                .andDo(result -> savedQueryResponse = readJsonObject(result.getResponse().getContentAsString()));
+
+        // Export using queryId
+        getJson(EXPORT_PATH + "/query/" + savedQueryResponse.get("savedQuery").get("id").textValue(), getRequestParams(limit, null, databaseType))
+                .andExpect(request().asyncStarted())
+                .andDo(MvcResult::getAsyncResult)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    String response = result.getResponse().getContentAsString();
+                    Set<Integer> actualRowSet = calculateHash(response);
+                    assertRowsAndColumns(limit, totalColumns, response);
+                    assertTrue(actualRowSet.contains(getHashCode(customer1Info)));
+                    assertTrue(actualRowSet.contains(getHashCode(customer2Info)));
+                });
+
+
+        // test limit
+        int newLimit = 1;
+        postWithParams(EXPORT_PATH, getRequestParams(newLimit, json, databaseType))
+                .andExpect(request().asyncStarted())
+                .andDo(MvcResult::getAsyncResult)
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    String response = result.getResponse().getContentAsString();
+                    Set<Integer> actualRowSet = calculateHash(response);
+                    assertRowsAndColumns(newLimit, totalColumns, response);
+                    assertTrue(actualRowSet.contains(getHashCode(customer2Info)), "Sort order should guarantee that customer 2 is returned as the one result. Result: " + response);
+                });
     }
 }

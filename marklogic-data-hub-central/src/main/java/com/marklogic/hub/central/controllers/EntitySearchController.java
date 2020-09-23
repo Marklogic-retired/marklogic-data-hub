@@ -52,14 +52,14 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     @ApiOperation(value = "Response is a MarkLogic JSON search response. Please see ./specs/EntitySearchResponse.schema.json for complete information, as swagger-ui does not capture all the details",
             response = EntitySearchResponseSchema.class)
-    public String search(@RequestBody SearchQuery searchQuery) {
-        return newEntitySearchManager().search(searchQuery).get();
+    public String search(@RequestBody SearchQuery searchQuery, @RequestParam(defaultValue = "final") String database) {
+        return newEntitySearchManager(database).search(searchQuery).get();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Document> search(@RequestParam String docUri) {
-        Optional<Document> optionalContent = newEntitySearchManager().getDocument(docUri);
+    public ResponseEntity<Document> search(@RequestParam String docUri, @RequestParam(defaultValue = "final") String database) {
+        Optional<Document> optionalContent = newEntitySearchManager(database).getDocument(docUri);
         HttpHeaders headers = new HttpHeaders();
 
         return optionalContent.map(content -> {
@@ -77,16 +77,16 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     @ApiImplicitParam(required = true, paramType = "body", dataType = "FacetValuesQuery")
     @ApiOperation(value = "Get an array of strings that match the pattern for the given index", response = FacetValues.class)
-    public JsonNode getFacetValues(@RequestBody @ApiParam(hidden = true) JsonNode fsQuery) {
-        return getEntitySearchService().getMatchingPropertyValues(fsQuery);
+    public JsonNode getFacetValues(@RequestBody @ApiParam(hidden = true) JsonNode fsQuery, @RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getMatchingPropertyValues(fsQuery);
     }
 
     @RequestMapping(value = "/facet-values/range", method = RequestMethod.POST)
     @ResponseBody
     @ApiImplicitParam(required = true, paramType = "body", dataType = "IndexMinMaxQuery")
     @ApiOperation(value = "Get values for a range index", response = IndexMinMax.class)
-    public JsonNode getFacetValuesRange(@RequestBody @ApiParam(hidden = true) JsonNode facetInfo) {
-        return getEntitySearchService().getMinAndMaxPropertyValues(facetInfo);
+    public JsonNode getFacetValuesRange(@RequestBody @ApiParam(hidden = true) JsonNode facetInfo, @RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getMinAndMaxPropertyValues(facetInfo);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/savedQueries")
@@ -138,11 +138,12 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     @Secured("ROLE_exportEntityInstances")
     @ApiOperation("Returns CSV data")
-    public ResponseEntity<StreamingResponseBody> export(@RequestParam String queryDocument, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
-        StreamingResponseBody stream = out -> {
-            newEntitySearchManager().exportByQuery(new ObjectMapper().readTree(queryDocument), fileType, limit, out, response);
-        };
-
+    public ResponseEntity<StreamingResponseBody> export(@RequestParam String queryDocument,
+                                                        @RequestParam String fileType,
+                                                        @RequestParam(required = false) Long limit,
+                                                        final HttpServletResponse response,
+                                                        @RequestParam(defaultValue = "final") String database) {
+        StreamingResponseBody stream = out -> newEntitySearchManager(database).exportByQuery(new ObjectMapper().readTree(queryDocument), fileType, limit, out, response);
         return ResponseEntity.ok(stream);
     }
 
@@ -150,19 +151,27 @@ public class EntitySearchController extends BaseController {
     @ResponseBody
     @Secured("ROLE_exportEntityInstances")
     @ApiOperation("Returns CSV data")
-    public ResponseEntity<StreamingResponseBody> exportSavedQuery(@PathVariable String queryId, @RequestParam String fileType, @RequestParam(required = false) Long limit, final HttpServletResponse response) {
-        StreamingResponseBody stream = out -> {
-            newEntitySearchManager().exportById(queryId, fileType, limit, out, response);
-        };
-
+    public ResponseEntity<StreamingResponseBody> exportSavedQuery(@PathVariable String queryId,
+                                                                  @RequestParam String fileType,
+                                                                  @RequestParam(required = false) Long limit,
+                                                                  final HttpServletResponse response,
+                                                                  @RequestParam(defaultValue = "final") String database) {
+        StreamingResponseBody stream = out -> newEntitySearchManager(database).exportById(queryId, fileType, limit, out, response);
         return ResponseEntity.ok(stream);
     }
 
-    private EntitySearchManager newEntitySearchManager() {
-        return new EntitySearchManager(getHubClient());
+    private EntitySearchManager newEntitySearchManager(String database) {
+        return new EntitySearchManager(getHubClient(), database);
     }
 
     private EntitySearchService getEntitySearchService() {
+        return getEntitySearchService("final");
+    }
+
+    private EntitySearchService getEntitySearchService(String database) {
+        if("staging".equalsIgnoreCase(database)) {
+            return EntitySearchService.on(getHubClient().getStagingClient());
+        }
         return EntitySearchService.on(getHubClient().getFinalClient());
     }
 
