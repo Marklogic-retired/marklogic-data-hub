@@ -1,7 +1,15 @@
 buildscript {
   repositories {
-    maven {url 'http://developer.marklogic.com/maven2/'}
-  }
+		// To use gradle in disconnected mode, you just need to set the 'disconnected' property. E.g. gradle compileJava -Pdisconnected
+		if (project.hasProperty("disconnected") && !"FALSE".equalsIgnoreCase(disconnected)) {
+			println "Using offline buildscript dependency repositories"
+			maven { url uri(projectMavenRepo) }
+		} else {
+			println "Using online buildscript dependency repositories"
+			jcenter()
+			maven { url "http://developer.marklogic.com/maven2/" }
+		}
+	}
 }
 
 plugins {
@@ -25,10 +33,10 @@ plugins {
 repositories {
 	// To use gradle in disconnected mode, you just need to set the 'disconnected' property. E.g. gradle compileJava -Pdisconnected
 	if (project.hasProperty("disconnected") && !"FALSE".equalsIgnoreCase(disconnected)) {
-		println "Using offline repositories"
+		println "Using offline dependency repositories"
 		maven { url uri(projectMavenRepo) }
 	} else {
-		println "Using online repositories"
+		println "Using online dependency repositories"
 		jcenter()
 		maven { url "https://developer.marklogic.com/maven2/" }
 	}
