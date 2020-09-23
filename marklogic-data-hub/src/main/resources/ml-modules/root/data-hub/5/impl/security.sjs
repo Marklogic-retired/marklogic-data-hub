@@ -27,6 +27,8 @@ const roleToAuthorityMap = {
   "hub-central-load-writer": "writeIngestion",
   "hub-central-mapping-reader": "readMapping",
   "hub-central-mapping-writer": "writeMapping",
+  "hub-central-match-merge-reader": ["readMatching", "readMerge"],
+  "hub-central-match-merge-writer": ["writeMatching", "writeMerge"],
   "hub-central-saved-query-user": "savedQueryUser",
   "hub-central-step-runner": ["runStep", "readFlow"],
   "hub-central-user": "loginToHubCentral"
