@@ -40,7 +40,15 @@ public class ReferenceModelProject extends TestObject {
         createCustomerInstance(customer, Format.JSON, null);
     }
 
+    public void createCustomerInstance(Customer customer, String databaseType) {
+        createCustomerInstance(customer, databaseType, Format.JSON, null);
+    }
+
     public void createCustomerInstance(Customer customer, Format contentFormat, String xmlNamespace) {
+        createCustomerInstance(customer, "final", contentFormat, xmlNamespace);
+    }
+
+    public void createCustomerInstance(Customer customer, String databaseType, Format contentFormat, String xmlNamespace) {
         String customerEntityType = "Customer";
 
         Map<String, Object> infoMap = new LinkedHashMap<>();
@@ -66,7 +74,8 @@ public class ReferenceModelProject extends TestObject {
         byte[] instanceBytes;
         ByteArrayInputStream instanceByteStream = null;
         String fileExtension;
-        GenericDocumentManager mgr = hubClient.getFinalClient().newDocumentManager();
+        GenericDocumentManager mgr = databaseType.equalsIgnoreCase("staging") ? hubClient.getStagingClient().newDocumentManager()
+                : hubClient.getFinalClient().newDocumentManager();
         mgr.setContentFormat(contentFormat);
 
         try {
