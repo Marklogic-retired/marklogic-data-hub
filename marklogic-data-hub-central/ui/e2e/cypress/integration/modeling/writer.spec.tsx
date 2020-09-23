@@ -362,14 +362,14 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getProperty('user-id').should('exist');
   });
 
-  it('can create entity, can create a structured type, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
+  it('can create entity, can create a structured type, duplicate structured type name check, add properties to structure type, add structure type as property, delete structured type, and delete entity', () => {
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName('User3');
     entityTypeModal.newEntityDescription('An entity for User');
     entityTypeModal.getAddButton().click();
 
     propertyTable.getAddPropertyButton('User3').click();
-    propertyModal.newPropertyName('address');
+    propertyModal.newPropertyName('Address');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('New Property Type').click();
@@ -378,6 +378,11 @@ describe('Entity Modeling: Writer Role', () => {
     structuredTypeModal.getAddButton().click();
 
     propertyModal.getYesRadio('multiple').click();
+    propertyModal.getSubmitButton().click();
+
+    cy.contains('A property already exists with a name of Address');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('address');
     propertyModal.getSubmitButton().click();
 
     propertyTable.getMultipleIcon('address').should('exist');
@@ -407,6 +412,11 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('New Property Type').click();
+
+    structuredTypeModal.newName('street');
+    structuredTypeModal.getAddButton().click();
+    cy.contains('A property type already exists with a name of street');
+    structuredTypeModal.clearName();
 
     structuredTypeModal.newName('Zip');
     structuredTypeModal.getAddButton().click();

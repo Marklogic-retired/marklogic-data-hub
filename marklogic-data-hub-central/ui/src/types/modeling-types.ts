@@ -76,7 +76,8 @@ export enum PropertyType {
 export interface ModelingOptionsInterface {
   entityTypeNamesArray: any[],
   isModified: boolean,
-  modifiedEntitiesArray: EntityModified[]
+  modifiedEntitiesArray:  any[],
+  entityPropertiesNamesArray: string[]
 }
 
 export interface EntityModified {

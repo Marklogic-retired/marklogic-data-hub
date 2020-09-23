@@ -71,8 +71,10 @@ export const entityNamesArray = {
     ],
     isModified: false,
     modifiedEntitiesArray: [],
+    entityPropertiesNamesArray: ['Order', 'Address', 'address', 'city', 'state', 'zip', 'OrderDetails']
   },
-  updateEntityModified: jest.fn()
+  updateEntityModified: jest.fn(),
+  setEntityPropertiesNamesArray: jest.fn()
 }
 
 export const customerEntityNamesArray = {
@@ -82,6 +84,8 @@ export const customerEntityNamesArray = {
         name: 'Customer',
         entityTypeId: 'http://marklogic.com/example/Customer-0.0.1/Customer'
       }
-    ]
-  }
+    ],
+    entityPropertiesNamesArray: ['Customer', 'Billing', 'address', 'city', 'state', 'zip', 'Address', 'Zip', 'Shipping']
+  },
+  setEntityPropertiesNamesArray: jest.fn()
 }
