@@ -3,6 +3,7 @@
   "description": "Permits writing a matching or merging configuration",
   "role": [
     "data-hub-common-writer",
+    "data-hub-step-definition-reader",
     "data-hub-match-merge-reader"
   ]
 }
