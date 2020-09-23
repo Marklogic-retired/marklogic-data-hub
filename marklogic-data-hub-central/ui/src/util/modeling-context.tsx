@@ -7,7 +7,8 @@ import {
 const DEFAULT_MODELING_OPTIONS = {
   entityTypeNamesArray: [],
   isModified: false,
-  modifiedEntitiesArray: []
+  modifiedEntitiesArray: [],
+  entityPropertiesNamesArray: []
 }
 
 export interface ModelingContextInterface {
@@ -17,6 +18,7 @@ export interface ModelingContextInterface {
   updateEntityModified: (entityModified: EntityModified) => void;
   removeEntityModified: (entityModified: EntityModified) => void;
   clearEntityModified: () => void;
+  setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
 }
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
@@ -25,7 +27,8 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   toggleIsModified: () => {},
   updateEntityModified: () => {},
   removeEntityModified: () => {},
-  clearEntityModified: () => {}
+  clearEntityModified: () => {},
+  setEntityPropertiesNamesArray: () => {}
 });
 
 const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -64,6 +67,19 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [], isModified: false })
   }
 
+  const setEntityPropertiesNamesArray = (entityDefinitionsArray: any[]) => {
+    let entityPropertiesNamesArray: string[] = [];
+
+    entityDefinitionsArray.forEach( entity => {
+      entityPropertiesNamesArray.push(entity.name);
+      entity.properties.forEach( property => {
+        entityPropertiesNamesArray.push(property.name);
+      });
+    });
+
+    setModelingOptions({ ...modelingOptions, entityPropertiesNamesArray })
+  }
+
   return (
     <ModelingContext.Provider value={{
       modelingOptions,
@@ -71,7 +87,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
       toggleIsModified,
       updateEntityModified,
       removeEntityModified,
-      clearEntityModified
+      clearEntityModified,
+      setEntityPropertiesNamesArray
     }}>
       {children}
     </ModelingContext.Provider>

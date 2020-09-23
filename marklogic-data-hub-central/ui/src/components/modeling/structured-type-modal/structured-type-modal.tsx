@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { Form, Icon, Input, Modal } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import styles from './structured-type-modal.module.scss'
 
+import { ModelingContext } from '../../../util/modeling-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip } from '@marklogic/design-system';
 
@@ -20,6 +21,8 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     labelCol: { span: 6 },
     wrapperCol: { span: 18 },
   };
+
+  const { modelingOptions } = useContext(ModelingContext);
 
   const [name, setName] = useState('');
   const [isNameDisabled, toggleIsNameDisabled] = useState(true);
@@ -43,12 +46,15 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
   };
 
   const onSubmit = (event) => {
-  event.preventDefault();
-  let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name })
+    event.preventDefault();
+    let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name });
+
     if (!NAME_REGEX.test(name)) {
       setErrorMessage(ModelingTooltips.nameRegex)
     } else if (entityDefinitionNamesArray.includes(name)) {
-      setErrorMessage(`A structured type already exists with a name of ${name}`)
+      setErrorMessage(`A structured type already exists with a name of ${name}`);
+    } else if (modelingOptions.entityPropertiesNamesArray.includes(name)) {
+      setErrorMessage(`A property type already exists with a name of ${name}`);
     } else {
       props.updateStructuredTypesAndHideModal(name);
       props.toggleModal(false);

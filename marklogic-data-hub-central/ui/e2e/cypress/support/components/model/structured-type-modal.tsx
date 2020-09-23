@@ -1,6 +1,10 @@
 class StructuredTypeModal {
   newName(str: string) {
-    cy.get('#structured-name').type(str);
+    cy.get('#structured-name').focus().type(str);
+  }
+
+  clearName() {
+    cy.get('#structured-name').focus().clear();
   }
 
   getCancelButton() {

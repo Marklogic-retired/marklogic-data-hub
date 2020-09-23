@@ -119,7 +119,7 @@ const layout = {
 
 const PropertyModal: React.FC<Props> = (props) => {
   const { handleError } = useContext(UserContext);
-  const { modelingOptions } = useContext(ModelingContext);
+  const { modelingOptions, setEntityPropertiesNamesArray } = useContext(ModelingContext);
 
   const [modalTitle, setModalTitle] = useState('');
   const [name, setName] = useState('');
@@ -147,6 +147,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.isVisible){
+      setEntityPropertiesNamesArray(props.entityDefinitionsArray)
       updateTypeDropdown();
       if (props.editPropertyOptions.isEdit) {
         let structuredLabel = '';
@@ -394,7 +395,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     if (modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0) {
       let relatedEntityDropdown = createRelatedEntityDropdown();
-
+      
       setDropdownOptions([
         ...COMMON_PROPERTY_TYPES,
         DROPDOWN_PLACEHOLDER('1'),
@@ -405,6 +406,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_NUMBER_TYPES,
         MORE_DATE_TYPES
       ]);
+      setEntityPropertyNamesArray([...entityPropertyNamesArray, name ]);
 
     } else if (modelingOptions.entityTypeNamesArray.length <= 1 && structuredDefinitions.length > 0) {
       setDropdownOptions([

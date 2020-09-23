@@ -271,6 +271,13 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
   ];
 
+  const addPropertyButtonClicked = () => {
+
+    toggleShowPropertyModal(true);
+    setEditPropertyOptions({ ...editPropertyOptions, isEdit: false });
+    setStructuredTypeOptions({ ...structuredTypeOptions, isStructured: false });
+  }
+
   const updateEntityDefinitionsAndRenderTable = (definitions: Definition) => {
     let entityDefinitionsArray = definitionsParser(definitions);
     let renderTableData = parseDefinitionsToTable(entityDefinitionsArray);
@@ -751,14 +758,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       aria-label={props.entityName +'-add-property'}
       disabled={!props.canWriteEntityModel}
       className={!props.canWriteEntityModel && styles.disabledButton}
-      onClick={()=> {
-        toggleShowPropertyModal(true);
-        setEditPropertyOptions({...editPropertyOptions, isEdit: false });
-        setStructuredTypeOptions({
-          ...structuredTypeOptions,
-          isStructured: false
-        });
-      }}
+      onClick={() => addPropertyButtonClicked()}
     >Add Property</MLButton>
 
   return (
