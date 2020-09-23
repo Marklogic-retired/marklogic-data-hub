@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
@@ -28,8 +31,8 @@ public class BulkIngestTest extends AbstractHubCoreTest {
     @Test
     public void testBulkIngest() {
 
-        String prefix = "/bulkIngestTest";
-        String endpointState = "{\"next\":" + 0 + ", \"prefix\":\""+prefix+"\"}";
+        String prefix = "/bulkIngesterTest";
+        String endpointState = "{\"next\":" + 0 + ", \"uriprefix\":\""+prefix+"\"}";
         String workUnit      = "{\"taskId\":"+1+"}";
 
         runAsDataHubOperator();
@@ -47,9 +50,19 @@ public class BulkIngestTest extends AbstractHubCoreTest {
         );
         input.forEach(loader::accept);
         loader.awaitCompletion();
-        checkResults("/bulkIngestTest/1/1.json");
-        checkResults("/bulkIngestTest/1/2.json");
-        checkResults("/bulkIngestTest/1/3.json");
+
+        String uriQuery = "cts.uriMatch('/bulkIngesterTest**')";
+        EvalResultIterator uriQueryResult = db.newServerEval().javascript(uriQuery).eval();
+
+        class Output {
+            List<String> uris = new ArrayList();
+        }
+        Output output = new Output();
+        uriQueryResult.iterator().forEachRemaining(item -> {
+            output.uris.add(item.getString());
+        });
+        for(String i:output.uris)
+            checkResults(i);
     }
 
     public static InputStream asInputStream(String value) {

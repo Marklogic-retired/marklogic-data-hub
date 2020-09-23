@@ -62,7 +62,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         ).bulkCaller();
 
         loader.setWorkUnit(new ByteArrayInputStream(("{\"taskId\":" + taskId + "}").getBytes()));
-        loader.setEndpointState(new ByteArrayInputStream(("{\"next\":" + 0 + ", \"prefix\":\"" + params.get("prefix") + "\"}").getBytes()));
+        loader.setEndpointState(new ByteArrayInputStream(("{\"next\":" + 0 + ", \"uriprefix\":\"" + params.get("uriprefix") + "\"}").getBytes()));
     }
 
     @Override

@@ -36,7 +36,7 @@ const inputs =
       [{UNKNOWN: input}];
 inputs.forEach(record => {
   state.next = state.next + 1;
-  const uri = (state.prefix) + '/' + (work.taskId) + '/' + (state.next) + '.json';
+  const uri = (state.uriprefix) +  sem.uuidString() + '.json';
   record = ingest.main({uri: uri, value: record}, {
     outputFormat: consts.JSON, headers: {createdOn: consts.CURRENT_DATE_TIME, createdBy: consts.CURRENT_USER}
   }).value;

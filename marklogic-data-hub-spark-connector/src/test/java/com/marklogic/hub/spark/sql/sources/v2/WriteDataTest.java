@@ -1,7 +1,6 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.eval.EvalResultIterator;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
@@ -20,7 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteDataTest extends AbstractSparkConnectorTest {
 
@@ -48,6 +47,27 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         verifyFruitCount(3, "The commit call should result in the 3rd fruit being ingested");
     }
 
+
+    @Test
+    public void testBulkIngestWithoutUriPrefix() throws IOException {
+        DataWriter<InternalRow> dataWriter = buildDataWriter("1", "");
+        dataWriter.write(buildRow("pineapple", "green"));
+
+        String uriQuery = "cts.uris('', null, cts.andQuery([\n" +
+            "  cts.jsonPropertyValueQuery('fruitName', 'pineapple')\n" +
+            "]))";
+
+        EvalResultIterator uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
+        assertTrue(uriQueryResult.hasNext());
+        String uri = uriQueryResult.next().getString();
+
+        assertTrue(uri.endsWith(".json"));
+
+        assertFalse(uri.startsWith("/"), "If the user wants the URI to start with a forward slash, the user must provide one. " +
+            "If the user doesn't, then it's assumed that the user doesn't want a forward slash at the start of the URI, so the endpoint will not add one automatically.");
+        assertFalse(uriQueryResult.hasNext());
+    }
+
     /**
      * Spark will do all of this in the real world - i.e. a user will specify the entry class and the set of options.
      * But in a test, we need to do that ourselves. So we create the DataSource class, build up the params, and then
@@ -65,7 +85,11 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         // Get the set of DHF properties used to connect to ML as a map, and then add connector-specific params
         Map<String, String> params = getHubPropertiesAsMap();
         params.put("batchsize", batchSize);
-        params.put("prefix", uriPrefix);
+
+        if(uriPrefix!=null && uriPrefix.length()!=0) {
+            params.put("uriprefix", uriPrefix);
+        }
+
         DataSourceOptions options = new DataSourceOptions(params);
 
         Optional<DataSourceWriter> dataSourceWriter = dataSource.createWriter(writeUUID, SCHEMA, saveModeDoesntMatter, options);
@@ -86,15 +110,30 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     }
 
     private void verifyFruitCount(int expectedCount, String message) {
-        String query = "cts.uriMatch('/testFruit/**').toArray().length";
+        String query = "cts.uriMatch('/testFruit**').toArray().length";
         String count = getHubClient().getStagingClient().newServerEval().javascript(query).evalAs(String.class);
         assertEquals(expectedCount, Integer.parseInt(count), message);
 
         if (expectedCount > 0) {
-            String expectedUri = "/testFruit/2/1.json";
-            JsonNode doc = getHubClient().getStagingClient().newJSONDocumentManager().read(expectedUri, new JacksonHandle()).get();
-            assertEquals("apple", doc.get("envelope").get("instance").get("fruitName").asText());
-            assertEquals("red", doc.get("envelope").get("instance").get("fruitColor").asText());
+        String uriQuery = "cts.uris('', null, cts.andQuery([\n" +
+            "  cts.directoryQuery('/'),\n" +
+            "  cts.jsonPropertyValueQuery('fruitName', 'apple')\n" +
+            "]))";
+
+        EvalResultIterator uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
+        assertTrue(uriQueryResult.hasNext());
+        assertTrue(uriQueryResult.next().getString().startsWith("/testFruit"));
+        assertFalse(uriQueryResult.hasNext());
+
+        uriQuery = "cts.uris('', null, cts.andQuery([\n" +
+            "  cts.directoryQuery('/'),\n" +
+            "  cts.jsonPropertyValueQuery('fruitName', 'banana')\n" +
+            "]))";
+
+        uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
+        assertTrue(uriQueryResult.hasNext());
+        assertTrue(uriQueryResult.next().getString().startsWith("/testFruit"));
+        assertFalse(uriQueryResult.hasNext());
         }
     }
 }
