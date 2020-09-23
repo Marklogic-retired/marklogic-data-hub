@@ -29,7 +29,6 @@ import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.client.io.ReaderHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
@@ -45,7 +44,6 @@ import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.managers.ModelManager;
 import com.marklogic.hub.dataservices.EntitySearchService;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +61,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class EntitySearchManager {
 
@@ -79,17 +76,31 @@ public class EntitySearchManager {
 
     public static String QUERY_OPTIONS = "exp-final-entity-options";
     private static Map<String, FacetHandler> facetHandlerMap;
-    private DatabaseClient finalDatabaseClient;
+    private DatabaseClient searchDatabaseClient;
+    private DatabaseClient savedQueryDatabaseClient;
     private ModelManager modelManager;
 
     public EntitySearchManager(HubClient hubClient) {
-        this.finalDatabaseClient = hubClient.getFinalClient();
+        this.searchDatabaseClient = hubClient.getFinalClient();
+        this.modelManager = new ModelManager(hubClient);
+        initializeFacetHandlerMap();
+    }
+
+    public EntitySearchManager(HubClient hubClient, String database) {
+        if("staging".equalsIgnoreCase(database)) {
+            this.searchDatabaseClient = hubClient.getStagingClient();
+            QUERY_OPTIONS = "exp-staging-entity-options";
+        } else {
+            this.searchDatabaseClient = hubClient.getFinalClient();
+            QUERY_OPTIONS = "exp-final-entity-options";
+        }
+        this.savedQueryDatabaseClient = hubClient.getFinalClient();
         this.modelManager = new ModelManager(hubClient);
         initializeFacetHandlerMap();
     }
 
     public StringHandle search(SearchQuery searchQuery) {
-        QueryManager queryMgr = finalDatabaseClient.newQueryManager();
+        QueryManager queryMgr = searchDatabaseClient.newQueryManager();
 
         // Setting criteria and searching
         StringHandle resultHandle = new StringHandle();
@@ -142,7 +153,7 @@ public class EntitySearchManager {
     }
 
     public Optional<Document> getDocument(String docUri) {
-        GenericDocumentManager docMgr = finalDatabaseClient.newDocumentManager();
+        GenericDocumentManager docMgr = searchDatabaseClient.newDocumentManager();
         DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
 
         // Fetching document content and meta-data
@@ -200,8 +211,7 @@ public class EntitySearchManager {
         });
 
         // And between all the queries
-        return queryBuilder
-                .and(queries.toArray(new StructuredQueryDefinition[0]));
+        return queryBuilder.and(queries.toArray(new StructuredQueryDefinition[0]));
     }
 
     private void initializeFacetHandlerMap() {
@@ -223,7 +233,7 @@ public class EntitySearchManager {
     }
 
     public void exportById(String queryId, String fileType, Long limit, OutputStream out, HttpServletResponse response) {
-        JsonNode queryDocument = EntitySearchService.on(finalDatabaseClient).getSavedQuery(queryId);
+        JsonNode queryDocument = EntitySearchService.on(savedQueryDatabaseClient).getSavedQuery(queryId);
         exportByQuery(queryDocument, fileType, limit, out, response);
     }
 
@@ -237,7 +247,7 @@ public class EntitySearchManager {
     }
 
     public void exportRows(JsonNode queryDocument, Long limit, OutputStream out) {
-        QueryManager queryMgr = finalDatabaseClient.newQueryManager();
+        QueryManager queryMgr = searchDatabaseClient.newQueryManager();
         SearchQuery searchQuery = transformToSearchQuery(queryDocument);
         StructuredQueryDefinition structuredQueryDefinition = buildQuery(queryMgr, searchQuery);
 
@@ -249,7 +259,7 @@ public class EntitySearchManager {
         List<SearchQuery.SortOrder> sortOrder = searchQuery.getSortOrder().orElse(new ArrayList<>());
         ArrayNode sortOrderNode = sortOrderToArrayNode(sortOrder);
 
-        EntitySearchService entitySearchService = EntitySearchService.on(finalDatabaseClient);
+        EntitySearchService entitySearchService = EntitySearchService.on(searchDatabaseClient);
         // Exporting directly from Data Service to avoid bug https://bugtrack.marklogic.com/55338 related to namespaced path range indexes
         Reader export = entitySearchService.exportSearchAsCSV(structuredQuery, searchText, queryOptions, entityTypeId, entityTypeId, limit, sortOrderNode, columns.stream());
         try {
@@ -338,7 +348,7 @@ public class EntitySearchManager {
     protected String getQueryOptions(String queryOptionsName) {
         String queryOptions;
         try {
-            queryOptions = finalDatabaseClient.newServerConfigManager()
+            queryOptions = searchDatabaseClient.newServerConfigManager()
                     .newQueryOptionsManager()
                     .readOptionsAs(queryOptionsName, Format.XML, String.class);
         } catch (ResourceNotFoundException e) {
