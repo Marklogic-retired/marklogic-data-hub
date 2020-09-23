@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-match-merge-writer",
+  "description": "Permits reading/reviewing matching and merging steps in Hub Central",
+  "role": [
+    "hub-central-match-merge-reader",
+    "data-hub-match-merge-writer"
+  ]
+}

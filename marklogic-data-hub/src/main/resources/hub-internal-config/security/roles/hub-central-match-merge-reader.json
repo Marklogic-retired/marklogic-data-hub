@@ -1,0 +1,9 @@
+{
+  "role-name": "hub-central-match-merge-reader",
+  "description": "Permits reading/reviewing matching and merging steps in Hub Central",
+  "role": [
+    "hub-central-user",
+    "data-hub-entity-model-reader",
+    "data-hub-match-merge-reader"
+  ]
+}
