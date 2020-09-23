@@ -60,43 +60,13 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
      * exhaustively, so just checking a few things here.
      */
     @Test
-    void searchWithTransform() {
-        runAsDataHubDeveloper();
-        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
-        deployEntityIndexes();
-        project.createCustomerInstance(new Customer(1, "Jane"));
-        project.createCustomerInstance(new Customer(2, "Sally"));
+    void searchWithTransformInFinalDatabase() {
+        validateSearchWithTransform("final");
+    }
 
-        runAsHubCentralUser();
-
-        SearchQuery query = new SearchQuery();
-        DocSearchQueryInfo info = new DocSearchQueryInfo();
-        info.setEntityTypeIds(Arrays.asList("Customer"));
-        query.setQuery(info);
-
-        StringHandle results = new EntitySearchManager(getHubClient()).search(query);
-        ObjectNode node = readJsonObject(results.get());
-        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
-            "columns to display");
-        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
-            "to /api/models to get the property names and also traverse the entity definition itself");
-        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
-            "entityProperties so that the UI knows what structured values to show for each entity instance");
-        assertTrue(node.get("results").get(1).has("entityProperties"));
-
-        // Adding propertiesToDisplay to search query which are user selected columns
-        List<String> propertiesToDisplay = Arrays.asList("name", "customerId");
-        query.setPropertiesToDisplay(propertiesToDisplay);
-        results = new EntitySearchManager(getHubClient()).search(query);
-        node = readJsonObject(results.get());
-        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
-            "columns to display");
-        assertEquals(2, node.get("selectedPropertyDefinitions").size());
-        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
-            "to /api/models to get the property names and also traverse the entity definition itself");
-        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
-            "entityProperties so that the UI knows what structured values to show for each entity instance");
-        assertTrue(node.get("results").get(1).has("entityProperties"));
+    @Test
+    void searchWithTransformInStagingDatabase() {
+        validateSearchWithTransform("staging");
     }
 
     @Test
@@ -112,7 +82,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         info.setEntityTypeIds(Arrays.asList(" "));
         query.setQuery(info);
 
-        String results = new EntitySearchManager(getHubClient()).search(query).get();
+        String results = new EntitySearchManager(getHubClient(), "staging").search(query).get();
         ObjectNode node = readJsonObject(results);
         assertEquals(0, node.get("total").asInt(), "When entityTypeIds has values, but they're all empty strings, the " +
             "backend should return no results, and not throw an error");
@@ -306,5 +276,44 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     @Test
     void testGetQueryOptions() {
         assertThrows(DataHubException.class, () -> new EntitySearchManager(getHubClient()).getQueryOptions("non-existent-options"));
+    }
+
+    private void validateSearchWithTransform(String databaseType) {
+        runAsDataHubDeveloper();
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+        deployEntityIndexes();
+        project.createCustomerInstance(new Customer(1, "Jane"), databaseType);
+        project.createCustomerInstance(new Customer(2, "Sally"), databaseType);
+
+        runAsHubCentralUser();
+
+        SearchQuery query = new SearchQuery();
+        DocSearchQueryInfo info = new DocSearchQueryInfo();
+        info.setEntityTypeIds(Arrays.asList("Customer"));
+        query.setQuery(info);
+
+        StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(query);
+        ObjectNode node = readJsonObject(results.get());
+        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
+                "columns to display");
+        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
+                "to /api/models to get the property names and also traverse the entity definition itself");
+        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
+                "entityProperties so that the UI knows what structured values to show for each entity instance");
+        assertTrue(node.get("results").get(1).has("entityProperties"));
+
+        // Adding propertiesToDisplay to search query which are user selected columns
+        List<String> propertiesToDisplay = Arrays.asList("name", "customerId");
+        query.setPropertiesToDisplay(propertiesToDisplay);
+        results = new EntitySearchManager(getHubClient(), databaseType).search(query);
+        node = readJsonObject(results.get());
+        assertTrue(node.has("selectedPropertyDefinitions"), "Including this makes life easy on the UI so it knows what " +
+                "columns to display");
+        assertEquals(2, node.get("selectedPropertyDefinitions").size());
+        assertTrue(node.has("entityPropertyDefinitions"), "Including this means the UI doesn't need to make a separate call " +
+                "to /api/models to get the property names and also traverse the entity definition itself");
+        assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
+                "entityProperties so that the UI knows what structured values to show for each entity instance");
+        assertTrue(node.get("results").get(1).has("entityProperties"));
     }
 }
