@@ -9,7 +9,7 @@
     margin-top: 9px;
     text-align: left;
     align-content: left;
-    padding-bottom: 2px;
+    padding-bottom: 0px;
     border: 1px solid #d7d6d6;
     margin-bottom: 10px;
 }
@@ -80,8 +80,7 @@
 .cardLink {
     color: #3f4692;
     background-color: #ecf6fe;
-    margin-bottom: 13px;
-    padding: 8px;
+    padding: 20px 8px 8px 8px;
     font-size: 14px;
     cursor: pointer;
 }
@@ -89,8 +88,7 @@
 .cardDisabledLink {
     color: #3f4692;
     background-color: #ecf6fe;
-    margin-bottom: 13px;
-    padding: 8px;
+    padding: 20px 8px 8px 8px;
     font-size: 14px;
     cursor: not-allowed;
 }
@@ -98,14 +96,14 @@
 .cardNonLink {
     color: rgba(0, 0, 0, 0.65);
     background-color: #ecf6fe;
-    margin-bottom: 13px;
-    padding: 8px;
+    padding: 8px 8px 1px 8px;
     font-size: 14px;
     cursor: default;
 }
 
 .cardLinkSelect {
     margin-top: 7px;
+    margin-bottom: 10px;
 }
 
 .sourceFormat:before {

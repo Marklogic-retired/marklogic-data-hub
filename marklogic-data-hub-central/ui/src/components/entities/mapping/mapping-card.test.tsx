@@ -33,7 +33,7 @@ describe("Mapping Card component", () => {
   test('Mapping card does not allow edit without writeMapping authority', async () => {
     let entityModel = data.primaryEntityTypes.data[0];
     let mapping = data.mappings.data[0].artifacts;
-    let queryAllByText, getByRole, queryAllByRole, getByText;
+    let queryAllByText, getByRole, queryAllByRole, getByText, getByTestId;
     const noopFun = () => {};
     const deleteMappingArtifact = jest.fn(() => {});
     await act(async () => {
@@ -55,12 +55,16 @@ describe("Mapping Card component", () => {
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
       getByText = renderResults.getByText;
+      getByTestId = renderResults.getByTestId;
     });
 
-    expect(getByRole("edit-mapping")).toBeInTheDocument();
-    expect(getByRole("settings-mapping")).toBeInTheDocument();
+    fireEvent.mouseOver(getByRole('edit-mapping'));
+    await wait (() => expect(getByText('Edit')).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId('Mapping1-stepDetails'));
+    await wait (() => expect(getByText('Step Details')).toBeInTheDocument());
+    fireEvent.mouseOver(getByRole('settings-mapping'));
+    await wait (() => expect(getByText('Settings')).toBeInTheDocument());
     expect(queryAllByRole('delete-mapping')).toHaveLength(0);
-    expect(getByRole('disabled-delete-mapping')).toBeInTheDocument();
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByRole('disabled-delete-mapping'));
@@ -74,7 +78,7 @@ describe("Mapping Card component", () => {
   test('Mapping card does allow edit with writeMapping authority', async () => {
     let entityModel = data.primaryEntityTypes.data[0];
     let mapping = data.mappings.data[0].artifacts;
-    let getByText, getByRole, queryAllByRole;
+    let getByText, getByRole, queryAllByRole, getByTestId;
     const noopFun = () => {};
     const deleteMappingArtifact = jest.fn(() => {});
     await act(async () => {
@@ -95,9 +99,11 @@ describe("Mapping Card component", () => {
       getByText = renderResults.getByText;
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
+      getByTestId = renderResults.getByTestId;
     });
 
     expect(getByRole("edit-mapping")).toBeInTheDocument();
+    expect(getByTestId("Mapping1-stepDetails")).toBeInTheDocument();
     expect(getByRole("settings-mapping")).toBeInTheDocument();
     expect(queryAllByRole('disabled-delete-mapping')).toHaveLength(0);
     expect(getByRole('delete-mapping')).toBeInTheDocument();
@@ -256,11 +262,11 @@ describe("Mapping Card component", () => {
     expect(getByTestId('Mapping1-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
     //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('Mapping1-flowsList')); 
+    fireEvent.click(getByTestId('Mapping1-flowsList'));
 
     //Choose testFlow from the dropdown
     fireEvent.click(getByText('testFlow'));
-    
+
     //Click on 'Yes' button
     fireEvent.click(getByTestId('Mapping1-to-testFlow-Confirm'));
 
@@ -317,7 +323,7 @@ describe("Mapping Card component", () => {
     expect(getByTestId('Mapping1-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
 
     //Click on the link 'Add step to a new Flow'.
-    fireEvent.click(getByTestId('Mapping1-toNewFlow')); 
+    fireEvent.click(getByTestId('Mapping1-toNewFlow'));
 
     //Wait for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {

@@ -106,7 +106,6 @@ describe('Tiles View component tests for Developer user', () => {
 
         fireEvent.mouseOver(getByText('Mapping1'));
 
-        expect(getByText('Open step details'));
         expect(getByText('Add step to a new flow'));
         expect(getByText('Add step to an existing flow'));
     });
@@ -396,7 +395,6 @@ describe('Tiles View component tests for Operator user', () => {
         fireEvent.click(getByText('Customer'));
         fireEvent.mouseOver(getByText('Mapping1'));
 
-        expect(getByText('Open step details'));
     });
 });
 
