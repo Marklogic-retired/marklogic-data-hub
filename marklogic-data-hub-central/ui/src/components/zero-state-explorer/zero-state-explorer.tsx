@@ -12,28 +12,35 @@ import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
 const ZeroStateExplorer = (props) => {
 
   const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const { Option } = Select;
   const dropdownOptions = ['All Entities', ...props.entities];
   let [view, setView] = useState(props.tableView ? 'table' : 'snippet');
 
   const {
-    setQuery,
     applySaveQuery,
-    setZeroState,
-    setNextEntity
   } = useContext(SearchContext);
 
   const onClickExplore = () => {
-    setZeroState(false)
+    let options: QueryOptions = {
+      searchText: searchQuery,
+      entityTypeIds: dropDownValue === 'All Entities' ? [] : [dropDownValue],
+      selectedFacets: {},
+      selectedQuery: 'select a query',
+      propertiesToDisplay: [],
+      zeroState: false,
+      manageQueryModal: false,
+      sortOrder: []
+  }
+  applySaveQuery(options);
   }
 
   const handleOptionSelect = (option: any) => {
-    setDropdownValue(option)
-    setNextEntity(option)
+    setDropdownValue(option);
   }
 
   const onChange = (e) => {
-    setQuery(e.target.value);
+    setSearchQuery(e.target.value);
   }
 
   const entityMenu = (
