@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.dataservices.FlowService;
 import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.*;
 import com.marklogic.hub.impl.FlowManagerImpl;
@@ -170,6 +171,15 @@ public class FlowRunnerImpl implements FlowRunner {
         }
         Flow flow = flowManager.getFullFlow(flowName);
         return runFlow(flow, flowInputs.getSteps(), flowInputs.getJobId(), flowInputs.getOptions(), flowInputs.getStepConfig());
+    }
+
+    public RunFlowResponse runStep(String stepId) {
+        JsonNode jsonFlow = FlowService.on(hubClient.getStagingClient()).getAdHocFlow(stepId);
+        FlowImpl flow = new FlowImpl();
+        flow.deserialize(jsonFlow);
+        Map<String, Object> options = new HashMap<>();
+        options.put("datahubAdHocFlow", flow);
+        return runFlow(flow, Arrays.asList("1"), null, options, null);
     }
 
     protected RunFlowResponse runFlow(Flow flow, List<String> stepNums, String jobId, Map<String, Object> options, Map<String, Object> stepConfig) {

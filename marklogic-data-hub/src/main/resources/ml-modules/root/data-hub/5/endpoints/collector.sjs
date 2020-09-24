@@ -42,7 +42,13 @@ if (!step) {
 }
 let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
-let flowDoc= datahub.flow.getFlow(flowName);
+let flowDoc = null;
+if (options.datahubAdHocFlow) {
+  flowDoc = options.datahubAdHocFlow;
+} else {
+  flowDoc = datahub.flow.getFlow(flowName);
+}
+
 if (!fn.exists(flowDoc)) {
   fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
 }

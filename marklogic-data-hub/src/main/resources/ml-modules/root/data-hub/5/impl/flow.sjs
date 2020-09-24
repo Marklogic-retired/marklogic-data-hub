@@ -121,7 +121,7 @@ class Flow {
    */
   findMatchingContent(flowName, stepNumber, options, filterQuery) {
     // getFlow will throw an error if the flow cannot be found
-    const flow = this.getFlow(flowName);
+    const flow = options.datahubAdHocFlow ? options.datahubAdHocFlow : this.getFlow(flowName);
 
     const flowStep = flow.steps[stepNumber];
     if (!flowStep) {
@@ -174,7 +174,7 @@ class Flow {
    */
   runFlow(flowName, jobId, content = [], options, stepNumber) {
     let items = content.map((contentItem) => contentItem.uri);
-    let flow = this.getFlow(flowName);
+    let flow = options.datahubAdHocFlow ? options.datahubAdHocFlow : this.getFlow(flowName);
     if(!flow) {
       this.datahub.debug.log({message: 'The flow with the name '+flowName+' could not be found.', type: 'error'});
       throw Error('The flow with the name '+flowName+' could not be found.')

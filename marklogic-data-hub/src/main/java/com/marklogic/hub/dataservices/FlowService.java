@@ -47,6 +47,7 @@ public interface FlowService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
+            private BaseProxy.DBFunctionRequest req_getAdHocFlow;
             private BaseProxy.DBFunctionRequest req_getFlow;
             private BaseProxy.DBFunctionRequest req_deleteFlow;
             private BaseProxy.DBFunctionRequest req_addStepToFlow;
@@ -61,6 +62,8 @@ public interface FlowService {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/flow/", servDecl);
 
+                this.req_getAdHocFlow = this.baseProxy.request(
+                    "getAdHocFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getFlow = this.baseProxy.request(
                     "getFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_deleteFlow = this.baseProxy.request(
@@ -79,6 +82,21 @@ public interface FlowService {
                     "createFlow.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getFullFlow = this.baseProxy.request(
                     "getFullFlow.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getAdHocFlow(String stepId) {
+                return getAdHocFlow(
+                    this.req_getAdHocFlow.on(this.dbClient), stepId
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getAdHocFlow(BaseProxy.DBFunctionRequest request, String stepId) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepId", false, BaseProxy.StringType.fromString(stepId))
+                          ).responseSingle(false, Format.JSON)
+                );
             }
 
             @Override
@@ -219,6 +237,14 @@ public interface FlowService {
 
         return new FlowServiceImpl(db, serviceDeclaration);
     }
+
+  /**
+   * Invokes the getAdHocFlow operation on the database server
+   *
+   * @param stepId	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getAdHocFlow(String stepId);
 
   /**
    * Invokes the getFlow operation on the database server

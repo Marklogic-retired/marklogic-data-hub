@@ -1,0 +1,23 @@
+{
+  "name": "simpleMapper",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "selectedSource": "query",
+  "sourceQuery": "cts.collectionQuery('customer-input')",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "collections": [
+    "Customer"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "sourceContext": "/",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    },
+    "name": {
+      "sourcedFrom": "echo(name)"
+    }
+  }
+}

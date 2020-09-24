@@ -1,0 +1,11 @@
+{
+  "functionName" : "getAdHocFlow",
+  "params" : [ {
+    "name" : "stepId",
+    "datatype" : "string"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode"
+  }
+}
