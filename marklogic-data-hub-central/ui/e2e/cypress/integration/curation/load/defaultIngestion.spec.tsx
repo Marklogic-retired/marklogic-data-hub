@@ -161,6 +161,7 @@ describe('Default ingestion ', () => {
         loadPage.cancelSettings(stepName).click();
         loadPage.confirmationOptions('No').click();
         loadPage.saveSettings(stepName).click();
+        cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
 
         //Verify Add to New Flow
@@ -194,6 +195,7 @@ describe('Default ingestion ', () => {
         loadPage.selectSourceFormat('TEXT');
         loadPage.selectTargetFormat('TEXT');
         loadPage.saveButton().click();
+        cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
         loadPage.addStepToExistingFlow(stepName, flowName);
         loadPage.addStepToFlowConfirmationMessage(stepName, flowName).should('be.visible');
