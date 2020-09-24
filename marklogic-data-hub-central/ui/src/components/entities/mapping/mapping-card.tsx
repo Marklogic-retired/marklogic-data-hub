@@ -16,6 +16,7 @@ import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
 import { Link, useHistory } from 'react-router-dom';
 import { MLTooltip } from '@marklogic/design-system';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons'
 
 
 const { Option } = Select;
@@ -442,7 +443,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     }
                 }
 
-            } 
+            }
             // val is null or ""
             else {
                 if (!/^@xmlns/.test(key)) {
@@ -633,10 +634,10 @@ const MappingCard: React.FC<Props> = (props) => {
                         >
                             <Card
                                 actions={[
-                                    <span></span>,
+                                    <MLTooltip title={'Edit'} placement="bottom"><Icon className={styles.editIcon} type="edit" key ="last" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
+                                    <MLTooltip title={'Step Details'} placement="bottom"><i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name,index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
-                                    <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
+                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"
@@ -650,7 +651,6 @@ const MappingCard: React.FC<Props> = (props) => {
                                 <br /><br />
                                 <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
                                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                    <div data-testid={`${elem.name}-stepDetails`} className={styles.cardLink} onClick={() => openSourceToEntityMapping(elem.name,index)}>Open step details</div>
                                     { props.canWriteFlow ? <Link id="tiles-run-add" to={
                                     {pathname: '/tiles/run/add',
                                     state: {
