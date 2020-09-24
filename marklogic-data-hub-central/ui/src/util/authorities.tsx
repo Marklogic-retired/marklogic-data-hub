@@ -42,11 +42,11 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public canReadMatchMerge:() => boolean = () => {
         // As of the moment readMatch and readMerge are connected
-        return this.authorities.includes('readMatch');
+        return this.authorities.includes('readMatching') && this.authorities.includes('readMerge');
     };
     public canWriteMatchMerge:() => boolean = () => {
         // As of the moment writeMatch and writeMerge are connected
-        return this.authorities.includes('writeMatch');
+        return this.authorities.includes('writeMatching') && this.authorities.includes('writeMerge');
     };
     public canReadLoad:() => boolean = () => {
         return this.authorities.includes('readIngestion');
