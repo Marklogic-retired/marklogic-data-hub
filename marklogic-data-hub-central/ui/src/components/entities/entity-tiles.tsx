@@ -36,6 +36,8 @@ const EntityTiles = (props) => {
             view = 'map-';
           } else if (location.state.stepDefinitionType === 'custom') {
             view = 'custom-'
+          } else if (location.state.stepDefinitionType === 'matching') {
+            view = 'match-'
           }
           const activeLocationEntityTypes = [location.state.targetEntityType || 'No Entity Type'];
           setLocationEntityType(activeLocationEntityTypes);
@@ -45,6 +47,8 @@ const EntityTiles = (props) => {
             view = 'map-';
           } else if (props.canReadCustom) {
             view = 'custom-'
+          } else if (props.canReadMatchMerge) {
+            view = 'match-'
           }
         }
 
@@ -160,7 +164,8 @@ const EntityTiles = (props) => {
               let response = await axios.get('/api/artifacts/matching');
               if (response.status === 200) {
                 let entArt = response.data;
-                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                /* Below sort should be enabled once the api is working properly and response has valid array data */
+                //entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
                 setMatchingArtifacts([...entArt]);
               }
             }
@@ -233,7 +238,7 @@ const EntityTiles = (props) => {
                     addStepToNew={props.addStepToNew}/>
             </div>
         }
-        else if (viewData[index] === 'matching-' + entityType && mappingCardData){
+        else if (viewData[index] === 'match-' + entityType && mappingCardData){
             output = <div className={styles.cardView}>
             <MatchingCard data={ matchingCardData ? matchingCardData.artifacts : []}
                 entityName={entityType}
