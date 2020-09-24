@@ -39,7 +39,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     setEntityClearQuery,
     setLatestJobFacet,
     resetSearchOptions,
-    setEntity,
     applySaveQuery,
     setPageWithEntity,
     setPageQueryOptions,
@@ -130,15 +129,13 @@ const Browse: React.FC<Props> = ({ location }) => {
     return () => {
       componentIsMounted.current = false
     }
-  }, [])
-
+  }, [])  
 
   useEffect(() => {
     if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
-      getSearchResults(entities);
+    getSearchResults(entities);
     }
-  }, [searchOptions, entities, user.error.type]);
-
+  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
   useEffect(() => {
     if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
@@ -293,7 +290,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <>
         <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} />
-        <ZeroStateExplorer entities={entities} setEntity={setEntity} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
       </>
     );
   } else {
