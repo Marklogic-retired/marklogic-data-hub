@@ -310,6 +310,7 @@ describe('json scenario for table on browse documents page', () => {
 
   it('verify source view of the document', () => {
     browsePage.selectEntity('Customer');
+    browsePage.getFinalDatabaseButton().click();
     browsePage.search('Adams Cole');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getFacetItemCheckbox('email', 'coleadams39@nutralab.com').click();
@@ -327,6 +328,7 @@ describe('json scenario for table on browse documents page', () => {
 
     //Verify if the facet, search text and view persists.
     browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getFinalDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
     browsePage.getClearFacetSearchSelection('mapCustomersJSON').should('exist');
     browsePage.getAppliedFacets('adamscole@nutralab.com').should('exist');
     browsePage.getAppliedFacets('coleadams39@nutralab.com').should('exist');
@@ -361,6 +363,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
     browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getFinalDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
     browsePage.getClearFacetSearchSelection('mapCustomersJSON').should('exist');
     browsePage.getSearchText().should('have.value', 'Adams Cole');
     browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)');
@@ -453,24 +456,24 @@ describe('json scenario for table on browse documents page', () => {
   })
 
   it('Apply facets, unchecking them should not recheck original facets', () => {
-      browsePage.selectEntity('Customer');
-      browsePage.getShowMoreLink().first().click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
-      browsePage.getGreySelectedFacets('Mcgee Burch').should('exist');
-      browsePage.getGreySelectedFacets('Powers Bauer').should('exist');
-      browsePage.getFacetApplyButton().click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
-      browsePage.waitForSpinnerToDisappear();
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
-      browsePage.getShowMoreLink().click({multiple:true});
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').should('not.be.checked');
+    browsePage.selectEntity('Customer');
+    browsePage.getShowMoreLink().first().click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
+    browsePage.getGreySelectedFacets('Mcgee Burch').should('exist');
+    browsePage.getGreySelectedFacets('Powers Bauer').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
+    browsePage.getShowMoreLink().click({ multiple: true });
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').should('not.be.checked');
   })
 });
 
@@ -511,5 +514,49 @@ describe('Verify numeric/date facet can be applied', () => {
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({ force: true });
     browsePage.getFacetApplyButton().should('not.exist')
     browsePage.getSelectedFacet('birthDate:').should('not.exist');
+  });
+});
+
+describe('scenario on zero state page', () => {
+
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+  });
+
+  it('verify selection of final/staging database on zero state page', () => {
+    //switch on zero state page and select query parameters for final database
+    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.getTableViewButton().click();
+    browsePage.selectEntity('Customer');
+    browsePage.getSearchText().type('Adams')
+    browsePage.getExploreButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //verify query parameters for final database on browse page
+    browsePage.waitForTableToLoad();
+    browsePage.getFinalDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getSearchText().should('have.value', 'Adams');
+
+    //switch on zero state page and select query parameters for staging database
+    toolbar.getExploreToolbarIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitUntil(() => browsePage.getStagingDatabaseButton()).click();
+    browsePage.selectEntity('Customer');
+    browsePage.getSearchText().type('Powers')
+    browsePage.getSnippetViewButton().click();
+    browsePage.getExploreButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //verify query parameters for staging database on browse page
+    cy.waitUntil(() => browsePage.getSnippetViewResult());
+    browsePage.getStagingDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getSearchText().should('have.value', 'Powers');
+    browsePage.getDocuments().should('not.exist')
   });
 });

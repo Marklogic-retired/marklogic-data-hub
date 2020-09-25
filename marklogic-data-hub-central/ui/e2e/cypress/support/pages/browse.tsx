@@ -172,6 +172,10 @@ class BrowsePage {
   getDateFacetPicker() {
     return cy.get('.ant-calendar-picker');
   }
+  
+  getSelectedFacet(facet: string) {
+    return cy.get('#selected-facets > button').contains(facet);
+  }
 
   selectDateRange() {
     this.getDateFacetPicker().click();
@@ -558,6 +562,21 @@ class BrowsePage {
     return cy.get(`[data-cy=query-option-${query}]`);
   }
 
+  getFinalDatabaseButton() {
+    return cy.findByText('Final');
+  }
+
+  getStagingDatabaseButton() {
+    return cy.findByText('Staging');
+  }
+
+  getTableViewButton() {
+    return cy.findByText('Table');
+  }
+
+  getSnippetViewButton() {
+    return cy.findByText('Snippet');
+  }
 
   //data export modal
   getStructuredDataWarning() {
