@@ -4,7 +4,7 @@ import styles from './zero-state-explorer.module.scss';
 import { SearchContext } from '../../util/search-context';
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
-import { MLButton, MLRadio,MLTooltip } from '@marklogic/design-system';
+import { MLButton, MLRadio, MLTooltip } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons'
 import tiles from '../../config/tiles.config'
@@ -13,10 +13,10 @@ const ZeroStateExplorer = (props) => {
 
   const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [view, setView] = useState(props.tableView ? 'table' : 'snippet');
   const { Option } = Select;
-  const dividerOption = <Divider className={styles.dividerOption}/>;
+  const dividerOption = <Divider className={styles.dividerOption} />;
   const dropdownOptions = ['All Data', dividerOption, 'All Entities', dividerOption, ...props.entities];
-  let [view, setView] = useState(props.tableView ? 'table' : 'snippet');
 
 
   const {
@@ -33,13 +33,14 @@ const ZeroStateExplorer = (props) => {
       zeroState: false,
       manageQueryModal: false,
       sortOrder: []
-  }
-  applySaveQuery(options);
+    }
+    props.setDatabasePreferences(props.zeroStatePageDatabase)
+    applySaveQuery(options);
   }
 
   const handleOptionSelect = (option: any) => {
     setDropdownValue(option)
-    if(option === 'All Data'){
+    if (option === 'All Data') {
       setView('card');
       props.setCardView(true);
     } else {
@@ -53,6 +54,14 @@ const ZeroStateExplorer = (props) => {
     setSearchQuery(e.target.value);
   }
 
+  const options = dropdownOptions.map((entity, index) => {
+    return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{ cursor: 'default' }}>
+      {entity}
+    </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
+        {entity}
+      </Option>
+  })
+
   const entityMenu = (
     <Select
       defaultValue='All Entities'
@@ -62,15 +71,7 @@ const ZeroStateExplorer = (props) => {
       value={dropDownValue}
       onChange={value => handleOptionSelect(value)}
     >
-      {
-        dropdownOptions.map((entity, index) => {
-          return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: 'default'}}>
-            {entity}
-          </Option> : <Option key={index} value={entity}>
-            {entity}
-          </Option>
-        })
-      }
+      {options}
     </Select>
   );
 
@@ -95,7 +96,11 @@ const ZeroStateExplorer = (props) => {
   const onViewChange = (val) => {
     setView(val);
     val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false)
-}
+  }
+
+  const onDatabaseChange = (val) => {
+    props.setZeroStatePageDatabase(val)
+  }
 
   return (
     <div className={styles.container} >
@@ -136,38 +141,59 @@ const ZeroStateExplorer = (props) => {
                 </Row>
                 <Row>
                   <br />
-                  <Col span={24}>
+                  <Col span={12}>
+                    <div className={styles.database}>
+                      <p className={styles.databaseLabel}>Database:</p>
+                      <MLRadio.MLGroup
+                        style={{}}
+                        buttonStyle="solid"
+                        defaultValue={props.zeroStatePageDatabase}
+                        name="radiogroup"
+                        onChange={e => onDatabaseChange(e.target.value)}
+                        size="medium"
+                        id="database-switch"
+                      >
+                        <MLRadio.MLButton aria-label="switch-database-final" value={'final'} className={styles.button}>
+                          Final
+                      </MLRadio.MLButton>
+                        <MLRadio.MLButton aria-label="switch-database-staging" value={'staging'} className={styles.button}>
+                          Staging
+                      </MLRadio.MLButton>
+                      </MLRadio.MLGroup>
+                    </div>
+                  </Col>
+                  <Col span={12}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
                       <MLRadio.MLGroup
-                      style={{ }}
+                        style={{}}
                         buttonStyle="solid"
                         value={view}
                         name="radiogroup"
                         onChange={e => onViewChange(e.target.value)}
                         size="medium"
                       >
-                      <MLTooltip
-                      title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
-                      placement="bottom"
-                      ><MLRadio.MLButton aria-label="switch-view-table" value={'table'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
-                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
+                        <MLTooltip
+                          title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                          placement="bottom"
+                        ><MLRadio.MLButton aria-label="switch-view-table" value={'table'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
                       </MLRadio.MLButton>
-                      </MLTooltip>
-                      <MLTooltip
-                      title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
-                      placement="bottom"
-                      ><MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
-                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
+                        </MLTooltip>
+                        <MLTooltip
+                          title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                          placement="bottom"
+                        ><MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
                       </MLRadio.MLButton>
-                      </MLTooltip>
-                      <MLTooltip
-                      title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
-                      placement="bottom"
-                      ><MLRadio.MLButton aria-label="switch-view-card" value={'card'} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
-                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
+                        </MLTooltip>
+                        <MLTooltip
+                          title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
+                          placement="bottom"
+                        ><MLRadio.MLButton aria-label="switch-view-card" value={'card'} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+                            <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
                       </MLRadio.MLButton>
-                      </MLTooltip>
+                        </MLTooltip>
                       </MLRadio.MLGroup>
                     </div>
                   </Col>
