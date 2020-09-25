@@ -18,6 +18,8 @@ describe('zero state explorer component', () => {
         expect(getByTestId('search-bar')).toBeInTheDocument();
         expect(getByTestId('entity-select')).toBeInTheDocument();
         expect(getByTestId('query-select')).toBeInTheDocument();
+        expect(document.querySelector('[aria-label="switch-database-final"]')).toBeInTheDocument();
+        expect(document.querySelector('[aria-label="switch-database-staging"]')).toBeInTheDocument();
     });
 
     test('Verify Zero State components renders when user does not have save query role', () => {
@@ -41,7 +43,7 @@ describe('zero state explorer component', () => {
     });
 
     test('Verify onClickExplore gets called', () => {
-        const { getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()}/>);
+        const { getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
         const exploreButton = getByText('Explore');
         exploreButton.onclick = jest.fn();
         fireEvent.click(exploreButton);
