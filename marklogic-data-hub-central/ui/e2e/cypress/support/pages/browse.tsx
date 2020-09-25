@@ -28,6 +28,7 @@ class BrowsePage {
 
   getTotalDocuments() {
     this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     return cy.get('[data-cy=total-documents]').then( value => {
         return parseInt(value.first().text().replace(/,/, ""));
     });
@@ -125,6 +126,7 @@ class BrowsePage {
   clickClearFacetSearchSelection(facet: string){
       cy.findByTestId(`clear-${facet}`).click();
       this.waitForSpinnerToDisappear();
+      cy.waitForAsyncRequest();
   }
 
   getFacetSearchSelectionCount(facet: string) {
@@ -226,6 +228,7 @@ class BrowsePage {
     cy.get('.ant-input-search-button').click();
     this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   changeNumericSlider(val: string){
@@ -245,7 +248,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
-    cy.get("#hub-properties > div > i").click();
+    cy.waitUntil(() => cy.get("#hub-properties > div > i").click());
   }
 
   getExpandableSnippetView() {
