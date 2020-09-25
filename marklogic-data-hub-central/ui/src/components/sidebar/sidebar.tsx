@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import NumericFacet from '../numeric-facet/numeric-facet';
 import DateFacet from '../date-facet/date-facet';
 import DateTimeFacet from '../date-time-facet/date-time-facet';
-import { MLTooltip } from '@marklogic/design-system';
+import { MLTooltip, MLRadio } from '@marklogic/design-system';
 import { getUserPreferences, updateUserPreferences } from '../../services/user-preferences';
 import { UserContext } from '../../util/user-context';
 
@@ -27,6 +27,8 @@ interface Props {
   entityDefArray: any[];
   facetRender: (facets: any) => void;
   checkFacetRender: (facets: any) => void;
+  database: string;
+  setDatabasePreferences: (database: string) => void;
 };
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -56,10 +58,10 @@ const Sidebar: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.facets) {
-      props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties', 'entityProperties']);
+      props.selectedEntities.length === 1 ? setActiveKey(['database', 'entityProperties']) : setActiveKey(['database', 'hubProperties', 'entityProperties']);
       for (let i in hubFacets) {
         if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName)) {
-          setActiveKey(['hubProperties', 'entityProperties']);
+          setActiveKey(['database', 'hubProperties', 'entityProperties']);
         }
       }
       const parsedFacets = facetParser(props.facets);
@@ -81,7 +83,7 @@ const Sidebar: React.FC<Props> = (props) => {
       if (selectedHubFacets.length) {
         initializeFacetPreferences();
       } else {
-        props.selectedEntities.length === 1 ? setActiveKey(['entityProperties']) : setActiveKey(['hubProperties', 'entityProperties']);
+        props.selectedEntities.length === 1 ? setActiveKey(['database', 'entityProperties']) : setActiveKey(['database', 'hubProperties', 'entityProperties']);
       }
 
       let entityFacets: any[] = []
@@ -489,6 +491,23 @@ const Sidebar: React.FC<Props> = (props) => {
         bordered={false}
         onChange={setActive}
       >
+        <Panel id="database" header={<div className={styles.title}>Database</div>} key="database" style={facetPanelStyle}>
+          <MLRadio.MLGroup
+            style={{}}
+            buttonStyle="solid"
+            defaultValue={props.database}
+            name="radiogroup"
+            onChange={e => props.setDatabasePreferences(e.target.value)}
+            size="medium"
+          >
+            <MLRadio.MLButton aria-label="switch-database-final" value={'final'} className={styles.button}>
+              Final
+            </MLRadio.MLButton>
+            <MLRadio.MLButton aria-label="switch-database-staging" value={'staging'} className={styles.button}>
+              Staging
+            </MLRadio.MLButton>
+          </MLRadio.MLGroup>
+        </Panel>
         {props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={facetPanelStyle}>
             {entityFacets.length ? entityFacets.map((facet, index) => {
@@ -510,6 +529,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       propertyPath={facet.propertyPath}
                       updateSelectedFacets={updateSelectedFacets}
                       addFacetValues={addFacetValues}
+                      database={props.database}
                     />
                   )
                 }
@@ -593,6 +613,7 @@ const Sidebar: React.FC<Props> = (props) => {
                       datatype={datatype}
                       key={facet.facetName}
                       onChange={onNumberFacetChange}
+                      database={props.database}
                     />
                   </div>
                 )
@@ -612,8 +633,7 @@ const Sidebar: React.FC<Props> = (props) => {
               id="date-select"
               value={dateRangeValue}
               onChange={value => handleOptionSelect(value)}
-            >{
-                dateRangeOptions.map((timeBucket, index) => {
+            >{dateRangeOptions.map((timeBucket, index) => {
                   return <Option key={index} value={timeBucket}>
                     {timeBucket}
                   </Option>
@@ -644,6 +664,7 @@ const Sidebar: React.FC<Props> = (props) => {
                 referenceType={facet.referenceType}
                 entityTypeId={facet.entityTypeId}
                 propertyPath={facet.propertyPath}
+                database={props.database}
               />
             )
           })}
