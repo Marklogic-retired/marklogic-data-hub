@@ -14,6 +14,7 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
+  database: string;
   onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
 };
 
@@ -29,7 +30,7 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   const getFacetRange = async () => {
     try {
-      const response = await rangeFacet(props)
+      const response = await rangeFacet(props, props.database)
       if (response['data']) {
         let range = [...[response.data.min, response.data.max].map(Number)]
         setRangeLimit(range)
@@ -146,8 +147,8 @@ const NumericFacet: React.FC<Props> = (props) => {
       <p className={styles.name}>{<MLTooltip title={props.name}>{formatTitle()}</MLTooltip>}</p>
       <div className={styles.numericFacet} data-testid='numeric-slider'>
         <MLSlider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
-        <div id={"min-numeric-value"}><InputNumber className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
-        <div id={"max-numeric-value"}><InputNumber className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
+        <div id={"min-numeric-value"}><InputNumber data-testid='numeric-slider-min' className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
+        <div id={"max-numeric-value"}><InputNumber data-testid='numeric-slider-max' className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
       </div>
     </div>
   )
