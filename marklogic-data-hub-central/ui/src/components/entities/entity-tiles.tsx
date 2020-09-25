@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
@@ -6,6 +6,7 @@ import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
+import MergingCard from './merging/merging-card';
 
 import { matchingStep } from '../../assets/mock-data/matching';
 
@@ -260,6 +261,17 @@ const EntityTiles = (props) => {
             />
         </div>
         }
+        //TODO:- Enhance below code for merging when working on DHFPROD-4328 
+        else if(viewData[index] === 'merge-' + entityType) {
+          output = <div className={styles.cardView}>
+                <MergingCard
+                entityName={entityType}
+                entityModel={props.entityModels[entityType]}
+                canReadMatchMerge={props.canReadMatchMerge}
+                canWriteMatchMerge={props.canWriteMatchMerge}
+                />
+        </div>
+        }
         else if (viewData[index] === 'custom-' + entityType ){
             output = <div className={styles.cardView}>
                 <CustomCard data={ customCardData ? customCardData.artifacts : []}
@@ -292,6 +304,9 @@ const EntityTiles = (props) => {
                         </Menu.Item>: null}
                       {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
                             Match
+                        </Menu.Item>: null}
+                      {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index,'merge', entityType)}>
+                            Merge
                         </Menu.Item>: null}
                     </Menu>
                     </div>
