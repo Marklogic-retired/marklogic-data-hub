@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { Tooltip } from 'antd';
 import { faFileExport } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { SearchContext } from '../../util/search-context';
@@ -49,7 +48,7 @@ const QueryExport = (props) => {
         }
 
         try {
-            const response = await getExportQueryPreview(query);
+            const response = await getExportQueryPreview(query, props.database);
             if (response) {
                 const preview = getExportPreview(response);
                 const header = preview[0];
@@ -67,7 +66,7 @@ const QueryExport = (props) => {
 
     return (
         <div>
-            <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+            <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} database={props.database}/>
             <MLTooltip title='Export results with the displayed columns to CSV.'>
                 <FontAwesomeIcon style={{ cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} data-testid='query-export' />
             </MLTooltip>
