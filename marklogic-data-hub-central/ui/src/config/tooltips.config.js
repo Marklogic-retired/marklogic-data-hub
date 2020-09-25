@@ -131,7 +131,7 @@ const ModelingTooltips = {
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   wildcard: 'Enables wildcard search.',
   addStructuredProperty: 'Click to add properties within this structured property.',
-  entityEditedAlert: 'Editing or deleting an entity type could trigger a reindexing of your data or affect processes that are in progress.',
+  entityEditedAlert: 'Applying changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.',
   noWriteAccess: 'Contact your security administrator for access.',
   addProperty: 'Click to add properties to this entity type.'
 }
