@@ -20,6 +20,7 @@ interface Props {
     hasStructured: boolean;
     tableView: boolean;
     entityDefArray: any[];
+    database: string;
 }
 
 const DEFAULT_ALL_ENTITIES_HEADER = [
@@ -223,7 +224,8 @@ const ResultsTabularView = (props) => {
                         sources: item.sources,
                         primaryKey: path.primaryKey,
                         uri: item.uri,
-                        entityInstance: item.entityInstance
+                        entityInstance: item.entityInstance,
+                        database: props.database
                     }
                 }} id={'instance'}
                     data-cy='instance'>
@@ -243,7 +245,8 @@ const ResultsTabularView = (props) => {
                         sources: item.sources,
                         primaryKey: path.primaryKey,
                         uri: item.uri,
-                        entityInstance: item.entityInstance
+                        entityInstance: item.entityInstance,
+                        database: props.database
                     }
                 }} id={'source'}
                     data-cy='source'>
@@ -265,7 +268,8 @@ const ResultsTabularView = (props) => {
                 primaryKeyPath: path,
                 sources: item.sources,
                 entityInstance: item.entityInstance,
-                detailView: detailView
+                detailView: detailView,
+                database: props.database
             }
         } else {
             options = {
@@ -274,7 +278,8 @@ const ResultsTabularView = (props) => {
                 primaryKeyPath: path,
                 sources: item.sources,
                 entityInstance: item.entityInstance,
-                detailView: detailView
+                detailView: detailView,
+                database: props.database
             }
         }
         dataObj = { ...dataObj, ...options };
@@ -401,7 +406,7 @@ const ResultsTabularView = (props) => {
         <>
             <div className={styles.icon}>
                 <div className={styles.queryExport} data-cy="query-export">
-                    {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} />}
+                    {canExportQuery && searchOptions.entityTypeIds.length > 0 && <QueryExport hasStructured={props.hasStructured} columns={props.columns} selectedPropertyDefinitions={props.selectedPropertyDefinitions} database={props.database}/>}
                 </div>
                 {props.selectedEntities?.length !== 0 ? <div className={styles.columnSelector} data-cy="column-selector">
                     <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />

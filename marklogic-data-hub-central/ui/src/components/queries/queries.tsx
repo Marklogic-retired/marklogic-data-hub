@@ -30,6 +30,7 @@ interface Props {
     setColumnSelectorTouched: (state: boolean) => void;
     setQueries: (state: boolean) => void;
     setIsLoading: (state: boolean) => void;
+    database: string;
 };
 
 const Query: React.FC<Props> = (props) => {
@@ -590,6 +591,7 @@ const Query: React.FC<Props> = (props) => {
                 isSavedQueryUser={props.isSavedQueryUser}
                 modalVisibility={searchOptions.manageQueryModal}
                 entityDefArray={props.entityDefArray}
+                database={props.database}
             />
             <Modal
                 visible={showEntityConfirmation}
