@@ -36,13 +36,15 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
       let structuredTitle = property.multiple ? (
         <span>
-          {property.name} 
+          {property.name}
+          &nbsp; 
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> 
           <img className={styles.arrayImage} src={arrayIcon}/>
         </span>
       ) : (
         <span>
-          {property.name} 
+          {property.name}
+          &nbsp; 
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> 
         </span>
       )
