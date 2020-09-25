@@ -27,7 +27,7 @@ const QueryExportModal = (props) => {
 
     const onOk = async () => {
         if (props.recordID) {
-            exportSavedQuery(props.recordID, limit)
+            exportSavedQuery(props.recordID, limit, props.database)
         } else {
             let query = {
                 savedQuery: {
@@ -44,7 +44,7 @@ const QueryExportModal = (props) => {
             }
 
             try {
-                await exportQuery(query, limit);
+                await exportQuery(query, limit, props.database);
             } catch (error) {
                 handleError(error);
             }
