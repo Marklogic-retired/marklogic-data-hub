@@ -34,6 +34,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   
   const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
   const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
+  const database = location.state && location.state["database"] ? location.state["database"]: detailPagePreferences["database"];
   const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
   const entityInstance = location.state && location.state['entityInstance'] ? location.state['entityInstance'] : detailPagePreferences["entityInstance"];
   const [selected, setSelected] = useState();
@@ -56,7 +57,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         return;
       }
       try {
-        const result = await axios(`/api/entitySearch?docUri=${uri}`);
+        const result = await axios(`/api/entitySearch?docUri=${uri}&database=${database}`);
         if (!result.data) {
           history.push('/error');
         }
