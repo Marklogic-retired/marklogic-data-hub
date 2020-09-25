@@ -1,8 +1,7 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { render } from '@testing-library/react';
+import { render, fireEvent, wait } from '@testing-library/react';
 import NumericFacet from './numeric-facet';
-
 jest.mock('../../api/facets')
 
 describe("<NumericFacet/>", () => {
@@ -16,6 +15,7 @@ describe("<NumericFacet/>", () => {
             referenceType={''}
             entityTypeId={''}
             propertyPath={''}
+            database='final'
         />);
 
         await act(async () => {
@@ -24,7 +24,7 @@ describe("<NumericFacet/>", () => {
     })
 
     test("Numeric component renders with mock data", async (done) => {
-        const { getByTestId, getByDisplayValue, debug } = render(<NumericFacet
+        const { getByTestId, getByDisplayValue } = render(<NumericFacet
             name={'age'}
             step={1}
             constraint={'age'}
@@ -33,6 +33,7 @@ describe("<NumericFacet/>", () => {
             referenceType={'element'}
             entityTypeId={''}
             propertyPath={'age'}
+            database='final'
         />);
 
         await act(async () => {
@@ -47,7 +48,6 @@ describe("<NumericFacet/>", () => {
             })
         });
     })
-
 });
 
 
