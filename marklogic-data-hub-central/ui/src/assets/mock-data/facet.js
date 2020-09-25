@@ -75,5 +75,6 @@ export const facetProps = {
       "count": 999,
       "value": "CustomerType"
     }
-  ]
+  ],
+  database: 'final'
 }
