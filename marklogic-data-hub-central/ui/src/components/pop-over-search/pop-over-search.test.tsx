@@ -21,6 +21,7 @@ describe("<PopOverSearch/>", () => {
             popOvercheckedValues={[]}
             facetValues= {[]}
             facetName={''}
+            database='final'
         />);
         expect(getByText("Search")).toBeInTheDocument();
         fireEvent.click(getByText("Search"));
@@ -28,7 +29,7 @@ describe("<PopOverSearch/>", () => {
         await wait(() => {
             fireEvent.change(inputField, { target: {value: 'ad'} });
         });
-        let url = "/api/entitySearch/facet-values";
+        let url = "/api/entitySearch/facet-values?database=final";
         let payload = {
             'referenceType':'path',
             'entityTypeId':'http://example.org/Customer-0.0.1/Customer',

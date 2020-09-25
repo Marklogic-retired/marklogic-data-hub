@@ -263,7 +263,7 @@ const QueryModal = (props) => {
 
     const getPreview = async (id) => {
         try {
-            const response = await getSavedQueryPreview(id);
+            const response = await getSavedQueryPreview(id, props.database);
             if (response.data) {
                 const preview = getExportPreview(response.data)
                 const header = preview[0];
@@ -281,7 +281,7 @@ const QueryModal = (props) => {
 
     return (
         <div>
-            <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+            <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} database={props.database}/>
             <Modal
                 title={null}
                 visible={props.modalVisibility}

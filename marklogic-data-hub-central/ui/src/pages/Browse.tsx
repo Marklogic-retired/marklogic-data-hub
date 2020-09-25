@@ -63,6 +63,8 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
+  const [database, setDatabase] = useState(JSON.parse(getUserPreferences(user.name)).database);
+  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state ? false : JSON.parse(getUserPreferences(user.name)).cardView);
 
@@ -81,14 +83,13 @@ const Browse: React.FC<Props> = ({ location }) => {
       setIsLoading(false);
     }
   }
-
   const getSearchResults = async (allEntities: string[]) => {
     try {
       handleUserPreferences();
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
-        url: `/api/entitySearch`,
+        url: `/api/entitySearch?database=${database}`,
         data: {
           query: {
             searchText: searchOptions.query,
@@ -137,7 +138,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
     getSearchResults(entities);
     }
-  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
+  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, database]);
 
   useEffect(() => {
     if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
@@ -155,7 +156,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     else if (location.state && location.state.hasOwnProperty('entity')) {
       setEntityClearQuery(location.state['entity']);
     }
-
   }, [searchOptions.zeroState]);
 
   const setZeroStateQueryOptions = () => {
@@ -198,7 +198,8 @@ const Browse: React.FC<Props> = ({ location }) => {
             propertiesToDisplay: searchOptions.selectedTableProperties || [],
             zeroState: parsedPreferences.zeroState,
             manageQueryModal: false,
-            sortOrder: parsedPreferences.sortOrder || []
+            sortOrder: parsedPreferences.sortOrder || [],
+            database:  database
           }
           await setPageQueryOptions(options)
           if (parsedPreferences.hasOwnProperty('tableView') && parsedPreferences.hasOwnProperty('cardView')) {
@@ -231,7 +232,8 @@ const Browse: React.FC<Props> = ({ location }) => {
       propertiesToDisplay: searchOptions.selectedTableProperties,
       zeroState: searchOptions.zeroState,
       sortOrder: searchOptions.sortOrder,
-      cardView: cardView
+      cardView: cardView,
+      database: database
     }
     updateUserPreferences(user.name, preferencesObject);
   }
@@ -246,6 +248,19 @@ const Browse: React.FC<Props> = ({ location }) => {
       resetSearchOptions();
     }
   };
+
+  const setDatabasePreferences = (database: string) => {
+    setDatabase(database)
+    let userPreferences = getUserPreferences(user.name);
+    if (userPreferences) {
+      let oldOptions = JSON.parse(userPreferences);
+      let newOptions = {
+        ...oldOptions,
+        database: database
+      }
+      updateUserPreferences(user.name, newOptions);
+    }
+  }
 
   const onCollapse = () => {
     setCollapsed(!collapse);
@@ -300,9 +315,9 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   if (searchOptions.zeroState) {
     return (
-      <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} />
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView}/>
+      <>        
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} />
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} database={database} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase}/>
       </>
     );
   } else {
@@ -321,6 +336,8 @@ const Browse: React.FC<Props> = ({ location }) => {
             entityDefArray={entityDefArray}
             facetRender={updateSelectedFacets}
             checkFacetRender={updateCheckedFacets}
+            database={database} 
+            setDatabasePreferences={setDatabasePreferences} 
           />
         </Sider>
         <Content className={styles.content}>
@@ -330,7 +347,6 @@ const Browse: React.FC<Props> = ({ location }) => {
               <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
               <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
           </div>
-
           {user.error.type === 'ALERT' ?
             <AsyncLoader />
             :
@@ -389,6 +405,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   isColumnSelectorTouched={isColumnSelectorTouched}
                   setColumnSelectorTouched={setColumnSelectorTouched}
                   entityDefArray={entityDefArray}
+                  database={database}
                 />
               </div>
               <div className={styles.viewContainer} >
