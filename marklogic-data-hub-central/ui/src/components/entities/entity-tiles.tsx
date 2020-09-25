@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
@@ -7,6 +7,7 @@ import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
 import './entity-tiles.scss'
+import MergingCard from './merging/merging-card';
 
 import { matchingStep } from '../../assets/mock-data/matching';
 
@@ -261,6 +262,17 @@ const EntityTiles = (props) => {
             />
         </div>
         }
+        //TODO:- Enhance below code for merging when working on DHFPROD-4328 
+        else if(viewData[index] === 'merge-' + entityType) {
+          output = <div className={styles.cardView}>
+                <MergingCard
+                entityName={entityType}
+                entityModel={props.entityModels[entityType]}
+                canReadMatchMerge={props.canReadMatchMerge}
+                canWriteMatchMerge={props.canWriteMatchMerge}
+                />
+        </div>
+        }
         else if (viewData[index] === 'custom-' + entityType ){
             output = <div className={styles.cardView}>
                 <div className={styles.customEntityTitle} aria-label={'customEntityTitle'}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
@@ -294,6 +306,9 @@ const EntityTiles = (props) => {
                         </Menu.Item>: null}
                       {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
                             Match
+                        </Menu.Item>: null}
+                      {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index,'merge', entityType)}>
+                            Merge
                         </Menu.Item>: null}
                     </Menu>
                     </div>
