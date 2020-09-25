@@ -1,0 +1,57 @@
+
+.addMergeRuleForm{
+    margin-top: 15px;
+}
+
+.title {
+    font-size :24px;
+    font-weight: 500;
+}
+
+.titleLegend {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+    margin-bottom: -16px;
+  
+    .legendText {
+      font-size: 14px;
+      margin-left: 10px;
+    }
+  
+    .structuredIcon {
+      color: #5B69AF;
+      font-size: 14px;
+    }
+  
+    .arrayImage {
+      margin-bottom: 4px
+    }
+  
+}
+
+.questionCircle {
+    font-size: 12px;
+    vertical-align: top;
+    margin-top: 6px;
+    color: #7F86B5;
+}
+
+.asterisk{
+    color: #DB4f59;
+}
+
+.formItem {
+    margin-bottom: 8px !important;
+}
+
+.submitButtonsForm {
+    text-align: right;
+    margin-bottom: -15px;
+    margin-right: 5px;
+}
+
+.submitButtons {
+    text-align: right;
+    width: 162%;
+}
