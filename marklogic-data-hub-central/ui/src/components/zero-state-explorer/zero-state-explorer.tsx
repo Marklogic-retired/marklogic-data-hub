@@ -1,21 +1,21 @@
 import React, { useState, useContext } from 'react';
-import { Row, Col, Card, Select, Input } from 'antd';
+import { Row, Col, Card, Select, Input, Divider } from 'antd';
 import styles from './zero-state-explorer.module.scss';
 import { SearchContext } from '../../util/search-context';
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
-import { MLButton, MLRadio } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStream, faTable } from '@fortawesome/free-solid-svg-icons';
-import tiles from '../../config/tiles.config';
-import './zero-state-explorer.scss';
+import { MLButton, MLRadio,MLTooltip } from '@marklogic/design-system';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons'
+import tiles from '../../config/tiles.config'
 
 const ZeroStateExplorer = (props) => {
 
   const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const { Option } = Select;
-  const dropdownOptions = ['All Entities', ...props.entities];
+  const dividerOption = <Divider className={styles.dividerOption}/>;
+  const dropdownOptions = ['All Data', dividerOption, 'All Entities', dividerOption, ...props.entities];
   let [view, setView] = useState(props.tableView ? 'table' : 'snippet');
 
   const {
@@ -25,19 +25,27 @@ const ZeroStateExplorer = (props) => {
   const onClickExplore = () => {
     let options: QueryOptions = {
       searchText: searchQuery,
-      entityTypeIds: dropDownValue === 'All Entities' ? [] : [dropDownValue],
+      entityTypeIds: dropDownValue === 'All Entities' || dropDownValue === 'All Data' ? [] : [dropDownValue],
       selectedFacets: {},
       selectedQuery: 'select a query',
       propertiesToDisplay: [],
       zeroState: false,
       manageQueryModal: false,
-      sortOrder: []
+      sortOrder: [],
   }
   applySaveQuery(options);
   }
 
   const handleOptionSelect = (option: any) => {
-    setDropdownValue(option);
+    setDropdownValue(option)
+    if(option === 'All Data'){
+      setView('card');
+      props.setCardView(true);
+    } else {
+      setView('table');
+      props.setCardView(false);
+      props.toggleTableView(true);
+    }
   }
 
   const onChange = (e) => {
@@ -55,7 +63,9 @@ const ZeroStateExplorer = (props) => {
     >
       {
         dropdownOptions.map((entity, index) => {
-          return <Option key={index} value={entity}>
+          return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: 'default'}}>
+            {entity}
+          </Option> : <Option key={index} value={entity}>
             {entity}
           </Option>
         })
@@ -131,17 +141,32 @@ const ZeroStateExplorer = (props) => {
                       <MLRadio.MLGroup
                       style={{ }}
                         buttonStyle="solid"
-                        defaultValue={view}
+                        value={view}
                         name="radiogroup"
                         onChange={e => onViewChange(e.target.value)}
                         size="medium"
                       >
-                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} style={{ height: '32px', fontSize: '14px'}}>
-                          <i style={{ fontSize: '16px', marginLeft: '-6px', marginRight: '5px'}}><FontAwesomeIcon icon={faTable} /></i>Table
+                      <MLTooltip
+                      title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                      placement="bottom"
+                      ><MLRadio.MLButton aria-label="switch-view-table" value={'table'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
                       </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} style={{ height: '32px', fontSize: '14px'}}>
-                          <i style={{ fontSize: '16px', marginLeft: '-6px', marginRight: '5px'}}><FontAwesomeIcon icon={faStream} /></i>Snippet
+                      </MLTooltip>
+                      <MLTooltip
+                      title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
+                      placement="bottom"
+                      ><MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
                       </MLRadio.MLButton>
+                      </MLTooltip>
+                      <MLTooltip
+                      title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
+                      placement="bottom"
+                      ><MLRadio.MLButton aria-label="switch-view-card" value={'card'} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+                          <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
+                      </MLRadio.MLButton>
+                      </MLTooltip>
                       </MLRadio.MLGroup>
                     </div>
                   </Col>
