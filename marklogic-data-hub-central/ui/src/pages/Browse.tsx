@@ -22,6 +22,7 @@ import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-expl
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
 import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
+import RawDataCardView from '../components/raw-data/raw-data-card-view/raw-data-card-view';
 
 
 interface Props extends RouteComponentProps<any> {
@@ -63,6 +64,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
+  const [cardView, setCardView] = useState(location && location.state ? false : JSON.parse(getUserPreferences(user.name)).cardView);
 
   const getEntityModel = async () => {
     try {
@@ -171,14 +173,19 @@ const Browse: React.FC<Props> = ({ location }) => {
   }
 
   const initializeUserPreferences = async () => {
-    if (location.state) {
-      if (location.state['tileIconClicked']) {
-        await setZeroStateQueryOptions();
-      }
-    } else {
-      let defaultPreferences = getUserPreferences(user.name);
-      if (defaultPreferences !== null) {
-        let parsedPreferences = JSON.parse(defaultPreferences);
+    let defaultPreferences = getUserPreferences(user.name);
+    if (defaultPreferences !== null) {
+      let parsedPreferences = JSON.parse(defaultPreferences);
+      if (location.state) {
+        if (location.state['tileIconClicked']) {
+          await setZeroStateQueryOptions();
+          let preferencesObject = {
+            ...parsedPreferences,
+            zeroState: searchOptions.zeroState
+          }
+          updateUserPreferences(user.name, preferencesObject);
+        }
+      } else {
         if (!parsedPreferences.zeroState && searchOptions.zeroState) {
           let options: any = {
             searchText: parsedPreferences.query.searchText || '',
@@ -189,13 +196,17 @@ const Browse: React.FC<Props> = ({ location }) => {
             pageNumber: parsedPreferences.pageNumber || 1,
             pageLength: parsedPreferences.pageLength,
             propertiesToDisplay: searchOptions.selectedTableProperties || [],
-            zeroState: parsedPreferences.zeroState || false,
+            zeroState: parsedPreferences.zeroState,
             manageQueryModal: false,
             sortOrder: parsedPreferences.sortOrder || []
           }
           await setPageQueryOptions(options)
-          if (parsedPreferences.hasOwnProperty('tableView')) {
-            toggleTableView(parsedPreferences.tableView);
+          if (parsedPreferences.hasOwnProperty('tableView') && parsedPreferences.hasOwnProperty('cardView')) {
+            if (parsedPreferences.cardView) {
+              setCardView(parsedPreferences.cardView);
+            } else {
+              toggleTableView(parsedPreferences.tableView);
+            }
           }
         } else if (parsedPreferences.zeroState) {
           await setZeroStateQueryOptions();
@@ -219,7 +230,8 @@ const Browse: React.FC<Props> = ({ location }) => {
       queries: queries,
       propertiesToDisplay: searchOptions.selectedTableProperties,
       zeroState: searchOptions.zeroState,
-      sortOrder: searchOptions.sortOrder
+      sortOrder: searchOptions.sortOrder,
+      cardView: cardView
     }
     updateUserPreferences(user.name, preferencesObject);
   }
@@ -290,7 +302,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <>
         <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} />
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} />
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView}/>
       </>
     );
   } else {
@@ -325,7 +337,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef}>
-                <SearchBar entities={entities} />
+                <SearchBar entities={entities} cardView={cardView} setCardView={setCardView}/>
                 <SearchSummary
                   total={totalDocuments}
                   start={searchOptions.start}
@@ -344,7 +356,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <div className={styles.spinViews}>
                   <div className={styles.switchViews}>
                     {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
-                    <div aria-label="switch-view" >
+                    {!cardView ? <div aria-label="switch-view" >
                       <MLRadio.MLGroup
                         buttonStyle="outline"
                         name="radiogroup"
@@ -363,7 +375,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                           </MLTooltip></i>
                         </MLRadio.MLButton>
                       </MLRadio.MLGroup>
-                    </div>
+                    </div> : ''}
                   </div>
                 </div>
                 <Query queries={queries}
@@ -381,21 +393,27 @@ const Browse: React.FC<Props> = ({ location }) => {
               </div>
               <div className={styles.viewContainer} >
                 <div className={styles.fixedView} >
-                  {tableView ?
-                    <div>
-                      <ResultsTabularView
-                        data={data}
-                        entityPropertyDefinitions={entityPropertyDefinitions}
-                        selectedPropertyDefinitions={selectedPropertyDefinitions}
-                        entityDefArray={entityDefArray}
-                        columns={columns}
-                        selectedEntities={searchOptions.entityTypeIds}
-                        setColumnSelectorTouched={setColumnSelectorTouched}
-                        tableView={tableView}
-                      />
-                    </div>
-                    : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
-                  }
+                  {cardView ?
+                    <RawDataCardView
+                      data={data}
+                      entityPropertyDefinitions={entityPropertyDefinitions}
+                      selectedPropertyDefinitions={selectedPropertyDefinitions}
+                    />
+                    : (tableView ?
+                      <div>
+                        <ResultsTabularView
+                          data={data}
+                          entityPropertyDefinitions={entityPropertyDefinitions}
+                          selectedPropertyDefinitions={selectedPropertyDefinitions}
+                          entityDefArray={entityDefArray}
+                          columns={columns}
+                          selectedEntities={searchOptions.entityTypeIds}
+                          setColumnSelectorTouched={setColumnSelectorTouched}
+                          tableView={tableView}
+                        />
+                      </div>
+                      : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                    )}
                 </div>
                 <br />
                 <div>
