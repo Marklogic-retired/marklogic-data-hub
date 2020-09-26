@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
-import {Select, Input, Modal} from 'antd';
+import {Select, Input, Modal, Divider} from 'antd';
 import styles from './search-bar.module.scss';
 import { SearchContext } from '../../util/search-context';
 
 interface Props {
   entities: any;
+  cardView: boolean;
+  setCardView: any;
 }
 
 const SearchBar: React.FC<Props> = props => {
@@ -13,11 +15,12 @@ const SearchBar: React.FC<Props> = props => {
     const { searchOptions, setQuery, setEntity, setNextEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
     const [dropDownValue, setDropdownValue] = useState('All Entities');
-    const dropdownOptions = ['All Entities', ...props.entities];
-
+    const dividerOption = <Divider className={styles.dividerOption}/>;
+    const dropdownOptions = ['All Data',dividerOption,'All Entities',dividerOption, ...props.entities];
 
     const options = dropdownOptions.map((entity, index) =>
-      <Option value={entity} key={index} data-cy={`entity-option-${entity}`}>{entity}</Option>
+      index === 1 || index === 3 ? <Option value={index} key={index} disabled={true} style={{cursor: 'default'}}>{entity}</Option>
+      : <Option value={entity} key={index} data-cy={`entity-option-${entity}`}>{entity}</Option>
     );
 
     const entityMenu = (
@@ -34,7 +37,13 @@ const SearchBar: React.FC<Props> = props => {
     );
 
     const handleOptionSelect = (option: any) => {
-        setNextEntity(option);
+        if(option === 'All Data'){
+          props.setCardView(true);
+          setNextEntity('All Entities');
+        } else {
+          setNextEntity(option);
+          props.setCardView(false);
+        }
     }
 
     const handleSearch = (searchString: string) => {
@@ -57,7 +66,7 @@ const SearchBar: React.FC<Props> = props => {
           setDropdownValue(searchOptions.entityTypeIds[0]);
         }
       } else {
-        setDropdownValue('All Entities');
+        setDropdownValue(!props.cardView ? 'All Entities' : 'All Data');
       }
     }, [searchOptions]);
 
