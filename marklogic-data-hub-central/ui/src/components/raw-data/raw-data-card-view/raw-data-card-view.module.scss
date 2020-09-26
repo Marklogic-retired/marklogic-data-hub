@@ -1,0 +1,35 @@
+.rawDataCard {
+    padding-left: 10px;
+    padding-right: 10px;
+    .cardStyle{
+        width: 370px;
+        height: 140px;
+        margin-top: 24px;
+        text-align: left;
+        align-content: left;
+        padding-bottom: 2px;
+        border: 1px solid #d7d6d6;
+    }
+}
+
+.uriContainer {
+    font-size: 14px;
+    >.uri{
+        color: #3f4692;
+    }
+}
+
+.cardIcons{
+    float: right;
+
+    .infoIcon {
+        color: #7F86B5;
+        font-size: 20px;
+        vertical-align: middle;
+        margin-right: 8px;
+    }
+    .detailLinkIcon {
+        color: #5B69AF;
+        font-size: 18px;
+    }
+}
