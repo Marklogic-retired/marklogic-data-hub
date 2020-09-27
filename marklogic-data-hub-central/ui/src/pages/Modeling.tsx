@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { faUndo } from "@fortawesome/free-solid-svg-icons";
+import {faSave, faUndo} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MLButton, MLTooltip, MLAlert } from '@marklogic/design-system';
 
@@ -131,7 +131,11 @@ const Modeling: React.FC = () => {
       toggleConfirmModal(true);
     }}
   >
-    <span className={styles.publishIcon}></span>
+    <FontAwesomeIcon
+      icon={faSave}
+      className={styles.publishIcon}
+      size='sm'
+    />
     Save All
   </MLButton>
 

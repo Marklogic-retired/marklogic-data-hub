@@ -18,22 +18,20 @@
   color: #cccccc;
 }
 
-.iconSave:before {       
-  content: "\70";
-  cursor: pointer;      
-  font-family: MLCustomFont; 
+.iconSave {
+  cursor: pointer;
   color: #5B69AF;
   font-size: 22px;
-  padding: 8px;
+  margin-right: 8px;
+  margin-bottom: 2px;
 }
 
-.iconSaveReadOnly:before {       
-  content: "\70";
+.iconSaveReadOnly {
   cursor: not-allowed;
-  font-family: MLCustomFont;
   color: #cccccc;
   font-size: 22px;
-  padding: 8px;
+  margin-right: 8px;
+  margin-bottom: 2px;
 }
 th.actions,
 td.actions {
