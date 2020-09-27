@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { MLTable, MLTooltip } from '@marklogic/design-system';
-import { faUndo, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import {faUndo, faTrashAlt, faSave} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from './entity-type-table.module.scss';
 
@@ -320,7 +320,8 @@ const EntityTypeTable: React.FC<Props> = (props) => {
 
         const saveIcon =
           <MLTooltip title={props.canWriteEntityModel ? ModelingTooltips.saveIcon : 'Save Entity: ' + SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '225px'}}>
-            <span
+            <FontAwesomeIcon
+              icon={faSave}
               data-testid={text + '-save-icon'}
               className={!modelingOptions.isModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
               onClick={(event) => {
@@ -330,6 +331,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   confirmSaveEntity(text)
                 }
               }}
+              size='2x'
             />
           </MLTooltip>
 
