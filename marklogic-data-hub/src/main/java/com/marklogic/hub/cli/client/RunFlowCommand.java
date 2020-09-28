@@ -9,6 +9,8 @@ import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,16 +43,18 @@ public class RunFlowCommand extends CommandLineFlowInputs implements Runnable {
     )
     private Map<String, String> params = new HashMap<>();
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Override
     public void run() {
         FlowRunnerImpl flowRunner = new FlowRunnerImpl(buildHubConfig().newHubClient());
         Pair<FlowInputs, String> pair = super.buildFlowInputs();
-        System.out.println(pair.getRight());
+        logger.info(pair.getRight());
 
         RunFlowResponse response = flowRunner.runFlow(pair.getLeft());
         flowRunner.awaitCompletion();
-        System.out.println("\nOutput:");
-        System.out.println(response.toJson());
+        logger.info("Output:");
+        logger.info(response.toJson());
     }
 
     protected HubConfigImpl buildHubConfig() {

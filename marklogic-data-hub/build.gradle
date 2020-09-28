@@ -116,6 +116,9 @@ configurations.all {
 bootJar {
     archiveClassifier = "installer"
     mainClassName = "com.marklogic.hub.dhs.installer.Main"
+    from("src/main/installer") {
+        include "logback.xml"
+    }
 }
 
 task clientJar(type: Jar) {
@@ -130,6 +133,9 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.RSA"
     }
     exclude "spring-boot*.jar"
+    from("src/main/clientJar") {
+        include "logback.xml"
+    }
     with jar
 }
 build.dependsOn clientJar
@@ -184,11 +190,6 @@ task copyUIAssets(type: Copy) {
 processResources {
     filesMatching("**/version.properties") {
         expand(project: project)
-    }
-
-    // Includes installer-specific files into the jar produced by bootJar
-    from ("src/installer") {
-        into "."
     }
 }
 
