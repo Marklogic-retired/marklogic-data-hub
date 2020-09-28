@@ -13,7 +13,10 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.Versions;
+import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.Amp;
 import com.marklogic.mgmt.resource.security.AmpManager;
 import com.marklogic.mgmt.resource.security.RoleManager;
 import com.marklogic.rest.util.ResourcesFragment;
@@ -22,6 +25,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.READ;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,10 +37,11 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     ObjectMapper mapper = new ObjectMapper();
     HubClient operatorHubClient;
     HubClient adminHubClient;
+    Versions.MarkLogicVersion mlVersion;
 
     @BeforeEach
     void checkIfTestsCanBeRun(){
-        Versions.MarkLogicVersion mlVersion = versions.getMLVersion();
+        mlVersion = versions.getMLVersion();
         assumeTrue(
             (mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
             (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
@@ -65,8 +71,41 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             assertEquals("123-456-7890", jacksonHandle.get().get("ssn").asText(), "data-hub-operator should be " +
                 "able to read the document since the amp has been created");
 
+
+            API api =  new API(runAsAdmin().getManageClient());
+            Amp amp = api.amp("getPiiData", "","/ampTest/testModule.sjs",HubConfig.DEFAULT_MODULES_DB_NAME );
+            List<String> ampRoles = amp.getRole();
+            Assertions.assertEquals(1, ampRoles.size());
+            Assertions.assertEquals("pii-reader", ampRoles.get(0));
+
             //PUT request - shouldn't fail
             writeAmpFileToProjectAndDeploy(HubConfig.DEFAULT_MODULES_DB_NAME,"data-hub-developer", "pii-reader");
+            api =  new API(runAsAdmin().getManageClient());
+            amp = api.amp("getPiiData", "","/ampTest/testModule.sjs",HubConfig.DEFAULT_MODULES_DB_NAME );
+            ampRoles = amp.getRole();
+            // If server version > 10.0-4.4, PUT request should succeed, will log an error msg in case of 10.0-4.4, will fail otherwise
+            if(mlVersion.isNightly() || mlVersion.getMinor() > 404){
+                Collections.sort(ampRoles);
+                Assertions.assertEquals(2, ampRoles.size());
+                Assertions.assertEquals("data-hub-developer", ampRoles.get(0));
+                Assertions.assertEquals("pii-reader", ampRoles.get(1));
+            }
+            else {
+                //no change in the amp in case server is 10.0-4.4
+                Assertions.assertEquals(1, ampRoles.size());
+                Assertions.assertEquals("pii-reader", ampRoles.get(0));
+            }
+
+            /* POST/PUT request as data-hub-developer will fail in all versions as the user doesn't have "get-amp"
+               privilege to first get the amps
+            */
+            try{
+                deployProject(runAsDataHubDeveloper());
+                Assertions.fail("'data-hub-developer' should not be able to deploy amps");
+            }
+            catch (Exception e){
+                logger.error("'data-hub-developer' cannot deploy amps;cause: " + e.getMessage());
+            }
         }
         finally {
             runAsDataHubSecurityAdmin().getManageClient().delete("/manage/v2/amps/getPiiData?namespace=&document-uri=/ampTest/testModule.sjs&modules-database=data-hub-MODULES");
@@ -164,7 +203,11 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        new DhsDeployer().deployAsSecurityAdmin(runAsDataHubSecurityAdmin());
+        deployProject(runAsDataHubSecurityAdmin());
+    }
+
+    private void deployProject(HubConfigImpl hubConfig){
+        new DhsDeployer().deployAsSecurityAdmin(hubConfig);
     }
 
     private EvalResultIterator fetchPiiData(){
