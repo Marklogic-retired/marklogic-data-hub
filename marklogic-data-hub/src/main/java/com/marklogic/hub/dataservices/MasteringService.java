@@ -50,6 +50,7 @@ public interface MasteringService {
             private BaseProxy.DBFunctionRequest req_getDefaultCollections;
             private BaseProxy.DBFunctionRequest req_updateMatchOptions;
             private BaseProxy.DBFunctionRequest req_updateMergeOptions;
+            private BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
 
             private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -61,6 +62,8 @@ public interface MasteringService {
                     "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_updateMergeOptions = this.baseProxy.request(
                     "updateMergeOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_calculateMatchingActivity = this.baseProxy.request(
+                    "calculateMatchingActivity.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -107,6 +110,21 @@ public interface MasteringService {
                         ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode calculateMatchingActivity(String stepName) {
+                return calculateMatchingActivity(
+                    this.req_calculateMatchingActivity.on(this.dbClient), stepName
+                );
+            }
+            private com.fasterxml.jackson.databind.JsonNode calculateMatchingActivity(BaseProxy.DBFunctionRequest request, String stepName) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    request
+                        .withParams(
+                            BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                        ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new MasteringServiceImpl(db, serviceDeclaration);
@@ -135,5 +153,13 @@ public interface MasteringService {
      * @return	as output
      */
     com.fasterxml.jackson.databind.JsonNode updateMergeOptions(com.fasterxml.jackson.databind.JsonNode options);
+
+    /**
+     * Invokes the calculateMatchingActivity operation on the database server
+     *
+     * @param stepName	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode calculateMatchingActivity(String stepName);
 
 }
