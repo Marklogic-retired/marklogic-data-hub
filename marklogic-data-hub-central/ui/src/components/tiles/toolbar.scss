@@ -1,6 +1,7 @@
 @font-face {
-    font-family: 'ExploreIcon';
-    src: url(../../fonts/ML_IconFont.ttf)  format('truetype');
+    font-family: 'MLCustomFont';
+    src: url('../../fonts/ML_IconFont_explore.ttf') format('truetype');
+    src: url('../../fonts/icomoon_load-model-curate-run.ttf') format('truetype');
 }
 
 .exploreIcon:before { 
@@ -9,7 +10,7 @@
     align-items: center;
     flex-direction: row;
     content: "\68";
-    font-family: ExploreIcon;
+    font-family: MLCustomFont;
     font-size: 24px; 
     position: relative;
     left: -2px;
@@ -21,4 +22,90 @@
     min-height: 40px;
     text-align: center;
     cursor: pointer;
+    margin-bottom: 40px;
+}
+
+.loadIcon:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\e94e";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    left: -2px;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+
+.modelIcon:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\e948";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    left: -2px;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 40px;
+}
+
+.curateIcon:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\e955";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    left: -2px;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 80px;
+}
+
+.runIcon:before {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    content: "\e926";
+    font-family: MLCustomFont;
+    font-size: 24px;
+    position: relative;
+    left: -2px;
+    background-color: #FFF;
+    border: 1px solid #7F86B5;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 40px;
 }
