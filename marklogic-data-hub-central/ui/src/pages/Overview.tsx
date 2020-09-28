@@ -51,7 +51,7 @@ const Overview: React.FC<Props> = (props) => {
                     <div className={getClassNames('load')} onClick={() => {goToTile('load')}} aria-label={'load-card'}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
-                            <i aria-label="load-icon"><FontAwesomeIcon icon={faLongArrowAltRight} /></i>Load
+                            <span className={styles.icon} aria-label="load-icon"></span>Load
                         </div>
                         <div className={styles.body}>Ingest raw data from multiple file types.
                             { props.enabled && !props.enabled.includes('load') &&
@@ -61,9 +61,8 @@ const Overview: React.FC<Props> = (props) => {
                     
                     <div className={getClassNames('model')} onClick={() => {goToTile('model')}} aria-label={'model-card'}>
                         <div className={styles.head}></div>
-                        <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
-                            <i aria-label="model-icon"><FontAwesomeIcon icon={faCube} /></i>Model
+                            <span className={styles.icon} aria-label="model-icon"></span>Model
                         </div>
                         <div className={styles.body}>Define entity types to describe curated data.
                             { props.enabled && !props.enabled.includes('model') &&
@@ -73,9 +72,8 @@ const Overview: React.FC<Props> = (props) => {
                     
                     <div className={getClassNames('curate')} onClick={() => {goToTile('curate')}} aria-label={'curate-card'}>
                         <div className={styles.head}></div>
-                        <span className={styles.icon}></span> 
                         <div className={styles.subtitle}>
-                            <i aria-label="curate-icon"><FontAwesomeIcon icon={faObjectUngroup} /></i>Curate
+                            <span className={styles.icon} aria-label="curate-icon"></span>Curate
                         </div>
                         <div className={styles.body}>Create a 360º view.
                             { props.enabled && !props.enabled.includes('curate') &&
@@ -96,9 +94,8 @@ const Overview: React.FC<Props> = (props) => {
                     
                     <div className={getClassNames('run')} onClick={() => {goToTile('run')}} aria-label={'run-card'}>
                         <div className={styles.head}>
-                            <span className={styles.icon}></span> 
                             <div className={styles.subtitle}>
-                                <i aria-label="run-icon"><FontAwesomeIcon icon={faCubes} /></i>Run
+                                <span className={styles.icon} aria-label="run-icon"></span>Run
                             </div>
                             <div className={styles.body}>Arrange steps into data flows to test loading and curation.
                                 { props.enabled && !props.enabled.includes('run') &&

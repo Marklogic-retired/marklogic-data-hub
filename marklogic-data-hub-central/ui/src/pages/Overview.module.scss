@@ -1,6 +1,7 @@
 @font-face {
     font-family: 'MLCustomFont';
-    src: url('../fonts/ML_IconFont.ttf') format('truetype');
+    src: url('../fonts/ML_IconFont_explore.ttf') format('truetype');
+    src: url('../fonts/icomoon_load-model-curate-run.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
@@ -114,6 +115,14 @@
                         padding-right: 12px;
                         padding-left: 4px;
                     }
+                    .icon:before {
+                        color: #3D409C;
+                        content: "\e94e";
+                        font-family: MLCustomFont;
+                        font-size: 24px;
+                        padding-bottom: 15px;
+                        padding-right: 13px;
+                    }
                 }
             }
             
@@ -138,6 +147,14 @@
                         padding-right: 11px;
                         padding-left: 2px;
                     }
+                    .icon:before {
+                        color: #304F7F;
+                        content: "\e948";
+                        font-family: MLCustomFont;
+                        font-size: 24px;
+                        padding-bottom: 15px;
+                        padding-right: 13px;
+                    }
                 }
             }
             
@@ -155,10 +172,19 @@
                     background-size: 60%;
                     background-repeat:no-repeat;
                     background-position:center;
+
                 }
                 .subtitle {
                     i {
                         color: #BC811D;
+                    }
+                    .icon:before {
+                        color: #184B5A;
+                        content: "\e955";
+                        font-family: MLCustomFont;
+                        font-size: 24px;
+                        padding-bottom: 15px;
+                        padding-right: 13px;
                     }
                 }
             }
@@ -215,6 +241,14 @@
                         color: #061178;
                         padding-right: 11px;
                         padding-left: 2px;
+                    }
+                    .icon:before {
+                        color: #82388A;
+                        content: "\e926";
+                        font-family: MLCustomFont;
+                        font-size: 24px;
+                        padding-bottom: 15px;
+                        padding-right: 13px;
                     }
                 }
             }

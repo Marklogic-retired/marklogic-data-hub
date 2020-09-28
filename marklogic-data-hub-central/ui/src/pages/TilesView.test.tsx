@@ -45,15 +45,15 @@ describe('Tiles View component tests for Developer user', () => {
         expect(getByLabelText("toolbar")).toBeInTheDocument();
 
         expect(getByLabelText("tool-load")).toBeInTheDocument();
-        expect(getByLabelText('tool-load')).toHaveStyle('color: rgb(82, 3, 57);')
+        expect(getByLabelText('tool-load')).toHaveStyle('color: rgb(61, 64, 156);')
         expect(getByLabelText("tool-model")).toBeInTheDocument();
-        expect(getByLabelText('tool-model')).toHaveStyle('color: rgb(34, 7, 94);')
+        expect(getByLabelText('tool-model')).toHaveStyle('color: rgb(48, 79, 127);')
         expect(getByLabelText("tool-curate")).toBeInTheDocument();
-        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(188, 129, 29);')
+        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(24, 75, 90);')
         expect(getByLabelText("tool-run")).toBeInTheDocument();
-        expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(6, 17, 120);')
+        expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(130, 56, 138);')
         expect(getByLabelText("tool-explore")).toBeInTheDocument();
-        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(0, 71, 79);')
+        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(55, 111, 99);')
 
         expect(getByLabelText("overview")).toBeInTheDocument();
 
