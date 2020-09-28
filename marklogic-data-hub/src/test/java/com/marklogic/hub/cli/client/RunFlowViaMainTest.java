@@ -23,7 +23,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
         final String flowName = "testFlow";
         makeInputFilePathsAbsoluteInFlow(flowName);
 
-        Main.main(new String[]{
+        Main.runCommand(new String[]{
             "runFlow",
             "-host", host,
             "-username", flowRunnerUser,
@@ -44,7 +44,7 @@ public class RunFlowViaMainTest extends AbstractHubCoreTest {
         final String flowName = "runXqyFuncFlow";
         makeInputFilePathsAbsoluteInFlow(flowName);
 
-        Main.main(new String[]{
+        Main.runCommand(new String[]{
             "runFlow",
             "-host", host,
             "-username", flowRunnerUser,
