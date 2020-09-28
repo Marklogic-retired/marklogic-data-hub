@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.ext.modulesloader.Modules;
@@ -29,6 +28,7 @@ import com.marklogic.client.ext.modulesloader.ModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.EntityDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.MappingDefModulesFinder;
 import com.marklogic.client.ext.modulesloader.impl.PropertiesModuleManager;
+import com.marklogic.client.ext.tokenreplacer.TokenReplacer;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.ext.util.DocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -39,13 +39,13 @@ import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.ModelsService;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -66,6 +66,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ObjectMapper objectMapper;
+    private TokenReplacer tokenReplacer;
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -109,6 +110,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     @Override
     public void execute(CommandContext context) {
+        tokenReplacer = context.getAppConfig().buildTokenReplacer();
         loadUserArtifacts();
     }
 
@@ -152,14 +154,15 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
             Files.walkFileTree(modelsPath, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)  {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     logger.info("Loading models from directory " + dir);
                     modulesFinder.findModules(dir.toString()).getAssets().forEach(r -> {
+                        logger.info("Loading model from file: " + r.getFilename());
                         try {
-                            logger.info("Loading model from file: " + r.getFilename());
-                            modelsArray.add(objectMapper.readTree(r.getInputStream()));
-                        } catch (IOException e) {
-                            throw new RuntimeException("Unable to read model as JSON; model filename: " + r.getFilename(), e);
+                            modelsArray.add(readArtifact(r.getFile()));
+                        }
+                        catch (IOException e) {
+                            throw new RuntimeException("Unable to read model file: " + r.getFilename() + "; cause: " + e.getMessage(), e);
                         }
                     });
                     return FileVisitResult.CONTINUE;
@@ -264,14 +267,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         DocumentWriteSet... writeSets
     ) throws IOException {
         if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
-            InputStream inputStream = r.getInputStream();
-
-            JsonNode json;
-            try {
-                json = objectMapper.readTree(inputStream);
-            } finally {
-                inputStream.close();
-            }
+            JsonNode json = readArtifact(r.getFile());
 
             if (json instanceof ObjectNode && json.has("language")) {
                 json = replaceLanguageWithLang((ObjectNode)json);
@@ -305,7 +301,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepType = stepTypeDir.getName();
                 for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
-                    JsonNode step = objectMapper.readTree(stepFile);
+                    JsonNode step = readArtifact(stepFile);
                     if (!step.has("name")) {
                         throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
                     }
@@ -325,7 +321,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             ObjectMapper objectMapper = new ObjectMapper();
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
-                JsonNode flow = objectMapper.readTree(file);
+                JsonNode flow = readArtifact(file);
                 if (!flow.has("name")) {
                     throw new RuntimeException("Unable to load flow from file: " + file + "; no 'name' property found");
                 }
@@ -347,7 +343,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     final String stepDefName = defDir.getName();
                     File stepDefFile = new File(defDir, stepDefName + ".step.json");
                     if (stepDefFile.exists()) {
-                        JsonNode stepDef = objectMapper.readTree(stepDefFile);
+                        JsonNode stepDef = readArtifact(stepDefFile);
                         if (!stepDef.has("name")) {
                             throw new RuntimeException("Unable to load step definition from file: " + stepDefFile +
                                 "; no 'name' property was found");
@@ -382,6 +378,25 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             }
         }
         return newObject;
+    }
+
+    /**
+     * Reads the artifact file, replaces tokens and then returns the content as a JsonNode.
+     *
+     * @param file
+     * @return
+     */
+    private JsonNode readArtifact(File file) {
+        JsonNode jsonNode;
+        try {
+            String artifact = tokenReplacer.replaceTokens(FileUtils.readFileToString(file));
+            jsonNode = objectMapper.readTree(artifact);
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Unable to read file " + file.getName() + " + as JSON; cause: " + e.getMessage(), e);
+        }
+
+        return jsonNode;
     }
 
     public void setHubConfig(HubConfig hubConfig) {
