@@ -2,6 +2,7 @@ package com.marklogic.hub.dhs.installer.deploy;
 
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
+import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.ResourceManager;
@@ -38,12 +39,13 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
 
         @Override
         public SaveReceipt updateResource(String payload, String resourceId) {
+
             SaveReceipt receipt = null;
             try{
                 receipt =  super.updateResource(payload, resourceId);
             }
             catch (HttpClientErrorException ex){
-                if (HttpStatus.FORBIDDEN.equals(ex.getStatusCode())) {
+                if (HttpStatus.FORBIDDEN.equals(ex.getStatusCode()) && cannotUpdateAmps()) {
                     logger.error("An error occurred while trying to update an amp: " + ex.getMessage()
                         + ". Updates to amps as a user with the data-hub-security-admin role are not allowed " +
                         "in this version of MarkLogic, so this error is being logged and not thrown. " +
@@ -54,6 +56,20 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
                 }
             }
             return receipt;
+        }
+
+        private boolean cannotUpdateAmps(){
+            try{
+                Versions.MarkLogicVersion mlVersion = new Versions().getMLVersion(getManageClient().getXml("/manage")
+                    .getElementValue("/node()/c:version"));
+                // Users should be able to update amps on versions > 10.0-4.4
+                return mlVersion.isNightly() == true ? false: (mlVersion.getMajor() == 10 && mlVersion.getMinor() == 404);
+            }
+            catch (Exception e){
+                logger.warn("Could not determine MarkLogic version; cause: " + e.getMessage() + "; will assume that user can update amps and will throw original exception");
+                return false;
+            }
+
         }
     }
 

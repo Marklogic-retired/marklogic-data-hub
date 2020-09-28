@@ -36,6 +36,11 @@
       "kind":"execute"
     },
     {
+      "privilege-name": "amp-set-roles",
+      "action": "http://marklogic.com/xdmp/privileges/amp-set-roles",
+      "kind":"execute"
+    },
+    {
       "privilege-name": "get-amp",
       "action": "http://marklogic.com/xdmp/privileges/get-amp",
       "kind":"execute"
