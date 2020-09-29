@@ -19,7 +19,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model"
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
-fn.collection(entityLib.getModelCollection()).toArray().map(model => {
+let modelResponseArr = fn.collection(entityLib.getModelCollection()).toArray().map(model => {
   model = model.toObject();
   const entityName = model.info.title;
   const jobData = entityLib.getLatestJobData(entityName);
@@ -31,3 +31,15 @@ fn.collection(entityLib.getModelCollection()).toArray().map(model => {
   };
   return Object.assign(response, jobData);
 })
+
+modelResponseArr.sort(function(modelA, modelB) {
+  var nameA = modelA.entityName;
+  var nameB = modelB.entityName;
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+  return 0;
+});
