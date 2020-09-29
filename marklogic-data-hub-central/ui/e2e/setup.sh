@@ -1,14 +1,16 @@
 #!/bin/bash
 set -e
 
-if [[ $1 != *"dhs"* || $2 != *"mlHost"* ]]
+if [[ $1 != *"dhs"* || $2 != *"mlHost"* || $3 != *"mlSecurityUsername"* || $4 != *"mlSecurityPassword"* ]]
 then
-        echo "This script must be run with dhs=<true/false> mlHost=<dhsHost/localhost>"
+        echo "This script must be run with dhs=<true/false> mlHost=<dhsHost/localhost> mlSecurityUsername=<mlSecurityUsername/admin> mlSecurityPassword=<mlSecurityPassword/admin>"
         exit 0
 fi
 DHS=`echo $1 | cut -d'=' -f 2`
 mlHost=`echo $2 | cut -d'=' -f 2`
 env=local
+mlSecurityUsername=`echo $3 | cut -d'=' -f 2`
+mlSecurityPassword=`echo $4 | cut -d'=' -f 2`
 
 cd hc-qa-project
 ./gradlew hubInit
@@ -20,9 +22,10 @@ if $DHS
 then
         env=dhs
         perl -i -pe"s/mlHost=.*/mlHost=$mlHost/g" gradle-dhs.properties
+        ./gradlew -i mldeployusers -PenvironmentName=$env -PmlUsername=$mlSecurityUsername -PmlPassword=$mlSecurityPassword
         ./gradlew hubDeploy -PenvironmentName=$env --info --stacktrace
 else
-        ./gradlew mlDeploy -PmlUsername=admin -PmlPassword=admin --info --stacktrace
+        ./gradlew mlDeploy -PmlUsername=$mlSecurityUsername -PmlPassword=$mlSecurityPassword --info --stacktrace
         # deployAsDeveloper so custom roles don't break hubDeploy since roles were created by admin
         ./gradlew hubDeployAsDeveloper --info --stacktrace
 fi

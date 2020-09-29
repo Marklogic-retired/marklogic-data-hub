@@ -191,7 +191,7 @@ def runCypressE2e(){
           repo="maven {url '"$M2_LOCAL_REPO"'}"
           sed -i "/repositories {/a$repo" hc-qa-project/build.gradle
           chmod +x setup.sh;
-          ./setup.sh dhs=false mlHost=localhost;
+          ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin;
           '''
         )
         sh(script:'''#!/bin/bash
