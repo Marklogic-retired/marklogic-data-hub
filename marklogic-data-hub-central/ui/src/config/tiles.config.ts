@@ -12,6 +12,7 @@ interface TileItem {
     bgColor: string;
     border: string;
     controls: ControlType[];
+    intro: string;
 }
 
 const tiles: Record<TileId, TileItem>  = {
@@ -23,6 +24,7 @@ const tiles: Record<TileId, TileItem>  = {
         bgColor: '#F4F6F8',
         border: '#a8819c',
         controls: ['close'],
+        intro: 'Create and configure steps that ingest raw data from multiple sources.',
     },
     model: { 
         title: 'Model',
@@ -32,6 +34,7 @@ const tiles: Record<TileId, TileItem>  = {
         bgColor: '#F4F6F8',
         border: '#7f9cc5',
         controls: ['close'],
+        intro: 'Define the entity models that describe and standardize your data. You need these entity models to curate your data.',
     },
     curate: { 
         title: 'Curate',
@@ -41,6 +44,7 @@ const tiles: Record<TileId, TileItem>  = {
         bgColor: '#F4F6F8',
         border: '#dcbd8a',
         controls: ['close'],
+        intro: 'Create and configure steps that curate and refine your data. In the Mapping step, you associate a field in your raw data model with each property in your entity model. When you run a Mapping step, these associations are applied to your data.',
     },
     run: { 
         title: 'Run',
@@ -50,6 +54,7 @@ const tiles: Record<TileId, TileItem>  = {
         bgColor: '#F4F6F8',
         border: '#8288bb',
         controls: ['close'],
+        intro: 'Run your step. Add your step to a flow and run it.',
     },
     explore: { 
         title: 'Explore',
@@ -59,6 +64,7 @@ const tiles: Record<TileId, TileItem>  = {
         bgColor: '#F4F6F8',
         border: '#90aeb2',
         controls: ['menu', 'close'],
+        intro: 'Search, filter, review, and export your curated data.',
     },
 };
 

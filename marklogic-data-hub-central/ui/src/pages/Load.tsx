@@ -7,6 +7,7 @@ import LoadCard from '../components/load/load-card';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
+import tiles from '../config/tiles.config'
 
 export type ViewType =  'card' | 'list';
 
@@ -181,8 +182,11 @@ const Load: React.FC = () => {
     <div>
       {canReadWrite || canReadOnly ?
       <div className={styles.loadContainer}>
-        <div className={styles.switchViewContainer}>
-          <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
+        <div className={styles.intro}>
+          <p>{tiles.load.intro}</p>
+          <div className={styles.switchViewContainer}>
+            <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
+          </div>
         </div>
         {output}
       </div> : ''

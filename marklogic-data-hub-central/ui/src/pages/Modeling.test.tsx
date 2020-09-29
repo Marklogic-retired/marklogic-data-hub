@@ -12,6 +12,7 @@ import { getEntityTypes } from '../assets/mock-data/modeling';
 import { isModified, notModified } from '../assets/mock-data/modeling-context-mock';
 import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
 import { ConfirmationType } from '../types/modeling-types';
+import tiles from '../config/tiles.config'
 
 jest.mock('../api/modeling');
 
@@ -42,6 +43,8 @@ describe("Modeling Page", () => {
     );
 
     await wait(() => expect(mockPrimaryEntityType).toHaveBeenCalledTimes(1));
+
+    expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
     expect(getByText('Entity Types')).toBeInTheDocument()
     expect(getByLabelText("add-entity")).toBeInTheDocument();

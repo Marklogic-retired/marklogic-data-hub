@@ -6,7 +6,7 @@ import axios from 'axios'
 import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
 import { useHistory } from 'react-router-dom';
-
+import tiles from '../config/tiles.config'
 
 const { Panel } = Collapse;
 
@@ -414,6 +414,9 @@ const Run = (props) => {
   return (
     <div>
         <div className={styles.runContainer}>
+            <div className={styles.intro}>
+                <p>{tiles.run.intro}</p>
+            </div>
             <Flows
                 flows={flows}
                 steps={steps}
