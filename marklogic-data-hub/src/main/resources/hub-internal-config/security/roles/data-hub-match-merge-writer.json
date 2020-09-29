@@ -5,5 +5,12 @@
     "data-hub-common-writer",
     "data-hub-step-definition-reader",
     "data-hub-match-merge-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-write-match-merge",
+      "action": "http://marklogic.com/data-hub/privileges/write-match-merge",
+      "kind": "execute"
+    }
   ]
 }

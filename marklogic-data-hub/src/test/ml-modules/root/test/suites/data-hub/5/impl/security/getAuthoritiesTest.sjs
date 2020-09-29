@@ -43,6 +43,26 @@ hubTest.runWithRolesAndPrivileges(['hub-central-mapping-writer'], [], function()
     assertions.push(test.assertTrue(authorities.includes('writeMapping'), 'hub-central-mapping-writer should have "writeMapping"'));
 });
 
+// Test hub-central-match-merge-reader
+hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-reader'], [], function() {
+    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-match-merge-reader should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('readMatching'), 'hub-central-match-merge-reader should have "readMatching"'));
+    assertions.push(test.assertFalse(authorities.includes('writeMatching'), 'hub-central-match-merge-reader should not have "writeMatching"'));
+    assertions.push(test.assertTrue(authorities.includes('readMerge'), 'hub-central-match-merge-reader should have "readMerge"'));
+    assertions.push(test.assertFalse(authorities.includes('writeMerge'), 'hub-central-match-merge-reader should not have "writeMerge"'));
+});
+
+// Test hub-central-match-merge-writer
+hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [], function() {
+    const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
+    assertions.push(test.assertTrue(authorities.includes('loginToHubCentral'), 'hub-central-match-merge-writer should have "loginToHubCentral"'));
+    assertions.push(test.assertTrue(authorities.includes('readMatching'), 'hub-central-match-merge-reader should have "readMatching"'));
+    assertions.push(test.assertTrue(authorities.includes('writeMatching'), 'hub-central-match-merge-reader should have "writeMatching"'));
+    assertions.push(test.assertTrue(authorities.includes('readMerge'), 'hub-central-match-merge-reader should have "readMerge"'));
+    assertions.push(test.assertTrue(authorities.includes('writeMerge'), 'hub-central-match-merge-reader should have "writeMerge"'));
+});
+
 // Test hub-central-step-runner
 hubTest.runWithRolesAndPrivileges(['hub-central-step-runner'], [], function() {
     const authorities = require('/data-hub/5/impl/security.sjs').getAuthorities();
