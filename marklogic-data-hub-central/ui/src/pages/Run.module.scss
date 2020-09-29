@@ -5,6 +5,12 @@
     width: 100%;
     margin: 0;
     padding: 20px;
+    .intro {
+        width: 100%;
+        p {
+            padding: 10px 0 0 0;
+        }
+    }
 }
 
 .errorHeader, .errorLabel {

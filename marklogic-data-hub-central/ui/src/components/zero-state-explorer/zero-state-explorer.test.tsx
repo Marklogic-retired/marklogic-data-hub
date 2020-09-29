@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, fireEvent, waitForElement, cleanup } from '@testing-library/react';
 import ZeroStateExplorer from './zero-state-explorer';
+import tiles from '../../config/tiles.config'
 
 describe('zero state explorer component', () => {
 
@@ -10,8 +11,8 @@ describe('zero state explorer component', () => {
 
     test('Verify Zero State components renders', () => {
         const { getByTestId, getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
+        expect(getByText(tiles.explore.intro)).toBeInTheDocument(); // tile intro text
         expect(getByText('All Entities')).toBeInTheDocument();
-        expect(getByText('Search through loaded data and curated data')).toBeInTheDocument();
         expect(getByText('What do you want to explore?')).toBeInTheDocument();
         expect(getByText('- or -')).toBeInTheDocument();
         expect(getByTestId('search-bar')).toBeInTheDocument();
@@ -21,8 +22,8 @@ describe('zero state explorer component', () => {
 
     test('Verify Zero State components renders when user does not have save query role', () => {
         const { getByTestId, getByText, debug, queryByTestId, queryByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={false} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} />);
+        expect(getByText(tiles.explore.intro)).toBeInTheDocument(); // tile intro text
         expect(getByText('All Entities')).toBeInTheDocument();
-        expect(getByText('Search through loaded data and curated data')).toBeInTheDocument();
         expect(getByText('What do you want to explore?')).toBeInTheDocument();
         expect(getByTestId('search-bar')).toBeInTheDocument();
         expect(getByTestId('entity-select')).toBeInTheDocument();

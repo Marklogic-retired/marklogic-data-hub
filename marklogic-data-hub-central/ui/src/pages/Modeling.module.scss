@@ -5,11 +5,17 @@
   width: 100%;
   margin: 0;
   padding: 20px;
+  .intro {
+    width: 100%;
+    p {
+        padding: 10px 0 15px 0;
+    }
+  }
 }
 
 .header {
   display: flex;
-  margin: 5px auto 0 auto;
+  margin: 0 auto 0 auto;
   width: 100%;
   justify-content: space-between;
 }

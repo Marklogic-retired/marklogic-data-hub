@@ -7,7 +7,7 @@ import { QueryOptions } from '../../types/query-types';
 import { MLButton, MLRadio } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
-
+import tiles from '../../config/tiles.config'
 
 const ZeroStateExplorer = (props) => {
 
@@ -90,7 +90,7 @@ const ZeroStateExplorer = (props) => {
       <div className={styles.zeroContent}>
         <Row>
           <Col span={18}>
-            <p className={styles.italicized}>Search through loaded data and curated data</p>
+            <p className={styles.intro}>{tiles.explore.intro}</p>
           </Col>
           <Col span={6} >
             <div className={styles.image}>

@@ -14,6 +14,7 @@ import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
 import { ConfirmationType, EntityModified } from '../types/modeling-types';
+import tiles from '../config/tiles.config'
 
 const Modeling: React.FC = () => {
   const { handleError } = useContext(UserContext);
@@ -158,6 +159,9 @@ const Modeling: React.FC = () => {
   if (canReadEntityModel) {
     return (
       <div className={styles.modelContainer}>
+        <div className={styles.intro}>
+          <p>{tiles.model.intro}</p>
+        </div>
         { modelingOptions.isModified && (
           <MLAlert type="info" aria-label="entity-modified-alert" showIcon message={ModelingTooltips.entityEditedAlert}/>
         )}

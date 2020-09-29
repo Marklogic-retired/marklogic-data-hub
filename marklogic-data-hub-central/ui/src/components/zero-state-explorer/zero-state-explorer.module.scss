@@ -8,12 +8,10 @@
     flex: 1;
   }
 
-  .italicized {
-    font-size: 18px;
+  .intro {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-style: italic;
     color: #333333;
-    margin: 10px 10px 30px 30px;
+    margin: 24px 10px 30px 20px;
   }
 
   @media all and (max-width: 800px) {

@@ -6,6 +6,7 @@ import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import Curate from "./Curate";
 import {MemoryRouter} from "react-router-dom";
+import tiles from '../config/tiles.config'
 
 jest.mock('axios');
 
@@ -27,6 +28,8 @@ describe('Curate component', () => {
         const { getByText, getAllByText, queryByText, getByTestId, queryByTestId, debug } = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
 
         expect(await(waitForElement(() => getByText('Customer')))).toBeInTheDocument();
+
+        expect(getByText(tiles.curate.intro)).toBeInTheDocument(); // tile intro text
 
         // Check for steps to be populated
         expect(axiosMock.get).toBeCalledWith('/api/steps/mapping');

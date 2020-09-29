@@ -5,6 +5,7 @@ import { AuthoritiesContext } from '../util/authorities';
 import { UserContext } from '../util/user-context';
 import axios from 'axios'
 import EntityTiles from '../components/entities/entity-tiles';
+import tiles from '../config/tiles.config'
 
 const Curate: React.FC = () => {
 
@@ -102,6 +103,9 @@ const Curate: React.FC = () => {
 
     return (
         <div className={styles.curateContainer}>
+          <div className={styles.intro}>
+            <p>{tiles.curate.intro}</p>
+          </div>
           <EntityTiles
             flows={flows}
             canReadMatchMerge={canReadMatchMerge}

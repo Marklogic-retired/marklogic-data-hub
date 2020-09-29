@@ -5,12 +5,19 @@
     width: 100%;
     margin: 0;
     padding: 20px;
+    .intro {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        p {
+            padding: 10px 0 15px 0;
+        }
+        .switchViewContainer {
+            display: flex;
+            flex-direction: row-reverse;
+            margin: 0;
+            padding: 0;
+        }
+    }
 }
 
-.switchViewContainer {
-    display: flex;
-    flex-direction: row-reverse;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-}

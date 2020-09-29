@@ -16,6 +16,7 @@ import authorities from '../assets/authorities.testutils';
 import {RunToolTips} from "../config/tooltips.config";
 import {act} from "react-dom/test-utils";
 import {MemoryRouter} from "react-router-dom";
+import tiles from '../config/tiles.config'
 
 jest.mock('axios');
 jest.setTimeout(30000);
@@ -66,6 +67,9 @@ describe('Verify links back to step details', () => {
         });
         const existingFlowName = data.flows.data[0].name;
         let steps = data.flows.data[0].steps;
+
+        expect(getByText(tiles.run.intro)).toBeInTheDocument(); // tile intro text
+
         // Click expand icon
         await act(() => {
             fireEvent.click(getByLabelText("icon: right"));
