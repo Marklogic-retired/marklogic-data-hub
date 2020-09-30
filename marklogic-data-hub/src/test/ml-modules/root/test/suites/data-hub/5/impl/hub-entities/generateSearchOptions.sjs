@@ -79,7 +79,7 @@ function generateExplorerOptionsWithElementRangeIndex() {
     test.assertEqual("/*:envelope/*:headers", xs.string(fn.head(expOptions.xpath("/*:extract-document-data/*:extract-path[2]/text()"))),
         "To see the sourced From, created on and created by information on the search snippet"
     ),
-    test.assertNotExists(expOptions.xpath("/*:transform-results"), "Enabling the snippet information by disabling empty-snippet")
+    test.assertExists(expOptions.xpath("/*:transform-results"), "Enabling the snippet information by applying snippet")
   ];
 }
 
@@ -361,29 +361,52 @@ function testHubCentralSupportedDatatypeMappingsForSort() {
 
 function generateExplorerOptionsWithoutContainerConstraint() {
   const input =
-    [{
-      "info": {
-        "title": "Book"
-      },
-      "definitions": {
-        "Book": {
-          "properties": {
-            "publishedAtAddress": {"$ref": "#/definitions/Address"}
-          }
+      [{
+        "info": {
+          "title": "Book"
         },
-        "Address": {
-          "properties": {}
+        "definitions": {
+          "Book": {
+            "properties": {
+              "publishedAtAddress": {"$ref": "#/definitions/Address"}
+            }
+          },
+          "Address": {
+            "properties": {}
+          }
         }
-      }
-    }];
+      }];
   const options = hent.dumpSearchOptions(input, true);
 
   let message = "We dont need the ES generated container constraint since Explorer does not need them and it avoids " +
-    "conflict with the DH added constraint if the entity type is also named 'Collection'.";
+      "conflict with the DH added constraint if the entity type is also named 'Collection'.";
   return [
     test.assertNotExists(options.xpath("/*:constraint[@name = 'Book']/*:container"), message),
     test.assertNotExists(options.xpath("/*:constraint[@name = 'Address']/*:container"), message),
   ];
+}
+
+function verifySnippetOptions() {
+  let input = [{
+    "info" : {
+      "title": "Book"
+    },
+    "definitions": {
+      "Book": {
+        "properties": {
+          "bookId": {"datatype": "integer", "facetable": true, "sortable": true, "collation": "http://marklogic.com/collation/"}
+        }
+      }
+    }
+  }];
+
+  let expOptions = hent.dumpSearchOptions(input, true);
+  return [
+    test.assertEqual("snippet", xs.string(fn.head(expOptions.xpath("/*:transform-results/@apply")))),
+    test.assertEqual("30", xs.string(fn.head(expOptions.xpath("/*:transform-results/*:per-match-tokens")))),
+    test.assertEqual("4", xs.string(fn.head(expOptions.xpath("/*:transform-results/*:max-matches")))),
+    test.assertEqual("200", xs.string(fn.head(expOptions.xpath("/*:transform-results/*:max-snippet-chars"))))
+  ]
 }
 
 []
@@ -395,4 +418,5 @@ function generateExplorerOptionsWithoutContainerConstraint() {
   .concat(verifySortOperatorsForSortableProperties())
   .concat(verifySortOptionDatatypeWhenEntityPropertyIsUpdated())
   .concat(testHubCentralSupportedDatatypeMappingsForSort())
-  .concat(generateExplorerOptionsWithoutContainerConstraint());
+  .concat(generateExplorerOptionsWithoutContainerConstraint())
+  .concat(verifySnippetOptions());
