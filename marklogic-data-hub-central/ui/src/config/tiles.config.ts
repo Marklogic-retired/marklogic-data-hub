@@ -11,6 +11,7 @@ interface TileItem {
     color: string;
     bgColor: string;
     border: string;
+    controlColor: string;
     controls: ControlType[];
     intro: string;
 }
@@ -22,7 +23,8 @@ const tiles: Record<TileId, TileItem>  = {
         icon: faLongArrowAltRight, 
         color: '#520339',
         bgColor: '#F4F6F8',
-        border: '#a8819c',
+        border: '#BFBFBF',
+        controlColor: '#777',
         controls: ['close'],
         intro: 'Create and configure steps that ingest raw data from multiple sources.',
     },
@@ -32,7 +34,8 @@ const tiles: Record<TileId, TileItem>  = {
         icon: faCube, 
         color: '#22075E',
         bgColor: '#F4F6F8',
-        border: '#7f9cc5',
+        border: '#BFBFBF',
+        controlColor: '#777',
         controls: ['close'],
         intro: 'Define the entity models that describe and standardize your data. You need these entity models to curate your data.',
     },
@@ -42,7 +45,8 @@ const tiles: Record<TileId, TileItem>  = {
         icon: faObjectUngroup, 
         color: '#BC811D',
         bgColor: '#F4F6F8',
-        border: '#dcbd8a',
+        border: '#BFBFBF',
+        controlColor: '#777',
         controls: ['close'],
         intro: 'Create and configure steps that curate and refine your data. In the Mapping step, you associate a field in your raw data model with each property in your entity model. When you run a Mapping step, these associations are applied to your data.',
     },
@@ -52,7 +56,8 @@ const tiles: Record<TileId, TileItem>  = {
         icon: faCubes, 
         color: '#061178',
         bgColor: '#F4F6F8',
-        border: '#8288bb',
+        border: '#BFBFBF',
+        controlColor: '#777',
         controls: ['close'],
         intro: 'Run your step. Add your step to a flow and run it.',
     },
@@ -62,7 +67,8 @@ const tiles: Record<TileId, TileItem>  = {
         icon: 'exploreIcon', 
         color: '#00474F',
         bgColor: '#F4F6F8',
-        border: '#90aeb2',
+        border: '#BFBFBF',
+        controlColor: '#777',
         controls: ['menu', 'close'],
         intro: 'Search, filter, review, and export your curated data.',
     },

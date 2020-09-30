@@ -98,25 +98,25 @@ const Tiles: React.FC<Props> = (props) => {
                         </div>
                     ) : null}
                     {showControl('newTab') ? (
-                        <i className={styles.fa} aria-label={'newTab'} style={{ color: options['color'] }} onClick={onClickNewTab}>
+                        <i className={styles.fa} aria-label={'newTab'} style={{ color: options['controlColor'] }} onClick={onClickNewTab}>
                             <MLTooltip title={'Open in New Tab'} placement="top">
                                 <FontAwesomeIcon icon={faExternalLinkAlt} />
                             </MLTooltip>
                         </i>) : null}
                     {showControl('maximize') ? (
-                        <i className={styles.ant} aria-label={'maximize'} style={{ color: options['color'] }} onClick={onClickMaximize}>
+                        <i className={styles.ant} aria-label={'maximize'} style={{ color: options['controlColor'] }} onClick={onClickMaximize}>
                             <MLTooltip title={'Maximize'} placement="top">
                                 <ArrowsAltOutlined />
                             </MLTooltip>
                         </i>) : null}
                     {showControl('minimize') ? (
-                        <i className={styles.ant} aria-label={'minimize'} style={{ color: options['color'] }} onClick={onClickMinimize}>
+                        <i className={styles.ant} aria-label={'minimize'} style={{ color: options['controlColor'] }} onClick={onClickMinimize}>
                             <MLTooltip title={'Minimize'} placement="top">
                                 <ShrinkOutlined />
                             </MLTooltip>
                         </i>) : null}
                     {showControl('close') ? (
-                        <i className={styles.close} aria-label={'close'} style={{ color: options['color'] }} onClick={onClickClose}>
+                        <i className={styles.close} aria-label={'close'} style={{ color: options['controlColor'] }} onClick={onClickClose}>
                             <MLTooltip title={'Close'} placement="top">
                                 <CloseOutlined />
                             </MLTooltip>
