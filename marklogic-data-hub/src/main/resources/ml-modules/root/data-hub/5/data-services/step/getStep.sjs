@@ -26,6 +26,8 @@ if ("ingestion" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
 } else if ("mapping" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+} else if ("matching" === stepDefinitionType || "merging" === stepDefinitionType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 } else if ("custom" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "execute");
 } else {
