@@ -1,0 +1,5 @@
+{
+  "privilege-name": "data-hub-read-match-merge",
+  "action": "http://marklogic.com/data-hub/privileges/read-match-merge",
+  "kind": "execute"
+}
