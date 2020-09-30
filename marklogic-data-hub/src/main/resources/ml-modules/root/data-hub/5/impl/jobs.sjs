@@ -242,13 +242,18 @@ class Jobs {
     }, this.config.JOBDATABASE);
   }
 
-  createBatch(jobId, step, stepNumber) {
+  createBatch(jobId, flowName, step, stepNumber) {
     let requestTimestamp = xdmp.requestTimestamp();
     let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
+
+    const stepId = step.stepId ? step.stepId : step.name + "-" + step.stepDefinitionType;
+
     let batch = {
       batch: {
         jobId: jobId,
         batchId: this.hubutils.uuid(),
+        flowName: flowName,
+        stepId : stepId,
         step: step,
         stepNumber: stepNumber,
         batchStatus: "started",
@@ -382,6 +387,9 @@ module.exports.updateBatch = module.amp(
     }
     docObj.batch.batchStatus = batchStatus;
     docObj.batch.uris = items;
+
+    docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(item));
+
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }

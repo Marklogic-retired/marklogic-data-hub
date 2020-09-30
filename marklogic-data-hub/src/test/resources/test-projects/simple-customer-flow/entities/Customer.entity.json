@@ -1,0 +1,20 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
