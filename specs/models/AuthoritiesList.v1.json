@@ -16,8 +16,8 @@
     "readStepDefinition",
     "readMatching",
     "writeMatching",
-    "writeMerge",
-    "readMerge"
+    "writeMerging",
+    "readMerging"
   ],
   "x-examples": {
     "hub-central-load-data-writer": [
