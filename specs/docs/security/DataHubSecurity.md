@@ -195,7 +195,7 @@ Can read match and merge artifacts through Hub Central
 
 #### Associate Authorities
  - readMatching
- - readMerge
+ - readMerging
 
 #### Inherited Roles
  - hub-central-user
@@ -207,7 +207,7 @@ Can read and write match and merge artifacts through Hub Central
 
 #### Associate Authorities
  - writeMatching
- - writeMerge
+ - writeMerging
 
 #### Inherited Roles
  - hub-central-match-merge-reader
