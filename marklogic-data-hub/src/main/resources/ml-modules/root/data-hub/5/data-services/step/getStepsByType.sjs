@@ -17,6 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-ingestion", "execute");
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
