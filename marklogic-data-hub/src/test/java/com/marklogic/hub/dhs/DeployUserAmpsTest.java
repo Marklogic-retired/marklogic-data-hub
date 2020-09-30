@@ -37,11 +37,10 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     ObjectMapper mapper = new ObjectMapper();
     HubClient operatorHubClient;
     HubClient adminHubClient;
-    Versions.MarkLogicVersion mlVersion;
 
     @BeforeEach
     void checkIfTestsCanBeRun(){
-        mlVersion = versions.getMLVersion();
+        Versions.MarkLogicVersion mlVersion = new Versions(getHubClient()).getMLVersion();
         assumeTrue(
             (mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
             (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
@@ -84,6 +83,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             amp = api.amp("getPiiData", "","/ampTest/testModule.sjs",HubConfig.DEFAULT_MODULES_DB_NAME );
             ampRoles = amp.getRole();
             // If server version > 10.0-4.4, PUT request should succeed, will log an error msg in case of 10.0-4.4, will fail otherwise
+            Versions.MarkLogicVersion mlVersion = new Versions(getHubClient()).getMLVersion();
             if(mlVersion.isNightly() || mlVersion.getMinor() > 404){
                 Collections.sort(ampRoles);
                 Assertions.assertEquals(2, ampRoles.size());
