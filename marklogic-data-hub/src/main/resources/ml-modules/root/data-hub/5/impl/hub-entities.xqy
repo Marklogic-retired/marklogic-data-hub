@@ -198,7 +198,12 @@ declare %private function hent:fix-options-for-explorer(
             </search:range>
           </search:constraint>,
           hent:build-sort-operator($sortable-properties, $entity-namespace-map),
-          hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
+          hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
+          <search:transform-results apply="snippet">
+            <per-match-tokens>30</per-match-tokens>
+            <max-matches>4</max-matches>
+            <max-snippet-chars>200</max-snippet-chars>
+          </search:transform-results>
         }
       case element(search:constraint) return
         let $container-for-entity-property-generated-by-es := $n/search:container
