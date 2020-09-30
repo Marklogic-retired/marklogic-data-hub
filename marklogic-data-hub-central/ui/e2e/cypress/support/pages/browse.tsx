@@ -245,6 +245,7 @@ class BrowsePage {
   }
 
   getHubPropertiesExpanded() {
+    cy.wait(500);
     cy.get("#hub-properties > div > i").click();
   }
 

@@ -6,11 +6,12 @@ Run the setup script first from under `marklogic-data-hub-central/ui/e2e` direct
 
     For DHS -
         * Create users as admin using the payload in cypress/fixtures/users for the tests
-        * ./setup.sh dhs=true mlHost=<curationEndpoint>
+        * ./setup.sh dhs=true mlHost=<curationEndpoint> mlSecurityUsername=<mladmin_username> mlSecurityPassword=<mladmin_password>
             * example of curation endpoint is dwgz7dnkj.ec2dentifier10.a.marklogicsvc.com
+            * credentials for <mladmin_username> and <mladmin_password> can be found in the same service email where the curation endpoint is provided
         
     For local - 
-        * ./setup.sh dhs=false mlHost=localhost 
+        * ./setup.sh dhs=false mlHost=localhost mlSecurityUsername=admin mlSecurityPassword=admin
 
 Boot up HC application from `marklogic-data-hub-central` directory either via bootRun or HC war
  
