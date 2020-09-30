@@ -80,9 +80,9 @@ public class ModelManager {
             } else { //FailedRequestException || ResourceNotResendableException || other runtime exceptions
                 logger.error(e.getLocalizedMessage());
             }
-            throw new DataHubException(e.getServerMessage(), e);
+            throw e;
         } catch (Exception e) {
-            throw new DataHubException(e.getLocalizedMessage(), e);
+            throw new RuntimeException(e.getLocalizedMessage(), e);
         }
 
         return jsonRes;

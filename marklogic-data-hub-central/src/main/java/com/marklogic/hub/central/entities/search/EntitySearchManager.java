@@ -126,14 +126,7 @@ public class EntitySearchManager {
 
             return queryMgr.search(queryDefinition, resultHandle, searchQuery.getStart());
         } catch (MarkLogicServerException e) {
-            // If there are no entityModels to search, then we expect an error because no search options will exist
-            if (searchQuery.getQuery().getEntityTypeIds().isEmpty() || modelManager.getModels().size() == 0) {
-                logger.warn("No entityTypes present to perform search");
-                return new StringHandle("");
-            }
-
             logger.error(e.getLocalizedMessage());
-
             // Resorting to string contains check as there isn't any other discernible difference
             if (e.getLocalizedMessage().contains(QUERY_OPTIONS)) {
                 logger.error("If this is a configuration issue, fix the configuration issues as shown in"
@@ -145,10 +138,7 @@ public class EntitySearchManager {
                         + "time for the file to get generated. This file is required to enable "
                         + "various search features.");
             }
-
-            throw new DataHubException(e.getServerMessage(), e);
-        } catch (Exception e) { //other runtime exceptions
-            throw new DataHubException(e.getLocalizedMessage(), e);
+            throw e;
         }
     }
 
@@ -167,9 +157,7 @@ public class EntitySearchManager {
             } else { //FailedRequestException || ResourceNotResendableException
                 logger.error(e.getLocalizedMessage());
             }
-            throw new DataHubException(e.getServerMessage(), e);
-        } catch (Exception e) { //other runtime exceptions
-            throw new DataHubException(e.getLocalizedMessage(), e);
+            throw e;
         }
     }
 
@@ -193,9 +181,6 @@ public class EntitySearchManager {
                     .andNot(queryBuilder.collection(entityTypeCollections),
                             queryBuilder.collection(excludedCollections));
 
-            queries.add(finalCollQuery);
-        } else { // If entity-model collections are empty, don't return any documents
-            StructuredQueryDefinition finalCollQuery = queryBuilder.and(queryBuilder.collection());
             queries.add(finalCollQuery);
         }
 
@@ -352,7 +337,7 @@ public class EntitySearchManager {
                     .newQueryOptionsManager()
                     .readOptionsAs(queryOptionsName, Format.XML, String.class);
         } catch (ResourceNotFoundException e) {
-            throw new DataHubException(String.format("Could not find search options: %s", queryOptionsName), e);
+            throw new RuntimeException(String.format("Could not find search options: %s", queryOptionsName), e);
         }
         return queryOptions;
     }
