@@ -7,6 +7,8 @@ import com.marklogic.hub.central.controllers.MappingController;
 import com.marklogic.hub.central.controllers.ModelController;
 import com.marklogic.hub.central.controllers.steps.IngestionStepController;
 import com.marklogic.hub.central.controllers.steps.MappingStepController;
+import com.marklogic.hub.central.controllers.steps.MatchingStepController;
+import com.marklogic.hub.central.controllers.steps.MergingStepController;
 import com.marklogic.hub.central.schemas.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -84,6 +86,10 @@ public class SwaggerConfig {
                 MappingController.MappingArtifact.class,
                 MappingStepController.class,
                 MappingStepController.MappingSteps.class,
+                MatchingStepController.class,
+                MatchingStepController.MatchingSteps.class,
+                MergingStepController.class,
+                MergingStepController.MergingSteps.class,
                 ModelController.CreateModelInput.class,
                 ModelController.LatestJobInfo.class,
                 ModelController.ModelReferencesInfo.class,
