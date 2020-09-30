@@ -1,4 +1,11 @@
 {
   "role-name": "data-hub-match-merge-reader",
-  "description": "Permits reading a matching or merging configuration"
+  "description": "Permits reading a matching or merging configuration",
+  "privilege": [
+    {
+      "privilege-name": "data-hub-read-match-merge",
+      "action": "http://marklogic.com/data-hub/privileges/read-match-merge",
+      "kind": "execute"
+    }
+  ]
 }
