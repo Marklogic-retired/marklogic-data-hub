@@ -20,12 +20,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.central.AbstractHubCentralTest;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
-import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.test.Customer;
@@ -70,37 +71,33 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
     }
 
     @Test
-    void noEntityTypesSelected() {
-        runAsDataHubDeveloper();
-        // Need at least one entity model to exist for this scenario
-        installOnlyReferenceModelEntities(true);
-
-        runAsHubCentralUser();
-
-        SearchQuery query = new SearchQuery();
-        DocSearchQueryInfo info = new DocSearchQueryInfo();
-        info.setEntityTypeIds(Arrays.asList(" "));
-        query.setQuery(info);
-
-        String results = new EntitySearchManager(getHubClient(), "staging").search(query).get();
-        ObjectNode node = readJsonObject(results);
-        assertEquals(0, node.get("total").asInt(), "When entityTypeIds has values, but they're all empty strings, the " +
-            "backend should return no results, and not throw an error");
+    void searchAllDataInStagingDatabase() {
+        validateAllDataSearch("staging");
     }
 
     @Test
-    public void testSearchResultsOnNoData() {
+    void searchAllDataInFinalDatabase() {
+        validateAllDataSearch("final");
+    }
+
+    @Test
+    public void testSearchResultsOnNonExistentEntityModel() {
         runAsDataHubDeveloper();
-        EntitySearchManager.QUERY_OPTIONS = "non-existent-options";
         String collectionDeleteQuery = "declareUpdate(); xdmp.collectionDelete(\"http://marklogic.com/entity-services/models\")";
         getHubClient().getFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
 
         runAsHubCentralUser();
-        assertTrue(new EntitySearchManager(getHubClient()).search(new SearchQuery()).get().isEmpty());
+        StringHandle results = new EntitySearchManager(getHubClient()).search(new SearchQuery());
 
-        SearchQuery query = new SearchQuery();
-        query.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
-        assertTrue(new EntitySearchManager(getHubClient()).search(query).get().isEmpty());
+        String query = "cts.estimate(cts.trueQuery())";
+        int count = Integer.parseInt(getHubClient().getFinalClient().newServerEval().javascript(query).evalAs(String.class));
+        ObjectNode node = readJsonObject(results.get());
+        assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
+                "to all the docs that the user can read in the database", count));
+
+        SearchQuery searchQuery = new SearchQuery();
+        searchQuery.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
+        assertThrows(MarkLogicServerException.class, () -> new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
     }
 
     @Test
@@ -275,7 +272,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
     @Test
     void testGetQueryOptions() {
-        assertThrows(DataHubException.class, () -> new EntitySearchManager(getHubClient()).getQueryOptions("non-existent-options"));
+        assertThrows(RuntimeException.class, () -> new EntitySearchManager(getHubClient()).getQueryOptions("non-existent-options"), "Search options doesn't exist");
     }
 
     private void validateSearchWithTransform(String databaseType) {
@@ -315,5 +312,23 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         assertTrue(node.get("results").get(0).has("entityProperties"), "Each result is expected to have " +
                 "entityProperties so that the UI knows what structured values to show for each entity instance");
         assertTrue(node.get("results").get(1).has("entityProperties"));
+    }
+
+    private void validateAllDataSearch(String databaseType) {
+        runAsDataHubDeveloper();
+        ReferenceModelProject project = installOnlyReferenceModelEntities(true);
+        deployEntityIndexes();
+        project.createCustomerInstance(new Customer(1, "Jane"), databaseType);
+        project.createCustomerInstance(new Customer(2, "Sally"), databaseType);
+
+        runAsHubCentralUser();
+        DatabaseClient client = databaseType.equalsIgnoreCase("staging") ? getHubClient().getStagingClient() : getHubClient().getFinalClient();
+
+        String query = "cts.estimate(cts.trueQuery())";
+        int count = Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
+        StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(new SearchQuery());
+        ObjectNode node = readJsonObject(results.get());
+        assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
+                "to all the docs that the user can read in the database", count));
     }
 }
