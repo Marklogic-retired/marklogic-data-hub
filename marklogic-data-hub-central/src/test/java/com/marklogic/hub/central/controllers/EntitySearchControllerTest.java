@@ -249,8 +249,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     @Test
     void testRowExportWithPathRangeQuery() throws Exception {
-        // This assumption is due to ML 9 Entity Services options not generating the range index constraints
-        assumeTrue(new Versions(getHubConfig()).getMLVersion().getMajor() == 10);
+        assumeTrue(supportsRangeIndexConstraints());
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
         deployEntityIndexes();
 
@@ -365,5 +364,12 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
         params.add("queryDocument", json);
 
         return params;
+    }
+
+    // Range constraints from Entity Services weren't returned until ML 10.0-4
+    private boolean supportsRangeIndexConstraints() {
+        Versions.MarkLogicVersion mlVersion = new Versions(getHubConfig()).getMLVersion();
+        Integer major = mlVersion.getMajor();
+        return major > 10 && (major == 10 && mlVersion.getMinor() >= 400);
     }
 }
