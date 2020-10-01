@@ -15,7 +15,6 @@ describe("<NumericFacet/>", () => {
             referenceType={''}
             entityTypeId={''}
             propertyPath={''}
-            database='final'
         />);
 
         await act(async () => {
@@ -33,7 +32,6 @@ describe("<NumericFacet/>", () => {
             referenceType={'element'}
             entityTypeId={''}
             propertyPath={'age'}
-            database='final'
         />);
 
         await act(async () => {

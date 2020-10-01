@@ -85,7 +85,8 @@ const QueryModal = (props) => {
             propertiesToDisplay: [],
             zeroState: searchOptions.zeroState,
             manageQueryModal: true,
-            sortOrder: []
+            sortOrder: [],
+            database: searchOptions.database,
         }
         applySaveQuery(options);
         props.setCurrentQueryDescription('');
@@ -106,7 +107,8 @@ const QueryModal = (props) => {
                     propertiesToDisplay: query.savedQuery.propertiesToDisplay,
                     zeroState: query.zeroState,
                     manageQueryModal: query.manageQueryModal,
-                    sortOrder: query.savedQuery.sortOrder
+                    sortOrder: query.savedQuery.sortOrder,
+                    database: searchOptions.database,
                 }
                 applySaveQuery(options);
                 props.setCurrentQueryDescription(query['savedQuery']['description']);
@@ -263,7 +265,7 @@ const QueryModal = (props) => {
 
     const getPreview = async (id) => {
         try {
-            const response = await getSavedQueryPreview(id, props.database);
+            const response = await getSavedQueryPreview(id, searchOptions.database);
             if (response.data) {
                 const preview = getExportPreview(response.data)
                 const header = preview[0];
@@ -281,7 +283,7 @@ const QueryModal = (props) => {
 
     return (
         <div>
-            <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} database={props.database}/>
+            <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
             <Modal
                 title={null}
                 visible={props.modalVisibility}

@@ -27,7 +27,7 @@ describe('Entity Modeling: Writer Role', () => {
 
   after(() => {
       cy.loginAsDeveloper().withRequest();
-      cy.deleteEntities('User', 'Patient', 'Client');
+      cy.deleteEntities('User', 'Patient', 'Buyer');
       cy.resetTestUser();
   });
 
@@ -39,13 +39,13 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeModal.getAddButton().should('not.be.disabled');
 
     entityTypeModal.clearEntityName();
-    entityTypeModal.newEntityName('Client');
-    entityTypeModal.newEntityDescription('An entity for clients');
+    entityTypeModal.newEntityName('Buyer');
+    entityTypeModal.newEntityDescription('An entity for buyers');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Client').trigger('mouseover');
+    propertyTable.getAddPropertyButton('Buyer').trigger('mouseover');
     cy.contains(`Click to add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton('Client').click();
+    propertyTable.getAddPropertyButton('Buyer').click();
 
     propertyModal.newPropertyName('user');
     propertyModal.openPropertyDropdown();
@@ -57,7 +57,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getMultipleIcon('user').should('exist');
 
     //Add cascaded type with identifer
-    propertyTable.getAddPropertyButton('Client').click();
+    propertyTable.getAddPropertyButton('Buyer').click();
     propertyModal.newPropertyName('newId');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More string types').click();
@@ -75,8 +75,8 @@ describe('Entity Modeling: Writer Role', () => {
     //propertyTable.getWildcardIcon('newId').should('exist');
 
     // add basic type with identifier, show confirmation modal
-    propertyTable.getAddPropertyButton('Client').click();
-    propertyModal.newPropertyName('client-id');
+    propertyTable.getAddPropertyButton('Buyer').click();
+    propertyModal.newPropertyName('buyer-id');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('string').click();
 
@@ -86,10 +86,10 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.getSubmitButton().click();
 
     propertyTable.getIdentifierIcon('newId').should('not.exist');
-    propertyTable.getIdentifierIcon('client-id').should('exist');
+    propertyTable.getIdentifierIcon('buyer-id').should('exist');
 
     // edit property and change type to relationship
-    propertyTable.editProperty('client-id');
+    propertyTable.editProperty('buyer-id');
     propertyModal.getToggleStepsButton().should('not.exist')
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('user-id');
@@ -108,14 +108,14 @@ describe('Entity Modeling: Writer Role', () => {
     //propertyTable.getWildcardIcon('user-id').should('not.exist');
 
     //edit entity decription
-    entityTypeTable.getEntity('Client').click();
+    entityTypeTable.getEntity('Buyer').click();
     entityTypeModal.clearEntityDescription();
     entityTypeModal.newEntityDescription('Description has changed');
     entityTypeModal.getAddButton().click();
     entityTypeModal.getAddButton().should('not.be.visible');
-    propertyTable.getAddPropertyButton('Client').should('not.be.visible');
+    propertyTable.getAddPropertyButton('Buyer').should('not.be.visible');
 
-    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Client')).click();
+    cy.waitUntil(() => entityTypeTable.getExpandEntityIcon('Buyer')).click();
     propertyTable.editProperty('newId');
     propertyModal.getDeleteIcon('newId').click();
     confirmationModal.getDeletePropertyWarnText().should('exist');
@@ -142,12 +142,12 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getMultipleIcon('username').should('exist');
 
     // check edited entity description
-    entityTypeTable.getEntity('Client').click();
+    entityTypeTable.getEntity('Buyer').click();
     entityTypeModal.getEntityDescription().should('have.value', 'Description has changed');
     entityTypeModal.getCancelButton().click();
 
-    // save new Client entity
-    entityTypeTable.getSaveEntityIcon('Client').click();
+    // save new Buyer entity
+    entityTypeTable.getSaveEntityIcon('Buyer').click();
     confirmationModal.getSaveEntityText().should('be.visible');
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');

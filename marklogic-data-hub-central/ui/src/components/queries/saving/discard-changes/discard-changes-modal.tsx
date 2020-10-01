@@ -50,7 +50,8 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
                     propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
                     zeroState: searchOptions.zeroState,
                     manageQueryModal: searchOptions.manageQueryModal,
-                    sortOrder: response.data.savedQuery.sortOrder
+                    sortOrder: response.data.savedQuery.sortOrder,
+                    database: searchOptions.database,
                 }
                 applySaveQuery(options);
                 clearAllGreyFacets();
