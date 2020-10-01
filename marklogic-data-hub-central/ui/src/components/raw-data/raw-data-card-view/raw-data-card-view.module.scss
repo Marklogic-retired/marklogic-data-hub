@@ -1,35 +1,77 @@
 .rawDataCard {
-    padding-left: 10px;
-    padding-right: 10px;
-    .cardStyle{
-        width: 370px;
-        height: 140px;
-        margin-top: 24px;
-        text-align: left;
-        align-content: left;
-        padding-bottom: 2px;
-        border: 1px solid #d7d6d6;
-    }
+  padding-left: 10px;
+  padding-right: 10px;
+  .cardStyle {
+    width: 370px;
+    height: 140px;
+    margin-top: 24px;
+    text-align: left;
+    align-content: left;
+    padding-bottom: 2px;
+    border: 1px solid #d7d6d6;
+  }
 }
 
 .uriContainer {
-    font-size: 14px;
-    >.uri{
-        color: #3f4692;
-    }
+  font-size: 14px;
+  line-height: 28px;
+  > .uri {
+    color: #333;
+    font-weight: bold;
+  }
 }
 
-.cardIcons{
-    float: right;
+.cardIcons {
+  float: right;
 
-    .infoIcon {
-        color: #7F86B5;
-        font-size: 20px;
-        vertical-align: middle;
-        margin-right: 8px;
-    }
-    .detailLinkIcon {
-        color: #5B69AF;
-        font-size: 18px;
-    }
+  .infoIcon {
+    color: #7f86b5;
+    font-size: 20px;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  .detailLinkIcon {
+    color: #5b69af;
+    font-size: 18px;
+  }
+
+  .detailLinkIconDisabled {
+    color: #ccc;
+    font-size: 18px;
+  }
 }
+
+.snippetContainer {
+  font-size: 14px;
+  padding-top: 12px;
+  color: #333;
+  display: inline-block;
+  width: 346px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 6em;
+  line-height: 1.3em;
+}
+
+.binaryCard {
+  width: 344px;
+  align-items: center;
+  text-align: center;
+  align-content: center;
+  padding-top: 10px;
+}
+
+.binaryText {
+  font-size: 14px;
+  max-width: 50%;
+  color: #777;
+  padding-top: 6px;
+  margin: 0 auto;
+}
+
+.binaryIcon {
+  font-size: 24px;
+  color: #777;
+}
+
+
