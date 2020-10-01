@@ -1,0 +1,32 @@
+{
+    "endpoint": "/custom-ingestion-endpoint/endpoint.sjs",
+    "desc": "This is for testing a custom ingestion endpoint",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "workUnit",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "input",
+            "datatype": "jsonDocument",
+            "multiple": true,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": false,
+        "nullable": true
+    },
+    "$bulk": {
+        "inputBatchSize": 2
+    }
+}

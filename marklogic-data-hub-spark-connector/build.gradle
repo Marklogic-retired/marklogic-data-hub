@@ -16,7 +16,16 @@ group = 'com.marklogic'
 dependencies {
     // Contrary to the marklogic-data-hub-central project, when this project is brought over, the okhttp3 dependencies
     // remain at version 4.4.0. So no need to exclude them and then depend on them explicitly.
-    compile(project(":marklogic-data-hub"))
+    compile(project(":marklogic-data-hub")) {
+        // Excluding dependencies we don't need in the connector
+        exclude module: "spring-boot"
+        exclude module: "spring-boot-autoconfigure"
+        exclude module: "spring-integration"
+        exclude module: "spring-integration-http"
+        exclude module: "mlcp-util"
+        exclude module: "jcommander"
+        exclude module: "marklogic-data-movement-components"
+    }
 
     compile "org.apache.spark:spark-sql_2.11:${sparkVersion}"
     compile "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
