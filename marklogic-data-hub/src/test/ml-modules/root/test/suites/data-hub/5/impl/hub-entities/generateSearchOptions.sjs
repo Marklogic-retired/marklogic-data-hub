@@ -359,6 +359,33 @@ function testHubCentralSupportedDatatypeMappingsForSort() {
   return assertions;
 }
 
+function generateExplorerOptionsWithoutContainerConstraint() {
+  const input =
+    [{
+      "info": {
+        "title": "Book"
+      },
+      "definitions": {
+        "Book": {
+          "properties": {
+            "publishedAtAddress": {"$ref": "#/definitions/Address"}
+          }
+        },
+        "Address": {
+          "properties": {}
+        }
+      }
+    }];
+  const options = hent.dumpSearchOptions(input, true);
+
+  let message = "We dont need the ES generated container constraint since Explorer does not need them and it avoids " +
+    "conflict with the DH added constraint if the entity type is also named 'Collection'.";
+  return [
+    test.assertNotExists(options.xpath("/*:constraint[@name = 'Book']/*:container"), message),
+    test.assertNotExists(options.xpath("/*:constraint[@name = 'Address']/*:container"), message),
+  ];
+}
+
 []
   .concat(entityDefWithNamespace())
   .concat(generateOptionsWithElementRangeIndex())
@@ -367,4 +394,5 @@ function testHubCentralSupportedDatatypeMappingsForSort() {
   .concat(twoEntitiesHaveSameSortablePropertyName())
   .concat(verifySortOperatorsForSortableProperties())
   .concat(verifySortOptionDatatypeWhenEntityPropertyIsUpdated())
-  .concat(testHubCentralSupportedDatatypeMappingsForSort());
+  .concat(testHubCentralSupportedDatatypeMappingsForSort())
+  .concat(generateExplorerOptionsWithoutContainerConstraint());
