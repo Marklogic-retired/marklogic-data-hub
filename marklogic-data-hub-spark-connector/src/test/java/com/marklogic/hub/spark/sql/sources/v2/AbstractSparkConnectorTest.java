@@ -3,17 +3,34 @@ package com.marklogic.hub.spark.sql.sources.v2;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.test.AbstractHubTest;
+import org.apache.spark.sql.SaveMode;
+import org.apache.spark.sql.catalyst.InternalRow;
+import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
+import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
+import org.apache.spark.sql.sources.v2.writer.DataWriter;
+import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
+import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
  * Base class for all glue-connector tests.
  */
 public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
+
+    protected final static StructType FRUIT_SCHEMA = new StructType(new StructField[]{
+        new StructField("fruitName", DataTypes.StringType, true, Metadata.empty()),
+        new StructField("fruitColor", DataTypes.StringType, true, Metadata.empty()),
+    });
 
     private HubConfigImpl hubConfig;
     private HubClient hubClient;
@@ -86,5 +103,41 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
         Map<String, String> params = new HashMap<>();
         hubProperties.keySet().forEach(key -> params.put((String) key, hubProperties.getProperty((String) key)));
         return params;
+    }
+
+    /**
+     * Spark will do all of this in the real world - i.e. a user will specify the entry class and the set of options.
+     * But in a test, we need to do that ourselves. So we create the DataSource class, build up the params, and then
+     * call the factory/writer methods ourselves.
+     *
+     * @param options
+     * @return
+     */
+    protected DataWriter<InternalRow> buildDataWriter(Options options) {
+        HubDataSource dataSource = new HubDataSource();
+        final String writeUUID = "doesntMatter";
+        final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
+
+        // Get the set of DHF properties used to connect to ML as a map, and then add connector-specific params
+
+        Optional<DataSourceWriter> dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, options.toDataSourceOptions());
+        DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.get().createWriterFactory();
+
+        final int partitionIdDoesntMatter = 0;
+        final long taskId = 2;
+        final int epochIdDoesntMatter = 0;
+        return dataWriterFactory.createDataWriter(partitionIdDoesntMatter, taskId, epochIdDoesntMatter);
+    }
+
+    /**
+     * @param values
+     * @return a row that can be ingested via HubDataWriter for testing purposes
+     */
+    protected GenericInternalRow buildRow(String... values) {
+        Object[] rowValues = new Object[values.length];
+        for (int i = 0; i < values.length; i++) {
+            rowValues[i] = UTF8String.fromString(values[i]);
+        }
+        return new GenericInternalRow(rowValues);
     }
 }

@@ -50,10 +50,7 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Creating DataWriter with taskId: " + taskId);
-        }
-        return new HubDataWriter(hubClient, taskId, schema, params);
+        return new HubDataWriter(hubClient, schema, params);
     }
 
     protected HubConfigImpl buildHubConfig(Map<String, String> params) {
@@ -63,7 +60,7 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
         props.setProperty("hubssl", "true");
         // hubDHS and hubSsl passed in the params Map will be overridden.
         params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
-        logger.info("Creating HubClient for host: " + props.getProperty("mlHost"));
+        logger.info("Creating HubClient for host: " + props.getProperty("mlhost"));
         HubConfigImpl hubConfig = new HubConfigImpl();
         hubConfig.registerLowerCasedPropertyConsumers();
         hubConfig.applyProperties(new SimplePropertySource(props));

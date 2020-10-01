@@ -32,8 +32,8 @@ public class BulkIngestTest extends AbstractHubCoreTest {
     public void testBulkIngest() {
 
         String prefix = "/bulkIngesterTest";
-        String endpointState = "{\"next\":" + 0 + ", \"uriprefix\":\""+prefix+"\"}";
-        String workUnit      = "{\"taskId\":"+1+"}";
+        String endpointState =  "{}";
+        String workUnit      = "{\"userDefinedValue\":" + 1 + ", \"uriprefix\":\""+prefix+"\"}";
 
         runAsDataHubOperator();
         InputEndpoint loadEndpt = InputEndpoint.on(adminHubConfig.newStagingClient(null),
