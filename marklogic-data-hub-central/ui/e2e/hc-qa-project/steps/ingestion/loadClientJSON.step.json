@@ -1,0 +1,30 @@
+{
+  "headers": {
+    "sources": [
+      {
+        "name": "loadClientJSON"
+      }
+    ],
+    "createdOn": "currentDateTime",
+    "createdBy": "currentUser"
+  },
+  "collections": [
+    "loadClientJSON"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "name": "loadClientJSON",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "loadClientJSON-ingestion",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "inputFilePath": "input/json/clients",
+  "outputURIReplacement": ".*input,''",
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-STAGING",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-08-18T00:14:42.121193Z",
+  "outputFormat": "json"
+}

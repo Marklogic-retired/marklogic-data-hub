@@ -123,7 +123,8 @@ const Query: React.FC<Props> = (props) => {
                        propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
                        zeroState: searchOptions.zeroState,
                        manageQueryModal: searchOptions.manageQueryModal,
-                       sortOrder: response.data.savedQuery.sortOrder
+                       sortOrder: response.data.savedQuery.sortOrder,
+                       database: searchOptions.database,
                    }
                    applySaveQuery(options);
                    setCurrentQuery(response.data);
@@ -279,7 +280,8 @@ const Query: React.FC<Props> = (props) => {
             propertiesToDisplay: [],
             zeroState: true,
             manageQueryModal: false,
-            sortOrder: []
+            sortOrder: [],
+            database: 'final',
         }
         applySaveQuery(options);
         toggleResetQueryEditedConfirmation(false);
@@ -308,7 +310,8 @@ const Query: React.FC<Props> = (props) => {
                 propertiesToDisplay: [],
                 zeroState: true,
                 manageQueryModal: false,
-                sortOrder: []
+                sortOrder: [],
+                database: 'final',
             }
             applySaveQuery(options);
             clearAllGreyFacets();
@@ -590,7 +593,7 @@ const Query: React.FC<Props> = (props) => {
                 isSavedQueryUser={props.isSavedQueryUser}
                 modalVisibility={searchOptions.manageQueryModal}
                 entityDefArray={props.entityDefArray}
-                database={props.database}
+                database={searchOptions.database}
             />
             <Modal
                 visible={showEntityConfirmation}
