@@ -38,11 +38,10 @@ public class CopyQueryOptionsCommandTest extends AbstractHubCoreTest {
         uris.forEach((uriNode) -> {
             urisList.add(uriNode.asText());
         });
-        assertEquals(20, uris.size(),
-            "20 URIs are expected. " +
+        assertEquals(12, uris.size(),
+            "12 URIs are expected. " +
                 "2 URIs are for copying default.xml to data-hub-STAGING in the other 2 groups. " +
                 "6 URIs are for copying default.xml to the other 2 servers in all 3 groups. " +
-                "8 URIs are for copying exp-default.xml in the same fashion as default.xml. " +
                 "2 URIs are for copying jobs.xml to data-hub-JOBS in the other 2 groups. " +
                 "2 URIs are for copying traces.xml to data-hub-JOBS in the other 2 groups.");
         assertTrue(urisList.contains("/testGroup-B/data-hub-STAGING/rest-api/options/default.xml"));
@@ -53,15 +52,6 @@ public class CopyQueryOptionsCommandTest extends AbstractHubCoreTest {
         assertTrue(urisList.contains("/testGroup-B/testServer-C/rest-api/options/default.xml"));
         assertTrue(urisList.contains("/testGroup-C/testServer-B/rest-api/options/default.xml"));
         assertTrue(urisList.contains("/testGroup-C/testServer-C/rest-api/options/default.xml"));
-
-        assertTrue(urisList.contains("/testGroup-B/data-hub-STAGING/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/testGroup-C/data-hub-STAGING/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/" + groupName + "/testServer-B/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/" + groupName + "/testServer-C/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/testGroup-B/testServer-B/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/testGroup-B/testServer-C/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/testGroup-C/testServer-B/rest-api/options/exp-default.xml"));
-        assertTrue(urisList.contains("/testGroup-C/testServer-C/rest-api/options/exp-default.xml"));
 
         assertTrue(urisList.contains("/testGroup-B/data-hub-JOBS/rest-api/options/jobs.xml"));
         assertTrue(urisList.contains("/testGroup-C/data-hub-JOBS/rest-api/options/jobs.xml"));
