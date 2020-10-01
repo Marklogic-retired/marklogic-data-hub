@@ -226,9 +226,9 @@ class BrowsePage {
 
   //search bar
   search(str: string) {
-    cy.get('[data-cy=search-bar]').type(str);
+    cy.get('[data-cy=search-bar]').clear().type(str);
     cy.get('.ant-input-search-button').click();
-    this.waitForTableToLoad();
+    // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
   }
 
@@ -588,8 +588,13 @@ class BrowsePage {
     return cy.get('#snippetViewResult');
   }
 
-  getSelectedFacet(facet: string) {
-    return cy.get('#selected-facets > button').contains(facet);
+  // getSelectedFacet(facet: string) {
+  //   return cy.get('#selected-facets > button').contains(facet);
+  // }
+
+  //All Data
+  getAllDataSnippetByUri(uri: string) {
+    return cy.findByTestId(`${uri}-snippet`)
   }
   
 }
