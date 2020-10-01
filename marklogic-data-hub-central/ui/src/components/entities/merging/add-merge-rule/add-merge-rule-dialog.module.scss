@@ -32,8 +32,6 @@
 
 .questionCircle {
     font-size: 12px;
-    vertical-align: top;
-    margin-top: 6px;
     color: #7F86B5;
 }
 
@@ -48,10 +46,17 @@
 .submitButtonsForm {
     text-align: right;
     margin-bottom: -15px;
-    margin-right: 5px;
 }
 
 .submitButtons {
     text-align: right;
-    width: 162%;
+    width: 150%;
+}
+
+.mergeTypeSelect {
+    width: 400px !important;
+}
+
+.input{
+    width: 400px !important;
 }
