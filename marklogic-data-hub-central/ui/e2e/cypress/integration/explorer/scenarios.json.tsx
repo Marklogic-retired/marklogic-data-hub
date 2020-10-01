@@ -46,26 +46,26 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getFacetItems(item).should('exist');
     })
 
-     //Verify shadow effect upon scrolling within the snippet view
-     browsePage.getSnippetViewResult().should('have.css','box-shadow','none'); //No shadow effect in place when no scroll.
-     browsePage.getSnippetViewResult().scrollTo('center'); //Scrolling within the div
-     //Checking if the shadow style is applied when scroll in effect
-     browsePage.getSnippetViewResult().should('have.css','box-shadow','rgb(153, 153, 153) 0px 4px 4px -4px, rgb(153, 153, 153) 0px -4px 4px -4px');
-     browsePage.getSnippetViewResult().scrollTo('bottom'); //Scrolling within the div, to the bottom of the list
-     browsePage.getSnippetViewResult().should('have.css','box-shadow','none'); //No shadow effect because end of scroll.
+    //Verify shadow effect upon scrolling within the snippet view
+    browsePage.getSnippetViewResult().should('have.css', 'box-shadow', 'none'); //No shadow effect in place when no scroll.
+    browsePage.getSnippetViewResult().scrollTo('center'); //Scrolling within the div
+    //Checking if the shadow style is applied when scroll in effect
+    browsePage.getSnippetViewResult().should('have.css', 'box-shadow', 'rgb(153, 153, 153) 0px 4px 4px -4px, rgb(153, 153, 153) 0px -4px 4px -4px');
+    browsePage.getSnippetViewResult().scrollTo('bottom'); //Scrolling within the div, to the bottom of the list
+    browsePage.getSnippetViewResult().should('have.css', 'box-shadow', 'none'); //No shadow effect because end of scroll.
 
-      //Verify page number persists when navigating back from detail view
-     browsePage.clickPaginationItem(2);
-     browsePage.search('10256');
-     browsePage.getTotalDocuments().should('be.equal', 1);
-     browsePage.getInstanceViewIcon().click();
-     detailPage.getInstanceView().should('exist');
-     detailPage.getDocumentTable().should('exist');
-     detailPage.clickBackButton();
-     browsePage.getSelectedEntity().should('contain', 'All Entities');
-     browsePage.getSelectedPaginationNumber().should('contain', '1');
-     browsePage.getSearchText().should('have.value', '10256')
-     browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)')
+    //Verify page number persists when navigating back from detail view
+    browsePage.clickPaginationItem(2);
+    browsePage.search('10256');
+    browsePage.getTotalDocuments().should('be.equal', 1);
+    browsePage.getInstanceViewIcon().click();
+    detailPage.getInstanceView().should('exist');
+    detailPage.getDocumentTable().should('exist');
+    detailPage.clickBackButton();
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
+    browsePage.getSelectedPaginationNumber().should('contain', '1');
+    browsePage.getSearchText().should('have.value', '10256')
+    browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)')
   });
 
   it('select Person entity and verify entity, docs, hub/entity properties', () => {
@@ -410,7 +410,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('email', 'jacquelineknowles@nutralab.com').should('not.be.checked');
   });
 
-  it('apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked' , () => {
+  it('apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
@@ -436,102 +436,100 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('not.be.checked');
     browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
     browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('not.exist');
-    });
+  });
 
   it('Verify facets can be selected, applied and cleared using clear text', () => {
-      browsePage.selectEntity('Person');
-      browsePage.getShowMoreLink().first().click();
-      browsePage.getFacetItemCheckbox('fname', 'Gary').click();
-      browsePage.getGreySelectedFacets('Gary').should('exist');
-      browsePage.getFacetApplyButton().click();
-      browsePage.getFacetItemCheckbox('fname', 'Gary').should('be.checked');
-      browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
-      browsePage.getClearFacetSelection('fname').click();
-      browsePage.waitForSpinnerToDisappear();
-      browsePage.getFacetItemCheckbox('fname', 'Gary').should('not.be.checked');
-      browsePage.getGreySelectedFacets('Gary').should('not.exist');
+    browsePage.selectEntity('Person');
+    browsePage.getShowMoreLink().first().click();
+    browsePage.getFacetItemCheckbox('fname', 'Gary').click();
+    browsePage.getGreySelectedFacets('Gary').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('fname', 'Gary').should('be.checked');
+    browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
+    browsePage.getClearFacetSelection('fname').click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getFacetItemCheckbox('fname', 'Gary').should('not.be.checked');
+    browsePage.getGreySelectedFacets('Gary').should('not.exist');
   })
 
   it('Apply facets, unchecking them should not recheck original facets', () => {
-      browsePage.selectEntity('Customer');
-      browsePage.getShowMoreLink().first().click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
-      browsePage.getGreySelectedFacets('Mcgee Burch').should('exist');
-      browsePage.getGreySelectedFacets('Powers Bauer').should('exist');
-      browsePage.getFacetApplyButton().click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
-      browsePage.clickPopoverSearch('name');
-      browsePage.setInputField('name', 'Mc');
-      browsePage.getPopOverCheckbox('Mcgee Burch').should('be.checked');
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
-      browsePage.waitForSpinnerToDisappear();
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
-      browsePage.getShowMoreLink().click({multiple:true});
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').click();
-      browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
-      browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
-      browsePage.getFacetItemCheckbox('email','mcgeeburch@nutralab.com').should('not.be.checked');
+    browsePage.selectEntity('Customer');
+    browsePage.getShowMoreLink().first().click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
+    browsePage.getGreySelectedFacets('Mcgee Burch').should('exist');
+    browsePage.getGreySelectedFacets('Powers Bauer').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('be.checked');
+    browsePage.clickPopoverSearch('name');
+    browsePage.setInputField('name', 'Mc');
+    browsePage.getPopOverCheckbox('Mcgee Burch').should('be.checked');
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
+    browsePage.getShowMoreLink().click({ multiple: true });
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').click();
+    browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
+    browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').should('not.be.checked');
   })
 
   it('Verify facets checked from popover search can be unchecked on clicking discard all changes', () => {
-     browsePage.selectEntity('Person');
-     browsePage.getFacetItemCheckbox('fname', 'Alexandra').click();
-     browsePage.getGreySelectedFacets('Alexandra').should('exist');
-     browsePage.waitForSpinnerToDisappear();
-     browsePage.clickPopoverSearch('fname');
-     browsePage.setInputField('fname', 'Al');
-     browsePage.getPopOverCheckbox('Alexandra').click();
-     browsePage.getGreySelectedFacets('Alexandra').should('be.visible');
-     browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
-     browsePage.getClearGreyFacets().click();
-     browsePage.getFacetItemCheckbox('fname', 'Alexandra').should('not.be.checked');
-     browsePage.clickPopoverSearch('fname');
-     browsePage.getPopOverCheckbox('Alexandra').should('not.be.checked');
+    browsePage.selectEntity('Person');
+    browsePage.getFacetItemCheckbox('fname', 'Alexandra').click();
+    browsePage.getGreySelectedFacets('Alexandra').should('exist');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.clickPopoverSearch('fname');
+    browsePage.setInputField('fname', 'Al');
+    browsePage.getPopOverCheckbox('Alexandra').click();
+    browsePage.getGreySelectedFacets('Alexandra').should('be.visible');
+    browsePage.getFacetSearchSelectionCount('fname').should('contain', '1');
+    browsePage.getClearGreyFacets().click();
+    browsePage.getFacetItemCheckbox('fname', 'Alexandra').should('not.be.checked');
+    browsePage.clickPopoverSearch('fname');
+    browsePage.getPopOverCheckbox('Alexandra').should('not.be.checked');
   })
 
 });
 
 
 describe('Verify numeric/date facet can be applied', () => {
-    //login with valid account and go to /browse page
-    beforeEach(() => {
-        cy.visit('/');
-        cy.contains(Application.title);
-        cy.loginAsTestUserWithRoles("pii-reader","hub-central-developer").withRequest();
-        cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-        cy.waitUntil(() => browsePage.getExploreButton()).click();
-        browsePage.waitForSpinnerToDisappear();
-        browsePage.waitForTableToLoad();
-    });
+  //login with valid account and go to /browse page
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
 
-    it('Apply numeric facet values multiple times, clears the previous values and applies the new one, clearing date range facet clears selected facet', () => {
-        browsePage.selectEntity('Customer');
-        browsePage.getSelectedEntity().should('contain', 'Customer');
-        browsePage.waitForSpinnerToDisappear();
-        browsePage.changeNumericSlider('2273');
-        browsePage.getGreyRangeFacet(2273).should('exist');
-        browsePage.getFacetApplyButton().click();
-        browsePage.getRangeFacet(2273).should('exist');
-        browsePage.getClearAllButton().should('exist');
-        browsePage.changeNumericSlider('3024');
-        browsePage.getGreyRangeFacet(3024).should('exist');
-        browsePage.getFacetApplyButton().should('exist');
-        browsePage.getFacetApplyButton().click();
-        browsePage.getRangeFacet(3024).should('exist');
-        browsePage.getClearAllButton().should('exist');
-        browsePage.getClearAllButton().click();
-        //Verify clearing date range facet clears corresponding selected facet
-        let dateInAppliedFacet = browsePage.computeStartDateOfTheWeek();
-        browsePage.selectDateRange();
-        browsePage.getFacetApplyButton().click();
-        browsePage.getAppliedFacets(dateInAppliedFacet).should('exist');
-        browsePage.getDateFacetPicker().trigger('mouseover');
-        cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({force: true});
-        browsePage.waitForSpinnerToDisappear();
-        browsePage.getFacetApplyButton().should('not.exist')
-        browsePage.getAppliedFacets(dateInAppliedFacet).should('not.exist');
-    });
+  it('Apply numeric facet values multiple times, clears the previous values and applies the new one, clearing date range facet clears selected facet', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.changeNumericSlider('2273');
+    browsePage.getGreyRangeFacet(2273).should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getRangeFacet(2273).should('exist');
+    browsePage.getClearAllButton().should('exist');
+    browsePage.changeNumericSlider('3024');
+    browsePage.getGreyRangeFacet(3024).should('exist');
+    browsePage.getFacetApplyButton().should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getRangeFacet(3024).should('exist');
+    browsePage.getClearAllButton().should('exist');
+    browsePage.getClearAllButton().click();
+    //Verify clearing date range facet clears corresponding selected facet
+    browsePage.selectDateRange();
+    browsePage.getFacetApplyButton().click();
+    browsePage.getSelectedFacet('birthDate:').should('exist');
+    browsePage.getDateFacetPicker().trigger('mouseover');
+    cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({ force: true });
+    browsePage.getFacetApplyButton().should('not.exist')
+    browsePage.getSelectedFacet('birthDate:').should('not.exist');
+  });
 });

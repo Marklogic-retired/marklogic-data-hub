@@ -569,6 +569,10 @@ class BrowsePage {
     return cy.get('#snippetViewResult');
   }
 
+  getSelectedFacet(facet: string) {
+    return cy.get('#selected-facets > button').contains(facet);
+  }
+  
 }
 
 const browsePage = new BrowsePage();
