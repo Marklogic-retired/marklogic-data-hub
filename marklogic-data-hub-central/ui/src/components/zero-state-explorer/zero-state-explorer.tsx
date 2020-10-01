@@ -10,6 +10,9 @@ import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons'
 import tiles from '../../config/tiles.config'
 
 const ZeroStateExplorer = (props) => {
+  const {
+    searchOptions,
+} = useContext(SearchContext);
 
   const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -17,6 +20,7 @@ const ZeroStateExplorer = (props) => {
   const { Option } = Select;
   const dividerOption = <Divider className={styles.dividerOption} />;
   const dropdownOptions = ['All Data', dividerOption, 'All Entities', dividerOption, ...props.entities];
+  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
 
 
   const {
@@ -32,9 +36,9 @@ const ZeroStateExplorer = (props) => {
       propertiesToDisplay: [],
       zeroState: false,
       manageQueryModal: false,
-      sortOrder: []
+      sortOrder: [],
+      database: zeroStatePageDatabase,
     }
-    props.setDatabasePreferences(props.zeroStatePageDatabase)
     applySaveQuery(options);
   }
 
@@ -86,7 +90,8 @@ const ZeroStateExplorer = (props) => {
           propertiesToDisplay: query.savedQuery.propertiesToDisplay,
           zeroState: false,
           manageQueryModal: false,
-          sortOrder: query.savedQuery.sortOrder
+          sortOrder: query.savedQuery.sortOrder,
+          database: searchOptions.database,
         }
         applySaveQuery(options);
       }
@@ -95,11 +100,11 @@ const ZeroStateExplorer = (props) => {
 
   const onViewChange = (val) => {
     setView(val);
-    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false)
+    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false);
   }
 
   const onDatabaseChange = (val) => {
-    props.setZeroStatePageDatabase(val)
+    setZeroStatePageDatabase(val);
   }
 
   return (
