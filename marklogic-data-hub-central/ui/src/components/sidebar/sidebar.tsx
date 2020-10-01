@@ -27,8 +27,7 @@ interface Props {
   entityDefArray: any[];
   facetRender: (facets: any) => void;
   checkFacetRender: (facets: any) => void;
-  database: string;
-  setDatabasePreferences: (database: string) => void;
+  setDatabasePreferences: (option: string) => void;
 };
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -40,7 +39,8 @@ const Sidebar: React.FC<Props> = (props) => {
     clearRangeFacet,
     clearGreyRangeFacet,
     greyedOptions,
-    setAllGreyedOptions
+    setAllGreyedOptions,
+    setDatabase
   } = useContext(SearchContext);
   const {
     user
@@ -480,7 +480,6 @@ const Sidebar: React.FC<Props> = (props) => {
     updateUserPreferences(user.name, options);
   }
 
-
   return (
     <div className={styles.sideBarContainer} id={'sideBarContainer'}>
       <Collapse
@@ -495,7 +494,7 @@ const Sidebar: React.FC<Props> = (props) => {
           <MLRadio.MLGroup
             style={{}}
             buttonStyle="solid"
-            defaultValue={props.database}
+            defaultValue={searchOptions.database}
             name="radiogroup"
             onChange={e => props.setDatabasePreferences(e.target.value)}
             size="medium"
@@ -529,7 +528,6 @@ const Sidebar: React.FC<Props> = (props) => {
                       propertyPath={facet.propertyPath}
                       updateSelectedFacets={updateSelectedFacets}
                       addFacetValues={addFacetValues}
-                      database={props.database}
                     />
                   )
                 }
@@ -613,7 +611,6 @@ const Sidebar: React.FC<Props> = (props) => {
                       datatype={datatype}
                       key={facet.facetName}
                       onChange={onNumberFacetChange}
-                      database={props.database}
                     />
                   </div>
                 )
@@ -664,7 +661,6 @@ const Sidebar: React.FC<Props> = (props) => {
                 referenceType={facet.referenceType}
                 entityTypeId={facet.entityTypeId}
                 propertyPath={facet.propertyPath}
-                database={props.database}
               />
             )
           })}

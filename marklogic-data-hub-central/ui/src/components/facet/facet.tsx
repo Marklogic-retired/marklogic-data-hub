@@ -19,7 +19,6 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  database: string;
   updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?: boolean, toDeleteAll?: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
 };
@@ -194,7 +193,6 @@ const Facet: React.FC<Props> = (props) => {
               popOvercheckedValues={checked}
               facetValues={checkedFacets}
               facetName={props.name}
-              database={props.database}
             />
           </div>}
       </div>

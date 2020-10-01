@@ -7,4 +7,5 @@ export interface QueryOptions {
     zeroState: boolean;
     manageQueryModal: boolean;
     sortOrder: any[];
+    database: string;
   }

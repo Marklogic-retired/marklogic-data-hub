@@ -14,14 +14,11 @@ interface Props {
   referenceType: string;
   entityTypeId: any;
   propertyPath: any;
-  database: string;
   onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
 };
 
 const NumericFacet: React.FC<Props> = (props) => {
-  const {
-    searchOptions,
-  } = useContext(SearchContext);
+  const { searchOptions } = useContext(SearchContext);
   const { handleError } = useContext(UserContext);
 
   const [range, setRange] = useState<number[]>([]);
@@ -30,7 +27,7 @@ const NumericFacet: React.FC<Props> = (props) => {
 
   const getFacetRange = async () => {
     try {
-      const response = await rangeFacet(props, props.database)
+      const response = await rangeFacet(props, searchOptions.database)
       if (response['data']) {
         let range = [...[response.data.min, response.data.max].map(Number)]
         setRangeLimit(range)
