@@ -10,12 +10,15 @@
     line-height: 1.4;
     color: #333;
     background: #fff;
-    margin: 20px 70px 0px 40px;
+    margin: 20px 40px 0px 40px;
     .title {
-        font-size: 28px;
+        font-size: 42px;
+        font-weight: bold;
     }
     .introText {
-        margin: 20px 0 60px 0;
+        margin: 20px 0 40px 0;
+        width: 80%;
+        font-size: 18px;
     }
     .spacer {
         margin-top: 20px;
@@ -31,12 +34,13 @@
             display: grid;
             grid-template-columns: 20% 20% 20% 25%;
             grid-gap: 40px;
+            margin-bottom: 5px;
             .subtitle {
                 padding: 10px;
                 font-size: 16pt;
             }
             .body {
-                padding: 0px 20px 10px 48px;
+                padding: 0px 20px 10px 44px;
             }
             i {
                 position: relative;
@@ -78,36 +82,32 @@
             // Disabled cards have permissions text
             .permissions, .permissionsCurate, .permissionsRun, .permissionsExplore {
                 position: relative;
-                padding: 24px 0 0 10px;
-                text-align: right;
+                padding-top: 24px;
                 font-size: 9pt;
                 bottom: 5px;
-                right: 5px;
-            }
-            .permissionsCurate {
-                padding: 42px 0 0 10px;
+                color: #777;
+                font-weight: 600;
             }
             .permissionsRun {
-                padding: 98px 0 0 10px;
+                padding-top: 98px;
             }
             .permissionsExplore {
-                padding: 110px 0 0 10px;
+                padding-top: 110px;
             }
 
             .cardLoad {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #a8819c;
-                background-color: #eee6eb;
+                border: 1px solid #DEE0E0;
+                box-shadow: 0 4px 4px #ccc;
                 .head {
-                    border-radius: 4px 4px 0 0;
-                    min-height: 21vh;
-                    border-bottom: 1px solid #a8819c;
-                    background-image: url("../assets/load_visual_big.png");
-                    background-color: #FFF;
-                    background-size: 60%;
+                    min-height: 20vh;
+                    border-bottom: 1px solid #f4f4f4;
+                    background-image: url("../assets/load-temp.png");
                     background-repeat:no-repeat;
                     background-position:center;
+                    background-color: #F2F0FA;
+                    border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
@@ -119,27 +119,25 @@
                         color: #3D409C;
                         content: "\e94e";
                         font-family: MLCustomFont;
-                        font-size: 24px;
-                        padding-bottom: 15px;
-                        padding-right: 13px;
+                        font-size: 22px;
+                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
-            
+
             .cardModel {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #7f9cc5;
-                background-color: #e6ebf4;
+                border: 1px solid #DEE0E0;
+                box-shadow: 0 4px 4px #ccc;
                 .head {
-                    border-radius: 4px 4px 0 0;
-                    min-height: 21vh;
-                    border-bottom: 1px solid #7f9cc5;
-                    background-image: url("../assets/model_visual_big.png");
-                    background-color: #FFF;
-                    background-size: 50%;
+                    min-height: 20vh;
+                    border-bottom: 1px solid #f4f4f4;
+                    background-image: url("../assets/model-temp.png");
                     background-repeat:no-repeat;
                     background-position:center;
+                    background-color: #EDF3FB;
+                    border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
@@ -151,28 +149,25 @@
                         color: #304F7F;
                         content: "\e948";
                         font-family: MLCustomFont;
-                        font-size: 24px;
-                        padding-bottom: 15px;
-                        padding-right: 13px;
+                        font-size: 22px;
+                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
-            
+
             .cardCurate {
                 position: relative;
                 border-radius: 4px;
-                border: 1px solid #dcbd8a;
-                background-color: #f8f2e8;
+                border: 1px solid #DEE0E0;
+                box-shadow: 0 4px 4px #ccc;
                 .head {
-                    border-radius: 4px 4px 0 0;
-                    min-height: 21vh;
-                    border-bottom: 1px solid #dcbd8a;
-                    background-image: url("../assets/curate_visual_map.png");
-                    background-color: #FFF;
-                    background-size: 60%;
+                    min-height: 20vh;
+                    border-bottom: 1px solid #f4f4f4;
+                    background-image: url("../assets/curate-temp.png");
                     background-repeat:no-repeat;
                     background-position:center;
-
+                    background-color: #E3F4F9;
+                    border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
@@ -182,59 +177,57 @@
                         color: #184B5A;
                         content: "\e955";
                         font-family: MLCustomFont;
-                        font-size: 24px;
-                        padding-bottom: 15px;
-                        padding-right: 13px;
+                        font-size: 22px;
+                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
-            
+
             .cardExplore {
                 grid-row: span 2;
-                border: 1px solid #90aeb2;
-                background-color: #FFF;
-                background-image: url("../assets/explore_visual_big.png");
-                background-size: 60%;
+                background-color: #ECFAF7;
+                background-image: url("../assets/explore-temp.png");
                 background-repeat:no-repeat;
                 background-position: 50% 25%;
                 position: relative;
-                border-radius: 4px;
+                border: 1px solid #DEE0E0;
+                box-shadow: 0 4px 4px #ccc;
+                border-radius: 4px 4px 0 0;
                 .head {
-                    border-radius: 0 0 4px 4px;
-                    min-height: 22vh;
+                    min-height: 20vh;
                     width: 100%;
-                    border-top: 1px solid #90aeb2;
-                    background-color: #e6eded;
+                    border-top: 1px solid #f4f4f4;
+                    background-color: #FFF;
+                    border-radius: 4px 4px 0 0;
                     position: absolute;
                     bottom: 0px;
                     .icon:before {
-                        color: #00474F;  
-                        content: "\68";  
+                        color: #376F63;
+                        content: "\68";
                         font-family: MLCustomFont;
                         font-size: 24px;
                         float: left;
                         padding: 10px;
-                        padding-left: 13px;
                     }
                 }
             }
-            
+
             .cardRun {
                 position: relative;
-                border-radius: 4px;
                 grid-column: span 3;
-                border: 1px solid #8288bb;
-                background-color: #ffffff;
-                background-image: url("../assets/run_visual_big.png");
+                background-color: #FAF2FC;
+                background-image: url("../assets/run-temp.png");
                 background-repeat:no-repeat;
-                background-position: 85% 45%;
-                background-size: 55%;
+                background-position: 70% 45%;
+                border: 1px solid #DEE0E0;
+                box-shadow: 0 4px 4px #ccc;
+                border-radius: 4px 4px 0 0;
                 .head {
-                    border-radius: 4px 0 0 4px;
                     width: 30%;
-                    border-right: 1px solid #8288bb;
-                    min-height: 23vh;
-                    background-color: #e6e7f2;
+                    border-right: 1px solid #f4f4f4;
+                    min-height: 20vh;
+                    background-color: #FFF;
+                    border-radius: 4px 4px 0 0;
                 }
                 .subtitle {
                     i {
@@ -246,9 +239,8 @@
                         color: #82388A;
                         content: "\e926";
                         font-family: MLCustomFont;
-                        font-size: 24px;
-                        padding-bottom: 15px;
-                        padding-right: 13px;
+                        font-size: 22px;
+                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
@@ -259,9 +251,10 @@
 
 .active {
 	background-color: #FFF;
+    border: 2px solid #7F86B5;
 }
 .inactive {
-	background-color: #EEE;
+	background-color: #FAFBFC;
 }
 
 a {
@@ -273,14 +266,14 @@ a {
 	padding: 0px 20px 5px 45px;
 }
 .docicon:before {
-    content: "\f0f6";  
+    content: "\f0f6";
     font-family: FontAwesome;
 	font-size: 18px;
 	padding: 0 5px 0 0;
 	color:  #333333;
  }
 .videoicon:before {
-    content: "\f03d";  
+    content: "\f03d";
     font-family: FontAwesome;
 	font-size: 18px;
 	padding: 0 5px 0 0;

@@ -26,35 +26,39 @@ describe('Overview component', () => {
 
     });
 
-    it('Verify enabled cards are clickable', async () => {
+    it('Verify enabled cards are clickable and have appropriate styling/content', async () => {
 
         const history = createMemoryHistory();
         history.push('/tiles'); // initial state
 
         let enabled = ['load', 'model', 'curate', 'run', 'explore']
-        const {getByLabelText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+        const {getByLabelText, queryAllByText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
 
         enabled.forEach((card, i) => {
             expect(getByLabelText(card + "-card")).toHaveClass(`enabled`);
             fireEvent.click(getByLabelText(card + "-card"));
             expect(history.location.pathname).toEqual(`/tiles/${card}`);
         })
+        // NO cards have permissions warning
+        expect(queryAllByText("*additional permissions required")).toHaveLength(0);
 
     });
 
-    it('Verify disabled cards are not clickable', async () => {
+    it('Verify disabled cards are not clickable and have appropriate styling/content', async () => {
 
         const history = createMemoryHistory();
         history.push('/tiles'); // initial state
 
         let disabled = ['load', 'model', 'curate', 'run', 'explore']
-        const {getByLabelText} = render(<Router history={history}><Overview enabled={[]}/></Router>);
+        const {getByLabelText, getAllByText} = render(<Router history={history}><Overview enabled={[]}/></Router>);
 
         disabled.forEach((card, i) => {
             expect(getByLabelText(card + "-card")).toHaveClass(`disabled`);
             fireEvent.click(getByLabelText(card + "-card"));
             expect(history.location.pathname).toEqual(`/tiles`); // no change
         })
+        // ALL cards have permissions warning
+        expect(getAllByText("*additional permissions required")).toHaveLength(disabled.length);
 
     });
 
