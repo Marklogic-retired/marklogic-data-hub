@@ -37,14 +37,14 @@ const SearchBar: React.FC<Props> = props => {
     );
 
     const handleOptionSelect = (option: any) => {
-        if(option === 'All Data'){
-          props.setCardView(true);
-          setNextEntity('All Entities');
-        } else {
-          setNextEntity(option);
-          props.setCardView(false);
-        }
-    }
+      if(option === 'All Data'){
+        props.setCardView(true);
+        setNextEntity('All Entities');
+      } else {
+        setNextEntity(option);
+        props.setCardView(false);
+      }
+  }
 
     const handleSearch = (searchString: string) => {
       setQuery(searchString);
@@ -69,6 +69,7 @@ const SearchBar: React.FC<Props> = props => {
         setDropdownValue(!props.cardView ? 'All Entities' : 'All Data');
       }
     }, [searchOptions]);
+
 
     return (
         <div className={styles.searchBar}>

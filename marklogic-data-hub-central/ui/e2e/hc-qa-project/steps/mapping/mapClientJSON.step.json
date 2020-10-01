@@ -1,0 +1,45 @@
+{
+  "collections": [
+    "Client",
+    "mapClientJSON"
+  ],
+  "additionalCollections": [ ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "batchSize": 100,
+  "validateEntity": "doNotValidate",
+  "name": "mapClientJSON",
+  "targetEntityType": "http://example.org/Client-0.0.1/Client",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['loadClientJSON'])",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapClientJSON-mapping",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-STAGING",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-08-18T00:14:41.904565Z",
+  "properties": {
+    "firstname": {
+      "sourcedFrom": "FirstName"
+    },
+    "lastname": {
+      "sourcedFrom": "LastName"
+    },
+    "email": {
+      "sourcedFrom": "Email"
+    },
+    "postal": {
+      "sourcedFrom": "Postal"
+    },
+    "phone": {
+      "sourcedFrom": "Phone"
+    },
+    "pin": {
+      "sourcedFrom": "PIN"
+    },
+    "updated": {
+      "sourcedFrom": "Updated"
+    }
+  }
+}
