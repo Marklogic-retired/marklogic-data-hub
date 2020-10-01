@@ -4,6 +4,7 @@ import styles from './pop-over-search.module.scss';
 import axios from "axios";
 import { UserContext } from '../../util/user-context';
 import { MLCheckbox } from '@marklogic/design-system';
+import { SearchContext } from '../../util/search-context';
 
 interface Props {
   referenceType: string;
@@ -13,11 +14,11 @@ interface Props {
   popOvercheckedValues: any[];
   facetValues: any[];
   facetName: string;
-  database: string;
 };
 
 
 const PopOverSearch: React.FC<Props> = (props) => {
+  const { searchOptions } = useContext(SearchContext);
   const { handleError } = useContext(UserContext);
   const [options, setOptions] = useState<any[]>([]);
   const [checkedValues, setCheckedValues] = useState<any[]>([]);
@@ -34,7 +35,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
               "dataType": "string",
               "pattern": e.target.value
           }
-        const response = await axios.post(`/api/entitySearch/facet-values?database=${props.database}`, data)
+        const response = await axios.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data)
         setOptions(response.data);
       } catch (error) {
         console.log(error)

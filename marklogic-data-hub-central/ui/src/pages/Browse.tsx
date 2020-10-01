@@ -23,6 +23,7 @@ import ResultsTabularView from "../components/results-tabular-view/results-tabul
 import { QueryOptions } from '../types/query-types';
 import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
 import RawDataCardView from '../components/raw-data/raw-data-card-view/raw-data-card-view';
+import { PropertySafetyFilled } from '@ant-design/icons';
 
 
 interface Props extends RouteComponentProps<any> {
@@ -43,6 +44,8 @@ const Browse: React.FC<Props> = ({ location }) => {
     applySaveQuery,
     setPageWithEntity,
     setPageQueryOptions,
+    setEntity,
+    setDatabase,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -63,10 +66,10 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
-  const [database, setDatabase] = useState(JSON.parse(getUserPreferences(user.name)).database);
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state ? false : JSON.parse(getUserPreferences(user.name)).cardView);
+
 
   const getEntityModel = async () => {
     try {
@@ -83,17 +86,18 @@ const Browse: React.FC<Props> = ({ location }) => {
       setIsLoading(false);
     }
   }
+
   const getSearchResults = async (allEntities: string[]) => {
     try {
       handleUserPreferences();
       setIsLoading(true);
       const response = await axios({
         method: 'POST',
-        url: `/api/entitySearch?database=${database}`,
+        url: `/api/entitySearch?database=${searchOptions.database}`,
         data: {
           query: {
             searchText: searchOptions.query,
-            entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
+            entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : cardView ? [] : allEntities,
             selectedFacets: searchOptions.selectedFacets,
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
@@ -102,7 +106,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           sortOrder: searchOptions.sortOrder
         }
       });
-      if (componentIsMounted.current) {
+      if (componentIsMounted.current && response.data) {
         setData(response.data.results);
         if (response.data.hasOwnProperty('entityPropertyDefinitions')) {
           setEntityPropertyDefinitions(response.data.entityPropertyDefinitions);
@@ -115,7 +119,7 @@ const Browse: React.FC<Props> = ({ location }) => {
 
         if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
           let properties = getTableProperties(response.data.selectedPropertyDefinitions);
-          setColumns(properties)
+          setColumns(properties);
         }
       }
     } catch (error) {
@@ -132,13 +136,14 @@ const Browse: React.FC<Props> = ({ location }) => {
     return () => {
       componentIsMounted.current = false
     }
-  }, [])  
+  }, [])
 
   useEffect(() => {
     if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
-    getSearchResults(entities);
-    }
-  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, database]);
+        getSearchResults(entities);
+      }
+  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type])
+
 
   useEffect(() => {
     if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
@@ -167,7 +172,8 @@ const Browse: React.FC<Props> = ({ location }) => {
       propertiesToDisplay: [],
       zeroState: true,
       manageQueryModal: false,
-      sortOrder: []
+      sortOrder: [],
+      database: 'final',
     }
     applySaveQuery(options);
   }
@@ -199,7 +205,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             zeroState: parsedPreferences.zeroState,
             manageQueryModal: false,
             sortOrder: parsedPreferences.sortOrder || [],
-            database:  database
+            database: parsedPreferences.database
           }
           await setPageQueryOptions(options)
           if (parsedPreferences.hasOwnProperty('tableView') && parsedPreferences.hasOwnProperty('cardView')) {
@@ -233,7 +239,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       zeroState: searchOptions.zeroState,
       sortOrder: searchOptions.sortOrder,
       cardView: cardView,
-      database: database
+      database: searchOptions.database
     }
     updateUserPreferences(user.name, preferencesObject);
   }
@@ -249,14 +255,14 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   };
 
-  const setDatabasePreferences = (database: string) => {
-    setDatabase(database)
+  const setDatabasePreferences = (option:string) => {
+    setDatabase(option)
     let userPreferences = getUserPreferences(user.name);
     if (userPreferences) {
       let oldOptions = JSON.parse(userPreferences);
       let newOptions = {
         ...oldOptions,
-        database: database
+        database: option
       }
       updateUserPreferences(user.name, newOptions);
     }
@@ -315,9 +321,9 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   if (searchOptions.zeroState) {
     return (
-      <>        
+      <>
         <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} />
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} database={database} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase}/>
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} />
       </>
     );
   } else {
@@ -336,8 +342,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             entityDefArray={entityDefArray}
             facetRender={updateSelectedFacets}
             checkFacetRender={updateCheckedFacets}
-            database={database} 
-            setDatabasePreferences={setDatabasePreferences} 
+            setDatabasePreferences={setDatabasePreferences}
           />
         </Sider>
         <Content className={styles.content}>
@@ -353,7 +358,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef}>
-                <SearchBar entities={entities} cardView={cardView} setCardView={setCardView}/>
+                <SearchBar entities={entities} cardView={cardView} setCardView={setCardView} />
                 <SearchSummary
                   total={totalDocuments}
                   start={searchOptions.start}
@@ -405,7 +410,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   isColumnSelectorTouched={isColumnSelectorTouched}
                   setColumnSelectorTouched={setColumnSelectorTouched}
                   entityDefArray={entityDefArray}
-                  database={database}
+                  database={searchOptions.database}
                 />
               </div>
               <div className={styles.viewContainer} >

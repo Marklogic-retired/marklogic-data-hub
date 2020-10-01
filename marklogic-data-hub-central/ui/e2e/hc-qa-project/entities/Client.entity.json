@@ -1,0 +1,49 @@
+{
+  "info": {
+    "title": "Client",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Client": {
+      "required": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "firstname": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "lastname": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "email": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "postal": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "phone": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "pin": {
+          "datatype": "int",
+          "collation": "http://marklogic.com/collation/codepoint",
+          "facetable": true
+        },
+        "updated": {
+          "datatype": "dateTime",
+          "facetable": true
+        }
+      }
+    }
+  }
+}

@@ -18,7 +18,8 @@ type SearchContextInterface = {
   manageQueryModal: boolean,
   selectedTableProperties: any,
   view: JSX.Element|null,
-  sortOrder: any
+  sortOrder: any,
+  database: string
 }
 
 const defaultSearchOptions = {
@@ -36,8 +37,9 @@ const defaultSearchOptions = {
   manageQueryModal: false,
   selectedTableProperties: [],
   view: null,
-  sortOrder: []
-};
+  sortOrder: [],
+  database: 'final'
+}
 
 
 
@@ -77,6 +79,7 @@ interface ISearchContextInterface {
   setPageQueryOptions: (query: any) => void;
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
+  setDatabase: (option: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -114,7 +117,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setView: () => { },
   setPageWithEntity: () => { },
   setSortOrder: () => { },
-  setPageQueryOptions: () => { }
+  setPageQueryOptions: () => { },
+  setDatabase: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -447,7 +451,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
       manageQueryModal: query.manageQueryModal,
-      sortOrder: query.sortOrder
+      sortOrder: query.sortOrder,
+      database: query.database,
     });
   };
 
@@ -526,7 +531,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       ...searchOptions,
       sortOrder: sortingOrder
     });
-  };
+  }
 
   const setPageQueryOptions = (query: any) => {
     setSearchOptions({
@@ -542,7 +547,20 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
       manageQueryModal: query.manageQueryModal,
-      sortOrder: query.sortOrder
+      sortOrder: query.sortOrder,
+      database: query.database,
+    });
+  }
+
+  const setDatabase = (option: string) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      query: '',
+      pageNumber: 1,
+      selectedFacets: {},
+      selectedQuery: 'select a query',
+      database: option
     });
   };
   useEffect(() => {
@@ -587,7 +605,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         setView,
         setPageWithEntity,
         setSortOrder,
-        setPageQueryOptions
+        setPageQueryOptions,
+        setDatabase
       }}>
         {children}
       </SearchContext.Provider>
