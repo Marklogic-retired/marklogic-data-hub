@@ -516,7 +516,7 @@ describe('Verify numeric/date facet can be applied', () => {
   });
 });
 
-describe('scenario on zero state page', () => {
+describe('scenarios for final/staging databases for zero state and explore pages', () => {
 
   beforeEach(() => {
     cy.visit('/');
@@ -525,7 +525,7 @@ describe('scenario on zero state page', () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
-  it('verify selection of final/staging database on zero state page', () => {
+  it('verify selection of final/staging database on zero state and explore pages', () => {
     //switch on zero state page and select query parameters for final database
     cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
     browsePage.getFinalDatabaseButton().click();
@@ -540,6 +540,14 @@ describe('scenario on zero state page', () => {
     browsePage.getFinalDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getSearchText().should('have.value', 'Adams');
+    browsePage.getTotalDocuments().should('be.equal', 2);
+
+    //switch to staging database and verify the number of documents for the search string is 0
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.search('Adams');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 0);
 
     //switch on zero state page and select query parameters for staging database
     toolbar.getExploreToolbarIcon().click();
@@ -557,5 +565,89 @@ describe('scenario on zero state page', () => {
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getSearchText().should('have.value', 'Powers');
     browsePage.getDocuments().should('not.exist')
+
+    //verify the number of documents is 0
+    browsePage.getTotalDocuments().should('be.equal', 0);
+
+    //switch to final database and verify the number of documents for the search string is 1
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.search('Powers');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 1);
+
+    //switch to staging database and verify documents deployed to staging
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.selectEntity('Client');
+    browsePage.getSelectedEntity().should('contain', 'Client');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 5)
+
+    //apply facet search for the documents deployed to staging 
+    browsePage.getFacetItemCheckbox('firstname', 'Barbi').click();
+    browsePage.getGreySelectedFacets('Barbi').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getFacetItemCheckbox('firstname', 'Barbi').should('be.checked');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 1)
+    browsePage.getClearAllButton().click();
+
+    //apply numeric search for the documents deployed to staging 
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.changeNumericSlider('7000');
+    browsePage.getGreyRangeFacet(7000).should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getRangeFacet(7000).should('exist');
+    browsePage.getClearAllButton().should('exist');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 3)
+    browsePage.getClearAllButton().click();
+
+    //apply string search for the documents deployed to staging 
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.search('Barbi');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 1);
+  });
+});
+
+
+describe('scenarios for All Data zero state and explore pages.', () => {
+
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+  });
+
+  it('verify All Data for final/staging databases', () => {
+    //switch on zero state page and select query parameters for final database
+    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.getTableViewButton().click();
+    browsePage.selectEntity('All Data');
+    browsePage.getSearchText().type('Adams')
+    browsePage.getExploreButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //verify the query data for final database on explore page
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 2)
+    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'ColeAdams');
+    browsePage.search('Barbi');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 0)
+
+    //switch to staging database and verify data for query parameters 
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.search('Adams');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 2)
+    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'Adams');
+    browsePage.search('Barbi');
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should('be.equal', 1)
+    browsePage.getAllDataSnippetByUri('/json/clients/client1.json').should('contain', 'Barbi');
   });
 });
