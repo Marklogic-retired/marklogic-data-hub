@@ -529,6 +529,35 @@ public abstract class AbstractHubTest extends TestObject {
         return response;
     }
 
+    protected void waitForReindex(HubConfig hubConfig, String database){
+        String query = "(\n" +
+            "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
+            "  return xdmp:forest-status($forest-id)//*:reindexing\n" +
+            ") = fn:true()";
+        boolean currentStatus;
+        int attempts = 125;
+        boolean previousStatus = false;
+        do{
+            sleep(200L);
+            currentStatus = Boolean.parseBoolean(hubConfig.newStagingClient().newServerEval().xquery(query).evalAs(String.class));
+            if(currentStatus){
+                logger.info("Reindexing staging database");
+            }
+            if(!currentStatus && previousStatus){
+                logger.info("Finished reindexing staging database");
+                return;
+            }
+            else{
+                previousStatus = currentStatus;
+            }
+            attempts--;
+        }
+        while(attempts > 0);
+        if(currentStatus){
+            logger.warn("Reindexing is taking more than 25 seconds");
+        }
+    }
+
     protected HubProjectImpl getHubProject() {
         return (HubProjectImpl) getHubConfig().getHubProject();
     }
