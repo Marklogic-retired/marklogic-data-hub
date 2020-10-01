@@ -1139,7 +1139,69 @@ export const entitySearch = {
           ]
         }
       ]
-    }
+    },
+    {
+      "index": 6,
+      "uri": "/Customer/Customer.pdf",
+      "primaryKey": {
+      },
+      "path": "fn:doc(\"/Customer/Customer.pdf\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FCustomer%2FCustomer.pdf",
+      "mimetype": "application/pdf",
+      "format": "binary",
+      "matches": [
+        {
+          "path": "fn:doc()",
+          "match-text": [
+          ]
+        }
+      ],
+    },
+    {
+      "index": 7,
+      "uri": "/Customer.xml",
+      "primaryKey": {
+      },
+      "path": "fn:doc(\"/Customer/Cust1.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FCustomer%2FCust7.json",
+      "mimetype": "application/xml",
+      "format": "xml",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Customer/Cust7.json\")/object-node()",
+          "match-text": [
+            "xml mathcing content"
+          ]
+        }
+      ],
+    },
+    {
+      "index": 8,
+      "uri": "/Customer.txt",
+      "primaryKey": {
+      },
+      "path": "fn:doc(\"/Customer/Cust8.json\")",
+      "score": 0,
+      "confidence": 0,
+      "fitness": 0,
+      "href": "/v1/documents?uri=%2FCustomer%2FCust8.json",
+      "mimetype": "text/plain",
+      "format": "text",
+      "matches": [
+        {
+          "path": "fn:doc(\"/Customer/Cust8.json\")/object-node()",
+          "match-text": [
+            "text matching content"
+          ]
+        }
+      ],
+    },
   ],
   "facets": {
     "Collection": {
