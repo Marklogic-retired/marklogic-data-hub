@@ -201,25 +201,28 @@ declare %private function hent:fix-options-for-explorer(
           hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
         }
       case element(search:constraint) return
-        element { fn:node-name($n) } {
-          $n/@*,
-          let $path-expression := fix-path-expression(fn:string($n/search:range/search:path-index))
-          let $search-range-node := $n/search:range
-          let $is-sortable-only :=
-            let $sort-info := map:get($sortable-properties, $path-expression)
+        let $container-for-entity-property-generated-by-es := $n/search:container
+        where fn:not($container-for-entity-property-generated-by-es)
+        return
+          element {fn:node-name($n)} {
+            $n/@*,
+            let $path-expression := fix-path-expression(fn:string($n/search:range/search:path-index))
+            let $search-range-node := $n/search:range
+            let $is-sortable-only :=
+              let $sort-info := map:get($sortable-properties, $path-expression)
+              return
+                if (fn:exists($sort-info)) then map:get($sort-info, "is-sortable-only") = fn:true()
+                else fn:false()
             return
-              if (fn:exists($sort-info)) then map:get($sort-info, "is-sortable-only") = fn:true()
-              else fn:false()
-          return
-            if (fn:empty($search-range-node) or fn:not($is-sortable-only)) then
-              hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
-            else
-              element {fn:node-name($search-range-node)} {
-                $search-range-node/attribute()[not(name()='facet')],
-                attribute facet {"false"},
-                hent:fix-options-for-explorer($search-range-node, $sortable-properties, $entity-namespace-map)/node()
-              }
-        }
+              if (fn:empty($search-range-node) or fn:not($is-sortable-only)) then
+                hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map)
+              else
+                element {fn:node-name($search-range-node)} {
+                  $search-range-node/attribute()[not(name() = 'facet')],
+                  attribute facet {"false"},
+                  hent:fix-options-for-explorer($search-range-node, $sortable-properties, $entity-namespace-map)/node()
+                }
+          }
       case element(search:additional-query) return ()
       case element(search:return-facets) return <search:return-facets>true</search:return-facets>
       case element(search:extract-document-data) return
