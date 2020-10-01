@@ -1,0 +1,12 @@
+{
+  "name": "CurateClientJSON",
+  "steps": {
+    "1": {
+      "stepId": "loadClientJSON-ingestion"
+    },
+    "2": {
+      "stepId": "mapClientJSON-mapping"
+    }
+  },
+  "lastUpdated": "2020-08-18T00:14:41.237511Z"
+}
