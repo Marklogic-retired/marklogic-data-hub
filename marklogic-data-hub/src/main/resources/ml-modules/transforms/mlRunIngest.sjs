@@ -10,7 +10,7 @@ function transform(context, params, content) {
     fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found","The specified flow " + flowName + " is missing."]));
   }
 
-  let step = params['step'] ? xdmp.urlDecode(params['step']) : null;
+  let step = params['step'] ? xdmp.urlDecode(params['step']) : params['flow-name'] ? null : 1;
   let stepObj = flow.steps[step];
   if(!stepObj) {
     datahub.debug.log({message: params, type: 'error'});
