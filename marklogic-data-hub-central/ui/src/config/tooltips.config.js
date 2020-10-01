@@ -145,6 +145,12 @@ const SecurityTooltips = {
   missingPermission: 'Contact your security administrator for access.'
 }
 
+const MergeRuleTooltips = {
+    uri : 'The path to the custom module that contains the merge function to run.',
+    function : 'The merge function to run.',
+    namespace : 'The namespace of the module that contains the function to run.'
+}
+
 export {
     AdvancedSettings,
     NewFlowTooltips,
@@ -161,5 +167,6 @@ export {
     NewCustomTooltips,
     AdvCustomTooltips,
     SecurityTooltips,
-    MatchingStepDetailText
+    MatchingStepDetailText,
+    MergeRuleTooltips
 }
