@@ -19,7 +19,9 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.impl.EntityManagerImpl;
 import com.marklogic.hub.util.FileUtil;
+import com.marklogic.rest.util.Fragment;
 import org.apache.commons.io.FileUtils;
+import org.jdom2.Namespace;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,8 +31,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EntityManagerTest extends AbstractHubCoreTest {
 
@@ -92,7 +96,7 @@ public class EntityManagerTest extends AbstractHubCoreTest {
         runAsAdmin();
         Path dir = getHubProject().getEntityConfigDir();
         assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
         assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
         assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
 
@@ -189,6 +193,44 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         assertTrue(newFinalOptionsTimeStamp > oldFinalOptionsTimeStamp);
         assertTrue(newStagingOptionsTimeStamp > oldStagingOptionsTimeStamp);
+    }
+
+    @Test
+    public void deployExplorerOptionsWithoutContainerConstraint() {
+        clearUserModules();
+
+        Path entitiesDir = getHubProject().getHubEntitiesDir();
+        if (!entitiesDir.toFile().exists()) {
+            entitiesDir.toFile().mkdirs();
+        }
+        FileUtil.copy(getResourceStream("scaffolding-test/Collection.entity.json"),
+                entitiesDir.resolve("Collection.entity.json").toFile());
+
+        runAsDataHubDeveloper();
+        entityManager.deployQueryOptions();
+
+        runAsAdmin();
+        Stream.of(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME)
+                .forEach(dbName -> assertNull(getModulesFile("/Default/" + dbName + "/rest-api/options/exp-default.xml"), "Did not expect exp-default.xml options file in " + dbName + "since we dont use it anymore."));
+
+        Path dir = getHubProject().getEntityConfigDir();
+        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+
+        String stagingOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        String finalOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE);
+        Stream.of(stagingOptions, finalOptions).forEach(option -> assertNull(option, "Expected the option to not be deployed since there is a conflicting constraint for 'Collection'."));
+
+        String stagingExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.EXP_STAGING_ENTITY_QUERY_OPTIONS_FILE);
+        String finalExplorerOptions = getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.EXP_FINAL_ENTITY_QUERY_OPTIONS_FILE);
+        Stream.of(stagingExplorerOptions, finalExplorerOptions).forEach(option -> {
+            assertNotNull(option, "Expected the option to be deployed since the conflicting container constraint has been removed.");
+
+            Fragment fragment = new Fragment(option, Namespace.getNamespace("search", "http://marklogic.com/appservices/search"));
+            assertEquals(0, fragment.getElements("//search:constraint[@name = 'Collection']/search:container").size(), "Did not expect to find the ES generated container constraint in explorer options file: " + option);
+        });
     }
 
     private void copyTestEntityOptionsIntoProject() {
