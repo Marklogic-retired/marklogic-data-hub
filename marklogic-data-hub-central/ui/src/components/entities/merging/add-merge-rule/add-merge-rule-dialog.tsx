@@ -1,16 +1,18 @@
 import {
     Modal,
-    Form
+    Form,
+    Icon,
 } from 'antd';
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './add-merge-rule-dialog.module.scss';
-import { MLButton, MLTooltip } from '@marklogic/design-system';
+import { MLButton, MLTooltip, MLInput, MLSelect } from '@marklogic/design-system';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLayerGroup, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import EntityPropertyTreeSelect from '../../../entity-property-tree-select/entity-property-tree-select';
 import { Definition } from '../../../../types/modeling-types';
 import { CurationContext } from '../../../../util/curation-context';
 import arrayIcon from '../../../../assets/icon_array.png';
+import { MergeRuleTooltips } from '../../../../config/tooltips.config';
 
 type Props = {
     data: any;
@@ -23,23 +25,40 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
     properties: []
 };
 
+const { MLOption } = MLSelect;
+
 const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
     const { curationOptions } = useContext(CurationContext);
     const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
     const [property, setProperty] = useState<string | undefined>(undefined);
     const [propertyTouched, setPropertyTouched] = useState(false);
+    const [mergeType, setMergeType] = useState(undefined);
+    const [mergeTypeTouched, setMergeTypeTouched] = useState(false);
+    const [uri, setUri] = useState();
+    const [uriTouched, setUriTouched] = useState(false);
+    const [functionValue, setFunctionValue] = useState();
+    const [functionValueTouched, setFunctionValueTouched] = useState(false);
+    const [namespace, setNamespace] = useState();
+    const [namespaceTouched, setNamespaceTouched] = useState(false);
 
     const titleLegend = <div className={styles.titleLegend}>
         <div data-testid='multipleIconLegend' className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
         <div data-testid='structuredIconLegend' className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured</div>
     </div>
 
+    const mergeTypes = ['Custom', 'Strategy', 'Property-specific']
+    const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
+
+
     useEffect(() => {
         if (props.openAddMergeRuleDialog && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
             let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
             setEntityTypeDefinition(entityTypeDefinition);
-            setProperty(undefined)
+            setProperty(undefined);
+            setMergeType(undefined);
+            setUriTouched(false);
+            setFunctionValueTouched(false);
         }
     }, [props.openAddMergeRuleDialog]);
 
@@ -58,7 +77,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         },
         wrapperCol: {
             xs: { span: 24 },
-            sm: { span: 15 },
+            sm: { span: 16 },
         },
     };
 
@@ -72,19 +91,67 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         }
     }
 
+    const handleMergeType = (value) => {
+        if (value === ' ') {
+            setMergeTypeTouched(false);
+        }
+        else {
+            setMergeTypeTouched(true);
+            setMergeType(value);
+        }
+    }
+
+    const handleChange = (event) => {
+        if (event.target.id === 'uri') {
+            if (event.target.value === ' ') {
+                setUriTouched(false);
+            }
+            else {
+                setUriTouched(true);
+                setUri(event.target.value);
+            }
+        } else if (event.target.id === 'function') {
+            if (event.target.value === ' ') {
+                setFunctionValueTouched(false);
+            }
+            else {
+                setFunctionValueTouched(true);
+                setFunctionValue(event.target.value);
+            }
+        } else if (event.target.id === 'namespace') {
+            if (event.target.value === ' ') {
+                setNamespaceTouched(false);
+            }
+            else {
+                setNamespaceTouched(true);
+                setNamespace(event.target.value);
+            }
+        }
+    }
+
     const handleSubmit = () => {
-        props.setOpenAddMergeRuleDialog(false);
+        if(mergeType === 'Custom') {
+            if(uri && functionValue) {
+                props.setOpenAddMergeRuleDialog(false);
+            } else {
+                setUriTouched(true);
+                setFunctionValueTouched(true);
+            }
+        } else {
+                props.setOpenAddMergeRuleDialog(false);
+        }
+        
     }
 
     return (
         <Modal
             visible={props.openAddMergeRuleDialog}
             title={null}
-            width="700px"
+            width={700}
             onCancel={() => onCancel()}
             onOk={() => onOk()}
             okText="Save"
-            className={styles.SettingsModal}
+            className={styles.AddMergeRuleModal}
             footer={null}
             maskClosable={false}
             destroyOnClose={true}
@@ -94,11 +161,10 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             {titleLegend}
             <br />
             <div className={styles.addMergeRuleForm}>
-                <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
+                <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
                     <Form.Item
-                        label={<span aria-label='formItem-Property'>Property</span>}
+                        label={<span aria-label='formItem-Property'>Property:</span>}
                         labelAlign="left"
-                        className={styles.formItem}
                     >
                         <EntityPropertyTreeSelect
                             propertyDropdownOptions={entityTypeDefinition.properties}
@@ -107,6 +173,88 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                             onValueSelected={handleProperty}
                         />
                     </Form.Item>
+                    <Form.Item
+                        label={<span aria-label='formItem-MergeType'>Merge Type:</span>}
+                        labelAlign="left"
+                    >
+                        <MLSelect
+                            id="mergeType"
+                            placeholder="Select merge type"
+                            size="default"
+                            value={mergeType}
+                            onChange={handleMergeType}
+                            //disabled={!canWriteMatchMerge}
+                            className={styles.mergeTypeSelect}
+                            aria-label="mergeType-select"
+                        >
+                            {mergeTypeOptions}
+                        </MLSelect>
+                    </Form.Item>
+                    {mergeType === 'Custom' ?
+                        <>
+                            <Form.Item
+                                label={<span aria-label='formItem-URI'>URI:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                                labelAlign="left"
+                                validateStatus={(uri || !uriTouched) ? '' : 'error'}
+                                help={(uri || !uriTouched) ? '' : 'URI is required'}
+                            >
+                                <div className={styles.inputWithHelperIcon}>
+                                <MLInput
+                                    id="uri"
+                                    placeholder="Enter URI"
+                                    size="default"
+                                    value={uri}
+                                    onChange={handleChange}
+                                    //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                                    className={styles.input}
+                                    aria-label="uri-input"
+                                />&nbsp;&nbsp;
+                                <MLTooltip title={MergeRuleTooltips.uri}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip>
+                                </div>
+                            </Form.Item>
+                            <Form.Item
+                                label={<span aria-label='formItem-function'>Function:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
+                                labelAlign="left"
+                                validateStatus={(functionValue || !functionValueTouched) ? '' : 'error'}
+                                help={(functionValue || !functionValueTouched) ? '' : 'Function is required'}
+                            >
+                                <MLInput
+                                    id="function"
+                                    placeholder="Enter function"
+                                    size="default"
+                                    value={functionValue}
+                                    onChange={handleChange}
+                                    //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                                    className={styles.input}
+                                    aria-label="function-input"
+                                />&nbsp;&nbsp;
+                                <MLTooltip title={MergeRuleTooltips.function}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip>
+                            </Form.Item>
+                            <Form.Item
+                                label={<span aria-label='formItem-namespace'>Namespace:</span>}
+                                labelAlign="left"
+                            >
+                                <MLInput
+                                    id="namespace"
+                                    placeholder="Enter namespace"
+                                    size="default"
+                                    value={namespace}
+                                    onChange={handleChange}
+                                    //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
+                                    className={styles.input}
+                                    aria-label="namespace-input"
+                                />&nbsp;&nbsp;
+                                <MLTooltip title={MergeRuleTooltips.namespace}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip>
+                            </Form.Item>
+                        </> : ''
+                    }
+
                     <Form.Item className={styles.submitButtonsForm}>
                         <div className={styles.submitButtons}>
                             <MLButton onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
