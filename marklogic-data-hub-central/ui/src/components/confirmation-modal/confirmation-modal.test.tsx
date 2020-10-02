@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, getByLabelText } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import ConfirmationModal from './confirmation-modal';
-import { ConfirmationType } from '../../types/modeling-types';
+import { ConfirmationType } from '../../types/common-types';
 
 describe('Confirmation Modal Component', () => {
 
