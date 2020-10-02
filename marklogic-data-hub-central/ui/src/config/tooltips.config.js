@@ -137,9 +137,13 @@ const ModelingTooltips = {
   saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.'
 }
 
+const MatchingStepDetailText = {
+  description: 'The Match step defines criteria for determining whether the values from entiies match, and the action to take based on how close of a match they are.'
+}
+
 const SecurityTooltips = {
   missingPermission: 'Contact your security administrator for access.'
-};
+}
 
 export {
     AdvancedSettings,
@@ -156,5 +160,6 @@ export {
     RunToolTips,
     NewCustomTooltips,
     AdvCustomTooltips,
-    SecurityTooltips
-};
+    SecurityTooltips,
+    MatchingStepDetailText
+}

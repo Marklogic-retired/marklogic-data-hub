@@ -13,7 +13,8 @@ import { UserContext } from '../util/user-context';
 import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
-import { ConfirmationType, EntityModified } from '../types/modeling-types';
+import { EntityModified } from '../types/modeling-types';
+import { ConfirmationType } from '../types/common-types';
 import tiles from '../config/tiles.config'
 
 const Modeling: React.FC = () => {

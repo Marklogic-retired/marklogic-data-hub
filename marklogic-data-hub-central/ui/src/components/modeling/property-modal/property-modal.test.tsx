@@ -7,9 +7,9 @@ import {
   StructuredTypeOptions,
   EditPropertyOptions,
   PropertyType,
-  PropertyOptions,
-  ConfirmationType
+  PropertyOptions
 } from '../../../types/modeling-types';
+import { ConfirmationType } from '../../../types/common-types';
 
 import { entityReferences } from '../../../api/modeling';
 import { getSystemInfo } from '../../../api/environment';

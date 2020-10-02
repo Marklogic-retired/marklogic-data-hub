@@ -12,6 +12,7 @@ import Curate from './Curate';
 import Run from './Run';
 import Browse from './Browse';
 import Detail from "./Detail";
+import MatchingDetailStep from '../components/entities/matching/matching-step-detail/matching-step-detail';
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -38,10 +39,18 @@ const TilesView = (props) => {
     const history: any = useHistory();
     const location: any = useLocation();
 
+    const setCurateView = () => {
+        if (location.pathname.startsWith('/tiles/curate/match')) {
+            return <MatchingDetailStep/>;
+        } else {
+            return <Curate/>
+        }
+    }
+
     const views: Record<TileId, JSX.Element> = {
         load: <Load />,
         model: <Modeling />,
-        curate: <Curate />,
+        curate: setCurateView(),
         run: <Run />,
         explore: location.pathname.startsWith('/tiles/explore/detail') ? <Detail /> : <Browse/>,
     };

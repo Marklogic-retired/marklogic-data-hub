@@ -8,6 +8,8 @@ import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
 import './entity-tiles.scss'
 
+import { matchingStep } from '../../assets/mock-data/matching';
+
 const EntityTiles = (props) => {
     const entityModels = props.entityModels || {};
     const location = useLocation<any>();
@@ -160,20 +162,23 @@ const EntityTiles = (props) => {
     }
 
     const getMatchingArtifacts = async () => {
-        try {
-            if (props.canReadMatchMerge) {
-              let response = await axios.get('/api/artifacts/matching');
-              if (response.status === 200) {
-                let entArt = response.data;
-                /* Below sort should be enabled once the api is working properly and response has valid array data */
-                //entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-                setMatchingArtifacts([...entArt]);
-              }
-            }
-          } catch (error) {
-              let message = error;
-              console.error('Error while fetching matching artifacts', message);
-          }
+      // Use mock matching step
+      setMatchingArtifacts([matchingStep]);
+        // try {
+        //     if (props.canReadMatchMerge) {
+        //       let response = await axios.get('/api/artifacts/matching');
+        //       if (response.status === 200) {
+        //         let entArt = response.data;
+        //         console.log('get matching artifacts reps', response)
+        //         /* Below sort should be enabled once the api is working properly and response has valid array data */
+        //         //entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+        //         setMatchingArtifacts([...entArt]);
+        //       }
+        //     }
+        //   } catch (error) {
+        //       let message = error;
+        //       console.error('Error while fetching matching artifacts', message);
+        //   }
     }
 
     const deleteMatchingArtifact = async (matchingName) => {
@@ -239,14 +244,21 @@ const EntityTiles = (props) => {
                     addStepToNew={props.addStepToNew}/>
             </div>
         }
-        else if (viewData[index] === 'match-' + entityType && mappingCardData){
+        else if (viewData[index] === 'match-' + entityType){
             output = <div className={styles.cardView}>
-            <MatchingCard data={ matchingCardData ? matchingCardData.artifacts : []}
+            <MatchingCard 
+                matchingStepsArray={ matchingCardData ? matchingCardData.artifacts : []}
+                flows={props.flows}
                 entityName={entityType}
                 deleteMatchingArtifact={deleteMatchingArtifact}
                 createMatchingArtifact={createMatchingArtifact}
                 canReadMatchMerge={props.canReadMatchMerge}
-                canWriteMatchMerge={props.canWriteMatchMerge} />
+                canWriteMatchMerge={props.canWriteMatchMerge}
+                entityModel={props.entityModels[entityType]}
+                canWriteFlow={props.canWriteFlow}
+                addStepToFlow={props.addStepToFlow}
+                addStepToNew={props.addStepToNew}
+            />
         </div>
         }
         else if (viewData[index] === 'custom-' + entityType ){
@@ -272,21 +284,21 @@ const EntityTiles = (props) => {
         <Collapse activeKey={activeEntityTypes} onChange={handleCollapseChange} defaultActiveKey={locationEntityType}>
             { Object.keys(props.entityModels).sort().map((entityType, index) => (
                 <Panel header={<span data-testid={entityType}>{entityType}</span>} key={entityModels[entityType].entityTypeId}>
-            <div className={styles.switchMapMaster}>
-            <Menu mode="horizontal" defaultSelectedKeys={['map-' + entityType]}>
-                {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
-                    Map
-                </Menu.Item>: null}
-                {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
-                    Custom
-                </Menu.Item>: null}
-               {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
-                    Match
-                </Menu.Item>: null}
-            </Menu>
-            </div>
-            {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId),matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
-            </Panel>
+                    <div className={styles.switchMapMaster}>
+                    <Menu mode="horizontal" defaultSelectedKeys={['map-' + entityType]}>
+                        {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
+                            Map
+                        </Menu.Item>: null}
+                        {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
+                            Custom
+                        </Menu.Item>: null}
+                      {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
+                            Match
+                        </Menu.Item>: null}
+                    </Menu>
+                    </div>
+                    {outputCards(index, entityType, mappingArtifacts.find((artifact) => artifact.entityTypeId ===  entityModels[entityType].entityTypeId),matchingArtifacts.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId), customArtifactsWithEntity.find((artifact) => artifact.entityTypeId === entityModels[entityType].entityTypeId))}
+                </Panel>
             ))}
             {requiresNoEntityTypeTile  ?
                 <Panel id="customNoEntity" header={<span data-testid={"noEntityType"}>No Entity Type</span>} key="No Entity Type">
