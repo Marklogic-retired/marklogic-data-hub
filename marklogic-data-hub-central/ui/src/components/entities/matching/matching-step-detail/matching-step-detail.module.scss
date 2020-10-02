@@ -1,0 +1,74 @@
+.pageHeader {
+  padding-bottom: 10px;
+}
+
+.headerDescription {
+  padding: 0 0 10px 57px;
+}
+
+.stepNumberContainer {
+  display: flex;
+  margin-bottom: 10px;
+
+  .stepText {
+    margin: 8px 0 0 12px;
+  }
+}
+
+.matchingDetailContainer {
+  padding: 20px;
+
+  .bold {
+    font-weight: bold;
+  }
+
+  .italic {
+    font-style: italic;
+  }
+
+  .greyContainer {
+    padding: 10px;
+    margin-left: 2%;
+    margin-bottom: 35px;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+  }
+
+  .topHeader {
+    display: grid;
+    grid-template-columns: 90% 10%;
+  }
+
+  .textContainer {
+    display: flex;
+  }
+
+  .addButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+
+    .addThresholdButton {
+      padding-left: 25px;
+      padding-right: 25px;
+    }
+  }
+
+
+  .link {
+    margin-left: 10px;
+    color: #5B69AF;
+    cursor: pointer;
+  }
+
+  .hideText {
+    white-space: nowrap; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .showText {
+    white-space: normal;
+    overflow: inherit;
+    text-overflow: inherit;
+  }
+}
