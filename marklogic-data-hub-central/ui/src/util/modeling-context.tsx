@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   ModelingOptionsInterface,
+  ModelingContextInterface,
   EntityModified
 } from '../types/modeling-types';
 
@@ -9,16 +10,6 @@ const DEFAULT_MODELING_OPTIONS = {
   isModified: false,
   modifiedEntitiesArray: [],
   entityPropertiesNamesArray: []
-}
-
-export interface ModelingContextInterface {
-  modelingOptions: ModelingOptionsInterface;
-  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
-  toggleIsModified: (isModified: boolean) => void;
-  updateEntityModified: (entityModified: EntityModified) => void;
-  removeEntityModified: (entityModified: EntityModified) => void;
-  clearEntityModified: () => void;
-  setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
 }
 
 export const ModelingContext = React.createContext<ModelingContextInterface>({
