@@ -16,9 +16,9 @@ import {
   EditPropertyOptions,
   PropertyOptions,
   PropertyType,
-  ConfirmationType,
   EntityModified
 } from '../../../types/modeling-types';
+import { ConfirmationType } from '../../../types/common-types';
 
 import { entityReferences } from '../../../api/modeling';
 import { UserContext } from '../../../util/user-context';
