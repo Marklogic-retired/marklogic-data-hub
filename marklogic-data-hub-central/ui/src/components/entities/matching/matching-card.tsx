@@ -1,45 +1,70 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { CSSProperties, useState, useEffect, useContext } from 'react';
 import styles from './matching-card.module.scss';
-import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
+import {Card, Icon, Select, Row, Col, Modal} from 'antd';
+import { MLTooltip } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
+import { Link, useHistory } from 'react-router-dom';
+
+import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
+import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
+import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
+
 import sourceFormatOptions from '../../../config/formats.config';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
-import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
-import { MLTooltip } from '@marklogic/design-system';
+import { 
+  MatchingStep
+} from '../../../types/curation-types';
+import { ConfirmationType } from '../../../types/common-types';
+import { CurationContext } from '../../../util/curation-context';
 
 import MultiSlider from './multi-slider/multi-slider';
 
+const { Option } = Select;
 
 interface Props {
-    data: any;
+    matchingStepsArray: MatchingStep[];
+    flows: any;
     entityName: any;
     deleteMatchingArtifact: any;
     createMatchingArtifact: any;
     canReadMatchMerge: any;
     canWriteMatchMerge: any;
-  }
+    canWriteFlow: any;
+    entityModel: any;
+    addStepToFlow: any;
+    addStepToNew: any;
+}
 
 const MatchingCard: React.FC<Props> = (props) => {
+    const history = useHistory<any>();
+    const { setActiveStep } = useContext(CurationContext)
+
     const [newMatching, setNewMatching] = useState(false);
     const [title, setTitle] = useState('');
     const [matchingData, setMatchingData] = useState({});
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const [loadArtifactName, setLoadArtifactName] = useState('');
+    const [showLinks, setShowLinks] = useState('');
+    const [showAdvancedSettings, toggleAdvancedSettings] = useState(false);
 
-    const OpenAddNewDialog = () => {
+    const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
+    const [showConfirmModal, toggleConfirmModal] = useState(false);
+    const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+
+    const openAddNewDialog = () => {
         setTitle('New Matching');
         setNewMatching(true);
     }
 
-    const OpenEditStepDialog = (index) => {
+    const openEditStepDialog = (index) => {
         setTitle('Edit Matching');
-        setMatchingData(prevState => ({ ...prevState, ...props.data[index]}));
+        setMatchingData(prevState => ({ ...prevState, ...props.matchingStepsArray[index]}));
         setNewMatching(true);
     }
 
-    const OpenMatchingSettingsDialog = (index) => {
+    const openMatchingSettingsDialog = (index) => {
+        //TODO add advanced settings functionality
         console.log('Open settings')
+        //toggleAdvancedSettings(true);
     }
 
     //Custom CSS for source Format
@@ -54,21 +79,6 @@ const MatchingCard: React.FC<Props> = (props) => {
             padding: '5px'
         }
         return customStyles;
-    }
-
-
-    const handleCardDelete = (name) => {
-        setDialogVisible(true);
-        setLoadArtifactName(name);
-    }
-
-    const onOk = (name) => {
-        props.deleteMatchingArtifact(name)
-        setDialogVisible(false);
-    }
-
-    const onCancel = () => {
-        setDialogVisible(false);
     }
 
     // TODO get match options from backend
@@ -101,66 +111,157 @@ const MatchingCard: React.FC<Props> = (props) => {
         console.log('handleSlider', values);
     }
 
-    const deleteConfirmation = <Modal
-        visible={dialogVisible}
-        okText='Yes'
-        cancelText='No'
-        onOk={() => onOk(loadArtifactName)}
-        onCancel={() => onCancel()}
-        width={350}
-        maskClosable={false}
-        >
-        <span style={{fontSize: '16px'}}>Are you sure you want to delete this?</span>
-        </Modal>;
+    const handleMouseOver = (e, name) => {
+      // Handle all possible events from mouseover of card body
+      if (typeof e.target.className === 'string' &&
+          (e.target.className === 'ant-card-body' ||
+           e.target.className.startsWith('matching-card_cardContainer') ||
+           e.target.className.startsWith('matching-card_formatFileContainer') ||
+           e.target.className.startsWith('matching-card_sourceQuery') ||
+           e.target.className.startsWith('matching-card_lastUpdatedStyle'))
+      ) {
+          setShowLinks(name);
+      }
+    }
+
+    const openStepDetails = (matchingStep: MatchingStep) => {
+        setActiveStep(matchingStep, props.entityModel['model']['definitions'], props.entityName);
+        history.push({ pathname: '/tiles/curate/match'});
+    }
+
+    const handleCardDelete = (stepName) => {
+        setConfirmBoldTextArray([stepName]);
+        setConfirmType(ConfirmationType.DeleteStep)
+        toggleConfirmModal(true);
+    }
+
+    const handleSelect = (obj) => {
+        handleStepAdd(obj.mappingName, obj.flowName);
+    }
+
+    const handleStepAdd = (mappingName, flowName) => {
+      // TODO create new step
+      // setAddDialogVisible(true);
+      // setMappingArtifactName(mappingName);
+      // setFlowName(flowName);
+    }
+
+    const confirmAction = () => {
+        if (confirmType === ConfirmationType.AddStepToFlow) {
+          // TODO add step to new flow
+        } else if (confirmType === ConfirmationType.DeleteStep) {
+            props.deleteMatchingArtifact(confirmBoldTextArray[0]);
+            toggleConfirmModal(false);
+        }
+    }
 
     return (
         <div className={styles.matchingContainer}>
             <Row gutter={16} type="flex" >
-                {props.canWriteMatchMerge ? <Col >
-                    <Card
-                        size="small"
-                        className={styles.addNewCard}>
-                        <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNewDialog}/></div>
-                        <br />
-                        <p className={styles.addNewContent}>Add New</p>
-                    </Card>
-                </Col> : ''}{props && props.data.length > 0 ? props.data.map((elem,index) => (
-                    <Col key={index}><Card
-                        actions={[
-                            <span></span>,
-                            <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => OpenMatchingSettingsDialog(index)}/></MLTooltip>,
-                            <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                            props.canWriteMatchMerge ? <MLTooltip title={'Delete'} placement="bottom"><i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>,
-                        ]}
-                        className={styles.cardStyle}
+                {props.canWriteMatchMerge ? (
+                    <Col >
+                        <Card
+                            size="small"
+                            className={styles.addNewCard}>
+                            <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={openAddNewDialog}/></div>
+                            <br />
+                            <p className={styles.addNewContent}>Add New</p>
+                        </Card>
+                    </Col>
+                ) : ''}
+                
+                {props && props.matchingStepsArray.length > 0 ? props.matchingStepsArray.map((elem,index) => (
+                    <Col key={index}>
+                        <div
+                            data-testid={`${props.entityName}-${elem.name}-step`}
+                            onMouseOver={(e) => handleMouseOver(e, elem.name)}
+                            onMouseLeave={(e) => setShowLinks('')}
+                        >
+                            <Card
+                                actions={[
+                                    <span></span>,
+                                    <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => openMatchingSettingsDialog(index)}/></MLTooltip>,
+                                    <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => openEditStepDialog(index)}/></MLTooltip>,
+                                    props.canWriteMatchMerge ? (
+                                        <MLTooltip
+                                            title={'Delete'} 
+                                            placement="bottom"
+                                        >
+                                            <i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)} /></i>
+                                        </MLTooltip> 
+                                    ) : (
+                                        <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>
+                                    )
+                                ]}
+                                className={styles.cardStyle}
+                                size="small"
+                            >
+                                <div className={styles.formatFileContainer}>
+                                    <span className={styles.matchingNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
 
-                        size="small"
-                    >
-                        <div className={styles.formatFileContainer}>
-                            <span className={styles.matchingNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                            {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
+                                </div><br />
+                                {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
+                                <br /><br />
+                                <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
 
-                        </div><br />
-                        {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
-                        <br /><br />
-                        <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                    </Card></Col>
-                )) : <span></span> }</Row>
-
-                <MultiSlider options={matchOptions} handleSlider={handleSlider} />
-
+                                {/* Hover Over Menu */}
+                                <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
+                                    <div 
+                                        data-testid={`${elem.name}-stepDetails`} 
+                                        className={styles.cardLink} 
+                                        onClick={() => openStepDetails(elem)}
+                                    >Open step details</div>
+                                    {props.canWriteMatchMerge ? (
+                                        <Link id="tiles-run-add" to={
+                                            {pathname: '/tiles/run/add',
+                                            state: {
+                                                stepToAdd : elem.name,
+                                                stepDefinitionType : 'matching'
+                                            }}}
+                                        ><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>
+                                        </Link>
+                                    ) : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
+                                    <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
+                                        Add step to an existing flow
+                                        <div className={styles.cardLinkSelect}>
+                                            <Select
+                                                style={{ width: '100%' }}
+                                                onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
+                                                placeholder="Select Flow"
+                                                defaultActiveFirstOption={false}
+                                                disabled={!props.canWriteFlow}
+                                                data-testid={`${elem.name}-flowsList`}
+                                            >
+                                                { props.flows && props.flows.length > 0 && props.flows.map((flow, index) => (
+                                                    <Option aria-label={`${flow.name}-option`} value={flow.name} key={index}>{flow.name}</Option>
+                                                ))}
+                                            </Select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+                        </div>
+                    </Col>                        
+                )) : <span></span> }
                 <CreateEditMatchingDialog
-                newMatching={newMatching}
-                title={title}
-                setNewMatching={setNewMatching}
-                targetEntityType={props.entityName}
-                createMatchingArtifact={props.createMatchingArtifact}
-                deleteMatchingArtifact={props.deleteMatchingArtifact}
-                matchingData={matchingData}
-                canReadWrite={props.canWriteMatchMerge}
-                canReadOnly={props.canReadMatchMerge}/>
-                {deleteConfirmation}
-
+                    newMatching={newMatching}
+                    title={title}
+                    setNewMatching={setNewMatching}
+                    targetEntityType={props.entityName}
+                    createMatchingArtifact={props.createMatchingArtifact}
+                    deleteMatchingArtifact={props.deleteMatchingArtifact}
+                    matchingData={matchingData}
+                    canReadWrite={props.canWriteMatchMerge}
+                    canReadOnly={props.canReadMatchMerge}
+                />
+            </Row>
+            <ConfirmationModal
+                isVisible={showConfirmModal}
+                type={confirmType}
+                boldTextArray={confirmBoldTextArray}
+                toggleModal={toggleConfirmModal}
+                confirmAction={confirmAction}
+            />
         </div>
     );
 
