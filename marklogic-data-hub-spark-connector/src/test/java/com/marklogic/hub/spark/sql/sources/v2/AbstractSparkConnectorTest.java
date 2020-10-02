@@ -69,26 +69,26 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
     @Override
     protected HubConfigImpl runAsUser(String username, String password) {
         hubProperties = new Properties();
-        String mlHost="localhost";
-        String hubDhs="false";
-        String hubSsl="false";
-        boolean isDhs=false;
+        String mlHost = "localhost";
+        String hubDhs = "false";
+        String hubSsl = "false";
+        boolean isDhs = false;
         //Can override if we want to run tests on DHS
-        if(System.getProperty("mlHost")!=null){
-            mlHost=System.getProperty("mlHost");
+        if (System.getProperty("mlHost") != null) {
+            mlHost = System.getProperty("mlHost");
         }
-        if(System.getProperty("isDhs")!=null) {
+        if (System.getProperty("isDhs") != null) {
             isDhs = Boolean.parseBoolean(System.getProperty("isDhs"));
         }
-        if(isDhs){
-            hubDhs="true";
-            hubSsl="true";
+        if (isDhs) {
+            hubDhs = "true";
+            hubSsl = "true";
         }
-        hubProperties.setProperty("mlHost",mlHost);
+        hubProperties.setProperty("mlHost", mlHost);
         hubProperties.setProperty("mlUsername", username);
         hubProperties.setProperty("mlPassword", password);
-        hubProperties.setProperty("hubDHS",hubDhs);
-        hubProperties.setProperty("hubSsl",hubSsl);
+        hubProperties.setProperty("hubDHS", hubDhs);
+        hubProperties.setProperty("hubSsl", hubSsl);
         this.hubConfig = HubConfigImpl.withProperties(hubProperties);
         return hubConfig;
     }
@@ -103,6 +103,23 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
         Map<String, String> params = new HashMap<>();
         hubProperties.keySet().forEach(key -> params.put((String) key, hubProperties.getProperty((String) key)));
         return params;
+    }
+
+    /**
+     * @return a default set of fruit-specific options to simplify writing tests. Uses a batch size of 1 so that there's
+     * no need for tests to call commit by default.
+     */
+    protected Options newFruitOptions() {
+        return new Options(getHubPropertiesAsMap()).withBatchSize(1).withCollections("fruits");
+    }
+
+    /**
+     * @return all the URIs of docs in the 'fruits' collection, which assumes usage of newFruitOptions
+     */
+    protected String[] getFruitUris() {
+        return getHubClient().getStagingClient().newServerEval()
+            .javascript("cts.uris(null, null, cts.collectionQuery('fruits'))")
+            .evalAs(String.class).split("\n");
     }
 
     /**

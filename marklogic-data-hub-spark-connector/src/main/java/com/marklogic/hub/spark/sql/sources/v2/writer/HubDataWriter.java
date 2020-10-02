@@ -47,12 +47,12 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
     private InputEndpoint.BulkInputCaller loader;
     private StructType schema;
     private int batchSize;
+    private ObjectNode defaultWorkUnit;
 
     /**
-     *
      * @param hubClient
      * @param schema
-     * @param params contains all the params provided by Spark, which will include all connector-specific properties
+     * @param params    contains all the params provided by Spark, which will include all connector-specific properties
      */
     public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> params) {
         this.records = new ArrayList<>();
@@ -127,7 +127,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         ObjectNode endpointParams;
         if (params.containsKey("ingestendpointparams")) {
             try {
-                endpointParams = (ObjectNode)objectMapper.readTree(params.get("ingestendpointparams"));
+                endpointParams = (ObjectNode) objectMapper.readTree(params.get("ingestendpointparams"));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to parse ingestendpointparams, cause: " + e.getMessage(), e);
             }
@@ -151,11 +151,19 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         }
 
         if (!endpointParams.hasNonNull("workUnit")) {
-            ObjectNode defaultWorkUnit = objectMapper.createObjectNode();
-            defaultWorkUnit.put("uriprefix", params.get("uriprefix")!=null ? params.get("uriprefix"):"");
+            defaultWorkUnit = objectMapper.createObjectNode();
+            buildDefaultWorkUnit(params);
             endpointParams.set("workUnit", defaultWorkUnit);
         }
 
         return endpointParams;
+    }
+
+    protected void buildDefaultWorkUnit(Map<String, String> params) {
+        Stream.of("collections", "permissions", "sourcename", "sourcetype", "uriprefix").forEach(key -> {
+            if (params.containsKey(key)) {
+                defaultWorkUnit.put(key, params.get(key));
+            }
+        });
     }
 }
