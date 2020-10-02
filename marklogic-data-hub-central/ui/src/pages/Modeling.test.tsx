@@ -11,7 +11,7 @@ import { ModelingTooltips } from '../config/tooltips.config';
 import { getEntityTypes } from '../assets/mock-data/modeling';
 import { isModified, notModified } from '../assets/mock-data/modeling-context-mock';
 import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
-import { ConfirmationType } from '../types/modeling-types';
+import { ConfirmationType } from '../types/common-types';
 import tiles from '../config/tiles.config'
 
 jest.mock('../api/modeling');

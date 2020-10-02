@@ -11,6 +11,10 @@
     margin-bottom: 10px;
 }
 
+.cardStyle:hover {
+    border: 1px solid #67749c;
+}
+
 .matchingNameStyle{
     font-size: 20px;
     padding-bottom: 2px;
@@ -76,4 +80,44 @@
     opacity: 0.5;
     pointer-events: none;
     padding-bottom: 2px;
+}
+
+.cardLinks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.cardLink {
+    color: #3f4692;
+    background-color: #ecf6fe;
+    margin-bottom: 13px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.cardDisabledLink {
+    color: #3f4692;
+    background-color: #ecf6fe;
+    margin-bottom: 13px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: not-allowed;
+}
+
+.cardNonLink {
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #ecf6fe;
+    margin-bottom: 13px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.cardLinkSelect {
+    margin-top: 7px;
 }
