@@ -17,6 +17,10 @@ public class Options {
     private Integer batchSize;
     private String uriPrefix;
     private String ingestApiPath;
+    private String collections;
+    private String permissions;
+    private String sourceName;
+    private String sourceType;
     private JsonNode ingestWorkUnit;
     private JsonNode ingestEndpointState;
     private Map<String, String> hubProperties;
@@ -39,6 +43,22 @@ public class Options {
         }
         if (uriPrefix != null) {
             params.put("uriprefix", uriPrefix);
+        }
+
+        if (collections != null) {
+            params.put("collections", collections);
+        }
+
+        if (permissions != null) {
+            params.put("permissions", permissions);
+        }
+
+        if (sourceName != null) {
+            params.put("sourceName", sourceName);
+        }
+
+        if (sourceType != null) {
+            params.put("sourceType", sourceType);
         }
 
         if (ingestApiPath != null || ingestWorkUnit != null || ingestEndpointState != null) {
@@ -74,6 +94,26 @@ public class Options {
         return this;
     }
 
+    public Options withCollections(String collections) {
+        this.collections = collections;
+        return this;
+    }
+
+    public Options withPermissions(String permissions) {
+        this.permissions = permissions;
+        return this;
+    }
+
+    public Options withSourceName(String sourceName) {
+        this.sourceName = sourceName;
+        return this;
+    }
+
+    public Options withSourceType(String sourceType) {
+        this.sourceType = sourceType;
+        return this;
+    }
+
     public Options withIngestWorkUnit(JsonNode ingestWorkUnit) {
         this.ingestWorkUnit = ingestWorkUnit;
         return this;
@@ -83,4 +123,6 @@ public class Options {
         this.ingestEndpointState = ingestEndpointState;
         return this;
     }
+
+
 }

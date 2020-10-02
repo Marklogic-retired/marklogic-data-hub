@@ -25,10 +25,31 @@ var input;         // jsonDocument*
 declareUpdate();
 
 const ingest = require("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
-const consts = require('/data-hub/5/impl/consts.sjs');
+const consts = require("/data-hub/5/impl/consts.sjs");
+const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const state = fn.head(xdmp.fromJSON(endpointState));
 
 const work = fn.head(xdmp.fromJSON(workUnit));
+
+const uriPrefix = work.uriprefix != null ? work.uriprefix : "";
+
+const collections = work.collections != null ? work.collections.split(',') : [];
+
+const permissions = work.permissions != null ? work.permissions : 'data-hub-common,read,data-hub-common,update'
+const permissionsArray = new HubUtils().parsePermissions(permissions);
+
+const headers = {};
+headers.createdOn = consts.CURRENT_DATE_TIME
+headers.createdBy = consts.CURRENT_USER
+
+if(work.sourcename != null || work.sourcetype != null){
+  const sources = [];
+  const source = {};
+  source.name = work.sourcename
+  source.datahubSourceType = work.sourcetype
+  sources[0] = source;
+  headers.sources = sources
+}
 
 const inputs =
   (input instanceof Sequence) ? input.toArray().map(item => fn.head(xdmp.fromJSON(item))) :
@@ -36,18 +57,16 @@ const inputs =
       [{UNKNOWN: input}];
 inputs.forEach(record => {
   state.next = state.next + 1;
-  const uri = (work.uriprefix) +  sem.uuidString() + '.json';
+  const uri = (uriPrefix) +  sem.uuidString() + '.json';
   record = ingest.main({uri: uri, value: record}, {
-    outputFormat: consts.JSON, headers: {createdOn: consts.CURRENT_DATE_TIME, createdBy: consts.CURRENT_USER}
+    outputFormat: consts.JSON, headers: headers
   }).value;
   xdmp.documentInsert(
     uri,
     record,
     {
-      permissions: [
-        xdmp.permission('data-hub-common', 'read'),
-        xdmp.permission('data-hub-common', 'update')
-      ]
+      permissions: permissionsArray,
+      collections: collections
     }
   );
 });
