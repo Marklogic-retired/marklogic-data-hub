@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.MasteringService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -51,6 +52,15 @@ public class MergingStepController extends BaseController {
     public ResponseEntity<Void> deleteStep(@PathVariable String stepName) {
         newService().deleteStep(STEP_DEFINITION_TYPE, stepName);
         return emptyOk();
+    }
+
+    @RequestMapping(value = "/defaultCollections/{entityType}", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation("Returns the default mastering collections for an entity type")
+    public JsonNode getDefaultCollections(@PathVariable String entityType) {
+        return MasteringService
+            .on(getHubClient().getStagingClient())
+            .getDefaultCollections(entityType);
     }
 
     private StepService newService() {
