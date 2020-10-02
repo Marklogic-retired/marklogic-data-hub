@@ -14,12 +14,12 @@ import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
 
 import {
-  ConfirmationType,
   StructuredTypeOptions,
   PropertyOptions,
   EditPropertyOptions,
   PropertyType
 } from '../../../types/modeling-types';
+import { ConfirmationType } from '../../../types/common-types';
 
 import {
   COMMON_PROPERTY_TYPES,

@@ -5,6 +5,7 @@ import { Route, Redirect, RouteComponentProps, withRouter } from 'react-router-d
 import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 import ModelingProvider from './util/modeling-context';
+import CurationProvider from './util/curation-context';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -93,43 +94,48 @@ const App: React.FC<Props> = ({history, location}) => {
     <div id="background" style={pageTheme['background']}>
       <SearchProvider>
         <ModelingProvider>
-          <Header environment={getEnvironment()} />
-          <ModalStatus/>
-          <NavigationPrompt/>
-          <main>
-            <div className="contentContainer">
-            <Switch>
-              <Route path="/" exact component={Login}/>
-              <Route path="/noresponse" exact component={NoResponse} />
-              <PrivateRoute path="/tiles" exact>
-                <TilesView/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/load" exact>
-                <TilesView id='load'/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/model" exact>
-                <TilesView id='model'/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/curate" exact>
-                <TilesView id='curate'/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/run" exact>
-                <TilesView id='run'/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/run/add" exact>
-                <TilesView id='run' addingStepToFlow='true' />
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/explore" exact>
-                <TilesView id='explore'/>
-              </PrivateRoute>
-              <PrivateRoute path="/tiles/explore/detail">
-                 <TilesView id='explore'/>
-              </PrivateRoute>
-              <Route component={NoMatchRedirect}/>
-            </Switch>
-            </div>
-            <Footer pageTheme={pageTheme}/>
-          </main>
+          <CurationProvider>
+            <Header environment={getEnvironment()} />
+            <ModalStatus/>
+            <NavigationPrompt/>
+            <main>
+              <div className="contentContainer">
+              <Switch>
+                <Route path="/" exact component={Login}/>
+                <Route path="/noresponse" exact component={NoResponse} />
+                <PrivateRoute path="/tiles" exact>
+                  <TilesView/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/load" exact>
+                  <TilesView id='load'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/model" exact>
+                  <TilesView id='model'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/curate" exact>
+                  <TilesView id='curate'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/curate/match" exact>
+                  <TilesView id='curate'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/run" exact>
+                  <TilesView id='run'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/run/add" exact>
+                  <TilesView id='run' addingStepToFlow='true' />
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/explore" exact>
+                  <TilesView id='explore'/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/explore/detail">
+                  <TilesView id='explore'/>
+                </PrivateRoute>
+                <Route component={NoMatchRedirect}/>
+              </Switch>
+              </div>
+              <Footer pageTheme={pageTheme}/>
+            </main>
+          </CurationProvider>
         </ModelingProvider>
       </SearchProvider>
     </div>

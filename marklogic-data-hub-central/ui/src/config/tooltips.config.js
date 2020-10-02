@@ -136,6 +136,10 @@ const ModelingTooltips = {
   addProperty: 'Click to add properties to this entity type.'
 }
 
+const MatchingStepDetailText = {
+  description: 'The Match step defines criteria for determining whether the values from entiies match, and the action to take based on how close of a match they are.'
+}
+
 const SecurityTooltips = {
   missingPermission: 'Contact your security administrator for access.'
 }
@@ -155,5 +159,6 @@ export {
     RunToolTips,
     NewCustomTooltips,
     AdvCustomTooltips,
-    SecurityTooltips
+    SecurityTooltips,
+    MatchingStepDetailText
 }
