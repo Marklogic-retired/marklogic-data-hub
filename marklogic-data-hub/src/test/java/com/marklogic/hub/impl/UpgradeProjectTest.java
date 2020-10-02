@@ -164,7 +164,14 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
     public void testUpgradeTo510MappingStep() throws IOException{
         FileUtils.copyFileToDirectory(getResourceFile("mapping-test/flows/CustomerXML.flow.json"), adminHubConfig.getFlowsDir().toFile());
         FileUtils.copyDirectory(getResourceFile("flow-runner-test/flows"), adminHubConfig.getFlowsDir().toFile());
+        File testCsvLoadDataFile = getHubConfig().getHubProject().getFlowsDir().resolve("testCsvLoadData.flow.json").toFile();
+        long testCsvLoadDataFlowLastModified =  testCsvLoadDataFile.lastModified();
+        File testFlowFile = getHubConfig().getHubProject().getFlowsDir().resolve("testFlow.flow.json").toFile();
+        long testFlowLastModified =  testFlowFile.lastModified();
         getHubProject().updateStepDefinitionTypeForInlineMappingSteps();
+        //Flow is not saved unless it has been modified(i.e. mapping step with step def "default-mapping")
+        Assertions.assertEquals(testCsvLoadDataFlowLastModified, testCsvLoadDataFile.lastModified());
+        Assertions.assertNotEquals(testFlowLastModified, testFlowFile.lastModified());
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("testFlow").getStep("6").getStepDefinitionName());
         Assertions.assertEquals("entity-services-mapping", flowManager.getLocalFlow("CustomerXML").getStep("2").getStepDefinitionName());
     }

@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -638,15 +639,20 @@ public class HubProjectImpl implements HubProject {
     protected void updateStepDefinitionTypeForInlineMappingSteps() {
         try {
             flowManager.getLocalFlows().forEach(flow -> {
+                AtomicBoolean shouldSaveFlow = new AtomicBoolean(false);
                 flow.getSteps().values().forEach(step -> {
                     if (
                         StepDefinition.StepDefinitionType.MAPPING.equals(step.getStepDefinitionType()) &&
                             "default-mapping".equalsIgnoreCase(step.getStepDefinitionName()))
                     {
                         step.setStepDefinitionName("entity-services-mapping");
+                        shouldSaveFlow.set(true);
                     }
                 });
-                flowManager.saveLocalFlow(flow);
+                //save flow only if one or more steps are modified
+                if(shouldSaveFlow.get()){
+                    flowManager.saveLocalFlow(flow);
+                }
             });
 
         } catch (Exception ex) {
