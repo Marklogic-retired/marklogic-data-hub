@@ -19,7 +19,7 @@ import {
   referencePayloadSteps 
 } from '../../../assets/mock-data/modeling';
 
-import { ConfirmationType } from '../../../types/modeling-types';
+import { ConfirmationType } from '../../../types/common-types';
 import { ModelingContext } from '../../../util/modeling-context';
 import { isModified } from '../../../assets/mock-data/modeling-context-mock';
 

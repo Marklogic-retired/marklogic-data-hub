@@ -10,7 +10,7 @@ import { Application } from '../../config/application.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import SystemInfo from './system-info';
 import ConfirmationModal from '../confirmation-modal/confirmation-modal';
-import { ConfirmationType } from '../../types/modeling-types';
+import { ConfirmationType } from '../../types/common-types';
 
 interface Props extends RouteComponentProps<any> {
   environment: any
