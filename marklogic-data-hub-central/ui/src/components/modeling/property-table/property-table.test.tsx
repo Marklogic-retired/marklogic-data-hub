@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 import PropertyTable from './property-table';
 
 import { entityReferences } from '../../../api/modeling';
+import { ConfirmationType } from '../../../types/common-types';
 import { getSystemInfo } from '../../../api/environment';
-import { ConfirmationType } from '../../../types/modeling-types';
 import { ModelingContext } from '../../../util/modeling-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling';

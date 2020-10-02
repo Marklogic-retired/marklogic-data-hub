@@ -1,3 +1,20 @@
+export interface ModelingContextInterface {
+  modelingOptions: ModelingOptionsInterface;
+  setEntityTypeNamesArray: (entityTypeNamesArray: any[]) => void;
+  toggleIsModified: (isModified: boolean) => void;
+  updateEntityModified: (entityModified: EntityModified) => void;
+  removeEntityModified: (entityModified: EntityModified) => void;
+  clearEntityModified: () => void;
+  setEntityPropertiesNamesArray: (entityDefinitionsArray: any[]) => void;
+}
+
+export interface ModelingOptionsInterface {
+  entityTypeNamesArray: any[],
+  isModified: boolean,
+  modifiedEntitiesArray:  any[],
+  entityPropertiesNamesArray: string[]
+}
+
 export interface Definition {
   name: string,
   primaryKey?: string,
@@ -51,33 +68,10 @@ export interface PropertyOptions {
   //wildcard: boolean
 }
 
-export enum ConfirmationType {
-  Identifer = 'identifier',
-  DeleteEntity = 'deleteEntity',
-  DeleteEntityRelationshipWarn = 'deleteEntityRelationshipWarn',
-  DeleteEntityRelationshipOutstandingEditWarn = 'deleteEntityRelationshipOutstandingEditWarn',
-  DeleteEntityNoRelationshipOutstandingEditWarn = 'deleteEntityNoRelationshipOutstandingEditWarn',
-  DeleteEntityStepWarn = 'deleteEntityStepWarn',
-  DeletePropertyWarn = 'deletePropertyWarn',
-  DeletePropertyStepWarn = 'deletePropertyStepWarn',
-  SaveEntity = 'saveEntity',
-  SaveAll = 'saveAllEntity',
-  RevertEntity = 'revertEntity',
-  RevertAll = 'revertAllEntity',
-  NavigationWarn = 'navigationWarn'
-}
-
 export enum PropertyType {
   Basic = 'basic',
   Structured = 'structured',
   RelatedEntity = 'relatedEntity'
-}
-
-export interface ModelingOptionsInterface {
-  entityTypeNamesArray: any[],
-  isModified: boolean,
-  modifiedEntitiesArray:  any[],
-  entityPropertiesNamesArray: string[]
 }
 
 export interface EntityModified {
