@@ -133,6 +133,7 @@ describe('Default ingestion ', () => {
         loadPage.stepName(stepName).should('be.visible');
 
         //Verify Settings
+        cy.waitForAsyncRequest();
         loadPage.stepSettings(stepName).click();
         loadPage.stepNameInSettings().should('have.text', stepName);
         loadPage.selectTargetDB('STAGING');
