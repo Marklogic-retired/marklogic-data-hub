@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import { MLAlert, MLButton } from '@marklogic/design-system';
 import styles from './confirmation-modal.module.scss'
-
-import { ConfirmationType } from '../../types/modeling-types';
 import { ModelingTooltips } from '../../config/tooltips.config';
+import { ConfirmationType } from '../../types/common-types';
 
 type Props = {
   isVisible: boolean;
@@ -163,7 +162,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
           </>
         )}
 
-        {props.type === ConfirmationType.DeletePropertyWarn && 
+        {props.type === ConfirmationType.DeletePropertyWarn &&
           <p aria-label="delete-property-text"
           >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> property?</p>
         }
@@ -242,6 +241,24 @@ const ConfirmationModal: React.FC<Props> = (props) => {
             <p>Are you sure you want to exit?</p>
           </>
         )}
+
+        {props.type === ConfirmationType.DeleteStep &&
+          <p aria-label="delete-step-text"
+          >Are you sure you want to delete the <b>{props.boldTextArray[0]}</b> step?</p>
+        }
+
+        {/**
+          * Confirmation message for adding a step to a flow
+          * @param props.boldTextArray[0] = step name
+          * @example 'order-ingest'
+          * @param props.boldTextArray[1] = flow name
+          * @example 'order-flow'
+        **/}
+        {props.type === ConfirmationType.AddStepToFlow &&
+          <p aria-label="add-step-to-flow-text"
+            >Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
+          </p>
+        }
       </div>
     </Modal>
   )
