@@ -12,7 +12,7 @@ import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-
 
 import sourceFormatOptions from '../../../config/formats.config';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
-import { 
+import {
   MatchingStep
 } from '../../../types/curation-types';
 import { ConfirmationType } from '../../../types/common-types';
@@ -81,36 +81,6 @@ const MatchingCard: React.FC<Props> = (props) => {
         return customStyles;
     }
 
-    // TODO get match options from backend
-    const matchOptions = [
-        {
-            props: [{
-                prop: 'First',
-                type: 'Exact'
-            }],
-            value: 0
-        },
-        {
-            props: [{
-                prop: 'DOB',
-                type: 'Exact'
-            }],
-            value: 0
-        },
-        {
-            props: [{
-                prop: 'Foo',
-                type: 'Bar'
-            }],
-            value: 0
-        },
-    ];
-
-    const handleSlider = (values) => {
-        // TODO put match options to backend
-        console.log('handleSlider', values);
-    }
-
     const handleMouseOver = (e, name) => {
       // Handle all possible events from mouseover of card body
       if (typeof e.target.className === 'string' &&
@@ -169,7 +139,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                         </Card>
                     </Col>
                 ) : ''}
-                
+
                 {props && props.matchingStepsArray.length > 0 ? props.matchingStepsArray.map((elem,index) => (
                     <Col key={index}>
                         <div
@@ -184,11 +154,11 @@ const MatchingCard: React.FC<Props> = (props) => {
                                     <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => openEditStepDialog(index)}/></MLTooltip>,
                                     props.canWriteMatchMerge ? (
                                         <MLTooltip
-                                            title={'Delete'} 
+                                            title={'Delete'}
                                             placement="bottom"
                                         >
                                             <i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)} /></i>
-                                        </MLTooltip> 
+                                        </MLTooltip>
                                     ) : (
                                         <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>
                                     )
@@ -206,9 +176,9 @@ const MatchingCard: React.FC<Props> = (props) => {
 
                                 {/* Hover Over Menu */}
                                 <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                    <div 
-                                        data-testid={`${elem.name}-stepDetails`} 
-                                        className={styles.cardLink} 
+                                    <div
+                                        data-testid={`${elem.name}-stepDetails`}
+                                        className={styles.cardLink}
                                         onClick={() => openStepDetails(elem)}
                                     >Open step details</div>
                                     {props.canWriteMatchMerge ? (
@@ -241,7 +211,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                                 </div>
                             </Card>
                         </div>
-                    </Col>                        
+                    </Col>
                 )) : <span></span> }
                 <CreateEditMatchingDialog
                     newMatching={newMatching}
