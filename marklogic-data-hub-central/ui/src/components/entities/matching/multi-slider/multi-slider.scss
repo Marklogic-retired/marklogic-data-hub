@@ -1,74 +1,142 @@
 .multiSlider {
 
-  height: 120px;
-  margin-top: 80px;
-  width: 100%;
-
-  .slider {
-    position: relative;
+    height: 120px;
+    margin-top: 80px;
     width: 100%;
-    height: 80px;
-  }
 
-  .sliderRail {
-    position: absolute;
-    width: 100%;
-    height: 4px;
-    margin-top: 35px;
-    border-radius: 2px;
-    background-color: #b5b8cd;
-  }
-
-  .handle {
-    position: absolute;
-    margin-left: -15px;
-    margin-top: 25px;
-    z-index: 2;
-    width: 25px;
-    height: 25px;
-    border: solid 3px #8b94c6;
-    text-align: center;
-    cursor: pointer;
-    border-radius: 50%;
-    background-color: #fff;
-  }
-
-  .tooltipContainer {
-
-    position: absolute;
-    margin-left: -11px;
-    margin-top: -5px;
-
-    .tooltip {
-      position: relative;
-      display: block;
-      width: 200px;
-      bottom: 10px;
-      right: 92px;
-  
-      .tooltipText {
-        margin-top: 2px;
-        width: 200px;
-        background-color: #444;
-        color: #f0f0f0;
-        opacity: 0.8;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px 0;
+    .slider {
         position: relative;
-        z-index: 1;
-      }
-  
-      .tooltipText::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        margin-left: -5px;
-        border-width: 5px;
-        border-style: solid;
-        border-color: #444 transparent transparent transparent;
-      }
+        width: 100%;
+        height: 80px;
+        max-width: 84%;
+        margin-left: 8%;
     }
-  }
+
+    .sliderRail {
+        position: absolute;
+        width: 100%;
+        height: 4px;
+        margin-top: 35px;
+        border-radius: 2px;
+        background-color: #b5b8cd;
+    }
+
+    .sliderOptions {
+        font-weight: 500;
+        font-size: 16px;
+        color: #CCCCCC;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 85%;
+        max-width: 85%;
+        margin-left: 7%;
+    }
+
+    .clearIcon {
+        font-size: 10px;
+        position: absolute;
+        float: right;
+        top: 1px;
+        right: 5px;
+        left: auto;
+    }
+
+    .handle {
+        position: absolute;
+        margin-left: -15px;
+        margin-top: 25px;
+        z-index: 2;
+        width: 25px;
+        height: 25px;
+        border: solid 3px #8b94c6;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 50%;
+        background-color: #fff;
+    }
+
+    .tooltipContainer {
+
+        position: absolute;
+        margin-left: 0px;
+        margin-top: -5px;
+
+        .tooltip {
+            position: relative;
+            display: block;
+            width: 180px;
+            bottom: 10px;
+            right: 92px;
+            max-width: 180px;
+
+            .tooltipText {
+                margin-top: 2px;
+                width: 180px;
+                max-width: 180px;
+                background-color: #444;
+                color: #f0f0f0;
+                opacity: 0.8;
+                text-align: center;
+                border-radius: 6px;
+                padding: 3px 0;
+                position: relative;
+                z-index: 1;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .activeTooltipText {
+                margin-top: 2px;
+                z-index:3;
+                text-align: center;
+                position: relative;
+                border-radius: 6px;
+                padding: 3px 0;
+                background-color: #E9F7FE;
+                color: #5B69AF;
+                opacity: 1;
+                overflow: visible;
+                width: 180px;
+                max-width: 180px;
+            }
+
+            .tooltipText:hover {
+                margin-top: 2px;
+                z-index:2;
+                background-color: #E9F7FE;
+                color: #5B69AF;
+                opacity: 1;
+                overflow: visible;
+                width: 180px;
+                max-width: 180px;
+            }
+
+            .tooltipText::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #444 transparent transparent transparent;
+            }
+
+            .tooltipText:hover::after, .activeTooltipText::after {
+                margin-top: -1px;
+                z-index:2;
+                opacity: 1;
+                border-width: 5px;
+                border-style: solid;
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-color: #E9F7FE transparent transparent transparent;
+            }
+
+        }
+    }
 }
