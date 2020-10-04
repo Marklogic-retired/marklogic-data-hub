@@ -12,6 +12,7 @@ import {
   MatchingStep
 } from '../../../../types/curation-types';
 import { MatchingStepDetailText } from '../../../../config/tooltips.config';
+import MultiSlider from "../multi-slider/multi-slider";
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: '',
@@ -48,7 +49,6 @@ const MatchingStepDetail: React.FC = () => {
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepDefinition).length !== 0) {
       const matchingStep: MatchingStep = curationOptions.activeStep.stepDefinition;
-
       if (matchingStep.matchRulesets.length > 0 ) {
         toggleMoreRulesetText(false);
       } else {
@@ -66,6 +66,33 @@ const MatchingStepDetail: React.FC = () => {
       history.push('/tiles/curate');
     }
   }, [JSON.stringify(curationOptions.activeStep.stepDefinition)]);
+
+  const matchRuleSetOptions = matchingStep.matchRulesets.map((i) => {
+      const matchRuleOptionsObject = {
+          props: [{
+              prop: i.name,
+              type: i.matchRules.length <= 1 ? i.matchRules[0]['matchType'] : ''
+          }],
+          value: i.weight
+      }
+      return matchRuleOptionsObject;
+  });
+
+  const matchThresholdOptions = matchingStep.thresholds.map((i) => {
+      const matchThresholdOptionsObject = {
+          props: [{
+              prop: i.thresholdName,
+              type: i.action,
+          }],
+          value: i.score,
+      }
+      return matchThresholdOptionsObject;
+  });
+
+  const handleSlider = (values) => {
+        // TODO put match options to backend
+        //console.log('handleSlider', values);
+    }
 
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
@@ -106,6 +133,7 @@ const MatchingStepDetail: React.FC = () => {
                 <MLButton aria-label="add-threshold" type="primary" size="default" className={styles.addThresholdButton}>Add</MLButton>
             </div>
           </div>
+            <MultiSlider options={matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} type={'threshold'}/>
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -138,8 +166,8 @@ const MatchingStepDetail: React.FC = () => {
                 </MLButton>
               </MLDropdown>
             </div>
-
           </div>
+            <MultiSlider options={matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} type={'ruleSet'}/>
         </div>
 
       </div>
