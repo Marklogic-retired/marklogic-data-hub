@@ -31,29 +31,8 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         verifyFruitCount(3, "The commit call should result in the 3rd fruit being ingested");
     }
 
-
     @Test
-    public void testBulkIngestWithoutUriPrefix() throws IOException {
-        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap()).withBatchSize(1));
-        dataWriter.write(buildRow("pineapple", "green"));
-
-        String uriQuery = "cts.uris('', null, cts.andQuery([\n" +
-            "  cts.jsonPropertyValueQuery('fruitName', 'pineapple')\n" +
-            "]))";
-
-        EvalResultIterator uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
-        assertTrue(uriQueryResult.hasNext());
-        String uri = uriQueryResult.next().getString();
-
-        assertTrue(uri.endsWith(".json"));
-
-        assertFalse(uri.startsWith("/"), "If the user wants the URI to start with a forward slash, the user must provide one. " +
-            "If the user doesn't, then it's assumed that the user doesn't want a forward slash at the start of the URI, so the endpoint will not add one automatically.");
-        assertFalse(uriQueryResult.hasNext());
-    }
-
-    @Test
-    public void ingestWithoutCustomApiWithCustomWorkunit(){
+    public void ingestWithoutCustomApiWithCustomWorkunit() {
         ObjectNode customWorkUnit = objectMapper.createObjectNode();
         customWorkUnit.put("userDefinedValue", 0);
 

@@ -53,7 +53,64 @@ function verifyJson(expectedObject, actualObject, assertions) {
   });
 }
 
+/**
+ * Helper function for when you want a "Record" object that contains the URI, document, and metadata. Feel free to
+ * add new keys to this object as needed. Note that collections and permissions are sorted to allow for reliable
+ * assertions on specific indexes in the arrays.
+ *
+ * @param uri
+ * @returns {*|this|this}
+ */
+function getRecord(uri) {
+  return fn.head(xdmp.invokeFunction(function() {
+    return {
+      uri : uri.toString(),
+      document : cts.doc(uri).toObject(),
+      collections : xdmp.documentGetCollections(uri).sort(),
+      permissions : buildPermissionsMap(xdmp.documentGetPermissions(uri))
+    }
+  }));
+}
+
+/**
+ * Intended for the common use case of - I know my test module just did something that resulted in one document being
+ * written to a certain collection, so gimme back a Record for that document.
+ *
+ * @param collection
+ * @returns {*|*}
+ */
+function getRecordInCollection(collection) {
+  const uris = xdmp.eval('cts.uris(null, null, cts.collectionQuery("' + collection + '"))').toArray();
+  if (uris.length != 1) {
+    throw Error("Expected single document to be in collection: " + collection);
+  }
+  return getRecord(uris[0]);
+}
+
+/**
+ * Makes life easy for verifying permissions by building a map of them, keyed on role name, with arrays of capabilities
+ * as values.
+ *
+ * @param permissions
+ * @returns {{}}
+ */
+function buildPermissionsMap(permissions) {
+  const map = {};
+  permissions.forEach(perm => {
+    const roleName = xdmp.roleName(perm.roleId);
+    if (map[roleName]) {
+      map[roleName].push(perm.capability);
+    } else {
+      map[roleName] = [perm.capability];
+    }
+  })
+  Object.keys(map).forEach(key => map[key].sort());
+  return map;
+}
+
 module.exports = {
+  getRecord,
+  getRecordInCollection,
   verifyJson,
   runWithRolesAndPrivileges: module.amp(runWithRolesAndPrivileges)
 };
