@@ -51,11 +51,17 @@ if(work.sourcename != null || work.sourcetype != null){
   headers.sources = sources
 }
 
-const inputs =
-  (input instanceof Sequence) ? input.toArray().map(item => fn.head(xdmp.fromJSON(item))) :
-    (input instanceof Document) ? [fn.head(xdmp.fromJSON(input))] :
-      [{UNKNOWN: input}];
-inputs.forEach(record => {
+var inputArray;
+if (input instanceof Sequence) {
+  inputArray = input.toArray().map(item => fn.head(xdmp.fromJSON(item)));
+} else if (input instanceof Document) {
+  inputArray = [fn.head(xdmp.fromJSON(input))];
+} else {
+  // Assumed to be an array at this point, which is the case for unit tests
+  inputArray = fn.head(xdmp.fromJSON(input));
+}
+
+inputArray.forEach(record => {
   state.next = state.next + 1;
   const uri = (uriPrefix) +  sem.uuidString() + '.json';
   record = ingest.main({uri: uri, value: record}, {
