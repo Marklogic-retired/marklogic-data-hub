@@ -285,7 +285,27 @@ const mappings = {"data" :
       "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
     }
   ]
-}],
+},
+{
+  "entityType": "Customer",
+  "entityTypeId":"Customer",
+  "artifacts": [
+    {
+      "name": "Mapping2",
+      "targetEntityType": "Customer",
+      "description": "",
+      "selectedSource":"collection",
+      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+      "properties": {
+        "customerId": {
+          "sourcedFrom": "PIN"
+        }
+      },
+      "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
+    }
+  ]
+}
+],
 "status" :200
 };
 
