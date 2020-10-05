@@ -4,7 +4,7 @@ import {Card, Icon, Tooltip, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../../config/formats.config';
-import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
+import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
 import {getResultsByQuery, getDoc} from '../../../util/search-service'
@@ -56,6 +56,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sortedMapping, setSortedMappings] = useState(props.data)
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -88,6 +89,8 @@ const MappingCard: React.FC<Props> = (props) => {
     let history = useHistory();
 
     useEffect(() => {
+        let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data
+        setSortedMappings(sortedArray);
         setSourceData([]);
     },[props.data]);
 
@@ -107,6 +110,7 @@ const MappingCard: React.FC<Props> = (props) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
     }
+
 
     //Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
@@ -625,7 +629,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col> : ''}{props && props.data.length > 0 ? props.data.map((elem,index) => (
+                </Col> : ''}{sortedMapping && sortedMapping.length > 0 ? sortedMapping.map((elem,index) => (
                     <Col key={index}>
                         <div
                             data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
@@ -637,7 +641,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                     <MLTooltip title={'Edit'} placement="bottom"><Icon className={styles.editIcon} type="edit" key ="last" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
                                     <MLTooltip title={'Step Details'} placement="bottom"><i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name,index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
-                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
+                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" data-testid={elem.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"

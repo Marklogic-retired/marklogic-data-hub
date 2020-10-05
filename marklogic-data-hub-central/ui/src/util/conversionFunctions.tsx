@@ -28,6 +28,19 @@ const convertDateFromISO = (InputDate) => {
 
 }
 
+const sortStepsByUpdated = (stepData) => {
+    let sortedData = stepData.sort((step1, step2) => {
+        if(step1.lastUpdated > step2.lastUpdated){
+            return -1;
+        }
+
+        if(step1.lastUpdated < step2.lastUpdated){
+            return 1;
+        }
+    })
+    return sortedData;
+}
+
 const getInitialChars = (str, num, suffix) => {
     suffix = suffix ? suffix : '...';
     let result = str;
@@ -67,6 +80,7 @@ const getLastChars = (str, num, prefix) => {
 
 export {
     convertDateFromISO,
+    sortStepsByUpdated,
     getInitialChars,
     getLastChars,
     extractCollectionFromSrcQuery

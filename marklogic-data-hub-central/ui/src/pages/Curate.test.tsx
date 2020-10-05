@@ -39,25 +39,25 @@ describe('Curate component', () => {
         expect(queryByText('Match')).not.toBeInTheDocument();
         expect(queryByText('Merge')).not.toBeInTheDocument();
 
-        expect(getByText('Mapping1')).toBeInTheDocument();
+        expect(getByText('Mapping2')).toBeInTheDocument();
 
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
 
         // test settings
-        fireEvent.click(getByTestId('Mapping1-settings'));
+        fireEvent.click(getByTestId('Mapping2-settings'));
         expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
         //test edit
-        fireEvent.click(getByTestId('Mapping1-edit'));
+        fireEvent.click(getByTestId('Mapping2-edit'));
         expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
         // test delete
-        expect(queryByTestId('Mapping1-delete')).not.toBeInTheDocument();
+        expect(queryByTestId('Mapping2-delete')).not.toBeInTheDocument();
     });
 
     test('Verify writeMapping authority can edit mapping configs and settings', async () => {
