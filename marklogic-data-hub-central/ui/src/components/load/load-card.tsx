@@ -7,7 +7,7 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
-import { convertDateFromISO, sortStepsByUpdated } from '../../util/conversionFunctions';
+import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import { AdvLoadTooltips, SecurityTooltips } from '../../config/tooltips.config';
 
@@ -46,7 +46,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
 
     useEffect(() => {
-       let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
+       let sortedArray = sortLoadsByUpdated(props.data)
        setSortedLoads(sortedArray);
     }, [props.data])
 
@@ -67,6 +67,19 @@ const LoadCard: React.FC<Props> = (props) => {
     const OpenLoadSettingsDialog = (index) => {
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenLoadSettings(true);
+    }
+
+    const sortLoadsByUpdated = (loadArray) => {
+        let sortedArray = loadArray.sort((load1, load2) => {
+            if(load1.lastUpdated > load2.lastUpdated){
+                return -1;
+            }
+
+            if(load1.lastUpdated < load2.lastUpdated){
+                return 1;
+            }
+        })
+        return sortedArray;
     }
 
     // Custom CSS for source Format

@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
-import {fireEvent, render, waitForElement, wait, cleanup} from '@testing-library/react';
+import {fireEvent, render, waitForElement, wait, getByTestId} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
@@ -27,7 +27,6 @@ describe("Mapping Card component", () => {
   });
 
   afterEach(() => {
-    cleanup();
     jest.clearAllMocks();
   });
 
@@ -217,11 +216,11 @@ describe("Mapping Card component", () => {
        expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
   });
 
-  test('Verify Card sort order and Adding the step to an existing flow', async () => {
+  test('Adding the step to an existing flow', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
     let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts.concat(data.mappings.data[1].artifacts);
+    let mapping = data.mappings.data[0].artifacts;
     const noopFun = () => {};
     let getByText, getByLabelText, getByTestId;
     await act(async () => {
@@ -252,18 +251,11 @@ describe("Mapping Card component", () => {
 
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
-    expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
-    expect(getByText('Mapping2')).toBeInTheDocument();
-    expect(getByText('Last Updated: 10/01/2020 2:38AM')).toBeInTheDocument();
+    expect(getByText('Mapping1')).toBeInTheDocument();
     //expect(getByLabelText('testLoadXML-sourceFormat')).toBeInTheDocument();
+    expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
 
-    //Verify cards get sorted by last updated
-    let mapCards: any = document.querySelectorAll('.ant-col');
-    expect(mapCards[0]).toHaveTextContent('Add New');
-    expect(mapCards[1]).toHaveTextContent('Mapping2');
-    expect(mapCards[2]).toHaveTextContent('Mapping1');
-
-    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Map Card to get more options
+    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Load Card to get more options
 
     //Verify if the flow related options are availble on mouseOver
     expect(getByTestId('Mapping1-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
@@ -321,9 +313,10 @@ describe("Mapping Card component", () => {
 
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
+    expect(getByText('Mapping1')).toBeInTheDocument();
     expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
 
-    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Map Card to get more options
+    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Load Card to get more options
 
     //Verify if the flow related options are availble on mouseOver
     expect(getByTestId('Mapping1-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
