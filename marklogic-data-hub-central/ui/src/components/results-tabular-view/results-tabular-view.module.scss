@@ -5,8 +5,9 @@
 }
 .tabular {
     margin-top: 20px;
-    overflow-x: auto;
+    overflow: auto;
     height: 46vh;
+    display: grid;
 }
 
 .columnSelector {
