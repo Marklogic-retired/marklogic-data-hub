@@ -91,8 +91,12 @@ function parseDate(value, pattern) {
   if (pattern != null) {
     pattern = pattern.toString().replace(", ", ",");
   }
-  if (value != null) {
+
+  if(isNullOrEmpty(value)){
     value = value.toString().replace(", ", ",");
+  }
+  else{
+    return null;
   }
 
   if(standardFormats.includes(pattern.trim())){
@@ -151,6 +155,13 @@ function parseDateTime(value, pattern) {
   let supportedFormats = ["YYYYMMDDThhmmss", "DD/MM/YYYY-hh:mm:ss", "DD/MM/YYYY hh:mm:ss", "YYYY/MM/DD-hh:mm:ss" , "YYYY/MM/DD hh:mm:ss"];
   let response;
   let errorMsg = `The pattern '${pattern}' cannot be applied to the value '${value}'`;
+
+  if(isNullOrEmpty(value)){
+    value = value.toString();
+  }
+  else{
+    return null;
+  }
   if(supportedFormats.includes(pattern.trim())){
     try {
       response = xdmp.parseYymmdd(pattern.replace("YYYY","yyyy").replace("DD","dd"), value);
@@ -168,6 +179,22 @@ function parseDateTime(value, pattern) {
   }
   return response;
 }
+
+function isNullOrEmpty(value) {
+  if (value) {
+    if(typeof value === "object" && xdmp.nodeKind(value) === "null"){
+      return false;
+    }
+    if(!value.toString() || !value.toString().trim()){
+      return false;
+    }
+  }
+  else{
+    return false;
+  }
+  return true;
+}
+
 // END date/dateTime functions
 
 module.exports = {

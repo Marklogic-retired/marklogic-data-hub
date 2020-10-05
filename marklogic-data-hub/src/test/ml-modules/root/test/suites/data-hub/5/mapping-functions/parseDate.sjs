@@ -22,7 +22,11 @@ function testMoreParseDate() {
     test.assertEqual(xs.date("1996-07-16"), core.parseDate("1996.07.16", "yyyy.MM.dd")),
 
     test.assertEqual(null, core.parseDate("07.16.1996", "Mon DD,YYYY")),
-    test.assertEqual(null, core.parseDate("notADate", "Mon DD,YYYY"))
+    test.assertEqual(null, core.parseDate("notADate", "Mon DD,YYYY")),
+    test.assertEqual(null, core.parseDate(null, "Mon DD,YYYY")),
+    test.assertEqual(null, core.parseDate("", "Mon DD,YYYY")),
+    test.assertEqual(null, core.parseDate(undefined, "Mon DD,YYYY")),
+    test.assertEqual(null, core.parseDate(" ", "Mon DD,YYYY"))
   ];
 }
 
