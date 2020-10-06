@@ -129,16 +129,16 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
             try {
                 endpointParams = (ObjectNode) objectMapper.readTree(params.get("ingestendpointparams"));
             } catch (IOException e) {
-                throw new RuntimeException("Unable to parse ingestendpointparams, cause: " + e.getMessage(), e);
+                throw new IllegalArgumentException("Unable to parse ingestendpointparams, cause: " + e.getMessage(), e);
             }
         } else {
             endpointParams = objectMapper.createObjectNode();
         }
 
         boolean doesNotHaveApiPath = (!endpointParams.hasNonNull("apiPath") || StringUtils.isEmpty(endpointParams.get("apiPath").asText()));
-        boolean hasWorkUnitOrEndpointState = endpointParams.has("workUnit") || endpointParams.has("endpointState");
+        boolean hasWorkUnitOrEndpointState = endpointParams.hasNonNull("workUnit") || endpointParams.hasNonNull("endpointState");
         if (doesNotHaveApiPath && hasWorkUnitOrEndpointState) {
-            throw new RuntimeException("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.");
+            throw new IllegalArgumentException("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.");
         }
 
         if (doesNotHaveApiPath) {

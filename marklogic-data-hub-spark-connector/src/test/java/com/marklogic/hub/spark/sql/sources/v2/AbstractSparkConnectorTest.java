@@ -6,6 +6,7 @@ import com.marklogic.hub.test.AbstractHubTest;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
+import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
@@ -123,21 +124,29 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
     }
 
     /**
-     * Spark will do all of this in the real world - i.e. a user will specify the entry class and the set of options.
-     * But in a test, we need to do that ourselves. So we create the DataSource class, build up the params, and then
-     * call the factory/writer methods ourselves.
+     * Convenience method for building a DataWriter based on our Options convenience class.
      *
      * @param options
      * @return
      */
     protected DataWriter<InternalRow> buildDataWriter(Options options) {
+        return buildDataWriter(options.toDataSourceOptions());
+    }
+
+    /**
+     * Spark will do all of this in the real world - i.e. a user will specify the entry class and the set of options.
+     * But in a test, we need to do that ourselves. So we create the DataSource class, build up the params, and then
+     * call the factory/writer methods ourselves.
+     *
+     * @param dataSourceOptions
+     * @return
+     */
+    protected DataWriter<InternalRow> buildDataWriter(DataSourceOptions dataSourceOptions) {
         HubDataSource dataSource = new HubDataSource();
         final String writeUUID = "doesntMatter";
         final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
 
-        // Get the set of DHF properties used to connect to ML as a map, and then add connector-specific params
-
-        Optional<DataSourceWriter> dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, options.toDataSourceOptions());
+        Optional<DataSourceWriter> dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
         DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.get().createWriterFactory();
 
         final int partitionIdDoesntMatter = 0;
