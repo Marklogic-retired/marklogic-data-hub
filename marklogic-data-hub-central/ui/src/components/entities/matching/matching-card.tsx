@@ -38,7 +38,7 @@ interface Props {
 
 const MatchingCard: React.FC<Props> = (props) => {
     const history = useHistory<any>();
-    const { setActiveStep } = useContext(CurationContext)
+    const { setActiveStep } = useContext(CurationContext);
 
     const [newMatching, setNewMatching] = useState(false);
     const [title, setTitle] = useState('');
@@ -53,19 +53,19 @@ const MatchingCard: React.FC<Props> = (props) => {
     const openAddNewDialog = () => {
         setTitle('New Matching');
         setNewMatching(true);
-    }
+    };
 
     const openEditStepDialog = (index) => {
         setTitle('Edit Matching');
         setMatchingData(prevState => ({ ...prevState, ...props.matchingStepsArray[index]}));
         setNewMatching(true);
-    }
+    };
 
     const openMatchingSettingsDialog = (index) => {
         //TODO add advanced settings functionality
-        console.log('Open settings')
+        console.log('Open settings');
         //toggleAdvancedSettings(true);
-    }
+    };
 
     //Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
@@ -77,9 +77,9 @@ const MatchingCard: React.FC<Props> = (props) => {
             textAlign: 'left',
             color: '#ffffff',
             padding: '5px'
-        }
+        };
         return customStyles;
-    }
+    };
 
     const handleMouseOver = (e, name) => {
       // Handle all possible events from mouseover of card body
@@ -92,29 +92,29 @@ const MatchingCard: React.FC<Props> = (props) => {
       ) {
           setShowLinks(name);
       }
-    }
+    };
 
     const openStepDetails = (matchingStep: MatchingStep) => {
         setActiveStep(matchingStep, props.entityModel['model']['definitions'], props.entityName);
         history.push({ pathname: '/tiles/curate/match'});
-    }
+    };
 
     const handleCardDelete = (stepName) => {
         setConfirmBoldTextArray([stepName]);
-        setConfirmType(ConfirmationType.DeleteStep)
+        setConfirmType(ConfirmationType.DeleteStep);
         toggleConfirmModal(true);
-    }
+    };
 
     const handleSelect = (obj) => {
         handleStepAdd(obj.mappingName, obj.flowName);
-    }
+    };
 
     const handleStepAdd = (mappingName, flowName) => {
       // TODO create new step
       // setAddDialogVisible(true);
       // setMappingArtifactName(mappingName);
       // setFlowName(flowName);
-    }
+    };
 
     const confirmAction = () => {
         if (confirmType === ConfirmationType.AddStepToFlow) {
@@ -123,7 +123,7 @@ const MatchingCard: React.FC<Props> = (props) => {
             props.deleteMatchingArtifact(confirmBoldTextArray[0]);
             toggleConfirmModal(false);
         }
-    }
+    };
 
     return (
         <div className={styles.matchingContainer}>
@@ -235,6 +235,6 @@ const MatchingCard: React.FC<Props> = (props) => {
         </div>
     );
 
-}
+};
 
 export default MatchingCard;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Router } from 'react-router'
-import { createMemoryHistory } from 'history'
+import { Router } from 'react-router';
+import { createMemoryHistory } from 'history';
 import {render, fireEvent } from "@testing-library/react";
 import Overview from './Overview';
 
@@ -32,14 +32,14 @@ describe('Overview component', () => {
         const history = createMemoryHistory();
         history.push('/tiles'); // initial state
 
-        let enabled = ['load', 'model', 'curate', 'run', 'explore']
+        let enabled = ['load', 'model', 'curate', 'run', 'explore'];
         const {getByLabelText, queryAllByText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
 
         enabled.forEach((card, i) => {
             expect(getByLabelText(card + "-card")).toHaveClass(`enabled`);
             fireEvent.click(getByLabelText(card + "-card"));
             expect(history.location.pathname).toEqual(`/tiles/${card}`);
-        })
+        });
         // NO cards have permissions warning
         expect(queryAllByText("*additional permissions required")).toHaveLength(0);
 
@@ -50,14 +50,14 @@ describe('Overview component', () => {
         const history = createMemoryHistory();
         history.push('/tiles'); // initial state
 
-        let disabled = ['load', 'model', 'curate', 'run', 'explore']
+        let disabled = ['load', 'model', 'curate', 'run', 'explore'];
         const {getByLabelText, getAllByText} = render(<Router history={history}><Overview enabled={[]}/></Router>);
 
         disabled.forEach((card, i) => {
             expect(getByLabelText(card + "-card")).toHaveClass(`disabled`);
             fireEvent.click(getByLabelText(card + "-card"));
             expect(history.location.pathname).toEqual(`/tiles`); // no change
-        })
+        });
         // ALL cards have permissions warning
         expect(getAllByText("*additional permissions required")).toHaveLength(disabled.length);
 

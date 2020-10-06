@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './number-icon.module.scss'
+import styles from './number-icon.module.scss';
 
 type Props = {
   value: number
@@ -16,7 +16,7 @@ const NumberIcon: React.FC<Props> = (props) => {
     <div className={styles.numberIcon}>
       <span className={styles.numberValue}>{props.value}</span>
     </div>
-  )
-}
+  );
+};
 
 export default NumberIcon;

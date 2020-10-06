@@ -20,4 +20,4 @@ describe("Search Summary component", () => {
     const totalDocs = wrapper.find('[data-cy="total-documents"]').text();
     expect(totalDocs).toEqual("100");
   }); 
-})
+});

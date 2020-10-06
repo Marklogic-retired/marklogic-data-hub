@@ -46,11 +46,11 @@ const App: React.FC<Props> = ({history, location}) => {
     if (loc.search && loc.search.startsWith("?from=")) {
       return decodeURIComponent(loc.search.substring(6));
     } else if (loc.pathname !== '/' && loc.pathname !== '/noresponse') {
-      return loc.pathname
+      return loc.pathname;
     } else {
       return user.pageRoute;
     }
-  }
+  };
 
   useEffect(() => {
     if (user.authenticated){
@@ -81,7 +81,7 @@ const App: React.FC<Props> = ({history, location}) => {
           } else {
             history.push('/noresponse');
           }
-      })
+      });
     }
   }, [location.pathname]);
 
@@ -140,6 +140,6 @@ const App: React.FC<Props> = ({history, location}) => {
       </SearchProvider>
     </div>
   );
-}
+};
 
 export default withRouter(App);

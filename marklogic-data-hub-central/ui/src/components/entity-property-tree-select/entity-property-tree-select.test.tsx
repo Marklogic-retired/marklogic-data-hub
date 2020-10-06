@@ -7,11 +7,11 @@ import { customerEntityDef} from '../../assets/mock-data/curation/entity-definit
 import { definitionsParser } from '../../util/data-conversion';
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
-const entityTypeDefinition = customerEntityDefsArray.find( entityDefinition => entityDefinition.name === 'Customer')
+const entityTypeDefinition = customerEntityDefsArray.find( entityDefinition => entityDefinition.name === 'Customer');
 
 describe('Entity Property Tree Select component', () => {
   it('can render and can select a value', () => {
-    const mockOnValueSelected = jest.fn()
+    const mockOnValueSelected = jest.fn();
 
     const { getByText } =  render(
       <EntityPropertyTreeSelect
@@ -20,7 +20,7 @@ describe('Entity Property Tree Select component', () => {
         value={undefined}
         onValueSelected={mockOnValueSelected}
       />
-    )
+    );
 
     userEvent.click(getByText('Select property'));
     userEvent.click(getByText('customerId'));

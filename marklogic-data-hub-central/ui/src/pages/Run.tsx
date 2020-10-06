@@ -2,11 +2,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import styles from './Run.module.scss';
 import Flows from '../components/flows/flows';
 import { Modal, Collapse, Icon } from 'antd';
-import axios from 'axios'
+import axios from 'axios';
 import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
 import { useHistory } from 'react-router-dom';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 const { Panel } = Collapse;
 
@@ -20,7 +20,7 @@ const Statuses = {
     'CANCELED': 'canceled',
     'FAILED': 'failed',
     'FINISHED_WITH_ERRORS': 'finished_with_errors'
-}
+};
 
 const Run = (props) => {
    const { handleError } = useContext(UserContext);
@@ -43,16 +43,15 @@ const Run = (props) => {
 
     //For handling flows expand and collapse within Run tile
     const [newFlowName, setNewFlowName] = useState('');
-    const { success, error } = Modal;
     const [flowsDefaultActiveKey, setFlowsDefaultActiveKey] = useState<any []>([]);
 
     const pollConfig: PollConfig = {
         interval: 1000, // In millseconds
         retryLimit: 10  // Timeout after retries
-    }
+    };
 
     useEffect(() => {
-        return () =>  Modal.destroyAll()
+        return () =>  Modal.destroyAll();
     }, []);
 
     useEffect(() => {
@@ -61,7 +60,7 @@ const Run = (props) => {
         return (() => {
             setFlows([]);
             setSteps([]);
-        })
+        });
     }, [isLoading]);
 
     useEffect(() => {
@@ -79,16 +78,16 @@ const Run = (props) => {
             let response = await axios.get('/api/flows');
             if (response.status === 200) {
                 if(newFlowName){
-                    let key = [response.data.findIndex(el => el.name === newFlowName)]
+                    let key = [response.data.findIndex(el => el.name === newFlowName)];
                     setFlowsDefaultActiveKey(key);
                 }
                 setFlows(response.data);
             }
         } catch (error) {
             console.error('Error getting flows', error);
-            handleError(error)
+            handleError(error);
         }
-    }
+    };
 
     const getSteps = async () => {
         try {
@@ -101,7 +100,7 @@ const Run = (props) => {
             let message = error.response.data.message;
             console.error('Error getting steps', message);
         }
-    }
+    };
 
     const createFlow = async (payload) => {
         let newFlow;
@@ -110,7 +109,7 @@ const Run = (props) => {
             newFlow = {
                 name: payload.name,
                 description: payload.description
-            }
+            };
             let response = await axios.post(`/api/flows`, newFlow);
             if (response.status === 201) {
                 setIsLoading(false);
@@ -125,9 +124,9 @@ const Run = (props) => {
                 content: <p>Unable to create a flow. Flow with the name <b>{newFlow.name}</b> already exists.</p>
             }) : Modal.error({
                 content: message
-            })
+            });
         }
-    }
+    };
 
     const updateFlow = async (payload, flowId) => {
         try {
@@ -135,17 +134,17 @@ const Run = (props) => {
             let updatedFlow = {
                 name: payload.name,
                 description: payload.description,
-            }
+            };
             let response = await axios.put(`/api/flows/` + flowId, updatedFlow);
             if (response.status === 200) {
                 setIsLoading(false);
             }
         }
         catch (error) {
-            console.error('Error updating flow', error)
+            console.error('Error updating flow', error);
             setIsLoading(false);
         }
-    }
+    };
 
     // POST a step to existing flow
     const addStepToFlow = async (artifactName, flowName, stepDefinitionType) => {
@@ -171,7 +170,7 @@ const Run = (props) => {
             });
             handleError(error);
         }
-    }
+    };
 
     const deleteFlow = async (name) => {
         try {
@@ -184,7 +183,7 @@ const Run = (props) => {
             console.error('Error deleting flow', error);
             setIsLoading(false);
         }
-    }
+    };
 
     // function formatStepType(stepType){
     //     stepType = stepType.toLowerCase();
@@ -193,9 +192,9 @@ const Run = (props) => {
 
     const goToExplorer = (entityName, jobId) => {
         history.push({pathname: "/tiles/explore",
-            state: { entityName: entityName, jobId: jobId }})
+            state: { entityName: entityName, jobId: jobId }});
         Modal.destroyAll();
-    }
+    };
 
     function showStepRunResponse(stepName, stepType, entityName, jobId, response){
         if (response['jobStatus'] === Statuses.FINISHED) {
@@ -268,7 +267,7 @@ const Run = (props) => {
                         {errors.map((e, i) => {
                             return <Panel header={getErrorsHeader(i)} key={i}>
                                  {getErrorDetails(e)}
-                            </Panel>
+                            </Panel>;
                         })}
                     </Collapse>
                 </div>
@@ -286,7 +285,7 @@ const Run = (props) => {
             content: (
                 <div id="error-list">
                     {errors.map((e, i) => {
-                        return getErrorDetails(e)
+                        return getErrorDetails(e);
                     })}
                 </div>
             ),
@@ -354,7 +353,7 @@ const Run = (props) => {
             if (formData){
                 response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber, formData, {headers: {
                     'Content-Type': 'multipart/form-data; boundary=${formData._boundary}', crossorigin: true
-                }} )
+                }} );
             }
             else {
                 response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber);
@@ -390,10 +389,10 @@ const Run = (props) => {
             setRunEnded({flowId: flowId, stepId: stepNumber});
             setIsLoading(false);
             if (error.response && error.response.data && ( error.response.data.message.includes('The total size of all files in a single upload must be 100MB or less.') ||  error.response.data.message.includes('Uploading files to server failed') )) {
-                setUploadError(error.response.data.message)
+                setUploadError(error.response.data.message);
             }
         }
-    }
+    };
 
     // DELETE /flows​/{flowId}​/steps​/{stepId}
     const deleteStep = async (flowId, stepNumber) => {
@@ -408,7 +407,7 @@ const Run = (props) => {
             console.error('Error deleting step', error);
             setIsLoading(false);
         }
-    }
+    };
 
   return (
     <div>
@@ -438,6 +437,6 @@ const Run = (props) => {
         </div>
     </div>
   );
-}
+};
 
 export default Run;

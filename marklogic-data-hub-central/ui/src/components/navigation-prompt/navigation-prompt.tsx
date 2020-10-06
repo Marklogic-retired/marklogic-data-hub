@@ -18,11 +18,11 @@ const NavigationPrompt: React.FC = () => {
   const onUnload = (e) => {
     e.preventDefault();
     if (hasUnsavedChanges.current) {
-      return e.returnValue = 'message'
+      return e.returnValue = 'message';
     }
-  }
+  };
 
-  return null
-}
+  return null;
+};
 
 export default NavigationPrompt;

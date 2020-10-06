@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {fireEvent, getByLabelText, render} from '@testing-library/react';
 
 import EntityTiles from './entity-tiles';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import data from "../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 
@@ -26,7 +26,7 @@ describe("Entity Tiles component", () => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
   });
 
   afterEach(() => {
@@ -154,4 +154,4 @@ describe("Entity Tiles component", () => {
       expect(getByText('customXML')).toBeInTheDocument();
       expect(getByLabelText('customNoEntityTitle')).toBeInTheDocument();
   });
-})
+});
