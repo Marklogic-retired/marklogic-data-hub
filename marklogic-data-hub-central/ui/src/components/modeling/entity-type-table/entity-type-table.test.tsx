@@ -32,7 +32,7 @@ describe('EntityTypeModal Component', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  })
+  });
 
   test('Table renders with empty array prop', () => {
     const { getByText } =  render(
@@ -56,7 +56,7 @@ describe('EntityTypeModal Component', () => {
   });
 
   test('Table renders with mock data, no writer role', async () => {
-    const { getByText, getByTestId, getAllByRole, getByLabelText } =  render(
+    const { getByText, getByTestId, getByLabelText } =  render(
       <Router>
         <EntityTypeTable 
           allEntityTypesData={getEntityTypes}
@@ -104,7 +104,7 @@ describe('EntityTypeModal Component', () => {
 
   test('Table renders with mock data, with writer role, with auto expanded entity, and can click edit', () => {
     const editMock = jest.fn();
-    const { getByTestId, getByLabelText } =  render(
+    const { getByTestId } =  render(
       <Router>
         <EntityTypeTable 
           allEntityTypesData={getEntityTypes}
@@ -134,7 +134,7 @@ describe('EntityTypeModal Component', () => {
 
     const updateMock = jest.fn();
 
-    const { getByTestId, getByLabelText, getByText, debug } =  render(
+    const { getByTestId } =  render(
       <Router>
         <EntityTypeTable 
           allEntityTypesData={getEntityTypes}
@@ -159,7 +159,7 @@ describe('EntityTypeModal Component', () => {
 
       await wait(() =>
         expect(screen.getByLabelText('delete-text')).toBeInTheDocument(),
-      )
+      );
 
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntity}-yes`));
 
@@ -172,7 +172,7 @@ describe('EntityTypeModal Component', () => {
 
     const updateMock = jest.fn();
 
-    const { getByTestId, getByLabelText, getByText } =  render(
+    const { getByTestId } =  render(
       <Router>
         <EntityTypeTable 
           allEntityTypesData={getEntityTypes}
@@ -193,10 +193,10 @@ describe('EntityTypeModal Component', () => {
 
       await wait(() =>
         expect(screen.getByLabelText('delete-relationship-text')).toBeInTheDocument()
-      )
+      );
       expect(screen.getByText('Existing entity type relationships.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipWarn}-yes`));
-      expect(mockDeleteEntity).toBeCalledTimes(1)
+      expect(mockDeleteEntity).toBeCalledTimes(1);
   });
 
   test('can show confirm modal for delete steps', async () => {
@@ -205,7 +205,7 @@ describe('EntityTypeModal Component', () => {
 
     const updateMock = jest.fn();
 
-    const { getByTestId, getByLabelText, getByText } =  render(
+    const { getByTestId } =  render(
       <Router>
         <EntityTypeTable 
           allEntityTypesData={getEntityTypes}
@@ -226,16 +226,16 @@ describe('EntityTypeModal Component', () => {
 
       await wait(() =>
         expect(screen.getByLabelText('delete-step-text')).toBeInTheDocument()
-      )
+      );
       expect(screen.getByText('Entity type is used in one or more steps.')).toBeInTheDocument();
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityStepWarn}-close`));
-      expect(mockDeleteEntity).toBeCalledTimes(0)
+      expect(mockDeleteEntity).toBeCalledTimes(0);
   });
 
   test('Table can mock save an entity', async () => {
     mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
 
-    const { getByTestId, getByLabelText, getByText, debug } =  render(
+    const { getByTestId } =  render(
       <Router>
         <ModelingContext.Provider value={isModified}>  
           <EntityTypeTable 
@@ -256,7 +256,7 @@ describe('EntityTypeModal Component', () => {
 
       await wait(() =>
         expect(screen.getByLabelText('save-text')).toBeInTheDocument(),
-      )
+      );
       userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveEntity}-yes`));
       expect(mockUpdateEntityModels).toBeCalledTimes(1);
   });
@@ -285,7 +285,7 @@ describe('EntityTypeModal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('revert-text')).toBeInTheDocument(),
-    )
+    );
   });
 
   test('Table can mock delete entity with no relations and outstanding edits', async () => {
@@ -316,7 +316,7 @@ describe('EntityTypeModal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-no-relationship-edit-text')).toBeInTheDocument(),
-  )
+  );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityNoRelationshipOutstandingEditWarn}-yes`));
     expect(mockUpdateEntityModels).toBeCalledTimes(1);
   });
@@ -349,7 +349,7 @@ describe('EntityTypeModal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-relationship-edit-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}-yes`));
     expect(mockUpdateEntityModels).toBeCalledTimes(1);
   });

@@ -7,7 +7,7 @@ const sourceFormatOptions = {
     text: { label: 'TXT', color: '#1254f9'},
     binary : { label: 'BIN', color: '#444444'},
     default: {color: '#44499C'}
-}
+};
 
 const srcOptions = {
     'XML': 'xml',
@@ -15,13 +15,13 @@ const srcOptions = {
     'Delimited Text': 'csv',
     'BINARY': 'binary',
     'TEXT' : 'text'
-  }
+  };
 const tgtOptions = {
     'XML': 'xml',
     'JSON': 'json',
     'BINARY': 'binary',
     'TEXT' : 'text'
-}
+};
 
 const fieldSeparatorOptions = {
     ',' : ',',
@@ -29,7 +29,7 @@ const fieldSeparatorOptions = {
     ';' : ';',
     'Tab': '\\t',
     'Other': 'Other'
-}
+};
 
 
 export default sourceFormatOptions;
@@ -37,4 +37,4 @@ export {
     srcOptions,
     tgtOptions,
     fieldSeparatorOptions
-}
+};

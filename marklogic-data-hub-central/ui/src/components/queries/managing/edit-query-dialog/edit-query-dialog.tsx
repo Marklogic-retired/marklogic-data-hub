@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import { Modal, Form, Input, Button } from 'antd';
+import { Modal, Form, Input } from 'antd';
 import styles from './edit-query-dialog.module.scss';
 import {UserContext} from "../../../../util/user-context";
 import { MLButton } from '@marklogic/design-system';
@@ -39,12 +39,12 @@ const EditQueryDialog = (props) => {
 
     const onOk = () => {
         props.setEditModalVisibility(false);
-    }
+    };
 
     const onCancel = () => {
         setErrorMessage("");
         props.setEditModalVisibility(false);
-    }
+    };
 
     const handleChange = (event) => {
         if (event.target.id === 'name') {
@@ -66,7 +66,7 @@ const EditQueryDialog = (props) => {
                 setQueryDescription(event.target.value);
             }
         }
-    }
+    };
 
     const handleSubmit = async (event: { preventDefault: () => void; }) => {
         if (event) event.preventDefault();
@@ -87,7 +87,7 @@ const EditQueryDialog = (props) => {
             }
         }
         props.getQueries();
-    }
+    };
 
     return (
         <div>
@@ -148,7 +148,7 @@ const EditQueryDialog = (props) => {
                 </Form>
             </Modal>
         </div>
-    )
-}
+    );
+};
 
 export default EditQueryDialog;

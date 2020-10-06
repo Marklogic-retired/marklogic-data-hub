@@ -3,7 +3,7 @@ import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
 import {fireEvent, render, wait, cleanup} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import data from "../../../assets/mock-data/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
@@ -161,7 +161,7 @@ describe("Mapping Card component", () => {
 
       await wait(() => {
           fireEvent.click(getByRole("settings-mapping"));
-      })
+      });
       //set permissions without any errors and hit 'Save'
       let targetPermissions = getByPlaceholderText("Please enter target permissions");
       fireEvent.change(targetPermissions, { target: { value: 'role1,read' }});
@@ -175,7 +175,7 @@ describe("Mapping Card component", () => {
       //Open settings again
       await wait(() => {
           fireEvent.click(getByRole("settings-mapping"));
-      })
+      });
 
       expect(getByText('Batch Size')).toBeInTheDocument();
       expect(getByPlaceholderText('Please enter batch size')).toHaveValue('50');
@@ -301,7 +301,7 @@ describe("Mapping Card component", () => {
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
-      getByTestId = renderResults.getByTestId
+      getByTestId = renderResults.getByTestId;
     });
 
     //Check if the card is rendered properly
@@ -320,7 +320,7 @@ describe("Mapping Card component", () => {
     //Wait for the route to be pushed into History( which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
 
   });
 

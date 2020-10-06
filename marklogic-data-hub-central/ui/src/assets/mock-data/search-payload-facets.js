@@ -1044,6 +1044,6 @@ const searchPayloadFacets = {
       }
     ]
   }
-}
+};
 
 export default searchPayloadFacets;

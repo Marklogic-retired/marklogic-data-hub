@@ -51,4 +51,4 @@ class EntityTypeTable {
 }
 
 const entityTypeTable = new EntityTypeTable();
-export default entityTypeTable
+export default entityTypeTable;

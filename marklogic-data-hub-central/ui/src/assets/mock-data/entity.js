@@ -102,6 +102,6 @@ const exampleEntity =
         "$ref": "#/definitions/Admissions"
       }
     }
-  }
+  };
 
 export default exampleEntity;

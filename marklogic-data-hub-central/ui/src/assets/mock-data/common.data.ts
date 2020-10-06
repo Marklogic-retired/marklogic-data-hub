@@ -291,7 +291,7 @@ const mapFunctions = {
   "unparsed-text": { "category": "xpath", "signature": "unparsed-text(xs:string)" },
   "month-from-dateTime": { "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" }, "seconds-from-dateTime": { "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" },
   "concat": { "category": "xpath", "signature": "concat(xs:anyAtomicType?)" }
-}
+};
 
 const mapProps = {
   sourceData: jsonSourceData,
@@ -426,7 +426,7 @@ const viewCustom = {
     setViewCustom: jest.fn(),
     canReadWrite: false,
     customData: customData[0]
-}
+};
 
 const data = {
   data: {

@@ -1,4 +1,3 @@
-import { Tooltip } from 'antd';
 import React from 'react';
 import { MLTooltip } from '@marklogic/design-system';
 
@@ -10,7 +9,7 @@ export const getExportPreview = (response) => {
         if (index === 0) {
           let header = response.split("\n")[0].split(',');
           header.forEach(e => {
-            let prop = e.split('.')[e.split('.').length - 1]
+            let prop = e.split('.')[e.split('.').length - 1];
             tableColumns.push(
               {
                 title: prop,
@@ -23,23 +22,23 @@ export const getExportPreview = (response) => {
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis'                  }
-                  }
+                  };
                 },
                 render: (text) => <MLTooltip title={text}>{text}</MLTooltip>
               }
-            )
-          })
+            );
+          });
         } else {
           let i = 0;
           let rowObject: { [c: string]: any } = { key: index };
           let splittedRow = row.split(',');
           tableColumns.forEach(col => {
             rowObject[col['dataIndex']] = splittedRow[i++];
-          })
+          });
   
-          tableData.push(rowObject)
+          tableData.push(rowObject);
         }
-      })
+      });
     }
-    return [tableColumns, tableData]
-  }
+    return [tableColumns, tableData];
+  };

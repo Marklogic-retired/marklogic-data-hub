@@ -4,7 +4,6 @@ import { Layout } from 'antd';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import { SearchContext } from '../util/search-context';
-import { useScrollPosition } from '../hooks/use-scroll-position';
 import AsyncLoader from '../components/async-loader/async-loader';
 import Sidebar from '../components/sidebar/sidebar';
 import SearchBar from '../components/search-bar/search-bar';
@@ -14,9 +13,9 @@ import SearchResults from '../components/search-results/search-results';
 import { updateUserPreferences, createUserPreferences, getUserPreferences } from '../services/user-preferences';
 import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
 import styles from './Browse.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons'
-import Query from '../components/queries/queries'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons';
+import Query from '../components/queries/queries';
 import { AuthoritiesContext } from "../util/authorities";
 import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
@@ -26,7 +25,6 @@ import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
 
 interface Props extends RouteComponentProps<any> {
 }
-
 const Browse: React.FC<Props> = ({ location }) => {
   const { Content, Sider } = Layout;
   const componentIsMounted = useRef(true);
@@ -57,7 +55,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
-  const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
+  const [isSavedQueryUser,,] = useState<boolean>(authorityService.isSavedQueryUser());
   const [queries, setQueries] = useState<any>([]);
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
@@ -78,7 +76,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const getSearchResults = async (allEntities: string[]) => {
     try {
@@ -112,28 +110,28 @@ const Browse: React.FC<Props> = ({ location }) => {
 
         if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
           let properties = getTableProperties(response.data.selectedPropertyDefinitions);
-          setColumns(properties)
+          setColumns(properties);
         }
       }
     } catch (error) {
-      console.error('error', error)
+      console.error('error', error);
       handleError(error);
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     getEntityModel();
     initializeUserPreferences();
     return () => {
-      componentIsMounted.current = false
-    }
-  }, [])  
+      componentIsMounted.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
-    getSearchResults(entities);
+      getSearchResults(entities);
     }
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
@@ -144,7 +142,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         location.state['start'],
         location.state['searchFacets'],
         location.state['query'],
-        location.state['sortOrder'])
+        location.state['sortOrder']);
       location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
     else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
@@ -166,9 +164,9 @@ const Browse: React.FC<Props> = ({ location }) => {
       zeroState: true,
       manageQueryModal: false,
       sortOrder: []
-    }
+    };
     applySaveQuery(options);
-  }
+  };
 
   const initializeUserPreferences = async () => {
     if (location.state) {
@@ -192,8 +190,8 @@ const Browse: React.FC<Props> = ({ location }) => {
             zeroState: parsedPreferences.zeroState || false,
             manageQueryModal: false,
             sortOrder: parsedPreferences.sortOrder || []
-          }
-          await setPageQueryOptions(options)
+          };
+          await setPageQueryOptions(options);
           if (parsedPreferences.hasOwnProperty('tableView')) {
             toggleTableView(parsedPreferences.tableView);
           }
@@ -202,7 +200,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     }
-  }
+  };
 
   const setUserPreferences = (view: string = '') => {
     let preferencesObject = {
@@ -220,9 +218,9 @@ const Browse: React.FC<Props> = ({ location }) => {
       propertiesToDisplay: searchOptions.selectedTableProperties,
       zeroState: searchOptions.zeroState,
       sortOrder: searchOptions.sortOrder
-    }
+    };
     updateUserPreferences(user.name, preferencesObject);
-  }
+  };
 
   const handleUserPreferences = () => {
     setUserPreferences();
@@ -237,19 +235,19 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   const onCollapse = () => {
     setCollapsed(!collapse);
-  }
+  };
 
   useLayoutEffect(() => {
     if (endScroll && data.length) {
       if (resultsRef.current) {
-        resultsRef.current['style']['boxShadow'] = '0px 4px 4px -4px #999, 0px -4px 4px -4px #999'
+        resultsRef.current['style']['boxShadow'] = '0px 4px 4px -4px #999, 0px -4px 4px -4px #999';
       }
     } else if (!endScroll) {
       if (resultsRef.current) {
-        resultsRef.current['style']['boxShadow'] = 'none'
+        resultsRef.current['style']['boxShadow'] = 'none';
       }
     }
-  }, [endScroll])
+  }, [endScroll]);
 
   const onResultScroll = (event) => {
     if (resultsRef && resultsRef.current) {
@@ -260,15 +258,15 @@ const Browse: React.FC<Props> = ({ location }) => {
         setEndScroll(false);
       }
     }
-  }
+  };
 
   const updateSelectedFacets = (facets) => {
     setSelectedFacets(facets);
-  }
+  };
 
   const updateCheckedFacets = (facets) => {
     setGreyFacets(facets);
-  }
+  };
 
   const handleViewChange = (view) => {
     let tableView = '';
@@ -282,9 +280,9 @@ const Browse: React.FC<Props> = ({ location }) => {
     setUserPreferences(tableView);
 
     if (resultsRef && resultsRef.current) {
-      resultsRef.current['style']['boxShadow'] = 'none'
+      resultsRef.current['style']['boxShadow'] = 'none';
     }
-  }
+  };
 
   if (searchOptions.zeroState) {
     return (
@@ -297,11 +295,11 @@ const Browse: React.FC<Props> = ({ location }) => {
     return (
       <Layout className={styles.layout}>
         <Sider className={styles.sideBarFacets}
-          trigger={null}
-          collapsedWidth={0}
-          collapsible
-          collapsed={collapse}
-          width={'20vw'}
+               trigger={null}
+               collapsedWidth={0}
+               collapsible
+               collapsed={collapse}
+               width={'20vw'}
         >
           <Sidebar
             facets={facets}
@@ -367,16 +365,16 @@ const Browse: React.FC<Props> = ({ location }) => {
                   </div>
                 </div>
                 <Query queries={queries}
-                  setQueries={setQueries}
-                  isSavedQueryUser={isSavedQueryUser}
-                  columns={columns}
-                  setIsLoading={setIsLoading}
-                  entities={entities}
-                  selectedFacets={selectedFacets}
-                  greyFacets={greyFacets}
-                  isColumnSelectorTouched={isColumnSelectorTouched}
-                  setColumnSelectorTouched={setColumnSelectorTouched}
-                  entityDefArray={entityDefArray}
+                       setQueries={setQueries}
+                       isSavedQueryUser={isSavedQueryUser}
+                       columns={columns}
+                       setIsLoading={setIsLoading}
+                       entities={entities}
+                       selectedFacets={selectedFacets}
+                       greyFacets={greyFacets}
+                       isColumnSelectorTouched={isColumnSelectorTouched}
+                       setColumnSelectorTouched={setColumnSelectorTouched}
+                       entityDefArray={entityDefArray}
                 />
               </div>
               <div className={styles.viewContainer} >
@@ -392,6 +390,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                         selectedEntities={searchOptions.entityTypeIds}
                         setColumnSelectorTouched={setColumnSelectorTouched}
                         tableView={tableView}
+                        hasStructured={false}
                       />
                     </div>
                     : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
@@ -420,6 +419,6 @@ const Browse: React.FC<Props> = ({ location }) => {
       </Layout>
     );
   }
-}
+};
 
 export default withRouter(Browse);

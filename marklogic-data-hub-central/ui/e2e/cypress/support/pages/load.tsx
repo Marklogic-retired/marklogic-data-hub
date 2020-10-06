@@ -12,35 +12,35 @@ class LoadPage {
      * @param type - accepts `list` or `card`
      */
     addNewButton(type: string) {
-        return cy.findByLabelText(`add-new-${type}`)
+        return cy.findByLabelText(`add-new-${type}`);
     }
 
     stepName(stepName: string) {
         return cy.findByText(stepName);
     }
 
-    stepDescription(stepName: string) {
-
-    }
-
-    stepSourceFormat(stepName: string) {
-
-    }
-
-    stepTargetFormat(stepName: string) {
-
-    }
-
-    stepLastUpdated(stepName: string) {
-
-    }
-
-    columnSort(columnName: string) {
-
-    }
+    // stepDescription(stepName: string) {
+    //
+    // }
+    //
+    // stepSourceFormat(stepName: string) {
+    //
+    // }
+    //
+    // stepTargetFormat(stepName: string) {
+    //
+    // }
+    //
+    // stepLastUpdated(stepName: string) {
+    //
+    // }
+    //
+    // columnSort(columnName: string) {
+    //
+    // }
 
     closeModal() {
-        return cy.get('[aria-label="icon: close"]')
+        return cy.get('[aria-label="icon: close"]');
     }
 
     /**

@@ -1,4 +1,4 @@
-import { Menu, Select } from "antd"
+import { Select } from "antd";
 import React, { useState, useEffect, useRef, useCallback, CSSProperties } from 'react';
 import styles from './dropdownWithSearch.module.scss';
 import arrayIcon from '../../../assets/icon_array.png';
@@ -38,7 +38,7 @@ const DropDownWithSearch = (props) => {
             return maxStringLengthInPx.toString() + 'px';
         }
         return minWidth.toString() + 'px';
-    }
+    };
 
     // truncates and adds ellipsis for dropdown text
     const formatDropdownText = (text, index) => {
@@ -50,17 +50,17 @@ const DropDownWithSearch = (props) => {
             }
         }
         return text;
-    }
+    };
 
     //CSS Styles for the select list
     const dropDownWidth = calcDropdownWidth();
     const listStyle:CSSProperties = {
         width: dropDownWidth,
-    }
+    };
 
     const dropDownStyle: CSSProperties = {
         maxHeight: '40vh',
-    }
+    };
 
     useEffect(() => {
         setSelList(prev => props.setDisplaySelectList);
@@ -68,7 +68,7 @@ const DropDownWithSearch = (props) => {
         if(props.setDisplaySelectList){
             setEventValid(prev => true);
         }
-    },[props.setDisplaySelectList,props.setDisplayMenu])
+    },[props.setDisplaySelectList,props.setDisplayMenu]);
 
     //Handling click event outside the Dropdown Menu
     useEffect(() => {
@@ -77,7 +77,7 @@ const DropDownWithSearch = (props) => {
         }
 
         return () => {
-            document.removeEventListener('click', handleOuterClick)
+            document.removeEventListener('click', handleOuterClick);
         };
     });
 
@@ -108,6 +108,6 @@ const DropDownWithSearch = (props) => {
                </Select>  }
         </div>
     );
-}
+};
 
 export default DropDownWithSearch;

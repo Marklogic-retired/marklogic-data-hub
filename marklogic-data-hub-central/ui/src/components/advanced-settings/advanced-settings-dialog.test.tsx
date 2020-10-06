@@ -20,7 +20,7 @@ describe('Advanced Step Settings dialog', () => {
   });
 
   test('Verify settings for Load', async () => {
-    const { getByText, getAllByText, getAllByLabelText, queryByText } = render(
+    const { getByText, getAllByText, queryByText } = render(
       <AdvancedSettingsDialog {...data.advancedLoad} />
     );
 
@@ -149,7 +149,7 @@ describe('Advanced Step Settings dialog', () => {
   });
 
   test('Verify form fields can be input/selected', async () => {
-    let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText, debug;
+    let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
         <AdvancedSettingsDialog {...data.advancedMapping} />
@@ -160,7 +160,6 @@ describe('Advanced Step Settings dialog', () => {
       getByTestId = renderResults.getByTestId;
       getAllByTestId = renderResults.getAllByTestId;
       getByPlaceholderText = renderResults.getByPlaceholderText;
-      debug = renderResults.debug;
     });
 
     fireEvent.click(getByLabelText('sourceDatabase-select'));
@@ -407,8 +406,8 @@ describe('Advanced Step Settings dialog', () => {
       'targetFormat', 'provGranularity','validateEntity', 'batchSize', 'headers', 'processors', 'customHook'];
     tips.forEach(async (tip, i) => {
       fireEvent.mouseOver(tipIcons[i]);
-      await waitForElement(() => getByText(AdvancedSettings[tip]))
-    })
+      await waitForElement(() => getByText(AdvancedSettings[tip]));
+    });
   });
 
 });

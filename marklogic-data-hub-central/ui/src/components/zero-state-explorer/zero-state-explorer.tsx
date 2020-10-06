@@ -32,17 +32,17 @@ const ZeroStateExplorer = (props) => {
       zeroState: false,
       manageQueryModal: false,
       sortOrder: []
-  }
+  };
   applySaveQuery(options);
-  }
+  };
 
   const handleOptionSelect = (option: any) => {
     setDropdownValue(option);
-  }
+  };
 
   const onChange = (e) => {
     setSearchQuery(e.target.value);
-  }
+  };
 
   const entityMenu = (
     <Select
@@ -57,7 +57,7 @@ const ZeroStateExplorer = (props) => {
         dropdownOptions.map((entity, index) => {
           return <Option key={index} value={entity}>
             {entity}
-          </Option>
+          </Option>;
         })
       }
     </Select>
@@ -75,16 +75,16 @@ const ZeroStateExplorer = (props) => {
           zeroState: false,
           manageQueryModal: false,
           sortOrder: query.savedQuery.sortOrder
-        }
+        };
         applySaveQuery(options);
       }
-    })
+    });
   };
 
   const onViewChange = (val) => {
     setView(val);
-    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false)
-}
+    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false);
+};
 
   return (
     <div id="zero-state-explorer" className={styles.container} >
@@ -192,6 +192,6 @@ const ZeroStateExplorer = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default ZeroStateExplorer;

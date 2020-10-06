@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {fireEvent, render} from '@testing-library/react';
 
 import EntityTiles from './entity-tiles';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import data from "../../assets/mock-data/flows.data";
 import {act} from "react-dom/test-utils";
 
@@ -26,7 +26,7 @@ describe("Entity Tiles component", () => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
   });
 
   afterEach(() => {
@@ -41,7 +41,7 @@ describe("Entity Tiles component", () => {
       });
       let flows = [];
       let [canReadMatchMerge, canWriteMatchMerge,canWriteMapping, canReadMapping] = [true, false, false, false];
-      let queryAllByText, getByText;
+      let queryAllByText;
       await act(async () => {
           const renderResults = render(
               <Router>
@@ -58,7 +58,6 @@ describe("Entity Tiles component", () => {
                       addStepToNew={jest.fn}/>
               </Router>,
           );
-          getByText = renderResults.getByText;
           queryAllByText = renderResults.queryAllByText;
       });
       //await fireEvent.click(getByText('Customer'));
@@ -151,4 +150,4 @@ describe("Entity Tiles component", () => {
       //Custom card 'customXML' should be selected by default
       expect(getByText('customXML')).toBeInTheDocument();
   });
-})
+});

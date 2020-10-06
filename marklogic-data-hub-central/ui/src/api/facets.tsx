@@ -10,7 +10,7 @@ export const rangeFacet = async (props) => {
       "propertyPath": props.propertyPath
     }
   });
-}
+};
 
 export const stringSearch = async (data) => {
     return await axios({
@@ -18,4 +18,4 @@ export const stringSearch = async (data) => {
         url: `/api/entitySearch/facet-values`,
         data: data
     });
-}
+};

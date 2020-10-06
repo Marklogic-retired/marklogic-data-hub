@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { mount } from 'enzyme';
 import SearchResult from './search-result';
 import { entityFromJSON, entityParser } from '../../util/data-conversion';
@@ -21,7 +21,7 @@ describe("Search Result component", () => {
             tableView={false}
           />
         </Router>
-      )
+      );
     });
 
     it('should render entity name,primary key,snippet info', () => {
@@ -47,4 +47,4 @@ describe("Search Result component", () => {
   });
 
     // TODO Add more test cases for XML, with and without Primary key defined
-})
+});

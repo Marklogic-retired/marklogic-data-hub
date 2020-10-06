@@ -113,4 +113,4 @@ class SourceToEntityMap {
 }
 
 const sourceToEntityMap = new SourceToEntityMap();
-export default sourceToEntityMap
+export default sourceToEntityMap;

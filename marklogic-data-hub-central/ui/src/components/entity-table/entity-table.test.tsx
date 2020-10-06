@@ -17,7 +17,7 @@ describe("Entity Table component", () => {
           lastHarmonized={latestJobs}
         />
       </Router>,
-    )
+    );
     // Check for Entity Column
     expect(getByTestId('OrderDetail')).toBeInTheDocument();
     expect(getByTestId('CustomerType')).toBeInTheDocument();
@@ -48,10 +48,10 @@ describe("Entity Table component", () => {
           lastHarmonized={[]}
         />
       </Router>,
-    )
+    );
     // Check for Empty Table
     expect(getByText(/Entity Name/i)).toBeInTheDocument();
     expect(getByText(/Documents/i)).toBeInTheDocument();
     expect(getByText(/No Data/i)).toBeInTheDocument();
   });
-})
+});

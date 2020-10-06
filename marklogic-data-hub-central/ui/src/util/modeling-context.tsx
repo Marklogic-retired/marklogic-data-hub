@@ -9,7 +9,7 @@ const DEFAULT_MODELING_OPTIONS = {
   isModified: false,
   modifiedEntitiesArray: [],
   entityPropertiesNamesArray: []
-}
+};
 
 export interface ModelingContextInterface {
   modelingOptions: ModelingOptionsInterface;
@@ -36,12 +36,12 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
   const [modelingOptions, setModelingOptions] = useState<ModelingOptionsInterface>(DEFAULT_MODELING_OPTIONS);
 
   const setEntityTypeNamesArray = (entityTypeNamesArray: any[]) => {
-    setModelingOptions({ ...modelingOptions, entityTypeNamesArray })
-  }
+    setModelingOptions({ ...modelingOptions, entityTypeNamesArray });
+  };
 
   const toggleIsModified = (isModified: boolean) => {
-    setModelingOptions({ ...modelingOptions, isModified })
-  }
+    setModelingOptions({ ...modelingOptions, isModified });
+  };
 
   const updateEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
@@ -51,21 +51,21 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     } else {
       newModifiedEntitiesArray.push(entityModified);
     }
-    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: true })
-  }
+    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: true });
+  };
 
   const removeEntityModified = (entityModified: EntityModified) => {
     let newModifiedEntitiesArray = [...modelingOptions.modifiedEntitiesArray];
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
       let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
       newModifiedEntitiesArray.splice(index, 1);
-      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0 })
+      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0 });
     }
-  }
+  };
 
   const clearEntityModified = () => {
-    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [], isModified: false })
-  }
+    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [], isModified: false });
+  };
 
   const setEntityPropertiesNamesArray = (entityDefinitionsArray: any[]) => {
     let entityPropertiesNamesArray: string[] = [];
@@ -77,8 +77,8 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
       });
     });
 
-    setModelingOptions({ ...modelingOptions, entityPropertiesNamesArray })
-  }
+    setModelingOptions({ ...modelingOptions, entityPropertiesNamesArray });
+  };
 
   return (
     <ModelingContext.Provider value={{
@@ -92,7 +92,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     }}>
       {children}
     </ModelingContext.Provider>
-  )
-}
+  );
+};
 
 export default ModelingProvider;

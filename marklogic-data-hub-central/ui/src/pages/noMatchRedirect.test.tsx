@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render} from "@testing-library/react";
-import { createMemoryHistory } from 'history'
-const history = createMemoryHistory()
+import { createMemoryHistory } from 'history';
+const history = createMemoryHistory();
 import NoMatchRedirect from './noMatchRedirect';
 import {Router} from "react-router";
 import {AuthoritiesContext} from "../util/authorities";

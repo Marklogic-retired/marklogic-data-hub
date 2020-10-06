@@ -1,9 +1,7 @@
 /// <reference types="cypress"/>
 
-import viewPage from '../../support/pages/view';
 import browsePage from '../../support/pages/browse';
 import detailPage from '../../support/pages/detail';
-import homePage from "../../support/pages/home";
 import { Application } from '../../support/application.config';
 import {toolbar} from "../../support/components/common";
 import 'cypress-wait-until';
@@ -29,7 +27,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
     browsePage.getGreySelectedFacets('mapCustomersXML').should('exist');
     browsePage.getFacetApplyButton().click();
-    browsePage.getTotalDocuments().should('be.gte', 5)
+    browsePage.getTotalDocuments().should('be.gte', 5);
     browsePage.getDocuments().each((item, i) => {
       browsePage.getDocumentEntityName(i).should('exist');
       browsePage.getDocumentPKey(i).should('exist');
@@ -38,12 +36,12 @@ describe('xml scenario for snippet view on browse documents page', () => {
       browsePage.getDocumentCreatedOn(i).should('exist');
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
-    })
+    });
 
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
   });
 
   it('apply facet search and verify docs, hub/entity properties', () => {
@@ -95,8 +93,8 @@ describe('xml scenario for snippet view on browse documents page', () => {
     browsePage.getDocumentSnippet(0).should('exist');
     browsePage.getDocumentCreatedOn(0).should('exist');
     browsePage.getDocumentSources(0).should('exist');
-    browsePage.getDocumentFileType(0).should('exist')
-    browsePage.getDocumentFileType(0).should('be.equal', 'xml')
+    browsePage.getDocumentFileType(0).should('exist');
+    browsePage.getDocumentFileType(0).should('be.equal', 'xml');
   });
 
   it('verify instance view of the document', () => {
@@ -143,7 +141,7 @@ describe('xml scenario for table on browse documents page', () => {
     cy.waitUntil(() => browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML')).click();
     browsePage.getGreySelectedFacets('mapCustomersXML').should('exist');
     browsePage.getFacetApplyButton().click();
-    browsePage.getTotalDocuments().should('be.gte', 5)
+    browsePage.getTotalDocuments().should('be.gte', 5);
     //check table rows
     browsePage.getTableRows().should('have.length', 5);
     //check table columns

@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Modal, Form, Input, Radio, Button } from 'antd';
+import React, { useState, useContext } from 'react';
+import { Modal, Form, Input, Radio } from 'antd';
 import { SearchContext } from "../../../../util/search-context";
 import styles from './save-query-modal.module.scss';
 import { UserContext } from "../../../../util/user-context";
@@ -52,9 +52,9 @@ const SaveQueryModal: React.FC<Props> = (props) => {
 
     const onCancel = () => {
         props.setSaveModalVisibility();
-    }
+    };
     const onOk = async () => {
-        console.log('ON OKAY')
+        console.log('ON OKAY');
         let facets = { ...searchOptions.selectedFacets };
         let selectedFacets = facets;
         let greyedFacets = greyedOptions.selectedFacets;
@@ -86,7 +86,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 zeroState: searchOptions.zeroState,
                 manageQueryModal: searchOptions.manageQueryModal,
                 sortOrder: searchOptions?.sortOrder || []
-            }
+            };
             applySaveQuery(options);
             props.setCurrentQueryName(queryName);
             props.setCurrentQueryDescription(queryDescription);
@@ -101,7 +101,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                     zeroState: true,
                     manageQueryModal: false,
                     sortOrder: []
-                }
+                };
                 applySaveQuery(options);
             }
             props.setColumnSelectorTouched(false);
@@ -117,7 +117,7 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 handleError(error);
             }
         }
-    }
+    };
 
     const handleChange = (event) => {
         if (event.target.id === 'save-query-name') {
@@ -126,11 +126,11 @@ const SaveQueryModal: React.FC<Props> = (props) => {
         if (event.target.id === 'save-query-description') {
             setQueryDescription(event.target.value);
         }
-    }
+    };
 
     const unAppliedFacets = (e) => {
-        setRadioOptionClicked(e.target.value)
-    }
+        setRadioOptionClicked(e.target.value);
+    };
 
 
     return (
@@ -199,8 +199,8 @@ const SaveQueryModal: React.FC<Props> = (props) => {
                 </Form.Item>
             </Form>
         </Modal>
-    )
-}
+    );
+};
 
 export default SaveQueryModal;
 

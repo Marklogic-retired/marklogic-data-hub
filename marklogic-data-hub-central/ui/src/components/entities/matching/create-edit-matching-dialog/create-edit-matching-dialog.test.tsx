@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, fireEvent, cleanup, wait } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import CreateEditMatchingDialog from './create-edit-matching-dialog';
 import data from "../../../../assets/mock-data/matching.data";
 
 describe('Create/Edit Matching artifact component', () => {
 
-    afterEach(cleanup)
+    afterEach(cleanup);
 
     test('Verify Edit Matching dialog renders correctly for a read only user', () => {
         const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMatchingDialog {...data.editMatching} canReadOnly={true} canReadWrite={false}/>);

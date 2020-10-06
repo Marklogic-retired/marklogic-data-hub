@@ -28,7 +28,7 @@ describe("Search Result view component", () => {
         selectedTableProperties: [],
         view: null,
         sortOrder: []
-    }
+    };
 
     test('Source and instance tooltips render', async () => {
         const { getByText, getByTestId } = render(
@@ -63,9 +63,9 @@ describe("Search Result view component", () => {
                 </SearchContext.Provider>
         );
         expect(getByTestId('expandable-icon')).toBeInTheDocument();
-        expect(container.querySelector('[data-testid=expandable-icon] > svg')).not.toHaveStyle('transform: rotate(90deg);')
+        expect(container.querySelector('[data-testid=expandable-icon] > svg')).not.toHaveStyle('transform: rotate(90deg);');
         fireEvent.click(getByTestId('expandable-icon'));
-        expect(container.querySelector('[data-testid=expandable-icon] > svg')).toHaveStyle('transform: rotate(90deg);')
+        expect(container.querySelector('[data-testid=expandable-icon] > svg')).toHaveStyle('transform: rotate(90deg);');
 
         rerender(
             <SearchContext.Provider value={{searchOptions: { ...defaultSearchOptions, pageNumber: 2 }}}>
@@ -77,8 +77,8 @@ describe("Search Result view component", () => {
                     />
                 </Router>
             </SearchContext.Provider>
-            )
+            );
 
-        expect(container.querySelector('[data-testid=expandable-icon] > svg')).not.toHaveStyle('transform: rotate(90deg);')
+        expect(container.querySelector('[data-testid=expandable-icon] > svg')).not.toHaveStyle('transform: rotate(90deg);');
     });
-})
+});

@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render, wait } from "@testing-library/react";
 import EditQueryDetails from "./edit-query-details";
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import userEvent from "@testing-library/user-event";
 import {putQueryResponse} from "../../../../assets/mock-data/query";
 import {duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/query";
@@ -24,7 +24,7 @@ describe("<EditQueryDetails/>", () => {
                 "searchText": "",
                 "selectedFacets": ""
             }
-        }}
+        }};
 
     test("Verify Edit Query Detail modal fields are rendered and can take input", async () => {
         const { getByPlaceholderText } = render(<EditQueryDetails
@@ -34,7 +34,7 @@ describe("<EditQueryDetails/>", () => {
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
             setCurrentQueryDescription={jest.fn()}
-        />)
+        />);
         queryField = getByPlaceholderText("Enter new query name");
         fireEvent.change(queryField, { target: {value: 'edit new query'} });
         queryDescription = getByPlaceholderText("Enter new query description");
@@ -53,7 +53,7 @@ describe("<EditQueryDetails/>", () => {
             setCurrentQueryName={jest.fn()}
             currentQueryDescription={''}
             setCurrentQueryDescription={jest.fn()}
-        />)
+        />);
         queryField = getByPlaceholderText("Enter new query name");
         fireEvent.change(queryField, { target: {value: 'edit new query'} });
         queryDescription = getByPlaceholderText("Enter new query description");
@@ -75,7 +75,7 @@ describe("<EditQueryDetails/>", () => {
                         "searchText": "",
                         "selectedFacets": ""
                     }
-                }}
+                }};
         expect(axiosMock.put).toHaveBeenCalledWith(url, payload);
         expect(axiosMock.put).toHaveBeenCalledTimes(1);
     });

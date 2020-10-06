@@ -2,7 +2,6 @@ import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
 import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/entity-search";
 import ResultsTabularView from "./results-tabular-view";
-import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router } from 'react-router-dom';
 import { validateTableRow } from '../../util/test-utils';
 
@@ -20,7 +19,7 @@ describe("Results Table view component", () => {
                     selectedEntities={['Customer']}
                 />
                 </Router>
-        )
+        );
         // Check table column headers are rendered
         expect(getByText('customerId')).toBeInTheDocument();
         expect(getByText('name')).toBeInTheDocument();
@@ -42,12 +41,12 @@ describe("Results Table view component", () => {
         expect(getByText('null')).toBeInTheDocument();
 
         //Check if the tooltip on 'Detail on separate page' icon works fine.
-        fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show the processed data'))))
+        fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'));
+        await(waitForElement(() => (getByText('Show the processed data'))));
 
         //Check if the tooltip on 'source on separate page' icon works fine.
-        fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show the complete JSON'))))
+        fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'));
+        await(waitForElement(() => (getByText('Show the complete JSON'))));
     });
 
     test('Result table with no data renders', () => {
@@ -62,7 +61,7 @@ describe("Results Table view component", () => {
                     hasStructured={false}
                 />
                 </Router>
-        )
+        );
         // Check for Empty Table
         expect(getByText(/No Data/i)).toBeInTheDocument();
     });
@@ -80,7 +79,7 @@ describe("Results Table view component", () => {
                     entityDefArray={entityDefArray}
                 />
             </Router>
-        )
+        );
 
         expect(queryByText('Carmdin')).toBeNull();
         expect(queryByText('Carm din')).toBeNull();
@@ -90,8 +89,8 @@ describe("Results Table view component", () => {
         expect(getByText('Carm')).toContainHTML('style="text-overflow: ellipsis; overflow: hidden;"');
         expect(getByText('din')).toContainHTML('class="ml-tooltip-container"');
         expect(getByText('din')).toContainHTML('style="text-overflow: ellipsis; overflow: hidden;"');
-        expect(getByText('Carm').closest('td')).toEqual(getByText('din').closest('td'))
-        expect(getByText('Carm').closest('td')).toEqual(getByText('din').closest('td'))
+        expect(getByText('Carm').closest('td')).toEqual(getByText('din').closest('td'));
+        expect(getByText('Carm').closest('td')).toEqual(getByText('din').closest('td'));
     });
 
     test('Results table with data renders when All Entities option is selected', async () => {
@@ -107,7 +106,7 @@ describe("Results Table view component", () => {
                     selectedEntities={[]}
                 />
                 </Router>
-        )
+        );
 
         // Check table column headers are rendered
         expect(getByText('Identifier')).toBeInTheDocument();
@@ -125,12 +124,12 @@ describe("Results Table view component", () => {
         expect(getByTestId('101-sourceOnSeparatePage')).toBeInTheDocument();
 
         //Check if the tooltip on 'Detail on separate page' icon works fine.
-        fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show the processed data'))))
+        fireEvent.mouseOver(getByTestId('101-detailOnSeparatePage'));
+        await(waitForElement(() => (getByText('Show the processed data'))));
 
         //Check if the tooltip on 'source on separate page' icon works fine.
-        fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'))
-        await(waitForElement(() => (getByText('Show the complete JSON'))))
+        fireEvent.mouseOver(getByTestId('101-sourceOnSeparatePage'));
+        await(waitForElement(() => (getByText('Show the complete JSON'))));
 
     });
 
@@ -147,7 +146,7 @@ describe("Results Table view component", () => {
                     selectedEntities={['Customer']}
                 />
             </Router>
-        )
+        );
 
         // Check table column headers are rendered
         expect(getByText('customerId')).toBeInTheDocument();
@@ -208,4 +207,4 @@ describe("Results Table view component", () => {
         validateTableRow(resultsTable, urisBasedOnDescendingNickNames);
 
     });
-})
+});

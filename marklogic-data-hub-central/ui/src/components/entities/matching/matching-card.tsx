@@ -1,9 +1,8 @@
-import React, { CSSProperties, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './matching-card.module.scss';
-import {Card, Icon, Tooltip, Row, Col, Modal} from 'antd';
+import {Card, Icon, Row, Col, Modal} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
-import sourceFormatOptions from '../../../config/formats.config';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
 import { MLTooltip } from '@marklogic/design-system';
@@ -28,46 +27,33 @@ const MatchingCard: React.FC<Props> = (props) => {
     const OpenAddNewDialog = () => {
         setTitle('New Matching');
         setNewMatching(true);
-    }
+    };
 
     const OpenEditStepDialog = (index) => {
         setTitle('Edit Matching');
         setMatchingData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewMatching(true);
-    }
+    };
 
     const OpenMatchingSettingsDialog = (index) => {
-        console.log('Open settings')
-    }
+        console.log('Open settings');
+    };
 
-    //Custom CSS for source Format
-    const sourceFormatStyle = (sourceFmt) => {
-        let customStyles: CSSProperties = {
-            float: 'right',
-            backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
-            fontSize: '12px',
-            borderRadius: '50%',
-            textAlign: 'left',
-            color: '#ffffff',
-            padding: '5px'
-        }
-        return customStyles;
-    }
 
 
     const handleCardDelete = (name) => {
         setDialogVisible(true);
         setLoadArtifactName(name);
-      }
+      };
 
       const onOk = (name) => {
-        props.deleteMatchingArtifact(name)
+        props.deleteMatchingArtifact(name);
         setDialogVisible(false);
-      }
+      };
 
       const onCancel = () => {
         setDialogVisible(false);
-      }
+      };
 
     const deleteConfirmation = <Modal
         visible={dialogVisible}
@@ -106,7 +92,6 @@ const MatchingCard: React.FC<Props> = (props) => {
                     >
                         <div className={styles.formatFileContainer}>
                             <span className={styles.matchingNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                            {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
 
                         </div><br />
                         {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
@@ -129,6 +114,6 @@ const MatchingCard: React.FC<Props> = (props) => {
         </div>
     );
 
-}
+};
 
 export default MatchingCard;

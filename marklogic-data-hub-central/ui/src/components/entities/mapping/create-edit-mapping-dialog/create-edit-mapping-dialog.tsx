@@ -1,8 +1,7 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio } from "antd";
+import { Modal, Form, Input, Icon, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './create-edit-mapping-dialog.module.scss';
 import { NewMapTooltips } from '../../../../config/tooltips.config';
-import Axios from "axios";
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 
 
@@ -12,7 +11,7 @@ const CreateEditMappingDialog = (props) => {
   const [description, setDescription] = useState(props.mapData && props.mapData != {} ? props.mapData.description : '');
   //const [collections, setCollections] = useState<any[]>([]);
   const [collections, setCollections] = useState('');
-  const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
+  const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection');
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
   const [isQuerySelected, setIsQuerySelected] = useState(false);
   //To check submit validity
@@ -28,7 +27,6 @@ const CreateEditMappingDialog = (props) => {
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const colList = ['Provider', 'Claims', 'Students', 'Customer']; //To be removed once integrated with EndPoints.
 
   useEffect(() => {
     if (props.mapData && JSON.stringify(props.mapData) != JSON.stringify({}) && props.title === 'Edit Mapping Step') {
@@ -63,7 +61,7 @@ const CreateEditMappingDialog = (props) => {
       setMapNameTouched(false);
       setCollections('');
       setDescription('');
-      setSrcQuery('')
+      setSrcQuery('');
       setIsNameDuplicate(false);
     }
 
@@ -78,7 +76,7 @@ const CreateEditMappingDialog = (props) => {
       setCollectionsTouched(false);
       setTobeDisabled(false);
       setIsNameDuplicate(false);
-    })
+    });
 
   }, [props.mapData, props.title, props.newMap]);
 
@@ -90,7 +88,7 @@ const CreateEditMappingDialog = (props) => {
       props.setNewMap(false);
 
     }
-  }
+  };
 
   const checkDeleteOpenEligibility = () => {
     if (!isMapNameTouched
@@ -103,20 +101,20 @@ const CreateEditMappingDialog = (props) => {
     } else {
       return true;
     }
-  }
+  };
 
   const onOk = () => {
     props.setNewMap(false);
-  }
+  };
 
   const onDelOk = () => {
     props.setNewMap(false);
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const onDelCancel = () => {
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const deleteConfirmation = <Modal
     visible={deleteDialogVisible}
@@ -146,7 +144,7 @@ const CreateEditMappingDialog = (props) => {
         description: description,
         selectedSource: selectedSource,
         sourceQuery: sQuery
-      }
+      };
     } else {
         setIsQuerySelected(true); //to reset collection name
         dataPayload = {
@@ -155,7 +153,7 @@ const CreateEditMappingDialog = (props) => {
         description: description,
         selectedSource: selectedSource,
         sourceQuery: srcQuery
-      }
+      };
     }
 
 
@@ -169,11 +167,11 @@ const CreateEditMappingDialog = (props) => {
       props.setNewMap(false);
     } else if (status.code === 400) {
 
-      setErrorMessage(status.message)
+      setErrorMessage(status.message);
       setIsNameDuplicate(true);
       setIsValid(false);
     }
-  }
+  };
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -252,7 +250,7 @@ const CreateEditMappingDialog = (props) => {
         }
       }
     }
-  }
+  };
 /* // Handling multiple collections in a select tags list - Deprecated
   const handleCollList = (value) => {
     if (value === ' ') {
@@ -302,7 +300,7 @@ const CreateEditMappingDialog = (props) => {
         }
       }
     }
-  }
+  };
 
 
   const formItemLayout = {
@@ -320,7 +318,6 @@ const CreateEditMappingDialog = (props) => {
     { label: 'Collection', value: 'collection' },
     { label: 'Query', value: 'query' }
   ];
-  const collectionsList = colList.map(d => <Select.Option key={d}>{d}</Select.Option>);
   const { TextArea } = Input;
 
   return (<Modal visible={props.newMap}
@@ -423,8 +420,8 @@ const CreateEditMappingDialog = (props) => {
       </Form>
     </div>
     {deleteConfirmation}
-  </Modal>)
-}
+  </Modal>);
+};
 
 export default CreateEditMappingDialog;
 

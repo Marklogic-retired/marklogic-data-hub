@@ -19,4 +19,4 @@ describe("Search Results component", () => {
   test("component renders", () => {
     expect(wrapper.exists('#search-results')).toBe(true);
   });
-})
+});
