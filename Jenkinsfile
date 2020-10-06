@@ -118,12 +118,12 @@ def dhfWinTests(String mlVersion, String type){
         	        ''').trim().split();
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat clean'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat clean'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
         junit '**/TEST-*.xml'
     }
 }
@@ -972,12 +972,12 @@ pipeline{
                                 	        ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat clean'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat clean'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
                                 junit '**/TEST-*.xml'
                             }
         			}
