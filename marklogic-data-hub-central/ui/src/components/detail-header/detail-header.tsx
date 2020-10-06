@@ -9,7 +9,7 @@ interface Props {
   primaryKey: string;
   uri: string;
   sources: any;
-};
+}
 
 const DetailHeader: React.FC<Props> = (props) => {
   const { Text } = Typography;
@@ -52,7 +52,7 @@ const DetailHeader: React.FC<Props> = (props) => {
               Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
                 if (props.primaryKey.toString() === props.document.envelope.instance[instance][key].toString()) {
                   primaryKey = key;
-                  id = props.document.envelope.instance[instance][key]
+                  id = props.document.envelope.instance[instance][key];
                 }
               });
             }
@@ -153,7 +153,7 @@ const DetailHeader: React.FC<Props> = (props) => {
         }
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default DetailHeader;

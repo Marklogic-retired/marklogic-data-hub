@@ -87,15 +87,15 @@ class CuratePage {
     }
 
     saveEdit() {
-        return cy.findByTestId('mapping-dialog-save')
+        return cy.findByTestId('mapping-dialog-save');
     }
 
     cancelEdit() {
-        return cy.findByTestId('mapping-dialog-cancel')
+        return cy.findByTestId('mapping-dialog-cancel');
     }
 
     deleteMappingStepButton(stepName: string) {
-        return cy.findByTestId(`${stepName}-delete`)
+        return cy.findByTestId(`${stepName}-delete`);
     }
 
     deleteDisabled() {

@@ -131,4 +131,4 @@ class AdvancedSettingsDialog {
 }
 
 const advancedSettingsDialog = new AdvancedSettingsDialog();
-export default advancedSettingsDialog
+export default advancedSettingsDialog;

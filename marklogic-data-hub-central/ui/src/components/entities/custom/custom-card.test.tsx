@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import {fireEvent, render, wait, waitForElement} from '@testing-library/react';
 import CustomCard from './custom-card';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
@@ -51,11 +51,11 @@ describe("Custom Card component", () => {
 
         let tipIconSetting  = getAllByLabelText('icon: setting');
         fireEvent.mouseOver(tipIconSetting[0]);
-        await waitForElement(() => getByText(AdvCustomTooltips.settings))
+        await waitForElement(() => getByText(AdvCustomTooltips.settings));
 
         let tipIconView  = getAllByLabelText('icon: edit');
         fireEvent.mouseOver(tipIconView[0]);
-        await waitForElement(() => getByText(AdvCustomTooltips.viewCustom))
+        await waitForElement(() => getByText(AdvCustomTooltips.viewCustom));
     });
 
     test('Open advanced settings', async () => {
@@ -70,7 +70,7 @@ describe("Custom Card component", () => {
                           /></AuthoritiesContext.Provider></Router>);
         await wait(() => {
             fireEvent.click(getByTestId("customJSON-settings"));
-        })
+        });
 
         expect(getByText("Please select source database")).toBeInTheDocument();
         expect(getByText("db1")).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe("Custom Card component", () => {
         expect(getByText('{ "dummy": "value" }')).toBeInTheDocument();
         let tipIcons  = getAllByLabelText('icon: question-circle');
         fireEvent.mouseOver(tipIcons[tipIcons.length -1]);
-        await waitForElement(() => getByText(AdvCustomTooltips.additionalSettings))
+        await waitForElement(() => getByText(AdvCustomTooltips.additionalSettings));
 
     });
 

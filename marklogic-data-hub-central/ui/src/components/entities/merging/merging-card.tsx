@@ -23,7 +23,7 @@ const MergingCard: React.FC<Props> = (props) => {
         setActiveStep([], props.entityModel['model']['definitions'], props.entityName);
         toggleMergeRuleDialog(true);
         setOpenAddMergeRuleDialog(true);
-    }
+    };
     /*---------------------------------------*/
     return (
         <div className={styles.mergingContainer}>
@@ -35,6 +35,6 @@ const MergingCard: React.FC<Props> = (props) => {
         </div>
     );
 
-}
+};
 
 export default MergingCard;

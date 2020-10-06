@@ -33,7 +33,7 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
   targetFormat: '',
   matchRulesets: [],
   thresholds: []
-}
+};
 
 const MatchingStepDetail: React.FC = () => {
   const history = useHistory<any>();
@@ -56,7 +56,7 @@ const MatchingStepDetail: React.FC = () => {
       }
 
       if (matchingStepArtifact.thresholds.length > 0 ) {
-        toggleMoreThresholdText(false)
+        toggleMoreThresholdText(false);
       } else {
         toggleMoreThresholdText(true);
       }
@@ -74,7 +74,7 @@ const MatchingStepDetail: React.FC = () => {
               type: i.matchRules.length <= 1 ? i.matchRules[0]['matchType'] : ''
           }],
           value: i.weight
-      }
+      };
       return matchRuleOptionsObject;
   });
 
@@ -85,21 +85,21 @@ const MatchingStepDetail: React.FC = () => {
               type: i.action,
           }],
           value: i.score,
-      }
+      };
       return matchThresholdOptionsObject;
   });
 
   const handleSlider = (values) => {
         // TODO put match options to backend
         //console.log('handleSlider', values);
-    }
+    };
 
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
       <MLMenu.MLItem aria-label="single-ruleset-menu" onClick={() => toggleShowRulesetSingleModal(true)}>Add ruleset for a single property</MLMenu.MLItem>
       <MLMenu.MLItem aria-label="multiple-ruleset-menu"  >Add ruleset for multiple properties</MLMenu.MLItem>
     </MLMenu>
-  )
+  );
 
   return (
     <>
@@ -176,7 +176,7 @@ const MatchingStepDetail: React.FC = () => {
         toggleModal={toggleShowRulesetSingleModal}
       />
     </>
-  )
-}
+  );
+};
 
 export default MatchingStepDetail;

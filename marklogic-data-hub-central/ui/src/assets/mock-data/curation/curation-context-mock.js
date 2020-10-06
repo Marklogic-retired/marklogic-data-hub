@@ -16,7 +16,7 @@ export const customerMatchingStep = {
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
-}
+};
 
 export const customerMatchingStepEmpty = {
   curationOptions:   {
@@ -29,7 +29,7 @@ export const customerMatchingStepEmpty = {
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
-}
+};
 
 export const customerMergingStep = {
   curationOptions:   {
@@ -42,4 +42,4 @@ export const customerMergingStep = {
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
-}
+};

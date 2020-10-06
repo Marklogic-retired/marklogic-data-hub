@@ -22,7 +22,7 @@ describe("<SaveQueryDropdown/>", () => {
             setSaveChangesModal={jest.fn()}
             setNextQueryName={jest.fn()}
             isSaveQueryChanged={jest.fn()}
-        />)
+        />);
 
         expect(getByTitle("select a query")).toBeInTheDocument();
     });

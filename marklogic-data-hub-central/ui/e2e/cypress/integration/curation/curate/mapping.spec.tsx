@@ -24,17 +24,17 @@ describe('Mapping', () => {
 
   afterEach(() => {
     cy.resetTestUser();
-  })
+  });
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps('ingestion', 'loadOrder', 'loadOrderCustomHeader');
     cy.deleteSteps('mapping', 'mapOrder', 'mapOrderCustomHeader');
     cy.deleteFlows( 'orderFlow', 'orderCustomHeaderFlow');
-  })
+  });
 
   it('can create load step with processors & custom hook, can create mapping step with processors & custom hook, can create new flow, run both steps, and verify processors & custom hooks', () => {
-    const flowName = 'orderFlow'
+    const flowName = 'orderFlow';
     const loadStep = 'loadOrder';
     const mapStep = 'mapOrder';
     // create load step
@@ -79,7 +79,7 @@ describe('Mapping', () => {
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription('An order mapping with custom processors');
     createEditMappingDialog.setSourceRadio('Query');
-    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`)
+    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
     createEditMappingDialog.saveButton().click(); 
     curatePage.verifyStepNameIsVisible(mapStep);
 
@@ -114,11 +114,11 @@ describe('Mapping', () => {
     curatePage.openExistingFlowDropdown('Order', mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
-    curatePage.confirmAddStepToFlow(mapStep, flowName)
+    curatePage.confirmAddStepToFlow(mapStep, flowName);
 
     runPage.runStep(mapStep).click();
     cy.verifyStepRunResult('success','Mapping', mapStep);
-    runPage.explorerLink().click()
+    runPage.explorerLink().click();
     browsePage.getTableViewSourceIcon().click();
     cy.contains('mappedOrderDate');
     cy.contains('categoryCode');
@@ -126,10 +126,10 @@ describe('Mapping', () => {
     //Verifying the properties added by load and mapping custom hooks respectively
     cy.contains('primaryKey');
     cy.contains('uriFromCustomHook');
-  })
+  });
 
   it('can create a load step with a custom header, can create a mapping step with a custom header, and run both steps and verify in the detail view, ', () => {
-    const flowName = 'orderCustomHeaderFlow'
+    const flowName = 'orderCustomHeaderFlow';
     const loadStep = 'loadOrderCustomHeader';
     const mapStep = 'mapOrderCustomHeader';
     // create load step
@@ -170,7 +170,7 @@ describe('Mapping', () => {
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription('An order mapping with custom header');
     createEditMappingDialog.setSourceRadio('Query');
-    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`)
+    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
     createEditMappingDialog.saveButton().click(); 
     curatePage.verifyStepNameIsVisible(mapStep);
 
@@ -200,11 +200,11 @@ describe('Mapping', () => {
     curatePage.openExistingFlowDropdown('Order', mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.addStepToFlowConfirmationMessage();
-    curatePage.confirmAddStepToFlow(mapStep, flowName)
+    curatePage.confirmAddStepToFlow(mapStep, flowName);
 
     runPage.runStep(mapStep).click();
     cy.verifyStepRunResult('success','Mapping', mapStep);
-    runPage.explorerLink().click()
+    runPage.explorerLink().click();
     browsePage.getTableViewInstanceIcon().click();
 
     detailPage.getDocumentSource().should('contain', 'backup-ABC123');
@@ -214,4 +214,4 @@ describe('Mapping', () => {
     cy.contains('accessLevel');
     cy.contains('999ABC');
   });
-})
+});

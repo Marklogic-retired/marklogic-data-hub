@@ -27,7 +27,7 @@ describe('json scenario for snippet on browse documents page', () => {
 
   afterEach(() => {
     cy.resetTestUser();
-  })
+  });
 
   it('select "all entities" verify docs, hub/entity properties', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
@@ -40,11 +40,11 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentCreatedOn(i).should('exist');
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
-    })
+    });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
 
     //Verify shadow effect upon scrolling within the snippet view
     browsePage.getSnippetViewResult().should('have.css', 'box-shadow', 'none'); //No shadow effect in place when no scroll.
@@ -64,8 +64,8 @@ describe('json scenario for snippet on browse documents page', () => {
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getSelectedPaginationNumber().should('contain', '1');
-    browsePage.getSearchText().should('have.value', '10256')
-    browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)')
+    browsePage.getSearchText().should('have.value', '10256');
+    browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)');
   });
 
   it('select Person entity and verify entity, docs, hub/entity properties', () => {
@@ -81,35 +81,35 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentCreatedOn(i).should('exist');
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
-    })
+    });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
   });
 
   it('select Person/Customer entity, verify no entityName in Collection facets and hub property persistence', () => {
     browsePage.selectEntity('Person');
     browsePage.getSelectedEntity().should('contain', 'Person');
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('not.be.visible')
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('not.be.visible');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox('collection', 'Person').should('not.exist')
+    browsePage.getFacetItemCheckbox('collection', 'Person').should('not.exist');
     browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.visible')
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked')
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.visible');
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked');
     browsePage.selectEntity('Customer');
     browsePage.getEntityConfirmationNoClick().click();
     cy.waitForModalToDisappear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible')
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox('collection', 'Customer').should('not.exist')
+    browsePage.getFacetItemCheckbox('collection', 'Customer').should('not.exist');
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.visible')
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.checked')
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.visible');
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.checked');
   });
 
   it('apply facet search and verify docs, hub/entity properties', () => {
@@ -161,7 +161,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getDocumentSnippet(0).should('exist');
     browsePage.getDocumentCreatedOn(0).should('exist');
     browsePage.getDocumentSources(0).should('exist');
-    browsePage.getDocumentFileType(0).should('exist')
+    browsePage.getDocumentFileType(0).should('exist');
   });
 
   it('verify instance view of the document with pk', () => {
@@ -233,7 +233,7 @@ describe('json scenario for table on browse documents page', () => {
   it('select "all entities" and verify table default columns', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getExpandableTableView();
-    browsePage.getTotalDocuments().should('be.greaterThan', 25)
+    browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getColumnTitle(2).should('contain', 'Identifier');
     browsePage.getColumnTitle(3).should('contain', 'Entity');
     browsePage.getColumnTitle(4).should('contain', 'File Type');
@@ -242,12 +242,12 @@ describe('json scenario for table on browse documents page', () => {
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
   });
 
   it('select "all entities" and verify table', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getTotalDocuments().should('be.greaterThan', 25)
+    browsePage.getTotalDocuments().should('be.greaterThan', 25);
     //check table rows
     browsePage.getTableRows().should('have.length', 20);
     //check table columns
@@ -258,7 +258,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.selectEntity('Person');
     browsePage.getSelectedEntity().should('contain', 'Person');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', 5)
+    browsePage.getTotalDocuments().should('be.greaterThan', 5);
     //check table rows
     browsePage.getTableRows().should('have.length', 14);
     //check table columns
@@ -291,8 +291,8 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'Person');
     browsePage.getClearFacetSearchSelection('Alice').should('exist');
-    browsePage.getSearchText().should('have.value', 'Alice')
-    browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)')
+    browsePage.getSearchText().should('have.value', 'Alice');
+    browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)');
   });
 
   it('verify instance view of the document with pk', () => {
@@ -453,7 +453,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox('fname', 'Gary').should('not.be.checked');
     browsePage.getGreySelectedFacets('Gary').should('not.exist');
-  })
+  });
 
   it('Apply facets, unchecking them should not recheck original facets', () => {
     browsePage.selectEntity('Customer');
@@ -474,7 +474,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
     browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
     browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').should('not.be.checked');
-  })
+  });
 });
 
 
@@ -512,7 +512,7 @@ describe('Verify numeric/date facet can be applied', () => {
     browsePage.getSelectedFacet('birthDate:').should('exist');
     browsePage.getDateFacetPicker().trigger('mouseover');
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({ force: true });
-    browsePage.getFacetApplyButton().should('not.exist')
+    browsePage.getFacetApplyButton().should('not.exist');
   });
 });
 
@@ -531,7 +531,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.getFinalDatabaseButton().click();
     browsePage.getTableViewButton().click();
     browsePage.selectEntity('Customer');
-    browsePage.getSearchText().type('Adams')
+    browsePage.getSearchText().type('Adams');
     browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
 
@@ -554,7 +554,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => browsePage.getStagingDatabaseButton()).click();
     browsePage.selectEntity('Customer');
-    browsePage.getSearchText().type('Powers')
+    browsePage.getSearchText().type('Powers');
     browsePage.getSnippetViewButton().click();
     browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
@@ -564,7 +564,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.getStagingDatabaseButton().parent().find('input').invoke('attr', 'checked').should('exist');
     browsePage.getSelectedEntity().should('contain', 'Customer');
     browsePage.getSearchText().should('have.value', 'Powers');
-    browsePage.getDocuments().should('not.exist')
+    browsePage.getDocuments().should('not.exist');
 
     //verify the number of documents is 0
     browsePage.getTotalDocuments().should('be.equal', 0);
@@ -581,7 +581,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.selectEntity('Client');
     browsePage.getSelectedEntity().should('contain', 'Client');
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should('be.equal', 5)
+    browsePage.getTotalDocuments().should('be.equal', 5);
 
     //apply facet search for the documents deployed to staging 
     browsePage.getFacetItemCheckbox('firstname', 'Barbi').click();
@@ -589,7 +589,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.getFacetApplyButton().click();
     browsePage.getFacetItemCheckbox('firstname', 'Barbi').should('be.checked');
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should('be.equal', 1)
+    browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getClearAllButton().click();
 
     //apply numeric search for the documents deployed to staging 
@@ -600,7 +600,7 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.getRangeFacet(7000).should('exist');
     browsePage.getClearAllButton().should('exist');
     browsePage.waitForSpinnerToDisappear();
-    browsePage.getTotalDocuments().should('be.equal', 3)
+    browsePage.getTotalDocuments().should('be.equal', 3);
     browsePage.getClearAllButton().click();
 
     //apply string search for the documents deployed to staging 
@@ -627,31 +627,31 @@ describe('scenarios for All Data zero state and explore pages.', () => {
     browsePage.getFinalDatabaseButton().click();
     browsePage.getTableViewButton().click();
     browsePage.selectEntity('All Data');
-    browsePage.getSearchText().type('Adams')
+    browsePage.getSearchText().type('Adams');
     browsePage.getExploreButton().click();
     browsePage.waitForSpinnerToDisappear();
 
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2)
+    browsePage.getTotalDocuments().should('be.equal', 2);
     browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'ColeAdams');
     browsePage.search('Barbi');
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 0)
+    browsePage.getTotalDocuments().should('be.equal', 0);
 
     //switch to staging database and verify data for query parameters 
     browsePage.getStagingDatabaseButton().click();
     browsePage.search('Adams');
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2)
+    browsePage.getTotalDocuments().should('be.equal', 2);
     browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'Adams');
     browsePage.search('Barbi');
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 1)
+    browsePage.getTotalDocuments().should('be.equal', 1);
     browsePage.getAllDataSnippetByUri('/json/clients/client1.json').should('contain', 'Barbi');
 
     //Verify if switching between All Data and specific entities works properly
@@ -669,7 +669,7 @@ describe('scenarios for All Data zero state and explore pages.', () => {
     browsePage.search('Adams');
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2)
+    browsePage.getTotalDocuments().should('be.equal', 2);
 
     browsePage.selectEntity('Customer');
     browsePage.getSelectedEntity().should('contain', 'Customer');

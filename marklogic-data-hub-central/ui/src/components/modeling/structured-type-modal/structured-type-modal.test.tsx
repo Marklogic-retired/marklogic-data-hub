@@ -38,8 +38,8 @@ describe('Structured Type Modal Component', () => {
     userEvent.type(getByPlaceholderText('Enter name'), 'Product');
 
     userEvent.click(getByText('Add'));
-    expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(1)
-    expect(toggleModal).toHaveBeenCalledTimes(1)
+    expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(1);
+    expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 
   test('can do error handling for duplicate name and name regex validation ', () => {
@@ -72,11 +72,11 @@ describe('Structured Type Modal Component', () => {
     userEvent.click(getByText('Add'));
     expect(getByText('A property type already exists with a name of address')).toBeInTheDocument();
 
-    expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(0)
-    expect(toggleModal).toHaveBeenCalledTimes(0)
+    expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(0);
+    expect(toggleModal).toHaveBeenCalledTimes(0);
 
     userEvent.click(getByText('Cancel'));
-    expect(toggleModal).toHaveBeenCalledTimes(1)
+    expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 });
 

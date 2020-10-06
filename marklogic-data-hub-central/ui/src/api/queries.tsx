@@ -6,35 +6,35 @@ export const creatNewQuery = async (query) => {
     url: `/api/entitySearch/savedQueries`,
     data: query
   });
-}
+};
 
 export const fetchQueries = async () => {
   return await axios({
     method: 'GET',
     url: `/api/entitySearch/savedQueries`
   });
-}
+};
 
 export const fetchQueryById = async (query) => {
   return await axios({
     method: 'GET',
     url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`
   });
-}
+};
 
 export const updateQuery = async (query) => {
   return await axios.put(`/api/entitySearch/savedQueries`, { query });
-}
+};
 
 export const removeQuery = async (query) => {
   return await axios({
     method: 'DELETE',
     url: `/api/entitySearch/savedQueries/query?id=${query.savedQuery.id}`
   });
-}
+};
 
 export const exportQuery = (query, limit, database) => {
-  let queryString = JSON.stringify(query)
+  let queryString = JSON.stringify(query);
   const mapForm = document.createElement("form");
   mapForm.target = "_self" || "_blank";
   mapForm.id = "exportForm";
@@ -58,10 +58,10 @@ export const exportQuery = (query, limit, database) => {
   document.body.appendChild(mapForm);
   mapForm.submit();
   mapForm.reset();
-}
+};
 
 export const getExportQueryPreview = async (query, database) => {
-  let queryString = JSON.stringify(query)
+  let queryString = JSON.stringify(query);
   const mapForm = document.createElement("form");
   mapForm.id = "exportForm";
   const mapInput = document.createElement("input");
@@ -105,11 +105,11 @@ export const getExportQueryPreview = async (query, database) => {
     xhr.send(formData);
 });
 
-}
+};
 
 export const exportSavedQuery = (id, limit, database) => {
   window.open(`/api/entitySearch/export/query/${id}?fileType=csv&limit=${limit === Number.MAX_SAFE_INTEGER || limit < 1 ? '' : limit}&database=${database}`, '_self');
-}
+};
 
 export const getSavedQueryPreview = async (id, database) => {
   return await axios({
@@ -117,4 +117,4 @@ export const getSavedQueryPreview = async (id, database) => {
     url: `/api/entitySearch/export/query/${id}?fileType=csv&limit=2&database=${database}`
   });
 
-}
+};

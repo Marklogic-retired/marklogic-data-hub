@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { MLTreeSelect } from '@marklogic/design-system';
-import styles from './entity-property-tree-select.module.scss'
+import styles from './entity-property-tree-select.module.scss';
 import arrayIcon from '../../assets/icon_array.png';
 
 import { Definition, Property } from '../../types/modeling-types';
@@ -26,11 +26,11 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
   const renderBasicPropertyTitle = (property: Property) => {
     return property.multiple ? <span>{property.name} <img className={styles.arrayImage} src={arrayIcon}/></span> : <span>{property.name}</span>;
-  }
+  };
 
   const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string) => {
     if (property.ref !== '') {
-      let parsedRef = property.ref.split('/')
+      let parsedRef = property.ref.split('/');
       let structuredType = parsedRef[parsedRef.length-1];
       let structuredTypeDefinition: Definition = props.entityDefinitionsArray.find( entityDefinition => entityDefinition.name === structuredType) || DEFAULT_ENTITY_DEFINITION;
 
@@ -41,7 +41,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> 
           {property.multiple && <img className={styles.arrayImage} src={arrayIcon}/>}
         </span>
-      )
+      );
 
       let structuredProperties =  structuredTypeDefinition.properties.map((structProperty, index) => {
         if (structProperty.datatype === 'structured') {
@@ -56,7 +56,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
               value={`${entityPropertyName} > ${structProperty.name}`} 
               title={renderBasicPropertyTitle(structProperty)}
             />
-          )
+          );
         }
       });
 
@@ -69,15 +69,15 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
         >
           {structuredProperties}
         </MLTreeNode>
-      )
+      );
     }
-  }
+  };
 
   const renderPropertyOptions = props.propertyDropdownOptions.map((property, index) => {
     if (property.datatype === 'structured') {
       return renderStrucuturedPropertyOption(property, property.name);
     } else {
-      return <MLTreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>
+      return <MLTreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>;
     }
   });
 
@@ -93,7 +93,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
     >
       {renderPropertyOptions}
     </MLTreeSelect>
-  )
-}
+  );
+};
 
 export default EntityPropertyTreeSelect;

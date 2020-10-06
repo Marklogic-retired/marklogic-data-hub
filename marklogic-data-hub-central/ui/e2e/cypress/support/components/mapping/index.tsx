@@ -6,4 +6,4 @@ export {
   advancedSettingsDialog,
   createEditMappingDialog,
   sourceToEntityMap
-}
+};

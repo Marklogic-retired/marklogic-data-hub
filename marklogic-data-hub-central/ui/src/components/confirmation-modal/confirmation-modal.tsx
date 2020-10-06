@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from 'antd';
 import { MLAlert, MLButton } from '@marklogic/design-system';
-import styles from './confirmation-modal.module.scss'
+import styles from './confirmation-modal.module.scss';
 import { ModelingTooltips } from '../../config/tooltips.config';
 import { ConfirmationType } from '../../types/common-types';
 
@@ -27,9 +27,9 @@ const ConfirmationModal: React.FC<Props> = (props) => {
 
   const closeModal = () => {
     if (!loading) {
-      props.toggleModal(false)
+      props.toggleModal(false);
     }
-  }
+  };
 
   const renderArrayValues = props.arrayValues?.map((item, index) => <li key={item + index}>{item}</li>);
 
@@ -51,14 +51,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         props.confirmAction();
       }}
     >Yes</MLButton>
-  </div>
+  </div>;
 
   const modalFooterClose = <MLButton
     aria-label={`confirm-${props.type}-close`}
     type="primary"
     size="default"
     onClick={closeModal}
-  >Close</MLButton>
+  >Close</MLButton>;
 
   return (
     <Modal
@@ -261,7 +261,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         }
       </div>
     </Modal>
-  )
-}
+  );
+};
 
 export default ConfirmationModal;

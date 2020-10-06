@@ -88,7 +88,7 @@ const DEFAULT_STRUCTURED_DROPDOWN_OPTIONS = {
       value: 'newPropertyType'
     }
   ]
-}
+};
 
 const DEFAULT_DROPDOWN_OPTIONS = [
   ...COMMON_PROPERTY_TYPES,
@@ -109,7 +109,7 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   facetable: false,
   sortable: false
   //wildcard: false
-}
+};
 
 const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
 
@@ -124,7 +124,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   const [modalTitle, setModalTitle] = useState('');
   const [name, setName] = useState('');
-  const [isNameDisabled, toggleIsNameDisabled] = useState(true);
+  const [, toggleIsNameDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
   const [structuredTypeLabel, setStructuredTypeLabel] = useState('');
@@ -148,7 +148,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.isVisible){
-      setEntityPropertiesNamesArray(props.entityDefinitionsArray)
+      setEntityPropertiesNamesArray(props.entityDefinitionsArray);
       updateTypeDropdown();
       if (props.editPropertyOptions.isEdit) {
         let structuredLabel = '';
@@ -172,10 +172,10 @@ const PropertyModal: React.FC<Props> = (props) => {
             type = 'moreDateTypes';
           }
 
-          typeDisplayValue = [ type, props.editPropertyOptions.propertyOptions.type ]
+          typeDisplayValue = [ type, props.editPropertyOptions.propertyOptions.type ];
 
         } else if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.RelatedEntity){
-          typeDisplayValue = [ 'relatedEntity', props.editPropertyOptions.propertyOptions.type ]
+          typeDisplayValue = [ 'relatedEntity', props.editPropertyOptions.propertyOptions.type ];
           showConfigOptions = false;
           newRadioValues = [ALL_RADIO_DISPLAY_VALUES[1]];
 
@@ -184,7 +184,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           newRadioValues = ALL_RADIO_DISPLAY_VALUES.slice(1,3);
           showConfigOptions = false;
           if (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured) {
-            typeDisplayValue = [ 'structured', props.editPropertyOptions.propertyOptions.type ]
+            typeDisplayValue = [ 'structured', props.editPropertyOptions.propertyOptions.type ];
           }
         }
 
@@ -197,7 +197,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         setTypeDisplayValue(typeDisplayValue);
         setSelectedPropertyOptions(props.editPropertyOptions.propertyOptions);
       } else {
-        let modalTitle = 'Add Property'
+        let modalTitle = 'Add Property';
         if (props.structuredTypeOptions.isStructured) {
           modalTitle = 'Add Structured Type Property';
           setStructuredTypeLabel(props.structuredTypeOptions.name.split(',').slice(1).join('.'));
@@ -219,7 +219,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       const response = await entityReferences(props.entityName);
       if (response['status'] === 200) {
         let newConfirmType = ConfirmationType.DeletePropertyWarn;
-        let boldText = [name]
+        let boldText = [name];
 
         if (response['data']['stepNames'].length > 0) {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
@@ -230,9 +230,9 @@ const PropertyModal: React.FC<Props> = (props) => {
         setStepValuesArray(response['data']['stepNames']);
       }
     } catch (error) {
-      handleError(error)
+      handleError(error);
     }
-  }
+  };
 
   const refreshSessionTime = async () => {
     try {
@@ -252,11 +252,11 @@ const PropertyModal: React.FC<Props> = (props) => {
       }
       setName(event.target.value);
     }
-  }
+  };
 
   const onPropertyTypeChange = (value, selectedOptions) => {
     if (value.length) {
-      let newSelectedPropertyOptions = {...selectedPropertyOptions}
+      let newSelectedPropertyOptions = {...selectedPropertyOptions};
 
       switch(value[0]) {
         case 'relatedEntity':
@@ -300,24 +300,24 @@ const PropertyModal: React.FC<Props> = (props) => {
       setSelectedPropertyOptions({ ...selectedPropertyOptions, type: '', propertyType: PropertyType.Basic });
     }
     setTypeErrorMessage('');
-  }
+  };
 
   const onSubmit = (event) => {
     event.preventDefault();
     if (!NAME_REGEX.test(name)) {
-      setErrorMessage(ModelingTooltips.nameRegex)
+      setErrorMessage(ModelingTooltips.nameRegex);
     } else {
       if (props.editPropertyOptions.isEdit) {
         let editEntityPropertyNamesArray = entityPropertyNamesArray.filter(propertyName => propertyName !== props.editPropertyOptions.name);
 
         if (editEntityPropertyNamesArray.includes(name)){
-          setErrorMessage(`A property already exists with a name of ${name}`)
+          setErrorMessage(`A property already exists with a name of ${name}`);
         } else if (selectedPropertyOptions.type === '') {
           setTypeErrorMessage('Type is required');
         } else {
 
           let definitionName = props.entityName;
-          let typeChangeCheck = props.editPropertyOptions.propertyOptions.propertyType
+          let typeChangeCheck = props.editPropertyOptions.propertyOptions.propertyType;
 
           if (props.structuredTypeOptions.isStructured && props.structuredTypeOptions.name !== props.editPropertyOptions.propertyOptions.propertyType) {
             definitionName = props.structuredTypeOptions.name;
@@ -333,7 +333,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             name: name,
             isEdit: true,
             propertyOptions: selectedPropertyOptions
-          }
+          };
 
           props.editPropertyUpdateDefinition(definitionName, props.editPropertyOptions.name, newEditPropertyOptions);
           setErrorMessage('');
@@ -345,7 +345,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       } else {
         // Add Property
         if (entityPropertyNamesArray.includes(name)){
-          setErrorMessage(`A property already exists with a name of ${name}`)
+          setErrorMessage(`A property already exists with a name of ${name}`);
         } else if (selectedPropertyOptions.type === '') {
           setTypeErrorMessage('Type is required');
         } else {
@@ -365,7 +365,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     setRadioValues([]);
     toggleShowConfigurationOptions(false);
     setSelectedPropertyOptions(DEFAULT_SELECTED_PROPERTY_OPTIONS);
-    props.toggleModal(false)
+    props.toggleModal(false);
   };
 
   const confirmAction = () => {
@@ -388,7 +388,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       props.toggleModal(false);
       refreshSessionTime();
     }
-  }
+  };
 
   const addStructuredType = (name: string) => {
     let newStructuredDefinitionObject = {
@@ -400,7 +400,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       required: [],
       wordLexicon: [],
       properties: []
-    }
+    };
 
     let structuredDefinitions = props.entityDefinitionsArray.filter( entity => entity.name !== props.entityName);
     structuredDefinitions.push(newStructuredDefinitionObject);
@@ -438,7 +438,7 @@ const PropertyModal: React.FC<Props> = (props) => {
     setSelectedPropertyOptions({ ...selectedPropertyOptions, type: 'structured,'+ name });
     setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
     toggleShowConfigurationOptions(false);
-  }
+  };
 
   const updateTypeDropdown = () => {
     let entityDefinition = props.entityDefinitionsArray.find( entity => entity.name === props.entityName);
@@ -453,7 +453,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       if (structuredTypeDefinition && structuredTypeDefinition['properties'].length) {
         propertyNamesArray = structuredTypeDefinition['properties'].map( property => property.name);
       } else {
-        propertyNamesArray = []
+        propertyNamesArray = [];
       }
     }
 
@@ -517,30 +517,30 @@ const PropertyModal: React.FC<Props> = (props) => {
       ]);
     }
     setEntityPropertyNamesArray([...propertyNamesArray, ...entityNamesArray]);
-  }
+  };
 
   const createRelatedEntityDropdown = () => {
     let entityTypes = modelingOptions.entityTypeNamesArray
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map( entity => { return { label: entity.name, value: entity.name } });
+      .map( entity => { return { label: entity.name, value: entity.name }; });
 
     return {
       label: 'Related Entity',
       value: 'relatedEntity',
       children: entityTypes
-    }
-  }
+    };
+  };
 
   const createStructuredDropdown = (structuredDefinitions) => {
     let structuredTypes = structuredDefinitions
       .sort((a, b) => a.name.localeCompare(b.name))
-      .map( definition => { return { label: definition.name, value: definition.name }});
+      .map( definition => { return { label: definition.name, value: definition.name };});
 
     return {
       ...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS,
       children: [...DEFAULT_STRUCTURED_DROPDOWN_OPTIONS['children'], ...structuredTypes]
-    }
-  }
+    };
+  };
 
   const onRadioChange = (event, radioName) => {
     if (radioName === 'identifier' && event.target.value === 'yes') {
@@ -553,17 +553,17 @@ const PropertyModal: React.FC<Props> = (props) => {
         setStepValuesArray([]);
         toggleConfirmModal(true);
       } else {
-        setSelectedPropertyOptions({ ...selectedPropertyOptions, [radioName]: event.target.value})
+        setSelectedPropertyOptions({ ...selectedPropertyOptions, [radioName]: event.target.value});
       }
 
     } else {
-      setSelectedPropertyOptions({ ...selectedPropertyOptions, [radioName]: event.target.value})
+      setSelectedPropertyOptions({ ...selectedPropertyOptions, [radioName]: event.target.value});
     }
-  }
+  };
 
   const onCheckboxChange = (event, checkboxName) => {
-    setSelectedPropertyOptions({ ...selectedPropertyOptions, [checkboxName]: event.target.checked})
-  }
+    setSelectedPropertyOptions({ ...selectedPropertyOptions, [checkboxName]: event.target.checked});
+  };
 
   const renderRadios = radioValues.length > 0 && radioValues.map((radio, index) => {
     return (
@@ -584,7 +584,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Icon type="question-circle" className={styles.radioQuestionIcon} theme="filled" />
         </MLTooltip>
       </Form.Item>
-    )
+    );
   });
 
   const renderCheckboxes = ALL_CHECKBOX_DISPLAY_VALUES.map((checkbox, index) => {
@@ -605,7 +605,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           <Icon type="question-circle" className={styles.checkboxQuestionIcon} theme="filled" />
         </MLTooltip>
       </Form.Item>
-    )
+    );
   });
 
   const renderSteps = stepValuesArray.map((step, index) => <li key={step + index}>{step}</li>);
@@ -636,7 +636,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         onClick={onSubmit}
       >{props.editPropertyOptions.isEdit ? 'OK' : 'Add'}</MLButton>
     </div>
-  </div>
+  </div>;
 
   return (
     <Modal
@@ -745,7 +745,7 @@ const PropertyModal: React.FC<Props> = (props) => {
             aria-label="type-dropdown"
             placeholder="Select the property type"
             options={dropdownOptions}
-            displayRender={ label => { return label[label.length-1] } }
+            displayRender={ label => { return label[label.length-1]; } }
             onChange={onPropertyTypeChange}
             value={typeDisplayValue}
           />
@@ -776,7 +776,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         confirmAction={confirmAction}
       />
     </Modal>
-  )
-}
+  );
+};
 
 export default PropertyModal;

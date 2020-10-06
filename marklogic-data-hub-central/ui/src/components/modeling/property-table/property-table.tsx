@@ -3,7 +3,7 @@ import { MLButton, MLTable, MLTooltip } from '@marklogic/design-system';
 import { faCircle, faCheck, faTrashAlt, faPlusSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import scrollIntoView from 'scroll-into-view';
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import useDeepCompareEffect from 'use-deep-compare-effect';
 import styles from './property-table.module.scss';
 
 import PropertyModal from '../property-modal/property-modal';
@@ -43,7 +43,7 @@ const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
   name: '',
   propertyName: ''
-}
+};
 
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
@@ -54,17 +54,17 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   facetable: false,
   sortable: false
   //wildcard: false
-}
+};
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
   name: '',
   isEdit: false,
   propertyOptions: DEFAULT_SELECTED_PROPERTY_OPTIONS
-}
+};
 
 const PropertyTable: React.FC<Props> = (props) => {
   const { handleError } = useContext(UserContext);
-  const { modelingOptions, updateEntityModified } = useContext(ModelingContext)
+  const { modelingOptions, updateEntityModified } = useContext(ModelingContext);
   const [showPropertyModal, toggleShowPropertyModal] = useState(false);
 
   const [editPropertyOptions, setEditPropertyOptions] = useState<EditPropertyOptions>(DEFAULT_EDIT_PROPERTY_OPTIONS);
@@ -90,11 +90,11 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   useDeepCompareEffect(()=>{
     updateEntityDefinitionsAndRenderTable(props.definitions);
-  }, [props.definitions])
+  }, [props.definitions]);
 
   useEffect(() => {
     if (newRowKey) {
-      let element = document.querySelector(`.${newRowKey}`)
+      let element = document.querySelector(`.${newRowKey}`);
       if (element) {
         scrollIntoView(element);
       }
@@ -118,10 +118,10 @@ const PropertyTable: React.FC<Props> = (props) => {
             onClick={() => {
               editPropertyShowModal(text, record);
             }}>
-          {text}</span>
+          {text}</span>;
         }
 
-        return renderText
+        return renderText;
       }
     },
     {
@@ -138,7 +138,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'identifier',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={'identifier-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={'identifier-'+ text}/>;
       }
     },
     {
@@ -150,7 +150,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'multiple',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={'multiple-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={'multiple-'+ text}/>;
       }
     },
     {
@@ -162,7 +162,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'sortable',
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={'sort-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={'sort-'+ text}/>;
       }
     },
     {
@@ -174,7 +174,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'facetable',
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={'facet-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={'facet-'+ text}/>;
       }
     },
     // {
@@ -198,7 +198,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: 'pii',
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={'pii-'+ text}/>
+        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={'pii-'+ text}/>;
       }
     },
     {
@@ -220,7 +220,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             definitionName = record.structured;
           }
         }
-        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${record.propertyName}`
+        let id = definitionName === text ? `delete-${text}-${record.propertyName}` : `delete-${text}-${definitionName}-${record.propertyName}`;
 
         return <FontAwesomeIcon className={!props.canWriteEntityModel && props.canReadEntityModel ? styles.iconTrashReadOnly : styles.iconTrash}
         icon={faTrashAlt}
@@ -228,11 +228,11 @@ const PropertyTable: React.FC<Props> = (props) => {
         data-testid={id}
         onClick={(event) => {
           if (!props.canWriteEntityModel && props.canReadEntityModel) {
-            return event.preventDefault()
+            return event.preventDefault();
           } else {
             deletePropertyShowModal(text, record, definitionName);
           }
-        }}/>
+        }}/>;
       }
     },
     {
@@ -241,7 +241,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       width: 75,
       render: text => {
         let textParse = text && text.split(',');
-        let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
+        let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text;
 
         const addIcon = props.canWriteEntityModel ? (
           <MLTooltip title={ModelingTooltips.addStructuredProperty}>
@@ -255,7 +255,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   name: text,
                   propertyName: ''
                 });
-                setEditPropertyOptions({ ...editPropertyOptions, isEdit: false })
+                setEditPropertyOptions({ ...editPropertyOptions, isEdit: false });
                 toggleShowPropertyModal(true);           
               }}
             />
@@ -267,7 +267,7 @@ const PropertyTable: React.FC<Props> = (props) => {
           />
         );
 
-        return text && addIcon
+        return text && addIcon;
       }
     }
   ];
@@ -277,7 +277,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     toggleShowPropertyModal(true);
     setEditPropertyOptions({ ...editPropertyOptions, isEdit: false });
     setStructuredTypeOptions({ ...structuredTypeOptions, isStructured: false });
-  }
+  };
 
   const updateEntityDefinitionsAndRenderTable = (definitions: Definition) => {
     let entityDefinitionsArray = definitionsParser(definitions);
@@ -289,16 +289,16 @@ const PropertyTable: React.FC<Props> = (props) => {
     }
     // Expand structured type
     if (structuredTypeOptions.isStructured) {
-      let row = renderTableData.find(row => row.propertyName === structuredTypeOptions.propertyName)
+      let row = renderTableData.find(row => row.propertyName === structuredTypeOptions.propertyName);
       if (!row) {
         let structuredNames = structuredTypeOptions.name.split(',').slice(1);
-        row = renderTableData.find(row => row.type === structuredNames[0])
+        row = renderTableData.find(row => row.type === structuredNames[0]);
         if (row) {
           let childRow = row['children'].find( childRow => childRow.type === structuredNames[1] );
           if (childRow && childRow.hasOwnProperty('key')) {
-            setExpandedRows([row.key, childRow.key])
+            setExpandedRows([row.key, childRow.key]);
           } else {
-            setExpandedRows([row.key])
+            setExpandedRows([row.key]);
           }
         }
 
@@ -310,23 +310,23 @@ const PropertyTable: React.FC<Props> = (props) => {
     setDefinitions(definitions);
     setEntityDefinitionsArray(entityDefinitionsArray);
     setTableData(renderTableData);
-  }
+  };
 
   const addStructuredTypeToDefinition = (structuredTypeName: string) => {
     let newStructuredType: EntityDefinitionPayload = {
       [structuredTypeName] : {
         properties: {}
       }
-    }
-    let newDefinitions = {...definitions, ...newStructuredType }
+    };
+    let newDefinitions = {...definitions, ...newStructuredType };
     let entityModified: EntityModified = {
       entityName: props.entityName,
       modelDefinition: newDefinitions
-    }
+    };
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(newDefinitions);
-  }
+  };
 
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
     let parseType = propertyOptions.type.split(',');
@@ -335,13 +335,13 @@ const PropertyTable: React.FC<Props> = (props) => {
     let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
+      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1]);
       return {
         $ref: externalEntity.entityTypeId,
-      }
+      };
 
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
+      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1]);
       return {
         datatype: 'array',
         facetable: facetable,
@@ -349,12 +349,12 @@ const PropertyTable: React.FC<Props> = (props) => {
         items: {
           $ref: externalEntity.entityTypeId,
         }
-      }
+      };
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
         $ref: '#/definitions/'+ parseType[parseType.length-1],
-      }
+      };
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
       return {
@@ -364,7 +364,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         items: {
           $ref: '#/definitions/'+ parseType[parseType.length-1],
         }
-      }
+      };
 
     } else if (propertyOptions.propertyType === PropertyType.Basic && multiple) {
       return {
@@ -375,35 +375,35 @@ const PropertyTable: React.FC<Props> = (props) => {
           datatype: parseType[parseType.length-1],
           collation: "http://marklogic.com/collation/codepoint",
         }
-      }
+      };
     } else if (propertyOptions.propertyType === PropertyType.Basic && !multiple) {
       return {
         datatype: parseType[parseType.length-1],
         facetable: facetable,
         sortable: sortable,
         collation: "http://marklogic.com/collation/codepoint"
-      }
+      };
     }
-  }
+  };
 
   // Covers both Entity Type and Structured Type
   const addPropertyToDefinition = (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
     let parseName = definitionName.split(',');
-    let parseDefinitionName = parseName[parseName.length-1]
+    let parseDefinitionName = parseName[parseName.length-1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(propertyOptions);
     let newRowKey = props.entityName + '-' + propertyName;
 
     if (propertyOptions.identifier === 'yes') {
-      entityTypeDefinition['primaryKey'] = propertyName
+      entityTypeDefinition['primaryKey'] = propertyName;
     }
 
     if (propertyOptions.pii === 'yes') {
       if (entityTypeDefinition.hasOwnProperty('pii')) {
         entityTypeDefinition['pii'].push(propertyName);
       } else {
-        entityTypeDefinition['pii'] = [propertyName]
+        entityTypeDefinition['pii'] = [propertyName];
       }
     }
 
@@ -428,12 +428,12 @@ const PropertyTable: React.FC<Props> = (props) => {
     let entityModified: EntityModified = {
       entityName: props.entityName,
       modelDefinition: updatedDefinitions
-    }
+    };
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
     setNewRowKey(newRowKey);
-  }
+  };
 
   const editPropertyShowModal = (text: string, record: any) => {
     let parseKey = record.key.split(',');
@@ -464,7 +464,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       }
 
     } else if (relationshipType) {
-      propertyType = PropertyType.RelatedEntity
+      propertyType = PropertyType.RelatedEntity;
       newStructuredTypes.isStructured = false;
       newStructuredTypes.name = '';
       newStructuredTypes.propertyName = '';
@@ -483,21 +483,21 @@ const PropertyTable: React.FC<Props> = (props) => {
       facetable: record.facetable ? true : false,
       sortable: record.sortable ? true : false
       //wildcard: record.wildcard ? true : false
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: text,
       isEdit: true,
       propertyOptions
-    }
+    };
     setStructuredTypeOptions(newStructuredTypes);
     setEditPropertyOptions(editPropertyOptions);
     toggleShowPropertyModal(true);
-  }
+  };
 
   const editPropertyUpdateDefinition = (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => {
     let parseName = definitionName.split(',');
-    let parseDefinitionName = parseName[parseName.length-1]
+    let parseDefinitionName = parseName[parseName.length-1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
@@ -548,7 +548,7 @@ const PropertyTable: React.FC<Props> = (props) => {
     if (propertyName !== editPropertyOptions.name) {
       let reMapDefinition = Object.keys(entityTypeDefinition['properties']).map((key) => {
         const newKey = key === propertyName ? editPropertyOptions.name : key;
-        const value = key === propertyName ? newProperty : entityTypeDefinition['properties'][key]
+        const value = key === propertyName ? newProperty : entityTypeDefinition['properties'][key];
         return { [newKey] : value };
       });
       entityTypeDefinition['properties'] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
@@ -580,11 +580,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     let entityModified: EntityModified = {
       entityName: props.entityName,
       modelDefinition: updatedDefinitions
-    }
+    };
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
-  }
+  };
 
   const deletePropertyShowModal = async (text: string, record: any, definitionName: string) => {
     try {
@@ -592,7 +592,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       if (response['status'] === 200) {
         //let definitionName = record.delete;
         let newConfirmType = ConfirmationType.DeletePropertyWarn;
-        let boldText: string[] = [record.propertyName]
+        let boldText: string[] = [record.propertyName];
 
         if (response['data']['stepNames'].length > 0) {
           newConfirmType = ConfirmationType.DeletePropertyStepWarn;
@@ -606,13 +606,13 @@ const PropertyTable: React.FC<Props> = (props) => {
         toggleConfirmModal(true);
       }
     } catch (error) {
-      handleError(error)
+      handleError(error);
     }
-  }
+  };
 
   const deletePropertyFromDefinition = (definitionName: string, propertyName: string) => {
     let parseName = definitionName.split(',');
-    let parseDefinitionName = parseName[parseName.length-1]
+    let parseDefinitionName = parseName[parseName.length-1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
 
@@ -650,11 +650,11 @@ const PropertyTable: React.FC<Props> = (props) => {
     let entityModified: EntityModified = {
       entityName: props.entityName,
       modelDefinition: updatedDefinitions
-    }
+    };
 
     updateEntityModified(entityModified);
     updateEntityDefinitionsAndRenderTable(updatedDefinitions);
-  }
+  };
 
   const parseDefinitionsToTable = (entityDefinitionsArray: Definition[]) => {
     let entityTypeDefinition: Definition = entityDefinitionsArray.find( definition => definition.name === props.entityName) || DEFAULT_ENTITY_DEFINITION;
@@ -686,7 +686,7 @@ const PropertyTable: React.FC<Props> = (props) => {
                   //wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   pii: structuredType?.pii?.some(value => value ===  structProperty.name) ? structProperty.name : '',
                   delete: entityTypeDefinition.name
-                }
+                };
               }
             });
 
@@ -710,9 +710,9 @@ const PropertyTable: React.FC<Props> = (props) => {
               children: structuredTypeProperties,
               add: addValue,
               delete: entityTypeDefinition.name
-            }
+            };
           }
-        }
+        };
         propertyRow = parseStructuredProperty(entityDefinitionsArray, property, '');
         counter++;
       } else {
@@ -728,14 +728,14 @@ const PropertyTable: React.FC<Props> = (props) => {
           pii: entityTypeDefinition?.pii?.some(value => value === property.name) ? property.name : '',
           add: '',
           delete: entityTypeDefinition.name
-        }
+        };
       }
       return propertyRow;
     });
-  }
+  };
 
   const onExpand = (expanded, record) => {
-    let newExpandedRows =  [...expandedRows]
+    let newExpandedRows =  [...expandedRows];
     if (expanded) {
       if ( newExpandedRows.indexOf(record.key) === -1) {
         newExpandedRows.push(record.key);
@@ -744,7 +744,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       newExpandedRows = newExpandedRows.filter(row => row !== record.key);
     }
     setExpandedRows(newExpandedRows);
-  }
+  };
 
   const confirmAction = async () => {
     if (confirmType === ConfirmationType.DeletePropertyWarn || confirmType === ConfirmationType.DeletePropertyStepWarn) {
@@ -757,7 +757,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         handleError(error)
       }
     }
-  }
+  };
 
   const addPropertyButton = <MLButton
       type="primary"
@@ -765,7 +765,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       disabled={!props.canWriteEntityModel}
       className={!props.canWriteEntityModel && styles.disabledButton}
       onClick={() => addPropertyButtonClicked()}
-    >Add Property</MLButton>
+    >Add Property</MLButton>;
 
   return (
     <div>
@@ -809,7 +809,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       <MLTable
         rowClassName={(record) => {
           let propertyName = record.hasOwnProperty('add') && record.add !== '' ? record.add.split(',').join('-') : record.propertyName;
-          return props.entityName + '-' + propertyName
+          return props.entityName + '-' + propertyName;
         }}
         locale={{ emptyText: ' ' }}
         columns={headerColumns}
@@ -820,6 +820,6 @@ const PropertyTable: React.FC<Props> = (props) => {
       />
     </div>
   );
-}
+};
 
 export default PropertyTable;

@@ -1,6 +1,6 @@
 /// <reference types="cypress"/>
 
-import { toolbar, tiles, projectInfo } from '../../support/components/common/index';
+import { toolbar, tiles } from '../../support/components/common/index';
 import 'cypress-wait-until';
 import loadPage from "../../support/pages/load";
 import runPage from "../../support/pages/run";
@@ -31,7 +31,7 @@ describe('customRole', () => {
     toolbar.getModelToolbarIcon().click();
     tiles.getModelTile().should('exist');
 
-    let entityTypeId = 'Customer'
+    let entityTypeId = 'Customer';
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, 'be.visible', 'be.visible');
