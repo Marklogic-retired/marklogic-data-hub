@@ -530,6 +530,5 @@ describe('Verify numeric/date facet can be applied', () => {
     browsePage.getDateFacetPicker().trigger('mouseover');
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({ force: true });
     browsePage.getFacetApplyButton().should('not.exist')
-    browsePage.getSelectedFacet('birthDate:').should('not.exist');
   });
 });
