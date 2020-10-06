@@ -57,6 +57,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [showLinks, setShowLinks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [sortedMapping, setSortedMappings] = useState(props.data)
+    const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -139,6 +140,7 @@ const MappingCard: React.FC<Props> = (props) => {
       const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
+        setSelected({}); // reset menus on cancel
       }
 
       function handleMouseOver(e, name) {
@@ -579,13 +581,23 @@ const MappingCard: React.FC<Props> = (props) => {
     }
 
     function handleSelect(obj) {
+        let selectedNew = {...selected};
+        selectedNew[obj.loadName] = obj.flowName;
+        setSelected(selectedNew);
         handleStepAdd(obj.mappingName, obj.flowName);
     }
 
+    const isStepInFlow = (mappingName, flowName) => {
+        let result = false, flow;
+        if (props.flows) flow = props.flows.find(f => f.name === flowName);
+        if (flow) result = flow['steps'].findIndex(s => s.stepName === mappingName) > -1;
+        return result;
+    }
+
     const handleStepAdd = (mappingName, flowName) => {
-        setAddDialogVisible(true);
         setMappingArtifactName(mappingName);
         setFlowName(flowName);
+        setAddDialogVisible(true);
     }
 
     const onAddOk = async (lName, fName) => {
@@ -609,11 +621,14 @@ const MappingCard: React.FC<Props> = (props) => {
             cancelText='No'
             onOk={() => onAddOk(mappingArtifactName, flowName)}
             onCancel={() => onCancel()}
-            width={350}
+            width={400}
             maskClosable={false}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>
-                Are you sure you want to add "{mappingArtifactName}" to flow "{flowName}"?
+            <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
+                { isStepInFlow(mappingArtifactName, flowName) ?
+                    <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Add another instance of the step?</p> :
+                    <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+                }
             </div>
         </Modal>
     );
@@ -666,6 +681,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                         <div className={styles.cardLinkSelect}>
                                             <Select
                                                 style={{ width: '100%' }}
+                                                value={selected[elem.name] ? selected[elem.name] : undefined}
                                                 onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
                                                 placeholder="Select Flow"
                                                 defaultActiveFirstOption={false}

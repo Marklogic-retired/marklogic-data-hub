@@ -113,7 +113,7 @@ describe('Mapping', () => {
 
     curatePage.openExistingFlowDropdown('Order', mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
-    curatePage.addStepToFlowConfirmationMessage(mapStep, flowName);
+    curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName)
 
     runPage.runStep(mapStep).click();
@@ -199,7 +199,7 @@ describe('Mapping', () => {
 
     curatePage.openExistingFlowDropdown('Order', mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
-    curatePage.addStepToFlowConfirmationMessage(mapStep, flowName);
+    curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(mapStep, flowName)
 
     runPage.runStep(mapStep).click();

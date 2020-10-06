@@ -42,6 +42,7 @@ const LoadList: React.FC<Props> = (props) => {
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [stepData,setStepData] = useState({});
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
+    const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
 
     const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
 
@@ -83,18 +84,29 @@ const LoadList: React.FC<Props> = (props) => {
     const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
+        setSelected({}); // reset menus on cancel
     }
 
 
     function handleSelect(obj) {
+        let selectedNew = {...selected};
+        selectedNew[obj.loadName] = obj.flowName;
+        setSelected(selectedNew);
         handleStepAdd(obj.loadName, obj.flowName);
     }
 
+    const isStepInFlow = (loadName, flowName) => {
+        let result = false;
+        let flow;
+        if (props.flows) flow = props.flows.find(f => f.name === flowName);
+        if (flow) result = flow['steps'].findIndex(s => s.stepName === loadName) > -1;
+        return result;
+    }
 
     const handleStepAdd = (loadName, flowName) => {
-        setAddDialogVisible(true);
         setLoadArtifactName(loadName);
         setFlowName(flowName);
+        setAddDialogVisible(true);
     }
 
     const onAddOk = async (lName, fName) => {
@@ -118,11 +130,14 @@ const LoadList: React.FC<Props> = (props) => {
             cancelText={<div aria-label="No">No</div>}
             onOk={() => onAddOk(loadArtifactName, flowName)}
             onCancel={() => onCancel()}
-            width={350}
+            width={400}
             maskClosable={false}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>
-                Are you sure you want to add "{loadArtifactName}" to flow "{flowName}"?
+            <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
+                { isStepInFlow(loadArtifactName, flowName) ?
+                    <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Add another instance of the step?</p> :
+                    <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+                }
             </div>
         </Modal>
     );
@@ -143,6 +158,7 @@ const LoadList: React.FC<Props> = (props) => {
                     <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
                         <Select
                             style={{ width: '100%' }}
+                            value={selected[name] ? selected[name] : undefined}
                             onChange={(flowName) => handleSelect({flowName: flowName, loadName: name})}
                             placeholder="Select Flow"
                             defaultActiveFirstOption={false}

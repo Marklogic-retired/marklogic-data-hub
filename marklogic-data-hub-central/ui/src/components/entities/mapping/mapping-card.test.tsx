@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
-import {fireEvent, render, waitForElement, wait, cleanup} from '@testing-library/react';
+import {fireEvent, render, wait, cleanup} from '@testing-library/react';
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
@@ -22,6 +22,25 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe("Mapping Card component", () => {
+
+  const mapping = data.mappings.data[0].artifacts;
+  const entityModel = data.primaryEntityTypes.data[0];
+  const mappingProps = {
+    data: mapping,
+    flows: data.flows.data,
+    entityTypeTitle: entityModel.entityName,
+    entityModel: entityModel,
+    deleteMappingArtifact: jest.fn(() => {}),
+    getMappingArtifactByMapName: () => {},
+    createMappingArtifact: () => {},
+    updateMappingArtifact: () => {},
+    addStepToFlow: () => {},
+    addStepToNew: () => {},
+    canReadOnly: false,
+    canReadWrite: false,
+    canWriteFlow: false,
+  }
+
   beforeEach(() => {
     mocks.curateAPI(axiosMock);
   });
@@ -32,30 +51,20 @@ describe("Mapping Card component", () => {
   });
 
   test('Mapping card does not allow edit without writeMapping authority', async () => {
-    let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts;
-    let queryAllByText, getByRole, queryAllByRole, getByText, getByTestId;
-    const noopFun = () => {};
     const deleteMappingArtifact = jest.fn(() => {});
+    let queryAllByText, getByText, getByRole, queryAllByRole, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard data={mapping}
-                             flows={data.flows}
-                             entityTypeTitle={entityModel.entityName}
-                             getMappingArtifactByMapName={noopFun}
-                             deleteMappingArtifact={deleteMappingArtifact}
-                             createMappingArtifact={noopFun}
-                             updateMappingArtifact={noopFun}
-                             canReadOnly={true}
-                             canReadWrite={false}
-                             canWriteFlow={false}
-                             entityModel={entityModel}
-                             addStepToFlow={noopFun}
-                             addStepToNew={noopFun}/></Router>);
-      queryAllByText = renderResults.queryAllByText;
-      getByRole = renderResults.getByRole;
-      queryAllByRole = renderResults.queryAllByRole;
+        <Router><MappingCard 
+          {...mappingProps}
+          canReadOnly={true}
+          deleteMappingArtifact={deleteMappingArtifact}
+        /></Router>
+      );
       getByText = renderResults.getByText;
+      getByRole = renderResults.getByRole;
+      queryAllByText = renderResults.queryAllByText;
+      queryAllByRole = renderResults.queryAllByRole;
       getByTestId = renderResults.getByTestId;
     });
 
@@ -74,29 +83,22 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole('disabled-delete-mapping'));
     expect(queryAllByText('Yes')).toHaveLength(0);
     expect(deleteMappingArtifact).not.toBeCalled();
+
   });
 
   test('Mapping card does allow edit with writeMapping authority', async () => {
-    let entityModel = data.primaryEntityTypes.data[0];
     let mapping = data.mappings.data[0].artifacts;
-    let getByText, getByRole, queryAllByRole, getByTestId;
-    const noopFun = () => {};
     const deleteMappingArtifact = jest.fn(() => {});
+    let getByText, getByRole, queryAllByRole, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard data={mapping}
-                             flows={data.flows}
-                             entityTypeTitle={entityModel.entityName}
-                             getMappingArtifactByMapName={noopFun}
-                             deleteMappingArtifact={deleteMappingArtifact}
-                             createMappingArtifact={noopFun}
-                             updateMappingArtifact={noopFun}
-                             canReadOnly={true}
-                             canReadWrite={true}
-                             canWriteFlow={false}
-                             entityModel={entityModel}
-                             addStepToFlow={noopFun}
-                             addStepToNew={noopFun}/></Router>);
+        <Router><MappingCard 
+          {...mappingProps}
+          canReadOnly={true}
+          canReadWrite={true}
+          deleteMappingArtifact={deleteMappingArtifact}
+        /></Router>
+      );
       getByText = renderResults.getByText;
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
@@ -108,71 +110,55 @@ describe("Mapping Card component", () => {
     expect(getByRole("settings-mapping")).toBeInTheDocument();
     expect(queryAllByRole('disabled-delete-mapping')).toHaveLength(0);
     expect(getByRole('delete-mapping')).toBeInTheDocument();
+
     // check if delete tooltip appears
     fireEvent.mouseOver(getByRole('delete-mapping'));
     await wait (() => expect(getByText('Delete')).toBeInTheDocument());
     await fireEvent.click(getByRole('delete-mapping'));
     await fireEvent.click(getByText('Yes'));
     expect(deleteMappingArtifact).toBeCalled();
+
   });
 
   test('Mapping card parses XML appropriately', async () => {
-    let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts;
-    let getByText, getByTestId;
-    const noopFun = () => {};
     const mappingArtifactByNameFunction = () => {
       return { sourceDatabase: 'data-hub-STAGING' };
     };
-    const deleteMappingArtifact = jest.fn(() => {});
+    let mapping = data.mappings.data[0].artifacts;
+    let getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <Router><MappingCard data={mapping}
-                             flows={data.flows}
-                             entityTypeTitle={entityModel.entityName}
-                             getMappingArtifactByMapName={mappingArtifactByNameFunction}
-                             deleteMappingArtifact={deleteMappingArtifact}
-                             createMappingArtifact={noopFun}
-                             updateMappingArtifact={noopFun}
-                             canReadOnly={true}
-                             canReadWrite={true}
-                             canWriteFlow={false}
-                             entityModel={entityModel}
-                             addStepToFlow={noopFun}
-                             addStepToNew={noopFun}/></Router>);
+        <Router><MappingCard 
+          {...mappingProps}
+          getMappingArtifactByMapName={mappingArtifactByNameFunction}
+          canReadOnly={true}
+          canReadWrite={true}
+        /></Router>);
       getByText = renderResults.getByText;
       getByTestId = renderResults.getByTestId;
     });
+
     await act(async () => {
       await fireEvent.click(getByTestId("Mapping1-stepDetails"));
     });
     const orderDetailsNode = getByText("OrderDetails");
     expect(orderDetailsNode).toBeInTheDocument();
-    console.log(orderDetailsNode.parentNode);
     expect(orderDetailsNode.parentNode).toHaveTextContent('OrderNS:');
+
   });
 
   test('Open Advanced Step settings', async () => {
       const authorityService = new AuthoritiesService();
       authorityService.setAuthorities(['writeMapping', 'readMapping']);
-      let entityModel = data.primaryEntityTypes.data[0];
-      let mapping = data.mappings.data[0].artifacts;
-      const noopFun = () => {};
-      const deleteMappingArtifact = jest.fn(() => {});
+        let mapping = data.mappings.data[0].artifacts;
       const {getByText,getByRole, getByPlaceholderText} = render(
-          <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard data={mapping}
-                               flows={data.flows}
-                               entityTypeTitle={entityModel.entityName}
-                               getMappingArtifactByMapName={noopFun}
-                               deleteMappingArtifact={deleteMappingArtifact}
-                               createMappingArtifact={noopFun}
-                               updateMappingArtifact={noopFun}
-                               canReadOnly={false}
-                               canReadWrite={true}
-                               canWriteFlow={true}
-                               entityModel={entityModel}
-                               addStepToFlow={noopFun}
-                               addStepToNew={noopFun}/></AuthoritiesContext.Provider></Router>);
+        <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard 
+          {...mappingProps}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></Router>
+      );
+
       await wait(() => {
           fireEvent.click(getByRole("settings-mapping"));
       })
@@ -217,71 +203,86 @@ describe("Mapping Card component", () => {
        expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
   });
 
-  test('Verify Card sort order and Adding the step to an existing flow', async () => {
+  test('Verify Card sort order and adding the step to an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
-    let entityModel = data.primaryEntityTypes.data[0];
     let mapping = data.mappings.data[0].artifacts.concat(data.mappings.data[1].artifacts);
     const noopFun = () => {};
     let getByText, getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter>
-          <AuthoritiesContext.Provider value={authorityService}>
-            <MappingCard
-              data={mapping}
-              flows={data.flows.data}
-              entityTypeTitle={entityModel.entityName}
-              getMappingArtifactByMapName={noopFun}
-              deleteMappingArtifact={noopFun}
-              createMappingArtifact={noopFun}
-              updateMappingArtifact={noopFun}
-              canReadOnly={false}
-              canReadWrite={true}
-              canWriteFlow={true}
-              entityModel={entityModel}
-              addStepToFlow={noopFun}
-              addStepToNew={noopFun} />
-          </AuthoritiesContext.Provider>
-        </MemoryRouter>
+        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+          {...mappingProps}
+          data={mapping}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></MemoryRouter>
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId
-    })
+    });
 
-    //Check if the card is rendered properly
+    // Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
+    expect(getByText('Mapping1')).toBeInTheDocument();
     expect(getByText('Last Updated: 04/24/2020 1:21PM')).toBeInTheDocument();
     expect(getByText('Mapping2')).toBeInTheDocument();
     expect(getByText('Last Updated: 10/01/2020 2:38AM')).toBeInTheDocument();
-    //expect(getByLabelText('testLoadXML-sourceFormat')).toBeInTheDocument();
 
-    //Verify cards get sorted by last updated
+    // Verify cards get sorted by last updated
     let mapCards: any = document.querySelectorAll('.ant-col');
     expect(mapCards[0]).toHaveTextContent('Add New');
     expect(mapCards[1]).toHaveTextContent('Mapping2');
     expect(mapCards[2]).toHaveTextContent('Mapping1');
 
-    fireEvent.mouseOver(getByText('Mapping1')); // Hover over the Map Card to get more options
+    // Hover for options
+    fireEvent.mouseOver(getByText('Mapping2'));
+    expect(getByTestId('Mapping2-toNewFlow')).toBeInTheDocument(); // 'Add to a new Flow'
+    expect(getByTestId('Mapping2-toExistingFlow')).toBeInTheDocument(); // 'Add to an existing Flow'
 
-    //Verify if the flow related options are availble on mouseOver
-    expect(getByTestId('Mapping1-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
-    expect(getByTestId('Mapping1-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
-
-    //Click on the select field to open the list of existing flows.
-    fireEvent.click(getByTestId('Mapping1-flowsList'));
-
-    //Choose testFlow from the dropdown
+    // Open menu, choose flow
+    fireEvent.click(getByTestId('Mapping2-flowsList'));
     fireEvent.click(getByText('testFlow'));
 
-    //Click on 'Yes' button
+    // Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-not-in-flow')).toBeInTheDocument();
+    fireEvent.click(getByTestId('Mapping2-to-testFlow-Confirm'));
+
+    // Check if the /tiles/run/add route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add'); })
+    // TODO- E2E test to check if the Run tile is loaded or not.
+
+  });
+
+  test('Adding the step to an existing flow where step DOES exist', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
+    let getByText, getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+          {...mappingProps}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></MemoryRouter>
+      );
+      getByText = renderResults.getByText;
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId
+    });
+
+    // Hover for options, open menu, choose flow
+    fireEvent.mouseOver(getByText('Mapping1'));
+    fireEvent.click(getByTestId('Mapping1-flowsList'));
+    fireEvent.click(getByText('testFlow'));
+
+    // Dialog appears, click 'Yes'
+    expect(getByLabelText('step-in-flow')).toBeInTheDocument();
     fireEvent.click(getByTestId('Mapping1-to-testFlow-Confirm'));
 
     //Check if the /tiles/run/add route has been called
-    wait(() => {
-      expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add'); })
     //TODO- E2E test to check if the Run tile is loaded or not.
 
   });
@@ -289,35 +290,19 @@ describe("Mapping Card component", () => {
   test('Adding the step to a new flow', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
-    let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts;
-    const noopFun = () => {};
     let getByText, getByLabelText, getByTestId;
     await act(async () => {
       const renderResults = render(
-        <MemoryRouter>
-          <AuthoritiesContext.Provider value={authorityService}>
-            <MappingCard
-              data={mapping}
-              flows={data.flows.data}
-              entityTypeTitle={entityModel.entityName}
-              getMappingArtifactByMapName={noopFun}
-              deleteMappingArtifact={noopFun}
-              createMappingArtifact={noopFun}
-              updateMappingArtifact={noopFun}
-              canReadOnly={false}
-              canReadWrite={true}
-              canWriteFlow={true}
-              entityModel={entityModel}
-              addStepToFlow={noopFun}
-              addStepToNew={noopFun} />
-          </AuthoritiesContext.Provider>
-        </MemoryRouter>
+        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+          {...mappingProps}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></MemoryRouter>
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
       getByTestId = renderResults.getByTestId
-    })
+    });
 
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
@@ -342,27 +327,19 @@ describe("Mapping Card component", () => {
   test('Verify Mapping card allows step to be added to flow with writeFlow authority', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping','writeFlow']);
-    let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts;
-    const mockAddStepToFlow = jest.fn();
-    const noopFun = jest.fn();
-    const {getByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-      data={mapping}
-      flows={data.flows.data}
-      entityTypeTitle={entityModel.entityName}
-      getMappingArtifactByMapName={noopFun}
-      deleteMappingArtifact={noopFun}
-      createMappingArtifact={noopFun}
-      updateMappingArtifact={noopFun}
-      canReadOnly={authorityService.canReadMapping()}
-      canReadWrite={authorityService.canWriteMapping()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      entityModel={entityModel}
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={noopFun}/>
-    </AuthoritiesContext.Provider></MemoryRouter>);
-
     const mappingStepName = mapping[0].name;
+    const mockAddStepToFlow = jest.fn();
+    const {getByText, getAllByText, getByTestId} = render(
+      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+        {...mappingProps}
+        canReadOnly={authorityService.canReadMapping()}
+        canReadWrite={authorityService.canWriteMapping()}
+        canWriteFlow={authorityService.canWriteFlow()}
+        addStepToFlow={mockAddStepToFlow}
+      />
+      </AuthoritiesContext.Provider></MemoryRouter>
+    );
+
     fireEvent.mouseOver(getByText(mappingStepName));
 
     // test adding to existing flow
@@ -373,34 +350,27 @@ describe("Mapping Card component", () => {
     expect(mockAddStepToFlow).toBeCalledTimes(1);
 
     // adding to new flow
-    fireEvent.mouseOver(getByText(mappingStepName));
+    const mappingStep = getAllByText(mappingStepName);
+    fireEvent.mouseOver(mappingStep[0]);
     expect(getByTestId(`${mappingStepName}-toNewFlow`)).toBeInTheDocument();
     // TODO calling addStepToNew not implemented yet
+
   });
 
   test('Verify Mapping card does not allow a step to be added to flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping','readFlow']);
-    let entityModel = data.primaryEntityTypes.data[0];
-    let mapping = data.mappings.data[0].artifacts;
-    const mockAddStepToFlow = jest.fn();
-    const noopFun = jest.fn();
-    const {getByText, queryByText, queryByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
-      data={mapping}
-      flows={data.flows}
-      entityTypeTitle={entityModel.entityName}
-      getMappingArtifactByMapName={noopFun}
-      deleteMappingArtifact={noopFun}
-      createMappingArtifact={noopFun}
-      updateMappingArtifact={noopFun}
-      canReadOnly={authorityService.canReadMapping()}
-      canReadWrite={authorityService.canWriteMapping()}
-      canWriteFlow={authorityService.canWriteFlow()}
-      entityModel={entityModel}
-      addStepToFlow={mockAddStepToFlow}
-      addStepToNew={noopFun}/>
-    </AuthoritiesContext.Provider></MemoryRouter>);
     const mappingStepName = mapping[0].name;
+    const mockAddStepToFlow = jest.fn();
+    const {getByText, queryByText, queryByTestId} = render(
+      <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+        {...mappingProps}
+        canReadOnly={authorityService.canReadMapping()}
+        canReadWrite={authorityService.canWriteMapping()}
+        canWriteFlow={authorityService.canWriteFlow()}
+        addStepToFlow={mockAddStepToFlow}
+      /></AuthoritiesContext.Provider></MemoryRouter>
+    );
 
     fireEvent.mouseOver(getByText(mappingStepName));
 
@@ -409,9 +379,9 @@ describe("Mapping Card component", () => {
     fireEvent.click(queryByTestId(`${mappingStepName}-flowsList`));
     expect(queryByText(data.flows.data[0].name)).not.toBeInTheDocument();
 
-
     // test adding to new flow
     expect(queryByTestId(`${mappingStepName}-toNewFlow`)).not.toBeInTheDocument();
     expect(queryByTestId(`${mappingStepName}-disabledToNewFlow`)).toBeInTheDocument();
+
   });
 });

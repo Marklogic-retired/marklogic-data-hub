@@ -38,6 +38,33 @@ const flows = [
     }
 ];
 
+const flowsAdd = [
+    {
+        name: 'FlowStepNoExist',
+        steps: [
+            {
+                stepNume: '1',
+                stepName: 'testLoad456', // has step NOT IN loadData
+                stepDefinitionType: 'Load Data',
+                stepId: 'testLoad456-ingestion',
+                format: 'xml'
+            },
+        ]
+    },
+    {
+        name: 'FlowStepExist',
+        steps: [
+            {
+                  stepNume: '2',
+                  stepName: 'testLoadXML', // has step IN loadData
+                  stepDefinitionType: 'Load Data',
+                  stepId: 'testLoadXML-ingestion',
+                  format: 'xml'
+            },
+        ]
+    },
+];
+
 const loadData = {
   data: [
     {
@@ -407,6 +434,7 @@ const data = {
     canWrite: true
   },
   flows: flows,
+  flowsAdd: flowsAdd,
   loadData: loadData,
   mapProps: mapProps,
   newMap: newMap,

@@ -199,7 +199,7 @@ describe('Default ingestion ', () => {
         cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
         loadPage.addStepToExistingFlow(stepName, flowName);
-        loadPage.addStepToFlowConfirmationMessage(stepName, flowName).should('be.visible');
+        loadPage.addStepToFlowConfirmationMessage().should('be.visible');
         loadPage.confirmationOptions('Yes').click();
         cy.verifyStepAddedToFlow('Load', stepName);
 

@@ -102,8 +102,12 @@ class CuratePage {
         return cy.get('[role="disabled-delete-mapping button"]');
     }
 
-    addStepToFlowConfirmationMessage(stepName: string, flowName: string) {
-      return cy.findByText(`Are you sure you want to add "${stepName}" to flow "${flowName}"?`)
+    addStepToFlowConfirmationMessage() {
+        return cy.findByLabelText('step-not-in-flow');
+    }
+
+    addStepExistingToFlowConfirmationMessage() {
+        return cy.findByLabelText('step-in-flow');
     }
 
     confirmAddStepToFlow(stepName: string, flowName: string) {
