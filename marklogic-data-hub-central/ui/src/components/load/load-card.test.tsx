@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent, wait, cleanup, waitForElement, screen} from '@testing-library/react';
+import {render, fireEvent, wait, cleanup, screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
 import data from '../../assets/mock-data/common.data';
@@ -7,7 +7,7 @@ import ingestionData from '../../assets/mock-data/ingestion.data';
 import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
-import {ModelingTooltips, SecurityTooltips} from "../../config/tooltips.config";
+import {SecurityTooltips} from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -31,7 +31,7 @@ describe('Load Card component', () => {
     cleanup();
   })
 
-  test('Load Card - Add step to an existing Flow', async () => {
+  test('Load Card - Add step to an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
     const { getByText, getByLabelText, getByTestId } = render(
@@ -39,7 +39,7 @@ describe('Load Card component', () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadCard
             {...data.loadData}
-            flows={data.flows}
+            flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
             addStepToNew={jest.fn()} />
@@ -62,17 +62,48 @@ describe('Load Card component', () => {
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
-    //Choose FlowA from the dropdown
-    fireEvent.click(getByText('FlowA'));
+    //Choose FlowStepNoExist from the dropdown
+    fireEvent.click(getByText('FlowStepNoExist'));
 
-    //Click on 'Yes' button
-    fireEvent.click(getByTestId('testLoadXML-to-FlowA-Confirm'));
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-not-in-flow')).toBeInTheDocument();
+    fireEvent.click(getByTestId('testLoadXML-to-FlowStepNoExist-Confirm'));
 
     //Check if the /tiles/run/add route has been called
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
     //TODO- E2E test to check if the Run tile is loaded or not.
+    
+  });
+
+  test('Load Card - Add step to an existing flow where step DOES exist', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
+    const { getByText, getByLabelText, getByTestId } = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadCard
+            {...data.loadData}
+            flows={data.flowsAdd}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    )
+
+    fireEvent.mouseOver(getByText('testLoadXML')); // Hover over the Load Card to get more options
+
+    //Click on the select field to open the list of existing flows.
+    fireEvent.click(getByTestId('testLoadXML-flowsList'));
+
+    //Choose FlowStepExist from the dropdown
+    fireEvent.click(getByText('FlowStepExist'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-in-flow')).toBeInTheDocument();
+    fireEvent.click(getByTestId('testLoadXML-to-FlowStepExist-Confirm'));
     
   });
 
@@ -133,7 +164,7 @@ describe('Load Card component', () => {
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+    const {getByText, getAllByText, getByTestId} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -155,7 +186,8 @@ describe('Load Card component', () => {
     fireEvent.click(getByText('Yes'));
     expect(mockAddStepToFlow).toBeCalledTimes(1);
     // adding to new flow
-    fireEvent.mouseOver(getByText(loadStepName));
+    const loadSteps = getAllByText(loadStepName);
+    fireEvent.mouseOver(loadSteps[0]);
     expect(getByTestId(`${loadStepName}-toNewFlow`)).toBeInTheDocument();
     // TODO calling addStepToNew not implemented yet
   });

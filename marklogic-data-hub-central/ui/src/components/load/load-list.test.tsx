@@ -174,7 +174,7 @@ describe('Load data component', () => {
 
   })
 
-  test('Load List - Add step to an existing Flow', async () => {
+  test('Load List - Add step to an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
     const { getByText, getByLabelText, getByTestId } = render(
@@ -182,7 +182,7 @@ describe('Load data component', () => {
         <AuthoritiesContext.Provider value={authorityService}>
           <LoadList
             {...data.loadData}
-            flows={data.flows}
+            flows={data.flowsAdd}
             canWriteFlow={true}
             addStepToFlow={jest.fn()}
             addStepToNew={jest.fn()} />
@@ -202,10 +202,11 @@ describe('Load data component', () => {
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
-    //Choose FlowA from the dropdown
-    fireEvent.click(getByText('FlowA'));
+    //Choose FlowStepNoExist from the dropdown
+    fireEvent.click(getByText('FlowStepNoExist'));
 
-    //Click on 'Yes' button
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-not-in-flow')).toBeInTheDocument();
     fireEvent.click(getByLabelText('Yes'));
 
     //Check if the /tiles/run/add route has been called
@@ -215,6 +216,40 @@ describe('Load data component', () => {
     //TODO- E2E test to check if the Run tile is loaded or not.
 
   })
+
+  test('Load List - Add step to an existing flow where step DOES exist', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
+    const { getByText, getByLabelText, getByTestId } = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            {...data.loadData}
+            flows={data.flowsAdd}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    )
+
+    fireEvent.mouseOver(getByLabelText('testLoadXML-add-icon')); // Hover over the Add to Flow Icon to get more options
+
+    //Verify if the flow related options are availble on mouseOver
+    await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
+    await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
+
+    //Click on the select field to open the list of existing flows.
+    fireEvent.click(getByTestId('testLoadXML-flowsList'));
+
+    //Choose FlowStepExist from the dropdown
+    fireEvent.click(getByText('FlowStepExist'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-in-flow')).toBeInTheDocument();
+    fireEvent.click(getByLabelText('Yes'));
+    
+  });
 
   test('Load List - Add step to an new Flow', async () => {
     const authorityService = new AuthoritiesService();
