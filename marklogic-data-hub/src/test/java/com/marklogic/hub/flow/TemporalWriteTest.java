@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
+import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -17,10 +19,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.stream.Stream;
+
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TemporalWriteTest extends AbstractHubCoreTest {
+
+    private InputEndpoint.BulkInputCaller bulkInputCaller;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +48,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         removeIndexesAndFields();
         new DatabaseManager(runAsAdmin().getManageClient()).clearDatabase(HubConfig.DEFAULT_STAGING_SCHEMAS_DB_NAME);
     }
@@ -55,10 +64,9 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
             "declareUpdate();\n" +
             "temporal.documentInsert('temporal/test', '/temporal/ingestion/test.json', root, {permissions : [xdmp.permission('data-hub-common', 'read'),xdmp.permission('data-hub-common', 'update')]});";
 
-        try{
+        try {
             runAsDataHubOperator().newStagingClient().newServerEval().javascript(updateTemporalDoc).eval();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             logger.error("Document update failed: ", e);
             Assertions.fail("After the step is run, a temporal document should have been created and it's update should not fail. " +
                 "If it's not a temporal document, temporal update would fail");
@@ -68,13 +76,42 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
             "declareUpdate();\n" +
             "temporal.documentDelete('temporal/test', '/temporal/ingestion/test.json');";
 
-        try{
+        try {
             runAsDataHubOperator().newStagingClient().newServerEval().javascript(deleteTemporalDoc).eval();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             logger.error("Document deletion failed: ", e);
             Assertions.fail("dh-operator should be able to delete the document");
         }
+    }
+
+    @Test
+    void ingestDocWithTemporalCollecion() {
+        String collections = "fruits,stuff,temporal/test";
+        ObjectNode workUnit = objectMapper.createObjectNode();
+        workUnit.put("uriprefix", "/bulkJavaTest/");
+        workUnit.put("collections", collections);
+        runAsDataHubOperator();
+        InputEndpoint endpoint = InputEndpoint.on(
+            getHubClient().getStagingClient(),
+            stagingModulesClient.newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle())
+        );
+        bulkInputCaller = endpoint.bulkCaller();
+        bulkInputCaller.setEndpointState("{}".getBytes());
+        bulkInputCaller.setWorkUnit(new JacksonHandle(workUnit));
+
+        Stream<InputStream> input = Stream.of(
+            asInputStream("{\"fruitName\":\"pineapple\", \"fruitColor\":\"green\"}")
+        );
+        input.forEach(bulkInputCaller::accept);
+        bulkInputCaller.awaitCompletion();
+
+        DocumentMetadataHandle metadata = getDocumentMetadata();
+        assertEquals(collections.split(",").length + 2, metadata.getCollections().size());
+        assertTrue(metadata.getCollections().contains("fruits"));
+        assertTrue(metadata.getCollections().contains("stuff"));
+        assertTrue(metadata.getCollections().contains("temporal/test"));
+        assertTrue(metadata.getCollections().contains("latest"));
+
     }
 
     private void removeIndexesAndFields() {
@@ -127,4 +164,21 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         systemEndIndex.put("range-value-positions", false);
         new DatabaseManager(adminHubConfig.getManageClient()).save(newNode.toString());
     }
+
+    private InputStream asInputStream(String value) {
+        return new ByteArrayInputStream(value.getBytes());
+    }
+
+    private DocumentMetadataHandle getDocumentMetadata() {
+        String[] uris = getDocUris();
+        assertTrue(uris.length > 0, "Expected at least one fruit URI, found zero");
+        return stagingClient.newDocumentManager().readMetadata(uris[0], new DocumentMetadataHandle());
+    }
+
+    private String[] getDocUris() {
+        return stagingClient.newServerEval()
+            .javascript("cts.uris(null, null, cts.collectionQuery('fruits'))")
+            .evalAs(String.class).split("\n");
+    }
+
 }
