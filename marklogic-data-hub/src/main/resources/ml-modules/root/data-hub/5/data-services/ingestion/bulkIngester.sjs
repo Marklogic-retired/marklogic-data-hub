@@ -29,11 +29,21 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const state = fn.head(xdmp.fromJSON(endpointState));
 
+const temporal = require("/MarkLogic/temporal.xqy");
+const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
+
 const work = fn.head(xdmp.fromJSON(workUnit));
 
 const uriPrefix = work.uriprefix != null ? work.uriprefix : "";
 
 const collections = work.collections != null ? work.collections.split(',') : [];
+const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
+    acc[col] = true;
+    return acc;
+}, {});
+
+let temporalCollection = collections.concat(collections).find((col) => temporalCollections[col]);
+
 
 const permissions = work.permissions != null ? work.permissions : 'data-hub-common,read,data-hub-common,update'
 const permissionsArray = new HubUtils().parsePermissions(permissions);
@@ -67,14 +77,27 @@ inputArray.forEach(record => {
   record = ingest.main({uri: uri, value: record}, {
     outputFormat: consts.JSON, headers: headers
   }).value;
-  xdmp.documentInsert(
-    uri,
-    record,
-    {
-      permissions: permissionsArray,
-      collections: collections
-    }
-  );
+  if(temporalCollection) {
+    const collectionsReservedForTemporal = ['latest', uri];
+    temporal.documentInsert(
+            temporalCollection,
+            uri,
+            record,
+            {
+              permissions: permissionsArray,
+              collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col)))
+            }
+    );
+  } else {
+    xdmp.documentInsert(
+        uri,
+        record,
+        {
+          permissions: permissionsArray,
+          collections: collections
+        }
+      );
+  }
 });
 
 const returnValue = (fn.count(input) > 0) ? state : null;
