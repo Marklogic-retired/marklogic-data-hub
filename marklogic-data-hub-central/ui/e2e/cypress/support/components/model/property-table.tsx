@@ -64,4 +64,4 @@ class PropertyTable {
 }
 
 const propertyTable = new PropertyTable();
-export default propertyTable
+export default propertyTable;

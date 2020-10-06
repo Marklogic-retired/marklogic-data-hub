@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio } from "antd";
+import { Modal, Form, Input, Icon, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './create-edit-matching-dialog.module.scss';
 import { NewMatchTooltips } from '../../../../config/tooltips.config';
@@ -11,7 +11,7 @@ const CreateEditMatchingDialog = (props) => {
   const [description, setDescription] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.description : '');
   //const [collections, setCollections] = useState<any[]>([]);
   const [collections, setCollections] = useState('');
-  const [selectedSource, setSelectedSource] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.selectedSource : 'collection')
+  const [selectedSource, setSelectedSource] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.selectedSource : 'collection');
   const [srcQuery, setSrcQuery] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.sourceQuery : '');
 
   //To check submit validity
@@ -47,7 +47,7 @@ const CreateEditMatchingDialog = (props) => {
       //setCollections([]);
       setCollections('');
       setDescription('');
-      setSrcQuery('')
+      setSrcQuery('');
     }
 
     return (() => {
@@ -60,7 +60,7 @@ const CreateEditMatchingDialog = (props) => {
       setSelectedSourceTouched(false);
       setCollectionsTouched(false);
       setTobeDisabled(false);
-    })
+    });
 
   }, [props.matchingData, props.title, props.newMatching]);
 
@@ -72,7 +72,7 @@ const CreateEditMatchingDialog = (props) => {
       props.setNewMatching(false);
 
     }
-  }
+  };
 
   const checkDeleteOpenEligibility = () => {
     if (!isMatchingNameTouched
@@ -85,20 +85,20 @@ const CreateEditMatchingDialog = (props) => {
     } else {
       return true;
     }
-  }
+  };
 
   const onOk = () => {
     props.setNewMatching(false);
-  }
+  };
 
   const onDelOk = () => {
     props.setNewMatching(false);
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const onDelCancel = () => {
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const deleteConfirmation = <Modal
     visible={deleteDialogVisible}
@@ -128,7 +128,7 @@ const CreateEditMatchingDialog = (props) => {
         description: description,
         selectedSource: selectedSource,
         sourceQuery: sQuery
-      }
+      };
     } else {
       dataPayload = {
         name: matchingName,
@@ -136,7 +136,7 @@ const CreateEditMatchingDialog = (props) => {
         description: description,
         selectedSource: selectedSource,
         sourceQuery: srcQuery
-      }
+      };
     }
 
 
@@ -145,7 +145,7 @@ const CreateEditMatchingDialog = (props) => {
     props.createMatchingArtifact(dataPayload);
 
     props.setNewMatching(false);
-  }
+  };
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -209,7 +209,7 @@ const CreateEditMatchingDialog = (props) => {
         setCollectionsTouched(true);
         setCollections(event.target.value);
         if (props.matchingData && props.matchingData.collection) {
-          console.log('props.matchingData.collection',props.matchingData.collection,event.target.value)
+          console.log('props.matchingData.collection',props.matchingData.collection,event.target.value);
           if (props.matchingData.collection === event.target.value) {
 
             setCollectionsTouched(false);
@@ -224,7 +224,7 @@ const CreateEditMatchingDialog = (props) => {
         }
       }
     }
-  }
+  };
 
   const handleSelectedSource = (event) => {
     if (event.target.value === ' ') {
@@ -250,7 +250,7 @@ const CreateEditMatchingDialog = (props) => {
         }
       }
     }
-  }
+  };
 
 
   const formItemLayout = {
@@ -367,8 +367,8 @@ const CreateEditMatchingDialog = (props) => {
       </Form>
     </div>
     {deleteConfirmation}
-  </Modal>)
-}
+  </Modal>);
+};
 
 export default CreateEditMatchingDialog;
 

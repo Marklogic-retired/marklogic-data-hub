@@ -16,11 +16,11 @@ describe('Custom Ingestion', () => {
 
     afterEach(() => {
         cy.resetTestUser();
-    })
+    });
 
 
     it('verify that custom ingestion step shows up and can be run', () => {
-        const flowName = 'testCustomFlow'
+        const flowName = 'testCustomFlow';
         const loadStep = 'ingestion-step';
 
         // create load step
@@ -45,5 +45,5 @@ describe('Custom Ingestion', () => {
         cy.verifyStepRunResult('success','Ingestion', loadStep);
         tiles.closeRunMessage().click();
 
-    })
-})
+    });
+});

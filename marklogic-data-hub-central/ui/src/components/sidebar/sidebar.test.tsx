@@ -106,7 +106,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
                 database='final'
                 setDatabasePreferences={jest.fn()}
             />
-        )
+        );
 
         const finalDatabaseButton = getByText('Final');
         const stagingDatabaseButton = getByText('Staging');
@@ -129,7 +129,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
                 database='final'
                 setDatabasePreferences={jest.fn()}
             />
-        )
+        );
         expect(document.querySelector('#database [data-icon=down]')).toBeInTheDocument();
         expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
         userEvent.click(getByText('Database'));
@@ -152,7 +152,7 @@ describe("Sidebar createdOn face time window dropdown", () => {
                 database='final'
                 setDatabasePreferences={jest.fn()}
             />
-        )
+        );
         expect(document.querySelector('#database [data-icon=down]')).toBeInTheDocument();
         expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
         userEvent.click(getByText('Database'));

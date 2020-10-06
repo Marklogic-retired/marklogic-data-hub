@@ -38,7 +38,7 @@ export const getQueriesResponse = [
         "lastUpdatedDateTime": "2020-04-20T16:37:19.603846-07:00"
       }
     }
-  }]
+  }];
 
 //save new query
 export const saveQueryResponse =
@@ -73,7 +73,7 @@ export const saveQueryResponse =
         "EntityTypeProperty1"
       ]
     }
-  }
+  };
 
 //PUT
 export const putQueryResponse =
@@ -160,4 +160,4 @@ export const duplicateQueryNameErrorResponse = {
   "message": "You already have a saved query with a name of edit new query",
   "suggestion": "Resend the request in the correct format.",
   "details": "You already have a saved query with a name of edit new query"
-}
+};

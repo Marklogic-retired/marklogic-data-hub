@@ -9,6 +9,6 @@ const NoResponse: React.FC = () => {
       <div className={styles.subtitle}>Contact your administrator.</div>
     </div>
   );
-}
+};
 
 export default NoResponse;

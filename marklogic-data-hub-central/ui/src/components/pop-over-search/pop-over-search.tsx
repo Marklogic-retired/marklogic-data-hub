@@ -14,7 +14,7 @@ interface Props {
   popOvercheckedValues: any[];
   facetValues: any[];
   facetName: string;
-};
+}
 
 
 const PopOverSearch: React.FC<Props> = (props) => {
@@ -34,47 +34,47 @@ const PopOverSearch: React.FC<Props> = (props) => {
               "limit": 10,
               "dataType": "string",
               "pattern": e.target.value
-          }
-        const response = await axios.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data)
+          };
+        const response = await axios.post(`/api/entitySearch/facet-values?database=${searchOptions.database}`, data);
         setOptions(response.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         handleError(error);
       }
     } else {
       setOptions([]);
     }
-  }
+  };
 
   const onSelectCheckboxes = (e) => {
-      let index = checkedValues.indexOf(e.target.value)
+      let index = checkedValues.indexOf(e.target.value);
       if(index == -1) {
           setCheckedValues([...checkedValues, e.target.value]);
       }
       else{
           let newChecked = checkedValues.filter(function(el){
-              return (el !== e.target.value)
+              return (el !== e.target.value);
           });
           setCheckedValues(newChecked);
       }
-  }
+  };
 
   const addFacetValues = () => {
     props.checkFacetValues(checkedValues);
     setPopOverVisibilty(false);
-  }
+  };
 
   const searchPopover = () => {
     setPopOverVisibilty(true);
-  }
+  };
 
   const handleChange = (visible) => {
     setPopOverVisibilty(visible);
-  }
+  };
 
    useEffect(()=>{
         setCheckedValues(props.popOvercheckedValues);
-   },[props.popOvercheckedValues])
+   },[props.popOvercheckedValues]);
 
 
 
@@ -88,7 +88,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         >{value}
         </MLCheckbox>
     </div>
-    )
+    );
 
 
   const content = (
@@ -102,7 +102,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
       </div>
     </div>
-  )
+  );
 
   return (
     <Popover
@@ -113,8 +113,8 @@ const PopOverSearch: React.FC<Props> = (props) => {
       visible={popOverVisibility}>
       <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={'popover-search-label'}>Search</div>
     </Popover>
-  )
-}
+  );
+};
 
 export default PopOverSearch;
 

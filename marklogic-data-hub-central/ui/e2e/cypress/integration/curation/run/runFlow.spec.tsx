@@ -11,12 +11,12 @@ describe('Run Tile tests', () => {
         cy.loginAsTestUserWithRoles('hub-central-flow-writer').withRequest();
         cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
         cy.waitUntil(() => runPage.getFlowName('personJSON').should('be.visible'));
-    })
+    });
 
     after(() => {
-        cy.deleteRecordsInFinal('master-xml-person', 'mapPersonXML')
+        cy.deleteRecordsInFinal('master-xml-person', 'mapPersonXML');
         cy.resetTestUser();
-    })
+    });
 
     it('should load xml merged document and display content', () => {
         //Verifies DHFPROD-5863
@@ -50,6 +50,6 @@ describe('Run Tile tests', () => {
         cy.contains('uri: /com.marklogic.smart-mastering/merged/').should('be.visible');
         cy.contains('123 Bates St').scrollIntoView().should('be.visible');
         cy.contains('456 Bates St').should('be.visible');
-    })
+    });
 
-})
+});

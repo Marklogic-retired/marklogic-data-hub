@@ -19,7 +19,7 @@ const defaultUserData = {
   },
   pageRoute: '/tiles',
   maxSessionTime: MAX_SESSION_TIME
-}
+};
 
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
@@ -47,7 +47,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const setSessionTime = (timeInSeconds) => {
     sessionCount.current = timeInSeconds;
-  }
+  };
 
   const resetSessionMonitor = () => {
     // unsubscribe from STOMP/WebSockets
@@ -112,7 +112,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
-      let values = JSON.parse(userPreferences);
       setUser({
         ...user,
         name: username,
@@ -138,7 +137,6 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem('dataHubUser', username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
-      let values = JSON.parse(userPreferences);
       setUser({
         ...user,
         name: username,
@@ -245,15 +243,15 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         break;
       }
     }
-  }
+  };
 
   const clearErrorMessage = () => {
     setUser({ ...user, error : { title:'', message: '', type: '' }});
-  }
+  };
 
   const setPageRoute = (route: string) => {
     updateUserPreferences(user.name, { pageRoute: route });
-  }
+  };
 
   const setAlertMessage = (title: string, message: string) => {
     setUser({
@@ -264,20 +262,20 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         type: 'ALERT'
       }
     });
-  }
+  };
 
   const resetSessionTime = () => {
     setSessionTime(user.maxSessionTime);
-  }
+  };
 
   const getSessionTime = () =>{
       return sessionCount.current;
-  }
+  };
 
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
-      let loginResponse = JSON.parse(localStorage.getItem('loginResp') || '{}')
+      let loginResponse = JSON.parse(localStorage.getItem('loginResp') || '{}');
       if(JSON.stringify(loginResponse) !== JSON.stringify({})){
         loginAuthenticated(sessionUser,loginResponse);
       }
@@ -305,7 +303,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     }}>
       {children}
     </UserContext.Provider>
-  )
-}
+  );
+};
 
 export default UserProvider;

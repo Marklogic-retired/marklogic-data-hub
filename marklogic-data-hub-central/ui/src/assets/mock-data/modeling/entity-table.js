@@ -961,4 +961,4 @@ export const latestJobs = [
     "latestJobId": "65703071-07c9-46a4-863e-eab5e5621567",
     "latestJobDateTime": "2020-01-24T14:43:53.517287-07:00"
   }
-]
+];

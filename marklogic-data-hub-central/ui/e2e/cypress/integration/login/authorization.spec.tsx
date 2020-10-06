@@ -61,7 +61,7 @@ describe('login', () => {
           .url().should('include', '/tiles');
         //All tiles but Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
       });
 
       toolbar.getExploreToolbarIcon().trigger('mouseover');
@@ -80,7 +80,7 @@ describe('login', () => {
           .url().should('include', '/tiles');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
       });
 
       toolbar.getModelToolbarIcon().click();
@@ -90,12 +90,12 @@ describe('login', () => {
 
   it('should only enable Load and Explorer tile for hub-central-load-reader', () => {
       let stepName = 'loadCustomersJSON';
-      let flowName= 'personJSON'
+      let flowName= 'personJSON';
       cy.loginAsTestUserWithRoles('hub-central-load-reader').withUI()
           .url().should('include', '/tiles');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Model', 'Curate', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
       });
 
       toolbar.getLoadToolbarIcon().click();
@@ -128,13 +128,13 @@ describe('login', () => {
   });
 
   it('should only enable Curate and Explorer tile for hub-central-mapping-reader', () => {
-      let entityTypeId = 'Customer'
-      let mapStepName = 'mapCustomersXML'
+      let entityTypeId = 'Customer';
+      let mapStepName = 'mapCustomersXML';
       cy.loginAsTestUserWithRoles('hub-central-mapping-reader').withUI()
           .url().should('include', '/tiles');
       //All tiles but Explore and Model, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Run'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
       });
 
       toolbar.getCurateToolbarIcon().click();
@@ -159,7 +159,7 @@ describe('login', () => {
           .url().should('include', '/tiles');
       //All tiles but Run and Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
       });
 
       toolbar.getRunToolbarIcon().click();
@@ -177,7 +177,7 @@ describe('login', () => {
           .url().should('include', '/tiles');
       //All tiles but Run and Explore, should show a tooltip that says contact your administrator
       ['Load', 'Model', 'Curate'].forEach((tile) => {
-          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'})
+          toolbar.getToolBarIcon(tile).should('have.attr', {style: 'cursor: not-allowed'});
         });
 
       toolbar.getRunToolbarIcon().click();
@@ -199,8 +199,8 @@ describe('login', () => {
   });
 
   it('should redirect to /tiles/explore when uri is undefined for /detail view bookmark', () => {
-      let host = Cypress.config().baseUrl
-      cy.visit(`${host}?from=%2Ftiles%2Fexplore%2Fdetail`)
+      let host = Cypress.config().baseUrl;
+      cy.visit(`${host}?from=%2Ftiles%2Fexplore%2Fdetail`);
       loginPage.getUsername().type('hc-test-user');
       loginPage.getPassword().type('password');
       loginPage.getLoginButton().click();
@@ -210,9 +210,9 @@ describe('login', () => {
   });
 
   it('should redirect a bookmark to login screen when not authenticated', () => {
-      let host = Cypress.config().baseUrl
+      let host = Cypress.config().baseUrl;
       //URL from bookmark
-      cy.visit(`${host}?from=%2Ftiles%2Fcurate`)
+      cy.visit(`${host}?from=%2Ftiles%2Fcurate`);
       //Redirected to login
       loginPage.getUsername().type('hc-developer');
       loginPage.getPassword().type('password');

@@ -15,7 +15,7 @@ import { ModelingTooltips } from '../config/tooltips.config';
 import { AuthoritiesContext } from '../util/authorities';
 import { EntityModified } from '../types/modeling-types';
 import { ConfirmationType } from '../types/common-types';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 const Modeling: React.FC = () => {
   const { handleError } = useContext(UserContext);
@@ -51,14 +51,14 @@ const Modeling: React.FC = () => {
         setEntityTypes(response['data']);
         if (response['data'].length > 0) {
           setEntityTypeNamesArray(response['data'].map(entity => {
-            return {name: entity.entityName, entityTypeId: entity.entityTypeId}
+            return {name: entity.entityName, entityTypeId: entity.entityTypeId};
           }));
         }
       }
     } catch (error) {
       handleError(error);
     }
-  }
+  };
 
   const saveAllEntitiesToServer = async () => {
     try {
@@ -67,19 +67,19 @@ const Modeling: React.FC = () => {
         await setEntityTypesFromServer();
       } 
     } catch (error) {
-      handleError(error)
+      handleError(error);
     } finally {
       clearEntityModified();
       toggleConfirmModal(false);
     }
-  }
+  };
 
   const updateSavedEntity = (entity: EntityModified) => {
     let updatedEntityTypes = [...entityTypes];
     let updateEntityIndex = updatedEntityTypes.findIndex((entityType) => entityType.entityName === entity.entityName);
 
     updatedEntityTypes[updateEntityIndex]['model']['definitions'] = entity.modelDefinition;
-    setEntityTypes(updatedEntityTypes)
+    setEntityTypes(updatedEntityTypes);
   };
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
@@ -105,7 +105,7 @@ const Modeling: React.FC = () => {
     } else if (confirmType === ConfirmationType.RevertAll) {
       resetAllEntityTypes();
     }
-  }
+  };
 
   const resetAllEntityTypes = async () => {
     await setEntityTypesFromServer();
@@ -123,7 +123,7 @@ const Modeling: React.FC = () => {
     }}
     disabled={!canWriteEntityModel}
     className={!canWriteEntityModel && styles.disabledButton}
-  >Add</MLButton>
+  >Add</MLButton>;
 
   const saveAllButton = <MLButton
     disabled={!modelingOptions.isModified}
@@ -139,14 +139,14 @@ const Modeling: React.FC = () => {
       size='sm'
     />
     Save All
-  </MLButton>
+  </MLButton>;
 
   const revertAllButton = <MLButton
     disabled={!modelingOptions.isModified}
     aria-label="revert-all"
     onClick={() => {
       setConfirmType(ConfirmationType.RevertAll);
-      toggleConfirmModal(true)
+      toggleConfirmModal(true);
     }}
   >
     <FontAwesomeIcon
@@ -155,7 +155,7 @@ const Modeling: React.FC = () => {
       size="sm"
     />
     Revert All
-  </MLButton>
+  </MLButton>;
 
   if (canReadEntityModel) {
     return (
@@ -225,8 +225,8 @@ const Modeling: React.FC = () => {
           toggleRevertAllEntity={toggleRevertAllEntity}
         />
       </div>
-    )
-  } else return null
-}
+    );
+  } else return null;
+};
 
 export default Modeling;
