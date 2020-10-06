@@ -20,7 +20,7 @@ describe('Entity Modeling: Writer Role', () => {
     cy.visit('/');
     cy.contains(Application.title);
     console.log(Cypress.env('mlHost'));
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest()
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon().should('have.css', 'cursor', 'pointer')).click();
     entityTypeTable.waitForTableToLoad();
   });
@@ -82,7 +82,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyModal.getYesRadio('identifier').click();
     confirmationModal.getIdentifierText().should('be.visible');
-    confirmationModal.getYesButton(ConfirmationType.Identifer).click()
+    confirmationModal.getYesButton(ConfirmationType.Identifer).click();
     propertyModal.getSubmitButton().click();
 
     propertyTable.getIdentifierIcon('newId').should('not.exist');
@@ -90,7 +90,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     // edit property and change type to relationship
     propertyTable.editProperty('client-id');
-    propertyModal.getToggleStepsButton().should('not.exist')
+    propertyModal.getToggleStepsButton().should('not.exist');
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('user-id');
     propertyModal.openPropertyDropdown();
@@ -196,7 +196,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getPiiIcon('orderID').should('not.exist');
     modelPage.getEntityModifiedAlert().should('not.exist');
     //propertyTable.getWildcardIcon('orderID').should('not.exist');
-    
+
     // edit Order type and then revert again
     propertyTable.editProperty('orderDetails');
     propertyModal.clearPropertyName();
@@ -204,7 +204,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.getNoRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
     propertyModal.getSubmitButton().click();
-    
+
     propertyTable.getMultipleIcon('testing').should('not.exist');
     propertyTable.getPiiIcon('testing').should('exist');
 
@@ -298,7 +298,7 @@ describe('Entity Modeling: Writer Role', () => {
 
   it('create new entity types, add relationship type, delete entity type with outstanding edits', () => {
     let entityName1 = 'User';
-    let entityName2 = 'Product'
+    let entityName2 = 'Product';
     cy.waitUntil(() => modelPage.getAddEntityButton()).click();
     entityTypeModal.newEntityName(entityName1);
     entityTypeModal.getAddButton().click();
@@ -413,7 +413,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     // add structured property to structured type
     propertyTable.getAddPropertyToStructureType('Address').click();
-    propertyModal.newPropertyName('zip')
+    propertyModal.newPropertyName('zip');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('New Property Type').click();
@@ -438,7 +438,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getAddPropertyToStructureType('Zip').click();
 
     propertyModal.getStructuredTypeName().should('have.text', 'Address.Zip');
-    propertyModal.newPropertyName('fiveDigit')
+    propertyModal.newPropertyName('fiveDigit');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More number types').click();
     propertyModal.getCascadedTypeFromDropdown('int').click();
@@ -450,7 +450,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     // Test for additional nesting of structured types
     propertyTable.getAddPropertyToStructureType('Zip').click();
-    propertyModal.newPropertyName('extra')
+    propertyModal.newPropertyName('extra');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('New Property Type').click();
@@ -462,7 +462,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyTable.getAddPropertyToStructureType('Extra').click();
 
-    propertyModal.newPropertyName('fourDigit')
+    propertyModal.newPropertyName('fourDigit');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('integer').click();
     propertyModal.getYesRadio('pii').click();
@@ -476,7 +476,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     //Edit Property Structured Property
     propertyTable.editProperty('street');
-    propertyModal.getToggleStepsButton().should('not.exist')
+    propertyModal.getToggleStepsButton().should('not.exist');
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('Zip');
     propertyModal.getSubmitButton().click();
@@ -520,7 +520,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     // change relationship property to structured
     propertyTable.editProperty('alt_address');
-    propertyModal.getToggleStepsButton().should('not.exist')
+    propertyModal.getToggleStepsButton().should('not.exist');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('Address').click();
@@ -540,13 +540,13 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getProperty('alt_address').should('not.exist');
 
     entityTypeTable.getSaveEntityIcon('User3').click();
-    confirmationModal.getSaveEntityText().should('be.visible')
+    confirmationModal.getSaveEntityText().should('be.visible');
     confirmationModal.getYesButton(ConfirmationType.SaveEntity).click();
     confirmationModal.getSaveEntityText().should('exist');
     confirmationModal.getSaveEntityText().should('not.exist');
 
     entityTypeTable.getDeleteEntityIcon('User3').click();
-    confirmationModal.getDeleteEntityText().should('be.visible')
+    confirmationModal.getDeleteEntityText().should('be.visible');
     confirmationModal.getYesButton(ConfirmationType.DeleteEntity).click();
     confirmationModal.getDeleteEntityText().should('exist');
     confirmationModal.getDeleteEntityText().should('not.exist');

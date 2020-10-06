@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useHistory } from "react-router-dom";
 import styles from './load-list.module.scss';
 import './load-list.scss';
-import {Table, Icon, Button, Tooltip, Popover, Modal, Menu, Select, Dropdown} from 'antd';
+import {Table, Icon, Modal, Menu, Select, Dropdown} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
 import { MLButton } from '@marklogic/design-system';
@@ -13,7 +12,6 @@ import { convertDateFromISO } from '../../util/conversionFunctions';
 import AdvancedSettingsDialog from "../advanced-settings/advanced-settings-dialog";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import { MLTooltip } from '@marklogic/design-system';
-import { OmitProps } from 'antd/lib/transfer/renderListBody';
 
 const {Option} = Select;
 
@@ -58,35 +56,34 @@ const LoadList: React.FC<Props> = (props) => {
     const OpenAddNewDialog = () => {
         setNewDataLoad(true);
         setTitle('New Loading Step');
-    }
+    };
 
     const OpenEditStepDialog = (record) => {
         setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...record}));
         setNewDataLoad(true);
-    }
+    };
 
     const OpenLoadSettingsDialog = (record) => {
         setStepData(prevState => ({ ...prevState, ...record}));
         setOpenLoadSettings(true);
-    }
+    };
 
     const showDeleteConfirm = (name) => {
         setDialogVisible(true);
         setLoadArtifactName(name);
-    }
+    };
 
     const onOk = (name) => {
-        props.deleteLoadArtifact(name)
+        props.deleteLoadArtifact(name);
         setDialogVisible(false);
-    }
+    };
 
     const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
         setSelected({}); // reset menus on cancel
-    }
-
+    };
 
     function handleSelect(obj) {
         let selectedNew = {...selected};
@@ -107,10 +104,10 @@ const LoadList: React.FC<Props> = (props) => {
         setLoadArtifactName(loadName);
         setFlowName(flowName);
         setAddDialogVisible(true);
-    }
+    };
 
     const onAddOk = async (lName, fName) => {
-        await props.addStepToFlow(lName, fName)
+        await props.addStepToFlow(lName, fName);
         setAddDialogVisible(false);
 
         history.push({
@@ -120,8 +117,8 @@ const LoadList: React.FC<Props> = (props) => {
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
                 existingFlow: true
             }
-        })
-    }
+        });
+    };
 
     const addConfirmation = (
         <Modal
@@ -243,7 +240,7 @@ const LoadList: React.FC<Props> = (props) => {
                     </Dropdown>
                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></MLTooltip>
                     &nbsp;&nbsp;
-                    {props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+'-delete'} onClick={() => {showDeleteConfirm(row.name)}} className={styles.deleteIcon} size="lg"/></i></MLTooltip> :
+                    {props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+'-delete'} onClick={() => {showDeleteConfirm(row.name);}} className={styles.deleteIcon} size="lg"/></i></MLTooltip> :
                     <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+'-disabled-delete'} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip> }
                 </span>
             ),
@@ -290,6 +287,6 @@ const LoadList: React.FC<Props> = (props) => {
         {addConfirmation}
     </div>
    );
-}
+};
 
 export default LoadList;

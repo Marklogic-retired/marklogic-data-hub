@@ -1,15 +1,15 @@
 import React from 'react';
-import { Router } from 'react-router'
-import { createMemoryHistory } from 'history'
-const history = createMemoryHistory()
-import { render, fireEvent, waitForElement, cleanup, wait } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import { Router } from 'react-router';
+import { createMemoryHistory } from 'history';
+const history = createMemoryHistory();
+import { render, fireEvent, waitForElement, cleanup, wait } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import TilesView from './TilesView';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import authorities from '../assets/authorities.testutils';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 import { SearchContext } from '../util/search-context';
 import {
     setViewCurateFunction,
@@ -33,27 +33,27 @@ describe('Tiles View component tests for Developer user', () => {
     afterEach(() => {
         jest.clearAllMocks();
         cleanup();
-    })
+    });
 
     test('Verify TilesView renders with the toolbar', () => {
         const { getByLabelText } = render(<Router history={history}>
             <AuthoritiesContext.Provider value={mockDevRolesService}>
                 <TilesView/>
-            </AuthoritiesContext.Provider> />
+            </AuthoritiesContext.Provider>
         </Router>);
 
         expect(getByLabelText("toolbar")).toBeInTheDocument();
 
         expect(getByLabelText("tool-load")).toBeInTheDocument();
-        expect(getByLabelText('tool-load')).toHaveStyle('color: rgb(61, 64, 156);')
+        expect(getByLabelText('tool-load')).toHaveStyle('color: rgb(61, 64, 156);');
         expect(getByLabelText("tool-model")).toBeInTheDocument();
-        expect(getByLabelText('tool-model')).toHaveStyle('color: rgb(48, 79, 127);')
+        expect(getByLabelText('tool-model')).toHaveStyle('color: rgb(48, 79, 127);');
         expect(getByLabelText("tool-curate")).toBeInTheDocument();
-        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(24, 75, 90);')
+        expect(getByLabelText('tool-curate')).toHaveStyle('color: rgb(24, 75, 90);');
         expect(getByLabelText("tool-run")).toBeInTheDocument();
-        expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(130, 56, 138);')
+        expect(getByLabelText('tool-run')).toHaveStyle('color: rgb(130, 56, 138);');
         expect(getByLabelText("tool-explore")).toBeInTheDocument();
-        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(55, 111, 99);')
+        expect(getByLabelText('tool-explore')).toHaveStyle('color: rgb(55, 111, 99);');
 
         expect(getByLabelText("overview")).toBeInTheDocument();
 
@@ -77,7 +77,7 @@ describe('Tiles View component tests for Developer user', () => {
             expect(await(waitForElement(() => getByLabelText("close")))).toBeInTheDocument();
             fireEvent.click(getByLabelText("close"));
             expect(getByLabelText("overview")).toBeInTheDocument();
-        })
+        });
 
     });
 
@@ -286,7 +286,7 @@ describe('Tiles View component tests for Developer user', () => {
     test('Verify Run tile can read/run with readFlow and runStep authority', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readFlow','runStep']);
-        const {getByLabelText, getByText, queryByText, getByTestId} = render(<Router history={history}>
+        const {getByLabelText, queryByText, getByTestId} = render(<Router history={history}>
             <AuthoritiesContext.Provider value={authorityService}>
                 <SearchContext.Provider value={setViewRunFunction}>
                     <TilesView id='run'/>
@@ -335,7 +335,7 @@ describe('Tiles View component tests for Developer user', () => {
     });
 
     test('Verify Load tile displays from toolbar', async () => {
-        const {getByLabelText, getByText, queryByText} = render(<Router history={history}>
+        const {getByLabelText, queryByText} = render(<Router history={history}>
             <AuthoritiesContext.Provider value={mockDevRolesService}>
                 <SearchContext.Provider value={setViewLoadFunction}>
                     <TilesView id='load'/>
@@ -371,7 +371,7 @@ describe('Tiles View component tests for Operator user', () => {
     afterEach(() => {
         jest.clearAllMocks();
         cleanup();
-    })
+    });
 
     test('Verify Curate tile', async () => {
         const { getByLabelText, queryByText, getByText } = render(<Router history={history}>

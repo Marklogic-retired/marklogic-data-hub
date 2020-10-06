@@ -1,5 +1,5 @@
 import React from 'react';
-import {fireEvent, render, wait} from "@testing-library/react";
+import {fireEvent, render} from "@testing-library/react";
 import DiscardChangesModal from './discard-changes-modal';
 
 describe("<DiscardChangesModal/>", () => {
@@ -10,7 +10,7 @@ describe("<DiscardChangesModal/>", () => {
             savedQueryList={[]}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
-        />)
+        />);
 
         expect(getByText((content, node) => {
             const hasText = node => node.textContent === "Are you sure you want to discard all changes made to select a query ?";
@@ -30,7 +30,7 @@ describe("<DiscardChangesModal/>", () => {
             savedQueryList={[]}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
-        />)
+        />);
 
         const okButton = getByText('Yes');
         okButton.onclick = jest.fn();
@@ -44,7 +44,7 @@ describe("<DiscardChangesModal/>", () => {
             savedQueryList={[]}
             toggleApply={jest.fn()}
             toggleApplyClicked={jest.fn()}
-        />)
+        />);
         const cancelButton = getByText('No');
         cancelButton.onclick = jest.fn();
         fireEvent.click(cancelButton);

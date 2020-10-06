@@ -19,7 +19,7 @@ describe("Sidebar component", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
       />
-    )
+    );
     expect(document.querySelector('#hub-properties [data-icon=down]')).toBeInTheDocument();
     expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
     fireEvent.click(getByTestId('toggle'));
@@ -35,7 +35,7 @@ describe("Sidebar component", () => {
         facetRender={jest.fn()}
         checkFacetRender={jest.fn()}
       />
-    )
+    );
     expect(document.querySelector('#entity-properties [data-icon=down]')).toBeInTheDocument();
     expect(document.querySelector('#entity-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
     fireEvent.click(getAllByTestId('toggle')[0]);
@@ -45,4 +45,4 @@ describe("Sidebar component", () => {
     fireEvent.click(getAllByTestId('toggle')[1]);
     expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
   });
-})
+});

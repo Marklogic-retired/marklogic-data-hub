@@ -9,17 +9,17 @@ import { useInterval } from '../../hooks/use-interval';
 import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from '../../config/application.config';
 
 interface Props extends RouteComponentProps<any>{
-};
+}
 
 const SESSION_BTN_TEXT = {
   ok: 'Continue Session',
   cancel: 'Log Out'
-}
+};
 
 const ERROR_BTN_TEXT = {
   ok: 'OK',
   cancel: 'Cancel'
-}
+};
 
 const ModalStatus: React.FC<Props> = (props) => {
   const {
@@ -55,7 +55,7 @@ const ModalStatus: React.FC<Props> = (props) => {
             toggleModal(true); // For testing
             history.push('/noresponse');
           }
-        })
+        });
     } else if (sessionWarning && 
                // Ignore session warning if in no-response state
                location.pathname !== '/noresponse') { 
@@ -153,8 +153,8 @@ const ModalStatus: React.FC<Props> = (props) => {
       {sessionWarning && user.error.type !== 'MODAL' && <p>Due to Inactivity, you will be logged out in <b>{sessionTime} seconds</b></p>}
       {user.error.type === 'MODAL' && <p>{user.error.message}</p>}
     </Modal>
-  )
-}
+  );
+};
 
 export default withRouter(ModalStatus);
 

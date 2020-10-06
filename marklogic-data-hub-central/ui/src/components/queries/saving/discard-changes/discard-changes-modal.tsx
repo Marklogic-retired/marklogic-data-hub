@@ -27,7 +27,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
 
     const onCancel = () => {
         props.setDiscardChangesModalVisibility();
-    }
+    };
 
     const onOk = () => {
         for (let key of props.savedQueryList) {
@@ -36,7 +36,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
                 break;
             }
         }
-    }
+    };
 
     const getSaveQueryWithId = async (key) => {
         try {
@@ -51,7 +51,7 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
                     zeroState: searchOptions.zeroState,
                     manageQueryModal: searchOptions.manageQueryModal,
                     sortOrder: response.data.savedQuery.sortOrder
-                }
+                };
                 applySaveQuery(options);
                 clearAllGreyFacets();
             }
@@ -59,9 +59,9 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
             props.toggleApplyClicked(true);
             props.toggleApply(false);
         } catch (error) {
-            handleError(error)
+            handleError(error);
         }
-    }
+    };
 
     return (
         <>
@@ -78,8 +78,8 @@ const DiscardChangesModal: React.FC<Props> = (props) => {
                 <p>Are you sure you want to discard all changes made to <strong>{searchOptions.selectedQuery} ?</strong></p>
             </Modal>
         </>
-    )
-}
+    );
+};
 
 export default DiscardChangesModal;
 

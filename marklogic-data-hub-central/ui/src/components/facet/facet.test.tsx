@@ -20,7 +20,7 @@ describe("Facet component", () => {
           entityTypeId=""
           propertyPath="sales_region"
         />
-    )
+    );
     expect(getByText(/sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe("Facet component", () => {
           entityTypeId=""
           propertyPath="sales_region"
         />
-    )
+    );
     expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
@@ -88,7 +88,7 @@ describe("Facet component", () => {
           entityTypeId=""
           propertyPath="sales_region"
         />
-    )
+    );
 
     expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();

@@ -26,7 +26,7 @@ const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
   name: '',
   propertyName: ''
-}
+};
 
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
@@ -37,13 +37,13 @@ const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   sortable: false,
   facetable: false,
   wildcard: false
-}
+};
 
 const DEFAULT_EDIT_PROPERTY_OPTIONS: EditPropertyOptions = {
   name: '',
   isEdit: false,
   propertyOptions: DEFAULT_SELECTED_PROPERTY_OPTIONS
-}
+};
 
 describe('Property Modal Component', () => {
   afterEach(() => {
@@ -100,15 +100,15 @@ describe('Property Modal Component', () => {
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
 
-    const identifierRadio = screen.getByLabelText('identifier-yes')
+    const identifierRadio = screen.getByLabelText('identifier-yes');
     fireEvent.change(identifierRadio, { target: { value: "yes" } });
     expect(identifierRadio['value']).toBe('yes');
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
     expect(multipleRadio['value']).toBe('yes');
 
-    const piiRadio = screen.getByLabelText('pii-no')
+    const piiRadio = screen.getByLabelText('pii-no');
     fireEvent.change(piiRadio, { target: { value: "no" } });
     expect(piiRadio['value']).toBe('no');
 
@@ -162,7 +162,7 @@ describe('Property Modal Component', () => {
     expect(screen.queryByLabelText('Facet')).toBeNull();
     //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
   
-    const multipleRadio = screen.getByLabelText('multiple-no')
+    const multipleRadio = screen.getByLabelText('multiple-no');
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
@@ -237,7 +237,7 @@ describe('Property Modal Component', () => {
     expect(screen.queryByText('Related Entity')).toBeNull();
     expect(screen.queryByLabelText('identifier-yes')).toBeNull();
 
-    const multipleRadio = screen.getByLabelText('multiple-no')
+    const multipleRadio = screen.getByLabelText('multiple-no');
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
@@ -276,11 +276,11 @@ describe('Property Modal Component', () => {
     userEvent.click(getByText('string'));
 
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
     expect(multipleRadio['value']).toBe('yes');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
@@ -327,11 +327,11 @@ describe('Property Modal Component', () => {
 
     expect(getByText('Product')).toBeInTheDocument();
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
     expect(multipleRadio['value']).toBe('yes');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
@@ -365,7 +365,7 @@ describe('Property Modal Component', () => {
     userEvent.click(getByPlaceholderText('Select the property type'));
     userEvent.click(getByText('string'));
 
-    const identifierRadio = screen.getByLabelText('identifier-yes')
+    const identifierRadio = screen.getByLabelText('identifier-yes');
     fireEvent.change(identifierRadio, { target: { value: "yes" } });
     expect(identifierRadio['value']).toBe('yes');
 
@@ -389,13 +389,13 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false,
       wildcard: true
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'customerId',
       isEdit: true,
       propertyOptions: basicPropertyOptions
-    }
+    };
 
     const { getByLabelText, getByText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
@@ -420,7 +420,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(getByText('Show Steps...')).toBeInTheDocument()
-    )
+    );
 
     expect(queryByText('Hide Steps...')).toBeNull();
     userEvent.click(getByLabelText('toggle-steps'));
@@ -431,10 +431,10 @@ describe('Property Modal Component', () => {
 
     expect(getByText('Edit Property')).toBeInTheDocument();
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     expect(multipleRadio['value']).toBe('yes');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     expect(piiRadio['value']).toBe('yes');
 
     // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
@@ -466,15 +466,15 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false
       //wildcard: false
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'order',
       isEdit: true,
       propertyOptions: relationshipPropertyOptions
-    }
+    };
 
-    const { getByLabelText, getByText, queryByTestId, queryByText } =  render(
+    const { getByLabelText, getByText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -499,7 +499,7 @@ describe('Property Modal Component', () => {
 
     expect(getByText('Edit Property')).toBeInTheDocument();
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     expect(multipleRadio['value']).toBe('yes');
 
     fireEvent.change(multipleRadio, { target: { value: "no" } });
@@ -525,19 +525,19 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false
       //wildcard: false
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'shipping',
       isEdit: true,
       propertyOptions: structuredPropertyOptions
-    }
+    };
 
     const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'shipping'
-    }
+    };
 
     const { getByLabelText, getByText, getByPlaceholderText, queryByText, queryByLabelText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
@@ -561,7 +561,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(getByText('Show Steps...')).toBeInTheDocument()
-    )
+    );
 
     expect(queryByText('Hide Steps...')).toBeNull();
     userEvent.click(getByLabelText('toggle-steps'));
@@ -575,13 +575,13 @@ describe('Property Modal Component', () => {
     userEvent.clear(getByPlaceholderText('Enter the property name'));
     userEvent.type(getByPlaceholderText('Enter the property name'), 'alt_shipping');
 
-    const multipleRadio = screen.getByLabelText('multiple-yes')
+    const multipleRadio = screen.getByLabelText('multiple-yes');
     expect(multipleRadio['value']).toBe('yes');
 
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
@@ -608,19 +608,19 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false
       //wildcard: true
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'state',
       isEdit: true,
       propertyOptions: structuredPropertyOptions
-    }
+    };
 
     const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'address'
-    }
+    };
 
     const { getByLabelText, getByText, getByPlaceholderText, queryByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
@@ -651,7 +651,7 @@ describe('Property Modal Component', () => {
     userEvent.clear(getByPlaceholderText('Enter the property name'));
     userEvent.type(getByPlaceholderText('Enter the property name'), 'county');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     expect(piiRadio['value']).toBe('yes');
 
     // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
@@ -683,15 +683,15 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false
       //wildcard: true
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'customerId',
       isEdit: true,
       propertyOptions: basicPropertyOptions
-    }
+    };
 
-    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+    const { getByText, getByTestId } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -716,7 +716,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
   });
@@ -737,22 +737,22 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false
       //wildcard: false
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'street',
       isEdit: true,
       propertyOptions: basicPropertyOptions
-    }
+    };
 
 
     const structuredOptions: StructuredTypeOptions = {
       isStructured: true,
       name: 'Address',
       propertyName: 'address'
-    }
+    };
 
-    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+    const { getByText, getByTestId } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -777,7 +777,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-step-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
   });
@@ -798,15 +798,15 @@ describe('Property Modal Component', () => {
       sortable: false,
       facetable: false,
       wildcard: false
-    }
+    };
 
     const editPropertyOptions: EditPropertyOptions = {
       name: 'orders',
       isEdit: true,
       propertyOptions: relationshipPropertyOptions
-    }
+    };
 
-    const { getByLabelText, getByText, getByTestId, getByPlaceholderText } =  render(
+    const { getByText, getByTestId } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -831,7 +831,7 @@ describe('Property Modal Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
   });

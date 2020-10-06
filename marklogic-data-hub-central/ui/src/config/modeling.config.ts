@@ -30,7 +30,7 @@ export const MORE_STRING_TYPES = {
       value: 'iri'
     }
   ]
-}
+};
 
 export const MORE_NUMBER_TYPES = {
   label: 'More number types',
@@ -97,7 +97,7 @@ export const MORE_NUMBER_TYPES = {
       value: 'unsignedShort'
     }
   ]
-}
+};
 
 export const MORE_DATE_TYPES = {
   label: 'More date types',
@@ -136,6 +136,6 @@ export const MORE_DATE_TYPES = {
       value: 'yearMonthDuration'
     }
   ]
-}
+};
 
-export const DROPDOWN_PLACEHOLDER = (key) => { return { label: '---------------------', value: key, disabled: true }}
+export const DROPDOWN_PLACEHOLDER = (key) => { return { label: '---------------------', value: key, disabled: true };};

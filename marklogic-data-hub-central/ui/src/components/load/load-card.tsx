@@ -1,9 +1,8 @@
 import React, {CSSProperties, useContext, useState, useEffect} from 'react';
 import styles from './load-card.module.scss';
 import { useHistory } from 'react-router-dom';
-import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
+import {Card, Icon, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import sourceFormatOptions from '../../config/formats.config';
 import NewLoadDialog from './new-load-dialog/new-load-dialog';
@@ -49,7 +48,7 @@ const LoadCard: React.FC<Props> = (props) => {
     useEffect(() => {
        let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
        setSortedLoads(sortedArray);
-    }, [props.data])
+    }, [props.data]);
 
     //To navigate to bench view with parameters
     let history = useHistory();
@@ -57,18 +56,18 @@ const LoadCard: React.FC<Props> = (props) => {
     const OpenAddNewDialog = () => {
         setTitle('New Loading Step');
         setNewDataLoad(true);
-    }
+    };
 
     const OpenEditStepDialog = (index) => {
         setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewDataLoad(true);
-    } 
+    }; 
 
     const OpenLoadSettingsDialog = (index) => {
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenLoadSettings(true);
-    }
+    };
 
     // Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
@@ -85,9 +84,9 @@ const LoadCard: React.FC<Props> = (props) => {
             textAlign: 'center',
             color: '#ffffff',
             verticalAlign: 'middle'
-        }
+        };
         return customStyles;
-    }
+    };
 
     // Truncate a string (Step Name) to desired no. of characters
     const getInitialChars = (str, num, suffix) => {
@@ -97,17 +96,17 @@ const LoadCard: React.FC<Props> = (props) => {
             result = str.substr(0, num) + suffix;
         }
         return result;
-    }
+    };
 
     const handleCardDelete = (name) => {
         setDialogVisible(true);
         setLoadArtifactName(name);
-    }
+    };
 
     const onDeleteOk = (name) => {
-        props.deleteLoadArtifact(name)
+        props.deleteLoadArtifact(name);
         setDialogVisible(false);
-    }
+    };
 
     function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
@@ -139,10 +138,10 @@ const LoadCard: React.FC<Props> = (props) => {
         setLoadArtifactName(loadName);
         setFlowName(flowName);
         setAddDialogVisible(true);
-    }
+    };
 
     const onAddOk = async (lName, fName) => {
-        await props.addStepToFlow(lName, fName)
+        await props.addStepToFlow(lName, fName);
         setAddDialogVisible(false);
 
         history.push({
@@ -152,14 +151,14 @@ const LoadCard: React.FC<Props> = (props) => {
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
                 existingFlow: true
             }
-        })
-    }
+        });
+    };
 
     const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
         setSelected({}); // reset menus on cancel
-    }
+    };
 
     const deleteConfirmation = (
         <Modal
@@ -282,6 +281,6 @@ const LoadCard: React.FC<Props> = (props) => {
         </div>
     );
 
-}
+};
 
 export default LoadCard;

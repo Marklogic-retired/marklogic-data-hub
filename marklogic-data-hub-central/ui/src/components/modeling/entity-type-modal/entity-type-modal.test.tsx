@@ -49,7 +49,7 @@ describe('EntityTypeModal Component', () => {
       userEvent.click(getByText('Add'));
     });
 
-    let url = "/api/models"
+    let url = "/api/models";
     let payload = { "name": "AnotherModel", "description": "Testing" };
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
@@ -68,7 +68,7 @@ describe('EntityTypeModal Component', () => {
     expect(getByText(/Add Entity Type/i)).toBeInTheDocument();
 
     userEvent.type(getByPlaceholderText('Enter name'), '123-Box');
-    userEvent.type(getByPlaceholderText('Enter description'), 'Product entity desription');;
+    userEvent.type(getByPlaceholderText('Enter description'), 'Product entity desription');
 
     await wait(() => {
       userEvent.click(getByText('Add'));
@@ -99,7 +99,7 @@ describe('EntityTypeModal Component', () => {
       userEvent.click(getByText('Add'));
     });
 
-    let url = "/api/models"
+    let url = "/api/models";
     let payload = { "name": "Testing", "description": "" };
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
@@ -122,7 +122,7 @@ describe('EntityTypeModal Component', () => {
   });
 
   test('Edit modal is visible', () => {
-    const { getByText, getByDisplayValue, getByPlaceholderText, queryByText } = render(
+    const { getByText, getByDisplayValue, queryByText } = render(
       <EntityTypeModal
         isVisible={true}
         toggleModal={jest.fn()}

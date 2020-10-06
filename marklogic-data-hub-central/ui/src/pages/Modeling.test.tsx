@@ -12,7 +12,7 @@ import { getEntityTypes } from '../assets/mock-data/modeling';
 import { isModified, notModified } from '../assets/mock-data/modeling-context-mock';
 import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
 import { ConfirmationType } from '../types/modeling-types';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 jest.mock('../api/modeling');
 
@@ -32,7 +32,7 @@ describe("Modeling Page", () => {
     mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
     mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
   
-    const { getByText, getByLabelText, queryByText, debug } = render(
+    const { getByText, getByLabelText } = render(
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
           <Router>
@@ -46,7 +46,7 @@ describe("Modeling Page", () => {
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
-    expect(getByText('Entity Types')).toBeInTheDocument()
+    expect(getByText('Entity Types')).toBeInTheDocument();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText('Instances')).toBeInTheDocument();
     expect(getByText('Last Processed')).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("Modeling Page", () => {
 
     userEvent.click(getByText('Save All'));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveAll}-yes`));
-    expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1)
+    expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1);
 
     userEvent.click(getByText('Revert All'));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));
@@ -70,7 +70,7 @@ describe("Modeling Page", () => {
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
   
-    const { getByText, getByLabelText, queryByLabelText, debug } = render(
+    const { getByText, getByLabelText, queryByLabelText } = render(
       <AuthoritiesContext.Provider value={mockOpRolesService}>
         <ModelingContext.Provider value={notModified}>
           <Router>

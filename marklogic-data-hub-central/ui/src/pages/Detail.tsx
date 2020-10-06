@@ -30,13 +30,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       return JSON.parse(currentPref);
     }
     return currentPref;
-  }
+  };
   
   const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
   const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
   const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
   const entityInstance = location.state && location.state['entityInstance'] ? location.state['entityInstance'] : detailPagePreferences["entityInstance"];
-  const [selected, setSelected] = useState();
+  const [selected, setSelected] = useState("");
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState("");
@@ -93,7 +93,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
     return () => {
       componentIsMounted.current = false;
-    }
+    };
 
   }, []);
 
@@ -125,9 +125,9 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       sources: detailPagePreferences['sources'] ? detailPagePreferences['sources'] : [],
       primaryKey: detailPagePreferences['primaryKey'] ? detailPagePreferences['primaryKey'] : '',
       uri: detailPagePreferences['uri'] ? detailPagePreferences['uri'] : ''
-    }
-    setParentPagePreferences({ ...userPref })
-  }
+    };
+    setParentPagePreferences({ ...userPref });
+  };
 
   const updateDetailPagePreferences = () => {
     if (location.state && (location.state.hasOwnProperty("sources") || location.state.hasOwnProperty("uri") || location.state.hasOwnProperty("primaryKey") || location.state.hasOwnProperty("entityInstance"))) {
@@ -154,10 +154,10 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         uri: uri,
         selected: location.state['selectedValue'] && location.state['selectedValue'] === 'source' ? 'full' : 'instance',
         entityInstance: entityInstance
-      }
+      };
       updateUserPreferences(user.name, preferencesObject);
     }
-  }
+  };
 
   const setEntityInstanceFlag = (content) => {
     let instance = {};
@@ -167,7 +167,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       info = instance["info"] ? instance["info"] : info;
     }
     setIsEntityInstance(info ? true : (Object.keys(instance).length > 1 ? false : true));
-  }
+  };
 
   const handleClick = (event) => {
     setSelected(event.key);
@@ -178,7 +178,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       selected: event.key
     };
     updateUserPreferences(user.name, preferencesObject);
-  }
+  };
 
   const selectedSearchOptions = {
       pathname: "/tiles/explore",
@@ -193,7 +193,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
          sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder'],
          sources: location.state && location.state.hasOwnProperty('sources') ? location.state['sources'] : parentPagePreferences['sources']
         }
-   }
+   };
 
   return (
     <Layout>
@@ -242,6 +242,6 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       </Content>
     </Layout>
   );
-}
+};
 
 export default withRouter(Detail);

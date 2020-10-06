@@ -10,6 +10,6 @@ const latestJobs =
     "latestJobId": "69703071-07c9-46a4-863e-eab5e5629d0c",
     "latestJobDateTime": "2019-10-07T14:43:53.517287-07:00"
 }
-]
+];
 
-export default latestJobs
+export default latestJobs;

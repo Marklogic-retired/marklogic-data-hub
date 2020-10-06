@@ -42,7 +42,7 @@ export const isModified = {
   updateEntityModified: jest.fn(),
   removeEntityModified: jest.fn(),
   clearEntityModified: jest.fn()
-}
+};
 
 export const notModified = {
   modelingOptions: {
@@ -51,7 +51,7 @@ export const notModified = {
   clearEntityModified: jest.fn(),
   toggleIsModified: jest.fn(),
   setEntityTypeNamesArray: jest.fn()
-}
+};
 
 export const entityNamesArray = {
   modelingOptions: {
@@ -75,7 +75,7 @@ export const entityNamesArray = {
   },
   updateEntityModified: jest.fn(),
   setEntityPropertiesNamesArray: jest.fn()
-}
+};
 
 export const customerEntityNamesArray = {
   modelingOptions: {
@@ -88,4 +88,4 @@ export const customerEntityNamesArray = {
     entityPropertiesNamesArray: ['Customer', 'Billing', 'address', 'city', 'state', 'zip', 'Address', 'Zip', 'Shipping']
   },
   setEntityPropertiesNamesArray: jest.fn()
-}
+};

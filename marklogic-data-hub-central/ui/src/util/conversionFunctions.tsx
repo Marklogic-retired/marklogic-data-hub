@@ -14,19 +14,19 @@ const convertDateFromISO = (InputDate) => {
         month = '0' + month;
     }
     if (hr == 0) {
-        hr = 12
+        hr = 12;
     }
     if (hr > 12) {
-        hr = hr - 12
+        hr = hr - 12;
     }
     if (min < 10) {
         min = '0' + min;
     }
 
 
-    return (month + '/' + dt + '/' + year + ' ' + hr + ':' + min + dayTime)
+    return (month + '/' + dt + '/' + year + ' ' + hr + ':' + min + dayTime);
 
-}
+};
 
 const sortStepsByUpdated = (stepData) => {
     let sortedData = stepData.sort((step1, step2) => {
@@ -37,9 +37,9 @@ const sortStepsByUpdated = (stepData) => {
         if(step1.lastUpdated < step2.lastUpdated){
             return 1;
         }
-    })
+    });
     return sortedData;
-}
+};
 
 const getInitialChars = (str, num, suffix) => {
     suffix = suffix ? suffix : '...';
@@ -48,7 +48,7 @@ const getInitialChars = (str, num, suffix) => {
         result = str.substr(0, num) + suffix;
     }
     return result;
-}
+};
 
 const extractCollectionFromSrcQuery = (query) => {
     if (query.includes('[') && query.includes(']')) {
@@ -67,7 +67,7 @@ const extractCollectionFromSrcQuery = (query) => {
     else{
         return getInitialChars(query, 30, '...');
     }
-}
+};
 
 const getLastChars = (str, num, prefix) => {
     prefix = prefix ? prefix : '...';
@@ -76,7 +76,7 @@ const getLastChars = (str, num, prefix) => {
       result = prefix + str.substr(str.length - num);
     }
     return result;
-  }
+  };
 
 export {
     convertDateFromISO,
@@ -84,4 +84,4 @@ export {
     getInitialChars,
     getLastChars,
     extractCollectionFromSrcQuery
-}
+};

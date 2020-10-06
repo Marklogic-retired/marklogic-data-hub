@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import data from "../../../../assets/mock-data/common.data";
 import ViewCustomDialog from "./view-custom-dialog";
 
 describe('View Custom artifact component', () => {
 
-  afterEach(cleanup)
+  afterEach(cleanup);
 
   test('Verify View Custom Dialog renders ', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<ViewCustomDialog {...data.viewCustom} />);

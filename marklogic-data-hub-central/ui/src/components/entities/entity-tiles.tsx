@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
@@ -35,7 +35,7 @@ const EntityTiles = (props) => {
           if (location.state.stepDefinitionType === 'mapping') {
             view = 'map-';
           } else if (location.state.stepDefinitionType === 'custom') {
-            view = 'custom-'
+            view = 'custom-';
           }
           const activeLocationEntityTypes = [location.state.targetEntityType || 'No Entity Type'];
           setLocationEntityType(activeLocationEntityTypes);
@@ -44,23 +44,23 @@ const EntityTiles = (props) => {
           if (props.canReadMapping) {
             view = 'map-';
           } else if (props.canReadCustom) {
-            view = 'custom-'
+            view = 'custom-';
           }
         }
 
         let tempView: string[] = [];
         Object.keys(props.entityModels).sort().forEach(ent => {
             tempView.push(view + ent);
-        })
-        setViewData([...tempView])
-    }, [props, location])
+        });
+        setViewData([...tempView]);
+    }, [props, location]);
 
     const updateView = (index, artifactType, entityType) => {
         let tempView : string[] ;
         tempView = viewData;
         tempView[index] = artifactType + '-' + entityType;
-        setViewData([...tempView])
-    }
+        setViewData([...tempView]);
+    };
 
     const updateIsLoadingFlag = () => {
       if(isLoading){
@@ -68,7 +68,7 @@ const EntityTiles = (props) => {
       } else {
         setIsLoading(true);
       }
-    }
+    };
 
     const getMappingArtifacts = async () => {
         try {
@@ -77,7 +77,7 @@ const EntityTiles = (props) => {
 
               if (response.status === 200) {
                 let mapArtifacts = response.data;
-                mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1);
                 setMappingArtifacts([...mapArtifacts]);
               }
             }
@@ -85,7 +85,7 @@ const EntityTiles = (props) => {
               let message = error;
               console.error('Error while fetching the mappings!', message);
             }
-    }
+    };
 
     const getMappingArtifactByMapName = async (entityTypeId,mapName) => {
         try {
@@ -103,7 +103,7 @@ const EntityTiles = (props) => {
               let message = error;
               console.error('Error while fetching the mapping!', message);
           }
-    }
+    };
 
     const deleteMappingArtifact = async (mapName) => {
         try {
@@ -116,7 +116,7 @@ const EntityTiles = (props) => {
               let message = error.response.data.message;
               console.error('Error while deleting the mapping!', message);
           }
-    }
+    };
 
     const createMappingArtifact = async (mapping) => {
         try {
@@ -130,13 +130,13 @@ const EntityTiles = (props) => {
           } catch (error) {
             let message = error;
             let code = error.response.data.code;
-            let details = error.response.data.details
-            console.error('Error while creating the mapping!', message)
+            let details = error.response.data.details;
+            console.error('Error while creating the mapping!', message);
             let err={code: code,
-                    message: details}
+                    message: details};
             return err;
           }
-    }
+    };
 
     const updateMappingArtifact = async (mapping) => {
         try {
@@ -149,10 +149,10 @@ const EntityTiles = (props) => {
             }
           } catch (error) {
             let message = error;
-            console.error('Error while updating the mapping!', message)
+            console.error('Error while updating the mapping!', message);
             return false;
           }
-    }
+    };
 
     const getMatchingArtifacts = async () => {
         try {
@@ -160,7 +160,7 @@ const EntityTiles = (props) => {
               let response = await axios.get('/api/artifacts/matching');
               if (response.status === 200) {
                 let entArt = response.data;
-                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1);
                 setMatchingArtifacts([...entArt]);
               }
             }
@@ -168,7 +168,7 @@ const EntityTiles = (props) => {
               let message = error;
               console.error('Error while fetching matching artifacts', message);
           }
-    }
+    };
 
     const deleteMatchingArtifact = async (matchingName) => {
         try {
@@ -181,7 +181,7 @@ const EntityTiles = (props) => {
               let message = error.response.data.message;
               console.error('Error while deleting matching artifact.', message);
           }
-    }
+    };
 
     const createMatchingArtifact = async (matchingObj) => {
         try {
@@ -191,9 +191,9 @@ const EntityTiles = (props) => {
             }
           } catch (error) {
             let message = error.response.data.message;
-            console.error('Error While creating the matching artifact!', message)
+            console.error('Error While creating the matching artifact!', message);
           }
-    }
+    };
 
     const getCustomArtifacts = async () => {
         try {
@@ -212,7 +212,7 @@ const EntityTiles = (props) => {
             let message = error;
             console.error('Error while fetching custom artifacts', message);
         }
-    }
+    };
 
     const outputCards = (index, entityType, mappingCardData, matchingCardData, customCardData) => {
         let output;
@@ -231,7 +231,7 @@ const EntityTiles = (props) => {
                     canWriteFlow={props.canWriteFlow}
                     addStepToFlow={props.addStepToFlow}
                     addStepToNew={props.addStepToNew}/>
-            </div>
+            </div>;
         }
         else if (viewData[index] === 'matching-' + entityType && mappingCardData){
             output = <div className={styles.cardView}>
@@ -241,20 +241,20 @@ const EntityTiles = (props) => {
                 createMatchingArtifact={createMatchingArtifact}
                 canReadMatchMerge={props.canReadMatchMerge}
                 canWriteMatchMerge={props.canWriteMatchMerge} />
-        </div>
+        </div>;
         }
         else if (viewData[index] === 'custom-' + entityType ){
             output = <div className={styles.cardView}>
                 <CustomCard data={ customCardData ? customCardData.artifacts : []}
                 canReadOnly={props.canReadCustom}
                 canReadWrite = {props.canWriteCustom}/>
-            </div>
+            </div>;
         }
         else {
-            output = <div><br/>This functionality implemented yet.</div>
+            output = <div><br/>This functionality implemented yet.</div>;
         }
         return output;
-    }
+    };
 
     // need special onChange for direct links to entity steps
     const handleCollapseChange = (keys) => Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
@@ -298,6 +298,6 @@ const EntityTiles = (props) => {
         </div>
     );
 
-}
+};
 
 export default EntityTiles;

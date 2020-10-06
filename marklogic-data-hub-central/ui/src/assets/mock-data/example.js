@@ -25,6 +25,6 @@ const exampleJson = {
     },
     "attachments": null
   }
-}
+};
 
 export default exampleJson;

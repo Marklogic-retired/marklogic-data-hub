@@ -1,7 +1,7 @@
 import React from 'react';
-import {fireEvent, render, wait } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import Query from "./queries";
-import { getQueriesResponse } from '../../assets/mock-data/query'
+import { getQueriesResponse } from '../../assets/mock-data/query';
 
 describe('Queries Component', () => {
     test('Verify save query button does not exist', () => {

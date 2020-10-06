@@ -1,10 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {Popover, Input, Checkbox, Icon} from 'antd';
+import {Popover, Input, Icon} from 'antd';
 import styles from './pop-over-search.module.scss';
 import axios from "axios";
 import { UserContext } from '../../util/user-context';
-import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
-import {stringConverter} from "../../util/string-conversion";
+import { MLCheckbox } from '@marklogic/design-system';
 
 interface Props {
   referenceType: string;
@@ -14,7 +13,7 @@ interface Props {
   popOvercheckedValues: any[];
   facetValues: any[];
   facetName: string;
-};
+}
 
 
 const PopOverSearch: React.FC<Props> = (props) => {
@@ -33,47 +32,43 @@ const PopOverSearch: React.FC<Props> = (props) => {
               "limit": 10,
               "dataType": "string",
               "pattern": e.target.value
-          }
-        const response = await axios.post(`/api/entitySearch/facet-values`, data)
+          };
+        const response = await axios.post(`/api/entitySearch/facet-values`, data);
         setOptions(response.data);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         handleError(error);
       }
     } else {
       setOptions([]);
     }
-  }
+  };
 
   const onSelectCheckboxes = (e) => {
-      let index = checkedValues.indexOf(e.target.value)
+      let index = checkedValues.indexOf(e.target.value);
       if(index == -1) {
           setCheckedValues([...checkedValues, e.target.value]);
       }
       else{
           let newChecked = checkedValues.filter(function(el){
-              return (el !== e.target.value)
+              return (el !== e.target.value);
           });
           setCheckedValues(newChecked);
       }
-  }
+  };
 
   const addFacetValues = () => {
     props.checkFacetValues(checkedValues);
     setPopOverVisibilty(false);
-  }
-
-  const searchPopover = () => {
-    setPopOverVisibilty(true);
-  }
+  };
 
   const handleChange = (visible) => {
     setPopOverVisibilty(visible);
-  }
+  };
 
    useEffect(()=>{
         setCheckedValues(props.popOvercheckedValues);
-   },[props.popOvercheckedValues])
+   },[props.popOvercheckedValues]);
 
 
 
@@ -87,7 +82,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         >{value}
         </MLCheckbox>
     </div>
-    )
+    );
 
 
   const content = (
@@ -101,7 +96,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
         <Icon type="check-square-o" className={styles.popoverIcons} onClick={addFacetValues}/>
       </div>
     </div>
-  )
+  );
 
   return (
     <Popover
@@ -112,8 +107,8 @@ const PopOverSearch: React.FC<Props> = (props) => {
       visible={popOverVisibility}>
       <div className={styles.search} data-testid={(props.facetName)+"-search-input"}>Search</div>
     </Popover>
-  )
-}
+  );
+};
 
 export default PopOverSearch;
 

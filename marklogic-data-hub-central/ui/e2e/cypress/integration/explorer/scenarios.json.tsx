@@ -1,9 +1,7 @@
 /// <reference types="cypress"/>
 
-import viewPage from '../../support/pages/view';
 import browsePage from '../../support/pages/browse';
 import detailPage from '../../support/pages/detail';
-import homePage from "../../support/pages/home";
 import { Application } from '../../support/application.config';
 import { toolbar } from "../../support/components/common";
 import 'cypress-wait-until';
@@ -27,7 +25,7 @@ describe('json scenario for snippet on browse documents page', () => {
 
   afterEach(() => {
     cy.resetTestUser();
-  })
+  });
 
   it('select "all entities" verify docs, hub/entity properties', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
@@ -40,11 +38,11 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentCreatedOn(i).should('exist');
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
-    })
+    });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
 
     //Verify shadow effect upon scrolling within the snippet view
     browsePage.getSnippetViewResult().should('have.css', 'box-shadow', 'none'); //No shadow effect in place when no scroll.
@@ -64,8 +62,8 @@ describe('json scenario for snippet on browse documents page', () => {
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getSelectedPaginationNumber().should('contain', '1');
-    browsePage.getSearchText().should('have.value', '10256')
-    browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)')
+    browsePage.getSearchText().should('have.value', '10256');
+    browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)');
   });
 
   it('select Person entity and verify entity, docs, hub/entity properties', () => {
@@ -81,35 +79,35 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentCreatedOn(i).should('exist');
       browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
-    })
+    });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
   });
 
   it('select Person/Customer entity, verify no entityName in Collection facets and hub property persistence', () => {
     browsePage.selectEntity('Person');
     browsePage.getSelectedEntity().should('contain', 'Person');
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('not.be.visible')
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('not.be.visible');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox('collection', 'Person').should('not.exist')
+    browsePage.getFacetItemCheckbox('collection', 'Person').should('not.exist');
     browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.visible')
-    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked')
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.visible');
+    browsePage.getFacetItemCheckbox('collection', 'mapPersonJSON').should('be.checked');
     browsePage.selectEntity('Customer');
     browsePage.getEntityConfirmationNoClick().click();
     cy.waitForModalToDisappear();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSelectedEntity().should('contain', 'Customer');
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible')
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomerXML').should('not.be.visible');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getFacetItemCheckbox('collection', 'Customer').should('not.exist')
+    browsePage.getFacetItemCheckbox('collection', 'Customer').should('not.exist');
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
     browsePage.getFacetApplyButton().click();
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.visible')
-    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.checked')
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.visible');
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').should('be.checked');
   });
 
   it('apply facet search and verify docs, hub/entity properties', () => {
@@ -161,7 +159,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getDocumentSnippet(0).should('exist');
     browsePage.getDocumentCreatedOn(0).should('exist');
     browsePage.getDocumentSources(0).should('exist');
-    browsePage.getDocumentFileType(0).should('exist')
+    browsePage.getDocumentFileType(0).should('exist');
   });
 
   it('verify instance view of the document with pk', () => {
@@ -233,7 +231,7 @@ describe('json scenario for table on browse documents page', () => {
   it('select "all entities" and verify table default columns', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getExpandableTableView();
-    browsePage.getTotalDocuments().should('be.greaterThan', 25)
+    browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getColumnTitle(2).should('contain', 'Identifier');
     browsePage.getColumnTitle(3).should('contain', 'Entity');
     browsePage.getColumnTitle(4).should('contain', 'File Type');
@@ -242,12 +240,12 @@ describe('json scenario for table on browse documents page', () => {
     facets.forEach(function (item) {
       browsePage.getFacet(item).should('exist');
       browsePage.getFacetItems(item).should('exist');
-    })
+    });
   });
 
   it('select "all entities" and verify table', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getTotalDocuments().should('be.greaterThan', 25)
+    browsePage.getTotalDocuments().should('be.greaterThan', 25);
     //check table rows
     browsePage.getTableRows().should('have.length', 20);
     //check table columns
@@ -258,7 +256,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.selectEntity('Person');
     browsePage.getSelectedEntity().should('contain', 'Person');
     browsePage.getHubPropertiesExpanded();
-    browsePage.getTotalDocuments().should('be.greaterThan', 5)
+    browsePage.getTotalDocuments().should('be.greaterThan', 5);
     //check table rows
     browsePage.getTableRows().should('have.length', 14);
     //check table columns
@@ -291,8 +289,8 @@ describe('json scenario for table on browse documents page', () => {
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'Person');
     browsePage.getClearFacetSearchSelection('Alice').should('exist');
-    browsePage.getSearchText().should('have.value', 'Alice')
-    browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)')
+    browsePage.getSearchText().should('have.value', 'Alice');
+    browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)');
   });
 
   it('verify instance view of the document with pk', () => {
@@ -450,7 +448,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox('fname', 'Gary').should('not.be.checked');
     browsePage.getGreySelectedFacets('Gary').should('not.exist');
-  })
+  });
 
   it('Apply facets, unchecking them should not recheck original facets', () => {
     browsePage.selectEntity('Customer');
@@ -474,7 +472,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
     browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');
     browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').should('not.be.checked');
-  })
+  });
 
   it('Verify facets checked from popover search can be unchecked on clicking discard all changes', () => {
     browsePage.selectEntity('Person');
@@ -490,7 +488,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('fname', 'Alexandra').should('not.be.checked');
     browsePage.clickPopoverSearch('fname');
     browsePage.getPopOverCheckbox('Alexandra').should('not.be.checked');
-  })
+  });
 
 });
 
@@ -529,6 +527,6 @@ describe('Verify numeric/date facet can be applied', () => {
     browsePage.getSelectedFacet('birthDate:').should('exist');
     browsePage.getDateFacetPicker().trigger('mouseover');
     cy.waitUntil(() => browsePage.getDateFacetClearIcon()).click({ force: true });
-    browsePage.getFacetApplyButton().should('not.exist')
+    browsePage.getFacetApplyButton().should('not.exist');
   });
 });

@@ -58,15 +58,15 @@ class RunPage {
     }
 
     deleteFlowConfirmationMessage(flowName: string) {
-        return cy.findByText(`Are you sure you want to delete flow "${flowName}"?`)
+        return cy.findByText(`Are you sure you want to delete flow "${flowName}"?`);
     }
 
     deleteStepConfirmationMessage(stepName: string, flowName: string) {
-        return cy.findByText(`Are you sure you want to delete step "${stepName}" from flow "${flowName}"?`)
+        return cy.findByText(`Are you sure you want to delete step "${stepName}" from flow "${flowName}"?`);
     }
 
     explorerLink() {
-      return cy.findByTestId('explorer-link')
+      return cy.findByTestId('explorer-link');
     }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, wait, within, cleanup, waitForElement, getByTestId } from '@testing-library/react';
+import { render, fireEvent, wait, within, cleanup, waitForElement } from '@testing-library/react';
 import LoadList from './load-list';
 import data from '../../assets/mock-data/common.data';
 import axiosMock from 'axios';
@@ -26,15 +26,15 @@ describe('Load data component', () => {
 
   beforeEach(() => {
       mocks.loadAPI(axiosMock);
-  })
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
-  })
+  });
 
   test('Verify Load list view renders correctly with no data', () => {
-    const { getByText } = render(<MemoryRouter><LoadList {...data.loadData} data={[]} /></MemoryRouter>)
+    const { getByText } = render(<MemoryRouter><LoadList {...data.loadData} data={[]} /></MemoryRouter>);
     const tableColumns = within(getByText('Name').closest('tr'));
 
     expect(getByText('Add New')).toBeInTheDocument();
@@ -45,10 +45,10 @@ describe('Load data component', () => {
     expect(tableColumns.getByText('Last Updated')).toBeInTheDocument();
     expect(tableColumns.getByText('Action')).toBeInTheDocument();
     expect(getByText('No Data')).toBeInTheDocument();
-  })
+  });
 
   test('Verify Load list view renders correctly with data', async () => {
-    const { getByText, getAllByLabelText, getByTestId } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
+    const { getByText, getAllByLabelText, getByTestId } = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>);
     const dataRow = within(getByText('testLoadXML').closest('tr'));
     expect(dataRow.getByText(data.loadData.data[1].name)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].description)).toBeInTheDocument();
@@ -112,15 +112,15 @@ describe('Load data component', () => {
     loadTableSort = getByTestId('loadTableDescription');
     fireEvent.click(loadTableSort);
     validateTableRow(loadTable, ['testLoadXML', 'testLoad', 'testLoad123']);
-  })
+  });
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>)
+    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>);
 
     // NOTE see config/advanced-settings.data.ts for test data
     await wait(() => {
       fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
-    })
+    });
     //set permissions without any errors and hit 'Save'
     let targetPermissions = getByPlaceholderText("Please enter target permissions");
     fireEvent.change(targetPermissions, { target: { value: 'role1,read' }});
@@ -135,7 +135,7 @@ describe('Load data component', () => {
 
     await wait(() => {
         fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
-    })
+    });
     let targetCollection = getByTitle('addedCollection'); // Additional target collection (Added by user)
     let stepName = loadData.loads.data[0].name;
 
@@ -172,7 +172,7 @@ describe('Load data component', () => {
     });
     expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
 
-  })
+  });
 
   test('Load List - Add step to an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
@@ -188,7 +188,7 @@ describe('Load data component', () => {
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
-    )
+    );
 
     //Check if the list is rendered properly
     expect(getByText('testLoadXML')).toBeInTheDocument();
@@ -212,10 +212,10 @@ describe('Load data component', () => {
     //Check if the /tiles/run/add route has been called
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
-  })
+  });
 
   test('Load List - Add step to an existing flow where step DOES exist', async () => {
     const authorityService = new AuthoritiesService();
@@ -265,7 +265,7 @@ describe('Load data component', () => {
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
-    )
+    );
 
     //Check if the list is rendered properly
     expect(getByText('testLoadXML')).toBeInTheDocument();
@@ -282,10 +282,10 @@ describe('Load data component', () => {
     //Check if the /tiles/run/add route has been called
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
-  })
+  });
 
   test('Verify Load list allows step to be added to flow with writeFlow authority', async () => {
     const authorityService = new AuthoritiesService();
@@ -324,7 +324,7 @@ describe('Load data component', () => {
     expect(mockAddStepToFlow).toBeCalledTimes(1);
 
     //TODO: Mock addStepToNew not implemented yet
-  })
+  });
 
   test('Verify Load list does not allow a step to be added to flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
@@ -360,6 +360,6 @@ describe('Load data component', () => {
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-delete'));
     await wait (() => expect(getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
-  })
+  });
 
 });

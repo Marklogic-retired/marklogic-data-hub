@@ -1,16 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history'
-const history = createMemoryHistory()
+import { createMemoryHistory } from 'history';
+const history = createMemoryHistory();
 import { render, wait, waitForElement } from '@testing-library/react';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import userEvent from "@testing-library/user-event";
 
 import ModalStatus from './modal-status';
 import NoMatchRedirect from '../../pages/noMatchRedirect';
 import { UserContext } from '../../util/user-context';
 import {
-  userAuthenticated,
   userSessionWarning,
   userModalError,
   userNoErrorNoSessionWarning,
@@ -44,7 +43,7 @@ describe('Modal Status Component', () => {
       </Router>);
 
       await wait(() => {
-        expect(getByText('Continue Session')).toBeInTheDocument()
+        expect(getByText('Continue Session')).toBeInTheDocument();
         expect(getByText('Due to Inactivity, you will be logged out in')).toBeInTheDocument();
         userEvent.click(getByText('Continue Session'));
       });
@@ -62,7 +61,7 @@ describe('Modal Status Component', () => {
       </Router>);
 
       await wait(() => {
-        expect(getByText('Continue Session')).toBeInTheDocument()
+        expect(getByText('Continue Session')).toBeInTheDocument();
         expect(getByText('Due to Inactivity, you will be logged out in')).toBeInTheDocument();
         userEvent.click(getByText('Log Out'));
       });
@@ -120,7 +119,7 @@ describe('Modal Status Component', () => {
 
   test('Error message is rendered over session warning', async () => {
     mocks.systemInfoAPI(axiosMock);
-    const { getByText, queryByText, debug } = render(
+    const { getByText, queryByText } = render(
       <Router>
         <UserContext.Provider value={userHasModalErrorHasSessionWarning}>
           <ModalStatus/>

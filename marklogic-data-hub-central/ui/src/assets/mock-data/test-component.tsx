@@ -6,6 +6,6 @@ interface Props {
 
 const TestComponent: React.FC<Props> = (props) => {
   return (<div>Test</div>);
-}
+};
 
 export default TestComponent;
