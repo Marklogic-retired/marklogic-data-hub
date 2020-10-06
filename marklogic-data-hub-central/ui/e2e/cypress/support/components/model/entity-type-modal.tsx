@@ -24,7 +24,7 @@ class EntityTypeModal {
   }
 
   getAddButton() {
-    return cy.get('#entity-modal-add', {timeout: 12000});
+    return cy.get('#entity-modal-add', {timeout: 20000});
   }
 
 }
