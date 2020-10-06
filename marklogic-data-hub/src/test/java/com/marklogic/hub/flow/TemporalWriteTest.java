@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
+import com.marklogic.client.dataservices.InputEndpoint;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -17,8 +19,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.stream.Stream;
+
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TemporalWriteTest extends AbstractHubCoreTest {
 
@@ -84,6 +91,37 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         }
     }
 
+    @Test
+    void ingestDocWithTemporalCollecion() {
+        String collections = "fruits,stuff,temporal/test";
+        ObjectNode workUnit = objectMapper.createObjectNode();
+        workUnit.put("uriprefix", "/bulkJavaTest/");
+        workUnit.put("collections", collections);
+        runAsDataHubOperator();
+        InputEndpoint endpoint = InputEndpoint.on(
+            getHubClient().getStagingClient(),
+            getHubClient().getModulesClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle())
+        );
+        InputEndpoint.BulkInputCaller bulkInputCaller = endpoint.bulkCaller();
+        bulkInputCaller.setEndpointState("{}".getBytes());
+        bulkInputCaller.setWorkUnit(new JacksonHandle(workUnit));
+
+        Stream<InputStream> input = Stream.of(
+            new ByteArrayInputStream("{\"fruitName\":\"pineapple\", \"fruitColor\":\"green\"}".getBytes())
+        );
+        input.forEach(bulkInputCaller::accept);
+        bulkInputCaller.awaitCompletion();
+
+        DocumentMetadataHandle metadata = getDocumentMetadata();
+        assertEquals(collections.split(",").length + 2, metadata.getCollections().size(), "documents inserted via temporal collection has 2 new collections 'latest and uri'");
+        assertTrue(metadata.getCollections().contains("fruits"));
+        assertTrue(metadata.getCollections().contains("stuff"));
+        assertTrue(metadata.getCollections().contains("temporal/test"));
+        assertTrue(metadata.getCollections().contains("latest"), "As the document is in Lastest collection, temporal/test was recognized as a temporal collection and document was invserted via temporal insert");
+
+
+    }
+
     private void removeIndexesAndFields() {
         String indexesDeletion = "  const admin = require('/MarkLogic/admin.xqy');\n" +
             "        var config = admin.getConfiguration();\n" +
@@ -134,4 +172,14 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         systemEndIndex.put("range-value-positions", false);
         new DatabaseManager(getHubConfig().getManageClient()).save(newNode.toString());
     }
+
+    private DocumentMetadataHandle getDocumentMetadata() {
+        String[] uris = getHubClient().getStagingClient().newServerEval()
+            .javascript("cts.uris(null, null, cts.collectionQuery('fruits'))")
+            .evalAs(String.class).split("\n");
+        assertTrue(uris.length > 0, "Expected at least one fruit URI, found zero");
+        return getHubClient().getStagingClient().newDocumentManager().readMetadata(uris[0], new DocumentMetadataHandle());
+    }
+
+
 }
