@@ -1,7 +1,7 @@
 import React from 'react';
 import {fireEvent, render, wait} from "@testing-library/react";
 import SaveChangesModal from "./save-changes-modal";
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 import {saveQueryResponse, putQueryResponse, duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/explore/query";
 import userEvent from "@testing-library/user-event";
 jest.mock('axios');
@@ -35,7 +35,7 @@ describe("<SaveChangesModal/>", () => {
             entityQueryUpdate={false}
             isSaveQueryChanged={jest.fn()}
             resetYesClicked={false}
-        />)
+        />);
         queryField = getByPlaceholderText("Enter query name");
         expect(queryField).toHaveAttribute('value', 'Order query');
         queryDescription = getByPlaceholderText("Enter query description");
@@ -67,7 +67,7 @@ describe("<SaveChangesModal/>", () => {
             isSaveQueryChanged={jest.fn()}
             resetYesClicked={false}
             setColumnSelectorTouched={jest.fn()}
-        />)
+        />);
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: ''} });
         fireEvent.change(queryField, { target: {value: 'Edit new query'} });
@@ -90,7 +90,7 @@ describe("<SaveChangesModal/>", () => {
                     "propertiesToDisplay": [],
                     "sortOrder": []
                 }
-        }
+        };
 
 
         let url = "/api/entitySearch/savedQueries";
@@ -122,7 +122,7 @@ describe("<SaveChangesModal/>", () => {
             isSaveQueryChanged={jest.fn()}
             resetYesClicked={false}
             setColumnSelectorTouched={jest.fn()}
-        />)
+        />);
         queryField = getByPlaceholderText("Enter query name");
         fireEvent.change(queryField, { target: {value: 'Edit new query'} });
         await wait(() => {
@@ -141,7 +141,7 @@ describe("<SaveChangesModal/>", () => {
                 "propertiesToDisplay": [],
                 "sortOrder": [],
             }
-        }
+        };
 
 
         let url = "/api/entitySearch/savedQueries";

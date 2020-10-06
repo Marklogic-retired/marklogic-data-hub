@@ -1,11 +1,11 @@
 import React, {useContext, useEffect} from 'react';
-import { Icon, Tooltip} from 'antd';
+import { Icon } from 'antd';
 import { MLButton } from '@marklogic/design-system';
 import { SearchContext } from '../../util/search-context';
 import styles from './selected-facets.module.scss';
 import moment from 'moment';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faCheckSquare, faWindowClose} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {faCheckSquare, faWindowClose} from '@fortawesome/free-solid-svg-icons';
 import { MLTooltip } from '@marklogic/design-system';
 
 
@@ -17,7 +17,7 @@ interface Props {
   toggleApplyClicked: (clicked:boolean) => void;
   showApply: boolean
   applyClicked: boolean
-};
+}
 
 const SelectedFacets: React.FC<Props> = (props) => {
   const {
@@ -61,13 +61,13 @@ const SelectedFacets: React.FC<Props> = (props) => {
         clearAllGreyFacets();
         props.toggleApplyClicked(true);
         props.toggleApply(false);
-    }
+    };
 
     const clearGreyFacets = () => {
         clearAllGreyFacets();
         props.toggleApplyClicked(true);
         props.toggleApply(false);
-    }
+    };
 
 
   const unCheckRest = (constraint, facet, rangeValues:any = {}) => {
@@ -80,7 +80,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             return false;
     }
     return true;
-  }
+  };
 
   return (
     <div
@@ -125,7 +125,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               { dateValues.join(' ~ ') }
                 <Icon type='close'/>
             </MLButton>
-          )
+          );
         } else if (item.rangeValues) {
           if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
             let dateValues:any = [];
@@ -141,7 +141,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
                   <Icon type='close'/>
               </MLButton>
-            )
+            );
           } else {
             return (
               <MLButton
@@ -155,7 +155,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
                   <Icon type='close'/>
               </MLButton>
-            )
+            );
           }
         }
         return (
@@ -170,7 +170,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
               {facetName + ': ' + item.facet}
               <Icon type='close'/>
           </MLButton>
-        )
+        );
       })}
         {props.greyFacets.map((item, index) => {
             let facetName = item.displayName ? item.displayName : item.constraint;
@@ -195,7 +195,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                         {dateValues.join(' ~ ')}
                         <Icon type='close'/>
                     </MLButton>
-                )
+                );
             } else if (item.rangeValues) {
                 if (moment(item.rangeValues.lowerBound).isValid() && moment(item.rangeValues.upperBound).isValid()) {
                     let dateValues: any = [];
@@ -211,7 +211,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
                             <Icon type='close'/>
                         </MLButton>
-                    )
+                    );
                 } else {
                     return ((unCheckRest(item.constraint, item.facet)) &&
                         <MLButton
@@ -225,7 +225,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                             {facetName + ': ' + item.rangeValues.lowerBound + ' - ' + item.rangeValues.upperBound}
                             <Icon type='close'/>
                         </MLButton>
-                    )
+                    );
                 }
             }
             return (
@@ -246,7 +246,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                       <Icon type='close'/>
                 </MLButton>
               </MLTooltip>
-            )
+            );
         })}
         {props.greyFacets.length > 0 &&
         <MLTooltip title={'Apply all changes'}>
@@ -273,6 +273,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
         }
     </div>
   );
-}
+};
 
 export default SelectedFacets;

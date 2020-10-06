@@ -16,7 +16,7 @@ const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);
 
   const handleDetailViewNavigation = () => {
-  }
+  };
 
   // Custom CSS for source Format
   const sourceFormatStyle = (sourceFmt) => {
@@ -34,13 +34,13 @@ const RecordCardView = (props) => {
       color: '#ffffff',
       verticalAlign: 'middle',
       marginRight: '8px'
-    }
+    };
     return customStyles;
-  }
+  };
 
   const displayUri = (uri) => {
     return formatCardUri(uri);
-  }
+  };
 
   const displaySnippet = (item) => {
     if (['json', 'xml', 'text'].includes(item.format)) {
@@ -53,7 +53,7 @@ const RecordCardView = (props) => {
             str = str.concat(element);
           }
         });
-      })
+      });
       return <p>{ReactHtmlParser(str)}</p>;
     } else if ('binary' === item.format) {
       return (
@@ -61,20 +61,20 @@ const RecordCardView = (props) => {
           <FileOutlined className={styles.binaryIcon} />
           <div className={styles.binaryText} data-testid={item.uri + '-noPreview'}> No preview available</div>
         </div>
-      )
+      );
     }
-  }
+  };
 
   const displayRecordSources = (item) => {
     let sources = item.hubMetadata?.sources.map((record) => {
       return record.name;
     }).join(", ");
     return sources;
-  }
+  };
 
   const emptyField = (
     <p className={styles.textDisabled}>none</p>
-  )
+  );
 
   const displayRecordMetadata = (item) => {
     return (
@@ -101,7 +101,7 @@ const RecordCardView = (props) => {
         </div>
       </div>
     );
-  }
+  };
 
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
@@ -142,6 +142,6 @@ const RecordCardView = (props) => {
       </Row>
     </div>
   );
-}
+};
 
 export default RecordCardView;

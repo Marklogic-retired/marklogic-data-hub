@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { UserContext } from '../../util/user-context';
 import Header from './header';
@@ -17,14 +17,14 @@ describe('Header component', () => {
       <Router>
         <Header environment={data.environment}/>
       </Router>
-    )
+    );
     
     expect(getByLabelText('header-logo')).toBeInTheDocument();
     expect(getByText(Application.title)).toBeInTheDocument();
     expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
     expect(queryByText('icon: user')).not.toBeInTheDocument();
     //unauthenticated users get sent to default Marklogic docs 
-    expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/')
+    expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/');
   });
 
   test('should render correctly when a user is logged in', async () => {
@@ -35,7 +35,7 @@ describe('Header component', () => {
           <Header environment = {{...data.environment, dataHubVersion: '5.3-SNAPSHOT'}}/>
         </UserContext.Provider>
       </Router>
-    )
+    );
     expect(getByLabelText('header-logo')).toBeInTheDocument();
     expect(getByText(Application.title)).toBeInTheDocument();
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('Header component', () => {
           <Header environment = {{...data.environment, dataHubVersion: '5.2.1'}}/>
         </UserContext.Provider>
       </Router>
-    )
+    );
     expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.2');
 
     //verify correct version specific link given multi-digit dataHub versions
@@ -65,7 +65,7 @@ describe('Header component', () => {
           <Header environment = {{...data.environment, dataHubVersion: '5.64.123456'}}/>
         </UserContext.Provider>
       </Router>
-    )
+    );
     expect(document.querySelector('#help-link')).toHaveAttribute('href', 'https://docs.marklogic.com/datahub/5.64');
 
   });

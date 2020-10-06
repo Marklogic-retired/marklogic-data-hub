@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import styles from './toolbar.module.scss';
 import './toolbar.scss';
@@ -22,19 +22,19 @@ const Toolbar: React.FC<Props> = (props) => {
         } else {
             return `${tiles[id]['title']}: Contact your security administrator to get the roles and permissions required to access this functionality.`;
         }
-    }
+    };
 
     const getIconStyle = (id) => {
         let disabled: CSSProperties = {
             color: 'grey',
             opacity: '0.5',
             cursor: 'not-allowed'
-        }
+        };
         let enabled: CSSProperties = {
             color: tiles[id]['color']
-        }
+        };
         return (props.enabled && props.enabled.includes(id)) ? enabled : disabled;
-    }
+    };
 
     return (
         <div id={styles.toolbar} aria-label={'toolbar'}>
@@ -63,7 +63,7 @@ const Toolbar: React.FC<Props> = (props) => {
                                     style={getIconStyle(id)}
                                 />
                             </MLTooltip>
-                    )
+                    );
                 } else {
                     return (
                         <MLTooltip title={getTooltip(id)} placement="leftTop" key={i}>
@@ -84,11 +84,11 @@ const Toolbar: React.FC<Props> = (props) => {
                                 ><FontAwesomeIcon icon={tiles[id]['icon']} size="lg" />
                                 </i>}
                         </MLTooltip>
-                    )
+                    );
                 }
             })}
         </div>
     );
-}
+};
 
 export default Toolbar;

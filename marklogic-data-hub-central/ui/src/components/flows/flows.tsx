@@ -1,5 +1,5 @@
 import React, { useState, CSSProperties, useEffect, useContext } from 'react';
-import { Collapse, Spin, Icon, Card, Tooltip, Modal, Upload, message, Menu, Dropdown } from 'antd';
+import { Collapse, Icon, Card, Modal, Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
@@ -16,7 +16,6 @@ import {UserContext} from "../../util/user-context";
 import './flows.scss';
 
 const { Panel } = Collapse;
-const { SubMenu } = Menu;
 
 interface Props {
     flows: any;
@@ -51,7 +50,7 @@ const StepDefinitionTypeTitles = {
     'merging': 'Merge',
     'CUSTOM': 'Custom',
     'custom': 'Custom'
-}
+};
 
 const Flows: React.FC<Props> = (props) => {
     const { handleError } = useContext(UserContext);
@@ -89,10 +88,10 @@ const Flows: React.FC<Props> = (props) => {
         if (activeKeys === undefined) {
             setActiveKeys([]);
         }
-    }, [props.flows])
+    }, [props.flows]);
 
     useEffect(() => {
-    }, [latestJobData])
+    }, [latestJobData]);
 
     // Get the latest job info after a step (in a flow) run
     useEffect(()=>{
@@ -100,7 +99,7 @@ const Flows: React.FC<Props> = (props) => {
         if(num >= 0){
             getFlowWithJobInfo(num);
         }
-    },[props.runEnded])
+    },[props.runEnded]);
 
     // For role-based privileges
     const authorityService = useContext(AuthoritiesContext);
@@ -114,7 +113,7 @@ const Flows: React.FC<Props> = (props) => {
         setCreateAdd(false);
         setTitle('New Flow');
         setNewFlow(true);
-    }
+    };
 
     //Custom CSS for source Format
     const sourceFormatStyle = (sourceFmt) => {
@@ -125,7 +124,7 @@ const Flows: React.FC<Props> = (props) => {
                 backgroundColor: '#fff',
                 color: '#fff',
                 padding: '5px'
-            }
+            };
         } else {
             customStyles = {
                 display: 'inline-flex',
@@ -140,22 +139,22 @@ const Flows: React.FC<Props> = (props) => {
                 textAlign: 'center',
                 color: '#ffffff',
                 verticalAlign: 'middle'
-            }
+            };
         }
         return customStyles;
-    }
+    };
 
     const handleStepAdd = async (stepName, flowName, stepType) => {
         setAddStepDialogVisible(true);
         setFlowName(flowName);
         setStepName(stepName);
         setStepType(stepType);
-    }
+    };
 
     const handleFlowDelete = (name) => {
         setDialogVisible(true);
         setFlowName(name);
-    }
+    };
 
     const handleStepDelete = (flowName, stepDetails) => {
         setStepDialogVisible(true);
@@ -163,17 +162,17 @@ const Flows: React.FC<Props> = (props) => {
         setStepName(stepDetails.stepName);
         setStepType(stepDetails.stepDefinitionType);
         setStepNumber(stepDetails.stepNumber);
-    }
+    };
 
     const onOk = (name) => {
         props.deleteFlow(name);
         setDialogVisible(false);
-    }
+    };
 
     const onStepOk = (flowName, stepNumber) => {
         props.deleteStep(flowName, stepNumber);
         setStepDialogVisible(false);
-    }
+    };
 
     const onAddStepOk = (stepName, flowName, stepType) => {
         props.addStepToFlow(stepName, flowName, stepType);
@@ -184,13 +183,13 @@ const Flows: React.FC<Props> = (props) => {
             setActiveKeys(newActiveKeys);
         }
         setAddStepDialogVisible(false);
-    }
+    };
 
     const onCancel = () => {
         setDialogVisible(false);
         setStepDialogVisible(false);
         setAddStepDialogVisible(false);
-    }
+    };
 
     const deleteConfirmation = (
         <Modal
@@ -257,7 +256,7 @@ const Flows: React.FC<Props> = (props) => {
             )) : null }
             </Menu.ItemGroup>
         </Menu>
-    )};
+    );};
 
     const panelActions = (name, i) => (
         <div
@@ -335,11 +334,11 @@ const Flows: React.FC<Props> = (props) => {
         setTitle('Edit Flow');
         setFlowData(prevState => ({ ...prevState, ...props.flows[index]}));
         setNewFlow(true);
-    }
+    };
 
     const StepDefToTitle = (stepDef) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
-    }
+    };
 
     const uploadProps = {
         onRemove: file => {
@@ -356,7 +355,7 @@ const Flows: React.FC<Props> = (props) => {
         },
         showUploadList:false,
         fileList,
-    }
+    };
 
     const customRequest = async option => {
         const {file} = option;
@@ -379,14 +378,14 @@ const Flows: React.FC<Props> = (props) => {
     const isRunning = (flowId, stepId) => {
         let result = props.running.find(r => (r.flowId === flowId && r.stepId === stepId));
         return result !== undefined;
-    }
+    };
 
     function handleMouseOver(e, name) {
         setShowLinks(name);
     }
     const showStepRunResponse = async (step) =>{
         try{
-            let response = await axios.get('/api/jobs/' + step.jobId)
+            let response = await axios.get('/api/jobs/' + step.jobId);
             if(response.status === 200){
                 props.showStepRunResponse(step.stepName, step.stepDefinitionType, "", step.jobId, response.data);
             }
@@ -394,7 +393,7 @@ const Flows: React.FC<Props> = (props) => {
         catch(error){
             handleError(error);
         }
-    }
+    };
 
     const lastRunResponse = (step) => {
         let stepEndTime, tooltipText;
@@ -429,7 +428,7 @@ const Flows: React.FC<Props> = (props) => {
                 </MLTooltip>
             );
         }
-    }
+    };
 
     const getFlowWithJobInfo = async (flowNum) => {
         let currentFlow = props.flows[flowNum];
@@ -437,7 +436,7 @@ const Flows: React.FC<Props> = (props) => {
             try {
                 let response = await axios.get('/api/flows/' + currentFlow.name + "/latestJobInfo");
                 if (response.status === 200 && response.data) {
-                    let currentFlowJobInfo = {}
+                    let currentFlowJobInfo = {};
                     currentFlowJobInfo[currentFlow["name"]] = response.data["steps"];
                     setLatestJobData({...latestJobData, ...currentFlowJobInfo});
                 }
@@ -445,7 +444,7 @@ const Flows: React.FC<Props> = (props) => {
                 console.error('Error getting latest job info ', error);
             }
         }
-    }
+    };
 
     let panels;
     if (props.flows) {
@@ -454,7 +453,7 @@ const Flows: React.FC<Props> = (props) => {
             let cards = flow.steps.map((step, index) => {
                 let sourceFormat = step.sourceFormat;
                 let stepNumber = step.stepNumber;
-                let viewStepId = `${flowName}-${stepNumber}`
+                let viewStepId = `${flowName}-${stepNumber}`;
                 let stepDefinitionType = step.stepDefinitionType ? step.stepDefinitionType.toLowerCase():'';
                 let stepDefinitionTypeTitle = StepDefinitionTypeTitles[stepDefinitionType];
                 return (
@@ -477,7 +476,6 @@ const Flows: React.FC<Props> = (props) => {
                                                 multiple={true}
                                                 className={styles.upload}
                                                 customRequest={customRequest}
-                                                showUploadList = {false}
                                                 {...uploadProps}
                                         >
                                         <div
@@ -486,8 +484,8 @@ const Flows: React.FC<Props> = (props) => {
                                             data-testid={'runStep-' + stepNumber}
                                             onClick={()=>{
                                                 setShowUploadError(false);
-                                                setRunningStep(step)
-                                                setRunningFlow(flowName)
+                                                setRunningStep(step);
+                                                setRunningFlow(flowName);
                                             }}
                                         >
                                             <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
@@ -500,7 +498,7 @@ const Flows: React.FC<Props> = (props) => {
                                             className={styles.run}
                                             onClick={() =>{
                                                 setShowUploadError(false);
-                                                props.runStep(flowName, step)
+                                                props.runStep(flowName, step);
                                             }}
                                             aria-label={`runStep-${step.stepName}`}
                                             data-testid={'runStep-' + stepNumber}
@@ -556,7 +554,7 @@ const Flows: React.FC<Props> = (props) => {
                         </div>
                     </Card>
                   </div>
-                )
+                );
             });
             return (
                 <Panel header={flowHeader(flowName, i)} key={i} extra={panelActions(flowName, i)}>
@@ -564,8 +562,8 @@ const Flows: React.FC<Props> = (props) => {
                         {cards}
                     </div>
                 </Panel>
-            )
-        })
+            );
+        });
     }
 
     //Update activeKeys on Collapse Panel interactions
@@ -575,8 +573,8 @@ const Flows: React.FC<Props> = (props) => {
         if(!activeKeys || (key.length > activeKeys.length && key.length > 0)) {
             getFlowWithJobInfo(key[key.length - 1]);
         }
-        setActiveKeys([...key])
-    }
+        setActiveKeys([...key]);
+    };
 
    return (
     <div id="flows-container" className={styles.flowsContainer}>
@@ -631,6 +629,6 @@ const Flows: React.FC<Props> = (props) => {
         }
     </div>
    );
-}
+};
 
 export default Flows;

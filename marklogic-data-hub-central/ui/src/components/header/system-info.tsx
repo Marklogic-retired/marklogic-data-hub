@@ -1,13 +1,13 @@
 import React, {useContext, useEffect, useState} from 'react';
 import styles from './system-info.module.scss';
-import {Button, Card, Col, Row, Modal, Alert, Spin, Icon} from 'antd';
+import { Card, Col, Row, Modal, Alert } from 'antd';
 import axios from 'axios';
 import { UserContext } from '../../util/user-context';
 import { AuthoritiesContext } from "../../util/authorities";
 import Axios from "axios";
 import { MLButton, MLSpin } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons'
+import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -45,7 +45,7 @@ const SystemInfo = (props) => {
                 link.setAttribute('download', filename);
                 document.body.appendChild(link);
                 link.click();
-            })
+            });
     };
 
     const clear =async () => {
@@ -63,24 +63,24 @@ const SystemInfo = (props) => {
             setIsLoading(false);
             console.error('Error while clearing user data, message || error', message);
         }
-    }
+    };
     const onCancel = () => {
         setMessage({show: false});
         props.setSystemInfoVisible(false);
-    }
+    };
 
     const onClearOk = () => {
         clear();
         setClearDataVisible(false);
-      }
+      };
     
     const onClearCancel = () => {
         setClearDataVisible(false);
-    }
+    };
     
     const handleClearData = () => {
         setClearDataVisible(true);
-    }
+    };
 
     const clearDataConfirmation = <Modal
         visible={clearDataVisible}
@@ -164,7 +164,7 @@ const SystemInfo = (props) => {
             </div>
             {clearDataConfirmation}
         </Modal>
-    )
-}
+    );
+};
 
 export default SystemInfo;

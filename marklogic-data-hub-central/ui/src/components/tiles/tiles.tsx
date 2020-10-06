@@ -1,9 +1,9 @@
 import React from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
-import { Tooltip, Menu, Dropdown } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import { ArrowsAltOutlined, ShrinkOutlined, CloseOutlined } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
 import './tiles.scss';
@@ -29,34 +29,34 @@ const Tiles: React.FC<Props> = (props) => {
 
     const showControl = (control) => {
         return controls.indexOf(control) !== -1;
-    }
+    };
 
     const onChange = (event) => {
         console.log('onChange', event);
-    }
+    };
 
     const onRelease = (event) => {
         console.log('onRelease', event);
-    }
+    };
 
     // TODO Implement newTab feature
     const onClickNewTab = (event) => {
         console.log('onClickNewTab', event);
-    }
+    };
 
     // TODO Implement maximize feature
     const onClickMaximize = (event) => {
         console.log('onClickMaximize', event);
-    }
+    };
 
     // TODO Implement minimize feature
     const onClickMinimize = (event) => {
         console.log('onClickMinimize', event);
-    }
+    };
 
     const onClickClose = () => {
         props.onTileClose();
-    }
+    };
 
     const menu = (
         <Menu onClick={props.onMenuClick}>
@@ -124,7 +124,7 @@ const Tiles: React.FC<Props> = (props) => {
                         ) : null}
                 </div>
             </div>
-        )
+        );
     };
 
     return (<>
@@ -138,7 +138,7 @@ const Tiles: React.FC<Props> = (props) => {
                     >
                         {!props.newStepToFlowOptions?.addingStepToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
                     </MosaicWindow>
-                )
+                );
             }}
             className={'mosaic-container mosaic-container-' + viewId}
             value={props.currentNode}
@@ -146,6 +146,6 @@ const Tiles: React.FC<Props> = (props) => {
             onRelease={onRelease}
         />
     </>);
-}
+};
 
 export default Tiles;

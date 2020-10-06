@@ -30,6 +30,6 @@ const hubPropertiesConfig = [
     propertyPath: 'createdByStep',
     entityTypeId: ' '
   },
-]
+];
 
 export default hubPropertiesConfig;

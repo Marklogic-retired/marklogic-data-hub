@@ -8,7 +8,6 @@ import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
 import {SecurityTooltips} from "../../config/tooltips.config";
-
 jest.mock('axios');
 
 const mockHistoryPush = jest.fn();
@@ -24,12 +23,12 @@ describe('Load Card component', () => {
 
   beforeEach(() => {
     mocks.loadAPI(axiosMock);
-  })
+  });
 
   afterEach(() => {
     jest.clearAllMocks();
     cleanup();
-  })
+  });
 
   test('Load Card - Add step to an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
@@ -45,7 +44,7 @@ describe('Load Card component', () => {
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
-    )
+    );
 
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
@@ -72,7 +71,7 @@ describe('Load Card component', () => {
     //Check if the /tiles/run/add route has been called
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
   });
@@ -91,7 +90,7 @@ describe('Load Card component', () => {
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
-    )
+    );
 
     fireEvent.mouseOver(getByText('testLoadXML')); // Hover over the Load Card to get more options
 
@@ -121,7 +120,7 @@ describe('Load Card component', () => {
             addStepToNew={jest.fn()} />
         </AuthoritiesContext.Provider>
       </MemoryRouter>
-    )
+    );
 
     //Verify cards get sorted by last updated
     let loadCards: any = document.querySelectorAll('.ant-col');
@@ -152,7 +151,7 @@ describe('Load Card component', () => {
     //Wait for the route to be pushed into History(which means that the route is working fine. Remaining can be verified in E2E test)
     wait(() => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
     //TODO- E2E test to check if the Run tile is loaded or not.
 
   });
@@ -216,10 +215,10 @@ describe('Load Card component', () => {
     expect(queryByText(data.flows[0].name)).not.toBeInTheDocument();
 
     // test adding to new flow
-    fireEvent.mouseOver(getByText(loadStepName))
+    fireEvent.mouseOver(getByText(loadStepName));
     fireEvent.click(getByTestId(`${loadStepName}-toNewFlow`));
     await wait(() => {
         expect(mockHistoryPush).not.toHaveBeenCalledWith('/tiles/run/add');
-    })
+    });
   });
 });
