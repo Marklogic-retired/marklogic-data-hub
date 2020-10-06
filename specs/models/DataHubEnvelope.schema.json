@@ -93,6 +93,10 @@
               "name": {
                 "description": "Name of a source that provides instance data in this envelope",
                 "type": "string"
+              },
+              "datahubSourceType": {
+                "description": "Type of the source that provides instance data in this envelope",
+                "type": "string"
               }
             }
           }
