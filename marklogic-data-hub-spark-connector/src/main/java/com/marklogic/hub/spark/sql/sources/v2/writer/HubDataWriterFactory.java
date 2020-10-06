@@ -18,7 +18,6 @@ package com.marklogic.hub.spark.sql.sources.v2.writer;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriter;
 import com.marklogic.mgmt.util.SimplePropertySource;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
@@ -32,35 +31,41 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
 
     private StructType schema;
     private HubClient hubClient;
-    private Map<String, String> params;
+    private Map<String, String> options;
 
 
     /**
-     * @param params a map of parameters containing both DHF-supported properties (most likely prefixed with ml* or
+     * @param options a map of options containing both DHF-supported properties (most likely prefixed with ml* or
      *               hub*) and connector-specific properties. The DHF-supported properties will be used to construct a
      *               HubClient for communicating with MarkLogic.
      * @param schema
      */
-    public HubDataWriterFactory(Map<String, String> params, StructType schema) {
-        this.params = params;
+    public HubDataWriterFactory(Map<String, String> options, StructType schema) {
+        this.options = options;
         this.schema = schema;
-        HubConfigImpl hubConfig = buildHubConfig(params);
+        HubConfigImpl hubConfig = buildHubConfig(options);
+        logger.info("Creating HubClient for host: " + hubConfig.getHost());
         this.hubClient = hubConfig.newHubClient();
     }
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        return new HubDataWriter(hubClient, schema, params);
+        return new HubDataWriter(hubClient, schema, options);
     }
 
-    protected HubConfigImpl buildHubConfig(Map<String, String> params) {
+    /**
+     * This is a static method so that it can be easily tested without instantiating this class.
+     *
+     * @param options
+     * @return
+     */
+    protected static HubConfigImpl buildHubConfig(Map<String, String> options) {
         Properties props = new Properties();
-        // Using Lower case to override the props sent by Spark
+        // Assume DHS usage by default; the options map can override these
         props.setProperty("hubdhs", "true");
         props.setProperty("hubssl", "true");
-        // hubDHS and hubSsl passed in the params Map will be overridden.
-        params.keySet().forEach(key -> props.setProperty(key, params.get(key)));
-        logger.info("Creating HubClient for host: " + props.getProperty("mlhost"));
+        options.keySet().forEach(key -> props.setProperty(key, options.get(key)));
+
         HubConfigImpl hubConfig = new HubConfigImpl();
         hubConfig.registerLowerCasedPropertyConsumers();
         hubConfig.applyProperties(new SimplePropertySource(props));

@@ -52,14 +52,14 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
     /**
      * @param hubClient
      * @param schema
-     * @param params    contains all the params provided by Spark, which will include all connector-specific properties
+     * @param options    contains all the options provided by Spark, which will include all connector-specific properties
      */
-    public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> params) {
+    public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> options) {
         this.records = new ArrayList<>();
         this.schema = schema;
-        this.batchSize = params.containsKey("batchsize") ? Integer.parseInt(params.get("batchsize")) : 100;
+        this.batchSize = options.containsKey("batchsize") ? Integer.parseInt(options.get("batchsize")) : 100;
 
-        JsonNode endpointParams = determineIngestionEndpointParams(params);
+        JsonNode endpointParams = determineIngestionEndpointParams(options);
 
         final String apiPath = endpointParams.get("apiPath").asText();
         logger.info("Will write to endpoint defined by: " + apiPath);
@@ -121,13 +121,13 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         return jsonObjectWriter.toString();
     }
 
-    protected JsonNode determineIngestionEndpointParams(Map<String, String> params) {
+    protected JsonNode determineIngestionEndpointParams(Map<String, String> options) {
         ObjectMapper objectMapper = new ObjectMapper();
 
         ObjectNode endpointParams;
-        if (params.containsKey("ingestendpointparams")) {
+        if (options.containsKey("ingestendpointparams")) {
             try {
-                endpointParams = (ObjectNode) objectMapper.readTree(params.get("ingestendpointparams"));
+                endpointParams = (ObjectNode) objectMapper.readTree(options.get("ingestendpointparams"));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to parse ingestendpointparams, cause: " + e.getMessage(), e);
             }
@@ -152,17 +152,17 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
 
         if (!endpointParams.hasNonNull("workUnit")) {
             defaultWorkUnit = objectMapper.createObjectNode();
-            buildDefaultWorkUnit(params);
+            buildDefaultWorkUnit(options);
             endpointParams.set("workUnit", defaultWorkUnit);
         }
 
         return endpointParams;
     }
 
-    protected void buildDefaultWorkUnit(Map<String, String> params) {
+    protected void buildDefaultWorkUnit(Map<String, String> options) {
         Stream.of("collections", "permissions", "sourcename", "sourcetype", "uriprefix").forEach(key -> {
-            if (params.containsKey(key)) {
-                defaultWorkUnit.put(key, params.get(key));
+            if (options.containsKey(key)) {
+                defaultWorkUnit.put(key, options.get(key));
             }
         });
     }
