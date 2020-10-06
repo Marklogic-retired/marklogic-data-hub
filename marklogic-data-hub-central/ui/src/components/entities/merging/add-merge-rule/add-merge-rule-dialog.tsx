@@ -45,9 +45,9 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     const titleLegend = <div className={styles.titleLegend}>
         <div data-testid='multipleIconLegend' className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
         <div data-testid='structuredIconLegend' className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured</div>
-    </div>
+    </div>;
 
-    const mergeTypes = ['Custom', 'Strategy', 'Property-specific']
+    const mergeTypes = ['Custom', 'Strategy', 'Property-specific'];
     const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
 
 
@@ -64,11 +64,11 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
     const onCancel = () => {
         props.setOpenAddMergeRuleDialog(false);
-    }
+    };
 
     const onOk = () => {
         props.setOpenAddMergeRuleDialog(false);
-    }
+    };
 
     const formItemLayout = {
         labelCol: {
@@ -89,7 +89,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             setPropertyTouched(true);
             setProperty(value);
         }
-    }
+    };
 
     const handleMergeType = (value) => {
         if (value === ' ') {
@@ -99,7 +99,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             setMergeTypeTouched(true);
             setMergeType(value);
         }
-    }
+    };
 
     const handleChange = (event) => {
         if (event.target.id === 'uri') {
@@ -127,7 +127,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                 setNamespace(event.target.value);
             }
         }
-    }
+    };
 
     const handleSubmit = () => {
         if(mergeType === 'Custom') {
@@ -141,7 +141,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                 props.setOpenAddMergeRuleDialog(false);
         }
         
-    }
+    };
 
     return (
         <Modal
@@ -265,6 +265,6 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             </div>
         </Modal>
     );
-}
+};
 
 export default AddMergeRuleDialog;

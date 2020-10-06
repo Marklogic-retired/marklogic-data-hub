@@ -419,7 +419,7 @@ const flows = {
   }]
   ,
   "status" :200
-}
+};
 
 const steps = {
   "data": {
@@ -446,7 +446,7 @@ const steps = {
   }
   ,
   "status" :200
-}
+};
 
 const jobRespSuccess = {
   "data": {
@@ -509,7 +509,7 @@ const flowsXML = {
   }]
   ,
   "status" :200
-}
+};
 const flowsXMLLatestJob = {
     "data": {
         "name": "testFlow",
@@ -535,7 +535,7 @@ const flowsXMLLatestJob = {
     }
     ,
     "status" :200
-}
+};
 
 const loadsXML = {"data" :
     [{
@@ -572,7 +572,7 @@ const customSteps = {"data" :{"stepsWithEntity":[{
     }],
     "stepsWithoutEntity": [{...commonData.customData[1]}]},
     "status" :200
-}
+};
 
 const flowProps = {
     flows: flows.data,
@@ -591,7 +591,7 @@ const flowProps = {
     flowsDefaultActiveKey: [],
     showStepRunResponse: jest.fn(),
     runEnded:jest.fn(),
-}
+};
 
 const data = {
     primaryEntityTypes,

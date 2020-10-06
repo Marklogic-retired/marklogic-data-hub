@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios'
+import axios from 'axios';
 import { Form, Icon, Input, Modal } from 'antd';
-import styles from './entity-type-modal.module.scss'
+import styles from './entity-type-modal.module.scss';
 
 import { UserContext } from '../../../util/user-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -27,7 +27,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   };
 
   const [name, setName] = useState('');
-  const [isNameDisabled, toggleIsNameDisabled] = useState(true);
+  const [, toggleIsNameDisabled] = useState(true);
   const [description, setDescription] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, toggleLoading] = useState(false);
@@ -96,7 +96,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       }
       toggleLoading(false);
     }
-  }
+  };
 
   const onOk = (event) => {
     event.preventDefault();
@@ -104,7 +104,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       updateEntityDescription(name, description);
     } else {
       if (!NAME_REGEX.test(name)) {
-        setErrorMessage(ModelingTooltips.nameRegex)
+        setErrorMessage(ModelingTooltips.nameRegex);
       } else {
         toggleLoading(true);
         createEntityType(name, description);
@@ -180,7 +180,7 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
 export default EntityTypeModal;

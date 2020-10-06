@@ -12,5 +12,5 @@ export const OverflowTooltip = (props) => {
     <OverflowDetector onOverflowChange={handleOverflowChange} className={styles.overflow} style={{ width: props.width }}>
         <MLTooltip title={isOverflowed && props.title} placement={props.placement} >{props.content}</MLTooltip>
     </OverflowDetector>
-  )
-} 
+  );
+}; 

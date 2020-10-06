@@ -1,5 +1,5 @@
-import React,{ useState } from 'react'
-import { Slider, Handles } from '@marklogic/react-compound-slider'
+import React,{ useState } from 'react';
+import { Slider, Handles } from '@marklogic/react-compound-slider';
 import './multi-slider.scss';
 
 const MultiSlider = (props) => {
@@ -43,12 +43,12 @@ const MultiSlider = (props) => {
             >
             </div>
         </>
-    )
+    );
     }
 
     const onUpdate = values => {
       // console.log('onUpdate values', values);
-    }
+    };
 
     const onChange = values => {
       let result = options.map((opt, i) => {
@@ -56,20 +56,20 @@ const MultiSlider = (props) => {
         return {
           props: opt['props'][0],
           value: values[i]
-        }
-      })
+        };
+      });
       props.handleSlider(result);
-    }
+    };
 
     const onSlideStart = (e, handleId ) => {
       let parsedHandleId = handleId.activeHandleID.split('-')[1];
       setActiveHandleIdOptions(options[parsedHandleId].props[0]);
-    }
+    };
 
     const onSlideEnd = values => {
         setActiveHandleIdOptions({});
       // console.log('onSlideEnd values', values);
-    }
+    };
 
     return (
       <div className={'multiSlider'}>
@@ -97,16 +97,16 @@ const MultiSlider = (props) => {
                         options={options[index].props}
                         getHandleProps={getHandleProps}
                       />
-                    ) }
+                    ); }
                   ) }
                   </div>
-              )
+              );
             }}
           </Handles>
         </Slider>
           <div className={'sliderOptions'} data-testid={`${props.type}-slider-options`}><span>LOW</span><span>MEDIUM</span><span>HIGH</span></div>
       </div>
-    )
-}
+    );
+};
 
 export default MultiSlider;

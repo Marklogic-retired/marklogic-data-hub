@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {Modal, Form, Input, Button} from 'antd';
+import {Modal, Form, Input } from 'antd';
 import styles from '../save-query-modal/save-query-modal.module.scss';
 import axios from 'axios';
 import {UserContext} from "../../../../util/user-context";
@@ -28,7 +28,6 @@ const EditQueryDetails: React.FC<Props> = (props) => {
 
     const [queryName, setQueryName] = useState('');
     const [queryDescription, setQueryDescription] = useState('');
-    const [queryEmpty, isQueryEmpty] = useState<any>('');
     const [errorMessage, setErrorMessage] = useState('');
     const [previousQueryName, setPreviousQueryName] = useState('');
 
@@ -49,8 +48,8 @@ const EditQueryDetails: React.FC<Props> = (props) => {
 
 
     const onCancel = () => {
-        props.setEditQueryDetailVisibility()
-    }
+        props.setEditQueryDetailVisibility();
+    };
 
     const onOk = async (queryName, queryDescription, currentQuery) => {
         try {
@@ -82,7 +81,7 @@ const EditQueryDetails: React.FC<Props> = (props) => {
         if (event.target.id === 'edit-query-detail-description') {
             setQueryDescription(event.target.value);
         }
-    }
+    };
 
 
     return (
@@ -141,8 +140,8 @@ const EditQueryDetails: React.FC<Props> = (props) => {
                 </Form.Item>
             </Form>
         </Modal>
-    )
-}
+    );
+};
 
 export default EditQueryDetails;
 

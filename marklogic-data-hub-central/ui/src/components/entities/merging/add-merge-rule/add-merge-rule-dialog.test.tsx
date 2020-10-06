@@ -60,4 +60,4 @@ describe('Add Merge Rule Dialog component', () => {
     expect(mergingData.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
 });
 
-})
+});

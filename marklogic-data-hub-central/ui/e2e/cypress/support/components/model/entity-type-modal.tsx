@@ -30,4 +30,4 @@ class EntityTypeModal {
 }
 
 const entityTypeModal = new EntityTypeModal();
-export default entityTypeModal
+export default entityTypeModal;

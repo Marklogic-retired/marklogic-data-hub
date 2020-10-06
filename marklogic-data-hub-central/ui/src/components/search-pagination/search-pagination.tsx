@@ -9,7 +9,7 @@ interface Props {
   pageSize: number;
   pageLength: number;
   maxRowsPerPage: number;
-};
+}
 
 const SearchPagination: React.FC<Props> = (props) => {
   const { setPage, setPageLength } = useContext(SearchContext);
@@ -29,7 +29,7 @@ const SearchPagination: React.FC<Props> = (props) => {
       n++;
     }
     setPageSizeOptions(pageOptionsDropdown);
-  }
+  };
 
 
    useEffect(() => {
@@ -38,12 +38,12 @@ const SearchPagination: React.FC<Props> = (props) => {
 
   const onPageChange = (pageNumber) => {
     setPage(pageNumber, props.total);
-  }
+  };
 
 
   const onPageSizeChange = (current, pageSize) => {
     setPageLength(current, pageSize);
-  }
+  };
 
   return (
       <div className={styles.searchPaginationContainer}>
@@ -58,7 +58,7 @@ const SearchPagination: React.FC<Props> = (props) => {
             pageSizeOptions={pageSizeOptions}
           />
       </div>
-  )
-}
+  );
+};
 
 export default SearchPagination;

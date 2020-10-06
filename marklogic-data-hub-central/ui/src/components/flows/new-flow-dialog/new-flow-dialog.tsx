@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, Tooltip, Icon } from "antd";
+import { Modal, Form, Input, Icon } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-flow-dialog.module.scss';
 import {NewFlowTooltips} from '../../../config/tooltips.config';
@@ -12,7 +12,7 @@ const NewFlowDialog = (props) => {
 
   const [isFlowNameTouched, setFlowNameTouched] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const NewFlowDialog = (props) => {
       setFlowNameTouched(false);
       setDescription('');
       setTobeDisabled(false);
-    })
+    });
 
   }, [props.title, props.newFlow]);
 
@@ -41,21 +41,21 @@ const NewFlowDialog = (props) => {
     if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
       props.setOpenNewFlow(false);
     }
-  }
+  };
 
   const onOk = () => {
     props.setNewFlow(false);
     if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
       props.setOpenNewFlow(false);
     }
-  }
+  };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
     let dataPayload = {
         name: flowName,
         description: description
-      }
+      };
     setIsLoading(true);
     if (props.title === 'Edit Flow') {
       await props.updateFlow(dataPayload, flowName);
@@ -67,7 +67,7 @@ const NewFlowDialog = (props) => {
       }
     }
     props.setNewFlow(false);
-  }
+  };
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -84,9 +84,9 @@ const NewFlowDialog = (props) => {
     }
 
     if (event.target.id === 'description') {
-      setDescription(event.target.value)
+      setDescription(event.target.value);
     }
-  }
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -165,7 +165,7 @@ const NewFlowDialog = (props) => {
         </Form.Item>
       </Form>
     </div>
-  </Modal>)
-}
+  </Modal>);
+};
 
 export default NewFlowDialog;

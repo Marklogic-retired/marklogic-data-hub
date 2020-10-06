@@ -29,8 +29,8 @@ describe('Column selector component', () => {
     const { getByPlaceholderText, getByText } = render(<ColumnSelector {...defaultProps} />);
     const searchInput = getByPlaceholderText('Search') as HTMLInputElement;
     expect(searchInput).toBeInTheDocument();
-    fireEvent.change(searchInput, { target: { value: 'customerSince' } })
-    expect(searchInput.value).toBe('customerSince')
+    fireEvent.change(searchInput, { target: { value: 'customerSince' } });
+    expect(searchInput.value).toBe('customerSince');
     expect(getByText('customerSince')).toBeInTheDocument();
   });
 

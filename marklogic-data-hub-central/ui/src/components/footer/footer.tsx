@@ -17,7 +17,7 @@ const Footer = (props) => {
       </div>
     </Layout.Footer>
 
-  )
-}
+  );
+};
 
 export default Footer;

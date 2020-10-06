@@ -77,6 +77,6 @@ const jsonDocPayload = {
     "datahubCreatedByJob": "4be73bd9-0d26-4f7f-b153-907796498ed3 4093eb92-a9b7-4ae2-87c5-05e4dcfdc6c5",
     "datahubCreatedInFlow": "products"
   }
-}
+};
 
 export default jsonDocPayload;

@@ -4,14 +4,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt, faFileExport, faLink, faTrashAlt, faListOl, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { UserContext } from '../../../../util/user-context';
 import { queryDateConverter } from '../../../../util/date-conversion';
-import EditQueryDialog from '../edit-query-dialog/edit-query-dialog'
+import EditQueryDialog from '../edit-query-dialog/edit-query-dialog';
 import { SearchContext } from '../../../../util/search-context';
 import styles from './manage-query.module.scss';
-import { fetchQueries, removeQuery } from '../../../../api/queries'
+import { fetchQueries, removeQuery } from '../../../../api/queries';
 import axios from "axios";
-import { getSavedQueryPreview } from '../../../../api/queries'
-import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal'
-import { getExportPreview } from '../../../query-export/export-preview/export-preview'
+import { getSavedQueryPreview } from '../../../../api/queries';
+import ExportQueryModal from '../../../query-export/query-export-modal/query-export-modal';
+import { getExportPreview } from '../../../query-export/export-preview/export-preview';
 import { QueryOptions } from '../../../../types/query-types';
 
 const QueryModal = (props) => {
@@ -44,7 +44,7 @@ const QueryModal = (props) => {
         } catch (error) {
             handleError(error);
         }
-    }
+    };
 
     const editQuery = async (query) => {
         const response = await axios.put(`/api/entitySearch/savedQueries`, query);
@@ -53,7 +53,7 @@ const QueryModal = (props) => {
             setSavedQueries(response.data);
             return { code: response.status };
         }
-    }
+    };
 
     const deleteQuery = async (query) => {
         try {
@@ -62,22 +62,22 @@ const QueryModal = (props) => {
             handleError(error);
         }
         getQueries();
-    }
+    };
 
     const onEdit = () => {
         setEditModalVisibility(true);
-    }
+    };
 
     const onDelete = () => {
         setDeleteModalVisibility(true);
-    }
+    };
 
     const onClose = () => {
-        setManageQueryModal(false)
+        setManageQueryModal(false);
     };
 
     const onOk = (query) => {
-        deleteQuery(query)
+        deleteQuery(query);
         setDeleteModalVisibility(false);
         clearAllGreyFacets();
         let options: QueryOptions = {
@@ -90,14 +90,14 @@ const QueryModal = (props) => {
             manageQueryModal: true,
             sortOrder: [],
             database: searchOptions.database,
-        }
+        };
         applySaveQuery(options);
         props.setCurrentQueryDescription('');
-    }
+    };
 
     const onCancel = () => {
         setDeleteModalVisibility(false);
-    }
+    };
 
     const onApply = (e) => {
         props.queries && props.queries.length > 0 && props.queries.forEach(query => {
@@ -112,13 +112,13 @@ const QueryModal = (props) => {
                     manageQueryModal: query.manageQueryModal,
                     sortOrder: query.savedQuery.sortOrder,
                     database: searchOptions.database,
-                }
+                };
                 applySaveQuery(options);
                 props.setCurrentQueryDescription(query['savedQuery']['description']);
             }
-        })
-        props.toggleApply(false)
-    }
+        });
+        props.toggleApply(false);
+    };
 
     const displayExportModal = (id) => {
         setRecordID(id);
@@ -127,20 +127,20 @@ const QueryModal = (props) => {
             if (selectedQuery['savedQuery']['id'] === id) {
                 query = selectedQuery;
             }
-        })
+        });
 
         let arrayProperties = new Array();
         props.entityDefArray && props.entityDefArray.forEach(entity => {
             if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
                 entity.properties && entity.properties.forEach(prop => {
                     if (prop.ref.length === 0 && prop.datatype === 'array') {
-                        arrayProperties.push(prop.name)
+                        arrayProperties.push(prop.name);
                     }
                 });
             }
-        })
+        });
 
-        let hasArray = query.savedQuery.propertiesToDisplay.length > 0 && arrayProperties.length > 0 && query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)))
+        let hasArray = query.savedQuery.propertiesToDisplay.length > 0 && arrayProperties.length > 0 && query.savedQuery.propertiesToDisplay.some((prop => arrayProperties.includes(prop)));
         let isStructured = query && query.savedQuery.propertiesToDisplay && query.savedQuery.propertiesToDisplay.some(column => column.includes('.'));
         setStructured(hasArray || isStructured);
         (hasArray || isStructured) && getPreview(id);
@@ -217,7 +217,7 @@ const QueryModal = (props) => {
                 onClick: () => {
                     displayExportModal(record.key);
                 }
-            }
+            };
         },
         width: 75
     };
@@ -249,8 +249,8 @@ const QueryModal = (props) => {
                 // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
                 delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg' />
             }
-        )
-    })
+        );
+    });
 
     const deleteConfirmation = <Modal
         visible={deleteModalVisibility}
@@ -270,7 +270,7 @@ const QueryModal = (props) => {
         try {
             const response = await getSavedQueryPreview(id, searchOptions.database);
             if (response.data) {
-                const preview = getExportPreview(response.data)
+                const preview = getExportPreview(response.data);
                 const header = preview[0];
                 const body = preview[1];
                 setTableColumns(header);
@@ -280,9 +280,9 @@ const QueryModal = (props) => {
                 setTableData([]);
             }
         } catch (error) {
-            handleError(error)
+            handleError(error);
         }
-    }
+    };
 
     return (
         <div>
@@ -306,9 +306,9 @@ const QueryModal = (props) => {
                                         setQuery(query);
                                         props.setCurrentQueryName(record.name);
                                     }
-                                })
+                                });
                             }
-                        }
+                        };
                     }}
                 >
                 </Table>
@@ -326,7 +326,7 @@ const QueryModal = (props) => {
             />
             {deleteConfirmation}
         </div>
-    )
-}
+    );
+};
 
 export default QueryModal;

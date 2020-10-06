@@ -32,7 +32,7 @@ const flows = {
   }]
   ,
   "status" :200
-}
+};
 
 const loadsXML = {"data" :
     [{
@@ -87,7 +87,7 @@ const loadCardProps = {
     data: {},
     deleteLoadArtifact: jest.fn(),
     flows: {}
-}
+};
 const data = {
     loadCardProps,
     genericSuccess: genericSuccess,

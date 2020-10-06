@@ -11,7 +11,7 @@ const defaultUserData: UserContextInterface = {
   },
   pageRoute: '/',
   maxSessionTime: MAX_SESSION_TIME
-}
+};
 
 const defaultUserContext: IUserContextInterface = {
   user: defaultUserData,
@@ -38,7 +38,7 @@ export const userAuthenticated: IUserContextInterface = Object.assign(defaultUse
     pageRoute: '/tiles',
     maxSessionTime: MAX_SESSION_TIME
   }
-})
+});
 
 export const userSessionWarning: IUserContextInterface = {
   user: {
@@ -61,7 +61,7 @@ export const userSessionWarning: IUserContextInterface = {
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
   getSessionTime: jest.fn().mockReturnValue(29)
-}
+};
 
 export const userModalError: IUserContextInterface = {
   user: {
@@ -84,7 +84,7 @@ export const userModalError: IUserContextInterface = {
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
   getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME)
-}
+};
 
 export const userNoErrorNoSessionWarning: IUserContextInterface = {
   user: {
@@ -107,7 +107,7 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
   getSessionTime: jest.fn().mockReturnValue(MAX_SESSION_TIME)
-}
+};
 
 export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   user: {
@@ -130,4 +130,4 @@ export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   resetSessionTime: jest.fn(),
   clearErrorMessage: jest.fn(),
   getSessionTime: jest.fn().mockReturnValue(29)
-}
+};

@@ -47,8 +47,8 @@ const EntityTable: React.FC<Props> = (props) => {
         property: property.name,
         datatype: property.datatype,
         indexSettings: indexes.join(', ')
-      }
-      return data
+      };
+      return data;
     });
 
     return <Table
@@ -79,9 +79,9 @@ const EntityTable: React.FC<Props> = (props) => {
           >
             {text}
           </Link>
-        )
+        );
       },
-      sorter: (a, b) => { return a.name.localeCompare(b.name) }
+      sorter: (a, b) => { return a.name.localeCompare(b.name); }
     },
     {
       title: 'Documents',
@@ -97,7 +97,7 @@ const EntityTable: React.FC<Props> = (props) => {
       render: text => {
         let parseText = text.split(',');
         if (parseText[0] === 'Invalid date') {
-          return 'Never been run'
+          return 'Never been run';
         }
         return (
           <Link to={{
@@ -109,9 +109,9 @@ const EntityTable: React.FC<Props> = (props) => {
           >
             {parseText[0]}
           </Link>
-        )
+        );
       },
-      sorter: (a, b) => { return a.created.localeCompare(b.created) }
+      sorter: (a, b) => { return a.created.localeCompare(b.created); }
     }
   ];
 
@@ -127,14 +127,14 @@ const EntityTable: React.FC<Props> = (props) => {
                 data-cy={text}>
             {text}
           </Link>
-      )},
-      sorter: (a, b) => { return a.name.localeCompare(b.name) }
+      );},
+      sorter: (a, b) => { return a.name.localeCompare(b.name); }
     },
     {
       title: 'Documents',
       dataIndex: 'documents',
       width: 200 ,
-      sorter: (a, b) => { return a.documents - b.documents }
+      sorter: (a, b) => { return a.documents - b.documents; }
     }
   ];
 
@@ -168,8 +168,8 @@ const EntityTable: React.FC<Props> = (props) => {
       documents: numberConverter(documentCount),
       created: relativeTimeConverter(latestJobDate) + ',' + latestJobId + ',' + entityName,
       definition: entityDefinition
-    }
-    return parsedEntity
+    };
+    return parsedEntity;
   });
 
     return (
@@ -183,6 +183,6 @@ const EntityTable: React.FC<Props> = (props) => {
             pagination={{defaultPageSize: 20, size: 'small'}}
         />
     );
-}
+};
 
 export default EntityTable;

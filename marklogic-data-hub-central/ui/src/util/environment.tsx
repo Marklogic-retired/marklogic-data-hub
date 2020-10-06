@@ -4,7 +4,7 @@ const defaultEnv = {
     serviceName: '',
     dataHubVersion: '',
     markLogicVersion: ''
-}
+};
 
 export function setEnvironment()  {
     axios.get('/api/environment/systemInfo')
@@ -14,7 +14,7 @@ export function setEnvironment()  {
             })
             .catch(err => {
                 console.error(err);
-            })
+            });
 }
 
 export function getEnvironment():any {
