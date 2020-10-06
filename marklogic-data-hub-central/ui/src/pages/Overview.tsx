@@ -17,9 +17,9 @@ const Overview: React.FC<Props> = (props) => {
                 state: {
                     tileIconClicked : true
                 }
-            })
+            });
         }
-    }
+    };
 
     const getClassNames = (id) => {
         const nameMap = {
@@ -28,13 +28,13 @@ const Overview: React.FC<Props> = (props) => {
             'curate': 'cardCurate',
             'explore': 'cardExplore',
             'run': 'cardRun'
-        }
+        };
         if (props.enabled && props.enabled.includes(id)) {
             return `${styles[nameMap[id]]} ${styles.enabled}`;
         } else {
-            return `${styles[nameMap[id]]} ${styles.disabled}`
+            return `${styles[nameMap[id]]} ${styles.disabled}`;
         }
-    }
+    };
 
     return (
         <div className={styles.overviewContainer} aria-label="overview">
@@ -45,7 +45,7 @@ const Overview: React.FC<Props> = (props) => {
             </div>
             <div className={styles.cardsContainer}>
                 <div className={styles.cards}>
-                    <div className={getClassNames('load')} onClick={() => {goToTile('load')}} aria-label={'load-card'}>
+                    <div className={getClassNames('load')} onClick={() => {goToTile('load');}} aria-label={'load-card'}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
                             <span className={styles.icon} aria-label="load-icon"></span>Load
@@ -56,7 +56,7 @@ const Overview: React.FC<Props> = (props) => {
                         </div>
                     </div>
 
-                    <div className={getClassNames('model')} onClick={() => {goToTile('model')}} aria-label={'model-card'}>
+                    <div className={getClassNames('model')} onClick={() => {goToTile('model');}} aria-label={'model-card'}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
                             <span className={styles.icon} aria-label="model-icon"></span>Model
@@ -67,7 +67,7 @@ const Overview: React.FC<Props> = (props) => {
                         </div>
                     </div>
 
-                    <div className={getClassNames('curate')} onClick={() => {goToTile('curate')}} aria-label={'curate-card'}>
+                    <div className={getClassNames('curate')} onClick={() => {goToTile('curate');}} aria-label={'curate-card'}>
                         <div className={styles.head}></div>
                         <div className={styles.subtitle}>
                             <span className={styles.icon} aria-label="curate-icon"></span>Curate
@@ -78,7 +78,7 @@ const Overview: React.FC<Props> = (props) => {
                         </div>
                     </div>
 
-                    <div className={getClassNames('explore')} onClick={() => {goToTile('explore')}} aria-label={'explore-card'}>
+                    <div className={getClassNames('explore')} onClick={() => {goToTile('explore');}} aria-label={'explore-card'}>
                         <div className={styles.head}>
                             <span className={styles.icon} aria-label="explore-icon"></span>
                             <div className={styles.subtitle}>Explore</div>
@@ -89,7 +89,7 @@ const Overview: React.FC<Props> = (props) => {
                         </div>
                     </div>
 
-                    <div className={getClassNames('run')} onClick={() => {goToTile('run')}} aria-label={'run-card'}>
+                    <div className={getClassNames('run')} onClick={() => {goToTile('run');}} aria-label={'run-card'}>
                         <div className={styles.head}>
                             <div className={styles.subtitle}>
                                 <span className={styles.icon} aria-label="run-icon"></span>Run
@@ -104,7 +104,7 @@ const Overview: React.FC<Props> = (props) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Overview;

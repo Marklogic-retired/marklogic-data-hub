@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Popover, Tree, Input } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faColumns } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faColumns } from '@fortawesome/free-solid-svg-icons';
 import styles from './column-selector.module.scss';
 import { treeConverter, getCheckedKeys, getSelectedTableProperties, setTreeVisibility, getParentKey } from '../../util/data-conversion';
 import { MLButton, MLDivider } from '@marklogic/design-system';
@@ -17,7 +17,7 @@ interface Props {
   setColumnSelectorTouched: (state: boolean) => void;
   columns: any[];
   primaryKey: string;
-};
+}
 
 const ColumnSelector: React.FC<Props> = (props) => {
   const { TreeNode } = Tree;
@@ -36,7 +36,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [treeColumns, setTreeColumns] = useState<any[]>(allProperties);
   const [checkedKeys, setCheckedKeys] = useState<any[]>(selectedPropertyKeys);
 
-  let primaryKey = treeColumns.find((prop => { return prop.title === props.primaryKey }))
+  let primaryKey = treeColumns.find((prop => { return prop.title === props.primaryKey; }));
   const dataList = new Array();
 
   useEffect(() => {
@@ -102,8 +102,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
         if (item && primaryKey && item.key === primaryKey.key) {
           let pkTitle = <MLTooltip title='The column identified as the unique identifier must always be displayed.' placement="top">
             <div data-testid='pk-tooltip'>{title}</div>
-            </MLTooltip>
-          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`}/>
+            </MLTooltip>;
+          return <TreeNode title={pkTitle} disabled={true} disableCheckbox={true} key={item.key} data-testid={`node-${item.title}`}/>;
         } else {
           return <TreeNode title={title} key={item.key} data-testid={`node-${item.title}`}/>;
         }
@@ -130,12 +130,12 @@ const ColumnSelector: React.FC<Props> = (props) => {
   };
 
   const onClose = () => {
-    props.setPopoverVisibility(false)
+    props.setPopoverVisibility(false);
   };
 
   const onApply = () => {
     let selectedProperties = getSelectedTableProperties(allProperties, checkedKeys);
-    props.setColumnSelectorTouched(JSON.stringify(selectedProperties) !== JSON.stringify(props.columns))
+    props.setColumnSelectorTouched(JSON.stringify(selectedProperties) !== JSON.stringify(props.columns));
     setSelectedTableProperties(selectedProperties);
     props.setPopoverVisibility(false);
   };
@@ -169,7 +169,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
         </div>
       </footer>
     </div>
-  )
+  );
 
   return (
     <div className={styles.fixedPopup}>
@@ -179,8 +179,8 @@ const ColumnSelector: React.FC<Props> = (props) => {
         </Popover>
       </MLTooltip>
     </div>
-  )
-}
+  );
+};
 
 export default ColumnSelector;
 

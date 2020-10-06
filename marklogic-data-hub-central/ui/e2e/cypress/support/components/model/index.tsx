@@ -11,4 +11,4 @@ export {
   propertyModal,
   propertyTable,
   structuredTypeModal
-}
+};

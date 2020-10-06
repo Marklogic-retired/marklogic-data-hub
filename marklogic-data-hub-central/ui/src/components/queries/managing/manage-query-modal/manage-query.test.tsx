@@ -9,11 +9,11 @@ const getSubElements = (content, node, title) => {
         child => !hasText(child)
     );
     return nodeHasText && childrenDontHaveText;
-}
+};
 
 describe('Query Modal Component', () => {
 
-  let query = [{ "savedQuery": { "id": "00529904-ed6e-4539-b7d8-eeddaf15aaa4", "name": "Lee", "description": "", "query": { "searchText": "", "entityTypeIds": ["Customer"], "selectedFacets": { "firstname": { "dataType": "xs:string", "stringValues": ["Lee"] } } }, "propertiesToDisplay": ["id"], "owner": "admin", "systemMetadata": { "createdBy": "admin", "createdDateTime": "2020-05-05T14:48:53.206721-07:00", "lastUpdatedBy": "admin", "lastUpdatedDateTime": "2020-05-05T14:48:53.206721-07:00" } } }]
+  let query = [{ "savedQuery": { "id": "00529904-ed6e-4539-b7d8-eeddaf15aaa4", "name": "Lee", "description": "", "query": { "searchText": "", "entityTypeIds": ["Customer"], "selectedFacets": { "firstname": { "dataType": "xs:string", "stringValues": ["Lee"] } } }, "propertiesToDisplay": ["id"], "owner": "admin", "systemMetadata": { "createdBy": "admin", "createdDateTime": "2020-05-05T14:48:53.206721-07:00", "lastUpdatedBy": "admin", "lastUpdatedDateTime": "2020-05-05T14:48:53.206721-07:00" } } }];
   let defaultProps = {
     modalVisibility: true,
     canExportQuery: false,
@@ -56,7 +56,7 @@ describe('Query Modal Component', () => {
     expect(getByTestId('delete')).toBeInTheDocument();
     fireEvent.click(getByTestId('delete'));
     expect(await(waitForElement(() => getByText((content, node) => {
-          return getSubElements(content, node,"Are you sure you would like to delete the Lee query? This action cannot be undone.")
+          return getSubElements(content, node,"Are you sure you would like to delete the Lee query? This action cannot be undone.");
     })))).toBeInTheDocument();
   });
 });

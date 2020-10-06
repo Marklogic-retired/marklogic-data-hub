@@ -13,7 +13,7 @@ describe("Raw data card view component", () => {
                     data={entitySearch.results}
                 />
             </Router>
-        )
+        );
         // Check raw data cards are rendered
         expect(getByTestId('/Customer/Cust1.json-URI')).toBeInTheDocument();
         expect(getByTestId('/Customer/Cust1.json-InfoIcon')).toBeInTheDocument();
@@ -31,13 +31,13 @@ describe("Raw data card view component", () => {
         expect(getByTestId('/Customer/Cust3.json-detailViewIcon')).toBeInTheDocument();
 
         //verify tooltips
-        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-URI'))
+        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-URI'));
         await waitForElement(() => getByText('/Customer/Cust1.json'));
 
-        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-InfoIcon'))
+        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-InfoIcon'));
         await waitForElement(() => getByText('View info'));
 
-        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-detailViewIcon'))
+        fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-detailViewIcon'));
         await waitForElement(() => getByText('Detail view'));
 
         //verify snippet content for json/xml/text docs
@@ -49,14 +49,14 @@ describe("Raw data card view component", () => {
         expect(getByTestId('/Customer/Customer.pdf-noPreview').textContent).toContain('No preview available');
 
         //verify popover metadata info
-        fireEvent.click(getByTestId('/Customer/Cust1.json-InfoIcon'))
+        fireEvent.click(getByTestId('/Customer/Cust1.json-InfoIcon'));
         expect(getByTestId('/Customer/Cust1.json-sources')).toBeInTheDocument();
         expect(getByText('loadPersonJSON')).toBeInTheDocument();
         expect(getByText('personJSON')).toBeInTheDocument();
         expect(getByText('mapPersonJSON')).toBeInTheDocument();
         expect(getByText('2020-October-09')).toBeInTheDocument();
         //verify popover metadata info for missing properties
-        fireEvent.click(getByTestId('/Customer/Cust2.json-InfoIcon'))
-        expect(getAllByText('none')).toHaveLength(4)
+        fireEvent.click(getByTestId('/Customer/Cust2.json-InfoIcon'));
+        expect(getAllByText('none')).toHaveLength(4);
     });
-})
+});

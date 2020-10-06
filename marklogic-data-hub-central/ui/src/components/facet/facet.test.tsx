@@ -5,7 +5,7 @@ import { facetProps } from '../../assets/mock-data/explore/facet-props';
 
 describe("Facet component", () => {
   it("Facet component renders with data properly" , () => {
-    const { getByTestId, getByText, queryByLabelText } = render(<Facet {...facetProps} />)
+    const { getByTestId, getByText, queryByLabelText } = render(<Facet {...facetProps} />);
 
     expect(getByText(/sales_region/i)).toBeInTheDocument();
 
@@ -27,7 +27,7 @@ describe("Facet component", () => {
   });
 
   it("Facet component renders with nested data properly" , () => {
-    const { getByTestId, getByText } = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />)
+    const { getByTestId, getByText } = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
     expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("Facet component", () => {
   });
 
   it("Collapse/Expand carets render properly for facet properties" , () => {
-    const { getByTestId } = render(<Facet {...facetProps} />)
+    const { getByTestId } = render(<Facet {...facetProps} />);
 
     expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();
@@ -61,12 +61,12 @@ describe("Facet component", () => {
     for (let i = 0; i < LIMIT; i++) {
       facetValsNew.push({"name": "fName", "count": 1, "value": "fVal"});
     }
-    const { getByLabelText, queryByLabelText, rerender } = render(<Facet {...facetProps} />)
+    const { getByLabelText, queryByLabelText, rerender } = render(<Facet {...facetProps} />);
 
     // Search link NOT shown for facets < LIMIT
     expect(queryByLabelText('popover-search-label')).not.toBeInTheDocument();
 
-    rerender(<Facet {...facetProps} facetValues={facetValsNew}/>)
+    rerender(<Facet {...facetProps} facetValues={facetValsNew}/>);
 
     // Search link shown for facets >= LIMIT
     expect(getByLabelText('popover-search-label')).toBeInTheDocument();

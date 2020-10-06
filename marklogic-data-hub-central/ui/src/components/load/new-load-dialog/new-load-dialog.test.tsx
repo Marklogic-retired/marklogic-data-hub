@@ -4,7 +4,7 @@ import '@testing-library/jest-dom/extend-expect';
 import NewLoadDialog from './new-load-dialog';
 import {BrowserRouter} from "react-router-dom";
 import {NewLoadTooltips} from '../../../config/tooltips.config';
-import axiosMock from 'axios'
+import axiosMock from 'axios';
 
 jest.mock('axios');
 
@@ -52,7 +52,7 @@ describe('New/edit load data configuration', () => {
     await waitForElement(() => getByText(NewLoadTooltips.targetFormat));
     //Tooltip for Target URI Prefix
     fireEvent.mouseOver(tooltip[4]);
-    await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix))
+    await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix));
     expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
     expect(getByText("Target URI Prefix:")).toHaveTextContent('Target URI Prefix:');
   });

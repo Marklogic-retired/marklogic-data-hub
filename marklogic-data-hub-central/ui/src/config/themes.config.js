@@ -34,7 +34,7 @@ let themes = {
         },
         bodyBg: 'bgColorWhite'
     }
-}
+};
 
 // Default theme if none mapped to pathname
 themes['default'] = themes['white'];
@@ -43,9 +43,9 @@ themes['default'] = themes['white'];
 const themeMap = {
     '/':         'image',
     '/install':  'image'
-}
+};
 
 export {
     themes,
     themeMap
-}
+};

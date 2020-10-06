@@ -10,7 +10,7 @@ const loadAPI = (axiosMock) => {
       case '/api/steps/ingestion/' + loadData.loads.data[0].name:
         return Promise.resolve(loadData.genericSuccess);
       default:
-        return Promise.reject(new Error('not found'))
+        return Promise.reject(new Error('not found'));
     }
   });
   axiosMock.post['mockImplementation']((url) => {
@@ -23,7 +23,7 @@ const loadAPI = (axiosMock) => {
           default:
               return Promise.reject(new Error('not found'));
       }
-  })
+  });
   return axiosMock.get['mockImplementation']((url) => {
     switch (url) {
       case '/api/flows':
@@ -35,7 +35,7 @@ const loadAPI = (axiosMock) => {
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const curateAPI = (axiosMock) => {
@@ -47,7 +47,7 @@ const curateAPI = (axiosMock) => {
         return Promise.resolve(loadData.genericSuccess);
       default:
         console.log('no DELETE defined: ' + url);
-        return Promise.reject(new Error('not found'))
+        return Promise.reject(new Error('not found'));
     }
   });
   axiosMock.post['mockImplementation']((url) => {
@@ -129,7 +129,7 @@ const curateAPI = (axiosMock) => {
         console.log('no GET defined: ' + url);
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const runAPI = (axiosMock) => {
@@ -150,7 +150,7 @@ const runAPI = (axiosMock) => {
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
   const runCrudAPI = (axiosMock) => {
@@ -163,7 +163,7 @@ const runAPI = (axiosMock) => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
     const updateURL = `/api/flows/${curateData.flows.data[0].name}`;
     axiosMock.put['mockImplementation']((url) => {
       switch (url) {
@@ -172,7 +172,7 @@ const runAPI = (axiosMock) => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
     return axiosMock.delete['mockImplementation']((url) => {
       switch (url) {
         case updateURL:
@@ -180,7 +180,7 @@ const runAPI = (axiosMock) => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
   };
 
   const runAddStepAPI = (axiosMock) => {
@@ -193,7 +193,7 @@ const runAPI = (axiosMock) => {
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
   };
 
   const runErrorsAPI = (axiosMock) => {
@@ -208,11 +208,11 @@ const runAPI = (axiosMock) => {
         case '/api/steps/mapping':
           return Promise.resolve(curateData.mappings);
         case '/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a':
-          return Promise.resolve(curateData.jobRespFailedWithError)
+          return Promise.resolve(curateData.jobRespFailedWithError);
         default:
           return Promise.reject(new Error('not found'));
       }
-    })
+    });
   };
 
 const runFailedAPI = (axiosMock) => {
@@ -227,11 +227,11 @@ const runFailedAPI = (axiosMock) => {
       case '/api/steps/mapping':
         return Promise.resolve(curateData.mappings);
       case '/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a':
-        return Promise.resolve(curateData.jobRespFailed)
+        return Promise.resolve(curateData.jobRespFailed);
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const runXMLAPI = (axiosMock) => {
@@ -248,11 +248,11 @@ const runXMLAPI = (axiosMock) => {
       case '/api/steps/mapping':
         return Promise.resolve(curateData.mappings);
       case '/api/jobs/350da405-c1e9-4fa7-8269-d9aefe3b4b9a':
-        return Promise.resolve(curateData.jobRespFailedWithError)
+        return Promise.resolve(curateData.jobRespFailedWithError);
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const advancedAPI = (axiosMock) => {
@@ -270,7 +270,7 @@ const advancedAPI = (axiosMock) => {
           default:
               return Promise.reject(new Error('not found'));
       }
-  })
+  });
 };
 
 const systemInfoAPI = (axiosMock) => {
@@ -281,7 +281,7 @@ const systemInfoAPI = (axiosMock) => {
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const noResponseAPI = (axiosMock) => {
@@ -292,7 +292,7 @@ const noResponseAPI = (axiosMock) => {
       default:
         return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const clearUserDataAPI = (axiosMock) => {
@@ -306,7 +306,7 @@ const clearUserDataAPI = (axiosMock) => {
         default:
             return Promise.reject(new Error('not found'));
     }
-  })
+  });
 };
 
 const mocks = {

@@ -21,7 +21,7 @@ interface Props {
   propertyPath: any;
   updateSelectedFacets: (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete?: boolean, toDeleteAll?: boolean) => void;
   addFacetValues: (constraint: string, vals: string[], datatype: string, facetCategory: string) => void;
-};
+}
 
 const Facet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
@@ -54,8 +54,7 @@ const Facet: React.FC<Props> = (props) => {
           const checkedArray = selectedOptions.selectedFacets[facet][valueType];
           if (checkedArray && checkedArray.length) {
             // checking if arrays are equivalent
-            if (JSON.stringify(checked) === JSON.stringify(checkedArray)) {
-            } else {
+            if (!(JSON.stringify(checked) === JSON.stringify(checkedArray))) {
               setChecked(checkedArray);
             }
           }
@@ -64,11 +63,11 @@ const Facet: React.FC<Props> = (props) => {
     } else {
       setChecked([]);
     }
-  }
+  };
 
   useEffect(() => {
     if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-      setCheckedOptions(searchOptions)
+      setCheckedOptions(searchOptions);
     } else if ((Object.entries(greyedOptions.selectedFacets).length === 0 || (!greyedOptions.selectedFacets.hasOwnProperty(props.constraint)))) {
       setChecked([]);
     }
@@ -76,9 +75,9 @@ const Facet: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
-      setCheckedOptions(greyedOptions)
+      setCheckedOptions(greyedOptions);
     } else
-      setCheckedOptions(searchOptions)
+      setCheckedOptions(searchOptions);
   }, [greyedOptions]);
 
   const checkFacetValues = (checkedValues) => {
@@ -89,10 +88,10 @@ const Facet: React.FC<Props> = (props) => {
     }
     setChecked(updatedChecked);
     props.addFacetValues(props.constraint, updatedChecked, props.facetType, props.facetCategory);
-  }
+  };
 
   const handleClick = (e) => {
-    let index = checked.indexOf(e.target.value)
+    let index = checked.indexOf(e.target.value);
     let isNested = props.constraint === props.propertyPath ? false : true;
     // Selection
     if (e.target.checked && index === -1) {
@@ -104,26 +103,26 @@ const Facet: React.FC<Props> = (props) => {
       let remChecked = [e.target.value];
       props.updateSelectedFacets(props.constraint, remChecked, props.facetType, isNested, true, false);
     }
-  }
+  };
 
   const handleClear = () => {
     setChecked([]);
     props.updateSelectedFacets(props.constraint, checked, props.facetType, false, false, true);
-  }
+  };
 
   const showMore = () => {
     let toggle = !more;
     let showNumber = SHOW_MINIMUM;
     if (toggle && props.facetValues.length > SHOW_MINIMUM) {
-      showNumber = props.facetValues.length
+      showNumber = props.facetValues.length;
     }
     toggleMore(!more);
     setShowFacets(showNumber);
-  }
+  };
 
   if (props.facetValues.length === 0 && checked.length > 0) {
     checkedFacets = checked.map(item => {
-      return { name: item, count: 0, value: item }
+      return { name: item, count: 0, value: item };
     });
   } else if (props.facetValues.length > 0) {
     checkedFacets = props.facetValues;
@@ -132,7 +131,7 @@ const Facet: React.FC<Props> = (props) => {
   const renderValues = checkedFacets.slice(0, showFacets).map((facet, index) => {
     return (
       <FacetName facet={facet} index={index} key={index} handleClick={handleClick} name={props.name} checked={checked} />
-    )
+    );
   });
 
   const formatTitle = () => {
@@ -143,7 +142,7 @@ const Facet: React.FC<Props> = (props) => {
       return first + '. ... .' + last;
     }
     return props.name;
-  }
+  };
 
   return (
     <div className={styles.facetContainer} data-cy={stringConverter(props.name) + "-facet-block"}>
@@ -197,7 +196,7 @@ const Facet: React.FC<Props> = (props) => {
           </div>}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Facet;

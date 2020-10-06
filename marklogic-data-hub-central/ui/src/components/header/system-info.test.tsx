@@ -1,12 +1,11 @@
 import React from 'react';
-import {render, cleanup, wait, fireEvent, waitForElement,} from "@testing-library/react";
+import {render, cleanup, fireEvent, waitForElement,} from "@testing-library/react";
 import SystemInfo from './system-info';
 import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
 import data from '../../assets/mock-data/system-info.data';
 import axiosMock from "axios";
 import mocks from '../../api/__mocks__/mocks.data';
-import LoginForm from "../login-form/login-form";
 
 jest.mock('axios');
 
@@ -17,7 +16,7 @@ const getSubElements=(content,node, title)=>{
         child => !hasText(child)
     );
     return nodeHasText && childrenDontHaveText;
-}
+};
 
 describe('Update data load settings component', () => {
 
@@ -55,7 +54,7 @@ describe('Update data load settings component', () => {
     test('Verify project info display, user with "Download" button enabled', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['downloadProjectFiles']);
-        const { getByText,getByTestId } = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+        const { getByText } = render(<Router><AuthoritiesContext.Provider value={authorityService}>
             <SystemInfo
                 systemInfoVisible={true}
                 setSystemInfoVisible={jest.fn()}
@@ -69,7 +68,7 @@ describe('Update data load settings component', () => {
         mocks.clearUserDataAPI(axiosMock);
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['clearUserData']);
-        const { getByText,getByTestId, getByLabelText, container } = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+        const { getByText, getByLabelText } = render(<Router><AuthoritiesContext.Provider value={authorityService}>
             <SystemInfo
                         systemInfoVisible={true}
                         setSystemInfoVisible={jest.fn()}
@@ -89,7 +88,7 @@ describe('Update data load settings component', () => {
         expect(axiosMock.post).toBeCalledWith('/api/environment/clearUserData');
 
         expect(await(waitForElement(() => getByText((content, node) => {
-            return getSubElements(content, node,"Clear All User Data completed successfully")
+            return getSubElements(content, node,"Clear All User Data completed successfully");
         })))).toBeInTheDocument();
     });
 

@@ -12,7 +12,7 @@ import { getEntityTypes } from '../assets/mock-data/modeling/modeling';
 import { isModified, notModified } from '../assets/mock-data/modeling/modeling-context-mock';
 import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
 import { ConfirmationType } from '../types/common-types';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 jest.mock('../api/modeling');
 
@@ -46,7 +46,7 @@ describe("Modeling Page", () => {
 
     expect(getByText(tiles.model.intro)).toBeInTheDocument(); // tile intro text
 
-    expect(getByText('Entity Types')).toBeInTheDocument()
+    expect(getByText('Entity Types')).toBeInTheDocument();
     expect(getByLabelText("add-entity")).toBeInTheDocument();
     expect(getByText('Instances')).toBeInTheDocument();
     expect(getByText('Last Processed')).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe("Modeling Page", () => {
 
     userEvent.click(getByText('Save All'));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.SaveAll}-yes`));
-    expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1)
+    expect(mockUpdateEntityModels).toHaveBeenCalledTimes(1);
 
     userEvent.click(getByText('Revert All'));
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.RevertAll}-yes`));

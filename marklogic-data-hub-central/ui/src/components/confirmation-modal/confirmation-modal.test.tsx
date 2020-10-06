@@ -50,7 +50,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.DeleteEntity}
@@ -117,7 +117,7 @@ describe('Confirmation Modal Component', () => {
 
   test('can render delete type step warn confirmation', () => {
     let entityName = 'PersonXML';
-    let stepValues = ['Person-Mapping-XML']
+    let stepValues = ['Person-Mapping-XML'];
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
@@ -163,7 +163,7 @@ describe('Confirmation Modal Component', () => {
 
   test('can render delete type entity relation with outstanding edit warn confirmation', () => {
     let entityName = 'PersonXML';
-    let arrayValues = ['Person-Mapping-XML']
+    let arrayValues = ['Person-Mapping-XML'];
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
@@ -202,7 +202,7 @@ describe('Confirmation Modal Component', () => {
 
   test('can render delete type outstanding edit warn confirmation', () => {
     let entityName = 'PersonXML';
-    let arrayValues = ['Person-Mapping-XML']
+    let arrayValues = ['Person-Mapping-XML'];
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
@@ -245,7 +245,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByLabelText, getByText, getAllByText, rerender } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal 
         isVisible={false}
         type={ConfirmationType.SaveEntity}
@@ -380,7 +380,7 @@ describe('Confirmation Modal Component', () => {
     let toggleModal = jest.fn();
     let confirmAction = jest.fn();
 
-    const { queryByLabelText, getByText, rerender, getByLabelText } =  render(
+    const { queryByLabelText, getByText, rerender } =  render(
       <ConfirmationModal
         isVisible={false}
         type={ConfirmationType.NavigationWarn}

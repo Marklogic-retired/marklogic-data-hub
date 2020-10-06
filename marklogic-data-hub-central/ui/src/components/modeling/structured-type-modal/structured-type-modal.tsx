@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { Form, Icon, Input, Modal } from 'antd';
 import { MLButton } from '@marklogic/design-system';
-import styles from './structured-type-modal.module.scss'
+import styles from './structured-type-modal.module.scss';
 
 import { ModelingContext } from '../../../util/modeling-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -25,7 +25,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
   const { modelingOptions } = useContext(ModelingContext);
 
   const [name, setName] = useState('');
-  const [isNameDisabled, toggleIsNameDisabled] = useState(true);
+  const [, toggleIsNameDisabled] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
@@ -47,10 +47,10 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name });
+    let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name; });
 
     if (!NAME_REGEX.test(name)) {
-      setErrorMessage(ModelingTooltips.nameRegex)
+      setErrorMessage(ModelingTooltips.nameRegex);
     } else if (entityDefinitionNamesArray.includes(name)) {
       setErrorMessage(`A structured type already exists with a name of ${name}`);
     } else if (modelingOptions.entityPropertiesNamesArray.includes(name)) {
@@ -79,7 +79,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
       size="default"
       onClick={onSubmit}
     >Add</MLButton>
-</div>
+</div>;
 
   return (
     <Modal
@@ -122,7 +122,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
 export default StructuredTypeModal;

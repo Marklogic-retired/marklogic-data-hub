@@ -37,18 +37,18 @@ const SearchBar: React.FC<Props> = props => {
 
     const handleOptionSelect = (option: any) => {
       setNextEntity(option);
-    }
+    };
 
     const handleSearch = (searchString: string) => {
       setQuery(searchString);
-    }
+    };
 
     const onChange = (e) => {
       setSearchString(e.target.value);
       if (searchOptions.query !== '' && e.target.value === '') {
         setQuery(e.target.value);
       }
-    }
+    };
 
     useEffect(() => {
       if (searchString !== searchOptions.query) {
@@ -81,7 +81,7 @@ const SearchBar: React.FC<Props> = props => {
                 />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default SearchBar;

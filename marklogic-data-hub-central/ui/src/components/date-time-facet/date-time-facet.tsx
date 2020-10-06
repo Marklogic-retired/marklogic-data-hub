@@ -13,7 +13,7 @@ interface Props {
   key: any
   propertyPath: string
   onChange: (datatype: any, facetName: any, value: any[], isNested: boolean) => void;
-};
+}
 
 const DateTimeFacet: React.FC<Props> = (props) => {
   const {
@@ -26,23 +26,23 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     let isNested = props.constraint === props.propertyPath ? false : true;
     if (e.length) {
       props.onChange(props.datatype, props.constraint, e, isNested);
-      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))])
+      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))]);
     } else {
       props.onChange(props.datatype, props.constraint, e, isNested);
     }
-  }
+  };
 
   useEffect(() => {
     if (Object.entries(searchOptions.selectedFacets).length !== 0 && searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
       for (let facet in searchOptions.selectedFacets) {
         if (facet === props.constraint) {
-          setDateTimePickerValue([moment(searchOptions.selectedFacets[facet].rangeValues.lowerBound), moment(searchOptions.selectedFacets[facet].rangeValues.upperBound)])
+          setDateTimePickerValue([moment(searchOptions.selectedFacets[facet].rangeValues.lowerBound), moment(searchOptions.selectedFacets[facet].rangeValues.upperBound)]);
         }
       }
     } else if (Object.entries(greyedOptions.selectedFacets).length !== 0 && greyedOptions.selectedFacets.hasOwnProperty(props.constraint)) {
       for (let facet in greyedOptions.selectedFacets) {
         if (facet === props.constraint) {
-          setDateTimePickerValue([moment(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), moment(greyedOptions.selectedFacets[facet].rangeValues.upperBound)])
+          setDateTimePickerValue([moment(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), moment(greyedOptions.selectedFacets[facet].rangeValues.upperBound)]);
         }
       }
     }
@@ -59,7 +59,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
       return first + '. ... .' + last;
     }
     return props.name;
-  }
+  };
 
   return (
     <div className={styles.name} data-testid="facet-date-time-picker">
@@ -74,7 +74,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
         key={props.name}
       />
     </div>
-  )
-}
+  );
+};
 
 export default DateTimeFacet;

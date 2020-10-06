@@ -101,7 +101,7 @@ describe('Matching Ruleset Single Modal component', () => {
     userEvent.click(screen.getByText('Select match type'));
     userEvent.click(screen.getByText('Synonym'));
     userEvent.type(getByLabelText('thesaurus-uri-input'), '/Users/jsmith/Documents/sample-data/4feec983');
-    userEvent.type(getByLabelText('filter-input'), '<thsr:qualifier>birds</thsr:qualifier>')
+    userEvent.type(getByLabelText('filter-input'), '<thsr:qualifier>birds</thsr:qualifier>');
 
 
     userEvent.click(getByText('Save'));
@@ -128,8 +128,8 @@ describe('Matching Ruleset Single Modal component', () => {
     userEvent.click(screen.getByText('Select match type'));
     userEvent.click(screen.getByText('Double Metaphone'));
     userEvent.type(getByLabelText('dictionary-uri-input'), '/Users/jsmith/Documents/sample-data/123ABC');
-    userEvent.type(getByLabelText('distance-threshold-input'), '100')
-    userEvent.type(getByLabelText('collation-input'), 'http://marklogic.com/collation/codepoint')
+    userEvent.type(getByLabelText('distance-threshold-input'), '100');
+    userEvent.type(getByLabelText('collation-input'), 'http://marklogic.com/collation/codepoint');
 
 
     userEvent.click(getByText('Save'));

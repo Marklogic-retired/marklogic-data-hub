@@ -1,7 +1,7 @@
 /// <reference types="cypress"/>
 
 import browsePage from '../../support/pages/browse';
-import queryComponent from '../../support/components/query/manage-queries-modal'
+import queryComponent from '../../support/components/query/manage-queries-modal';
 import { Application } from '../../support/application.config';
 import { toolbar } from '../../support/components/common/index';
 import 'cypress-wait-until';
@@ -174,7 +174,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getEditQueryModalIcon().first().click();
         cy.get('@qName').then((qName) => {
             browsePage.getEditQueryDetailFormName().invoke('val').should('contain', qName);
-        })
+        });
         browsePage.getEditQueryDetailCancelButton().click();
         // checking previous query name is set clicking save a copy modal icon
         browsePage.getSaveACopyModalIcon().click();
@@ -214,7 +214,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // creating query 1 with customer entity
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
-        browsePage.waitForSpinnerToDisappear()
+        browsePage.waitForSpinnerToDisappear();
         browsePage.getHubPropertiesExpanded();
         cy.waitUntil(() => browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON')).click();
         browsePage.getFacetApplyButton().click();
@@ -300,7 +300,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getHubPropertiesExpanded();
         browsePage.getFacetItemCheckbox('collection', 'Person').click();
         browsePage.getFacetApplyButton().click();
-        browsePage.getSaveModalIcon().should('not.be.visible')
+        browsePage.getSaveModalIcon().should('not.be.visible');
     });
 
     // Reset query confirmation
@@ -337,9 +337,9 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryButton().click();
         //verify created query on zero state page
         browsePage.getQuerySelector().click();
-        browsePage.getQueryByName('reset-query').should('be.visible')
+        browsePage.getQueryByName('reset-query').should('be.visible');
         browsePage.getQuerySelector().click();
-        browsePage.getExploreButton().should('be.visible')
+        browsePage.getExploreButton().should('be.visible');
         browsePage.getExploreButton().click();
         browsePage.selectEntity('Customer');
         browsePage.selectQuery('reset-query');
@@ -393,7 +393,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.getColumnSelectorIcon().click();
         browsePage.getColumnSelector().should('be.visible');
-        browsePage.selectColumnSelectorProperty('status')
+        browsePage.selectColumnSelectorProperty('status');
         browsePage.getColumnSelectorApply().click({force: true});
         browsePage.selectEntity('Person');
         //verifying the confirmation modal appearing and selection cancel
@@ -406,7 +406,7 @@ describe('save/manage queries scenarios, developer role', () => {
         //changing the selecte column list should trigger modal confirmation
         browsePage.getColumnSelectorIcon().click();
         browsePage.getColumnSelector().should('be.visible');
-        browsePage.selectColumnSelectorProperty('status')
+        browsePage.selectColumnSelectorProperty('status');
         browsePage.getColumnSelectorApply().click({force: true});
         browsePage.getResetQueryButton().click();
         //verifying the confirmation modal appearing and selection cancel
@@ -421,7 +421,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectQuery('reset-query');
         browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
-    })
+    });
 
     it('verify export array/structured data warning', () => {
         browsePage.selectEntity('Order');
@@ -446,8 +446,8 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSaveQueryDescription().type('check-query description');
         browsePage.getSaveQueryButton().click();
         browsePage.getFacetItemCheckbox('fname', 'Bob').should('be.checked');
-        browsePage.getFacetApplyButton().should('be.visible')
-    })
+        browsePage.getFacetApplyButton().should('be.visible');
+    });
 
 
     it('Check grey facets does not persist when clear query icon is clicked',() => {
@@ -460,7 +460,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.waitForSpinnerToDisappear();
         browsePage.getFacetItemCheckbox('collection', 'Person').should('not.be.checked');
         browsePage.getGreySelectedFacets('Person').should('not.exist');
-    })
+    });
 
 });
 
@@ -490,7 +490,7 @@ describe('manage queries modal scenarios, developer role', () => {
         browsePage.waitForSpinnerToDisappear();
         browsePage.getSelectedQuery().should('contain', 'edited-query');
         //remove query
-        browsePage.getManageQueriesModalOpened()
+        browsePage.getManageQueriesModalOpened();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getDeleteQuery().first().click();
         queryComponent.getDeleteQueryYesButton().click({ force: true });
@@ -515,7 +515,7 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
     after(() => {
         //clearing all the saved queries
         cy.deleteSavedQueries();
-    })
+    });
 
     it('manage queries, edit, apply, delete query', () => {
         //edit query
@@ -530,14 +530,14 @@ describe('manage queries modal scenarios on zero sate page, developer role', () 
         // apply query and verify discard/apply icons are not shown after applying
         queryComponent.getQueryByName('edited-query').click();
         browsePage.waitForSpinnerToDisappear();
-        browsePage.getClearGreyFacets().should('not.be.visible')
-        browsePage.getFacetApplyButton().should('not.be.visible')
+        browsePage.getClearGreyFacets().should('not.be.visible');
+        browsePage.getFacetApplyButton().should('not.be.visible');
         browsePage.getSelectedQuery().should('contain', 'edited-query');
         browsePage.getSelectedQueryDescription().should('contain', 'edited-query-description');
         //remove query
         browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
-        browsePage.getManageQueriesModalOpened()
+        browsePage.getManageQueriesModalOpened();
         queryComponent.getManageQueryModal().should('be.visible');
         queryComponent.getDeleteQuery().first().click();
         queryComponent.getDeleteQueryYesButton().click({ force: true });

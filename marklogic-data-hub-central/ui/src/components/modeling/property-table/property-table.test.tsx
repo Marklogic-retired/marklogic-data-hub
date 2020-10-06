@@ -33,7 +33,7 @@ describe('Entity Modeling Property Table Component', () => {
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     expect(getByText('Add Property')).toBeInTheDocument();
     expect(getByText('Property Name')).toBeInTheDocument();
@@ -46,14 +46,14 @@ describe('Entity Modeling Property Table Component', () => {
   test('Property Table renders with basic datatypes, with writer role & hover text shows', async () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId, getByLabelText, debug } =  render(
+    const { getByText, getByTestId, getByLabelText } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     fireEvent.mouseOver(getByLabelText('identifier-header'));
     await wait (() => expect(screen.getByText(ModelingTooltips.identifier)).toBeInTheDocument());
@@ -99,7 +99,7 @@ describe('Entity Modeling Property Table Component', () => {
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     expect(getByLabelText('Customer-add-property')).toBeDisabled();
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
@@ -162,7 +162,7 @@ describe('Entity Modeling Property Table Component', () => {
                   definitions={definitions}
               />
           </ModelingContext.Provider>
-      )
+      );
 
       // Verify facet & sort checkmarks render in the table
       expect(getByTestId('sort-customerId')).toBeInTheDocument();
@@ -192,14 +192,14 @@ describe('Entity Modeling Property Table Component', () => {
   test('can add a Property to the table and then edit it', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId, getByLabelText, debug } =  render(
+    const { getByTestId } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     userEvent.click(screen.getByLabelText('Concept-add-property'));
 
@@ -223,14 +223,14 @@ describe('Entity Modeling Property Table Component', () => {
   test('can add a new structured type property to the table and then edit it', () => {
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId } =  render(
+    const { getByTestId } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     userEvent.click(screen.getByLabelText('Concept-add-property'));
 
@@ -261,7 +261,7 @@ describe('Entity Modeling Property Table Component', () => {
   test('can edit a property and change the type from basic to relationship', () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const { getByText, getByTestId, queryByTestId, getAllByTestId } =  render(
+    const { getByTestId, getAllByTestId } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyTable
           canReadEntityModel={true}
@@ -270,7 +270,7 @@ describe('Entity Modeling Property Table Component', () => {
           definitions={definitions}
         />
       </ModelingContext.Provider>
-    )
+    );
 
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
@@ -285,7 +285,7 @@ describe('Entity Modeling Property Table Component', () => {
     fireEvent.change(multipleRadio, { target: { value: "yes" } });
     expect(multipleRadio['value']).toBe('yes');
 
-    const piiRadio = screen.getByLabelText('pii-yes')
+    const piiRadio = screen.getByLabelText('pii-yes');
     fireEvent.change(piiRadio, { target: { value: "yes" } });
     expect(piiRadio['value']).toBe('yes');
 
@@ -322,26 +322,26 @@ describe('Entity Modeling Property Table Component', () => {
 
   test('can delete a basic property from the table', async () => {
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
-    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
 
     let entityName = propertyTableEntities[0].entityName;
     let definitions = propertyTableEntities[0].model.definitions;
-    const { getByText, getByTestId } =  render(
+    const { getByTestId } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
-    userEvent.click(screen.getByTestId('delete-Concept-domain'));
+    userEvent.click(getByTestId('delete-Concept-domain'));
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.queryByTestId('domain-span')).toBeNull();
     expect(mockGetSystemInfo).toBeCalledTimes(1);
     expect(screen.queryByTestId('domain-span')).toBeNull()
   });
@@ -354,22 +354,23 @@ describe('Entity Modeling Property Table Component', () => {
 
     let entityName = propertyTableEntities[1].entityName;
     let definitions = propertyTableEntities[1].model.definitions;
-    const { getByText, getByTestId } =  render(
+    const { getByTestId } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     userEvent.click(getByTestId('delete-Order-address'));
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
+    expect(screen.queryByTestId('address-span')).toBeNull();
     expect(mockGetSystemInfo).toBeCalledTimes(1);
     expect(screen.queryByTestId('address-span')).toBeNull()
   });
@@ -380,14 +381,14 @@ describe('Entity Modeling Property Table Component', () => {
 
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const { getAllByRole, getByTestId } =  render(
+    const { getByTestId } =  render(
       <PropertyTable
         canReadEntityModel={true}
         canWriteEntityModel={true}
         entityName={entityName}
         definitions={definitions}
       />
-    )
+    );
 
     const shippingExpandIcon = getByTestId('mltable-expand-shipping');
     userEvent.click(within(shippingExpandIcon).getByRole('img'));
@@ -395,7 +396,7 @@ describe('Entity Modeling Property Table Component', () => {
 
     await wait(() =>
       expect(screen.getByLabelText('delete-property-step-text')).toBeInTheDocument(),
-    )
+    );
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(mockEntityReferences).toBeCalledTimes(1);
     expect(mockGetSystemInfo).toBeCalledTimes(1);

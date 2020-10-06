@@ -15,7 +15,7 @@ const NoMatchRedirect = ({history}) => {
 
   const backToHomePage = () => {
     return user.authenticated ? history.push('/tiles') : history.push('/');
-  }
+  };
   return (
       <Result
           status={404}
@@ -23,7 +23,7 @@ const NoMatchRedirect = ({history}) => {
           subTitle="Sorry, the page you visited does not exist."
           extra={<MLButton type="primary" aria-label="back home" onClick={backToHomePage}>Back Home</MLButton>}
       />
-  )
-}
+  );
+};
 
 export default withRouter(NoMatchRedirect);

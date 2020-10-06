@@ -22,9 +22,9 @@ const SearchResults:React.FC<Props> = (props) => {
 
     useEffect(() => {
         if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
-            setSelectedTableProperties(props.columns)
+            setSelectedTableProperties(props.columns);
         }
-    }, [props.columns])
+    }, [props.columns]);
 
   return (
     <div id="search-results" className={styles.searchResultsContainer}>
@@ -42,7 +42,7 @@ const SearchResults:React.FC<Props> = (props) => {
         )}
       />
     </div>
-  )
-}
+  );
+};
 
 export default SearchResults;

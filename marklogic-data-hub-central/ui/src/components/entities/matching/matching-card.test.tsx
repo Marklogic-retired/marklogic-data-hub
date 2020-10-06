@@ -7,9 +7,9 @@ import MatchingCard from './matching-card';
 
 import { matchingStep } from '../../../assets/mock-data/curation/matching';
 import { customerEntityDef} from '../../../assets/mock-data/curation/entity-definitions-mock';
-import { MatchingStep } from '../../../types/curation-types'
+import { MatchingStep } from '../../../types/curation-types';
 
-const matchingStepsArray: MatchingStep[] = matchingStep.artifacts
+const matchingStepsArray: MatchingStep[] = matchingStep.artifacts;
 
 
 describe('Matching cards view component', () => {
@@ -30,9 +30,9 @@ describe('Matching cards view component', () => {
           addStepToNew={jest.fn()}
         />
       </Router>
-    )
+    );
 
-    expect(getByText('matchCustomers')).toBeInTheDocument()
-    expect(getByText('matchCustomersEmpty')).toBeInTheDocument()
+    expect(getByText('matchCustomers')).toBeInTheDocument();
+    expect(getByText('matchCustomersEmpty')).toBeInTheDocument();
   });
 });

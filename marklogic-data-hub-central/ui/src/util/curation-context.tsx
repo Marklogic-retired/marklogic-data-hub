@@ -12,7 +12,7 @@ const DEFAULT_CURATION_OPTIONS = {
     entityName: '',
     isModified: false
   }
-}
+};
 
 export const CurationContext = React.createContext<CurationContextInterface>({
   curationOptions: DEFAULT_CURATION_OPTIONS,
@@ -41,15 +41,15 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
       activeStep: { isModified: false, stepArtifact, entityName },
       entityDefinitionsArray: entityDefArray
     });
-  }
+  };
 
   const updateActiveStepArtifact = (stepArtifact: any) => {
-    let updatedStep = { ...curationOptions.activeStep, isModified: true, stepArtifact }
+    let updatedStep = { ...curationOptions.activeStep, isModified: true, stepArtifact };
     setCurationOptions({ 
       ...curationOptions,
       activeStep: updatedStep,
     });
-  }
+  };
 
   return (
     <CurationContext.Provider value={{
@@ -59,7 +59,7 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
     }}>
       {children}
     </CurationContext.Provider>
-  )
-}
+  );
+};
 
 export default CurationProvider;

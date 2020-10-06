@@ -1,14 +1,14 @@
 import React from 'react';
 import { Router } from 'react-router';
-import {render, fireEvent, wait, within, cleanup, waitForElement, getByTestId, screen} from '@testing-library/react';
+import {render, fireEvent, wait, cleanup } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
-import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom/extend-expect';
 import { createMemoryHistory } from 'history';
 const history = createMemoryHistory();
 import axiosMock from 'axios';
 import data from '../../assets/mock-data/curation/flows.data';
 import Flows from './flows';
-import {ModelingTooltips, SecurityTooltips} from "../../config/tooltips.config";
+import { SecurityTooltips } from "../../config/tooltips.config";
 
 jest.mock('axios');
 
@@ -29,7 +29,7 @@ describe('Flows component', () => {
         flowsDefaultActiveKey: [],
         showStepRunResponse: () => null,
         runEnded: {},
-    }
+    };
     const flowName = data.flows.data[0].name;
     const flowStepName = data.flows.data[0].steps[1].stepName;
     const addStepName = data.steps.data['ingestionSteps'][0].name;
@@ -70,7 +70,7 @@ describe('Flows component', () => {
             expect(getByText(format)).toBeInTheDocument();
             expect(getByText(format)).toHaveStyle("height: 35px; width: 35px; line-height: 35px; text-align: center;");
         });
-    })
+    });
 
     it('user with flow read, write, and operator privileges can view, edit, and run', async () => {
         const {getByText, getByLabelText} = render(

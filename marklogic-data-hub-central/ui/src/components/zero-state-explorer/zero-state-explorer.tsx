@@ -5,9 +5,9 @@ import { SearchContext } from '../../util/search-context';
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
 import { MLButton, MLRadio, MLTooltip } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons'
-import tiles from '../../config/tiles.config'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons';
+import tiles from '../../config/tiles.config';
 
 const ZeroStateExplorer = (props) => {
   const {
@@ -37,12 +37,12 @@ const ZeroStateExplorer = (props) => {
       manageQueryModal: false,
       sortOrder: [],
       database: zeroStatePageDatabase,
-    }
+    };
     applySaveQuery(options);
-  }
+  };
 
   const handleOptionSelect = (option: any) => {
-    setDropdownValue(option)
+    setDropdownValue(option);
     if (option === 'All Data') {
       setView('card');
       props.setCardView(true);
@@ -51,19 +51,19 @@ const ZeroStateExplorer = (props) => {
       props.setCardView(false);
       props.toggleTableView(true);
     }
-  }
+  };
 
   const onChange = (e) => {
     setSearchQuery(e.target.value);
-  }
+  };
 
   const options = dropdownOptions.map((entity, index) => {
     return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{ cursor: 'default' }}>
       {entity}
     </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
         {entity}
-      </Option>
-  })
+      </Option>;
+  });
 
   const entityMenu = (
     <Select
@@ -91,20 +91,20 @@ const ZeroStateExplorer = (props) => {
           manageQueryModal: false,
           sortOrder: query.savedQuery.sortOrder,
           database: searchOptions.database,
-        }
+        };
         applySaveQuery(options);
       }
-    })
+    });
   };
 
   const onViewChange = (val) => {
     setView(val);
     val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false);
-  }
+  };
 
   const onDatabaseChange = (val) => {
     setZeroStatePageDatabase(val);
-  }
+  };
 
   return (
     <div id="zero-state-explorer" className={styles.container} >
@@ -248,6 +248,6 @@ const ZeroStateExplorer = (props) => {
       </div>
     </div>
   );
-}
+};
 
 export default ZeroStateExplorer;

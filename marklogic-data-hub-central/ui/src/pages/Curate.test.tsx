@@ -1,12 +1,12 @@
-import React, {useContext} from 'react';
-import {render, fireEvent, waitForElement, cleanup} from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import React from 'react';
+import {render, fireEvent, waitForElement, cleanup} from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import Curate from "./Curate";
 import {MemoryRouter} from "react-router-dom";
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 jest.mock('axios');
 
@@ -19,13 +19,13 @@ describe('Curate component', () => {
     afterEach(() => {
         jest.clearAllMocks();
         cleanup();
-    })
+    });
 
     test('Verify readMapping authority can only view mapping configs and settings', async () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readMapping']);
 
-        const { getByText, getAllByText, queryByText, getByTestId, queryByTestId, debug } = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
+        const { getByText, getAllByText, queryByText, getByTestId, queryByTestId } = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
 
         expect(await(waitForElement(() => getByText('Customer')))).toBeInTheDocument();
 
@@ -64,7 +64,7 @@ describe('Curate component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readMapping','writeMapping']);
 
-        const { getByText, getAllByText, queryByText, getByTitle, getByTestId } = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
+        const { getByText, queryByText, getByTestId } = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
 
         expect(await(waitForElement(() => getByText('Customer')))).toBeInTheDocument();
         // Check for steps to be populated
