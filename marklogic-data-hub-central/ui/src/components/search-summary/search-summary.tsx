@@ -8,7 +8,7 @@ interface Props {
   start: number;
   length: number;
   pageSize: number;
-};
+}
 
 const SearchSummary: React.FC<Props> = (props) => {
   const { Text } = Typography;
@@ -19,7 +19,7 @@ const SearchSummary: React.FC<Props> = (props) => {
     } else {
       return false;
     }
-  }
+  };
 
   const isNoDocuments = () => {
     if(props.total === 0) {
@@ -27,7 +27,7 @@ const SearchSummary: React.FC<Props> = (props) => {
     } else {
       return false;
     }
-  }
+  };
 
   return (
     <div className={styles.searchSummaryContainer}>
@@ -36,6 +36,6 @@ const SearchSummary: React.FC<Props> = (props) => {
       <Text> results</Text>
     </div>
   );
-}
+};
 
 export default SearchSummary;

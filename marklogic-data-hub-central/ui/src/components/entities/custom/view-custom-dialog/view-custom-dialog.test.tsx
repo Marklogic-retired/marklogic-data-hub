@@ -5,7 +5,7 @@ import ViewCustomDialog from "./view-custom-dialog";
 
 describe('View Custom artifact component', () => {
 
-  afterEach(cleanup)
+  afterEach(cleanup);
 
   test('Verify View Custom Dialog renders ', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(<ViewCustomDialog {...data.viewCustom} />);

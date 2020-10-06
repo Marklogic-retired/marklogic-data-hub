@@ -1,9 +1,8 @@
-import React, {CSSProperties, useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext} from 'react';
 import styles from './mapping-card.module.scss';
-import {Card, Icon, Tooltip, Row, Col, Modal, Select} from 'antd';
+import {Card, Icon, Row, Col, Modal, Select} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
-import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
@@ -16,7 +15,7 @@ import axios from 'axios';
 import { xmlParserForMapping } from '../../../util/xml-parser';
 import { Link, useHistory } from 'react-router-dom';
 import { MLTooltip } from '@marklogic/design-system';
-import { faSlidersH } from '@fortawesome/free-solid-svg-icons'
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 
 
 const { Option } = Select;
@@ -51,12 +50,12 @@ const MappingCard: React.FC<Props> = (props) => {
     const [sourceData, setSourceData] = useState<any[]>([]);
     const [sourceURI,setSourceURI] = useState('');
     const [sourceFormat,setSourceFormat] = useState('');
-    const [sourceDatabaseName, setSourceDatabaseName] = useState('data-hub-STAGING')
+    const [sourceDatabaseName, setSourceDatabaseName] = useState('data-hub-STAGING');
     const [docNotFound, setDocNotFound] = useState(false);
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [sortedMapping, setSortedMappings] = useState(props.data)
+    const [sortedMapping, setSortedMappings] = useState(props.data);
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
     const [selectVisible, setSelectVisible] = useState(false);
 
@@ -91,7 +90,7 @@ const MappingCard: React.FC<Props> = (props) => {
     let history = useHistory();
 
     useEffect(() => {
-        let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data
+        let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
         setSortedMappings(sortedArray);
         setSourceData([]);
     },[props.data]);
@@ -100,49 +99,36 @@ const MappingCard: React.FC<Props> = (props) => {
     const OpenAddNewDialog = () => {
         setTitle('New Mapping Step');
         setNewMap(true);
-    }
+    };
 
     const OpenEditStepDialog = (index) => {
         setTitle('Edit Mapping Step');
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewMap(true);
-    }
+    };
 
     const OpenMappingSettingsDialog = (index) => {
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenMappingSettings(true);
-    }
+    };
 
 
-    //Custom CSS for source Format
-    const sourceFormatStyle = (sourceFmt) => {
-        let customStyles: CSSProperties = {
-            float: 'right',
-            backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
-            fontSize: '12px',
-            borderRadius: '50%',
-            textAlign: 'left',
-            color: '#ffffff',
-            padding: '5px'
-        }
-        return customStyles;
-    }
 
     const handleCardDelete = (name) => {
         setDialogVisible(true);
         setMappingArtifactName(name);
-      }
+      };
 
       const onOk = (name) => {
-        props.deleteMappingArtifact(name)
+        props.deleteMappingArtifact(name);
         setDialogVisible(false);
-      }
+      };
 
       const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
         setSelected({}); // reset menus on cancel
-      }
+      };
 
       function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
@@ -200,7 +186,7 @@ const MappingCard: React.FC<Props> = (props) => {
         }
 
 
-    }
+    };
 
     const fetchSrcDocFromUri = async (stepName, uri, index = mapIndexLocal) => {
         try{
@@ -217,13 +203,13 @@ const MappingCard: React.FC<Props> = (props) => {
                 if(parsedDoc['envelope']){
                     if(parsedDoc['envelope'].hasOwnProperty('@xmlns')){
 
-                        let nmspcURI = parsedDoc['envelope']['@xmlns']
+                        let nmspcURI = parsedDoc['envelope']['@xmlns'];
                         let indCheck = nmspcURI.lastIndexOf('/');
                         let ind = indCheck !== -1 ? indCheck + 1 : 0;
                         let nmspcString = nmspcURI.slice(ind);
                         namespaceString = nmspcString;
                         nmspaces = { ...nmspaces, [namespaceString]: nmspcURI};
-                        setNamespaces({ ...namespaces, [namespaceString]: nmspcURI})
+                        setNamespaces({ ...namespaces, [namespaceString]: nmspcURI});
                     }
                 }
                 let nestedDoc: any = [];
@@ -238,29 +224,29 @@ const MappingCard: React.FC<Props> = (props) => {
             }
             setIsLoading(false);
         } catch(error)  {
-            let message = error//.response.data.message;
+            let message = error;//.response.data.message;
             setIsLoading(false);
-            console.error('Error While loading the Doc from URI!', message)
+            console.error('Error While loading the Doc from URI!', message);
             setDocNotFound(true);
         }
-    }
+    };
 
     const getParsedXMLDoc = (xmlDoc) => {
         let parsedDoc = xmlParserForMapping(xmlDoc.data);
         return parsedDoc;
-    }
+    };
 
     const updateMappingWithNamespaces = async (mapDataLocal) => {
         let {lastUpdated, ...dataPayload} = mapDataLocal;
         dataPayload['namespaces'] = nmspaces;
         setMapData({...dataPayload});
-    }
+    };
 
     const getNamespaceKey = (namespace) => {
         let indCheck = namespace.lastIndexOf('/');
         let ind = indCheck !== -1 ? indCheck + 1 : 0;
         return namespace.slice(ind);
-    }
+    };
     //Generate namespaces for source properties
     const getNamespace = (key, val, parentNamespacePrefix, defaultNamespace = '') => {
         let objWithNmspace = '';
@@ -285,14 +271,14 @@ const MappingCard: React.FC<Props> = (props) => {
                         }
                     }
                     nmspaces = {...nmspaces, ...nsObj.obj};
-                    setNamespaces({...nmspaces, ...nsObj.obj})
-                })
+                    setNamespaces({...nmspaces, ...nsObj.obj});
+                });
             } else if (count > 1) {
                 valObject.map(el => {
                     let nsObj = getNamespaceObject(val,el);
                     nmspaces = { ...nmspaces, ...nsObj.obj };
-                    setNamespaces({ ...nmspaces, ...nsObj.obj })
-                })
+                    setNamespaces({ ...nmspaces, ...nsObj.obj });
+                });
             }
         }
         if (keyParts.length > 1) {
@@ -302,7 +288,7 @@ const MappingCard: React.FC<Props> = (props) => {
         }
         currentPrefix = defaultNamespace !== '' && objWithNmspace === '' ? getNamespaceKey(defaultNamespace) : parentNamespacePrefix;
         return objWithNmspace === '' ? (currentPrefix !== '' ? currentPrefix +':'+ key : key) : objWithNmspace;
-    }
+    };
 
     const getNamespaceObject = (val, el) => {
         let indCheck = val[el].lastIndexOf('/');
@@ -324,7 +310,7 @@ const MappingCard: React.FC<Props> = (props) => {
             nmspace: nmspace,
             obj: obj
         };
-    }
+    };
 
     //Generate property object to push into deeply nested source data
     const getPropertyObject = (key, obj) => {
@@ -337,7 +323,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     key: key,
                     val: String(obj['#text']),
                     datatype: getValDatatype(obj['#text'])
-                }
+                };
             } else {
                 sourceTableKeyIndex = sourceTableKeyIndex + 1;
                 propty = {
@@ -346,7 +332,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     val: String(obj['#text']),
                     'children': [],
                     datatype: getValDatatype(obj['#text'])
-                }
+                };
             }
         } else {
             sourceTableKeyIndex = sourceTableKeyIndex + 1;
@@ -354,16 +340,16 @@ const MappingCard: React.FC<Props> = (props) => {
                 rowKey: sourceTableKeyIndex,
                 key: key,
                 'children': []
-            }
+            };
         }
         return propty;
-    }
+    };
 
     const getValDatatype = (val) => {
         let result: any = typeof val;
         result = val === null ? 'null' : result; // null returns typeof 'object', handle that
         return result;
-    }
+    };
 
     // construct infinitely nested source Data
     const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString, defaultNamespace = '') => {
@@ -402,7 +388,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         nestedDoc.push(propty);
                     }
                     else if (val[0].constructor.name !== "Object") {
-                            let joinValues = val.join(', ')
+                            let joinValues = val.join(', ');
                             sourceTableKeyIndex = sourceTableKeyIndex + 1;
                             let finalKey = !/^@/.test(key) ? getNamespace(key, val, parentNamespace, currentDefaultNamespace) : key;
                             let propty = {
@@ -430,7 +416,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 parentNamespace = tempNS;
                             }
                         });
-                    };
+                    }
 
                 } else {
 
@@ -466,7 +452,7 @@ const MappingCard: React.FC<Props> = (props) => {
             }
         });
         return nestedDoc;
-    }
+    };
 
     const updateParentNamespace = (val) => {
         let nmspcURI = val['@xmlns'];
@@ -474,7 +460,7 @@ const MappingCard: React.FC<Props> = (props) => {
         let ind = indCheck !== -1 ? indCheck + 1 : 0;
         let nmspcString = nmspcURI.slice(ind);
         return nmspcString;
-    }
+    };
 
     const getMappingFunctions = async () => {
         try {
@@ -487,7 +473,7 @@ const MappingCard: React.FC<Props> = (props) => {
               let message = error;
               console.error('Error while fetching the functions!', message);
           }
-    }
+    };
 
     const extractEntityInfoForTable = async () => {
         let resp = await getNestedEntities(props.entityTypeTitle);
@@ -498,7 +484,7 @@ const MappingCard: React.FC<Props> = (props) => {
             setEntityTypeProperties([...nestedEntityProps]);
             setTgtEntityReferences({...tgtRefs });
         }
-    }
+    };
 
 
     const extractNestedEntityData = (entProps, nestedEntityData: Array<any>,parentKey = '') => {
@@ -520,26 +506,25 @@ const MappingCard: React.FC<Props> = (props) => {
                     name: parentKey,
                     type: dataTp,
                     children: []
-                }
+                };
                 nestedEntityData.push(propty);
                 extractNestedEntityData(val.subProperties, propty.children, parentKey);
-                parentKey = (parentKey.indexOf("/")!=-1)?parentKey.substring(0,parentKey.lastIndexOf('/')):''
+                parentKey = (parentKey.indexOf("/")!=-1)?parentKey.substring(0,parentKey.lastIndexOf('/')):'';
 
             } else {
                 let dataTp = getDatatype(val);
                 EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
-                let tempKey = parentKey;
                 let propty = {
                     key: EntitYTableKeyIndex,
                     name: parentKey ? parentKey + '/' + key : key,
                     type: dataTp
-                }
+                };
                 nestedEntityData.push(propty);
             }
         });
 
         return nestedEntityData;
-    }
+    };
 
     const getDatatype = (prop) => {
         if (prop.datatype === 'array') {
@@ -556,7 +541,7 @@ const MappingCard: React.FC<Props> = (props) => {
             return prop.datatype;
         }
         return null;
-    }
+    };
 
     const openSourceToEntityMapping = async (name,index) => {
             mapIndexLocal = index;
@@ -565,19 +550,15 @@ const MappingCard: React.FC<Props> = (props) => {
             setSourceURI('');
             setDocUris([]);
             setSourceData([]);
-            setMapData({...mData})
+            setMapData({...mData});
             await getSourceData(index);
             extractEntityInfoForTable();
             setMapName(name);
             setSourceDatabaseName(mData.sourceDatabase);
             getMappingFunctions();
             setMappingVisible(true);
-      }
+      };
 
-
-    const cardContainer: CSSProperties = {
-        cursor: 'pointer',width: '330px',margin:'-12px -12px', padding: '5px 5px'
-    }
 
     function handleSelect(obj) {
         let selectedNew = {...selected};
@@ -591,16 +572,16 @@ const MappingCard: React.FC<Props> = (props) => {
         if (props.flows) flow = props.flows.find(f => f.name === flowName);
         if (flow) result = flow['steps'].findIndex(s => s.stepName === mappingName) > -1;
         return result;
-    }
+    };
 
     const handleStepAdd = (mappingName, flowName) => {
         setMappingArtifactName(mappingName);
         setFlowName(flowName);
         setAddDialogVisible(true);
-    }
+    };
 
     const onAddOk = async (lName, fName) => {
-        await props.addStepToFlow(lName, fName, 'mapping')
+        await props.addStepToFlow(lName, fName, 'mapping');
         setAddDialogVisible(false);
 
         history.push({
@@ -610,8 +591,8 @@ const MappingCard: React.FC<Props> = (props) => {
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
                 existingFlow: true
             }
-        })
-    }
+        });
+    };
 
     const addConfirmation = (
         <Modal
@@ -662,7 +643,6 @@ const MappingCard: React.FC<Props> = (props) => {
                             >
                                 <div className={styles.formatFileContainer}>
                                     <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-                                    {/* <span style={sourceFormatStyle(elem.sourceFormat)}>{elem.sourceFormat.toUpperCase()}</span> */}
 
                                 </div><br />
                                 {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
@@ -750,6 +730,6 @@ const MappingCard: React.FC<Props> = (props) => {
         </div>
     );
 
-}
+};
 
 export default MappingCard;

@@ -24,10 +24,10 @@ const validateMappingTableRow = (dataTable, {...rowValue}, colName, srcData) => 
                 keyCol = row.val;
             }
         }
-        expect(keyCol).toBe(rowValue[rowKey])
+        expect(keyCol).toBe(rowValue[rowKey]);
         rowKey++;
     });
-}
+};
 
 const onClosestTableRow:any = command => command.closest('tr');
 const onClosestTableBody:any = command => command.closest('tbody');
@@ -39,10 +39,10 @@ const validateTableRow = (dataTable, uris) => {
     
     dataTable.forEach(item => {
         let att: any = item.getAttribute('data-row-key') ? item.getAttribute('data-row-key') : '';    
-        expect(att).toBe(uris[rowKey])
+        expect(att).toBe(uris[rowKey]);
         rowKey++;
     });
-}
+};
 
 export {
     validateMappingTableRow,
@@ -51,4 +51,4 @@ export {
     onClosestTable,
     onClosestDiv,
     validateTableRow
-}
+};

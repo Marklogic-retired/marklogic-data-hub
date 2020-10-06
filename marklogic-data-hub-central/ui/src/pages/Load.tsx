@@ -5,9 +5,9 @@ import SwitchView from '../components/load/switch-view';
 import LoadList from '../components/load/load-list';
 import LoadCard from '../components/load/load-card';
 import { UserContext } from '../util/user-context';
-import axios from 'axios'
+import axios from 'axios';
 import { AuthoritiesContext } from "../util/authorities";
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 export type ViewType =  'card' | 'list';
 
@@ -29,7 +29,7 @@ const Load: React.FC = () => {
   //Set context for switching views
   const handleViewSelection = (view) => {
     setView(view);
-  }
+  };
 
   useEffect(() => {
       getLoadArtifacts();
@@ -37,7 +37,7 @@ const Load: React.FC = () => {
       return (() => {
         setLoadArtifacts([]);
         setFlows([]);
-      })
+      });
   }, [isLoading]);
 
   //CREATE/POST load data Artifact
@@ -51,12 +51,12 @@ const Load: React.FC = () => {
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error('Error While creating the Load Data artifact!', message)
+      console.error('Error While creating the Load Data artifact!', message);
       setIsLoading(false);
       handleError(error);
     }
 
-  }
+  };
 
   //GET all the data load artifacts
   const getLoadArtifacts = async () => {
@@ -71,7 +71,7 @@ const Load: React.FC = () => {
         console.error('Error while fetching load data artifacts', message);
         handleError(error);
     }
-  }
+  };
 
   //DELETE Load Data Artifact
   const deleteLoadArtifact = async (loadName) => {
@@ -88,7 +88,7 @@ const Load: React.FC = () => {
         setIsLoading(false);
         handleError(error);
     }
-  }
+  };
 
   //GET all the flow artifacts
   const getFlows = async () => {
@@ -101,7 +101,7 @@ const Load: React.FC = () => {
         let message = error.response.data.message;
         console.error('Error getting flows', message);
     }
-}
+};
 
   // POST load data step to new flow
   const addStepToNew = async () => {
@@ -118,7 +118,7 @@ const Load: React.FC = () => {
         setIsLoading(false);
         handleError(error);
     }
-  }
+  };
 
   // POST load data step to existing flow
   const addStepToFlow = async (loadArtifactName, flowName) => {
@@ -143,7 +143,7 @@ const Load: React.FC = () => {
         });
         handleError(error);
     }
-  }
+  };
 
   //Setting the value of switch view output
   let output;
@@ -159,7 +159,7 @@ const Load: React.FC = () => {
       canWriteFlow={canWriteFlow}
       addStepToFlow={addStepToFlow}
       addStepToNew={addStepToNew}
-    />
+    />;
   }
   else {
     output = <div className={styles.cardView}>
@@ -174,7 +174,7 @@ const Load: React.FC = () => {
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
       />
-    </div>
+    </div>;
   }
 
 
@@ -193,6 +193,6 @@ const Load: React.FC = () => {
     }
     </div>
   );
-}
+};
 
 export default Load;

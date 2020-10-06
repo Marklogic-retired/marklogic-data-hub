@@ -1,6 +1,5 @@
 import React, {useContext} from 'react';
 import { Table } from 'antd';
-import { xmlParser } from "../../util/xml-parser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
@@ -11,7 +10,7 @@ interface Props {
   item: any;
   entityDefArray: any[];
   tableView: boolean;
-};
+}
 
 
 const ExpandableTableView: React.FC<Props> = (props) => {
@@ -21,11 +20,11 @@ const ExpandableTableView: React.FC<Props> = (props) => {
   } = useContext(SearchContext);
 
   let primaryKeyValue: any = '-';
-  let primaryKey: any = '-';
+  // let primaryKey: any = '-';
 
   if (props.item.primaryKey && Object.keys(props.item.primaryKey).length !== 0) {
       primaryKeyValue = props.item.primaryKey.propertyValue;
-      primaryKey = props.item.primaryKey.propertyPath;
+      // primaryKey = props.item.primaryKey.propertyPath;
   }
 
   let data = new Array();
@@ -65,7 +64,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
       }
     }
     return parsedData;
-  }
+  };
 
   data = parseJson(props.item.entityInstance);
 
@@ -96,6 +95,6 @@ const ExpandableTableView: React.FC<Props> = (props) => {
           data-cy="expandable-table-view"
       />
   );
-}
+};
 
 export default ExpandableTableView;

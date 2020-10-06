@@ -9,7 +9,7 @@ import {
 } from '../../support/components/model/index';
 import { confirmationModal, toolbar, tiles } from '../../support/components/common/index';
 import { Application } from '../../support/application.config';
-import browsePage from '../../support/pages/browse'
+import browsePage from '../../support/pages/browse';
 import 'cypress-wait-until';
 
 describe('Entity Modeling: Reader Role', () => {
@@ -19,7 +19,7 @@ describe('Entity Modeling: Reader Role', () => {
     cy.visit('/');
     cy.contains(Application.title);
     console.log(Cypress.env('mlHost'));
-    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest()
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
     cy.waitUntil(() => toolbar.getModelToolbarIcon().should('have.css', 'cursor', 'pointer')).click();
     entityTypeTable.waitForTableToLoad();
   });

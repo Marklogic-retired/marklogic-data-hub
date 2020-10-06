@@ -77,4 +77,4 @@ export const facetProps = {
     }
   ],
   database: 'final'
-}
+};

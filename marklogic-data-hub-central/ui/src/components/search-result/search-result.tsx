@@ -6,8 +6,8 @@ import { UserContext } from '../../util/user-context';
 import { dateConverter } from '../../util/date-conversion';
 import ExpandableTableView from "../expandable-table-view/expandable-table-view";
 import { Icon } from "antd";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExternalLinkAlt, faCode } from '@fortawesome/free-solid-svg-icons';
 import { MLTooltip } from '@marklogic/design-system';
 import {SearchContext} from "../../util/search-context";
 
@@ -16,7 +16,7 @@ interface Props extends RouteComponentProps {
     item: any;
     entityDefArray: any[];
     tableView: boolean;
-};
+}
 
 const SearchResult: React.FC<Props> = (props) => {
     const { setAlertMessage } = useContext(UserContext);
@@ -34,7 +34,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
     useEffect(() => {
         toggleShow(false);
-    }, [searchOptions.pageNumber, searchOptions.entityTypeIds])
+    }, [searchOptions.pageNumber, searchOptions.entityTypeIds]);
 
     if (props.item.primaryKey && Object.keys(props.item.primaryKey).length) {
         primaryKeyValue = props.item.primaryKey.propertyValue;
@@ -69,13 +69,13 @@ const SearchResult: React.FC<Props> = (props) => {
         props.item.matches.forEach(item => {
             item['match-text'].forEach(element => {
                 if (typeof element === 'object') {
-                    str = str.concat('<b>').concat(element.highlight).concat('</b>')
+                    str = str.concat('<b>').concat(element.highlight).concat('</b>');
                 } else {
-                    str = str.concat(element)
+                    str = str.concat(element);
                 }
             });
-            str = str.concat('...')
-        })
+            str = str.concat('...');
+        });
         return <p>{ReactHtmlParser(str)}</p>;
     }
 
@@ -152,7 +152,7 @@ const SearchResult: React.FC<Props> = (props) => {
                 <ExpandableTableView item={props.item} entityDefArray={props.entityDefArray} tableView={props.tableView}/>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default withRouter(SearchResult);

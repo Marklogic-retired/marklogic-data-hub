@@ -15,13 +15,13 @@ describe('Default ingestion ', () => {
 
     afterEach(() => {
         cy.resetTestUser();
-    })
+    });
 
     after(() => {
         cy.loginAsDeveloper().withRequest();
         cy.deleteSteps('ingestion', 'cyZIPTest', 'cyCSVTest', 'cyXMTest');//'cyCSVTest', 'cyXMTest',
         cy.deleteFlows( 'zipE2eFlow', 'csvE2eFlow', 'xmlE2eFlow');//'csvE2eFlow', 'xmlE2eFlow',
-    })
+    });
 
     it('Verifies CRUD functionality from list view', () => {
         let stepName = 'cyListView';
@@ -96,7 +96,7 @@ describe('Default ingestion ', () => {
         loadPage.confirmationOptions('Yes').click();
         loadPage.stepName(stepName).should('not.be.visible');
 
-    })
+    });
 
     it('Verifies CRUD functionality from card view and run in a flow', () => {
         let stepName = 'cyCardView';
@@ -129,7 +129,7 @@ describe('Default ingestion ', () => {
         loadPage.stepNameInput().should('be.disabled');
         loadPage.stepDescriptionInput().clear().type('UPDATE');
         loadPage.saveButton().click();
-	    cy.waitForAsyncRequest();
+        cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
 
         //Verify Settings
@@ -223,7 +223,7 @@ describe('Default ingestion ', () => {
         loadPage.deleteStep(stepName).click();
         loadPage.confirmationOptions('Yes').click();
         loadPage.stepName(stepName).should('not.be.visible');
-    })
+    });
 
     it('Verify ingestion for csv filetype', () => {
         let stepName = 'cyCSVTest';
@@ -249,7 +249,7 @@ describe('Default ingestion ', () => {
         cy.uploadFile('input/test-1.csv');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
-    })
+    });
 
     it('Verify ingestion for zip filetype', () => {
         let stepName = 'cyZIPTest';
@@ -275,7 +275,7 @@ describe('Default ingestion ', () => {
         cy.uploadFile('input/test-1.zip');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
-    })
+    });
 
     it('Verify ingestion for xml filetype', () => {
         let stepName = 'cyXMTest';
@@ -301,6 +301,6 @@ describe('Default ingestion ', () => {
         cy.uploadFile('input/test-1.xml');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();
-    })
+    });
 
-})
+});

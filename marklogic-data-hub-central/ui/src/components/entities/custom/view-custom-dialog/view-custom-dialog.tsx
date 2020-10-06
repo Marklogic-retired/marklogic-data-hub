@@ -1,4 +1,4 @@
-import {Modal, Form, Input, Tooltip, Icon, Radio, Button} from "antd";
+import {Modal, Form, Input, Icon, Radio } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './view-custom-dialog.module.scss';
 import {NewCustomTooltips} from '../../../../config/tooltips.config';
@@ -10,7 +10,7 @@ const ViewCustomDialog = (props) => {
 
   const [customName, setCustomName] = useState('');
   const [description, setDescription] = useState(props.customData && props.customData !== {} ? props.customData.description : '');
-  const [selectedSource, setSelectedSource] = useState(props.customData && props.customData !== {} ? props.customData.selectedSource : 'query')
+  const [selectedSource, setSelectedSource] = useState(props.customData && props.customData !== {} ? props.customData.selectedSource : 'query');
   const [srcQuery, setSrcQuery] = useState(props.customData && props.customData !== {} ? props.customData.sourceQuery : '');
   const [collections, setCollections] = useState('');
 
@@ -30,7 +30,7 @@ const ViewCustomDialog = (props) => {
         } else {
             setCustomName('');
             setDescription('');
-            setSrcQuery('')
+            setSrcQuery('');
             setCollections('');
         }
 
@@ -38,7 +38,7 @@ const ViewCustomDialog = (props) => {
             setCustomName('');
             setDescription('');
             setSelectedSource('query');
-        })
+        });
 
     }, [props.customData]);
 
@@ -63,7 +63,7 @@ const ViewCustomDialog = (props) => {
 
   const onCancel = () => {
       props.setViewCustom(false);
-  }
+  };
 
   return (<Modal visible={props.viewCustom}
     title={null}
@@ -153,8 +153,8 @@ const ViewCustomDialog = (props) => {
       </Form>
     </div>
 
-  </Modal>)
-}
+  </Modal>);
+};
 
 export default ViewCustomDialog;
 

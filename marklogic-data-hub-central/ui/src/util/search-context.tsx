@@ -39,7 +39,7 @@ const defaultSearchOptions = {
   view: null,
   sortOrder: [],
   database: 'final'
-}
+};
 
 
 
@@ -144,7 +144,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         selectedQuery: values.selectedQuery
       });
     }
-  }
+  };
 
   const setQuery = (searchString: string) => {
     setSearchOptions({
@@ -179,7 +179,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       pageLength: pageSize,
       pageSize,
     });
-  };
+  }
 
   const setSearchFacets = (constraint: string, vals: string[]) => {
     let facets = {};
@@ -532,7 +532,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       ...searchOptions,
       sortOrder: sortingOrder
     });
-  }
+  };
 
   const setPageQueryOptions = (query: any) => {
     setSearchOptions({
@@ -551,7 +551,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       sortOrder: query.sortOrder,
       database: query.database,
     });
-  }
+  };
 
   const setDatabase = (option: string) => {
     setSearchOptions({
@@ -564,7 +564,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       database: option
     });
   };
-  useEffect(() => {
+
+    useEffect(() => {
     if (user.authenticated) {
       setSearchFromUserPref(user.name);
     }

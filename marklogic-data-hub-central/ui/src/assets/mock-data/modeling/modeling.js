@@ -10,14 +10,14 @@ export const createModelResponse = {
       "description": "Testing"
     }
   }
-}
+};
 
 export const createModelErrorResponse = {
   "code": 400,
   "message": "An entity type already exists with a name of Testing",
   "suggestion": "Resend the request in the correct format.",
   "details": "An entity type already exists with a name of Testing"
-}
+};
 
 export const getEntityTypes = [
   {
@@ -389,7 +389,7 @@ export const getEntityTypes = [
       "latestJobDateTime": "2020-04-09T14:27:51.986901-07:00",
       "latestJobId": "c8f0fbab-689e-47ad-89bf-bdc2ae9da18a"
   }
-]
+];
 
 export const editEntityPropertyRequest = { "AnotherModel": {
   "primaryKey": "concept_name",
@@ -470,7 +470,7 @@ export const editEntityPropertyRequest = { "AnotherModel": {
     }
   }
 }
-}
+};
 
 export const propertyTableEntities = [
   {
@@ -711,7 +711,7 @@ export const propertyTableEntities = [
       "latestJobDateTime": "2020-05-13T10:37:00.802231-07:00",
       "latestJobId": "b0ee8653-bf8f-4bbd-956b-9a1471137253"
   }
-]
+];
 
 export const entityDefinitionsArray = [
   {
@@ -851,24 +851,24 @@ export const entityDefinitionsArray = [
       }
     ]
   }
-]
+];
 
 export const referencePayloadEmpty = {
   "stepNames": [],
   "entityNames": []
-}
+};
 
 export const referencePayloadSteps = {
   "stepNames": ['Order-Load', 'Order-Map'],
   "entityNames": []
-}
+};
 
 export const referencePayloadRelationships = {
   "stepNames": [],
   "entityNames": ['Protein']
-}
+};
 
 export const referencePayloadStepRelationships = {
   "stepNames": ['Order-Load', 'Order-Map'],
   "entityNames": ['Protein']
-}
+};

@@ -61,4 +61,4 @@ class ConfirmationModal {
 
 const confirmationModal = new ConfirmationModal();
 
-export default confirmationModal
+export default confirmationModal;
