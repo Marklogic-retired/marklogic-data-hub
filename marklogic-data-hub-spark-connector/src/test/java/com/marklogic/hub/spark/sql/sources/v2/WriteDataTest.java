@@ -1,12 +1,18 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.eval.EvalResultIterator;
 import org.apache.spark.sql.catalyst.InternalRow;
+import org.apache.spark.sql.sources.v2.DataSourceOptions;
+import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,7 +42,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         ObjectNode customWorkUnit = objectMapper.createObjectNode();
         customWorkUnit.put("userDefinedValue", 0);
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestWorkUnit(customWorkUnit)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
@@ -45,7 +51,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
     @Test
     public void ingestWithIncorrectApi(){
-        RuntimeException ex = assertThrows(RuntimeException.class,
+        ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("/incorrect.api")),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
@@ -58,7 +64,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         ObjectNode customWorkUnit = objectMapper.createObjectNode();
         customWorkUnit.put("userDefinedValue", 0);
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestWorkUnit(customWorkUnit)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
@@ -70,11 +76,51 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         ObjectNode  customEndpointState= objectMapper.createObjectNode();
         customEndpointState.put("userDefinedValue", 0);
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointState(customEndpointState)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+    }
+
+    @Test
+    void nullWorkUnitNoApiPath() {
+        Map<String, String> params = new HashMap<>();
+        params.putAll(getHubPropertiesAsMap());
+
+        ObjectNode node = objectMapper.createObjectNode();
+        node.set("endpointState", null);
+        params.put("ingestendpointparams", node.toString());
+
+        buildDataWriter(new DataSourceOptions(params));
+        logger.info("No exception should have occurred because a null workUnit doesn't mean that Ernie tried to " +
+            "set a workUnit without an apiPath");
+    }
+
+    @Test
+    void nullEndpointStateNoApiPath() {
+        Map<String, String> params = new HashMap<>();
+        params.putAll(getHubPropertiesAsMap());
+
+        ObjectNode node = objectMapper.createObjectNode();
+        node.set("endpointState", null);
+        params.put("ingestendpointparams", node.toString());
+
+        buildDataWriter(new DataSourceOptions(params));
+        logger.info("No exception should have occurred because a null endpointState doesn't mean that Ernie tried to " +
+            "set an endpointState without an apiPath");
+    }
+
+    @Test
+    void invalidJsonForIngestionParams() {
+        Map<String, String> params = new HashMap<>();
+        params.putAll(getHubPropertiesAsMap());
+
+        final String invalidJson = "{\"workUnit\":{}";
+        params.put("ingestendpointparams", invalidJson);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> buildDataWriter(new DataSourceOptions(params)));
+        assertTrue(ex.getMessage().contains("Unable to parse ingestendpointparams"), "Unexpected error message: " + ex.getMessage());
     }
 
     private void verifyFruitCount(int expectedCount, String message) {
