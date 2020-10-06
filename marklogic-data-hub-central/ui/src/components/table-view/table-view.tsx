@@ -5,7 +5,7 @@ interface Props {
   document: any;
   contentType: string;
   location: {};
-};
+}
 
 const TableView: React.FC<Props> = (props) => {
   const [expanded, setExpanded] = useState(false);
@@ -32,15 +32,15 @@ const TableView: React.FC<Props> = (props) => {
       }
     }
     return parsedData;
-  }
+  };
 
   if (props.document) {
       data = parseJson(props.document);
   }
 
   const handleClick = () => {
-    expanded === false ? setExpanded(true) : setExpanded(false)
-  }
+    expanded === false ? setExpanded(true) : setExpanded(false);
+  };
 
 
   const columns = [
@@ -61,8 +61,8 @@ const TableView: React.FC<Props> = (props) => {
           cursor: 'pointer',
           padding: '0',
           margin: '0'
-        } as React.CSSProperties
-        return <p onClick={() => handleClick()} style={pStyle}>{value}</p>
+        } as React.CSSProperties;
+        return <p onClick={() => handleClick()} style={pStyle}>{value}</p>;
       },
       width: '80%',
     }
@@ -79,7 +79,7 @@ const TableView: React.FC<Props> = (props) => {
           data-cy="document-table"
           defaultExpandedRowKeys={expandRow}
       />
-  )
-}
+  );
+};
 
 export default TableView;

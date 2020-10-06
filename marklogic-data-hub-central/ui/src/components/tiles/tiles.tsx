@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
+import { Menu, Dropdown } from 'antd';
 import { ArrowsAltOutlined, ShrinkOutlined, CloseOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";

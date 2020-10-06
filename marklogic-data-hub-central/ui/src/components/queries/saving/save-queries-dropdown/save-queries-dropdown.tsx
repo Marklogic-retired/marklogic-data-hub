@@ -1,4 +1,4 @@
-import {Select, Modal, Button} from "antd"
+import {Select, Modal } from "antd";
 import React, {useContext, useState} from 'react';
 import styles from './save-queries-dropdown.module.scss';
 import { SearchContext } from "../../../../util/search-context";
@@ -19,7 +19,7 @@ interface Props {
     setNextQueryName: (name: string) => void;
     isSaveQueryChanged:() => boolean;
 
-};
+}
 
 
 const SaveQueriesDropdown: React.FC<Props> = (props) => {
@@ -46,9 +46,9 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
            setSwitchedQueryName(e);
        }
        else{
-           onItemSelect(e)
+           onItemSelect(e);
        }
-    }
+    };
 
     const onItemSelect = (e) => {
         props.setCurrentQueryName(e);
@@ -62,22 +62,22 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         props.setSaveNewIconVisibility(false);
         props.setDiscardChangesIconVisibility(false);
         props.setSaveChangesIconVisibility(false);
-     }
+     };
 
     const onNoClick = () => {
         toggleConfirmation(false);
         onItemSelect(switchedQueryName);
-    }
+    };
 
     const onCancel = () => {
         toggleConfirmation(false);
-    }
+    };
 
     const onOk = () => {
         props.setSaveChangesModal(true);
         toggleConfirmation(false);
         props.setNextQueryName(switchedQueryName);
-    }
+    };
 
     return (
         <div>
@@ -117,6 +117,6 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
     </div>
 
     );
-}
+};
 
 export default SaveQueriesDropdown;

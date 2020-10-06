@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 import Toolbar from '../components/tiles/toolbar';
 import Tiles from '../components/tiles/tiles';
 import styles from './TilesView.module.scss';
@@ -43,9 +43,9 @@ const TilesView = (props) => {
         if (location.pathname.startsWith('/tiles/curate/match')) {
             return <MatchingDetailStep/>;
         } else {
-            return <Curate/>
+            return <Curate/>;
         }
-    }
+    };
 
     const views: Record<TileId, JSX.Element> = {
         load: <Load />,
@@ -62,8 +62,8 @@ const TilesView = (props) => {
     } = useContext(SearchContext);
 
     const onMenuClick = () => {
-        setManageQueryModal(true)
-    }
+        setManageQueryModal(true);
+    };
 
     const onTileClose = () => {
         setSelection(INITIAL_SELECTION);
@@ -71,7 +71,7 @@ const TilesView = (props) => {
         setOptions(null);
         setView(null);
         history.push('/tiles');
-    }
+    };
 
     // For role-based privileges
     const auth = useContext(AuthoritiesContext);
@@ -98,8 +98,8 @@ const TilesView = (props) => {
             setCurrentNode(INITIAL_SELECTION); // TODO Handle multiple with nested objects
             setOptions(null);
             setView(null);
-        })
-    }, [])
+        });
+    }, []);
 
     const getNewStepToFlowOptions = () => {
         return !props.addingStepToFlow ? { addingStepToFlow: false } : {
@@ -108,8 +108,8 @@ const TilesView = (props) => {
             stepDefinitionType: location.state?.stepDefinitionType,
             existingFlow: location.state?.existingFlow || false,
             flowsDefaultKey: location.state?.flowsDefaultKey || ['-1']
-        }
-    }
+        };
+    };
 
     return (
         <>
@@ -144,6 +144,6 @@ const TilesView = (props) => {
 
         </>
     );
-}
+};
 
 export default TilesView;

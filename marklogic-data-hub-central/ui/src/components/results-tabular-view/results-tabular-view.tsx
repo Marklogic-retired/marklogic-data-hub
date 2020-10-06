@@ -93,12 +93,12 @@ const ResultsTabularView = (props) => {
                         dataObj[subItem.propertyPath] = dataObjArr;
                     }
                 } else {
-                    return generateTableDataWithSelectedColumns(subItem)
+                    return generateTableDataWithSelectedColumns(subItem);
                 }
             }
             return dataObj;
         }
-    }
+    };
 
     let dataWithSelectedTableColumns = generateTableDataWithSelectedColumns(props.selectedPropertyDefinitions);
 
@@ -117,7 +117,7 @@ const ResultsTabularView = (props) => {
                                 whiteSpace: 'nowrap',
                                 maxWidth: 150,
                             }
-                        }
+                        };
                     },
                     ...setSortOptions(item),
                     render: (value) => {
@@ -134,13 +134,13 @@ const ResultsTabularView = (props) => {
                                                 title={title}>
                                                 <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{title}</div>
                                             </MLTooltip>
-                                        )
+                                        );
                                     }
                                 }
-                            })
+                            });
                             return {
                                 children: values
-                            }
+                            };
                         } else {
                             if (value) {
                                 return {
@@ -150,11 +150,11 @@ const ResultsTabularView = (props) => {
                                             <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{value}</div>
                                         </MLTooltip>
                                     )
-                                }
+                                };
                             }
                         }
                     },
-                }
+                };
             } else {
                 return {
                     dataIndex: item.propertyPath,
@@ -163,29 +163,29 @@ const ResultsTabularView = (props) => {
                     type: item.datatype,
                     ...setSortOptions(item),
                     columns: tableHeaderRender(item.properties)
-                }
+                };
             }
-        })
+        });
         return columns;
-    }
+    };
 
     const handleChange = (sorter) => {
         if(searchOptions.sortOrder.length && searchOptions.sortOrder[0].sortDirection == 'descending')
-            setSortOrder(searchOptions.sortOrder[0].propertyName,null)
-    }
+            setSortOrder(searchOptions.sortOrder[0].propertyName,null);
+    };
 
     const setSortOptions = (item) => (
         item.sortable ?
         {
         sorter: (a: any, b: any, sortOrder) => {
             if(!sortingOrder) {
-                setSortOrder(item.propertyLabel,sortOrder)
+                setSortOrder(item.propertyLabel,sortOrder);
                 sortingOrder = true;
             }
         },
          sortOrder : (searchOptions.sortOrder.length && (searchOptions.sortOrder[0].propertyName === item.propertyLabel)
              && searchOptions.sortOrder[0].hasOwnProperty('sortDirection') ) ? (searchOptions.sortOrder[0].sortDirection === 'ascending') ?'ascend':'descend' : null,
-    } : "")
+    } : "");
 
     const updatedTableHeader = () => {
         let header = tableHeaderRender(selectedTableColumns);
@@ -193,10 +193,10 @@ const ResultsTabularView = (props) => {
             title: 'Detail View',
             dataIndex: 'detailView',
             key: '0-d'
-        }
+        };
         header.length > 0 && header.push(detailView);
         return header;
-    }
+    };
 
     const tableHeaders = props.selectedEntities?.length === 0 ? DEFAULT_ALL_ENTITIES_HEADER : updatedTableHeader();
 
@@ -252,7 +252,7 @@ const ResultsTabularView = (props) => {
                     data-cy='source'>
                     <Tooltip title={'Show the complete ' + item.format.toUpperCase()} placement="topRight"><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
                 </Link>
-            </div>
+            </div>;
         if (props.selectedEntities?.length === 0) {
             let itemIdentifier = item.identifier?.propertyValue;
             let itemEntityName = item.entityName;
@@ -270,7 +270,7 @@ const ResultsTabularView = (props) => {
                 entityInstance: item.entityInstance,
                 detailView: detailView,
                 database: searchOptions.database
-            }
+            };
         } else {
             options = {
                 primaryKey: primaryKeyValue,
@@ -280,19 +280,19 @@ const ResultsTabularView = (props) => {
                 entityInstance: item.entityInstance,
                 detailView: detailView,
                 database: searchOptions.database
-            }
+            };
         }
         dataObj = { ...dataObj, ...options };
         if (item?.hasOwnProperty('entityProperties')) {
             if (JSON.stringify(item.entityProperties) !== JSON.stringify([])) {
-                generateTableData(item.entityProperties, dataObj)
+                generateTableData(item.entityProperties, dataObj);
             } else {
                 dataObj = { ...dataObj, ...dataWithSelectedTableColumns };
             }
         }
 
         return dataObj;
-    }
+    };
 
     const generateTableData = (item, dataObj = {}) => {
         if (item) {
@@ -306,16 +306,16 @@ const ResultsTabularView = (props) => {
                             if (el) {
                                 dataObjArr.push(generateTableData(el, {key: index}));
                             }
-                        })
+                        });
                         dataObj[subItem.propertyPath] = dataObjArr;
                     }
                 } else {
-                    return generateTableData(subItem)
+                    return generateTableData(subItem);
                 }
             }
             return dataObj;
         }
-    }
+    };
 
     const dataSource = props.data.map((item) => {
         return tableDataRender(item);
@@ -323,17 +323,17 @@ const ResultsTabularView = (props) => {
 
     useEffect(() => {
         if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
-            setSelectedTableProperties(props.columns)
+            setSelectedTableProperties(props.columns);
         }
-    }, [props.columns])
+    }, [props.columns]);
 
     useEffect(() => {
         props.selectedEntities && props.selectedEntities.length && props.entityDefArray && props.entityDefArray.forEach((entity => {
             if (entity.name === props.selectedEntities[0]) {
                 entity.primaryKey && setPrimaryKey(entity.primaryKey);
             }
-        }))
-    }, [props.selectedEntities, searchOptions.selectedTableProperties])
+        }));
+    }, [props.selectedEntities, searchOptions.selectedTableProperties]);
 
     const expandedRowRender = (rowId) => {
         const nestedColumns = [
@@ -382,7 +382,7 @@ const ResultsTabularView = (props) => {
                 }
             }
             return parsedData;
-        }
+        };
 
         let index: string = '';
         for (let i in props.data) {
@@ -399,8 +399,8 @@ const ResultsTabularView = (props) => {
             dataSource={nestedData}
             pagination={false}
             className={styles.nestedTable}
-        />
-    }
+        />;
+    };
 
     return (
         <>
@@ -426,7 +426,7 @@ const ResultsTabularView = (props) => {
                 />
             </div>
         </>
-    )
-}
+    );
+};
 
-export default ResultsTabularView
+export default ResultsTabularView;

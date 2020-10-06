@@ -55,4 +55,4 @@ class PropertyModal {
 }
 
 const propertyModal = new PropertyModal();
-export default propertyModal
+export default propertyModal;

@@ -1,13 +1,12 @@
 import React from 'react';
-import { render, fireEvent, waitForElement, act, cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom/extend-expect'
+import { render, fireEvent, waitForElement, act, cleanup } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
 import Load from "./Load";
-import LoadList from "../components/load/load-list";
 import {MemoryRouter} from "react-router-dom";
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 jest.mock('axios');
 jest.setTimeout(30000);
@@ -23,7 +22,7 @@ describe('Load component', () => {
     afterEach(() => {
         jest.clearAllMocks();
         cleanup();
-    })
+    });
 
     test('Verify cannot edit with only readIngestion authority', async () => {
         const authorityService = new AuthoritiesService();

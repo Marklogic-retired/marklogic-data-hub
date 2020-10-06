@@ -3,7 +3,7 @@ import 'cypress-wait-until';
 class BrowsePage {
 
   getSelectedEntity() {
-    return cy.get('#entity-select').invoke('text')
+    return cy.get('#entity-select').invoke('text');
   }
 
   getSpinner() {
@@ -38,7 +38,7 @@ class BrowsePage {
   }
 
   getSelectedPaginationNumber(){
-      return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text')
+      return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text');
   }
 
   getInstanceViewIcon() {
@@ -192,7 +192,7 @@ class BrowsePage {
   }
 
   getFacetApplyButton() {
-    return cy.get('svg[data-icon="check-square"]')
+    return cy.get('svg[data-icon="check-square"]');
   }
 
   getClearAllButton() {
@@ -233,7 +233,7 @@ class BrowsePage {
   }
 
   changeNumericSlider(val: string){
-   cy.get('#min-numeric-value .ant-input-number input').clear().type(val)
+   cy.get('#min-numeric-value .ant-input-number input').clear().type(val);
   }
 
   getSearchText(){
@@ -329,11 +329,11 @@ class BrowsePage {
   }
 
   getTableCell(rowIndex: number, columnIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text')
+    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text');
   }
 
   getTableUriCell(rowIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text')
+    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text');
   }
 
   getTableTitle(index: number) {
@@ -391,7 +391,7 @@ class BrowsePage {
   //Save queries
 
   getSaveModalIcon() {
-    return cy.get('svg[data-icon="save"]')
+    return cy.get('svg[data-icon="save"]');
   }
 
   getSaveQueryName() {
@@ -415,11 +415,11 @@ class BrowsePage {
   }
 
   getEditQueryModalIcon() {
-    return cy.get('svg[data-icon="pencil-alt"]')
+    return cy.get('svg[data-icon="pencil-alt"]');
   }
 
   getSaveACopyModalIcon() {
-    return cy.get('svg[data-icon="copy"]')
+    return cy.get('svg[data-icon="copy"]');
   }
 
   getEditQueryDetailFormName() {
@@ -455,7 +455,7 @@ class BrowsePage {
   }
 
   getDiscardChangesIcon() {
-    return cy.get('svg[data-icon="undo"]')
+    return cy.get('svg[data-icon="undo"]');
   }
 
   getDiscardYesButton() {
@@ -475,7 +475,7 @@ class BrowsePage {
   }
 
   getResetQueryButton() {
-    return cy.get('#reset-changes')
+    return cy.get('#reset-changes');
   }
 
   //temp query icon
@@ -597,7 +597,7 @@ class BrowsePage {
 
   //All Data
   getAllDataSnippetByUri(uri: string) {
-    return cy.findByTestId(`${uri}-snippet`)
+    return cy.findByTestId(`${uri}-snippet`);
   }
   
 }

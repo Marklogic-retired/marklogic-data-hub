@@ -16,7 +16,7 @@ describe("Date facet", () => {
 
         const dateFacet = getByTestId("facet-date-picker");
         expect(dateFacet).toBeInTheDocument();
-        expect(dateFacet).toHaveTextContent('date-facet')
+        expect(dateFacet).toHaveTextContent('date-facet');
     });
 
     test("Nested Date facet component renders without crashing", async () => {
@@ -31,7 +31,7 @@ describe("Date facet", () => {
 
       const dateFacet = getByTestId("facet-date-picker");
       expect(dateFacet).toBeInTheDocument();
-      expect(dateFacet).toHaveTextContent('OrderDetail.DateTime')
+      expect(dateFacet).toHaveTextContent('OrderDetail.DateTime');
   });
 
 });

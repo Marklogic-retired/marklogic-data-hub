@@ -7,8 +7,8 @@ import { OverflowDetector } from 'react-overflow';
 
 
 export const FacetName = (props) => {
-  const [isOverflowed, setisOverflowed] = useState(false)
-  const handleOverflowChange = (isOverflowed) => setisOverflowed(isOverflowed)
+  const [isOverflowed, setisOverflowed] = useState(false);
+  const handleOverflowChange = (isOverflowed) => setisOverflowed(isOverflowed);
 
   return (
     <div className={styles.checkContainer} key={props.index} data-testid={props.facet.value} data-cy={stringConverter(props.name) + "-facet-item"}>
@@ -28,5 +28,5 @@ export const FacetName = (props) => {
       <div className={styles.count}
         data-cy={`${stringConverter(props.name)}-${props.facet.value}-count`}>{numberConverter(props.facet.count)}</div>
     </div>
-  )
-}
+  );
+};

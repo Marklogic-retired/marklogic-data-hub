@@ -17,7 +17,7 @@ export const xmlParser = (xmlData) => {
   };
 
   return parser.parse(xmlData, options);
-}
+};
 
 export const xmlParserForMapping = (xmlData) => {
   var parser = require('fast-xml-parser');
@@ -38,10 +38,10 @@ export const xmlParserForMapping = (xmlData) => {
   };
 
   return parser.parse(xmlData, options);
-}
+};
 
 export const xmlDecoder = (xml) => {
   var he = require('he');
   return he.decode(xml);
-}
+};
 
