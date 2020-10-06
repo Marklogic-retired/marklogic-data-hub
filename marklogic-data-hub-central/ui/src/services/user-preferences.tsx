@@ -22,13 +22,13 @@ export const defaultUserPreferences = {
   // pageRoute: '/view',
   resultTableColumns: [],
   selectedQuery: 'select a query'
-}
+};
 
 export const createUserPreferences = (username: string) => {
   const newUserPreference: UserPreferences = defaultUserPreferences;
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(newUserPreference));
   return;
-}
+};
 
 export const getUserPreferences = (username: string): string => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
@@ -44,7 +44,7 @@ export const getUserPreferences = (username: string): string => {
     return JSON.stringify(defaultUserPreferences);
   }
   return currentPreferences ? currentPreferences : '';
-}
+};
 
 export const updateUserPreferences = (username: string, newPreferences: any) => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
@@ -52,11 +52,11 @@ export const updateUserPreferences = (username: string, newPreferences: any) => 
 
   if (parsedPreferences && parsedPreferences.hasOwnProperty('entityTypeIds')) {
     // old preferences, use defaultUser preferences
-    parsedPreferences = { ...defaultUserPreferences }
+    parsedPreferences = { ...defaultUserPreferences };
   }
-  let updatedPreferences = { ...parsedPreferences, ...newPreferences }
+  let updatedPreferences = { ...parsedPreferences, ...newPreferences };
   localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(updatedPreferences));
-}
+};
 
 export const updateTablePreferences = (username: string, entity: string, tableColumns: any ) => {
   let currentPreferences = localStorage.getItem(`dataHubExplorerUserPreferences-${username}`) || 'null';
@@ -66,7 +66,7 @@ export const updateTablePreferences = (username: string, entity: string, tableCo
     let tableObject = {
       name: entity,
       columns: tableColumns
-    }
+    };
     if (index >= 0) {
       parsedPreferences.resultTableColumns[index] = tableObject; 
     } else {
@@ -74,4 +74,4 @@ export const updateTablePreferences = (username: string, entity: string, tableCo
     }
     localStorage.setItem(`dataHubExplorerUserPreferences-${username}`, JSON.stringify(parsedPreferences));
   }
-}
+};

@@ -3,9 +3,9 @@ import { Modal } from 'antd';
 import styles from './Curate.module.scss';
 import { AuthoritiesContext } from '../util/authorities';
 import { UserContext } from '../util/user-context';
-import axios from 'axios'
+import axios from 'axios';
 import EntityTiles from '../components/entities/entity-tiles';
-import tiles from '../config/tiles.config'
+import tiles from '../config/tiles.config';
 
 const Curate: React.FC = () => {
 
@@ -15,7 +15,7 @@ const Curate: React.FC = () => {
     },[]);
 
     const { handleError } = useContext(UserContext);
-    const [isLoading, setIsLoading] = useState(false);
+    // const [isLoading, setIsLoading] = useState(false);
     const [flows, setFlows] = useState<any[]>([]);
     const [entityModels, setEntityModels] = useState<any>({});
 
@@ -44,7 +44,7 @@ const Curate: React.FC = () => {
             handleError(error);
         }
 
-    }
+    };
 
   //GET all the flow artifacts
   const getFlows = async () => {
@@ -57,23 +57,23 @@ const Curate: React.FC = () => {
             let message = error.response.data.message;
             console.error('Error getting flows', message);
         }
-    }
+    };
 
   // POST mapping step to new flow
   const addStepToNew = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
 
       //if (response.status === 200) {
-        setIsLoading(false);
+      //   setIsLoading(false);
       //}
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding mapping step to new flow.', message);
-        setIsLoading(false);
+        // setIsLoading(false);
         handleError(error);
     }
-  }
+  };
 
   // POST mapping step to existing flow
   const addStepToFlow = async (mappingArtifactName, flowName) => {
@@ -82,23 +82,23 @@ const Curate: React.FC = () => {
       "stepDefinitionType": "mapping"
     };
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       let url = '/api/flows/' + flowName + '/steps';
       let body = stepToAdd;
       let response = await axios.post(url, body);
       if (response.status === 200) {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding mapping step to flow.', message);
-        setIsLoading(false);
+        // setIsLoading(false);
         Modal.error({
           content: 'Error adding step "' + mappingArtifactName + '" to flow "' + flowName + '."',
         });
         handleError(error);
     }
-  }
+  };
 
 
     return (
@@ -123,6 +123,6 @@ const Curate: React.FC = () => {
         </div>
     );
 
-}
+};
 
 export default Curate;

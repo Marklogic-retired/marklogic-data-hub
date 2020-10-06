@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect'
+import '@testing-library/jest-dom/extend-expect';
 import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
 import { SearchContext } from "../util/search-context";
@@ -26,7 +26,7 @@ describe('Explorer Browse page tests ', () => {
         selectedTableProperties: [],
         view: null,
         sortOrder: []
-    }
+    };
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -39,12 +39,12 @@ describe('Explorer Browse page tests ', () => {
                 setEntity: jest.fn(),
                 applySaveQuery: jest.fn()}}>
                 <Browse/>
-            </SearchContext.Provider></MemoryRouter>)
+            </SearchContext.Provider></MemoryRouter>);
 
-        expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument()
-        await fireEvent.click(getByLabelText('expanded'))
-        expect(document.querySelector('[data-icon="angle-double-right"]')).toBeInTheDocument()
-        await fireEvent.click(getByLabelText('collapsed'))
-        expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument()
-    })
-})
+        expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument();
+        await fireEvent.click(getByLabelText('expanded'));
+        expect(document.querySelector('[data-icon="angle-double-right"]')).toBeInTheDocument();
+        await fireEvent.click(getByLabelText('collapsed'));
+        expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument();
+    });
+});

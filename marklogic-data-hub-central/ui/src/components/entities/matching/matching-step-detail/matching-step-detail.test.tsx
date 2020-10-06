@@ -14,13 +14,13 @@ describe('Matching Step Detail view component', () => {
       <CurationContext.Provider value={customerMatchingStepEmpty}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
-    )
+    );
 
     expect(queryByLabelText('threshold-more')).toBeNull();
     expect(queryByLabelText('ruleset-more')).toBeNull();
     expect(getByTestId('threshold-slider-rail')).toBeInTheDocument();
     expect(getByTestId('threshold-slider-options')).toBeInTheDocument();
-    expect(getByTestId('ruleSet-slider-rail')).toBeInTheDocument()
+    expect(getByTestId('ruleSet-slider-rail')).toBeInTheDocument();
     expect(getByTestId('ruleSet-slider-options')).toBeInTheDocument();
 
     userEvent.click(getByLabelText('threshold-less'));
@@ -36,7 +36,7 @@ describe('Matching Step Detail view component', () => {
       <CurationContext.Provider value={customerMatchingStep}>
         <MatchingStepDetail/>
       </CurationContext.Provider>
-    )
+    );
 
     expect(queryByLabelText('threshold-more')).toBeInTheDocument();
     expect(queryByLabelText('ruleset-more')).toBeInTheDocument();

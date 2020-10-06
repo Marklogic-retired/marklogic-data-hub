@@ -1,6 +1,6 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react';
 
-const isBrowser = typeof window !== `undefined`
+const isBrowser = typeof window !== `undefined`;
 
 export const useScrollPosition = (effect, dependencies, wait) => {
   const position = useRef(getScrollPosition());
@@ -9,14 +9,14 @@ export const useScrollPosition = (effect, dependencies, wait) => {
 
   const callBack = () => {
     const currPos = getScrollPosition();
-    effect({ prevPos: position.current, currPos })
-    position.current = currPos
-    debounceTime = null
-  }
+    effect({ prevPos: position.current, currPos });
+    position.current = currPos;
+    debounceTime = null;
+  };
 
   useEffect(() => {
     if (!isBrowser) {
-      return
+      return;
     }
 
     const handleScroll = () => {
@@ -25,32 +25,32 @@ export const useScrollPosition = (effect, dependencies, wait) => {
           //TODO add support for debounce
         }
       } else {
-        callBack()
+        callBack();
       }
-    }
+    };
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll);
 
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, dependencies)
-}
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, dependencies);
+};
 
 const getScrollPosition = () => {
-  if (!isBrowser) return { x: 0, y: 0 }
+  if (!isBrowser) return { x: 0, y: 0 };
   
   let scrollEnd = false;
   if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 15) {
-    scrollEnd = true
+    scrollEnd = true;
   }
 
   return { 
     x: window.scrollX,
     y: window.scrollY,
     endOfScroll: scrollEnd 
-  }
-}
+  };
+};
 
 useScrollPosition.defaultProps = {
   dependencies: [],
   wait: null,
-}
+};

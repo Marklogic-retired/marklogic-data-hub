@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Button, Tooltip, Icon, Select } from "antd";
+import { Modal, Form, Input, Icon, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import styles from './new-load-dialog.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
@@ -61,7 +61,7 @@ const NewLoadDialog = (props) => {
       setTgtFormat('json');
       setOutputUriPrefix('');
       setTobeDisabled(false);
-    })
+    });
 
   }, [props.stepData, props.title, props.newLoad]);
 
@@ -71,7 +71,7 @@ const NewLoadDialog = (props) => {
     } else {
       props.setNewLoad(false);
     }
-  }
+  };
 
   const checkDeleteOpenEligibility = () => {
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step'){
@@ -88,7 +88,7 @@ const NewLoadDialog = (props) => {
         }
       }
       else {
-          return true
+          return true;
       }
     }
     else {
@@ -104,20 +104,20 @@ const NewLoadDialog = (props) => {
         return true;
       }
     }
-  }
+  };
 
   const onOk = () => {
     props.setNewLoad(false);
-  }
+  };
 
   const onDelOk = () => {
     props.setNewLoad(false);
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const onDelCancel = () => {
-    setDeleteDialogVisible(false)
-  }
+    setDeleteDialogVisible(false);
+  };
 
   const deleteConfirmation = <Modal
         visible={deleteDialogVisible}
@@ -149,7 +149,7 @@ const NewLoadDialog = (props) => {
         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
         targetFormat: tgtFormat,
         outputURIPrefix: outputUriPrefix,
-      }
+      };
     } else {
        dataPayload = {
         name: stepName,
@@ -157,7 +157,7 @@ const NewLoadDialog = (props) => {
         sourceFormat: srcFormat,
         targetFormat: tgtFormat,
         outputURIPrefix: outputUriPrefix
-      }
+      };
       if(props.stepData.separator){
         dataPayload.separator = null;
       }
@@ -167,7 +167,7 @@ const NewLoadDialog = (props) => {
     //Call create data load artifact API function
     props.createLoadArtifact(dataPayload);
     props.setNewLoad(false);
-  }
+  };
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -187,16 +187,16 @@ const NewLoadDialog = (props) => {
     }
 
     if (event.target.id === 'description') {
-      setDescription(event.target.value)
+      setDescription(event.target.value);
     }
 
-  }
+  };
 
   const handleOutputUriPrefix = (event) => {
     if (event.target.id === 'outputUriPrefix') {
       setOutputUriPrefix(event.target.value);
     }
-  }
+  };
 
   const handleSrcFormat = (value) => {
     if (value !== ' ') {
@@ -205,7 +205,7 @@ const NewLoadDialog = (props) => {
         setFieldSeparator(',');
       }
     }
-  }
+  };
 
   const handleFieldSeparator = (value) => {
     if (value !== ' ') {
@@ -214,19 +214,19 @@ const NewLoadDialog = (props) => {
         setOtherSeparator('');
       }
     }
-  }
+  };
 
   const handleOtherSeparator = (event) => {
     if (event.target.id === 'otherSeparator') {
       setOtherSeparator(event.target.value);
     }
-  }
+  };
 
   const handleTgtFormat = (value) => {
     if (value !== ' ') {
       setTgtFormat(value);
     }
-  }
+  };
 
   const formItemLayout = {
     labelCol: {
@@ -380,8 +380,8 @@ const NewLoadDialog = (props) => {
       </Form>
     </div>
     {deleteConfirmation}
-  </Modal>)
-}
+  </Modal>);
+};
 
 export default NewLoadDialog;
 

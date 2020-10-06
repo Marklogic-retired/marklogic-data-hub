@@ -1,10 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Form, Icon, Input, Button, Checkbox, Alert } from 'antd';
+import React, { useContext, useState } from 'react';
+import { Form, Icon, Input, Alert } from 'antd';
 import axios from 'axios';
 import styles from './login-form.module.scss';
 import { UserContext } from '../../util/user-context';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 import { MLButton } from '@marklogic/design-system';
 
@@ -13,7 +11,7 @@ const LoginForm: React.FC = () => {
   const { loginAuthenticated } = useContext(UserContext);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
   const [message, setMessage] = useState({show: false, text: ''});
@@ -36,7 +34,7 @@ const LoginForm: React.FC = () => {
     } catch (error) {
       let message = 'Internal Server Error'; // Default on error
       if (error.response.status === 401) {
-        message = 'The username and password combination is not recognized by MarkLogic.'
+        message = 'The username and password combination is not recognized by MarkLogic.';
       }
       else if (error.response.status === 403) {
         message = 'User does not have the required permissions to run Data Hub.';
@@ -44,7 +42,7 @@ const LoginForm: React.FC = () => {
       setIsLoading(false);
       setMessage({show: true, text: message});
     }
-  }
+  };
 
   const handleChange = (event: { target: { id: string; value: React.SetStateAction<string>; }; }) => {
     //if empty, set validator. otherwise, set username
@@ -68,7 +66,7 @@ const LoginForm: React.FC = () => {
         setPassword(event.target.value);
       }
     }
-  }
+  };
 
   return (
     <>
@@ -133,6 +131,6 @@ const LoginForm: React.FC = () => {
     </div>
     </>
   );
-}
+};
 
 export default LoginForm;

@@ -3,7 +3,7 @@ import { Modal, Form, Input, Radio, Table, Collapse, Alert } from 'antd';
 import styles from './query-export-modal.module.scss';
 import { SearchContext } from '../../../util/search-context';
 import { UserContext } from '../../../util/user-context';
-import { exportQuery, exportSavedQuery } from '../../../api/queries'
+import { exportQuery, exportSavedQuery } from '../../../api/queries';
 import { Icon } from '@iconify/react';
 import exclamationTriangle from '@iconify/icons-fa/exclamation-triangle';
 
@@ -21,13 +21,13 @@ const QueryExportModal = (props) => {
     } = useContext(UserContext);
 
     const onClose = () => {
-        setValue(1)
+        setValue(1);
         props.setExportModalVisibility(false);
     };
 
     const onOk = async () => {
         if (props.recordID) {
-            exportSavedQuery(props.recordID, limit, searchOptions.database)
+            exportSavedQuery(props.recordID, limit, searchOptions.database);
         } else {
             let query = {
                 savedQuery: {
@@ -41,7 +41,7 @@ const QueryExportModal = (props) => {
                     },
                     propertiesToDisplay: props.columns,
                 }
-            }
+            };
 
             try {
                 await exportQuery(query, limit, searchOptions.database);
@@ -51,9 +51,9 @@ const QueryExportModal = (props) => {
         }
 
         props.setExportModalVisibility(false);
-        setValue(1)
-        setLimit(Number.MAX_SAFE_INTEGER)
-    }
+        setValue(1);
+        setLimit(Number.MAX_SAFE_INTEGER);
+    };
 
     const onChange = e => {
         setValue(e.target.value);
@@ -132,7 +132,7 @@ const QueryExportModal = (props) => {
                 </Collapse>
             </div>}
         </Modal>
-    )
-}
+    );
+};
 
 export default QueryExportModal;

@@ -52,4 +52,4 @@ class CreateEditMappingDialog {
 }
 
 const createEditMappingDialog = new CreateEditMappingDialog();
-export default createEditMappingDialog
+export default createEditMappingDialog;

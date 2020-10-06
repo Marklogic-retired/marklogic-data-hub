@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import DropDownWithSearch from './dropdownWithSearch';
 import data from "../../../assets/mock-data/curation/common.data";
 

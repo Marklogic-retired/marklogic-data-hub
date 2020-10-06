@@ -68,7 +68,7 @@ class RunPage {
     }
 
     explorerLink() {
-      return cy.findByTestId('explorer-link')
+      return cy.findByTestId('explorer-link');
     }
 }
 
