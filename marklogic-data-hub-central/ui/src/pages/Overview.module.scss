@@ -36,7 +36,7 @@
             grid-gap: 40px;
             margin-bottom: 5px;
             .subtitle {
-                padding: 10px;
+                padding: 10px 10px 10px 44px;
                 font-size: 16pt;
             }
             .body {
@@ -103,7 +103,7 @@
                 .head {
                     min-height: 20vh;
                     border-bottom: 1px solid #f4f4f4;
-                    background-image: url("../assets/load-temp.png");
+                    background-image: url("../assets/load-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
                     background-color: #F2F0FA;
@@ -114,13 +114,6 @@
                         color: #520339;
                         padding-right: 12px;
                         padding-left: 4px;
-                    }
-                    .icon:before {
-                        color: #3D409C;
-                        content: "\e94e";
-                        font-family: MLCustomFont;
-                        font-size: 22px;
-                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
@@ -133,7 +126,7 @@
                 .head {
                     min-height: 20vh;
                     border-bottom: 1px solid #f4f4f4;
-                    background-image: url("../assets/model-temp.png");
+                    background-image: url("../assets/model-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
                     background-color: #EDF3FB;
@@ -144,13 +137,6 @@
                         color: #003A8C;
                         padding-right: 11px;
                         padding-left: 2px;
-                    }
-                    .icon:before {
-                        color: #304F7F;
-                        content: "\e948";
-                        font-family: MLCustomFont;
-                        font-size: 22px;
-                        padding: 10px 10px 10px 0px;
                     }
                 }
             }
@@ -163,7 +149,7 @@
                 .head {
                     min-height: 20vh;
                     border-bottom: 1px solid #f4f4f4;
-                    background-image: url("../assets/curate-temp.png");
+                    background-image: url("../assets/curate-overview.svg");
                     background-repeat:no-repeat;
                     background-position:center;
                     background-color: #E3F4F9;
@@ -173,22 +159,16 @@
                     i {
                         color: #BC811D;
                     }
-                    .icon:before {
-                        color: #184B5A;
-                        content: "\e955";
-                        font-family: MLCustomFont;
-                        font-size: 22px;
-                        padding: 10px 10px 10px 0px;
-                    }
                 }
             }
 
             .cardExplore {
                 grid-row: span 2;
                 background-color: #ECFAF7;
-                background-image: url("../assets/explore-temp.png");
+                background-image: url("../assets/explore-overview.svg");
                 background-repeat:no-repeat;
                 background-position: 50% 25%;
+                background-size: 45%;
                 position: relative;
                 border: 1px solid #DEE0E0;
                 box-shadow: 0 4px 4px #ccc;
@@ -201,14 +181,6 @@
                     border-radius: 4px 4px 0 0;
                     position: absolute;
                     bottom: 0px;
-                    .icon:before {
-                        color: #376F63;
-                        content: "\68";
-                        font-family: MLCustomFont;
-                        font-size: 24px;
-                        float: left;
-                        padding: 10px;
-                    }
                 }
             }
 
@@ -216,7 +188,7 @@
                 position: relative;
                 grid-column: span 3;
                 background-color: #FAF2FC;
-                background-image: url("../assets/run-temp.png");
+                background-image: url("../assets/run-overview.svg");
                 background-repeat:no-repeat;
                 background-position: 70% 45%;
                 border: 1px solid #DEE0E0;
@@ -235,13 +207,6 @@
                         padding-right: 11px;
                         padding-left: 2px;
                     }
-                    .icon:before {
-                        color: #82388A;
-                        content: "\e926";
-                        font-family: MLCustomFont;
-                        font-size: 22px;
-                        padding: 10px 10px 10px 0px;
-                    }
                 }
             }
 
@@ -250,32 +215,32 @@
 }
 
 .active {
-	background-color: #FFF;
+    background-color: #FFF;
     border: 2px solid #7F86B5;
 }
 .inactive {
-	background-color: #FAFBFC;
+    background-color: #FAFBFC;
 }
 
 a {
-	text-decoration: none;
-	color: #5B69AF;
+    text-decoration: none;
+    color: #5B69AF;
 }
 
 .links {
-	padding: 0px 20px 5px 45px;
+    padding: 0px 20px 5px 45px;
 }
 .docicon:before {
     content: "\f0f6";
     font-family: FontAwesome;
-	font-size: 18px;
-	padding: 0 5px 0 0;
-	color:  #333333;
- }
+    font-size: 18px;
+    padding: 0 5px 0 0;
+    color:  #333333;
+}
 .videoicon:before {
     content: "\f03d";
     font-family: FontAwesome;
-	font-size: 18px;
-	padding: 0 5px 0 0;
-	color:  #333333;
- }
+    font-size: 18px;
+    padding: 0 5px 0 0;
+    color:  #333333;
+}
