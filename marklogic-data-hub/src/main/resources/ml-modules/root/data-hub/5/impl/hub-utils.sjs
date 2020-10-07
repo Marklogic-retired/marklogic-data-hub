@@ -212,15 +212,19 @@ class HubUtils {
      return newInstance;
   }
 
-  parsePermissions(permissionsTest = "") {
-    let permissionParts = permissionsTest.split(",").filter((val) => val);
-    let permissions = [];
-    let permissionRoles = permissionParts.filter((val, index) => !(index % 2));
-    let permissionCapabilities = permissionParts.filter((val, index) => index % 2);
-    for (let i = 0; i < permissionRoles.length; i++) {
-      permissions.push(xdmp.permission(permissionRoles[i], permissionCapabilities[i]));
+  parsePermissions(permissionsString = "") {
+    try {
+      let permissionParts = permissionsString.split(",").filter((val) => val);
+      let permissions = [];
+      let permissionRoles = permissionParts.filter((val, index) => !(index % 2));
+      let permissionCapabilities = permissionParts.filter((val, index) => index % 2);
+      for (let i = 0; i < permissionRoles.length; i++) {
+        permissions.push(xdmp.permission(permissionRoles[i], permissionCapabilities[i]));
+      }
+      return permissions;
+    } catch (e) {
+      throw Error("Unable to parse permissions: " + permissionsString + "; it must fit the pattern of role1,capability1,role2,capability2,etc; cause: " + e.stack);
     }
-    return permissions;
   }
 
   // this function can be used to create xquery/xpath templates that are safe from injection attacks
