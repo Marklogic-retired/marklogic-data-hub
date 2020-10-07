@@ -9,8 +9,7 @@ import NumberIcon from '../../../number-icon/number-icon';
 
 import { CurationContext } from '../../../../util/curation-context';
 import {
-  MatchingStep,
-  MatchRule
+  MatchingStep
 } from '../../../../types/curation-types';
 import { MatchingStepDetailText } from '../../../../config/tooltips.config';
 
@@ -37,7 +36,7 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
 
 const MatchingStepDetail: React.FC = () => {
   const history = useHistory<any>();
-  const { curationOptions } = useContext(CurationContext);
+  const { curationOptions, updateActiveStepDefinition } = useContext(CurationContext);
 
   const [matchingStep, setMatchingStep] = useState<MatchingStep>(DEFAULT_MATCHING_STEP);
 
@@ -66,11 +65,7 @@ const MatchingStepDetail: React.FC = () => {
     } else {
       history.push('/tiles/curate');
     }
-  }, []);
-
-  const addRulesetToStepDefinition = (matchRule: MatchRule) => {
-    
-  }
+  }, [JSON.stringify(curationOptions.activeStep.stepDefinition)]);
 
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
@@ -151,7 +146,6 @@ const MatchingStepDetail: React.FC = () => {
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}
         toggleModal={toggleShowRulesetSingleModal}
-        saveMatchRuleset={addRulesetToStepDefinition}
       />
     </>
   )

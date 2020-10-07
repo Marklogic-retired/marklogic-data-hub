@@ -47,7 +47,7 @@ export interface MatchRuleset {
 export interface MatchRule {
   entityPropertyPath: string,
   matchType: string,
-  options: any
+  options?: any
 }
 
 export interface Threshold {
