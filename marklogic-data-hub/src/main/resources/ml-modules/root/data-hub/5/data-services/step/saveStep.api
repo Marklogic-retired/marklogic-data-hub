@@ -9,6 +9,10 @@
             "name": "stepProperties",
             "datatype": "jsonDocument",
             "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+        },
+        {
+            "name": "overwrite",
+            "datatype": "boolean"
         }
     ],
     "return": {

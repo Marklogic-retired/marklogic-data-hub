@@ -83,17 +83,18 @@ public interface StepService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties) {
+            public com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite) {
                 return saveStep(
-                    this.req_saveStep.on(this.dbClient), stepDefinitionType, stepProperties
+                    this.req_saveStep.on(this.dbClient), stepDefinitionType, stepProperties, overwrite
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode saveStep(BaseProxy.DBFunctionRequest request, String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties) {
+            private com.fasterxml.jackson.databind.JsonNode saveStep(BaseProxy.DBFunctionRequest request, String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("stepDefinitionType", false, BaseProxy.StringType.fromString(stepDefinitionType)),
-                          BaseProxy.documentParam("stepProperties", false, BaseProxy.JsonDocumentType.fromJsonNode(stepProperties))
+                          BaseProxy.documentParam("stepProperties", false, BaseProxy.JsonDocumentType.fromJsonNode(stepProperties)),
+                          BaseProxy.atomicParam("overwrite", false, BaseProxy.BooleanType.fromBoolean(overwrite))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -145,9 +146,10 @@ public interface StepService {
    *
    * @param stepDefinitionType	provides input
    * @param stepProperties	provides input
+   * @param overwrite	provides input
    * @return	Return the created/updated step document
    */
-    com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties);
+    com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite);
 
   /**
    * Invokes the deleteStep operation on the database server

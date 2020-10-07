@@ -23,6 +23,7 @@ const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var stepDefinitionType;
 var stepProperties;
+var overwrite;
 
 stepDefinitionType = stepDefinitionType.toLowerCase();
 
@@ -50,8 +51,15 @@ let existingStep = fn.head(cts.search(cts.andQuery([
 ])));
 
 if (existingStep) {
-  xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, so will update`);
-  let updatedStep = Object.assign(existingStep.toObject(), stepProperties);
+  let updatedStep;
+  if(overwrite){
+    xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, the existing step will be overwritten`);
+    updatedStep = stepProperties;
+  }
+  else{
+    xdmp.trace(consts.TRACE_STEP, `Step with name ${stepName} and type ${stepDefinitionType} already exists, so will update`);
+    updatedStep = Object.assign(existingStep.toObject(), stepProperties);
+  }
   Artifacts.setArtifact(stepDefinitionType, stepName, updatedStep);
 }
 else {

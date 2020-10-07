@@ -158,7 +158,8 @@ public class ScaffoldingImpl implements Scaffolding {
 
         try {
             StepService stepService = StepService.on(stagingClient);
-            step = stepService.saveStep(stepType, stepPayLoad);
+            //We don't update step using this command, hence 'overwrite' is set to false
+            step = stepService.saveStep(stepType, stepPayLoad, false);
         } catch (Exception e) {
             throw new RuntimeException("Unable to write step to database; cause: " + e.getMessage(), e);
         }

@@ -88,7 +88,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         // Create a mapping step to add to the flow
         final String stepDefinitionType = "mapping";
         MappingStepControllerTest.MappingStep mappingInfo = MappingStepControllerTest.newDefaultMappingStep("myMapper");
-        StepService.on(getHubClient().getStagingClient()).saveStep(stepDefinitionType, objectMapper.valueToTree(mappingInfo));
+        StepService.on(getHubClient().getStagingClient()).saveStep(stepDefinitionType, objectMapper.valueToTree(mappingInfo), false);
 
         // Add the mapping step to the flow
         postJson(flowPath + "/steps", new FlowController.AddStepInfo(mappingInfo.name, stepDefinitionType))
