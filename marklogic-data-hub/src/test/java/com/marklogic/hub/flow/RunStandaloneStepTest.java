@@ -41,7 +41,7 @@ public class RunStandaloneStepTest extends AbstractHubCoreTest {
         info.putObject("properties").putObject("customerId").put("sourcedFrom", "customerId");
         info.put("version", 1);
         info.put("sourceQuery", format("cts.collectionQuery('%s')", ReferenceModelProject.INPUT_COLLECTION));
-        StepService.on(getHubClient().getStagingClient()).saveStep("mapping", info);
+        StepService.on(getHubClient().getStagingClient()).saveStep("mapping", info, false);
 
         // Add it to the existing echoFlow, which is assumed to have one step
         FlowService.on(getHubClient().getStagingClient()).addStepToFlow("echoFlow", "myMapper", "mapping");
