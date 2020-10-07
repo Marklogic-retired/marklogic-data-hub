@@ -34,18 +34,12 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       let structuredType = parsedRef[parsedRef.length-1];
       let structuredTypeDefinition: Definition = props.entityDefinitionsArray.find( entityDefinition => entityDefinition.name === structuredType) || DEFAULT_ENTITY_DEFINITION;
 
-      let structuredTitle = property.multiple ? (
+      let structuredTitle = (
         <span>
           {property.name}
           &nbsp; 
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> 
-          <img className={styles.arrayImage} src={arrayIcon}/>
-        </span>
-      ) : (
-        <span>
-          {property.name}
-          &nbsp; 
-          <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> 
+          {property.multiple && <img className={styles.arrayImage} src={arrayIcon}/>}
         </span>
       )
 
