@@ -42,7 +42,7 @@ public class MatchingStepController extends BaseController {
     @Secured("ROLE_writeMatching")
     public ResponseEntity<Void> saveStep(@RequestBody @ApiParam(hidden = true) ObjectNode propertiesToAssign, @PathVariable String stepName) {
         propertiesToAssign.put("name", stepName);
-        newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign);
+        newService().saveStep(STEP_DEFINITION_TYPE, propertiesToAssign, false);
         return emptyOk();
     }
 
