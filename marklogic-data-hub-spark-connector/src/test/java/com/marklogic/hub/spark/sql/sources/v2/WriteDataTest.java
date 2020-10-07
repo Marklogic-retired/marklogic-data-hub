@@ -1,6 +1,7 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.eval.EvalResultIterator;
 import org.apache.spark.sql.catalyst.InternalRow;
@@ -121,6 +122,14 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> buildDataWriter(new DataSourceOptions(params)));
         assertTrue(ex.getMessage().contains("Unable to parse ingestendpointparams"), "Unexpected error message: " + ex.getMessage());
+    }
+
+    @Test
+    void invalidPermissionsString() {
+        DataWriter<InternalRow> writer = buildDataWriter(newFruitOptions().withPermissions("rest-reader,read,rest-writer"));
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> writer.write(buildRow("apple", "red")));
+        assertTrue(ex.getCause() instanceof FailedRequestException, "The Bulk Java client wraps the actual exception in a RuntimeException");
+        assertTrue(ex.getCause().getMessage().contains("Unable to parse permissions: rest-reader,read,rest-writer"), "Unexpected error message: " + ex.getCause().getMessage());
     }
 
     private void verifyFruitCount(int expectedCount, String message) {
