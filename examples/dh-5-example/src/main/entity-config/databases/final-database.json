@@ -1,0 +1,9 @@
+{
+  "lang" : "zxx",
+  "path-namespace" : [ {
+    "prefix" : "es",
+    "namespace-uri" : "http://marklogic.com/entity-services"
+  } ],
+  "range-element-index" : [ ],
+  "database-name" : "%%mlFinalDbName%%"
+}

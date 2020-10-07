@@ -1,3 +1,4 @@
 src/main/ml-config
 src/main/dhs-config
 src/main/ml-schemas
+src/main/entity-config/*.xml

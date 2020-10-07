@@ -18,13 +18,13 @@ public class RunFlowWithCustomHubConfig {
         final String inputFilePath = args[3];
 
         // Instantiate a HubConfig with DHF's default set of properties, and then start customizing it
-        HubConfigImpl hubConfig = HubConfigImpl.withDefaultProperties();
+        HubConfigImpl hubConfig = new HubConfigImpl();
         hubConfig.setHost(host);
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);
         // Can further customize hubConfig as needed
 
-        FlowRunner flowRunner = new FlowRunnerImpl(hubConfig);
+        FlowRunner flowRunner = new FlowRunnerImpl(hubConfig.newHubClient());
 
         RunFlowWithoutProject.runFlow(flowRunner, inputFilePath);
     }

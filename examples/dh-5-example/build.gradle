@@ -43,7 +43,7 @@ if (project.hasProperty("mlHost")) {
             mlHost,
             mlUsername,
             mlPassword,
-            new File("mastering-input").getAbsolutePath()
+            new File(project.getProjectDir(), "mastering-input").getAbsolutePath()
         ]
     }
 }
