@@ -11,12 +11,11 @@ describe('Matching Ruleset Single Modal component', () => {
   it('can select an property to match and match type and click cancel', () => {
     const toggleModalMock = jest.fn();
 
-    const { queryByText, getByText, getByPlaceholderText, rerender } =  render(
+    const { queryByText, getByText, rerender } =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal 
           isVisible={false}
           toggleModal={toggleModalMock}
-          saveMatchRuleset={jest.fn()}
         />
       </CurationContext.Provider>
     );
@@ -28,7 +27,6 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal 
           isVisible={true}
           toggleModal={toggleModalMock}
-          saveMatchRuleset={jest.fn()}
         />
       </CurationContext.Provider>
     );
@@ -42,5 +40,41 @@ describe('Matching Ruleset Single Modal component', () => {
 
     userEvent.click(getByText('Cancel'));
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepDefinition).toHaveBeenCalledTimes(0);
+  });
+
+  it('can select an property to match and Zip match type and click save', () => {
+    const toggleModalMock = jest.fn();
+
+    const { queryByText, getByText, rerender } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal 
+          isVisible={false}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeNull();
+
+    rerender(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal 
+          isVisible={true}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Select property'));
+    userEvent.click(screen.getByText('nicknames'));
+
+    userEvent.click(screen.getByText('Select match type'));
+    userEvent.click(screen.getByText('Zip'));
+
+    userEvent.click(getByText('Save'));
+    expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepDefinition).toHaveBeenCalledTimes(1);
   });
 });
