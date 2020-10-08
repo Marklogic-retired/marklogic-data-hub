@@ -122,6 +122,9 @@ public class EntitySearchManager {
                 }
                 searchResultsTransform.put("propertiesToDisplay", searchQuery.getPropertiesToDisplay());
                 queryDefinition.setResponseTransform(searchResultsTransform);
+            } else {
+                ServerTransform searchResultsTransform = new ServerTransform("hubAllDataSearchTransform");
+                queryDefinition.setResponseTransform(searchResultsTransform);
             }
 
             return queryMgr.search(queryDefinition, resultHandle, searchQuery.getStart());

@@ -212,4 +212,15 @@ public class EntitySearchController extends BaseController {
 
     public static class SavedQueries extends ArrayList<SavedQuery> {
     }
+
+    public static class HubMetadata {
+        public String lastProcessedByFlow;
+        public String lastProcessedByStep;
+        public String lastProcessedDateTime;
+        public ArrayList<DocumentSourceMetadata> sources;
+    }
+
+    public class DocumentSourceMetadata {
+        String name;
+    }
 }
