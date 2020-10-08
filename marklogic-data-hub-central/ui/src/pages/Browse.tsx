@@ -22,7 +22,7 @@ import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-expl
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
 import { QueryOptions } from '../types/query-types';
 import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
-import RawDataCardView from '../components/raw-data/raw-data-card-view/raw-data-card-view';
+import RawDataCardView from '../components/record-view/record-view';
 import { PropertySafetyFilled } from '@ant-design/icons';
 
 
