@@ -482,8 +482,23 @@ function handleDuplicateSources (propToValidate, arrayWithDuplicates) {
   return deDupedArray;
 }
 
+function addDocumentMetadataToSearchResults(searchResponse) {
+  searchResponse.results.forEach(result => {
+    let hubMetadata = {};
+    let documentMetadata = xdmp.documentGetMetadata(result.uri);
+    if(documentMetadata) {
+      hubMetadata["lastProcessedByFlow"] = documentMetadata.datahubCreatedInFlow;
+      hubMetadata["lastProcessedByStep"] = documentMetadata.datahubCreatedByStep;
+      hubMetadata["lastProcessedDateTime"] = documentMetadata.datahubCreatedOn;
+      hubMetadata["sources"] = getEntitySources(result.uri);
+    }
+    result["hubMetadata"] = hubMetadata;
+  });
+}
+
 module.exports = {
+  addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
-  buildPropertyMetadata: buildPropertyMetadata,
-  getEntityInstance: getEntityInstance
+  buildPropertyMetadata,
+  getEntityInstance
 };
