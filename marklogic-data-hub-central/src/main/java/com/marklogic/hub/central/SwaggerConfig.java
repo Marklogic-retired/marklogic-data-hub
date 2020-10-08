@@ -81,6 +81,7 @@ public class SwaggerConfig {
                 EntitySearchController.IndexMinMaxQuery.class,
                 EntitySearchController.SavedQueryRequest.class,
                 EntitySearchController.SavedQueries.class,
+                EntitySearchController.HubMetadata.class,
                 FlowSchema.class,
                 IngestionStepController.IngestionSteps.class,
                 MappingController.MappingArtifact.class,
