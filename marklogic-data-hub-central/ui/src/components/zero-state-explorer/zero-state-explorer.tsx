@@ -5,9 +5,10 @@ import { SearchContext } from '../../util/search-context';
 import graphic from './explore_visual_big.png';
 import { QueryOptions } from '../../types/query-types';
 import { MLButton, MLRadio } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStream, faTable } from '@fortawesome/free-solid-svg-icons'
-import tiles from '../../config/tiles.config'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStream, faTable } from '@fortawesome/free-solid-svg-icons';
+import tiles from '../../config/tiles.config';
+import './zero-state-explorer.scss';
 
 const ZeroStateExplorer = (props) => {
 
@@ -86,7 +87,7 @@ const ZeroStateExplorer = (props) => {
 }
 
   return (
-    <div className={styles.container} >
+    <div id="zero-state-explorer" className={styles.container} >
       <div className={styles.zeroContent}>
         <Row>
           <Col span={18}>
@@ -135,11 +136,11 @@ const ZeroStateExplorer = (props) => {
                         onChange={e => onViewChange(e.target.value)}
                         size="medium"
                       >
-                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} style={{ height: '30px', fontSize: '14px'}}>
-                          <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faTable} /></i>Table
+                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} style={{ height: '32px', fontSize: '14px'}}>
+                          <i style={{ fontSize: '16px', marginLeft: '-6px', marginRight: '5px'}}><FontAwesomeIcon icon={faTable} /></i>Table
                       </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} style={{ height: '30px', fontSize: '14px'}}>
-                          <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faStream} /></i>Snippet
+                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} style={{ height: '32px', fontSize: '14px'}}>
+                          <i style={{ fontSize: '16px', marginLeft: '-6px', marginRight: '5px'}}><FontAwesomeIcon icon={faStream} /></i>Snippet
                       </MLRadio.MLButton>
                       </MLRadio.MLGroup>
                     </div>
