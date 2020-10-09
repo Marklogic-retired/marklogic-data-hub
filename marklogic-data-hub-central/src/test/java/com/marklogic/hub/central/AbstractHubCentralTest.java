@@ -125,7 +125,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      * @return
      */
     @Override
-    protected HubConfigImpl runAsUser(String username, String password) {
+    protected HubClient runAsUser(String username, String password) {
         // Initialize a new HubConfigImpl
         testHubConfig = hubCentral.newHubConfig(username, password);
         testHubConfig.setHubProject(testHubProject);
@@ -134,7 +134,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         hubClientProvider.setHubClientDelegate(testHubConfig.newHubClient());
 
         // And return this for the rest of the core test plumbing to use
-        return testHubConfig;
+        return getHubClient();
     }
 
     /**
@@ -211,12 +211,12 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         EntityManager entityManager = new EntityManagerImpl(originalHubConfig);
         entityManager.saveDbIndexes();
 
-        HubConfig hubConfig = runAsAdmin();
-        Path dir = hubConfig.getEntityDatabaseDir();
+        runAsAdmin();
+        Path dir = getHubProject().getEntityDatabaseDir();
         List<String> filePaths = Arrays.asList(HubConfig.FINAL_ENTITY_DATABASE_FILE, HubConfig.STAGING_ENTITY_DATABASE_FILE);
         for (String filePath: filePaths) {
             File dbFile = Paths.get(dir.toString(), filePath).toFile();
-            DeployHubDatabaseCommand dbCommand = new DeployHubDatabaseCommand(hubConfig, dbFile, dbFile.getName());
+            DeployHubDatabaseCommand dbCommand = new DeployHubDatabaseCommand(getHubConfig(), dbFile, dbFile.getName());
             dbCommand.setMergeEntityConfigFiles(true);
             dbCommand.setPostponeForestCreation(true);
             dbCommand.execute(newCommandContext());

@@ -46,8 +46,8 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
         );
         if(operatorHubClient == null || adminHubClient == null){
-            operatorHubClient = runAsDataHubOperator().newHubClient();
-            adminHubClient = runAsAdmin().newHubClient();
+            operatorHubClient = runAsDataHubOperator();
+            adminHubClient = runAsAdmin();
         }
     }
 
@@ -100,7 +100,8 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
                privilege to first get the amps
             */
             try{
-                deployProject(runAsDataHubDeveloper());
+                runAsDataHubDeveloper();
+                deployProject();
                 Assertions.fail("'data-hub-developer' should not be able to deploy amps");
             }
             catch (Exception e){
@@ -203,11 +204,12 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        deployProject(runAsDataHubSecurityAdmin());
+        runAsDataHubSecurityAdmin();
+        deployProject();
     }
 
-    private void deployProject(HubConfigImpl hubConfig){
-        new DhsDeployer().deployAsSecurityAdmin(hubConfig);
+    private void deployProject() {
+        new DhsDeployer().deployAsSecurityAdmin(getHubConfig());
     }
 
     private EvalResultIterator fetchPiiData(){
