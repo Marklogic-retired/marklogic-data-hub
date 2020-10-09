@@ -46,16 +46,15 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
     }
 
     private void reindexDatabase(){
-        HubConfig hubConfig = runAsAdmin();
-        DatabaseManager dbManager = new DatabaseManager(hubConfig.getManageClient());
-        dbManager.reindexDatabase(hubConfig.getDbName(DatabaseKind.STAGING));
+        DatabaseManager dbManager = new DatabaseManager(runAsAdmin().getManageClient());
+        dbManager.reindexDatabase(getHubClient().getDbName(DatabaseKind.STAGING));
         logger.info("Starting to reindex staging database");
-        waitForReindex(hubConfig, HubConfig.DEFAULT_STAGING_NAME);
+        waitForReindex(getHubClient(), HubConfig.DEFAULT_STAGING_NAME);
     }
 
     private void enableAdvancedStemming(boolean stemming){
-        HubConfig hubConfig = runAsDataHubDeveloper();
-        Database db = new Database(new API(hubConfig.getManageClient()), hubConfig.getDbName(DatabaseKind.STAGING));;
+        runAsDataHubDeveloper();
+        Database db = new Database(new API(getHubClient().getManageClient()), getHubClient().getDbName(DatabaseKind.STAGING));;
         if(stemming){
             db.setStemmedSearches("advanced");
         }

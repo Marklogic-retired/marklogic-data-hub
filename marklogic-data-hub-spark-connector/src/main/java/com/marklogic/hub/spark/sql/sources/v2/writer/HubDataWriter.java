@@ -52,7 +52,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
     /**
      * @param hubClient
      * @param schema
-     * @param options    contains all the options provided by Spark, which will include all connector-specific properties
+     * @param options   contains all the options provided by Spark, which will include all connector-specific properties
      */
     public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> options) {
         this.records = new ArrayList<>();
@@ -92,7 +92,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
 
     @Override
     public void abort() {
-        throw new UnsupportedOperationException("Transaction cannot be aborted");
+        logger.info("Abort");
     }
 
     private void writeRecords() {
