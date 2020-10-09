@@ -29,26 +29,26 @@ import org.apache.spark.sql.sources.v2.writer.streaming.StreamWriter;
 import org.apache.spark.sql.streaming.OutputMode;
 import org.apache.spark.sql.types.StructType;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
-public class HubDataSource extends LoggingObject implements WriteSupport, StreamWriteSupport {
+public class DefaultSource extends LoggingObject implements WriteSupport, StreamWriteSupport {
 
     @Override
     public Optional<DataSourceWriter> createWriter(String writeUUID, StructType schema, SaveMode mode, DataSourceOptions options) {
-        logger.info("Creating HubDataSourceWriter");
-        return Optional.of(new HubDataSourceWriter(options.asMap(), schema, false){
-
+        return Optional.of(new HubDataSourceWriter(options.asMap(), schema, false) {
         });
     }
 
     @Override
     public StreamWriter createStreamWriter(String queryId, StructType schema, OutputMode mode, DataSourceOptions options) {
-        logger.info("Creating HubStreamSourceWriter");
         return new HubDataSourceWriter(options.asMap(), schema, true);
     }
 }
-class HubDataSourceWriter implements StreamWriter {
+
+class HubDataSourceWriter extends LoggingObject implements StreamWriter {
+
     private Map<String, String> map;
     private StructType schema;
     private boolean streaming;
@@ -58,6 +58,7 @@ class HubDataSourceWriter implements StreamWriter {
         this.schema = schema;
         this.streaming = streaming;
     }
+
     @Override
     public DataWriterFactory<InternalRow> createWriterFactory() {
         return new HubDataWriterFactory(map, this.schema);
@@ -70,7 +71,7 @@ class HubDataSourceWriter implements StreamWriter {
 
     @Override
     public void abort(long epochId, WriterCommitMessage[] messages) {
-        throw new UnsupportedOperationException("Transaction cannot be aborted.");
+        logger.info("Abort, epoch: " + epochId + "; messages: " + Arrays.asList(messages));
     }
 
     @Override
@@ -86,6 +87,6 @@ class HubDataSourceWriter implements StreamWriter {
         if (streaming) {
             throw new UnsupportedOperationException("Abort without epoch should not be called with StreamWriter");
         }
-        throw new UnsupportedOperationException("Transaction cannot be aborted.");
+        logger.info("Abort, messages: " + Arrays.asList(messages));
     }
 }
