@@ -49,6 +49,7 @@ public interface ArtifactService {
 
             private BaseProxy.DBFunctionRequest req_getArtifactsWithProjectPaths;
             private BaseProxy.DBFunctionRequest req_setArtifact;
+            private BaseProxy.DBFunctionRequest req_clearUserArtifacts;
             private BaseProxy.DBFunctionRequest req_getList;
 
             private ArtifactServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -59,6 +60,8 @@ public interface ArtifactService {
                     "getArtifactsWithProjectPaths.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_setArtifact = this.baseProxy.request(
                     "setArtifact.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_clearUserArtifacts = this.baseProxy.request(
+                    "clearUserArtifacts.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getList = this.baseProxy.request(
                     "getList.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
@@ -90,6 +93,16 @@ public interface ArtifactService {
                           BaseProxy.documentParam("artifact", false, BaseProxy.JsonDocumentType.fromJsonNode(artifact))
                           ).responseSingle(false, Format.JSON)
                 );
+            }
+
+            @Override
+            public void clearUserArtifacts() {
+                clearUserArtifacts(
+                    this.req_clearUserArtifacts.on(this.dbClient)
+                    );
+            }
+            private void clearUserArtifacts(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
             }
 
             @Override
@@ -128,6 +141,14 @@ public interface ArtifactService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode setArtifact(String artifactType, String artifactName, com.fasterxml.jackson.databind.JsonNode artifact);
+
+  /**
+   * Invokes the clearUserArtifacts operation on the database server
+   *
+   * 
+   * 
+   */
+    void clearUserArtifacts();
 
   /**
    * Invokes the getList operation on the database server
