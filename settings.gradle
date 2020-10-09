@@ -1,4 +1,5 @@
 rootProject.name = 'marklogic-data-hub'
+include ':marklogic-data-hub-api'
 include ':marklogic-data-hub'
 include ':ml-data-hub-plugin'
 include ':web'

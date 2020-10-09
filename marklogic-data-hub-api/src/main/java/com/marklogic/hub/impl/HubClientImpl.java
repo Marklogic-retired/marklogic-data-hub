@@ -18,6 +18,7 @@ package com.marklogic.hub.impl;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubClientConfig;
 import com.marklogic.mgmt.ManageClient;
 
 import java.util.Map;
@@ -32,14 +33,14 @@ public class HubClientImpl implements HubClient {
     private Map<DatabaseKind, String> databaseNames;
     private ManageClient manageClient;
 
-    public HubClientImpl(HubConfigImpl hubConfig, Map<DatabaseKind, String> databaseNames) {
-        username = hubConfig.getMlUsername();
-        stagingClient = hubConfig.newStagingClient(null);
-        finalClient = hubConfig.newFinalClient(null);
-        jobsClient = hubConfig.newJobDbClient();
-        modulesClient = hubConfig.newModulesDbClient();
-        this.databaseNames = databaseNames;
-        this.manageClient = hubConfig.getManageClient();
+    public HubClientImpl(HubClientConfig hubClientConfig) {
+        username = hubClientConfig.getUsername();
+        stagingClient = hubClientConfig.newStagingClient(null);
+        finalClient = hubClientConfig.newFinalClient(null);
+        jobsClient = hubClientConfig.newJobDbClient();
+        modulesClient = hubClientConfig.newModulesDbClient();
+        this.databaseNames = hubClientConfig.getDatabaseNames();
+        this.manageClient = new ManageClient(hubClientConfig.getManageConfig());
     }
 
     @Override
