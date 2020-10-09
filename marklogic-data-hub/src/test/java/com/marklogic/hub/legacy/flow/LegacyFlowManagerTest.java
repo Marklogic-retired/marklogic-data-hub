@@ -217,6 +217,9 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
     public void testGetFlows() {
         clearUserModules();
 
+        // Not sure why, but adding sleep between clearing user modules and installing modules ensures that both flows are written properly to ML
+        sleep(2000);
+
         installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
         installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
 
