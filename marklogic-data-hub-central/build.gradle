@@ -60,10 +60,14 @@ dependencies {
     // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
     // down from 4.4.0 to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
     // then explicitly depending on the desired versions.
-    compile (project(":marklogic-data-hub")) {
+    implementation (project(":marklogic-data-hub")) {
         exclude group: "com.squareup.okhttp3", module: "okhttp"
         exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
     }
+
+    // Depend on the versions that ML Java Client 5.3.0 depends on
+    implementation "com.squareup.okhttp3:okhttp:4.7.2"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
 
     // Excluding okhttp3 dependency as it bumps down the dependency from 4.4.0 to 3.x
     implementation ('com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:2.2.4') {
@@ -73,43 +77,43 @@ dependencies {
     implementation 'com.amazonaws:aws-java-sdk-s3:1.11.847'
     implementation 'com.amazonaws:aws-java-sdk-ssm:1.11.847'
 
-    runtime "com.squareup.okhttp3:okhttp:4.4.0"
-    runtime "com.squareup.okhttp3:logging-interceptor:4.4.0"
 
     // Used to generate Swagger docs at /swagger-ui.html
-    compile "io.springfox:springfox-swagger2:2.9.2"
-    compile 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation "io.springfox:springfox-swagger2:2.9.2"
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 
     // Main dependency for a Spring Boot web application
-    compile "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springBootVersion}"
 
     // Dependency to serialize and deserialize XML. The default version for the current springBootVersion is referenced.
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
+    implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml"
 
     // Used for hosting static resources when running as an executable jar/war
-    runtime "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-thymeleaf:${springBootVersion}"
 
     // Enables Spring Security - https://docs.spring.io/spring-security/site/docs/current/reference/html5/
-    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
-    compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-web:${springSecurityVersion}"
+    implementation "org.springframework.security:spring-security-config:${springSecurityVersion}"
 
     // Enables WebSocket - https://spring.io/guides/gs/messaging-stomp-websocket/
-    compile "org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-websocket:${springBootVersion}"
 
     // Enables Spring Boot actuator - https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready
-    runtime "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}"
 
     testImplementation(testFixtures(project(":marklogic-data-hub")))
 
-    testCompile "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springBootVersion}"
     testImplementation "org.springframework.security:spring-security-test:${springSecurityVersion}"
 
-    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
-    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
 
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
-    testCompile "org.mockito:mockito-core:3.0.0"
-    testCompile "org.mockito:mockito-junit-jupiter:3.0.0"
+    testImplementation "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+    testImplementation "org.mockito:mockito-core:3.0.0"
+    testImplementation "org.mockito:mockito-junit-jupiter:3.0.0"
+
+    //testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
 }
 
 // We need this to access test resources such as "entity-reference-model" project from core data hub project

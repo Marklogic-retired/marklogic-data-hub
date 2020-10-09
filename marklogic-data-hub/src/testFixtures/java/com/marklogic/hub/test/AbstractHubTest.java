@@ -46,15 +46,7 @@ import java.util.regex.Pattern;
 /**
  * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
  */
-public abstract class AbstractHubTest extends TestObject {
-
-    /**
-     * Tests should prefer this over getHubConfig, but of course use getHubConfig if HubClient doesn't provide something
-     * that you need.
-     *
-     * @return
-     */
-    protected abstract HubClient getHubClient();
+public abstract class AbstractHubTest extends AbstractHubClientTest {
 
     /**
      * Use this when you need access to stuff that's not in HubClient. Typically, that means you need a HubProject or
@@ -65,8 +57,6 @@ public abstract class AbstractHubTest extends TestObject {
     protected abstract HubConfigImpl getHubConfig();
 
     protected abstract File getTestProjectDirectory();
-
-    protected abstract HubConfigImpl runAsUser(String username, String password);
 
     protected void resetHubProject() {
         XMLUnit.setIgnoreWhitespace(true);
@@ -96,14 +86,7 @@ public abstract class AbstractHubTest extends TestObject {
     }
 
     protected void resetDatabases() {
-        // Admin is needed to clear out provenance data
-        runAsAdmin();
-
-        HubClient hubClient = getHubClient();
-        // Running these with primitive retry support, as if a connection cannot be made to ML, this is typically the first thing that will fail
-        clearDatabase(hubClient.getStagingClient());
-        clearDatabase(hubClient.getFinalClient());
-        clearDatabase(hubClient.getJobsClient());
+        super.resetDatabases();
 
         try {
             clearDatabase(getHubConfig().newStagingClient(getHubConfig().getDbName(DatabaseKind.STAGING_SCHEMAS)));
@@ -115,63 +98,6 @@ public abstract class AbstractHubTest extends TestObject {
         } catch (Exception ex) {
             logger.warn("Unable to clear final schemas database, but will continue: " + ex.getMessage());
         }
-    }
-
-    private void clearDatabase(DatabaseClient client) {
-        retryIfNecessary(() -> client.newServerEval()
-            .xquery("cts:uris((), (), cts:not-query(cts:collection-query('hub-core-artifact'))) ! xdmp:document-delete(.)")
-            .evalAs(String.class));
-    }
-
-    /**
-     * Adding this to handle some intermittent connection failures that occur when Jenkins runs the tests.
-     * @param r
-     */
-    protected void retryIfNecessary(Runnable r) {
-        int tries = 10;
-        long timeToWait = 1000;
-        for (int i = 1; i <= tries; i++) {
-            try {
-                r.run();
-                break;
-            } catch (MarkLogicIOException ex) {
-                if (ex.getCause() instanceof ConnectException) {
-                    if (i >= tries) {
-                        throw ex;
-                    }
-                    logger.warn("Caught ConnectException: " + ex.getMessage());
-                    sleep(timeToWait);
-                    logger.warn("Retrying, attempt: " + (i + 1) + " out of " + tries);
-                } else {
-                    throw ex;
-                }
-            }
-        }
-    }
-
-    protected HubConfigImpl runAsDataHubDeveloper() {
-        return runAsUser("test-data-hub-developer", "password");
-    }
-
-    protected HubConfigImpl runAsDataHubSecurityAdmin() {
-        return runAsUser("test-data-hub-security-admin", "password");
-    }
-
-    protected HubConfigImpl runAsDataHubOperator() {
-        return runAsUser("test-data-hub-operator", "password");
-    }
-
-    protected HubConfigImpl runAsAdmin() {
-        return runAsUser("test-admin-for-data-hub-tests", "password");
-    }
-
-    protected HubConfigImpl runAsTestUserWithRoles(String... roles) {
-        setTestUserRoles(roles);
-        return runAsTestUser();
-    }
-
-    protected HubConfigImpl runAsTestUser() {
-        return runAsUser("test-data-hub-user", "password");
     }
 
     /**
@@ -190,21 +116,6 @@ public abstract class AbstractHubTest extends TestObject {
         props.setProperty("mlHost", getHubConfig().getHost());
 
         getHubConfig().applyProperties(new SimplePropertySource(props));
-    }
-
-    /**
-     * Each test is free to modify the roles on this user so it can be used for any purpose. Such tests should not
-     * make any assumptions about what roles this user does have entering into the test.
-     *
-     * @param roles
-     */
-    protected void setTestUserRoles(String... roles) {
-        runAsAdmin();
-
-        User user = new User(new API(getHubConfig().getManageClient()), "test-data-hub-user");
-        user.setRole(Arrays.asList(roles));
-        user.setPassword("password");
-        user.save();
     }
 
     /**
@@ -413,50 +324,8 @@ public abstract class AbstractHubTest extends TestObject {
         waitForTasksToFinish();
     }
 
-    /**
-     * Use this anytime a test needs to wait for things that run on the ML task server - generally, post-commit triggers
-     * - to finish, without resorting to arbitrary Thread.sleep calls that don't always work and often require more
-     * waiting than necessary.
-     */
-    protected void waitForTasksToFinish() {
-        String query = "xquery version '1.0-ml';" +
-            "\n declare namespace ss = 'http://marklogic.com/xdmp/status/server';" +
-            "\n declare namespace hs = 'http://marklogic.com/xdmp/status/host';" +
-            "\n let $task-server-id as xs:unsignedLong := xdmp:host-status(xdmp:host())//hs:task-server-id" +
-            "\n return fn:count(xdmp:server-status(xdmp:host(), $task-server-id)/ss:request-statuses/*)";
-
-        final int maxTries = 100;
-        final long sleepPeriod = 200;
-
-        DatabaseClient stagingClient = getHubClient().getStagingClient();
-
-        int taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
-        int tries = 0;
-        logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
-        while (taskCount > 0 && tries < maxTries) {
-            tries++;
-            sleep(sleepPeriod);
-            taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
-            logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
-        }
-
-        // Hack for cluster tests - if there's more than one host, wait a couple more seconds. Sigh.
-        String secondHost = stagingClient.newServerEval().xquery("xdmp:hosts()[2]").evalAs(String.class);
-        if (StringUtils.hasText(secondHost)) {
-            sleep(2000);
-        }
-    }
-
     protected boolean isVersionCompatibleWith520Roles() {
         return new Versions(getHubClient()).isVersionCompatibleWith520Roles();
-    }
-
-    protected JsonNode getStagingDoc(String uri) {
-        return getHubClient().getStagingClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
-    }
-
-    protected JsonNode getFinalDoc(String uri) {
-        return getHubClient().getFinalClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
     }
 
     /**
@@ -529,7 +398,7 @@ public abstract class AbstractHubTest extends TestObject {
         return response;
     }
 
-    protected void waitForReindex(HubConfig hubConfig, String database){
+    protected void waitForReindex(HubClient hubClient, String database){
         String query = "(\n" +
             "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
             "  return xdmp:forest-status($forest-id)//*:reindexing\n" +
@@ -539,7 +408,7 @@ public abstract class AbstractHubTest extends TestObject {
         boolean previousStatus = false;
         do{
             sleep(200L);
-            currentStatus = Boolean.parseBoolean(hubConfig.newStagingClient().newServerEval().xquery(query).evalAs(String.class));
+            currentStatus = Boolean.parseBoolean(hubClient.getStagingClient().newServerEval().xquery(query).evalAs(String.class));
             if(currentStatus){
                 logger.info("Reindexing staging database");
             }
