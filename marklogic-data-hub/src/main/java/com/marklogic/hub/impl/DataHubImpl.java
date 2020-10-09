@@ -42,6 +42,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.hub.*;
+import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.deploy.HubAppDeployer;
 import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.deploy.util.HubDeployStatusListener;
@@ -403,6 +404,18 @@ public class DataHubImpl implements DataHub, InitializingBean {
             logger.error("Failed to clear user modules, cause: " + e.getMessage(), e);
         }
         logger.info("Finished clearing user modules");
+    }
+
+    public void clearUserArtifacts(){
+        final HubClient hubClientToUse = hubClient != null ? hubClient : hubConfig.newHubClient();
+
+        long start = System.currentTimeMillis();
+        logger.info("Clearing user artifacts as user: " + hubClientToUse.getUsername());
+
+        ArtifactService.on(hubClientToUse.getStagingClient()).clearUserArtifacts();
+        ArtifactService.on(hubClientToUse.getFinalClient()).clearUserArtifacts();
+
+        logger.info("Finished clearing user artifacts; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
     public void deleteDocument(String uri, DatabaseKind databaseKind) {
