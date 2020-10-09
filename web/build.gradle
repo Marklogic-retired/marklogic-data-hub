@@ -76,20 +76,20 @@ dependencies {
   compile("org.aspectj:aspectjweaver:1.8.9")
     compile("org.springframework:spring-messaging")
 
-  // Similar to the ./marklogic-data-hub core project, have to force use of 1.3.61 here, as otherwise 1.2.x versions
+  // Similar to the ./marklogic-data-hub core project, have to force use of 1.3.x here, as otherwise 1.2.x versions
   // are coming onto the classpath, breaking things.
-  compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.61"
-  compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.61"
+  compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.72"
+  compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72"
 
   // No idea why this is necessary, but when Gradle brings the core project over, it bumps the okhttp3 dependency
-  // down from 4.4.0 to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
+  // down from 4.x to 3.x, which then breaks all kinds of stuff. So exclude the two okhttp3 dependencies and
   // then explicitly depending on the desired versions.
   compile(project(":marklogic-data-hub")) {
     exclude group: "com.squareup.okhttp3", module: "okhttp"
     exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
   }
-  compile "com.squareup.okhttp3:okhttp:4.4.0"
-  compile "com.squareup.okhttp3:logging-interceptor:4.4.0"
+  compile "com.squareup.okhttp3:okhttp:4.7.2"
+  compile "com.squareup.okhttp3:logging-interceptor:4.7.2"
 
   compile("org.apache.commons:commons-csv:1.4")
 

@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'java-test-fixtures'
+    id 'maven-publish'
+}
+
+group = 'com.marklogic'
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    api "com.marklogic:marklogic-client-api:5.3.0"
+
+    // Needed for ManageClient, and we need the latest 3.x release, which can run on Java 8
+    api "com.marklogic:ml-app-deployer:3.17.0"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mainJava(MavenPublication) {
+            from components.java
+        }
+        sourcesJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+        }
+    }
+}
