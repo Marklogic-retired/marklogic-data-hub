@@ -17,8 +17,7 @@ package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.mgmt.util.SimplePropertySource;
+import com.marklogic.hub.HubClientConfig;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
@@ -30,45 +29,37 @@ import java.util.Properties;
 public class HubDataWriterFactory extends LoggingObject implements DataWriterFactory<InternalRow> {
 
     private StructType schema;
-    private HubClient hubClient;
     private Map<String, String> options;
 
 
     /**
      * @param options a map of options containing both DHF-supported properties (most likely prefixed with ml* or
-     *               hub*) and connector-specific properties. The DHF-supported properties will be used to construct a
-     *               HubClient for communicating with MarkLogic.
+     *                hub*) and connector-specific properties. The DHF-supported properties will be used to construct a
+     *                HubClient for communicating with MarkLogic.
      * @param schema
      */
     public HubDataWriterFactory(Map<String, String> options, StructType schema) {
         this.options = options;
         this.schema = schema;
-        HubConfigImpl hubConfig = buildHubConfig(options);
-        logger.info("Creating HubClient for host: " + hubConfig.getHost());
-        this.hubClient = hubConfig.newHubClient();
     }
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        return new HubDataWriter(hubClient, schema, options);
+        HubClient client = HubClient.withHubClientConfig(buildHubClientConfig(options));
+        logger.info("Creating HubClient for host: " + client.getStagingClient().getHost());
+        return new HubDataWriter(client, schema, options);
     }
 
-    /**
-     * This is a static method so that it can be easily tested without instantiating this class.
-     *
-     * @param options
-     * @return
-     */
-    protected static HubConfigImpl buildHubConfig(Map<String, String> options) {
+    protected HubClientConfig buildHubClientConfig(Map<String, String> options) {
         Properties props = new Properties();
         // Assume DHS usage by default; the options map can override these
         props.setProperty("hubdhs", "true");
         props.setProperty("hubssl", "true");
         options.keySet().forEach(key -> props.setProperty(key, options.get(key)));
 
-        HubConfigImpl hubConfig = new HubConfigImpl();
-        hubConfig.registerLowerCasedPropertyConsumers();
-        hubConfig.applyProperties(new SimplePropertySource(props));
-        return hubConfig;
+        HubClientConfig hubClientConfig = new HubClientConfig();
+        hubClientConfig.registerLowerCasedPropertyConsumers();
+        hubClientConfig.applyProperties(props);
+        return hubClientConfig;
     }
 }
