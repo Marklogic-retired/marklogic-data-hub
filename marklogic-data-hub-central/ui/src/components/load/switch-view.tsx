@@ -3,7 +3,6 @@ import { Menu } from 'antd';
 import { MLRadio } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThLarge, faTable } from '@fortawesome/free-solid-svg-icons';
-import styles from './switch-view.module.scss';
 import './switch-view.scss';
 
 interface Props {
@@ -20,20 +19,20 @@ const SwitchView: React.FC<Props> = (props) => {
     }
 
     return (
-        <div aria-label="switch-view" className={styles.switchView}>
+        <div id="switch-view" aria-label="switch-view">
             <MLRadio.MLGroup
                 buttonStyle="outline"
                 defaultValue={view}
                 name="radiogroup"
                 onChange={e => onChange(e.target.value)}
                 size="large"
-                style={{ color: '#CCC' }}
+                style={{ color: '#999' }}
             >
                 <MLRadio.MLButton aria-label="switch-view-card" value={'card'}>
-                    <i>{view !== 'card' ? <FontAwesomeIcon icon={faThLarge} style={{ color: '#CCC' }} /> : <FontAwesomeIcon icon={faThLarge} />}</i>
+                    <i>{view !== 'card' ? <FontAwesomeIcon icon={faThLarge} style={{ color: '#999' }} /> : <FontAwesomeIcon icon={faThLarge} />}</i>
                 </MLRadio.MLButton>
                 <MLRadio.MLButton aria-label="switch-view-list" value={'list'}>
-                    <i>{view !== 'list' ? <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} /> : <FontAwesomeIcon icon={faTable} />}</i>
+                    <i>{view !== 'list' ? <FontAwesomeIcon icon={faTable} style={{ color: '#999' }} /> : <FontAwesomeIcon icon={faTable} />}</i>
                 </MLRadio.MLButton>
             </MLRadio.MLGroup>
         </div>
