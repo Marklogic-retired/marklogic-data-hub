@@ -1,8 +1,9 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.test.AbstractHubTest;
+import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.impl.HubClientImpl;
+import com.marklogic.hub.test.AbstractHubClientTest;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
@@ -17,7 +18,6 @@ import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -26,16 +26,16 @@ import java.util.Properties;
 /**
  * Base class for all glue-connector tests.
  */
-public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
+public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
 
     protected final static StructType FRUIT_SCHEMA = new StructType(new StructField[]{
         new StructField("fruitName", DataTypes.StringType, true, Metadata.empty()),
         new StructField("fruitColor", DataTypes.StringType, true, Metadata.empty()),
     });
 
-    private HubConfigImpl hubConfig;
+    private HubClientConfig hubClientConfig;
     private HubClient hubClient;
-    private Properties hubProperties;
+    private Properties testProperties;
 
     /**
      * Reset the databases, then run every test by default as a data-hub-operator. Ernie the ETL engineer will typically
@@ -43,7 +43,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
      */
     @BeforeEach
     void beforeEachTest() {
-        hubConfig = new HubConfigImpl();
+        hubClientConfig = new HubClientConfig();
         resetDatabases();
         runAsDataHubOperator();
     }
@@ -51,25 +51,14 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
     @Override
     protected HubClient getHubClient() {
         if (hubClient == null) {
-            hubClient = hubConfig.newHubClient();
+            hubClient = new HubClientImpl(hubClientConfig);
         }
         return hubClient;
     }
 
     @Override
-    protected HubConfigImpl getHubConfig() {
-        return hubConfig;
-    }
-
-    @Override
-    protected File getTestProjectDirectory() {
-        // We don't have any need for a HubProject within the connector
-        return null;
-    }
-
-    @Override
-    protected HubConfigImpl runAsUser(String username, String password) {
-        hubProperties = new Properties();
+    protected HubClient runAsUser(String username, String password) {
+        testProperties = new Properties();
         String mlHost = "localhost";
         String hubDhs = "false";
         String hubSsl = "false";
@@ -85,13 +74,13 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
             hubDhs = "true";
             hubSsl = "true";
         }
-        hubProperties.setProperty("mlHost", mlHost);
-        hubProperties.setProperty("mlUsername", username);
-        hubProperties.setProperty("mlPassword", password);
-        hubProperties.setProperty("hubDHS", hubDhs);
-        hubProperties.setProperty("hubSsl", hubSsl);
-        this.hubConfig = HubConfigImpl.withProperties(hubProperties);
-        return hubConfig;
+        testProperties.setProperty("mlHost", mlHost);
+        testProperties.setProperty("mlUsername", username);
+        testProperties.setProperty("mlPassword", password);
+        testProperties.setProperty("hubDHS", hubDhs);
+        testProperties.setProperty("hubSsl", hubSsl);
+        hubClient = new HubClientImpl(new HubClientConfig(testProperties));
+        return hubClient;
     }
 
     /**
@@ -102,7 +91,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
      */
     protected Map<String, String> getHubPropertiesAsMap() {
         Map<String, String> params = new HashMap<>();
-        hubProperties.keySet().forEach(key -> params.put((String) key, hubProperties.getProperty((String) key)));
+        testProperties.keySet().forEach(key -> params.put((String) key, testProperties.getProperty((String) key)));
         return params;
     }
 
@@ -142,7 +131,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubTest {
      * @return
      */
     protected DataWriter<InternalRow> buildDataWriter(DataSourceOptions dataSourceOptions) {
-        HubDataSource dataSource = new HubDataSource();
+        DefaultSource dataSource = new DefaultSource();
         final String writeUUID = "doesntMatter";
         final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
 
