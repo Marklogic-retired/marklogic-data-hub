@@ -137,6 +137,8 @@ class DataHubPlugin implements Plugin<Project> {
             description: "Clears user data in the staging, final, and job databases, only leaving behind hub and user " +
                 "artifacts. Requires sufficient privilege to be able to clear each of the databases. " +
                 "Requires -Pconfirm=true to be set so this isn't accidentally executed.")
+        project.task("hubClearUserArtifacts", type: ClearUserArtifactsTask, group: developGroup,
+            description: "Clears all user artifacts in the staging, final databases. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask)
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
