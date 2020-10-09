@@ -1,68 +1,80 @@
 plugins {
-    id "net.saliman.properties" version "1.5.1"
-    id "java"
+    id "java-library"
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
+
+// Spark 2 requires Java 8
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+group = 'com.marklogic'
 
 repositories {
     jcenter()
 }
 
-sourceCompatibility = "9"
-targetCompatibility = "9"
-
-group = 'com.marklogic'
+ext {
+    junitPlatformVersion = '1.4.2'
+    junitJupiterVersion  = '5.4.2'
+}
 
 dependencies {
-    // Contrary to the marklogic-data-hub-central project, when this project is brought over, the okhttp3 dependencies
-    // remain at version 4.4.0. So no need to exclude them and then depend on them explicitly.
-    compile(project(":marklogic-data-hub")) {
-        // Excluding dependencies we don't need in the connector
-        exclude module: "spring-boot"
-        exclude module: "spring-boot-autoconfigure"
-        exclude module: "spring-integration"
-        exclude module: "spring-integration-http"
-        exclude module: "mlcp-util"
-        exclude module: "jcommander"
-        exclude module: "marklogic-data-movement-components"
-    }
+    // The client project depends on Java 8 and JavaClient 5.3 and can thus safely be used by this connector,
+    // as Spark runs on Java 8
+    api(project(":marklogic-data-hub-api"))
 
-    compile "org.apache.spark:spark-sql_2.11:${sparkVersion}"
-    compile "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
-    compile "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
-    compile "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
-    compile "org.apache.spark:spark-core_2.11:${sparkVersion}"
+    // We need to compile against the Spark jars, but we don't want to include them in the shadowJar
+    compileOnly "org.apache.spark:spark-sql_2.11:${sparkVersion}"
+    compileOnly "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
+    compileOnly "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
+    compileOnly "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
+    compileOnly "org.apache.spark:spark-core_2.11:${sparkVersion}"
+
+    // Need to declare the Spark dependencies here too so they're available for tests
+    testImplementation "org.apache.spark:spark-sql_2.11:${sparkVersion}"
+    testImplementation "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
+    testImplementation "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
+    testImplementation "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
+    testImplementation "org.apache.spark:spark-core_2.11:${sparkVersion}"
+
+    // Depends on the test plumbing classes in the api project
+    testImplementation(testFixtures(project(":marklogic-data-hub-api")))
 
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testCompile "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
-    testCompile "org.junit.platform:junit-platform-runner:${junitPlatformVersion}"
+}
 
-    testImplementation(testFixtures(project(":marklogic-data-hub")))
-    // Looks hacky, but seems to be the recommended way to depend on test classes from another project
-    testCompile files(project(':marklogic-data-hub').sourceSets.test.output)
+tasks.withType(Test) {
+    systemProperty "mlHost", mlHost
+    systemProperty "isDhs", isDhs
+    useJUnitPlatform()
+}
+
+shadowJar {
+    classifier "all"
+    // Relocate packages of classes that the ML Java Client needs; it can't use the versions provided by Spark
+    relocate('okio', 'marklogic.okio')
+    relocate('com.fasterxml', 'marklogic.com.fasterxml')
 }
 
 publishing {
     publications {
-        main(MavenPublication) {
+        allJava(MavenPublication) {
             from components.java
-        }
-    }
-    repositories {
-        maven {
-            if (project.hasProperty("mavenUser")) {
-                credentials {
-                    username mavenUser
-                    password mavenPassword
+            artifact shadowJar
+            // Removes the connector's dependencies, as the expectation is that if a client wants to
+            // depend on this project, they'll depend on the "all" shadow jar, which contains all the necessary
+            // classes, including relocated ones.q
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    if(dep.artifactId.last().value().last() in ["marklogic-data-hub-api"]) {
+                        assert dep.parent().remove(dep)
+                    }
                 }
             }
-            url publishUrl
         }
     }
-}
-
-tasks.withType(Test){
-    systemProperty "mlHost", mlHost
-    systemProperty "isDhs", isDhs
-    useJUnitPlatform()
 }
