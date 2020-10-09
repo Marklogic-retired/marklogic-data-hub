@@ -89,8 +89,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         runAsHubCentralUser();
         StringHandle results = new EntitySearchManager(getHubClient()).search(new SearchQuery());
 
-        String query = "cts.estimate(cts.trueQuery())";
-        int count = Integer.parseInt(getHubClient().getFinalClient().newServerEval().javascript(query).evalAs(String.class));
+        int count = getDocumentCount(getHubClient().getFinalClient());
         ObjectNode node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
                 "to all the docs that the user can read in the database", count));
@@ -324,8 +323,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         runAsHubCentralUser();
         DatabaseClient client = databaseType.equalsIgnoreCase("staging") ? getHubClient().getStagingClient() : getHubClient().getFinalClient();
 
-        String query = "cts.estimate(cts.trueQuery())";
-        int count = Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
+        int count = getDocumentCount(client);
         StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(new SearchQuery());
         ObjectNode node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +

@@ -607,4 +607,8 @@ public abstract class AbstractHubTest extends TestObject {
             }
         }
     }
+    protected int getDocumentCount(DatabaseClient client) {
+        String query = "cts.estimate(cts.trueQuery())";
+        return Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
+    }
 }
