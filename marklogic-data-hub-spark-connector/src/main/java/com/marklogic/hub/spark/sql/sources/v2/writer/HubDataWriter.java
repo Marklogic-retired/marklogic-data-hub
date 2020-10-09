@@ -19,10 +19,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.dataservices.InputEndpoint;
+import com.marklogic.client.document.DocumentDescriptor;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.spark.sql.sources.v2.IOUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.json.JSONOptions;
@@ -48,6 +50,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
     private StructType schema;
     private int batchSize;
     private ObjectNode defaultWorkUnit;
+    private HubClient hubClient;
 
     /**
      * @param hubClient
@@ -58,14 +61,15 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         this.records = new ArrayList<>();
         this.schema = schema;
         this.batchSize = options.containsKey("batchsize") ? Integer.parseInt(options.get("batchsize")) : 100;
+        this.hubClient = hubClient;
 
         JsonNode endpointParams = determineIngestionEndpointParams(options);
 
         final String apiPath = endpointParams.get("apiPath").asText();
         logger.info("Will write to endpoint defined by: " + apiPath);
         this.loader = InputEndpoint.on(
-            hubClient.getStagingClient(),
-            hubClient.getModulesClient().newJSONDocumentManager().read(apiPath, new StringHandle())
+            this.hubClient.getStagingClient(),
+            this.hubClient.getModulesClient().newJSONDocumentManager().read(apiPath, new StringHandle())
         ).bulkCaller();
 
         this.loader.setEndpointState(new JacksonHandle(endpointParams.get("endpointState")));
@@ -142,7 +146,17 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         }
 
         if (doesNotHaveApiPath) {
-            endpointParams.put("apiPath", "/data-hub/5/data-services/ingestion/bulkIngester.api");
+            String apiPath = "/data-hub/5/data-services/ingestion/bulkIngester.api";
+            DocumentDescriptor result = hubClient.getModulesClient().newJSONDocumentManager().exists(apiPath);
+            if(result == null) {
+                IOUtil ioUtil = new IOUtil(this.hubClient.getModulesClient());
+                try {
+                    ioUtil.load("bulkIngester.api");
+                } catch (IOException e) {
+                    throw new RuntimeException("Error occurred while loading default endpoints.");
+                }
+            }
+            endpointParams.put("apiPath", apiPath);
         }
 
         // TODO : remove the below else block after java-client-api 5.3 release
