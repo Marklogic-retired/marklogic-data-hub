@@ -120,10 +120,9 @@ public class ClearUserDataTest extends AbstractHubCoreTest {
 
     private int[] getDatabaseCounts() {
         int[] counts = new int[3];
-        String query = "cts.estimate(cts.trueQuery())";
-        counts[0] = Integer.parseInt(getHubClient().getStagingClient().newServerEval().javascript(query).evalAs(String.class));
-        counts[1] = Integer.parseInt(getHubClient().getFinalClient().newServerEval().javascript(query).evalAs(String.class));
-        counts[2] = Integer.parseInt(getHubClient().getJobsClient().newServerEval().javascript(query).evalAs(String.class));
+        counts[0] = getDocumentCount(getHubClient().getStagingClient());
+        counts[1] = getDocumentCount(getHubClient().getFinalClient());
+        counts[2] = getDocumentCount(getHubClient().getJobsClient());
         return counts;
     }
 
