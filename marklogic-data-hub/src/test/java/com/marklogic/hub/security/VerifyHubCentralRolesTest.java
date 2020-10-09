@@ -22,9 +22,9 @@ public class VerifyHubCentralRolesTest extends AbstractHubCoreTest {
     }
 
     private void verifyRole(String roleName, String ... assignedRoles){
-        HubConfigImpl hubConfig = runAsAdmin();
-        RoleManager roleManager = new RoleManager(hubConfig.getManageClient());
-        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(hubConfig.getManageClient()));
+        runAsAdmin();
+        RoleManager roleManager = new RoleManager(getHubClient().getManageClient());
+        ResourceMapper resourceMapper = new DefaultResourceMapper(new API(getHubClient().getManageClient()));
 
         Role r = resourceMapper.readResource(roleManager.getAsJson(roleName), Role.class);
         assertNotNull(r);

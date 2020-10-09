@@ -153,8 +153,8 @@ public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
     @Test
     public void testUpdateDhsResourcePermissions() {
         try {
-            HubConfigImpl adminConfig = runAsAdmin();
-            new UpdateDhsModulesPermissionsCommand(adminConfig).execute(newCommandContext(adminConfig));
+            runAsAdmin();
+            new UpdateDhsModulesPermissionsCommand(getHubConfig()).execute(newCommandContext());
 
             GenericDocumentManager modMgr = getHubClient().getModulesClient().newDocumentManager();
 

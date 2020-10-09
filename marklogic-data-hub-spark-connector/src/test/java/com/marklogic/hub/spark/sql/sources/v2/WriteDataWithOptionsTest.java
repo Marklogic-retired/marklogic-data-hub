@@ -55,13 +55,13 @@ public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
 
     @Test
     void ingestDocsWithPermissions() throws IOException {
-        String permissions = "qconsole-user,read,manage-admin,update";
+        String permissions = "data-hub-operator,read,data-hub-common-writer,update";
         DataWriter<InternalRow> dataWriter = buildDataWriter(newFruitOptions().withPermissions(permissions));
         dataWriter.write(buildRow("pineapple", "green"));
 
         DocumentMetadataHandle.DocumentPermissions perms = getFirstFruitMetadata().getPermissions();
-        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("qconsole-user").iterator().next());
-        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-operator").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-common-writer").iterator().next());
     }
 
     private DocumentMetadataHandle getFirstFruitMetadata() {
