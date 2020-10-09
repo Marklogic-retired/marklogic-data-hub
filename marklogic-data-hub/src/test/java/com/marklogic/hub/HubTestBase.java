@@ -145,7 +145,8 @@ public class HubTestBase extends AbstractHubTest {
     }
 
     protected HubConfigImpl runAsFlowOperator() {
-        return runAsUser("flow-operator", "password");
+        runAsUser("flow-operator", "password");
+        return getHubConfig();
     }
 
     /**
@@ -155,29 +156,32 @@ public class HubTestBase extends AbstractHubTest {
      * @return
      */
     protected HubConfigImpl runAsFlowDeveloper() {
-        return runAsUser("flow-developer", "password");
+        runAsUser("flow-developer", "password");
+        return getHubConfig();
     }
 
     @Override
-    protected HubConfigImpl runAsDataHubDeveloper() {
+    protected HubClient runAsDataHubDeveloper() {
         if (isVersionCompatibleWith520Roles()) {
             return super.runAsDataHubDeveloper();
         }
         logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-developer instead of data-hub-developer");
-        return runAsFlowDeveloper();
+        runAsFlowDeveloper();
+        return getHubClient();
     }
 
     @Override
-    protected HubConfigImpl runAsDataHubOperator() {
+    protected HubClient runAsDataHubOperator() {
         if (isVersionCompatibleWith520Roles()) {
             return super.runAsDataHubOperator();
         }
         logger.warn("ML version is not compatible with 5.2.0 roles, so will run as flow-operator instead of data-hub-operator");
-        return runAsFlowOperator();
+        runAsFlowOperator();
+        return getHubClient();
     }
 
     @Override
-    protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
+    protected HubClient runAsUser(String mlUsername, String mlPassword) {
         hubClient = null;
 
         applyMlUsernameAndMlPassword(mlUsername, mlPassword);
@@ -189,7 +193,7 @@ public class HubTestBase extends AbstractHubTest {
         // CMA config being constructed but not saved
         hubConfig.getAppConfig().getCmaConfig().setCombineRequests(false);
 
-        return hubConfig;
+        return getHubClient();
     }
 
     public void deleteProjectDir() {
