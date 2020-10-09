@@ -16,9 +16,14 @@
 package com.marklogic.hub;
 
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.mgmt.ManageClient;
 
 public interface HubClient {
+
+    static HubClient withHubClientConfig(HubClientConfig hubClientConfig) {
+        return new HubClientImpl(hubClientConfig);
+    }
 
     /**
      * @return the name of the MarkLogic user associated with this client

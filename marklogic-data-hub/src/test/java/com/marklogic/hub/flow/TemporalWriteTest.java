@@ -63,7 +63,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
             "temporal.documentInsert('temporal/test', '/temporal/ingestion/test.json', root, {permissions : [xdmp.permission('data-hub-common', 'read'),xdmp.permission('data-hub-common', 'update')]});";
 
         try{
-            runAsDataHubOperator().newStagingClient().newServerEval().javascript(updateTemporalDoc).eval();
+            runAsDataHubOperator().getStagingClient().newServerEval().javascript(updateTemporalDoc).eval();
         }
         catch (Exception e){
             logger.error("Document update failed: ", e);
@@ -76,7 +76,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
             "temporal.documentDelete('temporal/test', '/temporal/ingestion/test.json');";
 
         try{
-            runAsDataHubOperator().newStagingClient().newServerEval().javascript(deleteTemporalDoc).eval();
+            runAsDataHubOperator().getStagingClient().newServerEval().javascript(deleteTemporalDoc).eval();
         }
         catch (Exception e){
             logger.error("Document deletion failed: ", e);
