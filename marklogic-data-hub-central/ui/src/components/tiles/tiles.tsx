@@ -1,14 +1,13 @@
 import React from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
-import { Menu, Dropdown } from 'antd';
 import { ArrowsAltOutlined, ShrinkOutlined, CloseOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
 import './tiles.scss';
 import Run from '../../pages/Run';
-import { MLTooltip } from '@marklogic/design-system';
+import { MLTooltip, MLButton } from '@marklogic/design-system';
 
 
 interface Props {
@@ -58,13 +57,9 @@ const Tiles: React.FC<Props> = (props) => {
         props.onTileClose();
     };
 
-    const menu = (
-        <Menu onClick={props.onMenuClick}>
-            <Menu.Item key="1">
-                    Manage Queries
-            </Menu.Item>
-        </Menu>
-    );
+    const onMenuClick = () => {
+        props.onMenuClick();
+    };
 
     const renderHeader = function (props) {
         return (
@@ -86,15 +81,11 @@ const Tiles: React.FC<Props> = (props) => {
                 <div className={styles.controls}>
                     {showControl('menu') ? (
                         <div>
-                            <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
-                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                    <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
-                                        <MLTooltip title={'Menu'} placement="top">
-                                            <FontAwesomeIcon icon={faCog} />
-                                        </MLTooltip>
-                                    </i> 
-                                </a>
-                            </Dropdown>
+                            <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
+                                <MLButton id="manage-queries-button" onClick={onMenuClick} style={{height: '25px'}}>
+                                    <FontAwesomeIcon icon={faCog} style={{color: '#394494', fontSize: '14px', paddingRight: '4px', paddingTop: '1px'}}/> Manage Queries
+                                </MLButton>
+                            </i>
                         </div>
                     ) : null}
                     {showControl('newTab') ? (
