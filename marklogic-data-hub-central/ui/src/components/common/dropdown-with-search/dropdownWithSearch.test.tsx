@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import DropDownWithSearch from './dropdownWithSearch';
-import data from "../../../assets/mock-data/common.data";
+import data from "../../../assets/mock-data/curation/common.data";
 
 describe('DropDownWithSearch component', () => {
   const minWidth = '168px;';

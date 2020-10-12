@@ -144,7 +144,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         selectedQuery: values.selectedQuery
       });
     }
-  };
+  }
 
   const setQuery = (searchString: string) => {
     setSearchOptions({
@@ -212,6 +212,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedTableProperties: [],
       sortOrder: []
     });
+
     setGreyedOptions({
       ...greyedOptions,
       start: 1,
