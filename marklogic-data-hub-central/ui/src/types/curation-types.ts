@@ -2,8 +2,8 @@ import { Definition } from './modeling-types';
 
 export interface CurationContextInterface {
   curationOptions: CurationOptionsInterface;
-  setActiveStep: (stepDefinition: any, modelDefinition: any, entityType: string) => void;
-  updateActiveStepDefinition: (stepDefinition: any) => void;
+  setActiveStep: (stepArtifact: any, modelDefinition: any, entityType: string) => void;
+  updateActiveStepArtifact: (stepArtifact: any) => void;
 }
 
 export interface CurationOptionsInterface {
@@ -12,7 +12,7 @@ export interface CurationOptionsInterface {
 }
 
 export type ActiveStep ={
-  stepDefinition: any | MatchingStep,
+  stepArtifact: any | MatchingStep,
   entityName: string,
   isModified: boolean
 }
