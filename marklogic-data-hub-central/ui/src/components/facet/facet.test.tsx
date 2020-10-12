@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import Facet from './facet';
-import { facetProps } from '../../assets/mock-data/facet';
+import { facetProps } from '../../assets/mock-data/explore/facet-props';
 
 describe("Facet component", () => {
   it("Facet component renders with data properly" , () => {
@@ -67,7 +67,7 @@ describe("Facet component", () => {
     expect(queryByLabelText('popover-search-label')).not.toBeInTheDocument();
 
     rerender(<Facet {...facetProps} facetValues={facetValsNew}/>)
-    
+
     // Search link shown for facets >= LIMIT
     expect(getByLabelText('popover-search-label')).toBeInTheDocument();
   });

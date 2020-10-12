@@ -2,7 +2,7 @@ import React from 'react';
 import {render, fireEvent, getByPlaceholderText, wait} from '@testing-library/react';
 import PopOverSearch from './pop-over-search';
 import axiosMock from 'axios'
-import {stringSearchResponse} from "../../assets/mock-data/facet";
+import {stringSearchResponse} from "../../assets/mock-data/explore/facet-props";
 jest.mock('axios');
 
 

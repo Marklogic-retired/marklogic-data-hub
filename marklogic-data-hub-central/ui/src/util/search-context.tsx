@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { getUserPreferences } from '../services/user-preferences';
 import { UserContext } from './user-context';
 import { QueryOptions } from '../types/query-types';
-import { entityDefArray } from '../assets/mock-data/entity-search';
 
 type SearchContextInterface = {
   query: string,
@@ -208,7 +207,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedTableProperties: [],
       sortOrder: []
     });
-    
+
     setGreyedOptions({
       ...greyedOptions,
       start: 1,

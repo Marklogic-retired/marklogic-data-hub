@@ -1,6 +1,6 @@
-import Curate from '../../pages/Curate';
-import Load from "../../pages/Load";
-import Run from "../../pages/Run";
+import Curate from '../../../pages/Curate';
+import Load from "../../../pages/Load";
+import Run from "../../../pages/Run";
 import React from 'react'
 
 export const setViewLoadFunction = {

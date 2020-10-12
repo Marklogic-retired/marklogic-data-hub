@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, fireEvent, wait, within, cleanup, waitForElement, getByTestId } from '@testing-library/react';
 import LoadList from './load-list';
-import data from '../../assets/mock-data/common.data';
+import data from '../../assets/mock-data/curation/common.data';
 import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
-import loadData from "../../assets/mock-data/ingestion.data";
+import loadData from "../../assets/mock-data/curation/ingestion.data";
 import { AdvancedSettingsMessages } from '../../config/messages.config';
 import {MemoryRouter} from "react-router-dom";
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
