@@ -36,3 +36,17 @@
   color: #B32424;
 }
 
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
+.input {
+  position: relative;
+  width: 400px;
+}
+
