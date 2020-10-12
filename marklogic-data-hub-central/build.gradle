@@ -121,6 +121,8 @@ sourceSets.test.resources.srcDir "../marklogic-data-hub/src/test/resources"
 
 // jsonSchema2Pojo is used to generate Java classes that are then used in Swagger annotations for documentation purposes
 // See more at https://github.com/joelittlejohn/jsonschema2pojo/tree/master/jsonschema2pojo-gradle-plugin
+// Note that when this plugin registers itself, it forces compileJava to depend on it. So anytime Java code is compiled,
+// this plugin will generate Java classes for our JSON schemas.
 jsonSchema2Pojo {
     source = files("../specs/models")
     targetDirectory = file("src/main/java")
