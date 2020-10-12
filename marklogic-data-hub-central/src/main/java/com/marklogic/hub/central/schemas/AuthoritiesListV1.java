@@ -27,8 +27,8 @@ public enum AuthoritiesListV1 {
     READ_STEP_DEFINITION(null),
     READ_MATCHING(null),
     WRITE_MATCHING(null),
-    WRITE_MERGE(null),
-    READ_MERGE(null);
+    WRITE_MERGING(null),
+    READ_MERGING(null);
     private final List<String> value;
     private final static Map<List<String> , AuthoritiesListV1> CONSTANTS = new HashMap<List<String> , AuthoritiesListV1>();
 
