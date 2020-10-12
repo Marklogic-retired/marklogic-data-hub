@@ -2,7 +2,7 @@ import React from 'react';
 import {fireEvent, render, wait} from "@testing-library/react";
 import SaveChangesModal from "./save-changes-modal";
 import axiosMock from 'axios'
-import {saveQueryResponse, putQueryResponse, duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/query";
+import {saveQueryResponse, putQueryResponse, duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/explore/query";
 import userEvent from "@testing-library/user-event";
 jest.mock('axios');
 

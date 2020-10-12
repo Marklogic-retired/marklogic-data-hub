@@ -1,4 +1,4 @@
-import {IAuthoritiesContextInterface} from "../util/authorities";
+import {IAuthoritiesContextInterface} from "../../util/authorities";
 
 // Roles service for data-hub-developer
 class DeveloperRolesService implements IAuthoritiesContextInterface{

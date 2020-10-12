@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
-import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/entity-search";
+import {entitySearch, entityPropertyDefinitions, selectedPropertyDefinitions, entityDefArray, entitySearchAllEntities} from "../../assets/mock-data/explore/entity-search";
 import ResultsTabularView from "./results-tabular-view";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter as Router } from 'react-router-dom';
