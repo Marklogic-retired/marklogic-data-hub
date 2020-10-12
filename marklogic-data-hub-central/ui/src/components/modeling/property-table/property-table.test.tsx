@@ -8,8 +8,8 @@ import { ConfirmationType } from '../../../types/common-types';
 import { getSystemInfo } from '../../../api/environment';
 import { ModelingContext } from '../../../util/modeling-context';
 import { ModelingTooltips } from '../../../config/tooltips.config';
-import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling';
-import { entityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps } from '../../../assets/mock-data/modeling/modeling';
+import { entityNamesArray } from '../../../assets/mock-data/modeling/modeling-context-mock';
 
 jest.mock('../../../api/modeling');
 jest.mock('../../../api/environment');

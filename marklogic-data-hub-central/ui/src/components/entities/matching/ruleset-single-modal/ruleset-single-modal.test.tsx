@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import RulesetSingleModal from './ruleset-single-modal';
 
 import { CurationContext } from '../../../../util/curation-context';
-import { customerMatchingStep } from '../../../../assets/mock-data/curation-context-mock';
+import { customerMatchingStep } from '../../../../assets/mock-data/curation/curation-context-mock';
 
 describe('Matching Ruleset Single Modal component', () => {
   afterEach(() => {
@@ -17,7 +17,7 @@ describe('Matching Ruleset Single Modal component', () => {
 
     const { queryByText, getByText, rerender } =  render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal 
+        <RulesetSingleModal
           isVisible={false}
           toggleModal={toggleModalMock}
         />
@@ -28,7 +28,7 @@ describe('Matching Ruleset Single Modal component', () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal 
+        <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
         />
@@ -52,7 +52,7 @@ describe('Matching Ruleset Single Modal component', () => {
 
     const { queryByText, getByText, rerender } =  render(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal 
+        <RulesetSingleModal
           isVisible={false}
           toggleModal={toggleModalMock}
         />
@@ -63,7 +63,7 @@ describe('Matching Ruleset Single Modal component', () => {
 
     rerender(
       <CurationContext.Provider value={customerMatchingStep}>
-        <RulesetSingleModal 
+        <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
         />

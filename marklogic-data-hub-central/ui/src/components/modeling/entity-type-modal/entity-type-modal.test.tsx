@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import EntityTypeModal from './entity-type-modal';
 import { ModelingTooltips } from '../../../config/tooltips.config';
-import { createModelErrorResponse, createModelResponse } from '../../../assets/mock-data/modeling';
+import { createModelErrorResponse, createModelResponse } from '../../../assets/mock-data/modeling/modeling';
 
 jest.mock('axios');
 const axiosMock = axios as jest.Mocked<typeof axios>;
@@ -78,7 +78,7 @@ describe('EntityTypeModal Component', () => {
   });
 
   test('Creating duplicate entity shows error message', async () => {
-    axiosMock.post['mockImplementationOnce'](jest.fn(() => 
+    axiosMock.post['mockImplementationOnce'](jest.fn(() =>
       Promise.reject({ response: {status: 400, data: createModelErrorResponse } })));
 
     const { getByText, getByPlaceholderText } = render(

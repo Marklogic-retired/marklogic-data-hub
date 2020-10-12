@@ -8,7 +8,7 @@ import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
 import MergingCard from './merging/merging-card';
 
-import { matchingStep } from '../../assets/mock-data/matching';
+import { matchingStep } from '../../assets/mock-data/curation/matching';
 
 const EntityTiles = (props) => {
     const entityModels = props.entityModels || {};
@@ -246,7 +246,7 @@ const EntityTiles = (props) => {
         }
         else if (viewData[index] === 'match-' + entityType){
             output = <div className={styles.cardView}>
-            <MatchingCard 
+            <MatchingCard
                 matchingStepsArray={ matchingCardData ? matchingCardData.artifacts : []}
                 flows={props.flows}
                 entityName={entityType}
@@ -261,7 +261,7 @@ const EntityTiles = (props) => {
             />
         </div>
         }
-        //TODO:- Enhance below code for merging when working on DHFPROD-4328 
+        //TODO:- Enhance below code for merging when working on DHFPROD-4328
         else if(viewData[index] === 'merge-' + entityType) {
           output = <div className={styles.cardView}>
                 <MergingCard

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait } from '@testing-library/react';
 import CreateEditMappingDialog from './create-edit-mapping-dialog';
-import data from "../../../../assets/mock-data/common.data";
+import data from "../../../../assets/mock-data/curation/common.data";
 
 describe('Create/Edit Mapping Step artifact component', () => {
 

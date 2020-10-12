@@ -1,4 +1,4 @@
-import commonData from "../../assets/mock-data/common.data";
+import commonData from "./common.data";
 const response = {"data":{"jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}, "status": 200};
 
 let stepFailedWithError = [
