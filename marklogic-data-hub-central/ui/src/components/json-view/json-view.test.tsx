@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import JsonView from './json-view';
-import MockDocument from '../../assets/mock-data/example';
+import MockDocument from '../../assets/mock-data/explore/json-document-payload';
 
 
 describe("Json view component", () => {
@@ -13,9 +13,9 @@ describe("Json view component", () => {
 
     test("renders", () => {
         expect(wrapper.exists()).toBe(true);
-    }) 
+    })
 
     test("json-view renders", () => {
         expect(wrapper.find('.react-json-view')).toHaveLength(1);
-    }) 
+    })
 })

@@ -6,22 +6,22 @@ import EntityTypeTable from './entity-type-table';
 import {ModelingTooltips, SecurityTooltips} from '../../../config/tooltips.config';
 import { validateTableRow } from '../../../util/test-utils';
 
-import { 
+import {
   entityReferences,
   deleteEntity,
   updateEntityModels
 } from '../../../api/modeling';
 
-import { 
+import {
   getEntityTypes,
   referencePayloadEmpty,
   referencePayloadRelationships,
-  referencePayloadSteps 
-} from '../../../assets/mock-data/modeling';
+  referencePayloadSteps
+} from '../../../assets/mock-data/modeling/modeling';
 
 import { ConfirmationType } from '../../../types/common-types';
 import { ModelingContext } from '../../../util/modeling-context';
-import { isModified } from '../../../assets/mock-data/modeling-context-mock';
+import { isModified } from '../../../assets/mock-data/modeling/modeling-context-mock';
 
 jest.mock('../../../api/modeling');
 
@@ -38,7 +38,7 @@ describe('EntityTypeModal Component', () => {
   test('Table renders with empty array prop', () => {
     const { getByText } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={[]}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -59,7 +59,7 @@ describe('EntityTypeModal Component', () => {
   test('Table renders with mock data, no writer role', async () => {
     const { getByText, getByTestId, getAllByRole, getByLabelText } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={false}
@@ -118,7 +118,7 @@ describe('EntityTypeModal Component', () => {
     //verify sort by name alphabetically works in descending order
     fireEvent.click(getByTestId('entityName'));
     entityTable = document.querySelectorAll('.ant-table-row-level-0');
-    validateTableRow(entityTable, ['TestEntityForMapping,The TestEntityForMapping entity root.','Provider,','Protein,','Product,','Order,','Customer,','AnotherModel,Testing']);    
+    validateTableRow(entityTable, ['TestEntityForMapping,The TestEntityForMapping entity root.','Provider,','Protein,','Product,','Order,','Customer,','AnotherModel,Testing']);
     //verify third click does not return to default, but returns to ascending order
     fireEvent.click(getByTestId('entityName'));
     entityTable = document.querySelectorAll('.ant-table-row-level-0');
@@ -131,19 +131,19 @@ describe('EntityTypeModal Component', () => {
     //verify sort by instances works in descending order
     fireEvent.click(getByTestId('Instances'));
     entityTable = document.querySelectorAll('.ant-table-row-level-0');
-    validateTableRow(entityTable, ['Order,','Customer,','AnotherModel,Testing','Protein,','Product,','Provider,', 'TestEntityForMapping,The TestEntityForMapping entity root.', 'Order,','Customer,']);    
+    validateTableRow(entityTable, ['Order,','Customer,','AnotherModel,Testing','Protein,','Product,','Provider,', 'TestEntityForMapping,The TestEntityForMapping entity root.', 'Order,','Customer,']);
     //verify third click does not return to default, but returns to ascending order
     fireEvent.click(getByTestId('Instances'));
     entityTable = document.querySelectorAll('.ant-table-row-level-0');
     validateTableRow(entityTable, ['AnotherModel,Testing', 'Protein,', 'Product,','Provider,', 'TestEntityForMapping,The TestEntityForMapping entity root.', 'Customer,', 'Order,']);
-    
+
   });
 
   test('Table renders with mock data, with writer role, with auto expanded entity, and can click edit', () => {
     const editMock = jest.fn();
     const { getByTestId, getByLabelText } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -173,7 +173,7 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId, getByLabelText, getByText, debug } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -211,7 +211,7 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId, getByLabelText, getByText } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -244,7 +244,7 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId, getByLabelText, getByText } =  render(
       <Router>
-        <EntityTypeTable 
+        <EntityTypeTable
           allEntityTypesData={getEntityTypes}
           canReadEntityModel={true}
           canWriteEntityModel={true}
@@ -274,8 +274,8 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId, getByLabelText, getByText, debug } =  render(
       <Router>
-        <ModelingContext.Provider value={isModified}>  
-          <EntityTypeTable 
+        <ModelingContext.Provider value={isModified}>
+          <EntityTypeTable
             allEntityTypesData={getEntityTypes}
             canReadEntityModel={true}
             canWriteEntityModel={true}
@@ -303,7 +303,7 @@ describe('EntityTypeModal Component', () => {
 
     const { getByTestId } =  render(
       <Router>
-        <ModelingContext.Provider value={isModified}>  
+        <ModelingContext.Provider value={isModified}>
           <EntityTypeTable
             allEntityTypesData={getEntityTypes}
             canReadEntityModel={true}

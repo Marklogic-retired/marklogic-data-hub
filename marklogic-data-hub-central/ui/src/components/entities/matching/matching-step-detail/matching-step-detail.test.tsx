@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import MatchingStepDetail from './matching-step-detail';
 
 import { CurationContext } from '../../../../util/curation-context';
-import { customerMatchingStep, customerMatchingStepEmpty } from '../../../../assets/mock-data/curation-context-mock';
+import { customerMatchingStep, customerMatchingStepEmpty } from '../../../../assets/mock-data/curation/curation-context-mock';
 
 
 describe('Matching Step Detail view component', () => {

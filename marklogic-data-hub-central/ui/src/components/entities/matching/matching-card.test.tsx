@@ -5,8 +5,8 @@ import userEvent from "@testing-library/user-event";
 
 import MatchingCard from './matching-card';
 
-import { matchingStep } from '../../../assets/mock-data/matching';
-import { customerEntityDef} from '../../../assets/mock-data/entity-definitions-mock';
+import { matchingStep } from '../../../assets/mock-data/curation/matching';
+import { customerEntityDef} from '../../../assets/mock-data/curation/entity-definitions-mock';
 import { MatchingStep } from '../../../types/curation-types'
 
 const matchingStepsArray: MatchingStep[] = matchingStep.artifacts
@@ -16,7 +16,7 @@ describe('Matching cards view component', () => {
   it('can render matching steps', () => {
     const { getByText } =  render(
       <Router>
-        <MatchingCard 
+        <MatchingCard
           matchingStepsArray={matchingStepsArray}
           flows={[]}
           entityName={customerEntityDef.info.title}
