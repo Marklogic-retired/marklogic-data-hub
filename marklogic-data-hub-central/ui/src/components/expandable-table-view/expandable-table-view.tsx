@@ -23,7 +23,7 @@ const ExpandableTableView: React.FC<Props> = (props) => {
   let primaryKeyValue: any = '-';
   let primaryKey: any = '-';
 
-  if (Object.keys(props.item.primaryKey).length !== 0) {
+  if (props.item.primaryKey && Object.keys(props.item.primaryKey).length !== 0) {
       primaryKeyValue = props.item.primaryKey.propertyValue;
       primaryKey = props.item.primaryKey.propertyPath;
   }

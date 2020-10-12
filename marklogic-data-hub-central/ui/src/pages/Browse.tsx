@@ -97,7 +97,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         data: {
           query: {
             searchText: searchOptions.query,
-            entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : cardView ? [] : allEntities,
+            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds :  allEntities,
             selectedFacets: searchOptions.selectedFacets,
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
@@ -114,12 +114,17 @@ const Browse: React.FC<Props> = ({ location }) => {
         if (response.data.hasOwnProperty('selectedPropertyDefinitions')) {
           setSelectedPropertyDefinitions(response.data.selectedPropertyDefinitions);
         }
+
         setFacets(response.data.facets);
         setTotalDocuments(response.data.total);
 
         if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
-          let properties = getTableProperties(response.data.selectedPropertyDefinitions);
-          setColumns(properties);
+          if(!['All Data'].includes(searchOptions.nextEntityType)) {
+            let properties = getTableProperties(response.data.selectedPropertyDefinitions);
+            setColumns(properties);
+          } else {
+            setColumns([]);
+          }
         }
       }
     } catch (error) {
@@ -139,7 +144,11 @@ const Browse: React.FC<Props> = ({ location }) => {
   }, [])
 
   useEffect(() => {
-    if (entities.length && (!searchOptions.nextEntityType || searchOptions.nextEntityType === 'All Entities' || (searchOptions.entityTypeIds[0] == searchOptions.nextEntityType))) {
+    if (entities.length && (!searchOptions.nextEntityType ||
+        (searchOptions.nextEntityType === 'All Entities' && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
+        (searchOptions.nextEntityType === 'All Data' && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView) ||
+        (!['All Entities', 'All Data'].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType)
+      )) {
         getSearchResults(entities);
       }
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type])
@@ -322,7 +331,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} />
+        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView}/>
         <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} />
       </>
     );
@@ -358,7 +367,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef}>
-                <SearchBar entities={entities} cardView={cardView} setCardView={setCardView} />
+                <SearchBar entities={entities} cardView={cardView}/>
                 <SearchSummary
                   total={totalDocuments}
                   start={searchOptions.start}
@@ -411,6 +420,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                   setColumnSelectorTouched={setColumnSelectorTouched}
                   entityDefArray={entityDefArray}
                   database={searchOptions.database}
+                  setCardView={setCardView}
                 />
               </div>
               <div className={styles.viewContainer} >
