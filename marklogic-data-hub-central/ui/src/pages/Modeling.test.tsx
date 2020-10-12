@@ -5,11 +5,11 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import Modeling from './Modeling';
 import {AuthoritiesContext} from '../util/authorities';
-import authorities from '../assets/authorities.testutils';
+import authorities from '../assets/mock-data/authorities.testutils';
 import { ModelingContext } from '../util/modeling-context';
 import { ModelingTooltips } from '../config/tooltips.config';
-import { getEntityTypes } from '../assets/mock-data/modeling';
-import { isModified, notModified } from '../assets/mock-data/modeling-context-mock';
+import { getEntityTypes } from '../assets/mock-data/modeling/modeling';
+import { isModified, notModified } from '../assets/mock-data/modeling/modeling-context-mock';
 import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
 import { ConfirmationType } from '../types/common-types';
 import tiles from '../config/tiles.config'
@@ -31,7 +31,7 @@ describe("Modeling Page", () => {
   test("Modeling: with mock data, renders modified Alert component and Dev role can click add, edit, and save all", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
     mockUpdateEntityModels.mockResolvedValueOnce({ status: 200 });
-  
+
     const { getByText, getByLabelText, queryByText, debug } = render(
       <AuthoritiesContext.Provider value={mockDevRolesService}>
         <ModelingContext.Provider value={isModified}>
@@ -69,7 +69,7 @@ describe("Modeling Page", () => {
 
   test("Modeling: with mock data, no Alert component renders and operator role can not click add", async () => {
     mockPrimaryEntityType.mockResolvedValueOnce({ status: 200, data: getEntityTypes });
-  
+
     const { getByText, getByLabelText, queryByLabelText, debug } = render(
       <AuthoritiesContext.Provider value={mockOpRolesService}>
         <ModelingContext.Provider value={notModified}>

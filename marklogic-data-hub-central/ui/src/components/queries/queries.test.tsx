@@ -1,12 +1,12 @@
 import React from 'react';
 import {fireEvent, render, wait } from "@testing-library/react";
 import Query from "./queries";
-import { getQueriesResponse } from '../../assets/mock-data/query'
+import { getQueriesResponse } from '../../assets/mock-data/explore/query'
 
 describe('Queries Component', () => {
     test('Verify save query button does not exist', () => {
         const { queryByTitle } = render(<Query
-            queries={getQueriesResponse} 
+            queries={getQueriesResponse}
             setQueries={jest.fn()}
             isSavedQueryUser={false}
             selectedFacets={[{constraint: "lastname", facet: "Adams", displayName: ''},
@@ -20,7 +20,7 @@ describe('Queries Component', () => {
 
     test('Verify edit query button does not exist', () => {
         const { queryByTitle } = render(<Query
-            queries={getQueriesResponse} 
+            queries={getQueriesResponse}
             setQueries={jest.fn()}
             isSavedQueryUser={false}
             selectedFacets={[{constraint: "lastname", facet: "Adams", displayName: ''},
@@ -33,7 +33,7 @@ describe('Queries Component', () => {
 
     test('Verify discard changes button does not exist', () => {
         const { queryByTitle } = render(<Query
-            queries={getQueriesResponse} 
+            queries={getQueriesResponse}
             setQueries={jest.fn()}
             isSavedQueryUser={false}
             selectedFacets={[{constraint: "lastname", facet: "Adams", displayName: ''},
@@ -47,7 +47,7 @@ describe('Queries Component', () => {
 
     test('Verify save changes button does not exist', () => {
         const { queryByTitle } = render(<Query
-            queries={getQueriesResponse} 
+            queries={getQueriesResponse}
             setQueries={jest.fn()}
             isSavedQueryUser={false}
             selectedFacets={[]}
@@ -59,7 +59,7 @@ describe('Queries Component', () => {
 
     test('Verify reset changes button does not exist', () => {
         const { queryByTitle } = render(<Query
-            queries={getQueriesResponse} 
+            queries={getQueriesResponse}
             setQueries={jest.fn()}
             isSavedQueryUser={false}
             selectedFacets={[]}

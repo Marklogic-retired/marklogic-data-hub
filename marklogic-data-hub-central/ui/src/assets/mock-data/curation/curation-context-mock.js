@@ -1,6 +1,6 @@
 import { matchingStep } from './matching';
 import { customerEntityDef } from './entity-definitions-mock';
-import { definitionsParser } from '../../util/data-conversion';
+import { definitionsParser } from '../../../util/data-conversion';
 import { mergingStep } from './merging';
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);

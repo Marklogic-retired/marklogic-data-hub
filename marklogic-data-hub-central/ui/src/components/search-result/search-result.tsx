@@ -121,8 +121,8 @@ const SearchResult: React.FC<Props> = (props) => {
                         <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()} placement="topRight"><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
                     </Link>
                 </div>
-                <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>
-                {primaryKey && <span data-cy='primary-key' className={styles.primaryKey}>{primaryKey}:</span>}
+                <span className={styles.entityName} data-cy='entity-name' data-testid={'entity-name'}>{itemEntityName}</span>
+                {primaryKey && <span data-cy='primary-key' data-testid={'primary-key'} className={styles.primaryKey}>{primaryKey}:</span>}
                 <span data-cy='primary-key-value'> {primaryKeyValue}</span>
             </div>
             <div className={styles.snippet} data-cy='snippet'>
@@ -132,19 +132,19 @@ const SearchResult: React.FC<Props> = (props) => {
                 {createdOnVal && (
                     <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>Created On</span>
-                        <span className={styles.metaValue} data-cy='created-on'>{dateConverter(createdOnVal)}</span>
+                        <span className={styles.metaValue} data-cy='created-on' data-testid={'created-on'}>{dateConverter(createdOnVal)}</span>
                     </div>
                 )}
                 {sourcesVal && (
                     <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>Sources</span>
-                        <span className={styles.metaValue} data-cy='sources'>{sourcesVal}</span>
+                        <span className={styles.metaValue} data-cy='sources' data-testid={'sources'}>{sourcesVal}</span>
                     </div>
                 )}
                 {fileTypeVal && (
                     <div className={styles.metaItem}>
                         <span className={styles.metaLabel}>File Type</span>
-                        <span className={styles.format} data-cy='file-type'>{fileTypeVal}</span>
+                        <span className={styles.format} data-cy='file-type' data-testid={'file-type'}>{fileTypeVal}</span>
                     </div>
                 )}
             </div>
