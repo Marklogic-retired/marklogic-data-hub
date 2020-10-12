@@ -4,6 +4,7 @@ import { MLAlert, MLButton } from '@marklogic/design-system';
 import styles from './confirmation-modal.module.scss'
 
 import { ConfirmationType } from '../../types/modeling-types';
+import { ModelingTooltips } from '../../config/tooltips.config';
 
 type Props = {
   isVisible: boolean;
@@ -196,20 +197,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         {props.type === ConfirmationType.SaveEntity && (
           <>
             <p aria-label="save-text">Are you sure you want to save changes to <b>{props.boldTextArray[0]}</b>?</p>
-
-            <p>Changes will be saved to the entity model, possibly including updating indexes.
-              Any features enabled by the changes will not be available until this is complete.
-            </p>
+            <p>{ModelingTooltips.saveEntityConfirm}</p>
           </>
         )}
 
         {props.type === ConfirmationType.SaveAll && (
           <>
             <p aria-label="save-all-text">Are you sure you want to save ALL changes to ALL entity types?</p>
-
-            <p>Changes will be saved to the entity model, possibly including updating indexes.
-              Any features enabled by the changes will not be available until this is complete.
-            </p>
+            <p>{ModelingTooltips.saveEntityConfirm}</p>
           </>
         )}
 
