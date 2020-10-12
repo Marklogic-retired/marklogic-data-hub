@@ -1,4 +1,4 @@
-import React, { useState, CSSProperties, useEffect, useContext } from 'react';
+import React, { useState, CSSProperties, useEffect, useContext, createRef } from 'react';
 import { Collapse, Icon, Card, Modal, Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -73,7 +73,22 @@ const Flows: React.FC<Props> = (props) => {
     const [showLinks, setShowLinks] = useState('');
     const [latestJobData, setLatestJobData] = useState<any>({});
     const [createAdd, setCreateAdd] = useState(true);
-
+    const [addFlowDirty, setAddFlowDirty] = useState({});
+    
+    // maintain a list of panel refs 
+    const flowPanels : any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()} }), {})
+        
+    // If a step was just added scroll the flow step panel fully to the right
+    useEffect(() => {
+        if (addFlowDirty[flowName]) {
+            const panel = flowPanels[flowName]
+            if (panel && panel.current) {
+                const { clientWidth, scrollWidth } = panel.current
+                panel.current.scrollTo(scrollWidth - clientWidth, 0)
+            }
+            setAddFlowDirty({...addFlowDirty, [flowName]: false})
+        }
+    }, [props.flows])
 
     useEffect(() => {
         if (JSON.stringify(props.flowsDefaultActiveKey) !== JSON.stringify([])) {
@@ -90,8 +105,7 @@ const Flows: React.FC<Props> = (props) => {
         }
     }, [props.flows]);
 
-    useEffect(() => {
-    }, [latestJobData]);
+    useEffect(() => {}, [latestJobData])
 
     // Get the latest job info after a step (in a flow) run
     useEffect(()=>{
@@ -174,16 +188,17 @@ const Flows: React.FC<Props> = (props) => {
         setStepDialogVisible(false);
     };
 
-    const onAddStepOk = (stepName, flowName, stepType) => {
-        props.addStepToFlow(stepName, flowName, stepType);
+    const onAddStepOk = async (stepName, flowName, stepType) => {
+        await props.addStepToFlow(stepName, flowName, stepType);
         // Open flow panel if not open
         const flowIndex = props.flows.findIndex(f => f.name === flowName);
         if (!activeKeys.includes(flowIndex)) {
             let newActiveKeys = [...activeKeys, flowIndex];
             setActiveKeys(newActiveKeys);
         }
-        setAddStepDialogVisible(false);
-    };
+        await setAddStepDialogVisible(false);
+        await setAddFlowDirty({...addFlowDirty, [flowName]: true})
+    }
 
     const onCancel = () => {
         setDialogVisible(false);
@@ -444,8 +459,8 @@ const Flows: React.FC<Props> = (props) => {
                 console.error('Error getting latest job info ', error);
             }
         }
-    };
-
+    }
+    
     let panels;
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
@@ -463,10 +478,11 @@ const Flows: React.FC<Props> = (props) => {
                         title={StepDefToTitle(step.stepDefinitionType)}
                         size="small"
                         actions={[
-                            <span className={styles.stepResponse}>
-                                {latestJobData && latestJobData[flowName] && latestJobData[flowName][index] ?
-                                    lastRunResponse(latestJobData[flowName][index]): ''}
-                            </span>
+                            <span className={styles.stepResponse}>{
+                                latestJobData && latestJobData[flowName] && latestJobData[flowName][index]
+                                ? lastRunResponse(latestJobData[flowName][index])
+                                : ''
+                            }</span>
                         ]}
                         extra={
                             <div className={styles.actions}>
@@ -558,7 +574,7 @@ const Flows: React.FC<Props> = (props) => {
             });
             return (
                 <Panel header={flowHeader(flowName, i)} key={i} extra={panelActions(flowName, i)}>
-                    <div className={styles.panelContent}>
+                    <div className={styles.panelContent} ref={flowPanels[flowName]}>
                         {cards}
                     </div>
                 </Panel>
