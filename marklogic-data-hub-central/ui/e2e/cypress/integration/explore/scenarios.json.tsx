@@ -633,21 +633,45 @@ describe('scenarios for All Data zero state and explore pages.', () => {
 
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should('be.equal', 2)
     browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'ColeAdams');
     browsePage.search('Barbi');
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should('be.equal', 0)
 
     //switch to staging database and verify data for query parameters 
     browsePage.getStagingDatabaseButton().click();
     browsePage.search('Adams');
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should('be.equal', 2)
     browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'Adams');
     browsePage.search('Barbi');
     browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should('be.equal', 1)
     browsePage.getAllDataSnippetByUri('/json/clients/client1.json').should('contain', 'Barbi');
+
+    //Verify if switching between All Data and specific entities works properly
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.selectEntity('Customer');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getTotalDocuments().should('be.equal', 10);
+
+    browsePage.selectEntity('All Data');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Data');
+    browsePage.search('Adams');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getTotalDocuments().should('be.equal', 2)
+
+    browsePage.selectEntity('Customer');
+    browsePage.getSelectedEntity().should('contain', 'Customer');
   });
 });

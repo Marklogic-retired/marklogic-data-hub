@@ -10,7 +10,7 @@ describe('Search Bar', () => {
   afterEach(cleanup);
 
   test('Verify the search bar and entity select options', () => {
-    const { getByPlaceholderText, getByText } = render(<SearchBar entities={entities} />);
+    const { getByPlaceholderText, getByText } = render(<SearchBar entities={entities} cardView={false}/>);
     const searchInput = getByPlaceholderText("Type search text");
     expect(searchInput).toHaveAttribute('value', '');
     userEvent.type(searchInput, 'test');

@@ -36,7 +36,7 @@ const SearchResult: React.FC<Props> = (props) => {
         toggleShow(false);
     }, [searchOptions.pageNumber, searchOptions.entityTypeIds])
 
-    if (Object.keys(props.item.primaryKey).length) {
+    if (props.item.primaryKey && Object.keys(props.item.primaryKey).length) {
         primaryKeyValue = props.item.primaryKey.propertyValue;
         primaryKey = props.item.primaryKey.propertyPath;
     }
