@@ -31,6 +31,7 @@ interface Props {
     setQueries: (state: boolean) => void;
     setIsLoading: (state: boolean) => void;
     database: string;
+    setCardView: any;
 };
 
 const Query: React.FC<Props> = (props) => {
@@ -190,7 +191,7 @@ const Query: React.FC<Props> = (props) => {
     },[])
 
     useEffect(() => {
-            if(!entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
+            if(searchOptions.nextEntityType && !entityCancelClicked && searchOptions.nextEntityType !== searchOptions.entityTypeIds[0]) {
                 // TO CHECK IF THERE HAS BEEN A CANCEL CLICKED WHILE CHANGING ENTITY
                 if ((isSaveQueryChanged() || isNewQueryChanged()) && !searchOptions.zeroState) {
                     toggleEntityConfirmation(true);
@@ -243,6 +244,11 @@ const Query: React.FC<Props> = (props) => {
     }
 
     const setCurrentQueryOnEntityChange = () => {
+        if(searchOptions.nextEntityType === 'All Data'){
+            props.setCardView(true);
+        } else {
+            props.setCardView(false);
+        }
         setEntity(searchOptions.nextEntityType);
         toggleSaveNewIcon(false);
         props.setColumnSelectorTouched(false)
