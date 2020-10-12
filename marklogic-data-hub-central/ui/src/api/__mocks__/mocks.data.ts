@@ -1,7 +1,7 @@
-import loadData from "../../assets/mock-data/ingestion.data";
-import curateData from "../../assets/mock-data/flows.data";
-import advancedData from "../../assets/mock-data/advanced-settings.data";
-import commonData from "../../assets/mock-data/common.data";
+import loadData from "../../assets/mock-data/curation/ingestion.data";
+import curateData from "../../assets/mock-data/curation/flows.data";
+import advancedData from "../../assets/mock-data/curation/advanced-settings.data";
+import commonData from "../../assets/mock-data/curation/common.data";
 import systemInfoData from "../../assets/mock-data/system-info.data";
 
 const loadAPI = (axiosMock) => {
@@ -110,7 +110,7 @@ const curateAPI = (axiosMock) => {
       <n:UnitPrice>27.2000</n:UnitPrice>
       <n:Discount>0</n:Discount>
       <n:Quantity>40</n:Quantity>
-      <n:ProductID xmlns:k="https://www.w3schools.com/ProductNS">60</n:ProductID> 
+      <n:ProductID xmlns:k="https://www.w3schools.com/ProductNS">60</n:ProductID>
     </OrderDetail>
   </OrderDetails>
   <ShippedDate xmlns:l="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>

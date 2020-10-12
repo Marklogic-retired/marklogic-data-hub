@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import AddMergeRuleDialog from './add-merge-rule-dialog';
-import mergingData from "../../../../assets/mock-data/merging.data";
+import mergingData from "../../../../assets/mock-data/curation/merging.data";
 import { CurationContext } from '../../../../util/curation-context';
-import { customerMergingStep } from '../../../../assets/mock-data/curation-context-mock';
+import { customerMergingStep } from '../../../../assets/mock-data/curation/curation-context-mock';
 
 describe('Add Merge Rule Dialog component', () => {
 
@@ -45,7 +45,7 @@ describe('Add Merge Rule Dialog component', () => {
     expect(uri).toBeInTheDocument();
     expect(functionValue).toBeInTheDocument();
     expect(getByLabelText('namespace-input')).toBeInTheDocument();
-    
+
     fireEvent.click(saveButton); //Will throw an error because URI and Function are mandatory fields.
 
     //verify if the below error messages are displayed properly

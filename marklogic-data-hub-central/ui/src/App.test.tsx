@@ -5,7 +5,7 @@ const history = createMemoryHistory();
 import { render, fireEvent, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect'
 import { AuthoritiesContext } from './util/authorities';
-import authorities from './assets/authorities.testutils';
+import authorities from './assets/mock-data/authorities.testutils';
 import tiles from './config/tiles.config';
 import App from './App';
 import axiosMock from 'axios';

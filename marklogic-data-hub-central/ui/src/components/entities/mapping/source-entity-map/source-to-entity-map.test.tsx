@@ -1,7 +1,7 @@
 import React from 'react';
 import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within, screen, wait, prettyDOM } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
-import data from '../../../../assets/mock-data/common.data';
+import data from '../../../../assets/mock-data/curation/common.data';
 import { shallow } from 'enzyme';
 import SplitPane from 'react-split-pane';
 import axiosMock from 'axios';
@@ -658,19 +658,19 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(expandCollapseBtn); //Collapsing back to the default view (root and 1st level)
         expect(expandCollapseBtn.textContent).toBe('Expand');
         expect(onClosestTableRow(getByText('artCraft'))?.style.display).toBe('none'); // Checking if the row is marked hidden(collapsed) in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
-   
+
         //Verify Expand/Collapse button for source and entity tables resets to 'Expand' when Modal is closed and reoponed
-        fireEvent.click(expandCollapseBtn); 
+        fireEvent.click(expandCollapseBtn);
         expect(expandCollapseBtn.textContent).toBe('Collapse');
-        fireEvent.click(expandCollapseBtnSrc); 
+        fireEvent.click(expandCollapseBtnSrc);
         expect(expandCollapseBtnSrc.textContent).toBe('Collapse');
         fireEvent.click(getByLabelText('Close'));
         rerender(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
         />);
-        expect(expandCollapseBtn.textContent).toBe('Expand');  
-        expect(expandCollapseBtnSrc.textContent).toBe('Expand');        
-   
+        expect(expandCollapseBtn.textContent).toBe('Expand');
+        expect(expandCollapseBtnSrc.textContent).toBe('Expand');
+
     });
 
     test('CollapseAll/Expand All feature in XML Source data table', () => {
