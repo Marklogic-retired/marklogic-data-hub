@@ -139,6 +139,9 @@ class DataHubPlugin implements Plugin<Project> {
                 "Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubClearUserArtifacts", type: ClearUserArtifactsTask, group: developGroup,
             description: "Clears all user artifacts in the staging, final databases. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
+        project.task("hubClearUserModules", type: ClearUserModulesTask, group: developGroup,
+            description: "Clears user modules in the modules database, only leaving the modules " +
+                "that come with DataHub installation. Requires -Pconfirm=true to be set so this isn't accidentally executed.")
         project.task("hubCreateMapping", group: developGroup, type: CreateMappingTask)
         project.task("hubCreateStepDefinition", group: developGroup, type: CreateStepDefinitionTask,
             description: "Create a new step definition in your project; specify a name via -PstepDefName=YourStepDefName, " +
