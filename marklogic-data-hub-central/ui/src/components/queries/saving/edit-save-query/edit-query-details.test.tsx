@@ -3,8 +3,8 @@ import {fireEvent, render, wait } from "@testing-library/react";
 import EditQueryDetails from "./edit-query-details";
 import axiosMock from 'axios'
 import userEvent from "@testing-library/user-event";
-import {putQueryResponse} from "../../../../assets/mock-data/query";
-import {duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/query";
+import {putQueryResponse} from "../../../../assets/mock-data/explore/query";
+import {duplicateQueryNameErrorResponse} from "../../../../assets/mock-data/explore/query";
 jest.mock('axios');
 
 

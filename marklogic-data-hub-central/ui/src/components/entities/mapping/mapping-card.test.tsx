@@ -4,7 +4,7 @@ import {fireEvent, render, wait, cleanup, waitForElement} from '@testing-library
 import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios'
-import data from "../../../assets/mock-data/flows.data";
+import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
 import mocks from '../../../api/__mocks__/mocks.data';
