@@ -95,7 +95,7 @@ const Overview: React.FC<Props> = (props) => {
                             <div className={styles.subtitle}>
                                 <span className={styles.icon} aria-label="run-icon"></span>Run
                             </div>
-                            <div className={styles.body}>Run your step. Add your step to a flow and run it.
+                            <div className={styles.body}>Add your step to a flow and run it.
                                 { props.enabled && !props.enabled.includes('run') &&
                                 <div className={styles.permissionsRun}>*additional permissions required</div> }
                             </div>
