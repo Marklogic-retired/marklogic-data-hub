@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Form } from 'antd';
+import { Modal, Form, Input, Icon } from 'antd';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import { MLButton, MLTooltip, MLSelect } from '@marklogic/design-system';
@@ -11,6 +11,7 @@ import EntityPropertyTreeSelect from '../../../entity-property-tree-select/entit
 import { CurationContext } from '../../../../util/curation-context';
 import { MatchingStep, MatchRule, MatchRuleset } from '../../../../types/curation-types';
 import { Definition } from '../../../../types/modeling-types';
+import { NewMatchTooltips } from '../../../../config/tooltips.config';
 
 type Props = {
   isVisible: boolean;
@@ -28,6 +29,7 @@ const layout = {
 
 const MATCH_TYPE_OPTIONS = [
   { name: 'Exact', value: 'exact' },
+  { name: 'Synonym', value: 'synonym' },
   { name: 'Reduce', value: 'reduce' },
   { name: 'Zip', value: 'zip' },
 ]
@@ -35,13 +37,18 @@ const MATCH_TYPE_OPTIONS = [
 const { MLOption } = MLSelect;
  
 const MatchRulesetModal: React.FC<Props> = (props) => {
-  const { curationOptions, updateActiveStepDefinition } = useContext(CurationContext);
+  const { curationOptions, updateActiveStepArtifact } = useContext(CurationContext);
 
-  const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION)
-  const [selectedProperty, setSelectedProperty] = useState<string | undefined>(undefined)
+  const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
+
+  const [selectedProperty, setSelectedProperty] = useState<string | undefined>(undefined);
   const [propertyTypeErrorMessage, setPropertyTypeErrorMessage] = useState('');
   const [matchType, setMatchType] = useState('')
   const [matchTypeErrorMessage, setMatchTypeErrorMessage] = useState('');
+
+  const [thesaurusValue, setThesaurusValue] = useState('');
+  const [thesaurusErrorMessage, setThesaurusErrorMessage] = useState('');
+  const [filterValue, setFilterValue] = useState('')
 
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
@@ -49,6 +56,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       setEntityTypeDefinition(entityTypeDefinition);
     }
   }, [props.isVisible]);
+
+  const handleInputChange = (event) => {
+    if (event.target.id === 'thesaurus-uri-input') {
+      if (event.target.value === '') {
+        setThesaurusErrorMessage('A thesaurus URI is required')
+      } else {
+        setThesaurusErrorMessage('');
+      }
+      setThesaurusValue(event.target.value);
+    } else if (event.target.id === 'filter-input') {
+      setFilterValue(event.target.value);
+    }    
+  }
 
   const closeModal = () => {
     resetModal();
@@ -60,9 +80,13 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setMatchType('');
     setPropertyTypeErrorMessage('');
     setMatchTypeErrorMessage('');
+    setThesaurusValue('');
+    setThesaurusErrorMessage('');
+    setFilterValue('');
   }
 
-  const onSubmit = () => {
+  const onSubmit = (event) => {
+    event.preventDefault();
     let propertyErrorMessage = '';
     let matchErrorMessage = '';
 
@@ -76,39 +100,67 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       case 'exact':
       case 'reduce':
       case 'zip':
-        let propertyName = selectedProperty || '';
+        {
+          let propertyName = selectedProperty || '';
 
-        let matchRule: MatchRule = {
-          entityPropertyPath: propertyName,
-          matchType: matchType,
-          options: {}
+          let matchRule: MatchRule = {
+            entityPropertyPath: propertyName,
+            matchType: matchType,
+            options: {}
+          }
+  
+          let matchRuleset: MatchRuleset = {
+            name: propertyName,
+            weight: 0,
+            matchRules: [matchRule]
+          }
+  
+          if (propertyErrorMessage === '' && matchErrorMessage === '') {
+            // TODO save step to backend
+            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+            newStepArtifact.matchRulesets.push(matchRuleset);
+            updateActiveStepArtifact(newStepArtifact);
+            props.toggleModal(false);
+            resetModal();
+          }
+          break;
         }
 
-        let matchRuleset: MatchRuleset = {
-          name: propertyName,
-          weight: 0,
-          matchRules: [matchRule]
-        }
-
-        //check for duplicate
-        let propertyRulesets = curationOptions.activeStep.stepDefinition['matchRulesets'].filter(matchRuleset => matchRuleset['name'] === propertyName)
-        if (propertyRulesets.length > 0) {
-          propertyRulesets.forEach( ruleset => {
-            if (ruleset['matchRules'].length === 1 && ruleset['matchRules'][0].matchType === matchType) {
-              propertyErrorMessage = 'A ruleset with these selections already exists';
+      case 'synonym':
+        {
+          let thesaurusErrorMessage = '';
+          if (thesaurusValue === '') {
+            thesaurusErrorMessage = 'A thesaurus URI is required';
+          }
+  
+          let propertyName = selectedProperty || '';
+  
+          let synonymMatchRule: MatchRule = {
+            entityPropertyPath: propertyName,
+            matchType: matchType,
+            options: {
+              thesaurusUri: thesaurusValue,
+              filter: filterValue
             }
-          });
+          }
+  
+          let matchRuleset: MatchRuleset = {
+            name: propertyName,
+            weight: 0,
+            matchRules: [synonymMatchRule]
+          }
+  
+          if (thesaurusErrorMessage === '' && propertyErrorMessage === '') {
+            // TODO save step to backend
+            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+            newStepArtifact.matchRulesets.push(matchRuleset);
+            updateActiveStepArtifact(newStepArtifact);
+            props.toggleModal(false);
+            resetModal();
+          }
+          setThesaurusErrorMessage(thesaurusErrorMessage);
+          break;
         }
-
-        if (propertyErrorMessage === '' && matchErrorMessage === '') {
-          // TODO save step to backend
-          let newStepDefinition: MatchingStep = curationOptions.activeStep.stepDefinition;
-          newStepDefinition.matchRulesets.push(matchRuleset);
-          updateActiveStepDefinition(newStepDefinition);
-          props.toggleModal(false);
-          resetModal();
-        }
-        break;
 
       default:
         break;
@@ -131,6 +183,55 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     return <MLOption key={index} value={matchType.value}>{matchType.name}</MLOption>
   });
 
+  const renderSynonymOptions = (
+    <>
+      <Form.Item
+        className={styles.formItem}
+        label={<span>
+          Thesaurus URI:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>}
+        colon={false}
+        labelAlign="left"
+        validateStatus={thesaurusErrorMessage ? 'error' : ''}
+        help={thesaurusErrorMessage}
+      >
+        <Input
+          id="thesaurus-uri-input"
+          aria-label="thesaurus-uri-input"
+          placeholder="Enter thesaurus URI"
+          className={styles.input}
+          value={thesaurusValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.thesaurusUri}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
+      </Form.Item>
+      <Form.Item
+          className={styles.formItem}
+          label={<span>Filter:</span>}
+          colon={false}
+          labelAlign="left"
+        >
+
+          <Input
+            id="filter-input"
+            aria-label="filter-input"
+            placeholder="Enter a node in the thesaurus to use as a filter"
+            className={styles.input}
+            value={filterValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <MLTooltip title={NewMatchTooltips.filter}>
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
+          </MLTooltip>
+      </Form.Item>
+    </>
+  )
+
   const modalTitle = (
     <div>
       <div style={{ fontSize: '18px'}}>Add Match Ruleset for Single Property</div>
@@ -142,17 +243,16 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   )
 
   const modalFooter = (
-    <div>
+    <div className={styles.footer}>
       <MLButton
-        aria-label={`confirm`}
-        size="default"
+        aria-label={`cancel-single-ruleset`}
         onClick={closeModal}
       >Cancel</MLButton>
       <MLButton
-        aria-label={`confirm-`}
+        className={styles.saveButton}
+        aria-label={`confirm-single-ruleset`}
         type="primary"
-        size="default"
-        onClick={() => onSubmit()}
+        onClick={(e) => onSubmit(e)}
       >Save</MLButton>
     </div>
   )
@@ -164,7 +264,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       closable={true}
       maskClosable={false}
       title={modalTitle}
-      footer={modalFooter}
+      footer={null}
       width={700}
       onCancel={closeModal}
     >
@@ -213,6 +313,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           </MLSelect>
         </Form.Item>
 
+        {matchType === 'synonym' && renderSynonymOptions}
+        {modalFooter}
       </Form>
     </Modal>
   )
