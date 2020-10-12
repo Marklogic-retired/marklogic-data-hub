@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import EntityPropertyTreeSelect from './entity-property-tree-select';
-import { customerEntityDef} from '../../assets/mock-data/entity-definitions-mock';
+import { customerEntityDef} from '../../assets/mock-data/curation/entity-definitions-mock';
 import { definitionsParser } from '../../util/data-conversion';
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
@@ -14,7 +14,7 @@ describe('Entity Property Tree Select component', () => {
     const mockOnValueSelected = jest.fn()
 
     const { getByText } =  render(
-      <EntityPropertyTreeSelect 
+      <EntityPropertyTreeSelect
         propertyDropdownOptions={entityTypeDefinition?.properties || []}
         entityDefinitionsArray={customerEntityDefsArray}
         value={undefined}
