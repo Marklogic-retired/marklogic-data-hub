@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
-import { entitySearch } from "../../../assets/mock-data/entity-search";
+import { entitySearch } from "../../../assets/mock-data/explore/entity-search";
 import { BrowserRouter as Router } from 'react-router-dom';
 import RawDataCardView from './raw-data-card-view';
 
@@ -30,7 +30,7 @@ describe("Raw data card view component", () => {
         expect(getByTestId('/Customer/Cust3.json-sourceFormat')).toBeInTheDocument();
         expect(getByTestId('/Customer/Cust3.json-detailViewIcon')).toBeInTheDocument();
 
-        //verify tooltips 
+        //verify tooltips
         fireEvent.mouseOver(getByTestId('/Customer/Cust1.json-URI'))
         await waitForElement(() => getByText('/Customer/Cust1.json'));
 

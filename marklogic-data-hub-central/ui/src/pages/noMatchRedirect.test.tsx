@@ -6,7 +6,7 @@ import NoMatchRedirect from './noMatchRedirect';
 import {Router} from "react-router";
 import {AuthoritiesContext} from "../util/authorities";
 import { userAuthenticated } from '../assets/mock-data/user-context-mock';
-import authorities from "../assets/authorities.testutils";
+import authorities from "../assets/mock-data/authorities.testutils";
 import {UserContext} from "../util/user-context";
 
 const testAsDeveloper = authorities.DeveloperRolesService;

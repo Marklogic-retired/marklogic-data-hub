@@ -1,4 +1,4 @@
-import { getQueriesResponse, putQueryResponse, deleteQueryResponse, saveQueryResponse, fetchQueryByResponse } from '../../assets/mock-data/query'
+import { getQueriesResponse, putQueryResponse, deleteQueryResponse, saveQueryResponse, fetchQueryByResponse } from '../../assets/mock-data/explore/query'
 
 export const fetchQueries = async () => {
     return await new Promise((resolve) => {
