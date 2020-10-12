@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
-import data from "../../../../assets/mock-data/common.data";
+import data from "../../../../assets/mock-data/curation/common.data";
 import ViewCustomDialog from "./view-custom-dialog";
 
 describe('View Custom artifact component', () => {

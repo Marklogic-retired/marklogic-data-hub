@@ -3,7 +3,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import {fireEvent, render, wait, waitForElement} from '@testing-library/react';
 import CustomCard from './custom-card';
 import axiosMock from 'axios'
-import data from "../../../assets/mock-data/flows.data";
+import data from "../../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 import { AuthoritiesService, AuthoritiesContext } from '../../../util/authorities';
 import mocks from '../../../api/__mocks__/mocks.data';
