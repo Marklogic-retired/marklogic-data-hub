@@ -312,6 +312,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
      *                                 introduced for the sake of DHF tests so that marklogic-unit-test will not be deleted
      */
     public void clearUserModules(List<String> resourceNamesToNotDelete) {
+        long start = System.currentTimeMillis();
         logger.info("Clearing user modules");
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(DataHub.class.getClassLoader());
         try {
@@ -401,9 +402,9 @@ public class DataHubImpl implements DataHub, InitializingBean {
                     "] ! xdmp:document-delete(.)\n";
             runInDatabase(query, hubConfig.getDbName(DatabaseKind.MODULES));
         } catch (Exception e) {
-            logger.error("Failed to clear user modules, cause: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to clear user modules, cause: " + e.getMessage(), e);
         }
-        logger.info("Finished clearing user modules");
+        logger.info("Finished clearing user modules; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
     public void clearUserArtifacts(){
