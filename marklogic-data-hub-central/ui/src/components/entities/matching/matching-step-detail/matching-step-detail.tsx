@@ -37,7 +37,7 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
 
 const MatchingStepDetail: React.FC = () => {
   const history = useHistory<any>();
-  const { curationOptions, updateActiveStepDefinition } = useContext(CurationContext);
+  const { curationOptions, updateActiveStepArtifact } = useContext(CurationContext);
 
   const [matchingStep, setMatchingStep] = useState<MatchingStep>(DEFAULT_MATCHING_STEP);
 
@@ -47,25 +47,25 @@ const MatchingStepDetail: React.FC = () => {
   const [moreRulesetText, toggleMoreRulesetText] = useState(true);
 
   useEffect(() => {
-    if (Object.keys(curationOptions.activeStep.stepDefinition).length !== 0) {
-      const matchingStep: MatchingStep = curationOptions.activeStep.stepDefinition;
-      if (matchingStep.matchRulesets.length > 0 ) {
+    if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
+      const matchingStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+      if (matchingStepArtifact.matchRulesets.length > 0 ) {
         toggleMoreRulesetText(false);
       } else {
         toggleMoreRulesetText(true);
       }
 
-      if (matchingStep.thresholds.length > 0 ) {
+      if (matchingStepArtifact.thresholds.length > 0 ) {
         toggleMoreThresholdText(false)
       } else {
         toggleMoreThresholdText(true);
       }
 
-      setMatchingStep(matchingStep);
+      setMatchingStep(matchingStepArtifact);
     } else {
       history.push('/tiles/curate');
     }
-  }, [JSON.stringify(curationOptions.activeStep.stepDefinition)]);
+  }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
 
   const matchRuleSetOptions = matchingStep.matchRulesets.map((i) => {
       const matchRuleOptionsObject = {
