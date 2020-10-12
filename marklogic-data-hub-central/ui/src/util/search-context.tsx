@@ -199,7 +199,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
   };
 
   const setEntity = (option: string) => {
-    let entityOptions = (option === 'All Entities') ? [] : [option];
+    let entityOptions = (option === 'All Entities' || option === 'All Data') ? [] : [option];
     setSearchOptions({
       ...searchOptions,
       start: 1,
