@@ -6,13 +6,12 @@ import { SearchContext } from '../../util/search-context';
 interface Props {
   entities: any;
   cardView: boolean;
-  setCardView: any;
 }
 
 const SearchBar: React.FC<Props> = props => {
     const { Search } = Input;
     const { Option } = Select;
-    const { searchOptions, setQuery, setEntity, setNextEntity } = useContext(SearchContext);
+    const { searchOptions, setQuery, setNextEntity } = useContext(SearchContext);
     const [ searchString, setSearchString] = useState(searchOptions.query);
     const [dropDownValue, setDropdownValue] = useState('All Entities');
     const dividerOption = <Divider className={styles.dividerOption}/>;
@@ -37,14 +36,8 @@ const SearchBar: React.FC<Props> = props => {
     );
 
     const handleOptionSelect = (option: any) => {
-      if(option === 'All Data'){
-        props.setCardView(true);
-        setNextEntity('All Entities');
-      } else {
-        setNextEntity(option);
-        props.setCardView(false);
-      }
-  }
+      setNextEntity(option);
+    }
 
     const handleSearch = (searchString: string) => {
       setQuery(searchString);
