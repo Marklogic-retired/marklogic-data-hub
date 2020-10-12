@@ -43,7 +43,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const [flowName, setFlowName] = useState('');
     const [showLinks, setShowLinks] = useState('');
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
-
+    const [selectVisible, setSelectVisible] = useState(false);
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
 
     useEffect(() => {
@@ -63,7 +63,7 @@ const LoadCard: React.FC<Props> = (props) => {
         setTitle('Edit Loading Step');
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setNewDataLoad(true);
-    } 
+    }
 
     const OpenLoadSettingsDialog = (index) => {
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
@@ -111,6 +111,7 @@ const LoadCard: React.FC<Props> = (props) => {
 
     function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
+        setSelectVisible(true);
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('load-card_formatFileContainer') ||
@@ -118,6 +119,11 @@ const LoadCard: React.FC<Props> = (props) => {
         ) {
             setShowLinks(name);
         }
+    }
+    function handleMouseLeave() {
+        // Handle all possible events from mouseleave of card body
+        setShowLinks('');
+        setSelectVisible(false);
     }
 
     function handleSelect(obj) {
@@ -213,7 +219,7 @@ const LoadCard: React.FC<Props> = (props) => {
                 <Col key={index}>
                     <div
                         onMouseOver={(e) => handleMouseOver(e, elem.name)}
-                        onMouseLeave={(e) => setShowLinks('')}
+                        onMouseLeave={(e) => handleMouseLeave()}
                     >
                         <Card
                             actions={[
@@ -239,7 +245,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                     }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>: <div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                                    <div className={styles.cardLinkSelect}>
+                                    {selectVisible ? <div className={styles.cardLinkSelect}>
                                         <Select
                                             style={{ width: '100%' }}
                                             value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -253,7 +259,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                                 <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
                                             )) : null}
                                         </Select>
-                                    </div>
+                                    </div> : null}
                                 </div>
                             </div>
                         </Card>

@@ -58,6 +58,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [sortedMapping, setSortedMappings] = useState(props.data)
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
+    const [selectVisible, setSelectVisible] = useState(false);
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -145,6 +146,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
       function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
+          setSelectVisible(true);
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('mapping-card_cardContainer') ||
@@ -154,6 +156,10 @@ const MappingCard: React.FC<Props> = (props) => {
         ) {
             setShowLinks(name);
         }
+    }
+      function handleMouseLeave() {
+        setShowLinks('');
+        setSelectVisible(false);
     }
 
     const deleteConfirmation = <Modal
@@ -649,7 +655,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         <div
                             data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
                             onMouseOver={(e) => handleMouseOver(e, elem.name)}
-                            onMouseLeave={(e) => setShowLinks('')}
+                            onMouseLeave={(e) => handleMouseLeave()}
                         >
                             <Card
                                 actions={[
@@ -678,7 +684,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                     }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
                                     <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                         Add step to an existing flow
-                                        <div className={styles.cardLinkSelect}>
+                                        {selectVisible ? <div className={styles.cardLinkSelect}>
                                             <Select
                                                 style={{ width: '100%' }}
                                                 value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -692,7 +698,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                     <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                                                 )) : null}
                                             </Select>
-                                        </div>
+                                        </div> : null}
                                     </div>
                                 </div>
                             </Card>
