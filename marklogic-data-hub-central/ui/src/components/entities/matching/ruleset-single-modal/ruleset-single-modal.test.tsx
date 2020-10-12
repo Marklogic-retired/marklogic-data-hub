@@ -8,6 +8,10 @@ import { CurationContext } from '../../../../util/curation-context';
 import { customerMatchingStep } from '../../../../assets/mock-data/curation-context-mock';
 
 describe('Matching Ruleset Single Modal component', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('can select an property to match and match type and click cancel', () => {
     const toggleModalMock = jest.fn();
 
@@ -40,7 +44,7 @@ describe('Matching Ruleset Single Modal component', () => {
 
     userEvent.click(getByText('Cancel'));
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepDefinition).toHaveBeenCalledTimes(0);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
   });
 
   it('can select an property to match and Zip match type and click save', () => {
@@ -75,6 +79,33 @@ describe('Matching Ruleset Single Modal component', () => {
 
     userEvent.click(getByText('Save'));
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepDefinition).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+  });
+
+  it('can select Synonym ruleset type and click save', () => {
+    const toggleModalMock = jest.fn();
+
+    const { queryByText, getByText, getByLabelText } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Select property'));
+    userEvent.click(screen.getByText('nicknames'));
+
+    userEvent.click(screen.getByText('Select match type'));
+    userEvent.click(screen.getByText('Synonym'));
+    userEvent.type(getByLabelText('thesaurus-uri-input'), '/Users/jsmith/Documents/sample-data/4feec983');
+    userEvent.type(getByLabelText('filter-input'), '<thsr:qualifier>birds</thsr:qualifier>')
+
+
+    userEvent.click(getByText('Save'));
+    expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
   });
 });
