@@ -100,7 +100,7 @@ public class StepSchema {
      */
     @JsonProperty("headers")
     @JsonPropertyDescription("Any properties in this object will be copied into the headers of each document processed by the step")
-    private Headers headers;
+    private Headers__1 headers;
     /**
      * Non-DataHub options set by users; used only in UI in custom steps currently
      * 
@@ -325,7 +325,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("headers")
-    public Headers getHeaders() {
+    public Headers__1 getHeaders() {
         return headers;
     }
 
@@ -334,7 +334,7 @@ public class StepSchema {
      * 
      */
     @JsonProperty("headers")
-    public void setHeaders(Headers headers) {
+    public void setHeaders(Headers__1 headers) {
         this.headers = headers;
     }
 
