@@ -8,7 +8,7 @@ import { definitionsParser } from './data-conversion';
 const DEFAULT_CURATION_OPTIONS = {
   entityDefinitionsArray: [],
   activeStep: {
-    stepDefinition: {},
+    stepArtifact: {},
     entityName: '',
     isModified: false
   }
@@ -17,7 +17,7 @@ const DEFAULT_CURATION_OPTIONS = {
 export const CurationContext = React.createContext<CurationContextInterface>({
   curationOptions: DEFAULT_CURATION_OPTIONS,
   setActiveStep: () => {},
-  updateActiveStepDefinition: () => {}
+  updateActiveStepArtifact: () => {}
 });
 
 const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -27,24 +27,24 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
   /**
     * Sets the current active step in the curate tile 
     * Transforms definitions object payload into array of objects with static key values
-    * @param stepDefinition = Step definition object from payload
+    * @param stepArtifact = Step definition object from payload
     * @example 'step.artifacts[0]'
     * @param modelDefinition = Entity type definitions object from payload
     * @example 'model.definitions'
     * @param entityName = Entity type name
     * @example 'model.info.title'
   **/
-  const setActiveStep = (stepDefinition: any, modelDefinition: any, entityName: string) => {
+  const setActiveStep = (stepArtifact: any, modelDefinition: any, entityName: string) => {
     let entityDefArray = definitionsParser(modelDefinition);
     setCurationOptions({ 
       ...curationOptions,
-      activeStep: { isModified: false, stepDefinition, entityName },
+      activeStep: { isModified: false, stepArtifact, entityName },
       entityDefinitionsArray: entityDefArray
     });
   }
 
-  const updateActiveStepDefinition = (stepDefinition: any) => {
-    let updatedStep = { ...curationOptions.activeStep, isModified: true, stepDefinition }
+  const updateActiveStepArtifact = (stepArtifact: any) => {
+    let updatedStep = { ...curationOptions.activeStep, isModified: true, stepArtifact }
     setCurationOptions({ 
       ...curationOptions,
       activeStep: updatedStep,
@@ -55,7 +55,7 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
     <CurationContext.Provider value={{
       curationOptions,
       setActiveStep,
-      updateActiveStepDefinition
+      updateActiveStepArtifact
     }}>
       {children}
     </CurationContext.Provider>
