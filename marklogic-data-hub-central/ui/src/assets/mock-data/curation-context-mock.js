@@ -9,37 +9,37 @@ export const customerMatchingStep = {
   curationOptions:   {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
-      stepDefinition: matchingStep.artifacts[0],
+      stepArtifact: matchingStep.artifacts[0],
       entityName: matchingStep.entityType,
       isModified: false
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepDefinition: jest.fn()
+  updateActiveStepArtifact: jest.fn()
 }
 
 export const customerMatchingStepEmpty = {
   curationOptions:   {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
-      stepDefinition: matchingStep.artifacts[1],
+      stepArtifact: matchingStep.artifacts[1],
       entityName: matchingStep.entityType,
       isModified: false
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepDefinition: jest.fn()
+  updateActiveStepArtifact: jest.fn()
 }
 
 export const customerMergingStep = {
   curationOptions:   {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
-      stepDefinition: [],
+      stepArtifact: [],
       entityName: mergingStep.entityType,
       isModified: false
     }
   },
   setActiveStep: jest.fn(),
-  updateActiveStepDefinition: jest.fn()
+  updateActiveStepArtifact: jest.fn()
 }
