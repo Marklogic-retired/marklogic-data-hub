@@ -6,7 +6,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { createMemoryHistory } from 'history';
 const history = createMemoryHistory();
 import axiosMock from 'axios';
-import data from '../../assets/mock-data/flows.data';
+import data from '../../assets/mock-data/curation/flows.data';
 import Flows from './flows';
 import {ModelingTooltips, SecurityTooltips} from "../../config/tooltips.config";
 
@@ -74,7 +74,7 @@ describe('Flows component', () => {
 
     it('user with flow read, write, and operator privileges can view, edit, and run', async () => {
         const {getByText, getByLabelText} = render(
-            <Router history={history}><Flows 
+            <Router history={history}><Flows
                 {...flowsProps}
                 canReadFlow={true}
                 canWriteFlow={true}
@@ -107,7 +107,7 @@ describe('Flows component', () => {
 
     it('user without flow write privileges cannot edit', async () => {
         const {getByText, getByLabelText, queryByLabelText} = render(
-            <Router history={history}><Flows 
+            <Router history={history}><Flows
                 {...flowsProps}
                 canReadFlow={true}
                 canWriteFlow={false}
@@ -143,7 +143,7 @@ describe('Flows component', () => {
 
     it('user without flow write or operator privileges cannot edit or run', () => {
         const {getByText, getByLabelText, queryByLabelText} = render(
-            <Router history={history}><Flows 
+            <Router history={history}><Flows
                 {...flowsProps}
                 canReadFlow={true}
                 canWriteFlow={false}
@@ -171,7 +171,7 @@ describe('Flows component', () => {
 
     it('user without flow read, write, or operator privileges cannot view, edit, or run', () => {
         const {queryByText, queryByLabelText} = render(
-            <Router history={history}><Flows 
+            <Router history={history}><Flows
                 {...flowsProps}
                 canReadFlow={false}
                 canWriteFlow={false}

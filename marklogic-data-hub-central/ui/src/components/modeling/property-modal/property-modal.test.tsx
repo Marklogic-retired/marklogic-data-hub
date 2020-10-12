@@ -13,10 +13,10 @@ import { ConfirmationType } from '../../../types/common-types';
 
 import { entityReferences } from '../../../api/modeling';
 import { definitionsParser } from '../../../util/data-conversion';
-import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadStepRelationships } from '../../../assets/mock-data/modeling';
+import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadStepRelationships } from '../../../assets/mock-data/modeling/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { ModelingContext } from '../../../util/modeling-context';
-import { entityNamesArray, customerEntityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+import { entityNamesArray, customerEntityNamesArray } from '../../../assets/mock-data/modeling/modeling-context-mock';
 
 jest.mock('../../../api/modeling');
 
@@ -161,7 +161,7 @@ describe('Property Modal Component', () => {
     expect(screen.queryByLabelText('Sort')).toBeNull();
     expect(screen.queryByLabelText('Facet')).toBeNull();
     //expect(screen.queryByLabelText('Wildcard Search')).toBeNull();
-  
+
     const multipleRadio = screen.getByLabelText('multiple-no')
     fireEvent.change(multipleRadio, { target: { value: "no" } });
     expect(multipleRadio['value']).toBe('no');

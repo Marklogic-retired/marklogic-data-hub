@@ -1,7 +1,7 @@
 import { render} from "@testing-library/react";
 import XmlView from "../xml-view/xml-view";
 import React from "react";
-import data from "../../assets/mock-data/common.data";
+import data from "../../assets/mock-data/curation/common.data";
 
 describe("XML view detail component - RTL", () => {
     test('Rendering xml document with es namespace in instance document', () => {
