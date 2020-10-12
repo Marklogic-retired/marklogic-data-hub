@@ -1,10 +1,10 @@
 import React from 'react';
 import ColumnSelector from './column-selector';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
-import { entityPropertyDefinitions, selectedPropertyDefinitions } from "../../assets/mock-data/entity-search";
+import { entityPropertyDefinitions, selectedPropertyDefinitions } from "../../assets/mock-data/explore/entity-search";
 
-let defaultProps = { 
-  popoverVisibility: true, 
+let defaultProps = {
+  popoverVisibility: true,
   setPopoverVisibility: jest.fn(),
   entityPropertyDefinitions: entityPropertyDefinitions,
   selectedPropertyDefinitions: selectedPropertyDefinitions,

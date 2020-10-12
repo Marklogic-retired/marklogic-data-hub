@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 
 import StructuredTypeModal from './structured-type-modal';
 import { ModelingTooltips } from '../../../config/tooltips.config';
-import { entityDefinitionsArray } from '../../../assets/mock-data/modeling';
+import { entityDefinitionsArray } from '../../../assets/mock-data/modeling/modeling';
 import { ModelingContext } from '../../../util/modeling-context';
-import { entityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
+import { entityNamesArray } from '../../../assets/mock-data/modeling/modeling-context-mock';
 
 describe('Structured Type Modal Component', () => {
 

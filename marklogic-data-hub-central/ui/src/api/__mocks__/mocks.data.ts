@@ -1,7 +1,7 @@
-import loadData from "../../assets/mock-data/ingestion.data";
-import curateData from "../../assets/mock-data/flows.data";
-import advancedData from "../../assets/mock-data/advanced-settings.data";
-import commonData from "../../assets/mock-data/common.data";
+import loadData from "../../assets/mock-data/curation/ingestion.data";
+import curateData from "../../assets/mock-data/curation/flows.data";
+import advancedData from "../../assets/mock-data/curation/advanced-settings.data";
+import commonData from "../../assets/mock-data/curation/common.data";
 import systemInfoData from "../../assets/mock-data/system-info.data";
 
 const loadAPI = (axiosMock) => {

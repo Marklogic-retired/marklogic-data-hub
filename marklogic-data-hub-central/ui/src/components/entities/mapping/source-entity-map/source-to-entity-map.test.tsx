@@ -1,7 +1,7 @@
 import React from 'react';
 import { waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within, screen, wait, prettyDOM } from '@testing-library/react';
 import SourceToEntityMap from './source-to-entity-map';
-import data from '../../../../assets/mock-data/common.data';
+import data from '../../../../assets/mock-data/curation/common.data';
 import { shallow } from 'enzyme';
 import SplitPane from 'react-split-pane';
 import axiosMock from 'axios';
@@ -636,8 +636,8 @@ describe('RTL Source-to-entity map tests', () => {
         fireEvent.click(expandCollapseBtnSrc); //Collapsing all child levels
         expect(expandCollapseBtnSrc.textContent).toBe('Expand All'); // Validating the button label
         expect(onClosestTableRow(getByText('suffix'))?.style.display).toBe('none'); // Checking if the row is marked hidden in DOM. All collapsed rows are marked hidden(display: none) once you click on Collapse All button.
-        expect(onClosestTableRow(getByText('FirstNamePreferred'))?.style.display).toBe('none'); 
-        expect(onClosestTableRow(getByText('LastName'))?.style.display).toBe('none'); 
+        expect(onClosestTableRow(getByText('FirstNamePreferred'))?.style.display).toBe('none');
+        expect(onClosestTableRow(getByText('LastName'))?.style.display).toBe('none');
 
         /* Validate collapse-expand in Entity table */
         //Check if the expected Entity table elements are present in the DOM before hittting the Expand/Collapse button
@@ -664,17 +664,17 @@ describe('RTL Source-to-entity map tests', () => {
         expect(onClosestTableRow(getByText('itemCategory'))?.style.display).toBe('none');
 
         //Verify Expand/Collapse button for source and entity tables resets to 'Expand All' when Modal is closed and reoponed
-        fireEvent.click(expandCollapseBtn); 
+        fireEvent.click(expandCollapseBtn);
         expect(expandCollapseBtn.textContent).toBe('Collapse All');
-        fireEvent.click(expandCollapseBtnSrc); 
+        fireEvent.click(expandCollapseBtnSrc);
         expect(expandCollapseBtnSrc.textContent).toBe('Collapse All');
         fireEvent.click(getByLabelText('Close'));
         rerender(<SourceToEntityMap {...data.mapProps}
             mappingVisible={true}
         />);
-        expect(expandCollapseBtn.textContent).toBe('Expand All');  
-        expect(expandCollapseBtnSrc.textContent).toBe('Expand All');        
-   
+        expect(expandCollapseBtn.textContent).toBe('Expand All');
+        expect(expandCollapseBtnSrc.textContent).toBe('Expand All');
+
     });
 
     test('CollapseAll/Expand All feature in XML Source data table', () => {

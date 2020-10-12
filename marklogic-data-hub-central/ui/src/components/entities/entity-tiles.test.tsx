@@ -4,7 +4,7 @@ import {fireEvent, getByLabelText, render} from '@testing-library/react';
 
 import EntityTiles from './entity-tiles';
 import axiosMock from 'axios'
-import data from "../../assets/mock-data/flows.data";
+import data from "../../assets/mock-data/curation/flows.data";
 import {act} from "react-dom/test-utils";
 
 jest.mock('axios');
