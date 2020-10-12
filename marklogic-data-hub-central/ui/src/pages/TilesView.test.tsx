@@ -8,14 +8,14 @@ import TilesView from './TilesView';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
 import mocks from '../api/__mocks__/mocks.data';
-import authorities from '../assets/authorities.testutils';
+import authorities from '../assets/mock-data/authorities.testutils';
 import tiles from '../config/tiles.config'
 import { SearchContext } from '../util/search-context';
 import {
     setViewCurateFunction,
     setViewLoadFunction,
     setViewRunFunction
-} from '../assets/mock-data/search-context-mock';
+} from '../assets/mock-data/explore/search-context-mock';
 
 jest.mock('axios');
 jest.setTimeout(30000);

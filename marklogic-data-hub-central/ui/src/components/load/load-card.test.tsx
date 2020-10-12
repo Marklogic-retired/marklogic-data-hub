@@ -2,8 +2,8 @@ import React from 'react';
 import {render, fireEvent, wait, cleanup, screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
-import data from '../../assets/mock-data/common.data';
-import ingestionData from '../../assets/mock-data/ingestion.data';
+import data from '../../assets/mock-data/curation/common.data';
+import ingestionData from '../../assets/mock-data/curation/ingestion.data';
 import axiosMock from 'axios';
 import mocks from '../../api/__mocks__/mocks.data';
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
@@ -58,7 +58,7 @@ describe('Load Card component', () => {
     //Verify if the flow related options are availble on mouseOver
     expect(getByTestId('testLoadXML-toNewFlow')).toBeInTheDocument(); // check if option 'Add to a new Flow' is visible
     expect(getByTestId('testLoadXML-toExistingFlow')).toBeInTheDocument(); // check if option 'Add to an existing Flow' is visible
- 
+
     //Click on the select field to open the list of existing flows.
     fireEvent.click(getByTestId('testLoadXML-flowsList'));
 
@@ -74,7 +74,7 @@ describe('Load Card component', () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
     //TODO- E2E test to check if the Run tile is loaded or not.
-    
+
   });
 
   test('Load Card - Add step to an existing flow where step DOES exist', async () => {
@@ -129,7 +129,7 @@ describe('Load Card component', () => {
     expect(loadCards[1]).toHaveTextContent('testLoadXML');
     expect(loadCards[2]).toHaveTextContent('testLoad123');
     expect(loadCards[3]).toHaveTextContent('testLoad');
-  
+
     //Check if the card is rendered properly
     expect(getByText('Add New')).toBeInTheDocument();
     expect(getByText('testLoadXML')).toBeInTheDocument();
