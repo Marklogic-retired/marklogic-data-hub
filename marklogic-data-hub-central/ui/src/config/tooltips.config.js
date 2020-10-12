@@ -62,6 +62,9 @@ const NewMatchTooltips = {
     'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
     'description': 'The description of this matching configuration.',	    'targetDatabase': 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
     'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
+    'thesaurusUri' : 'The path to the thesaurus used to determine synonyms',
+    'filter' : 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>'
+
 }
 
 const AdvMatchTooltips = {
