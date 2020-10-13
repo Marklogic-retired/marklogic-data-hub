@@ -28,7 +28,14 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
 @EnableAsync
-@ComponentScan(basePackages = "com.marklogic.hub")
+@ComponentScan(basePackages = {
+    // DHF core packages
+    "com.marklogic.hub.impl", "com.marklogic.hub.legacy.impl", "com.marklogic.hub.deploy.commands",
+    "com.marklogic.hub.job.impl", "com.marklogic.hub.flow.impl", "com.marklogic.hub.step", "com.marklogic.hub.util",
+
+    // Webapp components
+    "com.marklogic.hub.web"
+})
 public class WebApplication extends SpringBootServletInitializer {
 
     /**
