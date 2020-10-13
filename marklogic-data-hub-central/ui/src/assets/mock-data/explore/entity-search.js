@@ -232,7 +232,17 @@ export const entitySearch = {
             ]
           ]
         }
-      ]
+      ],
+      "hubMetadata": {
+        "lastProcessedByFlow": "personJSON",
+        "lastProcessedByStep": "mapPersonJSON",
+        "lastProcessedDateTime": "2020-10-09T15:08:29.234563-07:00",
+        "sources": [
+          {
+            "name": "loadPersonJSON"
+          }
+        ]
+      }
     },
     {
       "index": 2,
