@@ -43,6 +43,7 @@ import java.util.List;
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LegacyFlowManagerTest extends AbstractHubCoreTest {
 
@@ -149,6 +150,8 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
             .build();
         String expected = getResource("flow-manager-test/simple-flow.xml");
         String actual = flow.serialize();
+        assertTrue(actual.contains("<flow xmlns=\"http://marklogic.com/data-hub\">"),
+            "Verifying that the default namespace was written before comparing the entire XML document");
         assertXMLEqual(expected, actual);
     }
 
