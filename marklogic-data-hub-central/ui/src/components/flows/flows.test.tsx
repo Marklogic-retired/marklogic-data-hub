@@ -1,6 +1,6 @@
 import React from 'react';
 import { Router } from 'react-router';
-import {render, fireEvent, wait, cleanup } from '@testing-library/react';
+import { render, fireEvent, wait, cleanup } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import '@testing-library/jest-dom/extend-expect';
 import { createMemoryHistory } from 'history';
