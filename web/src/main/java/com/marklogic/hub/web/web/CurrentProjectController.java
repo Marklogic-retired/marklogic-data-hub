@@ -87,9 +87,6 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
     private HubConfigImpl hubConfig;
 
     @Autowired
-    private HubProjectImpl hubProject;
-
-    @Autowired
     private SimpMessagingTemplate template;
 
     @Autowired
@@ -242,7 +239,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
             enableWatcherService(mappingsDir);
             //watch ml-modules/root/custom-modules/ingestion|mapping|mastering dirs
             for (StepDefinition.StepDefinitionType stepType : StepDefinition.StepDefinitionType.values()) {
-                enableWatcherService(hubProject.getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toFile());
+                enableWatcherService(hubConfig.getHubProject().getCustomModulesDir().resolve(stepType.toString().toLowerCase()).toFile());
             }
             watcherService.addListener(this);
         }
@@ -319,7 +316,7 @@ public class CurrentProjectController implements FileSystemEventListener, Valida
         disableWatcherService(hubConfig.getHubMappingsDir().toFile());
         disableWatcherService(hubConfig.getFlowsDir().toFile());
         disableWatcherService(hubConfig.getStepDefinitionsDir().toFile());
-        disableWatcherService(hubProject.getCustomModulesDir().toFile());
+        disableWatcherService(hubConfig.getHubProject().getCustomModulesDir().toFile());
         watcherService.removeListener(this);
         mappingManagerService.unsetMappingValidators();
     }
