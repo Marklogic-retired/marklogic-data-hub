@@ -12,3 +12,6 @@ export const queryDateConverter = (date:string) => {
   return moment(date).format("DD-MMM-YY HH:mm");
 }
 
+export const CardViewDateConverter = (date:string) => {
+  return moment(date).format("YYYY-MMMM-DD");
+} 
