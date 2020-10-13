@@ -1,4 +1,4 @@
-.rawDataCard {
+.recordDataCard {
   padding-left: 10px;
   padding-right: 10px;
   .cardStyle {
@@ -29,7 +29,9 @@
     font-size: 20px;
     vertical-align: middle;
     margin-right: 8px;
+    cursor: pointer;
   }
+
   .detailLinkIcon {
     color: #5b69af;
     font-size: 18px;
@@ -61,6 +63,42 @@
   padding-top: 10px;
 }
 
+.popover {
+  font-size: 14px;
+  color: #333333;
+  width: 280px;
+  height: 90px;
+  
+  .colKey {
+    width: 85px;
+    float: left;
+  }
+
+  .colValue {
+    margin-left: 80px;
+
+    .valText {
+      font-weight: bold;
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3em;
+      margin-bottom: 5px;
+    }
+  }
+
+  p {
+    line-height: 1.3em;
+    margin-bottom: 5px;
+  }
+}
+
+.textDisabled {
+  color: #ccc;
+  font-weight: normal;
+}
+
 .binaryText {
   font-size: 14px;
   max-width: 50%;
@@ -73,5 +111,3 @@
   font-size: 24px;
   color: #777;
 }
-
-

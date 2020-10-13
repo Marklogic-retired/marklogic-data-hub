@@ -1,15 +1,15 @@
 import React from 'react';
 import { render, fireEvent, waitForElement } from '@testing-library/react';
-import { entitySearch } from "../../../assets/mock-data/explore/entity-search";
+import { entitySearch } from "../../assets/mock-data/explore/entity-search";
 import { BrowserRouter as Router } from 'react-router-dom';
-import RawDataCardView from './raw-data-card-view';
+import RecordCardView from './record-view';
 
 describe("Raw data card view component", () => {
 
     test('Raw data card with data renders', async () => {
-        const { getByTestId, getByText } = render(
+        const { getByTestId, getByText, getAllByText } = render(
             <Router>
-                <RawDataCardView
+                <RecordCardView
                     data={entitySearch.results}
                 />
             </Router>
@@ -48,5 +48,15 @@ describe("Raw data card view component", () => {
         //verify snippet content for binary doc
         expect(getByTestId('/Customer/Customer.pdf-noPreview').textContent).toContain('No preview available');
 
+        //verify popover metadata info
+        fireEvent.click(getByTestId('/Customer/Cust1.json-InfoIcon'))
+        expect(getByTestId('/Customer/Cust1.json-sources')).toBeInTheDocument();
+        expect(getByText('loadPersonJSON')).toBeInTheDocument();
+        expect(getByText('personJSON')).toBeInTheDocument();
+        expect(getByText('mapPersonJSON')).toBeInTheDocument();
+        expect(getByText('2020-October-09')).toBeInTheDocument();
+        //verify popover metadata info for missing properties
+        fireEvent.click(getByTestId('/Customer/Cust2.json-InfoIcon'))
+        expect(getAllByText('none')).toHaveLength(4)
     });
 })
