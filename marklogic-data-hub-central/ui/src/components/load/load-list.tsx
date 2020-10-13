@@ -109,11 +109,11 @@ const LoadList: React.FC<Props> = (props) => {
     const onAddOk = async (lName, fName) => {
         await props.addStepToFlow(lName, fName);
         setAddDialogVisible(false);
-
         history.push({
             pathname: '/tiles/run/add',
             state: {
                 flowName: fName,
+                addFlowDirty: true,
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
                 existingFlow: true
             }

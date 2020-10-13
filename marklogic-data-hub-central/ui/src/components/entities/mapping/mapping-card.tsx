@@ -590,6 +590,7 @@ const MappingCard: React.FC<Props> = (props) => {
             pathname: '/tiles/run/add',
             state: {
                 flowName: fName,
+                addFlowDirty: true,
                 flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
                 existingFlow: true
             }
