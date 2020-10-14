@@ -1,0 +1,5 @@
+{
+  "desc": "Defines endpoints needed by the Spark connector",
+  "endpointDirectory": "/marklogic-data-hub-spark-connector/",
+  "$javaClass": "com.marklogic.hub.spark.dataservices.SparkService"
+}

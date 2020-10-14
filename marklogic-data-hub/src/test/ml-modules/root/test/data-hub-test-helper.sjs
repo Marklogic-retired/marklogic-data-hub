@@ -67,7 +67,8 @@ function getRecord(uri) {
       uri : uri.toString(),
       document : cts.doc(uri).toObject(),
       collections : xdmp.documentGetCollections(uri).sort(),
-      permissions : buildPermissionsMap(xdmp.documentGetPermissions(uri))
+      permissions : buildPermissionsMap(xdmp.documentGetPermissions(uri)),
+      metadata : xdmp.documentGetMetadata(uri)
     }
   }));
 }

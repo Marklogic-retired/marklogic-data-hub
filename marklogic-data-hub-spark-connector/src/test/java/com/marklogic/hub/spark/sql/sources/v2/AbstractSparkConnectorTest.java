@@ -1,5 +1,6 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.impl.HubClientImpl;
@@ -23,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Base class for all connector tests.
  */
@@ -32,7 +35,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         new StructField("fruitName", DataTypes.StringType, true, Metadata.empty()),
         new StructField("fruitColor", DataTypes.StringType, true, Metadata.empty()),
     });
-
+    protected Optional<DataSourceWriter> dataSourceWriter;
     private HubClientConfig hubClientConfig;
     private HubClient hubClient;
     private Properties testProperties;
@@ -113,6 +116,15 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
     }
 
     /**
+     * @return Document Metadata
+     */
+    protected DocumentMetadataHandle getFirstFruitMetadata() {
+        String[] uris = getFruitUris();
+        assertTrue(uris.length > 0, "Expected at least one fruit URI, found zero");
+        return getHubClient().getStagingClient().newDocumentManager().readMetadata(uris[0], new DocumentMetadataHandle());
+    }
+
+    /**
      * Convenience method for building a DataWriter based on our Options convenience class.
      *
      * @param options
@@ -135,7 +147,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         final String writeUUID = "doesntMatter";
         final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
 
-        Optional<DataSourceWriter> dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
+        dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
         DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.get().createWriterFactory();
 
         final int partitionIdDoesntMatter = 0;

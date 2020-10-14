@@ -1,0 +1,14 @@
+{
+  "functionName" : "initializeJob",
+  "desc" : "Creates a job document with the given sparkMetadata as a property",
+  "params" : [ {
+    "name" : "sparkMetadata",
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "nullable": true
+  } ],
+  "return" : {
+    "datatype" : "string",
+    "desc" : "The ID of the created job"
+  }
+}

@@ -27,6 +27,7 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.spark.dataservices.SparkService;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriterFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.SaveMode;
@@ -84,15 +85,23 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private HubClient hubClient;
     private HubClientConfig hubClientConfig;
     private final JsonNode endpointParams;
+    private final String jobId;
+    private ObjectMapper objectMapper;
 
     public HubDataSourceWriter(Map<String, String> map, StructType schema, Boolean streaming) {
         this.map = map;
         this.schema = schema;
         this.streaming = streaming;
+        this.objectMapper = new ObjectMapper();
 
         this.hubClientConfig = DefaultSource.buildHubClientConfig(map);
-        this.hubClient =  HubClient.withHubClientConfig(hubClientConfig);
+        this.hubClient = HubClient.withHubClientConfig(hubClientConfig);
+        logger.info("Creating HubClient for host: " + hubClient.getStagingClient().getHost());
+
         this.endpointParams = determineIngestionEndpointParams(map);
+
+        this.jobId = initializeJob(schema);
+        addJobIdToEndpointConstants();
     }
 
     @Override
@@ -102,7 +111,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     @Override
     public void commit(long epochId, WriterCommitMessage[] messages) {
-        // TODO : Implementation
+        finalizeJob("finished");
     }
 
     @Override
@@ -115,7 +124,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         if (streaming) {
             throw new UnsupportedOperationException("Commit without epoch should not be called with StreamWriter");
         }
-        // TODO : Implementation
+        finalizeJob("finished");
     }
 
     @Override
@@ -127,8 +136,6 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private JsonNode determineIngestionEndpointParams(Map<String, String> options) {
-        ObjectMapper objectMapper = new ObjectMapper();
-
         ObjectNode endpointParams;
         if (options.containsKey("ingestendpointparams")) {
             try {
@@ -206,5 +213,32 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         metadata.getCollections().addAll("hub-core-module");
 
         return metadata;
+    }
+
+    private String initializeJob(StructType schema) {
+        ObjectNode sparkMetadata = objectMapper.createObjectNode();
+        try {
+            sparkMetadata.set("schema", objectMapper.readTree(schema.json()));
+        } catch (Exception e) {
+            logger.warn("Unable to read Spark schema as a JSON object; cause: " + e.getMessage() + "; the schema will not " +
+                "be persisted on the job document");
+        }
+        String jobId = SparkService.on(hubClient.getJobsClient()).initializeJob(sparkMetadata);
+        logger.info("Initialized job; ID: " + jobId);
+        return jobId;
+    }
+
+    private void addJobIdToEndpointConstants() {
+        if (endpointParams != null && endpointParams.has("endpointConstants")) {
+            JsonNode endpointConstants = endpointParams.get("endpointConstants");
+            if (endpointConstants instanceof ObjectNode) {
+                ((ObjectNode)endpointConstants).put("jobId", this.jobId);
+            }
+        }
+    }
+
+    private void finalizeJob(String status) {
+        logger.info(format("Finalizing job; ID: %s; status: %s", jobId, status));
+        SparkService.on(hubClient.getJobsClient()).finalizeJob(jobId, status);
     }
 }

@@ -47,7 +47,6 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
         HubClient client = HubClient.withHubClientConfig(DefaultSource.buildHubClientConfig(options));
-        logger.info("Creating HubClient for host: " + client.getStagingClient().getHost());
         return new HubDataWriter(client, schema, options, endpointParams);
     }
 }

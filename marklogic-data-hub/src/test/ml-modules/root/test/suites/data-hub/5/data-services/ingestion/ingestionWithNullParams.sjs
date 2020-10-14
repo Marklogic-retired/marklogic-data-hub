@@ -29,5 +29,10 @@ const envelope = record.document.envelope;
   // Should use default permissions
   test.assertEqual(1, Object.keys(record.permissions).length),
   test.assertEqual("read", record.permissions["data-hub-operator"][0]),
-  test.assertEqual("update", record.permissions["data-hub-operator"][1])
+  test.assertEqual("update", record.permissions["data-hub-operator"][1]),
+
+  //should add default metadata
+  test.assertExists(record.metadata.datahubCreatedOn),
+  test.assertEqual("test-data-hub-developer",record.metadata.datahubCreatedBy),
+  test.assertExists(record.metadata.datahubCreatedByJob)
 ];

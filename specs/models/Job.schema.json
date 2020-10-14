@@ -35,6 +35,10 @@
       "type": "string",
       "description": "dateTime at which the job ended"
     },
+    "sparkMetadata": {
+      "type": "object",
+      "description": "Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector"
+    },
     "stepResponses": {
       "type": "object",
       "description": "For each step that was executed, a key with a name equaling the step number of the step will be present",
