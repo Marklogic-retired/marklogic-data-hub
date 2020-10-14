@@ -1,6 +1,7 @@
 {
     "endpoint": "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
-    "desc": "This is a prototype and not intended for client use yet",
+    "functionName": "bulkIngest",
+    "desc": "Bulk ingestion endpoint for writing documents via the Spark connector",
     "params": [
         {
             "name": "endpointConstants",
@@ -14,8 +15,5 @@
             "multiple": true,
             "nullable": true
         }
-    ],
-    "$bulk": {
-        "inputBatchSize": 2
-    }
+    ]
 }
