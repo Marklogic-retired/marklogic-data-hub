@@ -227,26 +227,10 @@ task generateDataServiceInterfaces {
     }
 }
 
-if (!(
-    gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("test") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("testunit") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("publishtomavenlocal") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("bintrayupload") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("bootjar") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:bootjar") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("clientjar") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("marklogic-data-hub:clientjar") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("generatedataservice") ||
-        // Added for Hub Central
-        gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("buildrpm") ||
-
-        project.hasProperty('skipui')
-)
-) {
+// When publishing the DHF core jar, or building it for release, it needs to have the compiled trace-ui files in it so
+// that the trace-ui feature is available for those users that are aware of it. Otherwise, copyUIAssets is not executed as it can take a couple
+// minutes to finish, and it's not typically needed during local development.
+if (gradle.startParameter.taskNames*.toLowerCase().contains("publish") || gradle.startParameter.taskNames*.toLowerCase().contains("build")) {
     processResources.dependsOn copyUIAssets
 }
 
