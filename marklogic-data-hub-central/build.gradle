@@ -17,7 +17,6 @@ plugins {
 }
 
 apply plugin: "org.springframework.boot"
-apply plugin: "maven-publish"
 apply plugin: "io.spring.dependency-management"
 apply plugin: "war"
 apply plugin: "com.github.node-gradle.node"
@@ -185,28 +184,22 @@ task copyUiFiles(type: Copy, dependsOn: deleteSpringBootUiFiles, group: taskGrou
     into springBootUiPath
 }
 
-// Before the Spring Boot jar is built, build the UI files and copy them over
-if (!(
-    gradle.startParameter.taskNames*.toLowerCase().contains("publishplugins") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("bintrayUpload") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("javadoc") ||
-        // bootRun doesn't need the UI, as it's assumed that the UI is being run separately via npm start
-        gradle.startParameter.taskNames*.toLowerCase().contains("bootrun") ||
-        gradle.startParameter.taskNames*.toLowerCase().contains("generateschemapojos") ||
-        project.hasProperty('skipui')
-)
-) {
+// When creating the HC war file, need to build the UI files and add them to the classpath so that the war file includes them
+ext {
+    def taskNames = gradle.startParameter.taskNames*.toLowerCase()
+    shouldBuildUiFiles = taskNames.contains("build") || taskNames.contains("buildrpm") || taskNames.contains("bootwar")
+}
+if (shouldBuildUiFiles) {
+    println "Building UI!"
     tasks.processResources.dependsOn(buildUi, copyUiFiles)
 }
 
+
 test {
-	exclude 'com/marklogic/hub/curation/integrationtests/**'
-	exclude 'com/marklogic/hub/central/integrationtests/**'
-    exclude 'com/marklogic/hub/curation/controllers/fullcycle/**'
 	useJUnitPlatform()
 }
 
-tasks.buildRpm.dependsOn(buildUi, copyUiFiles, bootWar)
+tasks.buildRpm.dependsOn bootWar
 
 task testUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup){
     description = "Runs the UI unit tests"
