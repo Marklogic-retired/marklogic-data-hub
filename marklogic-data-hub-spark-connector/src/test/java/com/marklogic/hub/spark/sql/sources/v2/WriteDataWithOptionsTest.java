@@ -64,9 +64,4 @@ public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("rest-reader").iterator().next());
     }
 
-    private DocumentMetadataHandle getFirstFruitMetadata() {
-        String[] uris = getFruitUris();
-        assertTrue(uris.length > 0, "Expected at least one fruit URI, found zero");
-        return getHubClient().getStagingClient().newDocumentManager().readMetadata(uris[0], new DocumentMetadataHandle());
-    }
 }
