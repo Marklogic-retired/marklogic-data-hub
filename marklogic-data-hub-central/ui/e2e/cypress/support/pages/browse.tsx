@@ -262,7 +262,7 @@ class BrowsePage {
   clickFacetView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
-    cy.get('[data-cy=facet-view]').click().trigger('mouseout');
+    cy.get('[data-cy=facet-view]').click().trigger('mouseout', {force: true});
   }
 
   getFacetView(){
