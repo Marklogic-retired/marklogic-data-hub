@@ -1,6 +1,5 @@
 plugins {
     id "java-library"
-    id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
@@ -59,22 +58,4 @@ shadowJar {
     relocate('okio', 'marklogic.okio')
     relocate('com.fasterxml', 'marklogic.com.fasterxml')
 }
-
-publishing {
-    publications {
-        allJava(MavenPublication) {
-            from components.java
-            artifact shadowJar
-            // Removes the connector's dependencies, as the expectation is that if a client wants to
-            // depend on this project, they'll depend on the "all" shadow jar, which contains all the necessary
-            // classes, including relocated ones.q
-            pom.withXml {
-                asNode().dependencies.dependency.each { dep ->
-                    if(dep.artifactId.last().value().last() in ["marklogic-data-hub-api"]) {
-                        assert dep.parent().remove(dep)
-                    }
-                }
-            }
-        }
-    }
-}
+build.dependsOn shadowJar
