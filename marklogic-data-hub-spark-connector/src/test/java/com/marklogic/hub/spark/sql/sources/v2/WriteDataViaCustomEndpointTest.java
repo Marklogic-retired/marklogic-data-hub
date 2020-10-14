@@ -16,8 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
 
@@ -97,7 +96,9 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
     }
 
     private void verifyEndpointConstantsIsEmpty() {
-        assertEquals(0, writtenDocument.get("myEndpointConstants").size(), "The constants should default to an empty object when no options " +
-            "are set that will populate the constants");
+        assertEquals(1, writtenDocument.get("myEndpointConstants").size(),
+            "When the user provides empty ingestion endpointConstants, the jobId is still added to them so that it's " +
+                "available for the ingestion endpoint");
+        assertNotNull(writtenDocument.get("myEndpointConstants").get("jobId").asText());
     }
 }
