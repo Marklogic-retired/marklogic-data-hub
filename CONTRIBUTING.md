@@ -48,10 +48,8 @@ that the values for mlSecurityUsername and mlSecurityPassword are correct, as th
 instance of Data Hub. Also, ensure that you do not have a Data Hub instance already deployed to the MarkLogic that you 
 will connect to. Then, run the following Gradle task from the root project:
 
-    ./gradlew -Pskipui= bootstrap
+    ./gradlew -i bootstrap
     
-The "skipui=" property tells Gradle to skip building the QuickStart web application, which is not needed right now. 
-
 After two or three minutes, the bootstrap process will finish, and the test instance of Data Hub will be installed in MarkLogic. 
 
 #### Running tests 
@@ -87,11 +85,8 @@ these instructions:
 1. Publish the Data Hub library and Data Hub Gradle plugin to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  ./gradlew publishToMavenLocal -PskipWeb= 
+  ./gradlew publishToMavenLocal 
   ```
-
-The "skipWeb" property is used to skip compilation of the UI code in the ./marklogic-data-hub-central and ./web subprojects. 
-Typically, this is not needed for testing out the Data Hub library or Gradle plugin.
 
 2. In the build.gradle file for the project that will use the library, add your local Maven repository as a repository if it's not alreaded included:
 
@@ -111,7 +106,7 @@ Typically, this is not needed for testing out the Data Hub library or Gradle plu
 The version is defined in gradle.properties in the marklogic-data-hub root project directory. You can override this if 
 desired when publishing to your local Maven repository - e.g.
 
-    ./gradlew publishToMavenLocal -PskipWeb= -Pversion=myVersion
+    ./gradlew publishToMavenLocal -Pversion=myVersion
 
 
 ### Testing changes to the Data Hub Gradle plugin 
@@ -123,7 +118,7 @@ another project. To do so, follow the steps below.
 1. Publish the Data Hub library and Gradle plugin to your local Maven repository (defaults to ~/.m2/repository).
 
   ```bash
-  ./gradlew publishToMavenLocal -PskipWeb=
+  ./gradlew publishToMavenLocal
   ```
 
 2. Then add the following to the build.gradle file of the project where you'd like to test your just-published Data Hub 
