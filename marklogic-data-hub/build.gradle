@@ -197,6 +197,7 @@ task generateDataService(type: JavaExec) {
     ]
 }
 
+
 // Dynamically generate a task for each data-service directory, where the task can generate a Java interface for the data service
 new File("src/main/resources/ml-modules/root/data-hub/5/data-services").listFiles().each { file ->
     if (file.isDirectory() && new File(file, "service.json").exists()) {
@@ -212,6 +213,12 @@ task generateDataServiceInterfaces {
     dependsOn {
         tasks.findAll { task -> dataServicesGroup.equals(task.group)}
     }
+}
+
+task generateSparkInterface(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask, group: dataServicesGroup) {
+    description = "Must run this from the ./marklogic-data-hub directory"
+    serviceDeclarationFile = "src/main/resources/ml-modules/root/marklogic-data-hub-spark-connector/service.json"
+    javaBaseDirectory = "../marklogic-data-hub-spark-connector/src/main/java"
 }
 
 // When publishing the DHF core jar, or building it for release, it needs to have the compiled trace-ui files in it so

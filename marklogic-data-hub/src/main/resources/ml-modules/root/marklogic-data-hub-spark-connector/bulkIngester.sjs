@@ -60,6 +60,11 @@ if(work.sourcename != null || work.sourcetype != null){
   headers.sources = sources
 }
 
+const metadata = {};
+metadata.datahubCreatedByJob = work.jobId != null ? work.jobId : '';
+metadata.datahubCreatedBy = xdmp.getCurrentUser();
+metadata.datahubCreatedOn = fn.currentDateTime();
+
 var inputArray;
 if (input instanceof Sequence) {
   inputArray = input.toArray().map(item => fn.head(xdmp.fromJSON(item)));
@@ -84,7 +89,8 @@ inputArray.forEach(record => {
             record,
             {
               permissions: permissionsArray,
-              collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col)))
+              collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
+              metadata: metadata
             }
     );
   } else {
@@ -93,7 +99,8 @@ inputArray.forEach(record => {
         record,
         {
           permissions: permissionsArray,
-          collections: collections
+          collections: collections,
+          metadata: metadata
         }
       );
   }

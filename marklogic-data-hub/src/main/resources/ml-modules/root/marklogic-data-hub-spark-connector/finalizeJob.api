@@ -1,0 +1,14 @@
+{
+  "functionName" : "finalizeJob",
+  "desc" : "Update the job document after records have been written or an error has occurred",
+  "params" : [ {
+    "name" : "jobId",
+    "datatype" : "string",
+    "desc" : "ID of the job document"
+  },
+  {
+    "name" : "status",
+    "datatype" : "string",
+    "desc" : "Status of the job"
+  }]
+}
