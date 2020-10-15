@@ -17,7 +17,15 @@
   text-overflow: ellipsis;
 }
 
-.selectedFacets {
-    //margin-top: -30px;
-  }
+.disabledSaveIcon {
+  color: grey;
+  opacity: 0.5;
+  cursor: not-allowed;
+  marginBottom: 9px;
+}
 
+.enabledSaveIcon {
+  cursor: pointer;
+  color: #5b69af;
+  marginBottom: 9px;
+}
