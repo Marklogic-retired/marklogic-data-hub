@@ -1,9 +1,10 @@
 const test = require("/test/test-helper.xqy");
 const hubTest = require("/test/data-hub-test-helper.sjs");
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 
 let assertions = [];
 
-function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit) {
+function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit, ignoreArtifactCollections = false) {
   return fn.head(xdmp.invoke(
       "/data-hub/5/data-services/entitySearch/getMatchingPropertyValues.sjs",
       {
@@ -12,7 +13,8 @@ function invokeService(entityTypeId, propertyPath, referenceType, pattern, limit
           "propertyPath": propertyPath,
           "referenceType": referenceType,
           "pattern": pattern,
-          "limit": limit
+          "limit": limit,
+          "ignoreArtifactCollections": ignoreArtifactCollections
         })
       }
   ));
@@ -111,11 +113,50 @@ function testMatchingValuesOnCollectionNames() {
   ];
 }
 
+function testMatchingValuesOnCollectionNamesIgnoringArtifacts() {
+  const assertions = [];
+  let entityTypeId = "";
+  let propertyPath = "";
+  let result = invokeService(entityTypeId, propertyPath,"collection", "doc", 10, true);
+  assertions.push(
+    test.assertEqual(2, result.length),
+    test.assertTrue(result.includes("doc1")),
+    test.assertTrue(result.includes("doc2"))
+  );
+  result = invokeService(entityTypeId, propertyPath,"collection", "step", 10, true);
+  assertions.push(
+      test.assertEqual(0, result.length)
+  );
+  return assertions;
+}
+
+function getAllArtifactCollectionsTest() {
+  const expectedArtifactCollections = [
+    "http://marklogic.com/data-hub/steps/ingestion",
+    "http://marklogic.com/data-hub/steps",
+    "http://marklogic.com/data-hub/flow",
+    "http://marklogic.com/data-hub/step-definition",
+    "http://marklogic.com/data-hub/steps/mapping",
+    "http://marklogic.com/data-hub/mappings",
+    "http://marklogic.com/data-hub/steps/matching",
+    "http://marklogic.com/data-hub/steps/merging",
+    "http://marklogic.com/data-hub/steps/mastering",
+    "http://marklogic.com/data-hub/steps/custom"
+  ];
+  const artifactCollections = Artifacts.getAllArtifactCollections();
+
+  return [
+    test.assertEqual(expectedArtifactCollections, artifactCollections)
+  ]
+}
+
 hubTest.runWithRolesAndPrivileges(['hub-central-entity-model-reader'], [], function() {
   assertions = []
     .concat(testMatchingValuesOnRangeElementIndexes())
     .concat(testMatchingValuesOnRangeFieldIndexes())
-    .concat(testMatchingValuesOnCollectionNames());
+    .concat(testMatchingValuesOnCollectionNames())
+    .concat(testMatchingValuesOnCollectionNamesIgnoringArtifacts())
+    .concat(getAllArtifactCollectionsTest());
   /*
   .concat(testMatchingValuesStartingWithPattern())
   .concat(testMatchingValuesWithPatternInBetween())

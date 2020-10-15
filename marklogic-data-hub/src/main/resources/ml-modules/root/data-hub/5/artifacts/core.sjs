@@ -324,6 +324,19 @@ function convertStepReferenceToInlineStep(stepId) {
   return newFlowStep;
 }
 
+function getAllArtifactCollections() {
+  const collections = [];
+  for(let artifactLibraryKey of Object.keys(registeredArtifactTypes)) {
+    let artifactLibrary = getArtifactTypeLibrary(artifactLibraryKey);
+      artifactLibrary.getCollections().forEach((collection) => {
+        if (!collections.includes(collection)) {
+            collections.push(collection);
+        }
+      })
+  }
+  return collections;
+}
+
 module.exports = {
     getArtifacts,
     deleteArtifact,
@@ -331,5 +344,6 @@ module.exports = {
     setArtifact,
     validateArtifact,
     getFullFlow,
+    getAllArtifactCollections,
     convertStepReferenceToInlineStep
 };

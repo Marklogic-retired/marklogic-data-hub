@@ -17,6 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
+const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const lib = require('/data-hub/5/impl/hub-es.sjs');
 
@@ -68,20 +69,29 @@ if(referenceType === 'element') {
 } else if(referenceType === 'field') {
   query = cts.fieldReference(propertyPath);
 } else if(referenceType === 'collection') {
-  query = cts.collectionReference();
+  const collectionsToIgnore = Artifacts.getAllArtifactCollections();
+  collectionsToIgnore.push("http://marklogic.com/entity-services/models", "hub-core-artifact");
+
+  const allCollectionsQuery = cts.collectionQuery(cts.collections());
+  const ignoredCollectionsQuery = queryObj.ignoreArtifactCollections ? cts.collectionQuery(collectionsToIgnore) : cts.collectionQuery([]);
+  query = cts.andNotQuery(allCollectionsQuery, ignoredCollectionsQuery);
 } else {
   const result = lib.buildPathReferenceParts(entityTypeId, propertyPath);
   query = cts.pathReference(result.pathExpression, null, result.namespaces);
 }
 
-var facetValues = cts.valueMatch(query, pattern + "*",
-    ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
-
-if (facetValues.length < limit) {
-  var moreFacetValues = cts.valueMatch(query, "?*" + pattern + "*",
-      ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
-  facetValues = Array.from(
-      [...new Set([...facetValues, ...moreFacetValues])]).slice(0, limit);
+let facetValues = [];
+if(referenceType === 'collection') {
+  facetValues = cts.collectionMatch(pattern + "*", ["item-order", "ascending", "limit=" + limit], query).toArray().map(String);
+  if (facetValues.length < limit) {
+    const moreFacetValues = cts.collectionMatch("?*" + pattern + "*", ["item-order", "ascending", "limit=" + limit], query).toArray().map(String);
+    facetValues = Array.from([...new Set([...facetValues, ...moreFacetValues])]).slice(0, limit);
+  }
+} else {
+  facetValues = cts.valueMatch(query, pattern + "*", ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
+  if (facetValues.length < limit) {
+    const moreFacetValues = cts.valueMatch(query, "?*" + pattern + "*", ["item-order", "ascending", "limit=" + limit]).toArray().map(String);
+    facetValues = Array.from([...new Set([...facetValues, ...moreFacetValues])]).slice(0, limit);
+  }
 }
-
 facetValues;

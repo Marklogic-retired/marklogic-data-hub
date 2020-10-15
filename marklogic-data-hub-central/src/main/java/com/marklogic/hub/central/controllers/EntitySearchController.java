@@ -184,6 +184,7 @@ public class EntitySearchController extends BaseController {
         public String referenceType;
         public Integer limit;
         public String pattern;
+        public boolean ignoreArtifactCollections;
     }
 
     public static class IndexMinMaxQuery {
