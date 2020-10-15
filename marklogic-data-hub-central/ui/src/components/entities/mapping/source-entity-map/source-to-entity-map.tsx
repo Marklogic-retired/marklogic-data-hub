@@ -1098,18 +1098,20 @@ const SourceToEntityMap = (props) => {
     const handleExpandCollapse = (rowKey) => {
         if(rowKey === 'rowKey'){
         let keys = getKeysToExpandFromTable(srcData,rowKey);
-            setSourceExpandedKeys([...keys]);
             if(expandedSourceFlag) {
+                setSourceExpandedKeys([])
                 setExpandedSourceFlag(false);
             } else {
+                setSourceExpandedKeys([...keys]);
                 setExpandedSourceFlag(true);
             }
         } else {
         let keys = getKeysToExpandFromTable(props.entityTypeProperties,rowKey);
-            setEntityExpandedKeys([...keys]);
             if(expandedEntityFlag) {
+                setEntityExpandedKeys([]);
                 setExpandedEntityFlag(false);
             } else {
+                setEntityExpandedKeys([...keys]);
                 setExpandedEntityFlag(true);
             }
         }
@@ -1225,7 +1227,7 @@ const SourceToEntityMap = (props) => {
                             :
                             <div id="dataPresent">
 
-                                <div className={styles.navigationCollapseButtons}><span><MLButton data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse' : 'Expand'}</MLButton></span><span>{navigationButtons}</span></div>
+                                <div className={styles.navigationCollapseButtons}><span><MLButton data-testid="expandCollapseBtn-source" onClick={() => handleExpandCollapse('rowKey')} className={styles.expandCollapseBtn}>{expandedSourceFlag ? 'Collapse All' : 'Expand All'}</MLButton></span><span>{navigationButtons}</span></div>
                                     <Table
                                         pagination={false}
                                         expandIcon={(props) => customExpandIcon(props)}
@@ -1253,7 +1255,7 @@ const SourceToEntityMap = (props) => {
                         </div>
                         <div ref={dummyNode}></div>
                         <div className={styles.columnOptionsSelectorContainer}>
-                            <span><MLButton data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse' : 'Expand'}</MLButton></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
+                            <span><MLButton data-testid="expandCollapseBtn-entity" onClick={() => handleExpandCollapse('key')} className={styles.expandCollapseBtn}>{expandedEntityFlag ? 'Collapse All' : 'Expand All'}</MLButton></span><span className={styles.columnOptionsSelector}>{columnOptionsSelector}</span></div>
                         <Table
                             pagination={false}
                             className={styles.entityTable}
