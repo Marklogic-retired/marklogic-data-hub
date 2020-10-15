@@ -414,7 +414,7 @@ describe('save/manage queries scenarios, developer role', () => {
         // browsePage.getResetQueryButton().click();
         browsePage.getExploreButton().should('be.visible');
         browsePage.getExploreButton().click();
-        //verify no confirmation modal after reset. 
+        //verify no confirmation modal after reset.
         browsePage.selectEntity('Customer');
         browsePage.getSelectedEntity().should('contain', 'Customer');
         browsePage.getSaveQueriesDropdown().should('be.visible');
@@ -585,6 +585,10 @@ describe('User without hub-central-saved-query-user role should not see saved qu
         browsePage.getGreySelectedFacets('Adams Cole').should('exist');
         browsePage.getFacetApplyButton().click();
         browsePage.waitForSpinnerToDisappear();
-        browsePage.getSaveModalIcon().should('not.be.visible');
+        //Verify user without hub-central-saved-query-user role can see save icon and is disabled
+        browsePage.getSaveModalIcon().should('be.visible');
+        browsePage.getSaveModalIcon().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
     });
 });
+
+

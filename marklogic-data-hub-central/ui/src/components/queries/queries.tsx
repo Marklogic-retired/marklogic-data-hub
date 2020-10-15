@@ -343,25 +343,18 @@ const Query: React.FC<Props> = (props) => {
     return (
         <div>
             <div>
-                {props.isSavedQueryUser && (props.selectedFacets.length > 0 || searchOptions.query
+                {(props.selectedFacets.length > 0 || searchOptions.query
                     || props.isColumnSelectorTouched || searchOptions.sortOrder.length > 0) &&
                 showSaveNewIcon && searchOptions.entityTypeIds.length > 0 && searchOptions.selectedQuery === 'select a query' &&
                     <div style={{ marginTop: '-22px' }}>
-                        <MLTooltip title={'Save the current query'}>
+                        <MLTooltip title={props.isSavedQueryUser ? 'Save the current query' : 'Save Query: Contact your security administrator to get the roles and permissions to access this functionality'}>
                             <FontAwesomeIcon
                                 icon={faSave}
-                                title="save-query"
-                                onClick={() => setOpenSaveModal(true)}
+                                onClick={props.isSavedQueryUser ? () => setOpenSaveModal(true) : () => setOpenSaveModal(false)}
+                                className={props.isSavedQueryUser ? styles.enabledSaveIcon : styles.disabledSaveIcon}
                                 data-testid='save-modal'
                                 style={props.queries.length > 0 ? {
-                                    color: '#5b69af',
-                                    marginLeft: '170px',
-                                    marginBottom: '9px',
-                                    cursor:'pointer'
-                                } : {
-                                        color: '#5b69af', marginLeft: '18px',
-                                        marginBottom: '9px',
-                                        cursor:'pointer'
+                                    marginLeft: '170px',marginBottom: '9px'} : {marginLeft: '18px',marginBottom: '9px'
                                     }}
                                 size="lg" />
                         </MLTooltip>
