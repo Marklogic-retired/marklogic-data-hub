@@ -108,4 +108,32 @@ describe('Matching Ruleset Single Modal component', () => {
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
   });
+
+  it('can select Double Metaphone ruleset type and click save', () => {
+    const toggleModalMock = jest.fn();
+
+    const { queryByText, getByText, getByLabelText } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Select property'));
+    userEvent.click(screen.getByText('orders'));
+
+    userEvent.click(screen.getByText('Select match type'));
+    userEvent.click(screen.getByText('Double Metaphone'));
+    userEvent.type(getByLabelText('dictionary-uri-input'), '/Users/jsmith/Documents/sample-data/123ABC');
+    userEvent.type(getByLabelText('distance-threshold-input'), '100')
+    userEvent.type(getByLabelText('collation-input'), 'http://marklogic.com/collation/codepoint')
+
+
+    userEvent.click(getByText('Save'));
+    expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+  });
 });
