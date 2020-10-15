@@ -30,6 +30,7 @@ const layout = {
 const MATCH_TYPE_OPTIONS = [
   { name: 'Exact', value: 'exact' },
   { name: 'Synonym', value: 'synonym' },
+  { name: 'Double Metaphone', value: 'doubleMetaphone' },
   { name: 'Reduce', value: 'reduce' },
   { name: 'Zip', value: 'zip' },
 ]
@@ -50,6 +51,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [thesaurusErrorMessage, setThesaurusErrorMessage] = useState('');
   const [filterValue, setFilterValue] = useState('')
 
+  const [dictionaryValue, setDictionaryValue] = useState('');
+  const [dictionaryErrorMessage, setDictionaryErrorMessage] = useState('');
+  const [distanceThresholdValue, setDistanceThresholdValue] = useState('');
+  const [distanceThresholdErrorMessage, setDistanceThresholdErrorMessage] = useState('');
+  const [collationValue, setCollationValue] = useState('')
+
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find( entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
@@ -58,16 +65,45 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   }, [props.isVisible]);
 
   const handleInputChange = (event) => {
-    if (event.target.id === 'thesaurus-uri-input') {
-      if (event.target.value === '') {
-        setThesaurusErrorMessage('A thesaurus URI is required')
-      } else {
-        setThesaurusErrorMessage('');
-      }
-      setThesaurusValue(event.target.value);
-    } else if (event.target.id === 'filter-input') {
-      setFilterValue(event.target.value);
-    }    
+    switch(event.target.id) {
+      case 'thesaurus-uri-input':
+        if (event.target.value === '') {
+          setThesaurusErrorMessage('A thesaurus URI is required')
+        } else {
+          setThesaurusErrorMessage('');
+        }
+        setThesaurusValue(event.target.value);
+        break;
+
+      case 'filter-input':
+        setFilterValue(event.target.value);
+        break;
+
+      case 'dictionary-uri-input':
+        if (event.target.value === '') {
+          setDictionaryErrorMessage('A dictionary URI is required')
+        } else {
+          setDictionaryErrorMessage('');
+        }
+        setDictionaryValue(event.target.value);
+        break;
+
+      case 'distance-threshold-input':
+        if (event.target.value === '') {
+          setDistanceThresholdErrorMessage('A distance threshold is required')
+        } else {
+          setDistanceThresholdErrorMessage('');
+        }
+        setDistanceThresholdValue(event.target.value);
+        break;
+
+      case 'collation-input':
+        setCollationValue(event.target.value);
+        break;
+
+      default:
+        break;
+    }
   }
 
   const closeModal = () => {
@@ -83,6 +119,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setThesaurusValue('');
     setThesaurusErrorMessage('');
     setFilterValue('');
+    setDictionaryValue('');
+    setDictionaryErrorMessage('')
+    setDistanceThresholdValue('');
+    setDistanceThresholdErrorMessage('');
+    setCollationValue('');
   }
 
   const onSubmit = (event) => {
@@ -162,6 +203,48 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           break;
         }
 
+      case 'doubleMetaphone':
+        {
+          let dictionaryUriErrorMessage = '';
+          if (dictionaryValue === '') {
+            dictionaryUriErrorMessage = 'A dictionary URI is required';
+          }
+
+          let distanceThresholdErrorMessage = '';
+          if (distanceThresholdValue === '') {
+            distanceThresholdErrorMessage = 'A distance threshold is required';
+          }
+  
+          let propertyName = selectedProperty || '';
+  
+          let doubleMetaphoneMatchRule: MatchRule = {
+            entityPropertyPath: propertyName,
+            matchType: matchType,
+            options: {
+              dictionaryUri: dictionaryValue,
+              distanceThreshold: distanceThresholdValue
+            }
+          }
+
+          let matchRuleset: MatchRuleset = {
+            name: propertyName,
+            weight: 0,
+            matchRules: [doubleMetaphoneMatchRule]
+          }
+  
+          if (dictionaryUriErrorMessage === '' && distanceThresholdErrorMessage === '') {
+            // TODO save step to backend
+            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+            newStepArtifact.matchRulesets.push(matchRuleset);
+            updateActiveStepArtifact(newStepArtifact);
+            props.toggleModal(false);
+            resetModal();
+          }
+          setDictionaryErrorMessage(dictionaryUriErrorMessage);
+          setDistanceThresholdErrorMessage(distanceThresholdErrorMessage)
+          break;
+        }
+
       default:
         break;
     }
@@ -215,7 +298,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           colon={false}
           labelAlign="left"
         >
-
           <Input
             id="filter-input"
             aria-label="filter-input"
@@ -226,6 +308,78 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             onBlur={handleInputChange}
           />
           <MLTooltip title={NewMatchTooltips.filter}>
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
+          </MLTooltip>
+      </Form.Item>
+    </>
+  )
+
+  const renderDoubleMetaphoneOptions = (
+    <>
+      <Form.Item
+        className={styles.formItem}
+        label={<span>
+          Dictionary URI:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>}
+        colon={false}
+        labelAlign="left"
+        validateStatus={dictionaryErrorMessage ? 'error' : ''}
+        help={dictionaryErrorMessage}
+      >
+        <Input
+          id="dictionary-uri-input"
+          aria-label="dictionary-uri-input"
+          placeholder="Enter dictionary URI"
+          className={styles.input}
+          value={dictionaryValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.dictionaryUri}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
+      </Form.Item>
+      <Form.Item
+        className={styles.formItem}
+        label={<span>
+          Distance Threshold:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>}
+        colon={false}
+        labelAlign="left"
+        validateStatus={distanceThresholdErrorMessage ? 'error' : ''}
+        help={distanceThresholdErrorMessage}
+      >
+        <Input
+          id="distance-threshold-input"
+          aria-label="distance-threshold-input"
+          placeholder="Enter distance threshold"
+          className={styles.input}
+          value={distanceThresholdValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.distanceThreshold}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
+      </Form.Item>
+      <Form.Item
+          className={styles.formItem}
+          label={<span>Collation:</span>}
+          colon={false}
+          labelAlign="left"
+        >
+          <Input
+            id="collation-input"
+            aria-label="collation-input"
+            placeholder="Enter URI for a collation"
+            className={styles.input}
+            value={collationValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <MLTooltip title={NewMatchTooltips.collation}>
             <Icon type="question-circle" className={styles.icon} theme="filled" />
           </MLTooltip>
       </Form.Item>
@@ -314,6 +468,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         </Form.Item>
 
         {matchType === 'synonym' && renderSynonymOptions}
+        {matchType === 'doubleMetaphone' && renderDoubleMetaphoneOptions}
         {modalFooter}
       </Form>
     </Modal>
