@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * Base class for all glue-connector tests.
+ * Base class for all connector tests.
  */
 public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
 
