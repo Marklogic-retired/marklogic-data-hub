@@ -18,4 +18,16 @@ const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services
 
 let mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
 let xpathFunctions = esMappingLib.getXpathMappingFunctions();
-Object.assign({}, mlFunctions, xpathFunctions);
+let unOrderedMappingFunctions = Object.assign({}, mlFunctions, xpathFunctions);
+let orderedMappingFunctions = {};
+Object.keys(unOrderedMappingFunctions).sort(function(fnA, fnB) {
+  fnA = fnA.toLowerCase();
+  fnB = fnB.toLowerCase();
+  if( fnA == fnB){
+    return 0;
+  }
+  return fnA < fnB ? -1 : 1;})
+  .forEach(function(key) {
+    orderedMappingFunctions[key] = unOrderedMappingFunctions[key];
+  });
+orderedMappingFunctions
