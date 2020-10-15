@@ -16,8 +16,8 @@ repositories {
 dependencies {
     api "com.marklogic:marklogic-client-api:5.3.0"
 
-    // Needed for ManageClient, and we need the latest 3.x release, which can run on Java 8
-    api "com.marklogic:ml-app-deployer:3.17.0"
+    // Needed for ManageClient, and need 4.1.0 or higher, as 4.1.0 now runs on Java 8 again
+    api "com.marklogic:ml-app-deployer:4.1.0"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
