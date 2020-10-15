@@ -63,7 +63,10 @@ const NewMatchTooltips = {
     'description': 'The description of this matching configuration.',	    'targetDatabase': 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
     'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
     'thesaurusUri' : 'The path to the thesaurus used to determine synonyms',
-    'filter' : 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>'
+    'filter' : 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>',
+    'dictionaryUri' : 'The path to the dictionary used to compare words phonetically',
+    'distanceThreshold' : 'The phonetic distance below which 2 strings are considered similar',
+    'collation' : 'The URI for a collation, which specifies the order for sorting strings'
 }
 
 
