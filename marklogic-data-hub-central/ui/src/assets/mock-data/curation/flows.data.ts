@@ -40,6 +40,7 @@ const jobRespFailedWithError = {
               "stepDefinitionType": "mapping",
               "stepOutput": stepFailedWithError,
               "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+              "targetDatabase": "final",
               "fullOutput": null,
               "status": "completed step 2",
               "totalEvents": 3,

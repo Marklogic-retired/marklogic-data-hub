@@ -19,6 +19,8 @@ package com.marklogic.hub.central.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.job.JobDocManager;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping(value = "/api/jobs")
@@ -62,10 +65,36 @@ public class JobsController extends BaseController {
             });
             return array;
         } else if (jobJSON.has("job")) {
-            return jobJSON.get("job");
+            return processTargetDatabase(jobJSON.get("job"));
         } else {
             return jobJSON;
         }
+    }
+
+    /**
+     * Modifies the passed in JsonNode to replace the targetDatabase name with the Database kind
+     * so the FE can set the correct database for data exploration.
+     * @param jobNode
+     * @return - Modified JsonNode
+     */
+    protected JsonNode processTargetDatabase(JsonNode jobNode) {
+        Optional.of(jobNode)
+                .map(node -> node.get("stepResponses"))
+                .ifPresent(stepResponsesNode -> {
+                    stepResponsesNode.forEach(stepResponseNode -> {
+                        String targetDatabase = Optional.ofNullable(stepResponseNode.get("targetDatabase"))
+                                .map(JsonNode::asText)
+                                .orElse(null);
+                        if (getHubClient().getDbName(DatabaseKind.STAGING).equals(targetDatabase)) {
+                            ((ObjectNode) stepResponseNode).put("targetDatabase", "staging");
+                        }
+                        else if ((getHubClient().getDbName(DatabaseKind.FINAL).equals(targetDatabase))) {
+                            ((ObjectNode) stepResponseNode).put("targetDatabase", "final");
+                        }
+                    });
+                });
+
+        return jobNode;
     }
 
     public static class Job {
