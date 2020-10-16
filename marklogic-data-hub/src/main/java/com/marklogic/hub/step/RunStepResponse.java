@@ -25,6 +25,7 @@ import com.marklogic.hub.step.impl.Step;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class RunStepResponse {
     private String jobId;
@@ -34,6 +35,7 @@ public class RunStepResponse {
     private String stepDefinitionName;
     private String stepDefinitionType;
     private String targetEntityType;
+    private String targetDatabase;
 
     public List<String> stepOutput;
     private Map<String, Object> fullOutput;
@@ -90,6 +92,7 @@ public class RunStepResponse {
         if (targetEntityTextNode != null) {
             this.targetEntityType = targetEntityTextNode.asText();
         }
+        Optional.of(step.getOptions()).map(optionMap -> (TextNode) optionMap.get("targetDatabase")).ifPresent(node -> this.targetDatabase = node.asText());
         return this;
     }
 
@@ -196,12 +199,21 @@ public class RunStepResponse {
         return targetEntityType;
     }
 
+    public String getTargetDatabase() {
+        return targetDatabase;
+    }
+
+    public void setTargetDatabase(String targetDatabase) {
+        this.targetDatabase = targetDatabase;
+    }
+
     @Override
     public String toString() {
-        return String.format("[flowName: %s, stepName: %s, stepDefinitionName: %s, stepDefinitionType: %s, targetEntityType: %s, success: %s, " +
-                "status: %s, totalEvents: %d, successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, " +
-                "failedBatches: %d, stepStartTime: %s , stepEndTime: %s]", flowName, stepName, stepDefinitionName,
-            stepDefinitionType, targetEntityType, String.valueOf(success), status, totalEvents, successfulEvents, failedEvents,
+        return String.format("[flowName: %s, stepName: %s, stepDefinitionName: %s, stepDefinitionType: %s, " +
+                        "targetEntityType: %s, targetDatabase: %s, success: %s, status: %s, totalEvents: %d, " +
+                        "successfulEvents: %d, " + "failedEvents: %d, successfulBatches: %d, failedBatches: %d, " +
+                        "stepStartTime: %s , stepEndTime: %s]", flowName, stepName, stepDefinitionName,
+            stepDefinitionType, targetEntityType, targetDatabase, success, status, totalEvents, successfulEvents, failedEvents,
             successfulBatches, failedBatches, stepStartTime, stepEndTime);
     }
 }
