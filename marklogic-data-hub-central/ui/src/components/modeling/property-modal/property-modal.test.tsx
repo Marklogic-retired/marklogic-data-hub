@@ -12,6 +12,7 @@ import {
 } from '../../../types/modeling-types';
 
 import { entityReferences } from '../../../api/modeling';
+import { getSystemInfo } from '../../../api/environment';
 import { definitionsParser } from '../../../util/data-conversion';
 import { propertyTableEntities, referencePayloadEmpty, referencePayloadSteps, referencePayloadStepRelationships } from '../../../assets/mock-data/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
@@ -19,8 +20,11 @@ import { ModelingContext } from '../../../util/modeling-context';
 import { entityNamesArray, customerEntityNamesArray } from '../../../assets/mock-data/modeling-context-mock';
 
 jest.mock('../../../api/modeling');
+jest.mock('../../../api/environment');
 
 const mockEntityReferences = entityReferences as jest.Mock;
+const mockGetSystemInfo = getSystemInfo as jest.Mock;
+
 
 const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
   isStructured: false,
@@ -69,6 +73,8 @@ describe('Property Modal Component', () => {
   });
 
   test('Add a basic property type and duplicate name validation', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -126,9 +132,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByText('Add'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('Add a Property with relationship type', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -168,9 +177,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can display error message for property name and type inputs and press cancel', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -204,9 +216,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByText('Cancel'));
     expect(mockAdd).toHaveBeenCalledTimes(0);
+    expect(mockGetSystemInfo).toBeCalledTimes(0);
   });
 
   test('Add a Property with a structured type, no relationship type in dropdown', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let mockAdd = jest.fn();
@@ -243,9 +258,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(mockAdd).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('Add a new property to a structured type definition', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -290,9 +308,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('Add a Property with a newly created structured type', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -337,9 +358,12 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('Add an identifier to a new Property', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
+
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Order' );
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
@@ -371,9 +395,11 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(addMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can edit a basic property with step warning, but cancel changes', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadStepRelationships });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -448,9 +474,11 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-cancel'));
     expect(editMock).toHaveBeenCalledTimes(0);
+    expect(mockGetSystemInfo).toBeCalledTimes(0);
   });
 
   test('can edit a relationship property', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -507,9 +535,11 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(editMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can edit a structured type property and change property name', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -590,9 +620,11 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(editMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can edit a basic property from a structured type', () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -665,9 +697,11 @@ describe('Property Modal Component', () => {
 
     userEvent.click(getByLabelText('property-modal-submit'));
     expect(editMock).toHaveBeenCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can delete a property', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -719,9 +753,11 @@ describe('Property Modal Component', () => {
     )
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can delete a structured property with step warning', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadSteps });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -780,9 +816,11 @@ describe('Property Modal Component', () => {
     )
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyStepWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 
   test('can delete a relationship type property with step warning', async () => {
+    mockGetSystemInfo.mockResolvedValueOnce({ status: 200, data: {} });
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });
 
     let entityType = propertyTableEntities.find( entity => entity.entityName === 'Customer' );
@@ -834,6 +872,7 @@ describe('Property Modal Component', () => {
     )
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeletePropertyWarn}-yes`));
     expect(deleteMock).toBeCalledTimes(1);
+    expect(mockGetSystemInfo).toBeCalledTimes(1);
   });
 });
 

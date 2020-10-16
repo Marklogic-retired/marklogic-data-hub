@@ -7,6 +7,7 @@ import { UserContext } from '../../util/user-context';
 import { ModelingContext} from '../../util/modeling-context';
 import { useInterval } from '../../hooks/use-interval';
 import {MAX_SESSION_TIME, SESSION_WARNING_COUNTDOWN} from '../../config/application.config';
+import { getSystemInfo } from '../../api/environment';
 
 interface Props extends RouteComponentProps<any>{
 };
@@ -96,7 +97,7 @@ const ModalStatus: React.FC<Props> = (props) => {
     } else if (sessionWarning) {
       // refresh session
       try {
-        await axios.get('/api/environment/systemInfo');
+        await getSystemInfo();
       } catch (error) {
         if (error.response) {
           handleError(error);
@@ -104,7 +105,6 @@ const ModalStatus: React.FC<Props> = (props) => {
           history.push('/noresponse');
         }
       } finally {
-        resetSessionTime();
         setSessionTime(SESSION_WARNING_COUNTDOWN);
         setSessionWarning(false);
         toggleModal(false);
