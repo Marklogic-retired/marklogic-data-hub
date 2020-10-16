@@ -396,7 +396,14 @@ describe('Verify step display', () => {
         // Error 2 is present
         expect(getByText("Error 2")).toBeInTheDocument();
         expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
-        fireEvent.click(getByText('Close'));
+
+        // Navigate to Explore tile
+        let exploreButton = await(waitForElement(() => getByText("Explore Curated Data")));
+        fireEvent.click(exploreButton);
+        await wait(() => {
+            expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
+                "state": {"entityName": "Customer", "targetDatabase": "final", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
+        });
     });
 
 });
@@ -666,7 +673,7 @@ describe('Verify map/match/merge/master step failures in a flow', () => {
         }
         await wait(() => {
             expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-                "state": {"entityName": "Customer", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
+                "state": {"entityName": "Customer", "targetDatabase": "final", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
         });
         //TODO- E2E test to check if the explore tile is loaded or not.*/
     });
