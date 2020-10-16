@@ -23,7 +23,7 @@ const Statuses = {
 }
 
 const Run = (props) => {
-   const { handleError, resetSessionTime } = useContext(UserContext);
+   const { handleError } = useContext(UserContext);
 
     const history: any = useHistory();
 
@@ -100,8 +100,6 @@ const Run = (props) => {
             console.error('********* ERROR', error);
             let message = error.response.data.message;
             console.error('Error getting steps', message);
-        } finally {
-          resetSessionTime();
         }
     }
 

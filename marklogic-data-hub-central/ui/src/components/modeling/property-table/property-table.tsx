@@ -25,6 +25,7 @@ import { UserContext } from '../../../util/user-context';
 import { ModelingContext } from '../../../util/modeling-context';
 import { definitionsParser } from '../../../util/data-conversion';
 import { ModelingTooltips } from '../../../config/tooltips.config';
+import { getSystemInfo } from '../../../api/environment';
 
 type Props = {
   canReadEntityModel: boolean;
@@ -745,11 +746,16 @@ const PropertyTable: React.FC<Props> = (props) => {
     setExpandedRows(newExpandedRows);
   }
 
-  const confirmAction = () => {
+  const confirmAction = async () => {
     if (confirmType === ConfirmationType.DeletePropertyWarn || confirmType === ConfirmationType.DeletePropertyStepWarn) {
       deletePropertyFromDefinition(deletePropertyOptions.definitionName, deletePropertyOptions.propertyName);
       toggleConfirmModal(false);
       setDeletePropertyOptions({ definitionName: '', propertyName: '' });
+      try {
+        await getSystemInfo();
+      } catch(error) {
+        handleError(error)
+      }
     }
   }
 

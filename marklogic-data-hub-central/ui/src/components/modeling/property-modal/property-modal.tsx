@@ -12,6 +12,7 @@ import { ModelingContext } from '../../../util/modeling-context';
 import { entityReferences } from '../../../api/modeling';
 import { ModelingTooltips } from '../../../config/tooltips.config';
 import { MLTooltip, MLCheckbox } from '@marklogic/design-system';
+import { getSystemInfo } from '../../../api/environment';
 
 import {
   ConfirmationType,
@@ -233,6 +234,14 @@ const PropertyModal: React.FC<Props> = (props) => {
     }
   }
 
+  const refreshSessionTime = async () => {
+    try {
+      await getSystemInfo();
+    } catch(error) {
+      handleError(error)
+    }
+  }
+
   const handleInputChange = (event) => {
     if (event.target.id === 'property-name') {
       if (event.target.value === '') {
@@ -330,6 +339,7 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage('');
           setTypeErrorMessage('');
           props.toggleModal(false);
+          refreshSessionTime();
         }
 
       } else {
@@ -344,10 +354,12 @@ const PropertyModal: React.FC<Props> = (props) => {
           setErrorMessage('');
           setTypeErrorMessage('');
           props.toggleModal(false);
+          refreshSessionTime();
         }
       }
     }
   };
+
 
   const onCancel = () => {
     setRadioValues([]);
@@ -374,6 +386,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       setConfirmBoldTextArray([]);
       toggleConfirmModal(false);
       props.toggleModal(false);
+      refreshSessionTime();
     }
   }
 
