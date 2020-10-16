@@ -59,3 +59,11 @@ shadowJar {
     relocate('com.fasterxml', 'marklogic.com.fasterxml')
 }
 build.dependsOn shadowJar
+
+task copyConnectorToSparkTestProject(type: Copy) {
+    description = "Build and copy the connector shadowJar to a gitignored directory in spark-test-project"
+    from "build/libs"
+    into "spark-test-project/lib"
+    include "*-all.jar"
+}
+copyConnectorToSparkTestProject.dependsOn shadowJar
