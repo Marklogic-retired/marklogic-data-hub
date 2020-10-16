@@ -1,0 +1,2 @@
+# The connector shadowJar is expected to be in the lib directory, but we don't want that version controlled
+lib
