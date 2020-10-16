@@ -387,14 +387,14 @@ const Flows: React.FC<Props> = (props) => {
     function handleMouseOver(e, name) {
         setShowLinks(name);
     }
-    const showStepRunResponse = async (step) =>{
-        try{
+
+    const showStepRunResponse = async (step) => {
+        try {
             let response = await axios.get('/api/jobs/' + step.jobId);
-            if(response.status === 200){
-                props.showStepRunResponse(step.stepName, step.stepDefinitionType, "", step.jobId, response.data);
+            if (response.status === 200) {
+                props.showStepRunResponse(step, step.jobId, response.data);
             }
-        }
-        catch(error){
+        } catch (error) {
             handleError(error);
         }
     };
@@ -410,7 +410,7 @@ const Flows: React.FC<Props> = (props) => {
         else if (step.lastRunStatus === "completed step " + step.stepNumber) {
             tooltipText = "Step last ran successfully on "+ stepEndTime;
             return(
-                <MLTooltip overlayStyle={{maxWidth: '200px'}} title= {tooltipText} placement="bottom"  >
+                <MLTooltip overlayStyle={{maxWidth: '200px'}} title= {tooltipText} placement="bottom" onClick={(e) => showStepRunResponse(step)}>
                     <Icon type="check-circle" theme="filled" className={styles.successfulRun} />
                 </MLTooltip>
             );

@@ -164,8 +164,11 @@ const Browse: React.FC<Props> = ({ location }) => {
         location.state['sortOrder']);
       location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
-    else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
-      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
+    else if (location.state
+      && location.state.hasOwnProperty('entityName')
+      && location.state.hasOwnProperty('targetDatabase')
+      && location.state.hasOwnProperty('jobId')) {
+      setLatestJobFacet(location.state['jobId'], location.state['entityName'], location.state['targetDatabase']);
     }
     else if (location.state && location.state.hasOwnProperty('entity')) {
       setEntityClearQuery(location.state['entity']);
