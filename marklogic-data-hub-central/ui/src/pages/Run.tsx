@@ -7,6 +7,7 @@ import { AuthoritiesContext } from "../util/authorities";
 import { UserContext } from '../util/user-context';
 import { useHistory } from 'react-router-dom';
 import tiles from '../config/tiles.config';
+import { getFromPath } from "../util/json-utils";
 
 const { Panel } = Collapse;
 
@@ -190,25 +191,39 @@ const Run = (props) => {
     //     return stepType[0].toUpperCase() + stepType.substr(1);
     // }
 
-    const goToExplorer = (entityName, jobId) => {
-        history.push({pathname: "/tiles/explore",
-            state: { entityName: entityName, jobId: jobId }});
+    const goToExplorer = (entityName, targetDatabase, jobId) => {
+        history.push({
+            pathname: "/tiles/explore",
+            state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId}
+        });
         Modal.destroyAll();
     };
 
-    function showStepRunResponse(stepName, stepType, entityName, jobId, response){
+    function showStepRunResponse(step, jobId, response) {
+        const stepName = step.stepName;
+        const stepType = step.stepDefinitionType;
+        const stepNumber = step.stepNumber;
+        const targetDatabase = getFromPath(["stepResponses", stepNumber, "targetDatabase"], response);
+        let entityName;
+
+        const targetEntityType = getFromPath(["stepResponses", stepNumber, "targetEntityType"], response);
+        if (targetEntityType) {
+            let splitTargetEntity = targetEntityType.split("/");
+            entityName = splitTargetEntity[splitTargetEntity.length - 1];
+        }
+
         if (response['jobStatus'] === Statuses.FINISHED) {
-            showSuccess(stepName, stepType, entityName, jobId);
+            showSuccess(stepName, stepType, entityName, targetDatabase, jobId);
         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
             let errors = getErrors(response);
-            showErrors(stepName, stepType, errors, response, entityName, jobId);
+            showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId);
         } else if (response['jobStatus'] === Statuses.FAILED) {
             let errors = getErrors(response);
-            showFailed(stepName, stepType, errors.slice(0,1));
+            showFailed(stepName, stepType, errors.slice(0, 1));
         }
     }
 
-    function showSuccess(stepName, stepType, entityName, jobId) {
+    function showSuccess(stepName, stepType, entityName, targetDatabase, jobId) {
          Modal.success({
               title:<div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
                icon: <Icon type="check-circle" theme="filled"/>, 
@@ -216,7 +231,7 @@ const Run = (props) => {
                mask: false,
                width:650,
                content: stepType.toLowerCase() === 'mapping' && entityName ?
-                   <div data-testId='explorer-link' onClick={()=> goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
+                   <div data-testId='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId)} className={styles.exploreCuratedData}>
                    <span className={styles.exploreIcon}></span>
                    <span className={styles.exploreText}>Explore Curated Data</span>
                </div> : ''
@@ -251,14 +266,14 @@ const Run = (props) => {
         </span>
     );
 
-    function showErrors(stepName, stepType, errors, response, entityName, jobId) {
+    function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId) {
          Modal.error({
             title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
             icon: <Icon type="exclamation-circle" theme="filled"/>, 
             content: (
                 <div id="error-list">
                     {stepType.toLowerCase() === 'mapping' && entityName ?
-                        <div onClick={() => goToExplorer(entityName, jobId)} className={styles.exploreCuratedData}>
+                        <div onClick={() => goToExplorer(entityName, targetDatabase, jobId)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
                     </div> : ''}
@@ -365,17 +380,8 @@ const Run = (props) => {
                         return axios.get('/api/jobs/' + jobId);
                     }, pollConfig.interval)
                     .then(function(response: any) {
-                        let entityName;
-                        if(response.hasOwnProperty("stepResponses")
-                          && response.stepResponses.hasOwnProperty(`${stepNumber}`)
-                          && response.stepResponses[`${stepNumber}`].hasOwnProperty('targetEntityType') &&
-                            (response.stepResponses[`${stepNumber}`].targetEntityType !== null || undefined))
-                        {
-                          let splitTargetEntity = response.stepResponses[`${stepNumber}`].targetEntityType.split("/");
-                          entityName = splitTargetEntity[splitTargetEntity.length-1];
-                        }
                         setRunEnded({flowId: flowId, stepId: stepNumber});
-                        showStepRunResponse(stepName, stepType, entityName, jobId, response);
+                        showStepRunResponse(stepDetails, jobId, response);
                         setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);
