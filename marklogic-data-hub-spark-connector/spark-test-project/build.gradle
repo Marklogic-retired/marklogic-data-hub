@@ -1,0 +1,36 @@
+plugins {
+    id 'net.saliman.properties' version '1.5.1'
+    id "java"
+}
+
+repositories {
+    jcenter()
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+ext {
+    sparkVersion = "2.4.5"
+}
+
+dependencies {
+    implementation fileTree(dir: "lib", includes: ["*.jar"])
+
+    implementation "org.apache.spark:spark-sql_2.11:${sparkVersion}"
+    implementation "org.apache.spark:spark-launcher_2.11:${sparkVersion}"
+    implementation "org.apache.spark:spark-catalyst_2.11:${sparkVersion}"
+    implementation "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
+    implementation "org.apache.spark:spark-core_2.11:${sparkVersion}"
+}
+
+task ingestDatabook(type: JavaExec) {
+    description = "Run the test program to ingest the databook.csv contents via our Spark connector"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "test.SparkTest"
+    args = [
+        host,
+        username,
+        password
+    ]
+}
