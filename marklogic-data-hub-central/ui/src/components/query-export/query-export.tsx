@@ -68,7 +68,7 @@ const QueryExport = (props) => {
     return (
         <div>
             <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
-            <MLTooltip title='Export results with the displayed columns to CSV.'>
+            <MLTooltip title='Export results with the displayed columns to CSV.' placement="topRight">
                 <FontAwesomeIcon style={{ cursor: 'pointer' }} icon={faFileExport} size="lg" onClick={displayModal} data-testid='query-export' />
             </MLTooltip>
         </div>

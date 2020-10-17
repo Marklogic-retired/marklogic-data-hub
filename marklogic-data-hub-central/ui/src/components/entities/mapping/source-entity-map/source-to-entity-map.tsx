@@ -617,7 +617,8 @@ const SourceToEntityMap = (props) => {
             title: <span>XPath Expression <Popover
                 content={xPathDocLinks}
                 trigger="click"
-                placement="top" ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
+                placement="top"
+                getPopupContainer={() => document.getElementById('parentContainer') || document.body}><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover>
             </span>,
             dataIndex: 'key',
             key: 'key',
@@ -1188,7 +1189,7 @@ const SourceToEntityMap = (props) => {
             </span>
             <br/>
             <hr/>
-            <div className={styles.parentContainer}>
+            <div id="parentContainer" className={styles.parentContainer}>
                 <SplitPane
                     style={splitStyle}
                     paneStyle={splitPaneStyles.pane}
@@ -1211,6 +1212,7 @@ const SourceToEntityMap = (props) => {
                                 content={srcDetails}
                                 trigger="click"
                                 placement="right"
+                                getPopupContainer={() => document.getElementById('parentContainer') || document.body}
                             ><Icon type="question-circle" className={styles.questionCircle} theme="filled" /></Popover></p>
                         </div>
                         {props.isLoading === true ? <div className={styles.spinRunning}>
@@ -1246,6 +1248,7 @@ const SourceToEntityMap = (props) => {
                                         dataSource={srcData}
                                         tableLayout="unset"
                                         rowKey={(record) => record.rowKey}
+                                        getPopupContainer={() => document.getElementById('srcContainer') || document.body}
                                     />
                             </div> }
                     </div>
@@ -1272,6 +1275,7 @@ const SourceToEntityMap = (props) => {
                             dataSource={props.entityTypeProperties}
                             tableLayout="unset"
                             rowKey={(record: any) => record.key}
+                            getPopupContainer={() => document.getElementById('entityContainer') || document.body}
                         />
                     </div>
                 </SplitPane>

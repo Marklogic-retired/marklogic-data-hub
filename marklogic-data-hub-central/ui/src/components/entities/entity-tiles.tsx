@@ -260,7 +260,7 @@ const EntityTiles = (props) => {
     const handleCollapseChange = (keys) => Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
 
     return (
-        <div className={styles.entityTilesContainer}>
+        <div id="entityTilesContainer" className={styles.entityTilesContainer}>
 
         <Collapse activeKey={activeEntityTypes} onChange={handleCollapseChange} defaultActiveKey={locationEntityType}>
             { Object.keys(props.entityModels).sort().map((entityType, index) => (

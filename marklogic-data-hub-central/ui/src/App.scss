@@ -149,6 +149,9 @@ tr.ant-table-row:hover > td {
 
 .ant-tooltip {
   white-space: pre-wrap;
+  width: max-content;
+  font-style: normal;
+  font-weight: normal;
 }
 
 .ant-popover {
@@ -260,3 +263,6 @@ ul.ant-cascader-menu:nth-child(2) {
     margin-top: 18px;
 }
 
+.ant-select-dropdown-menu-item{
+  text-align: left;
+}

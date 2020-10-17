@@ -693,6 +693,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                 defaultActiveFirstOption={false}
                                                 disabled={!props.canWriteFlow}
                                                 data-testid={`${elem.name}-flowsList`}
+                                                getPopupContainer={() => document.getElementById('entityTilesContainer') || document.body}
                                             >
                                                 { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
                                                     <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
