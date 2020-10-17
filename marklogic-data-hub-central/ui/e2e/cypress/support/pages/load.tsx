@@ -105,7 +105,7 @@ class LoadPage {
 
     selectSourceFormat(format: string) {
         cy.get('#sourceFormat').click();
-        cy.findAllByText(`${format}`).last().click();
+        cy.findAllByText(`${format}`).last().click({force: true});
     }
 
     selectTargetFormat(format: string) {
@@ -139,8 +139,8 @@ class LoadPage {
      * @param db - accepts `STAGING` or `FINAL`
      */
     selectTargetDB(db: string) {
-        cy.findByLabelText('targetDatabase-select').click();
-        cy.findByTestId(`targetDbOptions-data-hub-${db}`).click();
+        cy.waitUntil(() => cy.findByLabelText('targetDatabase-select')).click();
+        cy.waitUntil(() => cy.findByTestId(`targetDbOptions-data-hub-${db}`)).click({ force: true });
     }
 
     /**

@@ -240,7 +240,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text
 
         const addIcon = props.canWriteEntityModel ? (
-          <MLTooltip title={ModelingTooltips.addStructuredProperty}>
+          <MLTooltip title={ModelingTooltips.addStructuredProperty} placement="topRight">
             <FontAwesomeIcon
               data-testid={'add-struct-'+ structuredTypeName}
               className={styles.addIcon}

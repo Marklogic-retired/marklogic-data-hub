@@ -612,8 +612,8 @@ const Sidebar: React.FC<Props> = (props) => {
               id="date-select"
               value={dateRangeValue}
               onChange={value => handleOptionSelect(value)}
-            >{
-                dateRangeOptions.map((timeBucket, index) => {
+              getPopupContainer={() => document.getElementById('date-select') || document.body}
+            >{dateRangeOptions.map((timeBucket, index) => {
                   return <Option key={index} value={timeBucket}>
                     {timeBucket}
                   </Option>

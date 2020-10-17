@@ -173,7 +173,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.fixedPopup}>
-      <MLTooltip title='Select the columns to display.'>
+      <MLTooltip title='Select the columns to display.' placement="topRight">
         <Popover placement="leftTop" content={content} trigger="click" visible={props.popoverVisibility} className={styles.fixedPopup}>
           <FontAwesomeIcon onClick={() => props.setPopoverVisibility(true)} className={styles.columnIcon} icon={faColumns} size="lg" data-testid='column-selector-tooltip'/>
         </Popover>

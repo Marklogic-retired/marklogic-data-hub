@@ -227,7 +227,7 @@ const ResultsTabularView = (props) => {
                     }
                 }} id={'instance'}
                     data-cy='instance'>
-                    <Tooltip title={'Show the processed data'}><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
+                    <Tooltip title={'Show the processed data'} placement="topRight"><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
                 </Link>
                 <Link to={{
                     pathname: `${path.pathname}`,
@@ -247,7 +247,7 @@ const ResultsTabularView = (props) => {
                     }
                 }} id={'source'}
                     data-cy='source'>
-                    <Tooltip title={'Show the complete ' + item.format.toUpperCase()}><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
+                    <Tooltip title={'Show the complete ' + item.format.toUpperCase()} placement="topRight"><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
                 </Link>
             </div>
         if (props.selectedEntities?.length === 0) {
