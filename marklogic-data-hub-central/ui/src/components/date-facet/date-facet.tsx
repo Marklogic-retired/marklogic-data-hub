@@ -70,6 +70,7 @@ const DateFacet: React.FC<Props> = (props) => {
                 onChange={onChange}
                 value={datePickerValue}
                 key={props.name}
+                getCalendarContainer={() => document.getElementById('sideBarContainer') || document.body}
             />
         </div>
     )

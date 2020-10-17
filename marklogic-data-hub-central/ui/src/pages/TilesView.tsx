@@ -15,6 +15,7 @@ import Detail from "./Detail";
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
 
 export type TileId = 'load' | 'model' | 'curate' | 'run' | 'explore';
 export type IconType = 'fa' | 'custom';
@@ -107,15 +108,26 @@ const TilesView = (props) => {
             { (searchOptions.view !== null) ?  (
                 <div className={styles.tilesViewContainer}>
                     { (selection !== '') ?  (
-                    <Tiles
-                        id={selection}
-                        view={searchOptions.view}
-                        currentNode={currentNode}
-                        options={options}
-                        onMenuClick={onMenuClick}
-                        onTileClose={onTileClose}
-                        newStepToFlowOptions={getNewStepToFlowOptions()}
-                    />
+                    <ConfigProvider	
+                        getPopupContainer={(node) => {
+                            if(node) {
+                                return node.parentNode ?  node.parentNode as HTMLElement : document.body;
+                            }
+                             else {
+                                return document.body
+                            }
+                        }}
+                    >
+                        <Tiles
+                            id={selection}
+                            view={searchOptions.view}
+                            currentNode={currentNode}
+                            options={options}
+                            onMenuClick={onMenuClick}
+                            onTileClose={onTileClose}
+                            newStepToFlowOptions={getNewStepToFlowOptions()}
+                        />
+                    </ConfigProvider>
                     ) : null }
                 </div> ) :
                 <Overview enabled={enabled}/>

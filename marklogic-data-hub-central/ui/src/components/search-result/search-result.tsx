@@ -103,7 +103,7 @@ const SearchResult: React.FC<Props> = (props) => {
                             uri: props.item.uri,
                             entityInstance: props.item.entityInstance
                         }}} id={'instance'} data-cy='instance' >
-                        <MLTooltip title={'Show the processed data'}><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
+                        <MLTooltip title={'Show the processed data'} placement="topRight"><FontAwesomeIcon  icon={faExternalLinkAlt} size="sm" data-testid='instance-icon'/></MLTooltip>
                     </Link>
                     <Link to={{pathname: "/tiles/explore/detail",state: {selectedValue:'source',
                             entity : searchOptions.entityTypeIds ,
@@ -118,7 +118,7 @@ const SearchResult: React.FC<Props> = (props) => {
                             uri: props.item.uri,
                             entityInstance: props.item.entityInstance
                         }}} id={'source'} data-cy='source' >
-                        <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()}><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
+                        <MLTooltip title={'Show the complete ' + fileTypeVal.toUpperCase()} placement="topRight"><FontAwesomeIcon  icon={faCode} size="sm" data-testid='source-icon'/></MLTooltip>
                     </Link>
                 </div>
                 <span className={styles.entityName} data-cy='entity-name'>{itemEntityName}</span>

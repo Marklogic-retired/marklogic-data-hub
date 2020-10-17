@@ -531,7 +531,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.editProperty('alt_address');
     propertyModal.getToggleStepsButton().should('not.exist')
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Structured').click();
+    propertyModal.getTypeFromDropdown('Structured').click({force: true});
     propertyModal.getCascadedTypeFromDropdown('Address').click();
     propertyModal.getSubmitButton().click();
     propertyTable.expandStructuredTypeIcon('alt_address').click();

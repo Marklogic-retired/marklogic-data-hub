@@ -175,8 +175,8 @@ class BrowsePage {
 
   selectDateRange() {
     this.getDateFacetPicker().click();
-    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:first-child')).click();
-    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:last-child')).click();
+    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:first-child')).click({force: true});
+    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:last-child')).click({force: true});
   }
 
   getDateFacetClearIcon() {
