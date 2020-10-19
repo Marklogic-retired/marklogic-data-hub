@@ -84,10 +84,6 @@ const PropertyTable: React.FC<Props> = (props) => {
   const [expandedRows, setExpandedRows] = useState<string[]>([]);
   const [newRowKey, setNewRowKey] = useState('');
 
-  useEffect(() => {
-    updateEntityDefinitionsAndRenderTable(props.definitions);
-  }, []);
-
   useDeepCompareEffect(()=>{
     updateEntityDefinitionsAndRenderTable(props.definitions);
   }, [props.definitions])
@@ -329,19 +325,18 @@ const PropertyTable: React.FC<Props> = (props) => {
   }
 
   const createPropertyDefinitionPayload = (propertyOptions: PropertyOptions) => {
-    let parseType = propertyOptions.type.split(',');
     let multiple = propertyOptions.multiple === 'yes' ? true : false;
     let facetable = propertyOptions.facetable;
     let sortable = propertyOptions.sortable;
 
     if (propertyOptions.propertyType === PropertyType.RelatedEntity && !multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
+      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type)
       return {
         $ref: externalEntity.entityTypeId,
       }
 
     } else if (propertyOptions.propertyType === PropertyType.RelatedEntity && multiple) {
-      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === parseType[1])
+      let externalEntity = modelingOptions.entityTypeNamesArray.find(entity => entity.name === propertyOptions.type)
       return {
         datatype: 'array',
         facetable: facetable,
@@ -353,7 +348,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
-        $ref: '#/definitions/'+ parseType[parseType.length-1],
+        $ref: '#/definitions/'+ propertyOptions.type,
       }
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
@@ -362,7 +357,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         facetable: facetable,
         sortable: sortable,
         items: {
-          $ref: '#/definitions/'+ parseType[parseType.length-1],
+          $ref: '#/definitions/'+ propertyOptions.type,
         }
       }
 
@@ -372,13 +367,13 @@ const PropertyTable: React.FC<Props> = (props) => {
         facetable: facetable,
         sortable: sortable,
         items: {
-          datatype: parseType[parseType.length-1],
+          datatype: propertyOptions.type,
           collation: "http://marklogic.com/collation/codepoint",
         }
       }
     } else if (propertyOptions.propertyType === PropertyType.Basic && !multiple) {
       return {
-        datatype: parseType[parseType.length-1],
+        datatype: propertyOptions.type,
         facetable: facetable,
         sortable: sortable,
         collation: "http://marklogic.com/collation/codepoint"

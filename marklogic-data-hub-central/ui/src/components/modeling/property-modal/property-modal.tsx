@@ -257,12 +257,14 @@ const PropertyModal: React.FC<Props> = (props) => {
   const onPropertyTypeChange = (value, selectedOptions) => {
     if (value.length) {
       let newSelectedPropertyOptions = {...selectedPropertyOptions}
+      let typeValue = '';
 
       switch(value[0]) {
         case 'relatedEntity':
           newSelectedPropertyOptions.propertyType = PropertyType.RelatedEntity;
           newSelectedPropertyOptions.identifier = '';
           newSelectedPropertyOptions.pii = '';
+          typeValue = value[1];
           //newSelectedPropertyOptions.wildcard = false;
 
           setRadioValues([ALL_RADIO_DISPLAY_VALUES[1]]);
@@ -275,12 +277,26 @@ const PropertyModal: React.FC<Props> = (props) => {
           if (value[1] === 'newPropertyType') {
             toggleStructuredTypeModal(true);
           } else {
+            typeValue = value[1];
             setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
             toggleShowConfigurationOptions(false);
           }
           break;
+        case 'moreStringTypes':
+        case 'moreNumberTypes':
+        case 'moreDateTypes' :
+          newSelectedPropertyOptions.propertyType = PropertyType.Basic;
+          typeValue = value[1];
+          if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName){
+            setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
+          } else {
+            setRadioValues(ALL_RADIO_DISPLAY_VALUES);
+          }
+          toggleShowConfigurationOptions(true);
+          break;
         default:
           newSelectedPropertyOptions.propertyType = PropertyType.Basic;
+          typeValue = value[0];
           if (props.structuredTypeOptions.isStructured && props.editPropertyOptions.name !== props.structuredTypeOptions.propertyName){
             setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
           } else {
@@ -291,7 +307,7 @@ const PropertyModal: React.FC<Props> = (props) => {
       }
 
       setTypeDisplayValue(value);
-      setSelectedPropertyOptions({ ...newSelectedPropertyOptions, type: value.join(',') });
+      setSelectedPropertyOptions({ ...newSelectedPropertyOptions, type: typeValue });
 
     } else {
       setTypeDisplayValue([]);
@@ -435,7 +451,7 @@ const PropertyModal: React.FC<Props> = (props) => {
 
     props.addStructuredTypeToDefinition(name);
     setTypeDisplayValue(['structured', name]);
-    setSelectedPropertyOptions({ ...selectedPropertyOptions, type: 'structured,'+ name });
+    setSelectedPropertyOptions({ ...selectedPropertyOptions, type: name });
     setRadioValues(ALL_RADIO_DISPLAY_VALUES.slice(1,3));
     toggleShowConfigurationOptions(false);
   }
