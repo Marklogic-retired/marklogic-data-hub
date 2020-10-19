@@ -6,6 +6,7 @@ import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
 import CustomCard from "./custom/custom-card";
+import './entity-tiles.scss'
 
 const EntityTiles = (props) => {
     const entityModels = props.entityModels || {};
@@ -245,6 +246,7 @@ const EntityTiles = (props) => {
         }
         else if (viewData[index] === 'custom-' + entityType ){
             output = <div className={styles.cardView}>
+                <div className={styles.customEntityTitle} aria-label={'customEntityTitle'}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
                 <CustomCard data={ customCardData ? customCardData.artifacts : []}
                 canReadOnly={props.canReadCustom}
                 canReadWrite = {props.canWriteCustom}/>
@@ -282,17 +284,13 @@ const EntityTiles = (props) => {
             </Panel>
             ))}
             {requiresNoEntityTypeTile  ?
-                <Panel header={<span data-testid={"noEntityType"}>No Entity Type</span>} key="No Entity Type">
-                <Menu mode="horizontal" defaultSelectedKeys={['custom-NoEntityType']}>
-                {props.canReadCustom ? <Menu.Item key='custom-NoEntityType' >
-                    Custom
-                </Menu.Item>: null}
-                </Menu>
-                <div className={styles.cardView}>
+                <Panel id="customNoEntity" header={<span data-testid={"noEntityType"}>No Entity Type</span>} key="No Entity Type">
+                <div className={styles.customNoEntityTitle} aria-label={'customNoEntityTitle'}>Steps that are created outside Hub Central and are not associated with any entity type appear here. Hub Central only allows running these steps, not editing or deleting them.</div>
+                {props.canReadCustom ? <div className={styles.cardView}>
                     <CustomCard data={customArtifactsWithoutEntity}
                                 canReadOnly={props.canReadCustom}
                                 canReadWrite = {props.canWriteCustom}/>
-                </div>
+                </div>: null}
             </Panel>: null}
         </Collapse>
         </div>
