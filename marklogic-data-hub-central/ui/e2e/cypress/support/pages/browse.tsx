@@ -599,6 +599,14 @@ class BrowsePage {
   getAllDataSnippetByUri(uri: string) {
     return cy.findByTestId(`${uri}-snippet`);
   }
+
+  getNavigationIconForDocument(docUri: string) {
+    return cy.findByTestId(`${docUri}-detailViewIcon`)
+  }
+
+  clearSearchText() {
+    cy.get('.ant-input-clear-icon').click();
+  }
   
 }
 

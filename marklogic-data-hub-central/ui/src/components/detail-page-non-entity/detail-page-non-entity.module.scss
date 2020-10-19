@@ -1,30 +1,16 @@
-.header {
-  display: flex;
-  margin-bottom: 20px;
-}
-
-.heading {
-  display: flex;
-  justify-content: flex-start;
-  width: 85%;
-}
-
 .title {
   color: #5B69AF;
   cursor: pointer;
 }
-
 .menu {
-  width: 15%;
-  display: flex;
-  justify-content: flex-end;
+  width: 25em;
+  padding-left: 40px;
   font-size: 14px;
   font-weight: bold;
-}
 
-.detailContent {
-  background: #fff;
-  padding: 18px 36px;
+  .fileSearchIcon {
+    font-size: 20px;
+  }
 }
 
 .subMenu {
@@ -32,47 +18,48 @@
   font-size: 18px;
 }
 
-.contentHeader{
-  background-color: #fff;
-  border-right: 1px solid grey;
-}
-
 .detailContentNonEntityInstance {
   background: #fff;
   padding: 18px 0px;
   max-height: 100vh;
-  //border-right: 1px solid grey;
-  //box-shadow: 2px 0px red;
-}
 
-.detailContentNonEntityHeader {
-  background: #fff;
-  //padding: 18px 0px;
-  //border: 1px solid red;
-  display: flex;
-  justify-content: space-between;
-
-  .backButtonHeader {
-    //border: 1px solid red; 
-    margin-right: 30px;
-    display: flex;
-    //width: 60%;
+  .detailContent {
+    background: #fff;
+    padding: 18px 36px;
   }
 
-  .documentMetadataContainer {
+  .contentElements {
+    width: 80%;
+    min-width: 40em;
+    padding-left: 40px;
+    padding-top: 20px;
+  }
+}
+  
+.detailContentNonEntityHeader {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  
+  .backButtonHeader {
+    margin-right: 30px;
+    display: flex;
+  }
+  
+  .metadataCollapseIconContainer {
     display: flex; 
     align-items: center;
-
+  
     > .metadataCollapseIcon {
-
-      .collapseIconsAlignment{
+  
+      .collapseIconsAlignment {
         background-color: #e7e7e8;
         padding: 3px 3px;
         border-radius: 5px 0px 0px 5px;
         cursor: pointer;
       }
-    
-      .collapseExpandIcons{
+      
+      .collapseExpandIcons {
         font-size: 16px;
         color: #000; 
       }
@@ -80,6 +67,12 @@
   }
 }
 
+.documentContainer {
+  padding-top: 10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+  
 .siderParent {
   overflow: auto;
   //height: '77vh',
@@ -88,24 +81,44 @@
   border-left: 1px solid #777777;
   box-shadow: -1px 0px 4px #777777;
 }
-.siderContainerNonEntity{
-  padding: 72px 36px;
-
+.siderContainerNonEntity {
+  padding: 92px 36px 72px 36px;
+  
   .uri {
     font-weight: bold;
   }
-
-  .metadataTableLabel{
+  
+  .metadataTableLabel {
     padding-top: 20px;
+    font-size: 16px;
   }
-
-  .sourcesMetadataTable{
+  
+  .sourcesMetadataTable {
     padding-top: 5px;
     width: 400px;
+    
+    & thead > tr > th {
+      color: #44499C;
+      background-color: #E7E7E8;
+    };
   }
-
-  .historyMetadataTable{
+  
+  .historyMetadataTable {
     padding-top: 5px;
+    & thead > tr > th {
+      color: #44499C;
+      background-color: #E7E7E8;
+    };
   }
+} 
+
+.noneValue {
+  color: #CCCCCC;
 }
 
+.validValue {
+  width: 100%;
+  display: inline-flex;
+  vertical-align: top;
+  align-items: flex-start;
+}
