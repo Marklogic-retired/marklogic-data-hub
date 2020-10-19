@@ -11,9 +11,10 @@ import {Layout, Menu, PageHeader} from 'antd';
 import XmlView from '../components/xml-view/xml-view';
 import { xmlParser, xmlDecoder } from '../util/xml-parser';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
+import {faThList, faCode } from "@fortawesome/free-solid-svg-icons";
 import { MLTooltip } from '@marklogic/design-system';
 import { getUserPreferences, updateUserPreferences } from '../services/user-preferences';
+import DetailPageNonEntity from '../components/detail-page-non-entity/detail-page-non-entity';
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -36,14 +37,19 @@ const Detail: React.FC<Props> = ({ history, location }) => {
   const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
   const database = location.state && location.state["database"] ? location.state["database"]: detailPagePreferences["database"];
   const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
-  const entityInstance = location.state && location.state['entityInstance'] ? location.state['entityInstance'] : detailPagePreferences["entityInstance"];
+  const [entityInstance, setEntityInstance] = useState({});
   const [selected, setSelected] = useState("");
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [contentType, setContentType] = useState("");
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
-  const sources = location && location.state && location.state['sources'] ? location.state['sources'] : [];
+  const [sources, setSources] = useState(location && location.state && location.state['sources'] ? location.state['sources'] : []);
+
+  const [entityInstanceDocument, setIsEntityInstanceDocument] = useState<boolean | undefined>(undefined);
+  const [sourcesTableData, setSourcesTableData] = useState<any[]>([]);
+  const [historyData, setHistoryData] = useState<any[]>([]);
+  
 
   const componentIsMounted = useRef(true);
 
@@ -63,11 +69,15 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         }
 
         if (componentIsMounted.current) {
+          setIsEntityInstanceDocument(result.data.isHubEntityInstance);
           const content = result.data.recordType;
           // TODO handle exception if document type is json -> XML
           if (content === 'json') {
             setContentType('json');
             setData(result.data.data);
+            if(result.data.isHubEntityInstance) {
+              initializeEntityInstance(result.data.data);
+            }
             setEntityInstanceFlag(result.data.data);
           } else if (content === 'xml') {
             setContentType('xml');
@@ -76,7 +86,15 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             setData(document);
             setXml(xmlDecoder(decodedXml));
             setEntityInstanceFlag(document);
+            if(result.data.isHubEntityInstance) {
+              initializeEntityInstance(document);
+            }
           }
+          //Setting the data for sources metadata table
+          setSources(result.data.sources);
+          setSourcesTableData(generateSourcesData(result.data.sources));
+          setHistoryData(generateHistoryData([]));
+
           setIsLoading(false);
         }
 
@@ -100,16 +118,88 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   useEffect(() => {
     if(location.state && JSON.stringify(location.state) !== JSON.stringify({})) {
-      location.state.hasOwnProperty('selectedValue') && location.state['selectedValue'] === 'source' ?
+      entityInstanceDocument && location.state.hasOwnProperty('selectedValue') && location.state['selectedValue'] === 'source' ?
       setSelected('full') : setSelected('instance');
     } else {
       if(location.state === undefined){
         location.state = {};
       }
-      setSelected(detailPagePreferences['selected'] ? detailPagePreferences['selected'] : 'instance');
+      entityInstanceDocument && setSelected(detailPagePreferences['selected'] ? detailPagePreferences['selected'] : 'instance');
       handleUserPreferences();
     }
-  }, []);
+  }, [entityInstanceDocument === true || entityInstanceDocument === false]);
+
+  const initializeEntityInstance = (document) => {
+    let title = '';
+    if (document.envelope) {
+      let instance = document.envelope.instance;
+      if (instance.hasOwnProperty('info')) {
+        title = instance.info.hasOwnProperty('title') && instance.info.title;
+      }
+      setEntityInstance(instance[title]);
+    } else {
+      let esEnvelope = document['es:envelope'];
+      if (esEnvelope) {
+        let esInstance = esEnvelope['es:instance'];
+        if (esInstance.hasOwnProperty('es:info')) {
+          title = esInstance['es:info'].hasOwnProperty('es:title') && esInstance['es:info']['es:title'];
+        }
+        setEntityInstance(esInstance[title]);
+      }
+    }
+  }
+
+  const generateSourcesData = (sourceData) => {
+    let parsedData = new Array();
+    if(sourceData.length) {
+      sourceData.forEach((obj,index) => {
+        if (obj.constructor.name === 'Object') {
+          let sourceName = 'none';
+          let sourceType = 'none';
+          if( obj.hasOwnProperty('name') && obj['name']) {
+            sourceName = obj['name'];
+          }
+          if( obj.hasOwnProperty('datahubSourceType') && obj['datahubSourceType']) {
+            sourceType = obj['datahubSourceType'];
+          }
+
+          let tableObj = {
+            key: index,
+            sourceName: sourceName,
+            sourceType: sourceType,
+          }
+          parsedData.push(tableObj);
+        }
+      })
+    } else {
+      let tableObj = {
+        key: 1,
+        sourceName: 'none',
+        sourceType: 'none',
+      }
+      parsedData.push(tableObj);
+    }
+    
+    return parsedData;
+  }
+
+  const generateHistoryData = (historyData) => {
+    let parsedData = new Array();
+    if(historyData.length) {
+        //TODO
+    } else {
+      let tableObj = {
+        key: 1,
+        timeStamp: 'none',
+        flow: 'none',
+        step: 'none',
+        user: 'none'
+      }
+      parsedData.push(tableObj);
+    }
+    
+    return parsedData;
+  }
 
   //Apply user preferences on each page render
   const handleUserPreferences = () => {
@@ -135,6 +225,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       let primaryKey: any = '';
       let uri: any = '';
       let entityInstance: any = {};
+      let isEntityInstance = true;
       if (location.state["sources"] && location.state["sources"].length) {
         sources = location.state["sources"];
       }
@@ -147,13 +238,18 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       if (location.state["entityInstance"] && Object.keys(location.state["entityInstance"]).length) {
         entityInstance = location.state["entityInstance"];
       }
+      if (location.state.hasOwnProperty("isEntityInstance") && location.state["isEntityInstance"]) {
+        isEntityInstance = location.state["isEntityInstance"];
+      }
+
       let preferencesObject = {
         ...detailPagePreferences,
         sources: sources,
         primaryKey: primaryKey,
         uri: uri,
         selected: location.state['selectedValue'] && location.state['selectedValue'] === 'source' ? 'full' : 'instance',
-        entityInstance: entityInstance
+        entityInstance: entityInstance,
+        isEntityInstance: isEntityInstance
       };
       updateUserPreferences(user.name, preferencesObject);
     }
@@ -191,11 +287,24 @@ const Detail: React.FC<Props> = ({ history, location }) => {
          query: location.state && location.state.hasOwnProperty('query')? location.state['query'] : parentPagePreferences['query'],
          tableView: location.state && location.state.hasOwnProperty('tableView') ? location.state['tableView'] : parentPagePreferences['tableView'],
          sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder'],
-         sources: location.state && location.state.hasOwnProperty('sources') ? location.state['sources'] : parentPagePreferences['sources']
+         sources: location.state && location.state.hasOwnProperty('sources') ? location.state['sources'] : parentPagePreferences['sources'],
+         isEntityInstance: location.state && location.state.hasOwnProperty('isEntityInstance') ? location.state['isEntityInstance'] : parentPagePreferences['isEntityInstance']
         }
    };
 
+  // Test data for History table - Keeping only until we work on its dedicated story. Should be removed in future
+  // const historyData = [
+  //   { key: 1, timeStamp: '2020-08-10 12:00', flow: 'loadCustomerFlow', step: 'mapCustomerStep', user: 'Ernie'},
+  //   { key: 2, timeStamp: '2020-07-10 08:45', flow: 'loadCustomerFlow', step: 'mergeCustomer', user: 'Ernie'},
+  //   { key: 3, timeStamp: '2020-07-01 13:12', flow: 'loadCustomerFlow', step: 'loadCustomer', user: 'Wai Lin'}
+  // ]
+
   return (
+    entityInstanceDocument == undefined ? <div style={{ marginTop: '40px' }}>
+        <AsyncLoader />
+      </div> :
+
+    entityInstanceDocument ?
     <Layout>
       <Content className={styles.detailContent}>
         <div id='back-button' style={{ marginLeft: '-23px' }}  onClick={() => history.push(selectedSearchOptions)}>
@@ -234,13 +343,26 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             </div>
               :
               contentType === 'json' ?
-                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}} />) : (data && <JsonView document={data} />)
+                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}} isEntityInstance={entityInstanceDocument}/>) : (data && <JsonView document={data} />)
                 :
-                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}}/>) : (data  && <XmlView document={xml} />)
+                selected === 'instance' ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state['id']: {}} isEntityInstance={entityInstanceDocument}/>) : (data  && <XmlView document={xml} />)
           }
         </div>
       </Content>
-    </Layout>
+    </Layout> :
+
+        <DetailPageNonEntity
+          uri={uri}
+          sourcesTableData={sourcesTableData}
+          historyData={historyData}
+          selectedSearchOptions={selectedSearchOptions}
+          entityInstance={entityInstance}
+          isEntityInstance={entityInstanceDocument}
+          contentType={contentType}
+          data={data}
+          xml={xml}
+          detailPagePreferences={detailPagePreferences}
+        />
   );
 };
 

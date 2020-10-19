@@ -69,7 +69,7 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [cardView, setCardView] = useState(location && location.state ? false : JSON.parse(getUserPreferences(user.name)).cardView);
+  const [cardView, setCardView] = useState(location && location.state && location.state['isEntityInstance'] ? true : JSON.parse(getUserPreferences(user.name)).cardView);
 
 
   const getEntityModel = async () => {

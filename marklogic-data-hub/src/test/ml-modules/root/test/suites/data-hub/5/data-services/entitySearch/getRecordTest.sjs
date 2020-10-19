@@ -20,11 +20,17 @@ function getJsonRecordTest() {
     "datahubCreatedOn": "2020-10-08T15:14:28.772612-07:00"
   });
 
+  const expectedSources = JSON.stringify([{
+    "name": "testSourceForCustomer",
+    "datahubSourceType": "testSourceType"
+  }]);
+
   return[
     test.assertEqual(fn.doc(docUri), record.data),
     test.assertEqual(expectedMetadata, JSON.stringify(record.recordMetadata)),
     test.assertEqual(true, record.isHubEntityInstance),
-    test.assertEqual("json", record.recordType)
+    test.assertEqual("json", record.recordType),
+    test.assertEqual(expectedSources, JSON.stringify(record.sources))
   ];
 }
 
@@ -46,12 +52,17 @@ function getXmlRecordTest() {
     "datahubCreatedInFlow": "CurateCustomerXML",
     "datahubCreatedOn": "2020-10-08T15:14:28.772612-07:00"
   });
+  const expectedSources = JSON.stringify([{
+    "name": "testSourceForCustomerXML",
+    "datahubSourceType": "testSourceTypeXML"
+  }]);
 
   return[
     test.assertEqual(fn.doc(docUri), record.data),
     test.assertEqual(expectedMetadata, JSON.stringify(record.recordMetadata)),
     test.assertEqual(true, record.isHubEntityInstance),
-    test.assertEqual("xml", record.recordType)
+    test.assertEqual("xml", record.recordType),
+    test.assertEqual(expectedSources, JSON.stringify(record.sources))
   ];
 }
 

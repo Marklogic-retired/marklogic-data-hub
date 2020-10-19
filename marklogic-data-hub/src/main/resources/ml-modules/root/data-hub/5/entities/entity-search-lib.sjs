@@ -540,5 +540,6 @@ module.exports = {
   addPropertiesToSearchResponse,
   buildPropertyMetadata,
   getEntityInstance,
+  getEntitySources,
   isHubEntityInstance
 };
