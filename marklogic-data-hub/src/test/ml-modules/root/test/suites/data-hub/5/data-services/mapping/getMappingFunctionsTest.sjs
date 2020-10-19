@@ -9,12 +9,21 @@ function invokeService() {
 }
 
 const mapFuncs = invokeService();
+function getFunctionInfo(functionName){
+  return mapFuncs.find(func => {
+    return func.functionName == functionName
+  });
+}
+
+let sumFunc = getFunctionInfo("sum");
+let currentDatetime = getFunctionInfo("current-dateTime");
 const assertions = [
-  test.assertTrue(Object.keys(mapFuncs).length >= 100),
-  test.assertTrue(mapFuncs["sum"] != null),
-  test.assertTrue(mapFuncs["sum"]["signature"].includes("sum")),
-  test.assertTrue(mapFuncs["current-dateTime"] != null),
-  test.assertTrue(mapFuncs["fn:sum"] == null, "'fn:' has been stripped from the function name and signature")
+  test.assertTrue(mapFuncs.length >= 100),
+  test.assertTrue(sumFunc != null),
+  test.assertTrue(sumFunc["signature"].includes("sum")),
+  test.assertTrue(currentDatetime != null),
+  test.assertTrue(mapFuncs["fn:sum"] == null, "'fn:' has been stripped from the function name and signature"),
+  test.assertTrue(isAlphabeticallySorted())
 ];
 
 const functionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWorkInMappingExpressions();
@@ -23,6 +32,14 @@ functionsThatDontWork.forEach(functionName => {
     test.assertFalse(mapFuncs.hasOwnProperty(functionName), "Expected function to not be available for mapping expressions: " + functionName)
   );
 })
+function isAlphabeticallySorted(){
+  for(let i =0; i< mapFuncs.length; i++){
+    if(!(i == 0 || String(mapFuncs[i].functionName).toLowerCase() > String(mapFuncs[i-1].functionName).toLowerCase())){
+      return false;
+    }
+  }
+  return true;
+}
 
 assertions;
 

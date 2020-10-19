@@ -63,7 +63,7 @@ public class MappingControllerTest extends AbstractMvcTest {
         getJson("/api/artifacts/mapping/functions").andExpect(status().isOk()).andDo(result -> {
             JsonNode response = parseJsonResponse(result);
             assertTrue(response.size() > 100, "Should have at least 100 functions");
-            assertTrue(response.get("sum") != null, "Should have function 'sum'");
+            assertEquals("abs", response.get(0).get("functionName").asText(), "Should be sorted and have 'abs' as the first function");
         });
     }
 

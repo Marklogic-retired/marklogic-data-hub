@@ -38,8 +38,8 @@ public class MappingController extends BaseController {
     @RequestMapping(value = "/functions", method = RequestMethod.GET)
     @ResponseBody
     @Secured("ROLE_readMapping")
-    public ResponseEntity<ObjectNode> getMappingFunctions() {
-        return new ResponseEntity<>((ObjectNode) getMappingService().getMappingFunctions(), HttpStatus.OK);
+    public ResponseEntity<JsonNode> getMappingFunctions() {
+        return new ResponseEntity<>(getMappingService().getMappingFunctions(), HttpStatus.OK);
     }
 
     /**

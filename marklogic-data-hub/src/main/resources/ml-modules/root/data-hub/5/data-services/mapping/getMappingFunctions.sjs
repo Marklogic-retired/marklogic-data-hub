@@ -18,4 +18,15 @@ const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services
 
 let mlFunctions = esMappingLib.getMarkLogicMappingFunctions();
 let xpathFunctions = esMappingLib.getXpathMappingFunctions();
-Object.assign({}, mlFunctions, xpathFunctions);
+let mappingFunctions = mlFunctions.concat(xpathFunctions);
+mappingFunctions.sort(function(funcA, funcB) {
+  var nameA = String(funcA.functionName).toLowerCase();
+  var nameB = String(funcB.functionName).toLowerCase();
+  if (nameA < nameB) {
+    return -1;
+  }
+  if (nameA > nameB) {
+    return 1;
+  }
+  return 0;
+});

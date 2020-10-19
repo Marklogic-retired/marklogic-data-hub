@@ -10,6 +10,9 @@ import org.springframework.security.access.AccessDeniedException;
 
 import javax.ws.rs.core.MediaType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -83,7 +86,12 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
                 assertEquals(MediaType.APPLICATION_JSON, response.getContentType());
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
                 JsonNode functionsJson = parseJsonResponse(result);
-                assertTrue(functionsJson.has("parseDateTime"), "List of functions should contain parseDateTime");
+                List<String> functionNames = new ArrayList<>();
+                for(int i = 0; i< functionsJson.size(); i++){
+                    functionNames.add(functionsJson.get(i).get("functionName").asText());
+                }
+                assertTrue(functionNames.contains("parseDateTime"), "List of functions should contain parseDateTime");
+                assertTrue(functionNames.contains("parseDate"), "List of functions should contain parseDate");
             });
     }
 
