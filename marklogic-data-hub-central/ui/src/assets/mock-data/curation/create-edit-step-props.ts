@@ -1,4 +1,4 @@
-import { mergingStepCustomer } from './merging';
+import { mergingStep } from './merging';
 import { StepType } from '../../../types/curation-types';
 
 const newMerging = {
@@ -6,7 +6,7 @@ const newMerging = {
   isEditing: false,
   stepType: StepType.Merging,
   editStepArtifactObject: {},
-  targetEntityType: mergingStepCustomer.entityType  ,
+  targetEntityType: mergingStep.entityType  ,
   canReadWrite: true,
   canReadOnly: true,
   toggleModal: jest.fn(),
@@ -17,8 +17,8 @@ const editMerging = {
   isVisible: true,
   isEditing: true,
   stepType: StepType.Merging,
-  editStepArtifactObject: mergingStepCustomer.artifacts[0],
-  targetEntityType: mergingStepCustomer.entityType,
+  editStepArtifactObject: mergingStep.artifacts[0],
+  targetEntityType: mergingStep.entityType,
   canReadWrite: true,
   canReadOnly: true,
   toggleModal: jest.fn(),

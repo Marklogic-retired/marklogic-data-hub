@@ -10,7 +10,7 @@ import './entity-tiles.scss'
 import MergingCard from './merging/merging-card';
 
 import { matchingStep } from '../../assets/mock-data/curation/matching';
-import { mergingStepCustomer } from '../../assets/mock-data/curation/merging'
+import { mergingStep } from '../../assets/mock-data/curation/merging'
 
 const EntityTiles = (props) => {
     const entityModels = props.entityModels || {};
@@ -214,7 +214,7 @@ const EntityTiles = (props) => {
       //TODO add endpoint functionality
       if (props.canReadMatchMerge) {
         // use Mock step
-        setMergingArtifacts([mergingStepCustomer])
+        setMergingArtifacts([mergingStep])
         // try {
         //   let response = await axios.get('/api/steps/merging');
         //   if (response.status === 200) {
