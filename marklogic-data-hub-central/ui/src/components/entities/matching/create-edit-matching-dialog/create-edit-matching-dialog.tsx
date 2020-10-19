@@ -1,17 +1,21 @@
-import { Modal, Form, Input, Icon, Radio } from "antd";
-import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Button, Tooltip, Icon, Select, Radio, AutoComplete } from "antd";
+import React, { useState, useEffect, useContext } from "react";
 import styles from './create-edit-matching-dialog.module.scss';
+import { UserContext } from '../../../../util/user-context';
 import { NewMatchTooltips } from '../../../../config/tooltips.config';
+import axios from "axios";
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 
 
 const CreateEditMatchingDialog = (props) => {
 
+  const { handleError } = useContext(UserContext)
   const [matchingName, setMatchingName] = useState('');
   const [description, setDescription] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.description : '');
   //const [collections, setCollections] = useState<any[]>([]);
   const [collections, setCollections] = useState('');
-  const [selectedSource, setSelectedSource] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.selectedSource : 'collection');
+  const [collectionOptions, setCollectionOptions] = useState(['a','b']);
+  const [selectedSource, setSelectedSource] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.matchingData && props.matchingData != {} ? props.matchingData.sourceQuery : '');
 
   //To check submit validity
@@ -146,6 +150,55 @@ const CreateEditMatchingDialog = (props) => {
 
     props.setNewMatching(false);
   };
+
+  const handleSearch = async (value: any) => {
+    if(value && value.length > 2){
+      try {
+        let data = {
+            "referenceType": "collection",
+            "entityTypeId": " ",
+            "propertyPath": " ",
+            "limit": 10,
+            "dataType": "string",
+            "pattern": value,
+        }
+        const response = await axios.post(`/api/entitySearch/facet-values?database=staging`, data)
+        setCollectionOptions(response.data);
+      } catch (error) {
+        console.log(error)
+        handleError(error);
+    }
+
+    }else{
+      setCollectionOptions([]);
+    }
+  }
+
+  const handleFocus = () => {
+      setCollectionOptions([]);
+  }
+
+  const handleTypeaheadChange = (data: any) => {
+    if (data === ' ') {
+        setCollectionsTouched(false);
+    }
+    else {
+      setCollectionsTouched(true);
+      setCollections(data);
+      if (props.mapData && props.mapData.collection) {
+        if (props.mapData.collection === data) {
+          setCollectionsTouched(false);
+        }
+      }
+      if (data.length > 0) {
+        if (matchingName) {
+         setIsValid(true);
+        }
+      } else {
+        setIsValid(false);
+      }
+    }
+  }
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -332,18 +385,22 @@ const CreateEditMatchingDialog = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
-          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><Input
+          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             //mode="tags"
             className={styles.input}
-            placeholder="Enter collection name"
+            dataSource={collectionOptions}
+            aria-label="collection-input"
+            placeholder= {<span>Enter collection name<Icon className={styles.searchIcon} type="search" theme="outlined"/></span>}
             value={collections}
             disabled={!props.canReadWrite}
-            onChange={handleChange}
+            onSearch={handleSearch}
+            onFocus= {handleFocus}
+            onChange={handleTypeaheadChange}
           >
             {/* {collectionsList} */}
-          </Input>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ''}<MLTooltip title={NewMatchTooltips.sourceQuery}>
+            <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter source query"
@@ -371,4 +428,3 @@ const CreateEditMatchingDialog = (props) => {
 };
 
 export default CreateEditMatchingDialog;
-
