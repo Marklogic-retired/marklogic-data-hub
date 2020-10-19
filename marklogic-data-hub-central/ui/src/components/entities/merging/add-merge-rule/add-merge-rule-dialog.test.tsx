@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, cleanup, fireEvent } from '@testing-library/react';
 import AddMergeRuleDialog from './add-merge-rule-dialog';
-import mergingData from "../../../../assets/mock-data/curation/merging.data";
+import data from "../../../../assets/mock-data/curation/merging.data";
 import { CurationContext } from '../../../../util/curation-context';
 import { customerMergingStep } from '../../../../assets/mock-data/curation/curation-context-mock';
 
@@ -13,7 +13,7 @@ describe('Add Merge Rule Dialog component', () => {
     const { getByText, getByTestId, getByLabelText, queryByLabelText } = render(
     <CurationContext.Provider value={customerMergingStep}>
         <AddMergeRuleDialog
-          {...mergingData}
+          {...data.mergingDataProps}
         />
       </CurationContext.Provider>
     );
@@ -57,7 +57,7 @@ describe('Add Merge Rule Dialog component', () => {
     fireEvent.change(functionValue, { target: {value: 'Compare'}});
 
     fireEvent.click(saveButton); //Modal will close now
-    expect(mergingData.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
+    expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
 });
 
 });

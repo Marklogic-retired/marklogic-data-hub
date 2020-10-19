@@ -17,7 +17,7 @@ import { CurationContext } from '../../../util/curation-context';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
 import { ConfirmationType } from '../../../types/common-types';
-import { StepType } from '../../../types/curation-types';
+import { MergingStep, StepType} from '../../../types/curation-types';
 
 interface Props {
   mergingStepsArray: any;
@@ -35,7 +35,7 @@ interface Props {
 const { Option } = Select;
 
 const MergingCard: React.FC<Props> = (props) => {
-  const [openAddMergeRuleDialog, setOpenAddMergeRuleDialog] = useState(false); //Should be set to "true" to test the Add merge Rule dialog UI temporarily.
+  const history = useHistory<any>();
   const authorityService = useContext(AuthoritiesContext);
   const { setActiveStep } = useContext(CurationContext);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
@@ -68,7 +68,13 @@ const MergingCard: React.FC<Props> = (props) => {
   const stepSettingsClicked = (index) => {
     setStepArtifact(props.mergingStepsArray[index]);
     toggleStepSettings(true);
-  };
+    console.log(props.mergingStepsArray)
+  }
+
+  const openStepDetails = (mergingStep: MergingStep) => {
+    setActiveStep(mergingStep, props.entityModel['model']['definitions'], props.entityName);
+    history.push({ pathname: '/tiles/curate/merge'});
+   };
 
   const deleteStepClicked = (name) => {
     toggleConfirmModal(true);
@@ -111,21 +117,10 @@ const MergingCard: React.FC<Props> = (props) => {
     }
   };
 
-  /*---------------------------------------*/
-  // Temporary code - To be removed when working on CRUD Merge step story
-  const [showMergeRuleDialog, toggleMergeRuleDialog] = useState(true);
-
-  const displayAddMergeRuleDialog = () => {
-    setActiveStep([], props.entityModel['model']['definitions'], props.entityName);
-    toggleMergeRuleDialog(true);
-    setOpenAddMergeRuleDialog(true);
-  };
-  /*---------------------------------------*/
-
   const renderCardActions = (step, index) => {
     return [
       <MLTooltip title={'Edit'} placement="bottom">
-        <Icon 
+        <Icon
           className={styles.editIcon}
           type="edit"
           key ="last"
@@ -137,12 +132,12 @@ const MergingCard: React.FC<Props> = (props) => {
 
       <MLTooltip title={'Step Details'} placement="bottom">
         <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}>
-          <FontAwesomeIcon icon={faSlidersH} data-testid={`${step.name}-stepDetails`}/>
+          <FontAwesomeIcon icon={faSlidersH} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
       </MLTooltip>,
 
       <MLTooltip title={'Settings'} placement="bottom">
-        <Icon 
+        <Icon
           type="setting"
           key="setting"
           role="settings-merging button"
@@ -156,17 +151,17 @@ const MergingCard: React.FC<Props> = (props) => {
         <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
         </i>
-      </MLTooltip> 
+      </MLTooltip>
       ) : (
       <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}>
         <i role="disabled-delete-merging button" data-testid={step.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
         </i>
-      </MLTooltip> 
+      </MLTooltip>
       ),
     ]
   }
-  
+
   return (
     <div className={styles.mergeContainer}>
       <Row gutter={16} type="flex">
@@ -181,7 +176,7 @@ const MergingCard: React.FC<Props> = (props) => {
             </Card>
           </Col>
         ) : null}
-        {props.mergingStepsArray.length > 0 ? ( 
+        {props.mergingStepsArray.length > 0 ? (
           props.mergingStepsArray.map((step, index) => (
             <Col key={index}>
               <div
@@ -207,8 +202,8 @@ const MergingCard: React.FC<Props> = (props) => {
                   <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(step.lastUpdated)}</p>
                   <div className={styles.cardLinks} style={{display: showLinks === step.name ? 'block' : 'none'}}>
                   {props.canWriteMatchMerge ? (
-                    <Link 
-                      id="tiles-run-add" 
+                    <Link
+                      id="tiles-run-add"
                       to={{
                         pathname: '/tiles/run/add',
                         state: {
@@ -217,8 +212,8 @@ const MergingCard: React.FC<Props> = (props) => {
                       }}}
                     >
                       <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
-                    </Link> 
-                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div> 
+                    </Link>
+                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div>
                   }
                   <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
@@ -237,7 +232,7 @@ const MergingCard: React.FC<Props> = (props) => {
                             <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                           )) : null}
                         </Select>
-                      </div> 
+                      </div>
                     ): null}
                     </div>
                   </div>
@@ -250,7 +245,7 @@ const MergingCard: React.FC<Props> = (props) => {
       <CreateEditStepDialog
         isVisible={showCreateEditStepModal}
         isEditing={isEditing}
-        stepType={StepType.Merging}                                 
+        stepType={StepType.Merging}
         editStepArtifactObject={editStepArtifact}
         targetEntityType={props.entityName}
         createStepArtifact={props.createMergingArtifact}
@@ -274,13 +269,6 @@ const MergingCard: React.FC<Props> = (props) => {
         confirmAction={confirmAction}
       />
     </div>
-        //     <div className={styles.mergingContainer}>
-        //     {/* Below button and the ternary operation based on showMergeRuleDialog should be removed/modified when working on CRUD merge step */}
-        //     <MLButton type="primary" onClick={displayAddMergeRuleDialog}>Add (Temp button to test Rule dialog)</MLButton>
-        //     { showMergeRuleDialog ?
-        //         <AddMergeRuleDialog data={[]} openAddMergeRuleDialog={openAddMergeRuleDialog} setOpenAddMergeRuleDialog={setOpenAddMergeRuleDialog}/>
-        //        : ''}
-        //      </div>
   )
 };
 

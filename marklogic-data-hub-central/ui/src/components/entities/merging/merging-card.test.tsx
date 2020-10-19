@@ -5,13 +5,13 @@ import userEvent from "@testing-library/user-event";
 
 import MergingCard from './merging-card';
 
-import { mergingStepCustomer } from '../../../assets/mock-data/curation/merging';
+import { mergingStep } from '../../../assets/mock-data/curation/merging';
 import { customerEntityDef} from '../../../assets/mock-data/curation/entity-definitions-mock';
 
-const mergingStepsArray = mergingStepCustomer.artifacts;
+const mergingStepsArray = mergingStep.artifacts;
 
 describe('Merging cards view component', () => {
-  it('can render matching steps', () => {
+  it('can render merging steps', () => {
     const { getByText } =  render(
       <Router>
         <MergingCard
@@ -30,6 +30,6 @@ describe('Merging cards view component', () => {
     );
 
     expect(getByText('mergeCustomers')).toBeInTheDocument();
-    expect(getByText('Last Updated: 09/25/2020 9:40AM')).toBeInTheDocument();
+    expect(getByText('mergeCustomersEmpty')).toBeInTheDocument();
   });
 });
