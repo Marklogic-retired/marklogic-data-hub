@@ -132,6 +132,15 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getSortIcon('nicknames').should('exist');
     modelPage.getEntityModifiedAlert().should('exist');
 
+    // edit property name with Related Entity type
+    propertyTable.editProperty('user');
+    propertyModal.clearPropertyName();
+    propertyModal.newPropertyName('username');
+    propertyModal.getSubmitButton().click();
+    propertyTable.getProperty('user').should('not.exist');
+    propertyTable.getProperty('username').should('exist');
+    propertyTable.getMultipleIcon('username').should('exist');
+
     // check edited entity description
     entityTypeTable.getEntity('Client').click();
     entityTypeModal.getEntityDescription().should('have.value', 'Description has changed');
