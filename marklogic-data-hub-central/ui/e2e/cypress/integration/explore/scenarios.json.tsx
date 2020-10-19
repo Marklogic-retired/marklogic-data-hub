@@ -417,10 +417,13 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
-    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.selectDateRange();
+    browsePage.getSelectedFacet('birthDate:').should('exist');
+    browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('exist');
     browsePage.getFacetApplyButton().click();
+    browsePage.clickClearFacetSearchSelection('birthDate');
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('be.checked');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('be.checked');
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
