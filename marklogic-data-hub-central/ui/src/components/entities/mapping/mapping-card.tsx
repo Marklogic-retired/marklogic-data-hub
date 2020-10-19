@@ -101,9 +101,11 @@ const MappingCard: React.FC<Props> = (props) => {
         setNewMap(true);
     };
 
-    const OpenEditStepDialog = (index) => {
+    const OpenEditStepDialog = async (name, index) => {
         setTitle('Edit Mapping Step');
+        let settingsData = await axios.get(`/api/steps/mapping/${name}`);
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
+        setSourceDatabaseName(settingsData.data.sourceDatabase);
         setNewMap(true);
     };
 
@@ -640,7 +642,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         >
                             <Card
                                 actions={[
-                                    <MLTooltip title={'Edit'} placement="bottom"><Icon className={styles.editIcon} type="edit" key ="last" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
+                                    <MLTooltip title={'Edit'} placement="bottom"><Icon className={styles.editIcon} type="edit" key ="last" role="edit-mapping button" data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(elem.name, index)}/></MLTooltip>,
                                     <MLTooltip title={'Step Details'} placement="bottom"><i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name,index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
                                     props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" data-testid={elem.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
@@ -693,6 +695,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 createMappingArtifact={props.createMappingArtifact}
                 deleteMappingArtifact={props.deleteMappingArtifact}
                 mapData={mapData}
+                sourceDatabase={sourceDatabaseName}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}/>
                 {deleteConfirmation}

@@ -1,17 +1,20 @@
-import { Modal, Form, Input, Icon, Radio } from "antd";
-import React, { useState, useEffect } from "react";
+import { Modal, Form, Input, Icon, Radio, AutoComplete } from "antd";
+import React, { useState, useEffect, useContext } from "react";
 import styles from './create-edit-mapping-dialog.module.scss';
 import { NewMapTooltips } from '../../../../config/tooltips.config';
+import { UserContext } from '../../../../util/user-context';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
-
+import axios from "axios"; 
 
 const CreateEditMappingDialog = (props) => {
 
+  const { handleError } = useContext(UserContext)
   const [mapName, setMapName] = useState('');
   const [description, setDescription] = useState(props.mapData && props.mapData != {} ? props.mapData.description : '');
   //const [collections, setCollections] = useState<any[]>([]);
   const [collections, setCollections] = useState('');
-  const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection');
+  const [collectionOptions, setCollectionOptions] = useState(['a','b']);
+  const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
   const [isQuerySelected, setIsQuerySelected] = useState(false);
   //To check submit validity
@@ -156,7 +159,6 @@ const CreateEditMappingDialog = (props) => {
       };
     }
 
-
     setIsValid(true);
 
     //Call create Mapping artifact API function
@@ -171,7 +173,60 @@ const CreateEditMappingDialog = (props) => {
       setIsNameDuplicate(true);
       setIsValid(false);
     }
-  };
+  }
+
+   const handleSearch = async (value: any) => {
+    let databaseName = 'staging';
+    if(props.sourceDatabase){
+      databaseName = props.sourceDatabase.split('-')[2].toLowerCase();
+    }
+    if(value && value.length > 2){
+      try {
+        let data = {
+            "referenceType": "collection",
+            "entityTypeId": " ",
+            "propertyPath": " ",
+            "limit": 10,
+            "dataType": "string",
+            "pattern": value,
+        }
+        const response = await axios.post(`/api/entitySearch/facet-values?database=${databaseName}`, data)
+        setCollectionOptions(response.data);
+      } catch (error) {
+        console.log(error)
+        handleError(error);
+    }
+
+    }else{
+      setCollectionOptions([]);
+    }
+  }
+
+  const handleFocus = () => {
+      setCollectionOptions([]);
+  }
+
+  const handleTypeaheadChange = (data: any) => {
+    if (data === ' ') {
+        setCollectionsTouched(false);
+    }
+    else {
+      setCollectionsTouched(true);
+      setCollections(data);
+      if (props.mapData && props.mapData.collection) {
+        if (props.mapData.collection === data) {
+          setCollectionsTouched(false);
+        }
+      }
+      if (data.length > 0) {
+        if (mapName) {
+         setIsValid(true);
+        }
+      } else {
+        setIsValid(false);
+      }
+    }
+  }
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -385,18 +440,23 @@ const CreateEditMappingDialog = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
-          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><Input
+          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             //mode="tags"
             className={styles.input}
-            placeholder="Enter collection name"
+            dataSource={collectionOptions}
+            aria-label="collection-input"
+            placeholder= {<span>Enter collection name</span>}
             value={collections}
             disabled={!props.canReadWrite}
-            onChange={handleChange}
+            onSearch={handleSearch}
+            onFocus= {handleFocus}
+            onChange={handleTypeaheadChange}
           >
             {/* {collectionsList} */}
-          </Input>&nbsp;&nbsp;<MLTooltip title={NewMapTooltips.sourceQuery}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ''}
+          <MLTooltip title={NewMapTooltips.sourceQuery}>
+            <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter source query"
