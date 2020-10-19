@@ -200,6 +200,16 @@ ul.ant-cascader-menu:nth-child(2) {
   width: auto;
 }
 
+/* Mapping - Create/Edit step Typeahead search  */
+
+.ant-select-dropdown-menu-item-active:not(.ant-select-dropdown-menu-item-disabled) {
+  background-color: #E9F7FE;
+}
+
+.ant-select-auto-complete.ant-select .ant-select-selection--single {
+  width: 95%;
+}
+
 
 /* Styles for MLtable */
 
@@ -255,4 +265,3 @@ ul.ant-cascader-menu:nth-child(2) {
 .ant-modal-confirm-body{
     margin-top: 18px;
 }
-
