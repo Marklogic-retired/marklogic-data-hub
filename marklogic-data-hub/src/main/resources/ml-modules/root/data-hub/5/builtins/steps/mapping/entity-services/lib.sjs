@@ -476,7 +476,7 @@ function getMarkLogicMappingFunctions() {
   return fn.head(datahub.hubUtils.queryLatest(function() {
     let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata")
     let ns = {"m":"http://marklogic.com/entity-services/mapping"};
-    let output = {};
+    let output = [];
 
     for (const metaData of fnMetadata){
       if(metaData.xpath("/m:function-defs",ns)) {
@@ -487,9 +487,10 @@ function getMarkLogicMappingFunctions() {
           let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name",ns)).replace("\n",",");
           j++;
           let singleFunction ={};
-          singleFunction["category"] = (String(fnLocation).includes("/data-hub/5/mapping-functions")) ? "builtin" : "custom";
+          singleFunction["functionName"] = funcName;
           singleFunction["signature"] = funcName +"("+params+")";
-          output[funcName] = singleFunction;
+          singleFunction["category"] = (String(fnLocation).includes("/data-hub/5/mapping-functions")) ? "builtin" : "custom";
+          output.push(singleFunction)
         }
       }
     }
@@ -525,17 +526,30 @@ function getXpathMappingFunctions() {
 }
 
 function getFunctionsWithSignatures(xpathFunctions, excludeFunctions) {
-  const response = {};
+  const response = [];
+  //used to prevent duplicates(overloaded functions) in the response
+  const functionsAdded = [];
   for (let i = 0; i < xpathFunctions.length; i++) {
     if (String(xpathFunctions[i]).includes("fn:")) {
       let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
       signature = signature.match(/fn:(.*?) as.*?/)[1];
       let fn = String(xdmp.functionName(xpathFunctions[i])).replace("fn:", "");
       if (!excludeFunctions.includes(fn)) {
-        let xpathFunction = {};
-        xpathFunction["category"] = "xpath";
-        xpathFunction["signature"] = signature;
-        response[fn] = xpathFunction;
+        //Update the signature if the function is already added
+        if(functionsAdded.includes(fn)){
+          let addedFunction = response.find(func => {
+            return func.functionName == fn
+          });
+          addedFunction["signature"] = signature;
+        }
+        else{
+          let xpathFunction = {};
+          xpathFunction["functionName"] = fn;
+          xpathFunction["signature"] = signature;
+          xpathFunction["category"] = "xpath";
+          response.push(xpathFunction);
+          functionsAdded.push(fn);
+        }
       }
     }
   }

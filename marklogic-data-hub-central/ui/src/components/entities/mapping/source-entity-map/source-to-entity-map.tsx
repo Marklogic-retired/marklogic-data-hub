@@ -798,8 +798,8 @@ const SourceToEntityMap = (props) => {
 
     const handleFunctionsList = async (name) => {
         let funcArr: any[]= [];
-        Object.keys(props.mapFunctions).forEach(element => {
-            funcArr.push({'key':element, 'value':element});
+        props.mapFunctions.forEach(element => {
+            funcArr.push({'key':element.functionName, 'value':element.functionName});
         });
         setPropListForDropDown(funcArr);
 
@@ -815,8 +815,11 @@ const SourceToEntityMap = (props) => {
         }
     }
 
-    const functionsDef = (funcName) => {
-        return props.mapFunctions[funcName].signature
+    const functionsDef = (functionName) => {
+        return props.mapFunctions.find(func => {
+            return func.functionName == functionName
+        }).signature;
+
     }
 
     const insertContent = async (content, propName) => {

@@ -26,11 +26,14 @@ const expectedFunctionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWor
  * the ones excluded by esMappingLib covers all the functions that should be ignored.
  */
 const functions = esMappingLib.getFunctionsWithSignatures(xdmp.functions().toObject(), []);
-const actualFunctionsThatDontWork = Object.keys(functions).filter(functionName => {
-  const result = testFunctionInMapping(functions[functionName].signature);
-  return result.properties.gender.errorMessage && result.properties.gender.errorMessage.startsWith("Undefined function");
-});
-
+const actualFunctionsThatDontWork = [];
+for(let i=0; i< functions.length; i++){
+  const result = testFunctionInMapping(functions[i].signature);
+  if (result.properties.gender.errorMessage && result.properties.gender.errorMessage.startsWith("Undefined function")){
+    actualFunctionsThatDontWork.push(String(functions[i].functionName));
+  }
+}
+console.log(actualFunctionsThatDontWork);
 [
   test.assertEqual(expectedFunctionsThatDontWork.length, actualFunctionsThatDontWork.length,
     "Expected to find zero functions that don't work, as getXpathMappingFunctions should have already removed " +

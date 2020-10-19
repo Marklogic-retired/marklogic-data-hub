@@ -78,7 +78,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [openMappingSettings, setOpenMappingSettings] = useState(false);
 
     //For storing  mapping functions
-    const [mapFunctions,setMapFunctions] = useState({});
+    const [mapFunctions,setMapFunctions] = useState([]);
 
     //For storing namespaces
     const [namespaces, setNamespaces] = useState({});
@@ -488,7 +488,7 @@ const MappingCard: React.FC<Props> = (props) => {
             let response = await axios.get(`/api/artifacts/mapping/functions`);
 
             if (response.status === 200) {
-                setMapFunctions({...response.data});
+                setMapFunctions(response.data);
             }
           } catch (error) {
               let message = error;

@@ -281,17 +281,18 @@ const errorJSONResponse = {
   targetEntityType: 'Person'
 };
 
-const mapFunctions = {
-  "echo": { "category": "custom", "signature": "echo(input)" },
-  "memoryLookup": { "category": "builtin", "signature": "memoryLookup(input,inputDictionary)" },
-  "documentLookup": { "category": "builtin", "signature": "documentLookup(input,inputDictionaryPath)" },
-  "parseDate": { "category": "builtin", "signature": "parseDate(value,pattern)" },
-  "parseDateTime": { "category": "builtin", "signature": "parseDateTime(value,pattern)" },
-  "add-function": { "category": "custom", "signature": "add-function(num1,num2)" },
-  "unparsed-text": { "category": "xpath", "signature": "unparsed-text(xs:string)" },
-  "month-from-dateTime": { "category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" }, "seconds-from-dateTime": { "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" },
-  "concat": { "category": "xpath", "signature": "concat(xs:anyAtomicType?)" }
-}
+const mapFunctions = [
+   { "functionName": "echo","category": "custom", "signature": "echo(input)" },
+   { "functionName": "memoryLookup","category": "builtin", "signature": "memoryLookup(input,inputDictionary)" },
+   { "functionName": "documentLookup","category": "builtin", "signature": "documentLookup(input,inputDictionaryPath)" },
+   { "functionName": "parseDate","category": "builtin", "signature": "parseDate(value,pattern)" },
+   { "functionName": "parseDateTime","category": "builtin", "signature": "parseDateTime(value,pattern)" },
+   { "functionName": "add-function","category": "custom", "signature": "add-function(num1,num2)" },
+   { "functionName": "unparsed-text","category": "xpath", "signature": "unparsed-text(xs:string)" },
+   { "functionName": "month-from-dateTime","category": "xpath", "signature": "month-from-dateTime(xs:dateTime?)" },
+   { "functionName": "seconds-from-dateTime", "category": "xpath", "signature": "seconds-from-dateTime(xs:dateTime?)" },
+   { "functionName": "concat", "category": "xpath", "signature": "concat(xs:anyAtomicType?)" }
+]
 
 const mapProps = {
   sourceData: jsonSourceData,
