@@ -15,22 +15,22 @@
  */
 package com.marklogic.hub.spark.sql.sources.v2.writer;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
-import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.spark.sql.sources.v2.DefaultSource;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
 import org.apache.spark.sql.types.StructType;
 
 import java.util.Map;
-import java.util.Properties;
 
 public class HubDataWriterFactory extends LoggingObject implements DataWriterFactory<InternalRow> {
 
     private StructType schema;
     private Map<String, String> options;
-
+    private JsonNode endpointParams;
 
     /**
      * @param options a map of options containing both DHF-supported properties (most likely prefixed with ml* or
@@ -38,28 +38,16 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
      *                HubClient for communicating with MarkLogic.
      * @param schema
      */
-    public HubDataWriterFactory(Map<String, String> options, StructType schema) {
+    public HubDataWriterFactory(Map<String, String> options, StructType schema, JsonNode endpointParams) {
         this.options = options;
         this.schema = schema;
+        this.endpointParams = endpointParams;
     }
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        HubClient client = HubClient.withHubClientConfig(buildHubClientConfig(options));
+        HubClient client = HubClient.withHubClientConfig(DefaultSource.buildHubClientConfig(options));
         logger.info("Creating HubClient for host: " + client.getStagingClient().getHost());
-        return new HubDataWriter(client, schema, options);
-    }
-
-    protected HubClientConfig buildHubClientConfig(Map<String, String> options) {
-        Properties props = new Properties();
-        // Assume DHS usage by default; the options map can override these
-        props.setProperty("hubdhs", "true");
-        props.setProperty("hubssl", "true");
-        options.keySet().forEach(key -> props.setProperty(key, options.get(key)));
-
-        HubClientConfig hubClientConfig = new HubClientConfig();
-        hubClientConfig.registerLowerCasedPropertyConsumers();
-        hubClientConfig.applyProperties(props);
-        return hubClientConfig;
+        return new HubDataWriter(client, schema, options, endpointParams);
     }
 }
