@@ -78,6 +78,11 @@ public class HubClientConfig {
     private String stagingSchemasDbName;
     private String finalSchemasDbName;
 
+    // This is captured here as it's valid for a client to want to insert modules and be able to reuse the default permissions.
+    // The other permission properties from HubConfigImpl are not yet being stored here because it's preferred to use
+    // DHF DS endpoints to load artifacts, and those endpoints know the permissions to use.
+    private String modulePermissions;
+
     private Boolean isHostLoadBalancer;
 
     private ManageConfig manageConfig;
@@ -259,6 +264,8 @@ public class HubClientConfig {
         finalTriggersDbName = "data-hub-final-TRIGGERS";
         stagingSchemasDbName = "data-hub-staging-SCHEMAS";
         finalSchemasDbName = "data-hub-final-SCHEMAS";
+
+        modulePermissions = "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute";
     }
 
     public void configureForDhs() {
@@ -342,6 +349,8 @@ public class HubClientConfig {
         propertyConsumerMap.put("mlStagingSchemasDbName", prop -> stagingSchemasDbName = prop);
         propertyConsumerMap.put("mlFinalTriggersDbName", prop -> finalTriggersDbName = prop);
         propertyConsumerMap.put("mlFinalSchemasDbName", prop -> finalSchemasDbName = prop);
+
+        propertyConsumerMap.put("mlModulePermissions", prop -> modulePermissions = prop);
     }
 
     /**
@@ -702,5 +711,13 @@ public class HubClientConfig {
 
     public void setManageConfig(ManageConfig manageConfig) {
         this.manageConfig = manageConfig;
+    }
+
+    public String getModulePermissions() {
+        return modulePermissions;
+    }
+
+    public void setModulePermissions(String modulePermissions) {
+        this.modulePermissions = modulePermissions;
     }
 }

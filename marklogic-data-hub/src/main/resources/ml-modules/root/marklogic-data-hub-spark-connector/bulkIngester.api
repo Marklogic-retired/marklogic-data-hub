@@ -1,5 +1,5 @@
 {
-    "endpoint": "/data-hub/5/data-services/ingestion/bulkIngester.sjs",
+    "endpoint": "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
     "desc": "This is a prototype and not intended for client use yet",
     "params": [
         {
