@@ -137,6 +137,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
                 key={index}
                 onClick={()=> clearRangeFacet(item.constraint)}
                 data-cy={`clear-${item.rangeValues.lowerBound}`}
+                data-testid={`clear-${item.displayName}`}
               >
                 {facetName + ': ' + item.rangeValues.lowerBound + ' ~ ' + item.rangeValues.upperBound}
                   <Icon type='close'/>
