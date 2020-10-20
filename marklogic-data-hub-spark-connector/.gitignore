@@ -1,0 +1,2 @@
+# Ignore this directory; files will be copied to it from the core project via a Gradle task
+src/main/resources/marklogic-data-hub-spark-connector
