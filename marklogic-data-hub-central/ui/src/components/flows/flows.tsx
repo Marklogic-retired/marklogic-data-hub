@@ -9,6 +9,7 @@ import sourceFormatOptions from '../../config/formats.config';
 import {RunToolTips, SecurityTooltips} from '../../config/tooltips.config';
 import styles from './flows.module.scss';
 import { MLTooltip, MLSpin, MLUpload } from '@marklogic/design-system';
+import { useDropzone } from 'react-dropzone';
 import { AuthoritiesContext } from "../../util/authorities";
 import {Link} from "react-router-dom";
 import axios from "axios";
@@ -191,6 +192,26 @@ const Flows: React.FC<Props> = (props) => {
         setStepDialogVisible(false);
         setAddStepDialogVisible(false);
     }
+    // Setup for file upload
+    const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
+        noClick: true,
+        noKeyboard: true
+    });
+
+    const openFilePicker = () => {
+        open();
+    }
+
+    useEffect(() => {
+        acceptedFiles.map(file => {
+            setFileList(prevState => [...prevState, file])
+        });
+    }, [acceptedFiles])
+
+    useEffect(() => {
+        customRequest();
+    }, [fileList])
+
 
     const deleteConfirmation = (
         <Modal
@@ -341,27 +362,9 @@ const Flows: React.FC<Props> = (props) => {
         return (StepDefinitionTypeTitles[stepDef]) ? StepDefinitionTypeTitles[stepDef] : 'Unknown';
     }
 
-    const uploadProps = {
-        onRemove: file => {
-            setFileList(prevState => {
-                const index = prevState.indexOf(file);
-                const newFileList = prevState.slice();
-                newFileList.splice(index, 1);
-                return newFileList;
-            });
-        },
-        beforeUpload: (file: any) => {
-            setFileList(prevState => ([...prevState , file]));
-            return true;
-        },
-        showUploadList:false,
-        fileList,
-    }
-
-    const customRequest = async option => {
-        const {file} = option;
+    const customRequest = async () => {
         const filenames = fileList.map(({name}) => name);
-        if (filenames.indexOf(file.name) === (filenames.length - 1)) {
+        if (filenames.length) {
             let fl = fileList;
             const formData = new FormData();
 
@@ -473,28 +476,24 @@ const Flows: React.FC<Props> = (props) => {
                             <div className={styles.actions}>
                                 {props.hasOperatorRole ?
                                     step.stepDefinitionType.toLowerCase() === "ingestion" ?
-                                        <MLUpload id="fileUpload"
-                                                multiple={true}
-                                                className={styles.upload}
-                                                customRequest={customRequest}
-                                                showUploadList = {false}
-                                                {...uploadProps}
-                                        >
-                                        <div
-                                            className={styles.run}
-                                            aria-label={`runStep-${step.stepName}`}
-                                            data-testid={'runStep-' + stepNumber}
-                                            onClick={()=>{
-                                                setShowUploadError(false);
-                                                setRunningStep(step)
-                                                setRunningFlow(flowName)
-                                            }}
-                                        >
-                                            <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
-                                                <Icon type="play-circle" theme="filled" />
-                                            </MLTooltip>
+                                        <div {...getRootProps()} style={{display: 'inline-block'}}>
+                                            <input {...getInputProps()} id="fileUpload"/>
+                                            <div
+                                                className={styles.run}
+                                                aria-label={`runStep-${step.stepName}`}
+                                                data-testid={'runStep-' + stepNumber}
+                                                onClick={()=>{
+                                                    setShowUploadError(false);
+                                                    setRunningStep(step);
+                                                    setRunningFlow(flowName);
+                                                    openFilePicker();
+                                                }}
+                                            >
+                                                <MLTooltip title={RunToolTips.ingestionStep} placement="bottom">
+                                                    <Icon type="play-circle" theme="filled" />
+                                                </MLTooltip>
+                                            </div>
                                         </div>
-                                        </MLUpload>
                                         :
                                         <div
                                             className={styles.run}
