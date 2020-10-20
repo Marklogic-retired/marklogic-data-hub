@@ -418,11 +418,12 @@ const Sidebar: React.FC<Props> = (props) => {
   };
 
   const onDateFacetChange = (datatype, facet, value, isNested) => {
-    let updateGreyFacets = { ...greyedOptions.selectedFacets };
+    let updateFacets = { ...allSelectedFacets };
     //let facetName = setFacetName(facet, isNested);
     if (value.length > 1) {
-      updateGreyFacets = { ...updateGreyFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD') } } };
-      setAllGreyedOptions(updateGreyFacets);
+      updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DD'), upperBound: moment(value[1]).format('YYYY-MM-DD') } } }
+      setAllGreyedOptions(updateFacets);
+      setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {
       clearRangeFacet(facet);
       clearGreyRangeFacet(facet);
@@ -430,11 +431,12 @@ const Sidebar: React.FC<Props> = (props) => {
   };
 
   const onDateTimeFacetChange = (datatype, facet, value, isNested) => {
-    let updateGreyFacets = { ...greyedOptions.selectedFacets };
+    let updateFacets = { ...allSelectedFacets };
     //let facetName = setFacetName(facet, isNested);
     if (value.length > 1) {
-      updateGreyFacets = { ...updateGreyFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DDTHH:mm:ss'), upperBound: moment(value[1]).format('YYYY-MM-DDTHH:mm:ss') } } };
-      setAllGreyedOptions(updateGreyFacets);
+      updateFacets = { ...updateFacets, [facet]: { dataType: datatype, rangeValues: { lowerBound: moment(value[0]).format('YYYY-MM-DDTHH:mm:ss'), upperBound: moment(value[1]).format('YYYY-MM-DDTHH:mm:ss') } } }
+      setAllGreyedOptions(updateFacets);
+      setAllSelectedFacets(updateFacets);
     } else if (value.length === 0) {
       clearRangeFacet(facet);
       clearGreyRangeFacet(facet);
