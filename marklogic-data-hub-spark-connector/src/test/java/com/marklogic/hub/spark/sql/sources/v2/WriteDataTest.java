@@ -3,7 +3,8 @@ package com.marklogic.hub.spark.sql.sources.v2;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
-import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.document.GenericDocumentManager;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
@@ -132,31 +133,53 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         assertTrue(ex.getCause().getMessage().contains("Unable to parse permissions: rest-reader,read,rest-writer"), "Unexpected error message: " + ex.getCause().getMessage());
     }
 
+    @Test
+    public void testEndpointsAreLoaded() throws Exception {
+        runAsAdmin().getModulesClient().newTextDocumentManager().delete(
+            "/marklogic-data-hub-spark-connector/bulkIngester.api",
+            "/marklogic-data-hub-spark-connector/bulkIngester.sjs");
+
+        runAsDataHubOperator();
+        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap()).withBatchSize(3).withUriPrefix("/testFruit"));
+        dataWriter.write(buildRow("apple", "red"));
+        dataWriter.commit();
+
+        verifyFruitCount(1, "Verifying the data was written");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.sjs");
+    }
+
+    private void verifyModuleWasLoadedByConnector(String path) {
+        GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
+        assertNotNull(mgr.exists(path), "Expected module to be loaded by connector: " + path);
+
+        DocumentMetadataHandle metadata = mgr.readMetadata(path, new DocumentMetadataHandle());
+        assertTrue(metadata.getCollections().contains("hub-core-module"), "The module should be in this collection so that when a " +
+            "user clears user modules, these modules are not deleted. They're not really user modules because they're " +
+            "not from the user's project.");
+
+        DocumentMetadataHandle.DocumentPermissions perms = metadata.getPermissions();
+        // Verify module has default DHF module permissions
+        assertTrue(perms.get("data-hub-module-reader").contains(DocumentMetadataHandle.Capability.READ));
+        assertTrue(perms.get("data-hub-module-reader").contains(DocumentMetadataHandle.Capability.EXECUTE));
+        assertTrue(perms.get("data-hub-module-writer").contains(DocumentMetadataHandle.Capability.UPDATE));
+        assertTrue(perms.get("rest-extension-user").contains(DocumentMetadataHandle.Capability.EXECUTE));
+
+
+    }
+
     private void verifyFruitCount(int expectedCount, String message) {
         String query = "cts.uriMatch('/testFruit**').toArray().length";
         String count = getHubClient().getStagingClient().newServerEval().javascript(query).evalAs(String.class);
         assertEquals(expectedCount, Integer.parseInt(count), message);
 
-        if (expectedCount > 0) {
-        String uriQuery = "cts.uris('', null, cts.andQuery([\n" +
-            "  cts.directoryQuery('/'),\n" +
-            "  cts.jsonPropertyValueQuery('fruitName', 'apple')\n" +
-            "]))";
-
-        EvalResultIterator uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
-        assertTrue(uriQueryResult.hasNext());
-        assertTrue(uriQueryResult.next().getString().startsWith("/testFruit"));
-        assertFalse(uriQueryResult.hasNext());
-
-        uriQuery = "cts.uris('', null, cts.andQuery([\n" +
-            "  cts.directoryQuery('/'),\n" +
-            "  cts.jsonPropertyValueQuery('fruitName', 'banana')\n" +
-            "]))";
-
-        uriQueryResult = getHubClient().getStagingClient().newServerEval().javascript(uriQuery).eval();
-        assertTrue(uriQueryResult.hasNext());
-        assertTrue(uriQueryResult.next().getString().startsWith("/testFruit"));
-        assertFalse(uriQueryResult.hasNext());
+        // Assumes both apple and banana were written
+        if (expectedCount > 1) {
+            final String fruitQuery = "cts.search(cts.jsonPropertyValueQuery('fruitName', '%s'))";
+            ObjectNode apple = readJsonObject(getHubClient().getStagingClient().newServerEval().javascript(format(fruitQuery, "apple")).evalAs(String.class));
+            assertEquals("apple", apple.get("envelope").get("instance").get("fruitName").asText());
+            ObjectNode banana = readJsonObject(getHubClient().getStagingClient().newServerEval().javascript(format(fruitQuery, "banana")).evalAs(String.class));
+            assertEquals("banana", banana.get("envelope").get("instance").get("fruitName").asText());
         }
     }
 }

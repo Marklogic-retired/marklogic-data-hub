@@ -72,7 +72,7 @@ if (input instanceof Sequence) {
 }
 
 inputArray.forEach(record => {
-  state.next = state.next + 1;
+
   const uri = (uriPrefix) +  sem.uuidString() + '.json';
   record = ingest.main({uri: uri, value: record}, {
     outputFormat: consts.JSON, headers: headers
