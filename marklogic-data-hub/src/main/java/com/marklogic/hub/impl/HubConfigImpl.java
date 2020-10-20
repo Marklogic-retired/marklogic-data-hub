@@ -97,8 +97,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
     protected String customForestPath;
 
-    protected String modulePermissions;
-
     private String mappingPermissions;
     private String flowPermissions;
     private String stepDefinitionPermissions;
@@ -895,10 +893,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         this.customForestPath = customForestPath;
     }
 
-    @Override public String getModulePermissions() {
-        return modulePermissions;
-    }
-
     @Override
     public String getEntityModelPermissions() {
         return entityModelPermissions;
@@ -938,10 +932,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     @Deprecated
     public void setProjectDir(String projectDir) {
         createProject(projectDir);
-    }
-
-    public void setModulePermissions(String modulePermissions) {
-        this.modulePermissions = modulePermissions;
     }
 
     public void setEntityModelPermissions(String entityModelPermissions) {
@@ -1292,7 +1282,7 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
         config.setReplaceTokensInModules(true);
         config.setUseRoxyTokenPrefix(false);
-        config.setModulePermissions(modulePermissions);
+        config.setModulePermissions(getModulePermissions());
 
         if (envString != null) {
             String defaultPath = config.getModuleTimestampsPath();
@@ -1497,7 +1487,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
      * This is called by applyDefaultPropertyValues, but is separate for testing purposes.
      */
     public void applyDefaultPermissionPropertyValues() {
-        modulePermissions = "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute";
         entityModelPermissions = "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update";
         mappingPermissions = "data-hub-mapping-reader,read,data-hub-mapping-writer,update";
         stepDefinitionPermissions = "data-hub-step-definition-reader,read,data-hub-step-definition-writer,update";
@@ -1569,7 +1558,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         getPropertyConsumerMap().put("mlFlowPermissions", prop -> flowPermissions = prop);
         getPropertyConsumerMap().put("mlJobPermissions", prop -> jobPermissions = prop);
         getPropertyConsumerMap().put("mlMappingPermissions", prop -> mappingPermissions = prop);
-        getPropertyConsumerMap().put("mlModulePermissions", prop -> modulePermissions = prop);
         getPropertyConsumerMap().put("mlStepDefinitionPermissions", prop -> stepDefinitionPermissions = prop);
     }
 

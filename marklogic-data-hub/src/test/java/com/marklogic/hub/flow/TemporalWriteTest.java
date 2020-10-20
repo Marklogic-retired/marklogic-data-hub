@@ -6,8 +6,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalAxesCommand;
 import com.marklogic.appdeployer.command.temporal.DeployTemporalCollectionsCommand;
-import com.marklogic.client.dataservices.InputEndpoint;
+import com.marklogic.client.dataservices.InputCaller;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
@@ -19,9 +20,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.marklogic.client.io.DocumentMetadataHandle.Capability.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -94,21 +94,22 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
     @Test
     void ingestDocWithTemporalCollecion() {
         String collections = "fruits,stuff,temporal/test";
-        ObjectNode workUnit = objectMapper.createObjectNode();
-        workUnit.put("uriprefix", "/bulkJavaTest/");
-        workUnit.put("collections", collections);
+        ObjectNode endpointConstants = objectMapper.createObjectNode();
+        endpointConstants.put("uriprefix", "/bulkJavaTest/");
+        endpointConstants.put("collections", collections);
         runAsDataHubOperator();
-        InputEndpoint endpoint = InputEndpoint.on(
+        InputCaller<String> endpoint = InputCaller.on(
             getHubClient().getStagingClient(),
-            getHubClient().getModulesClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle())
+            getHubClient().getModulesClient().newTextDocumentManager()
+                .read("/marklogic-data-hub-spark-connector/bulkIngester.api", new StringHandle()),
+            new StringHandle().withFormat(Format.JSON)
         );
-        InputEndpoint.BulkInputCaller bulkInputCaller = endpoint.bulkCaller();
-        bulkInputCaller.setEndpointState("{}".getBytes());
-        bulkInputCaller.setWorkUnit(new JacksonHandle(workUnit));
+        InputCaller.BulkInputCaller<String> bulkInputCaller = endpoint.bulkCaller(endpoint.newCallContext()
+            .withEndpointConstants(new JacksonHandle(endpointConstants)));
 
-        Stream<InputStream> input = Stream.of(
-            new ByteArrayInputStream("{\"fruitName\":\"pineapple\", \"fruitColor\":\"green\"}".getBytes())
-        );
+        List<String> input = new ArrayList<>();
+        input.add("{\"fruitName\":\"pineapple\", \"fruitColor\":\"green\"}");
+
         input.forEach(bulkInputCaller::accept);
         bulkInputCaller.awaitCompletion();
 
