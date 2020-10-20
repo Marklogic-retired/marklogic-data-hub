@@ -218,13 +218,7 @@ public class LegacyFlowManagerTest extends AbstractHubCoreTest {
 
     @Test
     public void testGetFlows() {
-        clearUserModules();
-
-        // Not sure why, but adding sleep between clearing user modules and installing modules ensures that both flows are written properly to ML
-        sleep(2000);
-
-        installModule("/entities/test/harmonize/my-test-flow1/my-test-flow1.xml", "flow-manager-test/my-test-flow1/my-test-flow1.xml");
-        installModule("/entities/test/harmonize/my-test-flow2/my-test-flow2.xml", "flow-manager-test/my-test-flow1/my-test-flow2.xml");
+        // The test flows for entityName "test" are deployed to ML via the installModules method called as part of JUnit's BeforeEach block
 
         List<LegacyFlow> flows = fm.getFlows("test");
         assertEquals(2, flows.size());
