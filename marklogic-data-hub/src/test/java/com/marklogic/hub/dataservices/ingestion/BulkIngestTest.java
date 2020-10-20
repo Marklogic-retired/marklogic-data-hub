@@ -30,7 +30,7 @@ public class BulkIngestTest extends AbstractHubCoreTest {
     void beforeEach() {
         InputEndpoint endpoint = InputEndpoint.on(
             getHubClient().getStagingClient(),
-            getHubClient().getModulesClient().newTextDocumentManager().read("/data-hub/5/data-services/ingestion/bulkIngester.api", new StringHandle())
+            getHubClient().getModulesClient().newTextDocumentManager().read("/marklogic-data-hub-spark-connector/bulkIngester.api", new StringHandle())
         );
 
         ObjectNode workUnit = objectMapper.createObjectNode();

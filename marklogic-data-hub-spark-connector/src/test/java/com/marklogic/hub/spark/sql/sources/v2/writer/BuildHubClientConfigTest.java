@@ -1,6 +1,8 @@
 package com.marklogic.hub.spark.sql.sources.v2.writer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.spark.sql.sources.v2.DefaultSource;
 import org.apache.spark.sql.types.StructType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,12 +20,13 @@ public class BuildHubClientConfigTest {
     @BeforeEach
     void beforeEach() {
         StructType doesntMatter = null;
-        hubDataWriterFactory = new HubDataWriterFactory(options, doesntMatter);
+        ObjectMapper objectMapper = new ObjectMapper();
+        hubDataWriterFactory = new HubDataWriterFactory(options, doesntMatter, objectMapper.createObjectNode());
     }
 
     @Test
     void defaults() {
-        HubClientConfig config = hubDataWriterFactory.buildHubClientConfig(options);
+        HubClientConfig config = DefaultSource.buildHubClientConfig(options);
         verifyAuth(config, "basic", "Should default to basic auth for DHS usage");
 
         final String sslMessage = "Should default to SSL for DHS usage";
@@ -47,7 +50,7 @@ public class BuildHubClientConfigTest {
         options.put("hubdhs", "false");
         options.put("hubssl", "false");
 
-        HubClientConfig config = hubDataWriterFactory.buildHubClientConfig(options);
+        HubClientConfig config = DefaultSource.buildHubClientConfig(options);
         verifyAuth(config, "digest", "Should default to digest since hubDhs is false");
 
         final String sslMessage = "Should default to no SSL when hubSsl is false";
