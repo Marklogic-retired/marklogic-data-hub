@@ -21,7 +21,7 @@ public class Options {
     private String permissions;
     private String sourceName;
     private String sourceType;
-    private JsonNode ingestWorkUnit;
+    private JsonNode ingestEndpointConstants;
     private JsonNode ingestEndpointState;
     private Map<String, String> hubProperties;
 
@@ -61,14 +61,14 @@ public class Options {
             params.put("sourceType", sourceType);
         }
 
-        if (ingestApiPath != null || ingestWorkUnit != null || ingestEndpointState != null) {
+        if (ingestApiPath != null || ingestEndpointConstants != null || ingestEndpointState != null) {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode node = mapper.createObjectNode();
             if (ingestApiPath != null) {
                 node.put("apiPath", ingestApiPath);
             }
-            if (ingestWorkUnit != null) {
-                node.set("workUnit", ingestWorkUnit);
+            if (ingestEndpointConstants != null) {
+                node.set("endpointConstants", ingestEndpointConstants);
             }
             if (ingestEndpointState != null) {
                 node.set("endpointState", ingestEndpointState);
@@ -114,8 +114,8 @@ public class Options {
         return this;
     }
 
-    public Options withIngestWorkUnit(JsonNode ingestWorkUnit) {
-        this.ingestWorkUnit = ingestWorkUnit;
+    public Options withIngestEndpointConstants(JsonNode ingestEndpointConstants) {
+        this.ingestEndpointConstants = ingestEndpointConstants;
         return this;
     }
 
@@ -123,6 +123,5 @@ public class Options {
         this.ingestEndpointState = ingestEndpointState;
         return this;
     }
-
 
 }

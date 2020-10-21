@@ -17,16 +17,12 @@
 
 declareUpdate();
 
-var endpointState;
 var input;
-
-const state = fn.head(xdmp.fromJSON(endpointState));
-const work = fn.head(xdmp.fromJSON(workUnit));
 
 const doc = {
   input: input,
-  endpointState: state,
-  workUnit: work
+  myEndpointState: fn.head(xdmp.fromJSON(endpointState)),
+  myEndpointConstants: fn.head(xdmp.fromJSON(endpointConstants))
 };
 
 xdmp.documentInsert(
