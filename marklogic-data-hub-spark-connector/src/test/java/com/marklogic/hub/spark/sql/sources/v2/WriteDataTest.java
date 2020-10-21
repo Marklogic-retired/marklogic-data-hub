@@ -39,15 +39,15 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     }
 
     @Test
-    public void ingestWithoutCustomApiWithCustomWorkunit() {
-        ObjectNode customWorkUnit = objectMapper.createObjectNode();
-        customWorkUnit.put("userDefinedValue", 0);
+    public void ingestWithoutCustomApiWithCustomEndpointConstants() {
+        ObjectNode customEndpointConstants = objectMapper.createObjectNode();
+        customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestWorkUnit(customWorkUnit)),
+            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
@@ -61,15 +61,15 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     }
 
     @Test
-    public void ingestWithEmptyApiWithCustomWorkUnit() {
-        ObjectNode customWorkUnit = objectMapper.createObjectNode();
-        customWorkUnit.put("userDefinedValue", 0);
+    public void ingestWithEmptyApiWithCustomEndpointConstants() {
+        ObjectNode customEndpointConstants = objectMapper.createObjectNode();
+        customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestWorkUnit(customWorkUnit)),
+            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
@@ -81,11 +81,11 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointState(customEndpointState)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
-    void nullWorkUnitNoApiPath() {
+    void nullEndpointConstantsNoApiPath() {
         Map<String, String> params = new HashMap<>();
         params.putAll(getHubPropertiesAsMap());
 
@@ -94,8 +94,8 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         params.put("ingestendpointparams", node.toString());
 
         buildDataWriter(new DataSourceOptions(params));
-        logger.info("No exception should have occurred because a null workUnit doesn't mean that Ernie tried to " +
-            "set a workUnit without an apiPath");
+        logger.info("No exception should have occurred because a null endpointConstant doesn't mean that Ernie tried to " +
+            "set an endpointConstant without an apiPath");
     }
 
     @Test
@@ -117,7 +117,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         Map<String, String> params = new HashMap<>();
         params.putAll(getHubPropertiesAsMap());
 
-        final String invalidJson = "{\"workUnit\":{}";
+        final String invalidJson = "{\"endpointConstants\":{}";
         params.put("ingestendpointparams", invalidJson);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> buildDataWriter(new DataSourceOptions(params)));
