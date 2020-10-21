@@ -1,6 +1,7 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -9,23 +10,21 @@ import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
 
-    @Test
-    void test() throws IOException {
-        givenACustomIngestionEndpoint();
-        whenARowIsWrittenUsingTheCustomEndpoint();
-        thenTheExpectedDocumentExists();
-    }
+    private JsonNode writtenDocument;
 
-    private void givenACustomIngestionEndpoint() throws IOException {
+    @BeforeEach
+    void installCustomEndpoint() throws IOException {
         GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
@@ -36,32 +35,69 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
             new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.sjs").getFile()).withFormat(Format.TEXT));
     }
 
-    private void whenARowIsWrittenUsingTheCustomEndpoint() throws IOException {
-        ObjectNode customWorkUnit = objectMapper.createObjectNode();
-        customWorkUnit.put("someString", "value");
-        customWorkUnit.put("someNumber", 123);
+    @Test
+    void customEndpointStateAndEndpointConstants() {
+        ObjectNode endpointConstants = objectMapper.createObjectNode();
+        endpointConstants.put("someString", "value");
+        endpointConstants.put("someNumber", 123);
+
+        ObjectNode endpointState = objectMapper.createObjectNode();
+        endpointState.put("someState", "hello world");
+
+        writeRowUsingCustomEndpoint(endpointConstants, endpointState);
+
+        // Verify custom constants and state data were added to document
+        assertEquals("value", writtenDocument.get("myEndpointConstants").get("someString").asText());
+        assertEquals(123, writtenDocument.get("myEndpointConstants").get("someNumber").asInt());
+        assertEquals("hello world", writtenDocument.get("myEndpointState").get("someState").asText());
+    }
+
+    @Test
+    void customEndpointNoEndpointStateAndNoEndpointConstants() {
+        writeRowUsingCustomEndpoint(null, null);
+
+        verifyEndpointConstantsIsEmpty();
+        assertTrue(writtenDocument.has("myEndpointState"), "myEndpointState should exist, but it should be null since " +
+            "we didn't pass anything to the endpoint");
+        assertEquals(JsonNodeType.NULL, writtenDocument.get("myEndpointState").getNodeType());
+    }
+
+    @Test
+    void customEndpointWithEndpointStateAndNoEndpointConstants() {
         ObjectNode customEndpointState = objectMapper.createObjectNode();
         customEndpointState.put("someState", "hello world");
 
-        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap())
-            .withIngestApiPath("/custom-ingestion-endpoint/endpoint.api")
-            .withIngestWorkUnit(customWorkUnit)
-            .withIngestEndpointState(customEndpointState));
+        writeRowUsingCustomEndpoint(null, customEndpointState);
 
-        dataWriter.write(buildRow("apple", "red"));
-        dataWriter.commit();
+        verifyEndpointConstantsIsEmpty();
+        assertEquals("hello world", writtenDocument.get("myEndpointState").get("someState").asText());
     }
 
-    private void thenTheExpectedDocumentExists() {
-        JsonNode doc = getHubClient().getStagingClient().newJSONDocumentManager().read("/test/doc.json", new JacksonHandle()).get();
+    private void writeRowUsingCustomEndpoint(ObjectNode customEndpointConstants, ObjectNode customEndpointState) {
+        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap())
+            .withIngestApiPath("/custom-ingestion-endpoint/endpoint.api")
+            .withIngestEndpointConstants(customEndpointConstants)
+            .withIngestEndpointState(customEndpointState));
 
-        final String message = "Did not find expected data in doc: " + doc.toString();
+        try {
+            dataWriter.write(buildRow("apple", "red"));
+            dataWriter.commit();
 
-        assertEquals("apple", doc.get("input").get("fruitName").asText(), message);
-        assertEquals("red", doc.get("input").get("fruitColor").asText(), message);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
 
-        assertEquals("value", doc.get("workUnit").get("someString").asText(), message);
-        assertEquals(123, doc.get("workUnit").get("someNumber").asInt(), message);
-        assertEquals("hello world", doc.get("endpointState").get("someState").asText(), message);
+        loadDocumentAndVerifyInputData();
+    }
+
+    private void loadDocumentAndVerifyInputData() {
+        writtenDocument = getHubClient().getStagingClient().newJSONDocumentManager().read("/test/doc.json", new JacksonHandle()).get();
+        assertEquals("apple", writtenDocument.get("input").get("fruitName").asText());
+        assertEquals("red", writtenDocument.get("input").get("fruitColor").asText());
+    }
+
+    private void verifyEndpointConstantsIsEmpty() {
+        assertEquals(0, writtenDocument.get("myEndpointConstants").size(), "The constants should default to an empty object when no options " +
+            "are set that will populate the constants");
     }
 }

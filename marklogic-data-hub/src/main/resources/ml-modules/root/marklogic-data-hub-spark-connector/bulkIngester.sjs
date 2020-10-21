@@ -27,12 +27,11 @@ declareUpdate();
 const ingest = require("/data-hub/5/builtins/steps/ingestion/default/main.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-const state = fn.head(xdmp.fromJSON(endpointState));
 
 const temporal = require("/MarkLogic/temporal.xqy");
 const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
 
-const work = fn.head(xdmp.fromJSON(workUnit));
+const work = fn.head(xdmp.fromJSON(endpointConstants));
 
 const uriPrefix = work.uriprefix != null ? work.uriprefix : "";
 
@@ -99,7 +98,3 @@ inputArray.forEach(record => {
       );
   }
 });
-
-const returnValue = (fn.count(input) > 0) ? state : null;
-
-returnValue;
