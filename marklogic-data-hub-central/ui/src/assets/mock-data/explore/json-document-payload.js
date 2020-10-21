@@ -1,5 +1,5 @@
 const jsonDocPayload = {
-  "content": {
+  "data": {
     "envelope": {
       "headers": {
         "sources": [
@@ -70,7 +70,7 @@ const jsonDocPayload = {
       }
     }
   },
-  "metaData": {
+  "recordMetadata": {
     "datahubCreatedOn": "2019-10-08T14:33:15.31045-07:00",
     "datahubCreatedBy": "admin",
     "datahubCreatedByStep": "entity-services-mapping",
