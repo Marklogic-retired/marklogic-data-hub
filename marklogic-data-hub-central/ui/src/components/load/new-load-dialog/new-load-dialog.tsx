@@ -258,6 +258,7 @@ const NewLoadDialog = (props) => {
     <p className={styles.title}>{props.title}</p>
     <br/>
     <div className={styles.newDataLoadForm}>
+        <div className={styles.newLoadCardTitle} aria-label={'newLoadCardTitle'}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
@@ -273,7 +274,7 @@ const NewLoadDialog = (props) => {
             value={stepName}
             onChange={handleChange}
             disabled={tobeDisabled}
-           className={styles.input}
+            className={styles.input}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
