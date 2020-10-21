@@ -63,8 +63,8 @@ const DetailHeader: React.FC<Props> = (props) => {
       }
     }
   } else if (fileType === 'xml') {
-    if (props.document.content.envelope) {
-      envelope = props.document.content.envelope;
+    if (props.document.envelope) {
+      envelope = props.document.envelope;
       if (envelope && envelope.instance) {
         if (envelope.hasOwnProperty('headers')) {
           timestamp = envelope.headers.hasOwnProperty('createdOn') && envelope.headers.createdOn;
@@ -73,12 +73,12 @@ const DetailHeader: React.FC<Props> = (props) => {
           title = envelope.instance.info.hasOwnProperty('title') && envelope.instance.info.title;
         }
         if (props.primaryKey && props.primaryKey !== props.uri) {
-          Object.keys(props.document.content.envelope.instance).forEach(instance => {
+          Object.keys(props.document.envelope.instance).forEach(instance => {
             if (instance !== 'info') {
-              Object.keys(props.document.content.envelope.instance[instance]).forEach(function (key) {
-                if (props.primaryKey.toString() === props.document.content.envelope.instance[instance][key].toString()) {
+              Object.keys(props.document.envelope.instance[instance]).forEach(function (key) {
+                if (props.primaryKey.toString() === props.document.envelope.instance[instance][key].toString()) {
                   primaryKey = key;
-                  id = props.document.content.envelope.instance[instance][key];
+                  id = props.document.envelope.instance[instance][key];
                 }
               });
             }
