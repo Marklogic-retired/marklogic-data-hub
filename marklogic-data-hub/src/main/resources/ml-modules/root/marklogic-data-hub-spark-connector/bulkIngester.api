@@ -3,13 +3,7 @@
     "desc": "This is a prototype and not intended for client use yet",
     "params": [
         {
-            "name": "endpointState",
-            "datatype": "jsonDocument",
-            "multiple": false,
-            "nullable": true
-        },
-        {
-            "name": "workUnit",
+            "name": "endpointConstants",
             "datatype": "jsonDocument",
             "multiple": false,
             "nullable": true
@@ -21,11 +15,6 @@
             "nullable": true
         }
     ],
-    "return": {
-        "datatype": "jsonDocument",
-        "multiple": false,
-        "nullable": true
-    },
     "$bulk": {
         "inputBatchSize": 2
     }

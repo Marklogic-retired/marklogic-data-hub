@@ -9,7 +9,7 @@
             "nullable": true
         },
         {
-            "name": "workUnit",
+            "name": "endpointConstants",
             "datatype": "jsonDocument",
             "multiple": false,
             "nullable": true

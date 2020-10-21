@@ -1,19 +1,17 @@
 package com.marklogic.hub.dataservices.ingestion;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.dataservices.InputEndpoint;
+import com.marklogic.client.dataservices.InputCaller;
 import com.marklogic.client.eval.EvalResultIterator;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,28 +22,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class BulkIngestTest extends AbstractHubCoreTest {
 
-    private InputEndpoint.BulkInputCaller bulkInputCaller;
+    private InputCaller.BulkInputCaller<String> bulkInputCaller;
 
     @BeforeEach
     void beforeEach() {
-        InputEndpoint endpoint = InputEndpoint.on(
+        InputCaller<String> endpoint = InputCaller.on(
             getHubClient().getStagingClient(),
-            getHubClient().getModulesClient().newTextDocumentManager().read("/marklogic-data-hub-spark-connector/bulkIngester.api", new StringHandle())
+            getHubClient().getModulesClient().newTextDocumentManager().read("/marklogic-data-hub-spark-connector/bulkIngester.api", new StringHandle()),
+            new StringHandle().withFormat(Format.JSON)
         );
 
-        ObjectNode workUnit = objectMapper.createObjectNode();
-        workUnit.put("uriprefix", "/bulkJavaTest/");
+        ObjectNode endpointConstants = objectMapper.createObjectNode();
+        endpointConstants.put("uriprefix", "/bulkJavaTest/");
 
-        bulkInputCaller = endpoint.bulkCaller();
-        bulkInputCaller.setEndpointState("{}".getBytes());
-        bulkInputCaller.setWorkUnit(new JacksonHandle(workUnit));
+        bulkInputCaller = endpoint.bulkCaller(endpoint.newCallContext().withEndpointConstants(new JacksonHandle(endpointConstants)));
     }
 
     @Test
     void writeOneDoc() {
-        Stream<InputStream> input = Stream.of(
-            asInputStream("{\"docNum\":1, \"docName\":\"doc1\"}")
-        );
+        List<String> input = new ArrayList<>();
+        input.add("{\"docNum\":1, \"docName\":\"doc1\"}");
         input.forEach(bulkInputCaller::accept);
         bulkInputCaller.awaitCompletion();
 
@@ -54,10 +50,10 @@ public class BulkIngestTest extends AbstractHubCoreTest {
 
     @Test
     void writeTwoDocs() {
-        Stream<InputStream> input = Stream.of(
-            asInputStream("{\"docNum\":1, \"docName\":\"doc1\"}"),
-            asInputStream("{\"docNum\":2, \"docName\":\"doc2\"}")
-        );
+        List<String> input = new ArrayList<>();
+        input.add("{\"docNum\":1, \"docName\":\"doc1\"}");
+        input.add("{\"docNum\":2, \"docName\":\"doc2\"}");
+
         input.forEach(bulkInputCaller::accept);
         bulkInputCaller.awaitCompletion();
 
@@ -72,9 +68,5 @@ public class BulkIngestTest extends AbstractHubCoreTest {
         }
 
         assertEquals(expectedCount, uris.size());
-    }
-
-    private InputStream asInputStream(String value) {
-        return new ByteArrayInputStream(value.getBytes());
     }
 }
