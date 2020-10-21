@@ -22,12 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.ForbiddenUserException;
 import com.marklogic.client.MarkLogicServerException;
 import com.marklogic.client.ResourceNotFoundException;
-import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.ServerTransform;
-import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.QueryManager;
@@ -39,7 +36,6 @@ import com.marklogic.hub.central.entities.search.impl.CreatedOnFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.EntityPropertyFacetHandler;
 import com.marklogic.hub.central.entities.search.impl.JobRangeFacetHandler;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
-import com.marklogic.hub.central.entities.search.models.Document;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.exceptions.DataHubException;
 import com.marklogic.hub.central.managers.ModelManager;
@@ -140,25 +136,6 @@ public class EntitySearchManager {
                         + "for creating the options file. If the database is indexing then it might take some "
                         + "time for the file to get generated. This file is required to enable "
                         + "various search features.");
-            }
-            throw e;
-        }
-    }
-
-    public Optional<Document> getDocument(String docUri) {
-        GenericDocumentManager docMgr = searchDatabaseClient.newDocumentManager();
-        DocumentMetadataHandle documentMetadataReadHandle = new DocumentMetadataHandle();
-
-        // Fetching document content and meta-data
-        try {
-            String content = docMgr.readAs(docUri, documentMetadataReadHandle, String.class);
-            Map<String, String> metadata = documentMetadataReadHandle.getMetadataValues();
-            return Optional.ofNullable(new Document(content, metadata));
-        } catch (MarkLogicServerException e) {
-            if (e instanceof ResourceNotFoundException || e instanceof ForbiddenUserException) {
-                logger.warn(e.getLocalizedMessage());
-            } else { //FailedRequestException || ResourceNotResendableException
-                logger.error(e.getLocalizedMessage());
             }
             throw e;
         }

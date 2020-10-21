@@ -21,16 +21,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.hub.central.entities.search.EntitySearchManager;
 import com.marklogic.hub.central.entities.search.models.DocSearchQueryInfo;
-import com.marklogic.hub.central.entities.search.models.Document;
 import com.marklogic.hub.central.entities.search.models.SearchQuery;
 import com.marklogic.hub.central.schemas.EntitySearchResponseSchema;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -41,8 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 
 @Controller
 @RequestMapping(value = "/api/entitySearch")
@@ -58,19 +53,8 @@ public class EntitySearchController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Document> search(@RequestParam String docUri, @RequestParam(defaultValue = "final") String database) {
-        Optional<Document> optionalContent = newEntitySearchManager(database).getDocument(docUri);
-        HttpHeaders headers = new HttpHeaders();
-
-        return optionalContent.map(content -> {
-            if (content.getContent().startsWith("<")) {
-                headers.setContentType(MediaType.APPLICATION_XML);
-            }
-            else {
-                headers.setContentType(MediaType.APPLICATION_JSON);
-            }
-            return new ResponseEntity<>(content, headers, HttpStatus.OK);
-        }).orElse(new ResponseEntity<>(HttpStatus.OK));
+    public JsonNode getRecord(@RequestParam String docUri, @RequestParam(defaultValue = "final") String database) {
+        return getEntitySearchService(database).getRecord(docUri);
     }
 
     @RequestMapping(value = "/facet-values", method = RequestMethod.POST)

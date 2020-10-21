@@ -1,0 +1,13 @@
+{
+  "functionName" : "getRecord",
+  "params" : [ {
+    "name" : "docUri",
+    "datatype" : "string",
+    "desc" : "The URI of the document to be returned"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "The document with the URI provided"
+  }
+}

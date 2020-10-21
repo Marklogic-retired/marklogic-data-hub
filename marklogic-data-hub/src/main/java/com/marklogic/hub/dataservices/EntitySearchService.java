@@ -54,6 +54,7 @@ public interface EntitySearchService {
             private BaseProxy.DBFunctionRequest req_saveSavedQuery;
             private BaseProxy.DBFunctionRequest req_getSavedQueries;
             private BaseProxy.DBFunctionRequest req_exportSearchAsCSV;
+            private BaseProxy.DBFunctionRequest req_getRecord;
             private BaseProxy.DBFunctionRequest req_getMatchingPropertyValues;
 
             private EntitySearchServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -72,6 +73,8 @@ public interface EntitySearchService {
                     "getSavedQueries.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_exportSearchAsCSV = this.baseProxy.request(
                     "exportSearchAsCSV.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_getRecord = this.baseProxy.request(
+                    "getRecord.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_getMatchingPropertyValues = this.baseProxy.request(
                     "getMatchingPropertyValues.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
@@ -169,6 +172,21 @@ public interface EntitySearchService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode getRecord(String docUri) {
+                return getRecord(
+                    this.req_getRecord.on(this.dbClient), docUri
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getRecord(BaseProxy.DBFunctionRequest request, String docUri) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("docUri", false, BaseProxy.StringType.fromString(docUri))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public com.fasterxml.jackson.databind.JsonNode getMatchingPropertyValues(com.fasterxml.jackson.databind.JsonNode facetValuesSearchQuery) {
                 return getMatchingPropertyValues(
                     this.req_getMatchingPropertyValues.on(this.dbClient), facetValuesSearchQuery
@@ -241,6 +259,14 @@ public interface EntitySearchService {
    * @return	as output
    */
     java.io.Reader exportSearchAsCSV(String structuredQuery, String searchText, String queryOptions, String schemaName, String viewName, Long limit, com.fasterxml.jackson.databind.node.ArrayNode sortOrder, Stream<String> columns);
+
+  /**
+   * Invokes the getRecord operation on the database server
+   *
+   * @param docUri	The URI of the document to be returned
+   * @return	The document with the URI provided
+   */
+    com.fasterxml.jackson.databind.JsonNode getRecord(String docUri);
 
   /**
    * Invokes the getMatchingPropertyValues operation on the database server
