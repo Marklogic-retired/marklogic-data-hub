@@ -19,13 +19,14 @@ describe('New/edit load data configuration', () => {
   });
 
   test('fields non-Delimited Text render', async () => {
-    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
+    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText, getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                            title={'Edit Loading Step'}
                                                            setNewLoad={() => {}}
                                                            createLoadArtifact={() => {}}
                                                            stepData={{}}
                                                            canReadWrite={true}
                                                            canReadOnly={false}/></BrowserRouter>);
+    expect(getByLabelText('newLoadCardTitle')).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter name')[0]).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter description')[0]).toBeInTheDocument();
     expect(baseElement.querySelector('#sourceFormat')).toBeInTheDocument();
@@ -58,13 +59,14 @@ describe('New/edit load data configuration', () => {
 
   test('fields with Delimited Text render', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'json'};
-    const { baseElement, queryAllByPlaceholderText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
+    const { baseElement, queryAllByPlaceholderText,getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                                                                 title={'Edit Loading Step'}
                                                                                                 setNewLoad={() => {}}
                                                                                                 createLoadArtifact={() => {}}
                                                                                                 stepData={stepData}
                                                                                                 canReadWrite={true}
                                                                                                 canReadOnly={false}/></BrowserRouter>);
+    expect(getByLabelText('newLoadCardTitle')).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter name')[0]).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter description')[0]).toBeInTheDocument();
     expect(baseElement.querySelector('#sourceFormat')).toBeInTheDocument();
