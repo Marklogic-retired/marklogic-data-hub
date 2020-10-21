@@ -1,0 +1,85 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "required": [
+        "name"
+      ],
+      "primaryKey": "customerId",
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
+        "name": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "nicknames": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of simple values",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "shipping": {
+          "datatype": "array",
+          "description": "Example of a multi-value property of structured values",
+          "items": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "billing": {
+          "description": "Example of a single-value structured property",
+          "$ref": "#/definitions/Address"
+        },
+        "status": {
+          "datatype": "string"
+        },
+        "customerSince": {
+          "datatype": "date"
+        }
+      }
+    },
+    "Address": {
+      "required": [ ],
+      "pii": [ ],
+      "elementRangeIndex": [ ],
+      "rangeIndex": [ ],
+      "wordLexicon": [ ],
+      "properties": {
+        "street": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "city": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "state": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "zip": {
+          "$ref": "#/definitions/Zip"
+        }
+      }
+    },
+    "Zip": {
+      "required": [ ],
+      "properties": {
+        "fiveDigit": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "plusFour": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

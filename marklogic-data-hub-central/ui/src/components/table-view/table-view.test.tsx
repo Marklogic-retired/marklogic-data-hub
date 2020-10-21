@@ -8,7 +8,7 @@ describe("Table view component", () => {
     let wrapper;
     describe('Using JSON document payload', () => {
       beforeEach(() => {
-        wrapper = mount(<TableView document={jsonDocPayload.content.envelope.instance.Product} contentType="json" />);
+        wrapper = mount(<TableView document={jsonDocPayload.data.envelope.instance.Product} contentType="json" />);
       });
 
       test("renders", () => {
