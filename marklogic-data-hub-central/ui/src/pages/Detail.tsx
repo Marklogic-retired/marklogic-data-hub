@@ -63,20 +63,19 @@ const Detail: React.FC<Props> = ({ history, location }) => {
         }
 
         if (componentIsMounted.current) {
-          const content = result.headers['content-type'];
-
+          const content = result.data.recordType;
           // TODO handle exception if document type is json -> XML
-          if (content.indexOf("application/json") !== -1) {
+          if (content === 'json') {
             setContentType('json');
-            setData(result.data.content);
-            setEntityInstanceFlag(result.data.content);
-          } else if (content.indexOf("application/xml") !== -1) {
+            setData(result.data.data);
+            setEntityInstanceFlag(result.data.data);
+          } else if (content === 'xml') {
             setContentType('xml');
-            let decodedXml = xmlDecoder(result.data);
-            let document = xmlParser(decodedXml).Document;
+            let decodedXml = xmlDecoder(result.data.data);
+            let document = xmlParser(decodedXml);
             setData(document);
             setXml(xmlDecoder(decodedXml));
-            setEntityInstanceFlag(document.content);
+            setEntityInstanceFlag(document);
           }
           setIsLoading(false);
         }
