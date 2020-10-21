@@ -16,8 +16,10 @@
 package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.marklogic.client.dataservices.InputEndpoint;
+import com.marklogic.client.dataservices.IOEndpoint;
+import com.marklogic.client.dataservices.InputCaller;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.HubClient;
@@ -29,18 +31,15 @@ import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.apache.spark.sql.types.StructType;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class HubDataWriter extends LoggingObject implements DataWriter<InternalRow> {
 
     private List<String> records;
-    private InputEndpoint.BulkInputCaller loader;
+    private InputCaller.BulkInputCaller<String> loader;
     private StructType schema;
     private int batchSize;
 
@@ -56,13 +55,20 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
 
         final String apiPath = endpointParams.get("apiPath").asText();
         logger.info("Will write to endpoint defined by: " + apiPath);
-        this.loader = InputEndpoint.on(
+        InputCaller<String> inputCaller = InputCaller.on(
             hubClient.getStagingClient(),
-            hubClient.getModulesClient().newJSONDocumentManager().read(apiPath, new StringHandle())
-        ).bulkCaller();
+            hubClient.getModulesClient().newJSONDocumentManager().read(apiPath, new StringHandle()),
+            new StringHandle().withFormat(Format.JSON)
+        );
 
-        this.loader.setEndpointState(new JacksonHandle(endpointParams.get("endpointState")));
-        this.loader.setWorkUnit(new JacksonHandle(endpointParams.get("workUnit")));
+        IOEndpoint.CallContext callContext = inputCaller.newCallContext();
+        if (endpointParams.hasNonNull("endpointState")) {
+            callContext.withEndpointState(new JacksonHandle(endpointParams.get("endpointState")));
+        }
+        if (endpointParams.hasNonNull("endpointConstants")) {
+            callContext.withEndpointConstants(new JacksonHandle(endpointParams.get("endpointConstants")));
+        }
+        this.loader = inputCaller.bulkCaller(callContext);
     }
 
     @Override
@@ -90,12 +96,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
 
     private void writeRecords() {
         int recordCount = records.size();
-        Stream.Builder<InputStream> builder = Stream.builder();
-        for (int i = 0; i < recordCount; i++) {
-            builder.add(new ByteArrayInputStream(records.get(i).getBytes()));
-        }
-        Stream<InputStream> input = builder.build();
-        input.forEach(loader::accept);
+        records.forEach(loader::accept);
         loader.awaitCompletion();
         logger.debug("Wrote records, count: " + recordCount);
         this.records.clear();

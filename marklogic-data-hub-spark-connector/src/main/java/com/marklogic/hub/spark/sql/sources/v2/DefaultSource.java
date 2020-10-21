@@ -83,9 +83,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private boolean streaming;
     private HubClient hubClient;
     private HubClientConfig hubClientConfig;
-    private ObjectNode defaultWorkUnit;
-    private JsonNode endpointParams;
-    public final static ObjectMapper mapper = new ObjectMapper();
+    private final JsonNode endpointParams;
 
     public HubDataSourceWriter(Map<String, String> map, StructType schema, Boolean streaming) {
         this.map = map;
@@ -143,9 +141,9 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         }
 
         boolean doesNotHaveApiPath = (!endpointParams.hasNonNull("apiPath") || StringUtils.isEmpty(endpointParams.get("apiPath").asText()));
-        boolean hasWorkUnitOrEndpointState = endpointParams.hasNonNull("workUnit") || endpointParams.hasNonNull("endpointState");
-        if (doesNotHaveApiPath && hasWorkUnitOrEndpointState) {
-            throw new IllegalArgumentException("Cannot set workUnit or endpointState in ingestionendpointparams unless apiPath is defined as well.");
+        boolean hasEndpointConstantsOrEndpointState = endpointParams.hasNonNull("endpointConstants") || endpointParams.hasNonNull("endpointState");
+        if (doesNotHaveApiPath && hasEndpointConstantsOrEndpointState) {
+            throw new IllegalArgumentException("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.");
         }
 
         if (doesNotHaveApiPath) {
@@ -162,19 +160,25 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             endpointParams.put("apiPath", apiPath);
         }
 
-        if (!endpointParams.hasNonNull("workUnit")) {
-            defaultWorkUnit = objectMapper.createObjectNode();
-            buildDefaultWorkUnit(options);
-            endpointParams.set("workUnit", defaultWorkUnit);
+        if (!endpointParams.hasNonNull("endpointConstants")) {
+            ObjectNode endpointConstants = objectMapper.createObjectNode();
+            applyOptionsToEndpointConstants(endpointConstants, options);
+            endpointParams.set("endpointConstants", endpointConstants);
         }
 
         return endpointParams;
     }
 
-    private void buildDefaultWorkUnit(Map<String, String> options) {
+    /**
+     * Options that influence the default ingestion endpoint are copied to the endpoint constants object.
+     *
+     * @param endpointConstants
+     * @param options
+     */
+    private void applyOptionsToEndpointConstants(ObjectNode endpointConstants, Map<String, String> options) {
         Stream.of("collections", "permissions", "sourcename", "sourcetype", "uriprefix").forEach(key -> {
             if (options.containsKey(key)) {
-                defaultWorkUnit.put(key, options.get(key));
+                endpointConstants.put(key, options.get(key));
             }
         });
     }
