@@ -29,22 +29,22 @@ const consts = require("/data-hub/5/impl/consts.sjs");
 const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 const temporal = require("/MarkLogic/temporal.xqy");
-const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
 
 const work = fn.head(xdmp.fromJSON(endpointConstants));
 
 const uriPrefix = work.uriprefix != null ? work.uriprefix : "";
 
 const collections = work.collections != null ? work.collections.split(',') : [];
-const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
+
+const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
     acc[col] = true;
     return acc;
 }, {});
 
 let temporalCollection = collections.concat(collections).find((col) => temporalCollections[col]);
 
-
-const permissions = work.permissions != null ? work.permissions : 'data-hub-common,read,data-hub-common,update'
+// To ensure this endpoint can work with DHF 5.2.x, must use data-hub-operator, which is the least-privileged role in 5.2.x
+const permissions = work.permissions != null ? work.permissions : 'data-hub-operator,read,data-hub-operator,update'
 const permissionsArray = new HubUtils().parsePermissions(permissions);
 
 const headers = {};
