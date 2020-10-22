@@ -17,14 +17,15 @@ function getFunctionInfo(functionName){
 
 let sumFunc = getFunctionInfo("sum");
 let currentDatetime = getFunctionInfo("current-dateTime");
-const assertions = [
+const assertions = [];
+assertions.push(
   test.assertTrue(mapFuncs.length >= 100),
   test.assertTrue(sumFunc != null),
   test.assertTrue(sumFunc["signature"].includes("sum")),
   test.assertTrue(currentDatetime != null),
   test.assertTrue(mapFuncs["fn:sum"] == null, "'fn:' has been stripped from the function name and signature"),
   test.assertTrue(isAlphabeticallySorted())
-];
+);
 
 const functionsThatDontWork = esMappingLib.getXpathFunctionsThatDoNotWorkInMappingExpressions();
 functionsThatDontWork.forEach(functionName => {
@@ -35,7 +36,8 @@ functionsThatDontWork.forEach(functionName => {
 function isAlphabeticallySorted(){
   for(let i =0; i< mapFuncs.length; i++){
     if(!(i == 0 || String(mapFuncs[i].functionName).toLowerCase() > String(mapFuncs[i-1].functionName).toLowerCase())){
-      return false;
+      test.fail( String(mapFuncs[i].functionName).toLowerCase() + "," +
+        String(mapFuncs[i-1].functionName).toLowerCase() + " are not sorted alphabetically. Complete mapping functions:" + JSON.stringify(mapFuncs));
     }
   }
   return true;
