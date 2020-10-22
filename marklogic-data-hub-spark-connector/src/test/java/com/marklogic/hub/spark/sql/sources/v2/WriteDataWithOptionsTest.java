@@ -28,7 +28,7 @@ public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
 
         // Verify default permissions
         DocumentMetadataHandle.DocumentPermissions perms = getFirstFruitMetadata().getPermissions();
-        Set<DocumentMetadataHandle.Capability> capabilities = perms.get("data-hub-common");
+        Set<DocumentMetadataHandle.Capability> capabilities = perms.get("data-hub-operator");
         assertTrue(capabilities.contains(DocumentMetadataHandle.Capability.READ));
         assertTrue(capabilities.contains(DocumentMetadataHandle.Capability.UPDATE));
     }
@@ -55,13 +55,13 @@ public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
 
     @Test
     void ingestDocsWithPermissions() throws IOException {
-        String permissions = "data-hub-operator,read,data-hub-common-writer,update";
+        String permissions = "rest-extension-user,read,rest-reader,update";
         DataWriter<InternalRow> dataWriter = buildDataWriter(newFruitOptions().withPermissions(permissions));
         dataWriter.write(buildRow("pineapple", "green"));
 
         DocumentMetadataHandle.DocumentPermissions perms = getFirstFruitMetadata().getPermissions();
-        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("data-hub-operator").iterator().next());
-        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-common-writer").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("rest-extension-user").iterator().next());
+        assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("rest-reader").iterator().next());
     }
 
     private DocumentMetadataHandle getFirstFruitMetadata() {
