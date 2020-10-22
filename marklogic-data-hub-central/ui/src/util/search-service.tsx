@@ -1,23 +1,16 @@
 import axios from 'axios'
 
-const getResultsByQuery = async (database: string, ctsQuery: string, count: number, urisOnly: boolean) => {
-    let data = {
-      database: database,
-      sourceQuery: ctsQuery,
-      count: count,
-      urisOnly: urisOnly
-    }
-
-    let resp = await axios.post(`/api/map-search/sjsSearch`, data);
+const getUris = async (stepName: string, count: number) => {
+    let resp = await axios.get(`/api/steps/mapping/${stepName}/uris?limit=${count}`);
     return resp;
   }
 
-const getDoc = async (database: string, docUri: string) => {
-    let resp = await axios.get(`/api/map-search/doc?database=${database}&docUri=${encodeURIComponent(docUri)}`);
+const getDoc = async (stepName: string, docUri: string) => {
+    let resp = await axios.get(`/api/steps/mapping/${stepName}/doc?docUri=${docUri}`);
     return resp;
   }
 
 export {
-    getResultsByQuery,
+    getUris,
     getDoc
 }

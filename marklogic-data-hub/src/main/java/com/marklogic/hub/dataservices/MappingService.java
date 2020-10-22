@@ -48,6 +48,8 @@ public interface MappingService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_testMapping;
+            private BaseProxy.DBFunctionRequest req_getDocument;
+            private BaseProxy.DBFunctionRequest req_getUris;
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
 
@@ -57,6 +59,10 @@ public interface MappingService {
 
                 this.req_testMapping = this.baseProxy.request(
                     "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
+                this.req_getDocument = this.baseProxy.request(
+                    "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_getUris = this.baseProxy.request(
+                    "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getMappingFunctions = this.baseProxy.request(
@@ -76,6 +82,38 @@ public interface MappingService {
                           BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri)),
                           BaseProxy.atomicParam("database", false, BaseProxy.StringType.fromString(database)),
                           BaseProxy.documentParam("jsonMapping", false, BaseProxy.JsonDocumentType.fromJsonNode(jsonMapping))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public java.lang.String getDocument(String stepName, String uri) {
+                return getDocument(
+                    this.req_getDocument.on(this.dbClient), stepName, uri
+                    );
+            }
+            private java.lang.String getDocument(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
+              return BaseProxy.TextDocumentType.toString(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
+                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri))
+                          ).responseSingle(false, Format.TEXT)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getUris(String stepName, Integer limit) {
+                return getUris(
+                    this.req_getUris.on(this.dbClient), stepName, limit
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getUris(BaseProxy.DBFunctionRequest request, String stepName, Integer limit) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
+                          BaseProxy.atomicParam("limit", false, BaseProxy.IntegerType.fromInteger(limit))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -115,6 +153,24 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
+
+  /**
+   * Gets the document based on the given URI from the source database associated with the given step name
+   *
+   * @param stepName	provides input
+   * @param uri	provides input
+   * @return	as output
+   */
+    java.lang.String getDocument(String stepName, String uri);
+
+  /**
+   * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
+   *
+   * @param stepName	provides input
+   * @param limit	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getUris(String stepName, Integer limit);
 
   /**
    * Generates a transform in the modules database for each legacy mapping or mapping step

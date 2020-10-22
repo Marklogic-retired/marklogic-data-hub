@@ -1,0 +1,18 @@
+{
+    "functionName": "getDocument",
+    "desc": "Gets the document based on the given URI from the source database associated with the given step name",
+    "params": [
+        {
+           "name": "stepName",
+           "datatype": "string"
+        },
+        {
+           "name": "uri",
+           "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "textDocument",
+        "$javaClass": "java.lang.String"
+    }
+}

@@ -3,18 +3,24 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
+import com.marklogic.hub.central.managers.MapSearchManager;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.MappingService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api/steps/mapping")
@@ -53,12 +59,35 @@ public class MappingStepController extends BaseController {
         return emptyOk();
     }
 
+    @RequestMapping(value = "/{stepName}/uris",method = RequestMethod.GET)
+    @ApiOperation(value = "Get uris associated with source query of the step; uris count is determined by 'limit'", response = ArrayList.class)
+    @Secured("ROLE_readMapping")
+    public ResponseEntity<JsonNode> getUris(@PathVariable String stepName, @RequestParam String limit) {
+        JsonNode response = MappingService.on(getHubClient().getStagingClient()).getUris(stepName, Integer.parseInt(limit));
+        return ResponseEntity.ok(response);
+    }
+
+    @RequestMapping(value = "/{stepName}/doc",method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation("Returns a document as a string of JSON or XML")
+    @Secured("ROLE_readMapping")
+    public ResponseEntity<String> getDoc(@PathVariable String stepName, @RequestParam String docUri) {
+        HttpHeaders headers = new HttpHeaders();
+        String body = MappingService.on(getHubClient().getStagingClient()).getDocument(stepName, docUri);
+        if (body.startsWith("<")) {
+            headers.setContentType(MediaType.APPLICATION_XML);
+        }
+        else {
+            headers.setContentType(MediaType.APPLICATION_JSON);
+        }
+        return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    }
+
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
     }
 
     public static class MappingSteps extends ArrayList<StepSchema> {
     }
-
 
 }

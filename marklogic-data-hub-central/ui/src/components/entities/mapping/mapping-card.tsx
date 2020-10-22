@@ -7,7 +7,7 @@ import sourceFormatOptions from '../../../config/formats.config';
 import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
 import CreateEditMappingDialog from './create-edit-mapping-dialog/create-edit-mapping-dialog';
 import SourceToEntityMap from './source-entity-map/source-to-entity-map';
-import {getResultsByQuery, getDoc} from '../../../util/search-service'
+import {getUris, getDoc} from '../../../util/search-service'
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
 import {AuthoritiesContext} from "../../../util/authorities";
@@ -176,28 +176,21 @@ const MappingCard: React.FC<Props> = (props) => {
 
 
     const getSourceData = async (index) => {
-
-        let database = props.data[index].sourceDatabase || 'data-hub-STAGING';
-        let sQuery = props.data[index].sourceQuery;
-
+        let stepName = props.data[index].name;
         try{
-        setIsLoading(true);
-        let response = await getResultsByQuery(database,sQuery,20, true);
-          if (response.status === 200) {
-           if(response.data.length > 0){
-            setDisableURINavRight(response.data.length > 1 ? false : true);
-            let uris: any = [];
-            response.data.forEach(doc => {
-                uris.push(doc.uri);
-              })
-           setDocUris([...uris]);
-           setSourceURI(response.data[0].uri);
-           fetchSrcDocFromUri(response.data[0].uri);
-          }
-           else{
-               setIsLoading(false);
-           }
-        }
+            setIsLoading(true);
+            let response = await getUris(stepName,20);
+              if (response.status === 200) {
+               if(response.data.length > 0){
+                   setDisableURINavRight(response.data.length > 1 ? false : true);
+                   setDocUris(response.data);
+                   setSourceURI(response.data[0]);
+                   fetchSrcDocFromUri(stepName ,response.data[0]);
+              }
+               else{
+                   setIsLoading(false);
+               }
+            }
         }
         catch(error)  {
             let message = error;
@@ -209,9 +202,9 @@ const MappingCard: React.FC<Props> = (props) => {
 
     }
 
-    const fetchSrcDocFromUri = async (uri, index = mapIndexLocal) => {
+    const fetchSrcDocFromUri = async (stepName, uri, index = mapIndexLocal) => {
         try{
-            let srcDocResp = await getDoc('STAGING', uri);
+            let srcDocResp = await getDoc(stepName, uri);
             if (srcDocResp.status === 200) {
                 let parsedDoc: any;
                 if(typeof(srcDocResp.data) === 'string'){

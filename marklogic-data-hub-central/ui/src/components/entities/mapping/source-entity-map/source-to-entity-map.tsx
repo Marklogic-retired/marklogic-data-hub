@@ -124,7 +124,7 @@ const SourceToEntityMap = (props) => {
 
     const handleSubmitUri = (uri) => {
         props.getMappingArtifactByMapName(props.mapData.targetEntityType,props.mapData.name);
-        props.fetchSrcDocFromUri(uri,props.mapIndex);
+        props.fetchSrcDocFromUri(props.mapData.name, uri, props.mapIndex);
         if(isTestClicked) {
             getMapValidationResp(uri);
         }
@@ -244,7 +244,7 @@ const SourceToEntityMap = (props) => {
         }
     }
     const onUpdateURINavButtons = (uri) => {
-        props.fetchSrcDocFromUri(uri,props.mapIndex);
+        props.fetchSrcDocFromUri(props.mapData.name, uri,props.mapIndex);
         if(isTestClicked) {
             getMapValidationResp(uri);
         }
@@ -676,7 +676,7 @@ const SourceToEntityMap = (props) => {
             }else{
                 return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, '...')}</span>;
             }
-            
+
         } else {
             return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, 14, '...')}</span>;
         }
