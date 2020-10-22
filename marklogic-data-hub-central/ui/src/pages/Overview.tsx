@@ -39,10 +39,9 @@ const Overview: React.FC<Props> = (props) => {
     return (
         <div className={styles.overviewContainer} aria-label="overview">
             <div className={styles.title}>Welcome to MarkLogic Data Hub Central</div>
-            <div className={styles.introText}>MarkLogic Data Hub Central allows you to have all functionalities in one place. From loading in raw data files, to searching through the cleaned up,  business ready data, the whole process happens within this tool.
+            <div className={styles.introText} aria-label={'introText'}>MarkLogic Data Hub Central brings together the Data Hub features in a single intuitive interface on DHS. Load your data, curate and manage your data, or explore and export your data — all within Hub Central.
             <div className={styles.spacer}></div>
-            <span className={styles.note}>NOTE:</span> You might need additional permissions to access all the functionality. Contact your security administrator if you need to
-            access any disabled feature.
+            <span className={styles.note}>NOTE:</span> You might need additional permissions for advanced features. Contact your security administrator to access disabled features.
             </div>
             <div className={styles.cardsContainer}>
                 <div className={styles.cards}>
