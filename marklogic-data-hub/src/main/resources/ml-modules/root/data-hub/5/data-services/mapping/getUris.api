@@ -1,0 +1,18 @@
+{
+    "functionName": "getUris",
+    "desc": "Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter ",
+    "params": [
+        {
+           "name": "stepName",
+           "datatype": "string"
+        },
+        {
+           "name": "limit",
+           "datatype": "int"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

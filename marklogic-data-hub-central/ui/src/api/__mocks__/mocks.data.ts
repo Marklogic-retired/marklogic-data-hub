@@ -57,13 +57,6 @@ const curateAPI = (axiosMock) => {
                 "data": {},
                 "status": 200
             });
-      case '/api/map-search/sjsSearch':
-        return Promise.resolve({
-          "data": [
-            { "uri": "/testdoc.xml" }
-          ],
-          "status": 200
-        });
         default:
             console.log('no POST defined: ' + url);
             return Promise.reject(new Error('not found'));
@@ -95,7 +88,12 @@ const curateAPI = (axiosMock) => {
           return Promise.resolve({status:200, data:commonData.customData[0]});
       case '/api/artifacts/mapping/entity/Customer':
         return Promise.resolve({status:200, data:{}});
-      case `/api/map-search/doc?database=STAGING&docUri=${encodeURIComponent('/testdoc.xml')}`:
+      case '/api/steps/mapping/' + curateData.mappings.data[0].artifacts[0].name + '/uris?limit=20':
+        return Promise.resolve({
+            "data": ["/testdoc.xml"],
+            "status": 200
+        });
+      case `/api/steps/mapping/${curateData.mappings.data[0].artifacts[0].name}/doc?docUri=/testdoc.xml`:
         return Promise.resolve({status:200, data:`<Order xmlns="https://www.w3schools.com/OrderNS">
   <RequiredDate>1996-09-23T13:27:06</RequiredDate>
   <ShipName>B's Beverages</ShipName>
@@ -110,7 +108,7 @@ const curateAPI = (axiosMock) => {
       <n:UnitPrice>27.2000</n:UnitPrice>
       <n:Discount>0</n:Discount>
       <n:Quantity>40</n:Quantity>
-      <n:ProductID xmlns:k="https://www.w3schools.com/ProductNS">60</n:ProductID> 
+      <n:ProductID xmlns:k="https://www.w3schools.com/ProductNS">60</n:ProductID>
     </OrderDetail>
   </OrderDetails>
   <ShippedDate xmlns:l="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>
@@ -242,7 +240,6 @@ const runXMLAPI = (axiosMock) => {
       case '/api/flows':
         return Promise.resolve(curateData.flowsXML);
       case '/api/flows/testFlow/latestJobInfo':
-        console.log(curateData.flowsXMLLatestJob)
         return Promise.resolve(curateData.flowsXMLLatestJob);
       case '/api/steps':
         return Promise.resolve(curateData.steps);
