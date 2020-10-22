@@ -13,6 +13,7 @@ describe('Overview component', () => {
         expect(getByLabelText('overview')).toBeInTheDocument();
 
         expect(getByText('Welcome to MarkLogic Data Hub Central')).toBeInTheDocument();
+        expect(getByLabelText('introText')).toBeInTheDocument();
         expect(getByText('Load')).toBeInTheDocument();
         expect(getByLabelText('load-icon')).toBeInTheDocument();
         expect(getByText('Model')).toBeInTheDocument();
