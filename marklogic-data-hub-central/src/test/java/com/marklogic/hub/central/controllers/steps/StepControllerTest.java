@@ -26,6 +26,8 @@ public class StepControllerTest extends AbstractStepControllerTest {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
                 JsonNode stepsByType = parseJsonResponse(result);
+                assertEquals(stepsByType.get("ingestionSteps").get(0).get("name").asText(), "firstLoadData");
+                assertEquals(stepsByType.get("ingestionSteps").get(1).get("name").asText(), "testLoadData");
                 verifyStepsByStepType(stepsByType, "ingestionSteps");
                 verifyStepsByStepType(stepsByType, "mappingSteps");
             });
