@@ -27,7 +27,7 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
     void installCustomEndpoint() throws IOException {
         GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
+            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
 
         mgr.write("/custom-ingestion-endpoint/endpoint.api", metadata,
             new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.api").getFile()).withFormat(Format.JSON));
