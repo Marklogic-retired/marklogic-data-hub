@@ -191,11 +191,18 @@ const Run = (props) => {
     //     return stepType[0].toUpperCase() + stepType.substr(1);
     // }
 
-    const goToExplorer = (entityName, targetDatabase, jobId) => {
-        history.push({
-            pathname: "/tiles/explore",
+    const goToExplorer = (entityName, targetDatabase, jobId, stepType) => {
+      if (stepType === 'ingestion') {
+            history.push({
+              pathname: "/tiles/explore",
+              state: {targetDatabase: targetDatabase}
+            });
+          } else if (stepType === 'mapping') {
+            history.push(
+              {pathname: "/tiles/explore",
             state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId}
-        });
+          });
+          }
         Modal.destroyAll();
     };
 
@@ -213,27 +220,31 @@ const Run = (props) => {
         }
 
         if (response['jobStatus'] === Statuses.FINISHED) {
-            showSuccess(stepName, stepType, entityName, targetDatabase, jobId);
+            showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber);
         } else if (response['jobStatus'] === Statuses.FINISHED_WITH_ERRORS) {
             let errors = getErrors(response);
-            showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId);
+            showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber);
         } else if (response['jobStatus'] === Statuses.FAILED) {
             let errors = getErrors(response);
             showFailed(stepName, stepType, errors.slice(0, 1));
         }
     }
 
-    function showSuccess(stepName, stepType, entityName, targetDatabase, jobId) {
+    function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
          Modal.success({
               title:<div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
                icon: <Icon type="check-circle" theme="filled"/>, 
                okText: 'Close',
                mask: false,
                width:650,
-               content: stepType.toLowerCase() === 'mapping' && entityName ?
-                   <div data-testId='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId)} className={styles.exploreCuratedData}>
-                   <span className={styles.exploreIcon}></span>
-                   <span className={styles.exploreText}>Explore Curated Data</span>
+                content: stepType.toLowerCase() === 'mapping' && entityName ?
+                <div data-testid='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
+                  <span className={styles.exploreIcon}></span>
+                  <span className={styles.exploreText}>Explore Curated Data</span>
+                </div> : stepType.toLowerCase() === 'ingestion' ? 
+                <div data-testid='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+                  <span className={styles.exploreIcon}></span>
+                  <span className={styles.exploreText}>Explore Loaded Data</span>
                </div> : ''
            });
     }
@@ -266,16 +277,20 @@ const Run = (props) => {
         </span>
     );
 
-    function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId) {
+    function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber) {
          Modal.error({
             title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
             icon: <Icon type="exclamation-circle" theme="filled"/>, 
             content: (
                 <div id="error-list">
-                    {stepType.toLowerCase() === 'mapping' && entityName ?
-                        <div onClick={() => goToExplorer(entityName, targetDatabase, jobId)} className={styles.exploreCuratedData}>
+                    {(stepType.toLowerCase() === 'mapping' && entityName) ?
+                      <div onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
                         <span className={styles.exploreIcon}></span>
                         <span className={styles.exploreText}>Explore Curated Data</span>
+                    </div> : stepType.toLowerCase() === 'ingestion' ? 
+                      <div onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+                        <span className={styles.exploreIcon}></span>
+                        <span className={styles.exploreText}>Explore Loaded Data</span>
                     </div> : ''}
                     <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
                     <Collapse defaultActiveKey={['0']} bordered={false}>

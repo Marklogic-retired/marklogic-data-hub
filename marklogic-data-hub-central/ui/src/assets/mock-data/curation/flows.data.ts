@@ -415,7 +415,14 @@ const flows = {
               "stepName": "master-customer",
               "stepDefinitionType": "mastering",
               "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
-          }
+          },
+          {
+            "stepId": "Ingestion",
+            "stepName": "Ingestion1",
+            "stepDefinitionType": "ingestion",
+            "stepNumber": "7",
+            "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+        },
       ]
   }]
   ,
@@ -483,6 +490,13 @@ const jobRespSuccess = {
           "stepName": "master-customer",
           "stepDefinitionName": "default-mastering",
           "stepDefinitionType": "mastering",
+        },
+        "7": {
+          "flowName": "testFlow",
+          "stepName": "Ingestion1",
+          "stepDefinitionName": "default-ingestion",
+          "stepDefinitionType": "ingestion",
+          "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
       }
     },
     "jobStatus": "finished"
@@ -518,7 +532,7 @@ const flowsXMLLatestJob = {
         "steps": [
             {
                 "stepName": "loadXML",
-                "stepDefinitionType": "INGESTION",
+                "stepDefinitionType": "ingestion",
                 "stepNumber": "1",
                 "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
                 "lastRunStatus": "completed step 1",
@@ -526,7 +540,7 @@ const flowsXMLLatestJob = {
             },
             {
                 "stepName": "Mapping1",
-                "stepDefinitionType": "MAPPING",
+                "stepDefinitionType": "mapping",
                 "stepNumber": "2",
                 "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a",
                 "lastRunStatus": "completed with errors step 2",

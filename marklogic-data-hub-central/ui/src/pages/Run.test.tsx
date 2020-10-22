@@ -174,6 +174,7 @@ describe('Verify load step failures in a flow', () => {
         expect(getByText("/test/data/nestedPerson1.json")).toBeInTheDocument();
 
         expect(document.querySelector('#error-list')).toHaveTextContent('Out of 3 batches, 1 succeeded and 2 failed. The error messages are listed below');
+        expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
 
         // Error 2 is present
         expect(await(waitForElement(() => getByText("Error 2")))).toBeInTheDocument();
@@ -225,7 +226,7 @@ describe('Verify step running', () => {
     });
 
 
-    test('Verify a mapping/match/merge/master step can be run from a flow as data-hub-developer', async () => {
+    test('Verify a load/mapping/match/merge/master step can be run from a flow as data-hub-developer', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
         const { getByText, getAllByText, getByLabelText } = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockDevRolesService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
@@ -234,6 +235,34 @@ describe('Verify step running', () => {
 
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
+
+        let upload;
+        upload = document.querySelector('#fileUpload');
+        const files = [new File(["cust1.json"], "cust1.json", {
+            type: "application/json"
+        })];
+
+        Object.defineProperty(upload, "files", {
+            value: files
+        });
+        fireEvent.change(upload);
+
+        //Run  ingestion step
+        runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
+        fireEvent.click(runButton);
+
+        expect(await(waitForElement(() => getByText((content, node) => {
+            return getSubElements(content, node,`The ingestion step ${steps[6].stepName} completed successfully`);
+        })))).toBeInTheDocument();
+        expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
+        let stepType = `${steps[6].stepDefinitionType}`;
+        if(stepType === 'ingestion'){
+            expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
+        }
+        else{
+            expect(getByText(' ')).toBeInTheDocument();
+        }
+        fireEvent.click(getByText('Close'));
 
         //Run mapping step
         runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
@@ -244,7 +273,7 @@ describe('Verify step running', () => {
             return getSubElements(content, node,`The mapping step ${steps[1].stepName} completed successfully`);
         })))).toBeInTheDocument();
         expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-        let stepType = `${steps[1].stepDefinitionType}`;
+        stepType = `${steps[1].stepDefinitionType}`;
         if(stepType === 'mapping'){
             expect(await(waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
         }
@@ -285,7 +314,7 @@ describe('Verify step running', () => {
 
     },10000);
 
-    test('Verify a mapping/match/merge/master step can be run from a flow as data-hub-operator', async () => {
+    test('Verify a load/mapping/match/merge/master step can be run from a flow as data-hub-operator', async () => {
         axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve(data.jobRespSuccess)));
         const { getByText, getAllByText, getByLabelText } = await render(<MemoryRouter><AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider></MemoryRouter>);
 
@@ -295,6 +324,34 @@ describe('Verify step running', () => {
         // Click disclosure icon
         fireEvent.click(getByLabelText("icon: right"));
 
+        let upload;
+        upload = document.querySelector('#fileUpload');
+        const files = [new File(["cust1.json"], "cust1.json", {
+            type: "application/json"
+        })];
+
+        Object.defineProperty(upload, "files", {
+            value: files
+        });
+        fireEvent.change(upload);
+
+        //Run  ingestion step
+        runButton = await getByLabelText(`runStep-${steps[6].stepName}`);
+        fireEvent.click(runButton);
+
+        expect(await(waitForElement(() => getByText((content, node) => {
+            return getSubElements(content, node,`The ingestion step ${steps[6].stepName} completed successfully`);
+        })))).toBeInTheDocument();
+        expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
+        let stepType = `${steps[6].stepDefinitionType}`;
+        if(stepType === 'ingestion'){
+            expect(await(waitForElement(() => getByText("Explore Loaded Data")))).toBeInTheDocument();
+        }
+        else{
+            expect(getByText(' ')).toBeInTheDocument();
+        }
+        fireEvent.click(getByText('Close'));
+
         //Run mapping step
         runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
         fireEvent.click(runButton);
@@ -303,7 +360,7 @@ describe('Verify step running', () => {
             return getSubElements(content, node,`The mapping step ${steps[1].stepName} completed successfully`);
         })))).toBeInTheDocument();
         expect(getByLabelText("icon: check-circle")).toBeInTheDocument();
-        let stepType = `${steps[1].stepDefinitionType}`;
+        stepType = `${steps[1].stepDefinitionType}`;
         if(stepType === 'mapping'){
             expect(await(waitForElement(() => getByText("Explore Curated Data")))).toBeInTheDocument();
         }
@@ -402,7 +459,7 @@ describe('Verify step display', () => {
         fireEvent.click(exploreButton);
         await wait(() => {
             expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
-                "state": {"entityName": "Customer", "targetDatabase": "final", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a"}});
+                "state": {"entityName": "Customer", "jobId": "350da405-c1e9-4fa7-8269-d9aefe3b4b9a", "targetDatabase": "final"}});
         });
     });
 
