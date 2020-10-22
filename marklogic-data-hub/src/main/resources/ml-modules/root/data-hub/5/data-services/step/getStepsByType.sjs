@@ -38,6 +38,17 @@ function removeAllPropertiesExcept(step) {
 
 for (const stepType of stepTypes) {
     const stepsOfType = Artifacts.getArtifacts(stepType, false).map((step) => removeAllPropertiesExcept(step));
+    stepsOfType.sort((stepA, stepB) => {
+      var stepAName = stepA.name.toLowerCase();
+      var stepBName = stepB.name.toLowerCase();
+      if (stepAName < stepBName) {
+        return -1;
+      }
+      if (stepAName > stepBName) {
+        return 1;
+      }
+      return 0;
+    });
     response[`${stepType}Steps`] = stepsOfType;
 }
 
