@@ -546,6 +546,23 @@ class FlowUtils {
     if(options.file) {
         headers["createdUsingFile"] = options.file;
     }
+
+    const sourceName = options.sourceName ? options.sourceName : null;
+    const sourceType = options.sourceType ? options.sourceType : null;
+
+    if(headers["sources"] && !Array.isArray(headers["sources"])) {
+      headers.sources = [headers.sources];
+    }
+
+    if(sourceName || sourceType) {
+      if(!headers["sources"] || headers["sources"].length == 0) {
+        headers["sources"] = [];
+      }
+      headers["sources"].push({
+        "name": sourceName === null ? undefined : sourceName,
+        "datahubSourceType": sourceType === null ? undefined : sourceType
+      });
+    }
     return headers;
   }
 

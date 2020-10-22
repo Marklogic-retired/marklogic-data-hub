@@ -38,7 +38,6 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentPKeyValue(i).should('exist');
       browsePage.getDocumentSnippet(i).should('exist');
       browsePage.getDocumentCreatedOn(i).should('exist');
-      browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
     });
     facets.forEach(function (item) {
@@ -79,7 +78,6 @@ describe('json scenario for snippet on browse documents page', () => {
       browsePage.getDocumentPKeyValue(i).should('exist');
       browsePage.getDocumentSnippet(i).should('exist');
       browsePage.getDocumentCreatedOn(i).should('exist');
-      browsePage.getDocumentSources(i).should('exist');
       browsePage.getDocumentFileType(i).should('exist');
     });
     facets.forEach(function (item) {
