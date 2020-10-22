@@ -30,8 +30,8 @@ xdmp.documentInsert(
   doc,
   {
     permissions: [
-      xdmp.permission('data-hub-common', 'read'),
-      xdmp.permission('data-hub-common', 'update')
+      xdmp.permission('data-hub-operator', 'read'),
+      xdmp.permission('data-hub-operator', 'update')
     ]
   }
 );
