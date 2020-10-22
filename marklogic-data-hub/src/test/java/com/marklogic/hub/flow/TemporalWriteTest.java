@@ -15,10 +15,7 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,12 +89,19 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void ingestDocWithTemporalCollecion() {
+    void ingestDocWithTemporalCollection() {
         String collections = "fruits,stuff,temporal/test";
         ObjectNode endpointConstants = objectMapper.createObjectNode();
         endpointConstants.put("uriprefix", "/bulkJavaTest/");
         endpointConstants.put("collections", collections);
-        runAsDataHubOperator();
+
+        /**
+         * Because the endpoint and the Spark connector must work on 5.2.x, the endpoint cannot rely on hub-temporal.sjs,
+         * which does not exist in 5.2.x. So this test depends on the user having the temporal-admin role, which is the
+         * only way that temporal documents can be inserted by a DHF user prior to 5.2.x.
+         */
+        runAsTestUserWithRoles("data-hub-operator", "temporal-admin");
+
         InputCaller<String> endpoint = InputCaller.on(
             getHubClient().getStagingClient(),
             getHubClient().getModulesClient().newTextDocumentManager()
