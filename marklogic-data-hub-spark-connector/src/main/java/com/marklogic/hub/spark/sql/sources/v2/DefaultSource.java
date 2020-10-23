@@ -19,8 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.DocumentWriteSet;
-import com.marklogic.client.document.TextDocumentManager;
+import com.marklogic.client.document.DocumentManager;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.ext.util.DefaultDocumentPermissionsParser;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -52,7 +51,6 @@ import java.util.Properties;
 import java.util.stream.Stream;
 
 public class DefaultSource extends LoggingObject implements WriteSupport, StreamWriteSupport {
-
     @Override
     public Optional<DataSourceWriter> createWriter(String writeUUID, StructType schema, SaveMode mode, DataSourceOptions options) {
         return Optional.of(new HubDataSourceWriter(options.asMap(), schema, false) {
@@ -76,6 +74,8 @@ public class DefaultSource extends LoggingObject implements WriteSupport, Stream
         hubClientConfig.applyProperties(props);
         return hubClientConfig;
     }
+
+
 }
 
 class HubDataSourceWriter extends LoggingObject implements StreamWriter {
@@ -169,14 +169,10 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
         if (doesNotHaveApiPath) {
             String apiPath = "/marklogic-data-hub-spark-connector/bulkIngester.api";
+            String scriptPath = "/marklogic-data-hub-spark-connector/bulkIngester.sjs";
+            loadModuleIfNotPresent(scriptPath, Format.TEXT);
+            loadModuleIfNotPresent(apiPath, Format.JSON);
 
-            if(hubClient.getModulesClient().newJSONDocumentManager().exists(apiPath) == null) {
-                try {
-                    loadEndpoints();
-                } catch (IOException e) {
-                    throw new RuntimeException("Unable to write default ingestion endpoint at path: " + apiPath + "; cause: " + e.getMessage(), e);
-                }
-            }
 
             endpointParams.put("apiPath", apiPath);
         }
@@ -204,16 +200,16 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         });
     }
 
-    private void loadEndpoints() throws IOException {
-        String scriptPath = "marklogic-data-hub-spark-connector/bulkIngester.sjs";
-        String apiPath = "marklogic-data-hub-spark-connector/bulkIngester.api";
-
-        TextDocumentManager modMgr = hubClient.getModulesClient().newTextDocumentManager();
-        DocumentWriteSet writeSet = modMgr.newWriteSet();
-        DocumentMetadataHandle metadata = buildDocumentMetadata();
-        writeSet.add("/" + apiPath, metadata, new InputStreamHandle(new ClassPathResource(apiPath).getInputStream()).withFormat(Format.JSON));
-        writeSet.add("/" + scriptPath, metadata, new InputStreamHandle(new ClassPathResource(scriptPath).getInputStream()).withFormat(Format.TEXT));
-        modMgr.write(writeSet);
+    private void loadModuleIfNotPresent(String modulePath, Format format) {
+        if (!endpointExists(modulePath)) {
+            try {
+                DocumentManager modMgr = hubClient.getModulesClient().newDocumentManager();
+                DocumentMetadataHandle metadata = buildDocumentMetadata();
+                modMgr.write(modulePath, metadata, new InputStreamHandle(new ClassPathResource(modulePath).getInputStream()).withFormat(format));
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to write endpoint at path: " + modulePath + "; cause: " + e.getMessage(), e);
+            }
+        }
     }
 
     private DocumentMetadataHandle buildDocumentMetadata() {
@@ -230,6 +226,8 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private String initializeJob(StructType schema) {
+        loadJobEndpoints();
+
         ObjectNode sparkMetadata = objectMapper.createObjectNode();
         try {
             sparkMetadata.set("schema", objectMapper.readTree(schema.json()));
@@ -242,17 +240,35 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         return jobId;
     }
 
+    private void loadJobEndpoints() {
+        String initializeJobApiPath = "/marklogic-data-hub-spark-connector/initializeJob.api";
+        String initializaJobScriptPath = "/marklogic-data-hub-spark-connector/initializeJob.sjs";
+        loadModuleIfNotPresent(initializaJobScriptPath, Format.TEXT);
+        loadModuleIfNotPresent(initializeJobApiPath, Format.JSON);
+
+        String finalizeJobApiPath = "/marklogic-data-hub-spark-connector/finalizeJob.api";
+        String finalizeJobScriptPath = "/marklogic-data-hub-spark-connector/finalizeJob.sjs";
+        loadModuleIfNotPresent(finalizeJobScriptPath, Format.TEXT);
+        loadModuleIfNotPresent(finalizeJobApiPath, Format.JSON);
+    }
+
     private void addJobIdToEndpointConstants() {
         if (endpointParams != null && endpointParams.has("endpointConstants")) {
             JsonNode endpointConstants = endpointParams.get("endpointConstants");
             if (endpointConstants instanceof ObjectNode) {
-                ((ObjectNode)endpointConstants).put("jobId", this.jobId);
+                ((ObjectNode) endpointConstants).put("jobId", this.jobId);
             }
         }
     }
 
     private void finalizeJob(String status) {
+
+
         logger.info(format("Finalizing job; ID: %s; status: %s", jobId, status));
         SparkService.on(hubClient.getJobsClient()).finalizeJob(jobId, status);
+    }
+
+    private boolean endpointExists(String scriptPath) {
+        return !(hubClient.getModulesClient().newJSONDocumentManager().exists(scriptPath) == null);
     }
 }
