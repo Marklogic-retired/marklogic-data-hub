@@ -48,6 +48,7 @@ describe('Mapping', () => {
     loadPage.stepSettings(loadStep).click();
 
     // add processor to load step
+    cy.waitUntil(() => advancedSettingsDialog.getStepName(loadStep).should('be.visible'));
     advancedSettingsDialog.setStepProcessor('loadTile/orderCategoryCodeProcessor');
 
     //add cutomHook to load step
@@ -85,6 +86,7 @@ describe('Mapping', () => {
 
     // add processors
     curatePage.stepSettings(mapStep).click();
+    cy.waitUntil(() => advancedSettingsDialog.getStepName(mapStep).should('be.visible'));
     advancedSettingsDialog.setStepProcessor('curateTile/orderDateProcessor');
 
     // add customHook to mapping step
@@ -143,6 +145,7 @@ describe('Mapping', () => {
     loadPage.stepSettings(loadStep).click();
 
     // add custom header to load step
+    cy.waitUntil(() => advancedSettingsDialog.getStepName(loadStep).should('be.visible'));
     advancedSettingsDialog.setHeaderContent('loadTile/customHeader');
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should('not.be.visible');
@@ -176,6 +179,7 @@ describe('Mapping', () => {
 
     // add custom header
     curatePage.stepSettings(mapStep).click();
+    cy.waitUntil(() => advancedSettingsDialog.getStepName(mapStep).should('be.visible'));
     advancedSettingsDialog.setHeaderContent('curateTile/customHeader');
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should('not.be.visible');
