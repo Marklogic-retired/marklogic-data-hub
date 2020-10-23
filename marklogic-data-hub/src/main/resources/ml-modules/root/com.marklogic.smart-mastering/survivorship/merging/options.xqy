@@ -11,10 +11,18 @@ import module namespace config = "http://marklogic.com/data-hub/config"
   at "/com.marklogic.hub/config.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
+  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
+  at "../../function-extension/base.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
 import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations/functional"
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
+import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
+  at  "standard.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 
@@ -395,50 +403,62 @@ declare private function merge-impl:construct-merging-element($options-json as o
     attribute xmlns { "http://marklogic.com/smart-mastering/merging" },
     let $all-merge-options := $options-json/*:options/*:merging
     let $all-merge-strategy-options := $options-json/*:options/*:mergeStrategies
-    let $array-element-names :=
-      fn:distinct-values(
-        ($all-merge-options,$all-merge-strategy-options)//array-node() !
-          xs:QName("merging:"||fn:lower-case(fn:replace(fn:string(fn:node-name(.)), "([a-z])([A-Z])", "$1-$2")))
+    return (
+        merge-impl:propertyspec-to-xml($all-merge-options, xs:QName("merging:merge")),
+        merge-impl:propertyspec-to-xml($all-merge-strategy-options, xs:QName("merging:merge-strategy"))
       )
-    let $config := json:config("custom")
+  }
+};
+
+declare variable $merge-spec-json-config := json:config("custom")
       => map:with("element-namespace", "http://marklogic.com/smart-mastering/merging")
       => map:with("camel-case", fn:true())
       => map:with("whitespace", "ignore")
-      => map:with("array-element-names", $array-element-names)
-      => map:with("attribute-names", ("default", "name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources", "documentUri"))
-    let $all-xml := (
-      for $merge in $options-json/*:options/*:merging
-      return
-        element merging:merge {
-          json:transform-from-json($merge, $config)
-        },
-      for $merge-strategy in $all-merge-strategy-options
-      return
-        element merging:merge-strategy {
-          json:transform-from-json($merge-strategy, $config)
-        }
-      )
-    for $xml in $all-xml
-    let $array-elements := $xml//*[fn:node-name(.) = $array-element-names]
+      => map:with("attribute-names", ("default", "name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources", "documentUri"));
+
+declare function merge-impl:propertyspec-to-xml($merging-objects as item()*, $type as xs:QName) as element()* {
+  let $normalized-merging-objects :=
+    for $merging-object in $merging-objects
     return
-      if (fn:exists($array-elements)) then
-        mem:execute(
-          mem:transform(
-            mem:copy($xml),
-            $array-elements,
-            function($node) {
-              let $qn := fn:node-name($node)
-              where fn:empty($node/preceding-sibling::*[fn:node-name(.) = $qn])
-              return element {$qn} {
-                $node/*,
-                $node/following-sibling::*[fn:node-name(.) = $qn]/*
-              }
-            }
-          )
-        )
+      if ($merging-object instance of json:object) then
+        xdmp:to-json($merging-object)/object-node()
       else
-        $xml
-  }
+        $merging-object
+  let $array-element-names :=
+      fn:distinct-values(
+        $normalized-merging-objects//array-node() !
+          xs:QName("merging:"||fn:lower-case(fn:replace(fn:string(fn:node-name(.)), "([a-z])([A-Z])", "$1-$2")))
+      )
+  let $all-xml :=
+    for $merging-object in $normalized-merging-objects
+    return
+      element {$type} {
+        json:transform-from-json(
+          $merging-object,
+          $merge-spec-json-config
+            => map:with("array-element-names", $array-element-names)
+        )
+      }
+  for $xml in $all-xml
+  let $array-elements := $xml//*[fn:node-name(.) = $array-element-names]
+  return
+    if (fn:exists($array-elements)) then
+      mem:execute(
+        mem:transform(
+          mem:copy($xml),
+          $array-elements,
+          function($node) {
+            let $qn := fn:node-name($node)
+            where fn:empty($node/preceding-sibling::*[fn:node-name(.) = $qn])
+            return element {$qn} {
+              $node/*,
+              $node/following-sibling::*[fn:node-name(.) = $qn]/*
+            }
+          }
+        )
+      )
+    else
+      $xml
 };
 
 declare private function merge-impl:construct-triple-merge-element($options-json as object-node())
@@ -451,7 +471,6 @@ declare private function merge-impl:construct-triple-merge-element($options-json
         attribute namespace { $triple-merge/*:namespace },
         attribute function { $triple-merge/*:function },
         attribute at { $triple-merge/*:at },
-
         let $config := json:config("custom")
           => map:with("camel-case", fn:true())
           => map:with("whitespace", "ignore")
@@ -564,3 +583,388 @@ declare function merge-impl:propertyspec-to-json($property-spec as element()) as
     json:transform-to-json($transformed-xml, $config)/*
 };
 
+(: We are caching the compiled merge options as constructing and organizing the various functions, etc. can be expensive. :)
+declare variable $_cached-compiled-merge-options as map:map := map:map();
+
+declare function merge-impl:compile-merge-options(
+  $merge-options as item() (: as node()|json:object :)
+) {
+  merge-impl:compile-merge-options(
+    $merge-options,
+    fn:false()
+  )
+};
+
+(:
+ : Calculate merge information once per unique merge options in request to reduce repeat logic
+ : @param $merge-options  Options specifying how documents will be merged
+ : @param $only-warn-on-error  boolean indicating if errors should be returned rather than thrown
+ : @return map:map with compiled information about merge options
+ :)
+declare function merge-impl:compile-merge-options(
+  $merge-options as item() (: as node()|json:object :),
+  $only-warn-on-error as xs:boolean
+) {
+  let $merge-options :=
+    typeswitch($merge-options)
+    case json:object|map:map return
+        xdmp:to-json($merge-options)/object-node()
+    case node() return
+      $merge-options
+    default return
+      fn:error((), "Shouldn't happen", $merge-options)
+  let $merge-options := if (fn:exists($merge-options/(*:options|mergeOptions))) then
+      $merge-options/(*:options|mergeOptions)
+    else
+      $merge-options
+  let $cache-id :=
+      xdmp:md5(xdmp:describe($merge-options, (), ()))
+  return
+    if (map:contains($_cached-compiled-merge-options, $cache-id)) then
+      map:get($_cached-compiled-merge-options, $cache-id)
+    else
+      let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+          xdmp:trace($const:TRACE-MERGE-RESULTS, "compiling merge options: " || xdmp:describe($merge-options, (), ()))
+        else
+          ()
+    let $message-output :=
+      if ($only-warn-on-error) then
+        map:map()
+      else ()
+    (: Gather target Entity Type information :)
+    let $target-entity := $merge-options/(*:target-entity|targetEntity|targetEntityType) ! fn:string(.)
+    let $target-entity-type-def := es-helper:get-entity-def($target-entity)
+    let $target-entity-type := $target-entity-type-def/entityIRI ! fn:string(.)
+    let $target-entity-properties-info := $target-entity-type ! es-helper:get-entity-property-info(.)
+    let $target-entity-namespaces := $target-entity-type ! es-helper:get-entity-type-namespaces(.)
+
+    let $merge-rules := $merge-options/(merging:merging/merging:merge|merge|mergeRules)
+    let $property-defs := $merge-options/(*:property-defs|propertyDefs)
+    let $property-names-to-values :=
+      util-impl:properties-to-values-functions(
+        $merge-rules,
+        $property-defs,
+        $target-entity-type-def/entityIRI,
+        fn:true(),
+        $message-output
+      )
+  let $merge-algorithms := merge-impl:build-merging-map((
+      (: old algorithm format :)
+      $merge-options/*:algorithms/(custom|merging:algorithm),
+      (: new algorithm format :)
+      $merge-rules/(mergeStrategies|mergeRules)[mergeModulePath[fn:normalize-space(.)]]
+    ))
+  let $namespaces :=
+    util-impl:combine-maps(
+      if (fn:exists($property-defs/namespaces)) then
+        xdmp:from-json($property-defs/namespaces)
+      else
+        merge-impl:build-prefix-map($property-defs),
+      $target-entity-namespaces
+    )
+  let $merge-options-ref := merge-impl:build-merge-options-reference($merge-options)
+  let $last-updated-function := merge-impl:build-last-updated-function($merge-options)
+  let $default-merge-rule-info := merge-impl:build-default-merge-info($merge-options, $merge-algorithms, $namespaces)
+  let $target-collections := merge-impl:build-target-collections($merge-options)
+  let $compiled-merge-options :=
+      $target-collections
+        => map:with("targetEntityType", $target-entity-type)
+        => map:with("targetEntityTypeDefinition", $target-entity-type-def)
+        => map:with("mergeOptionsNode", $merge-options)
+        => map:with("lastUpdatedFunction", $last-updated-function)
+        => map:with("namespaces", $namespaces)
+        => map:with("mergeOptionsRef", $merge-options-ref)
+        => map:with("defaultMergeRuleInfo", $default-merge-rule-info)
+        => map:with("mergeRulesInfo",
+          merge-impl:build-merge-rules-info(
+            $default-merge-rule-info,
+            $merge-rules,
+            $property-defs,
+            $merge-options,
+            $target-entity-type-def,
+            $target-entity-properties-info,
+            $property-names-to-values,
+            $merge-algorithms,
+            $namespaces
+          )
+        )
+  return (
+    if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+      xdmp:trace($const:TRACE-MERGE-RESULTS, "Compiled merge options: " || xdmp:to-json-string($compiled-merge-options))
+    else (),
+    $compiled-merge-options,
+    if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+      xdmp:trace($const:TRACE-MERGE-RESULTS, "Caching compiled merge options with key: " || $cache-id)
+    else (),
+    map:put($_cached-compiled-merge-options, $cache-id, $compiled-merge-options)
+  )
+};
+
+declare function merge-impl:build-last-updated-function($merge-options as node()?) {
+  let $ts-ns-path := $merge-options/(*:algorithms/(merging:std-algorithm|stdAlgorithm)|lastUpdatedLocation)
+  let $ts-path := fn:string($ts-ns-path/(*:timestamp/(@path|path)|documentXPath))
+  let $ts-ns-map :=
+    if (fn:exists($ts-ns-path/namespaces)) then
+      xdmp:from-json($ts-ns-path/namespaces)
+    else if (fn:exists($ts-ns-path)) then
+      merge-impl:build-prefix-map($ts-ns-path)
+    else ()
+  return function($document) {
+    if (fn:string-length($ts-path) > 0) then
+      fn:head(xdmp:unpath($ts-path, $ts-ns-map, $document)[. castable as xs:dateTime] ! xs:dateTime(.))
+    else ()
+  }
+};
+
+declare function merge-impl:options-to-node($merge-options as item()?) {
+  let $merge-options :=
+    typeswitch($merge-options)
+    case json:object|map:map return
+        xdmp:to-json($merge-options)/object-node()
+    case node() return
+      $merge-options
+    default return
+      fn:error((), "Shouldn't happen", $merge-options)
+  return
+    if (fn:exists($merge-options/(*:options|mergeOptions))) then
+      $merge-options/(*:options|mergeOptions)
+    else
+      $merge-options
+
+};
+
+declare function merge-impl:build-default-merge-info($merge-options as node()?, $merge-algorithms as map:map, $namespaces as map:map) {
+  let $merge-rule := merge-impl:expand-merge-rule($merge-options, ())
+  let $algorithm-name := if (fn:exists($merge-rule/mergeFunction[fn:normalize-space(.)])) then
+                            fn:string($merge-rule/mergeModulePath) || ":" || fn:string($merge-rule/mergeFunction)
+                        else
+                            fn:string(fn:head($merge-rule/(@algorithm-ref|algorithmRef)))
+  let $merge-algorithm := $merge-algorithms => map:get($algorithm-name)
+  return
+    map:entry("mergeAlgorithm",
+        if (fn:exists($merge-algorithm)) then
+          $merge-algorithm
+        else
+          merge-impl:standard#3)
+      => map:with("mergeAlgorithmName", fn:head(($algorithm-name,"standard")[. ne '']))
+      => map:with("mergeRule", $merge-rule)
+      => map:with("namespaces", $namespaces)
+};
+
+declare function merge-impl:build-merge-options-reference($merge-options as node()?) {
+  let $merge-options-uri := $merge-options ! xdmp:node-uri(.)
+  return
+    if (fn:exists($merge-options-uri)) then
+      $merge-options-uri
+    else if (fn:exists($merge-options)) then
+      xdmp:base64-encode(xdmp:describe($merge-options, (), ()))
+    else
+      null-node{}
+};
+
+declare function merge-impl:build-target-collections($merge-options as node()?) {
+  let $target-collections := $merge-options/(*:algorithms/*:collections|targetCollections)
+  let $on-no-match := $target-collections/(merging:on-no-match|onNoMatch)
+  let $on-archive := $target-collections/(merging:on-archive|onArchive)
+  let $on-merge := $target-collections/(merging:on-merge|onMerge)
+  let $on-notification := $target-collections/(merging:on-notification|onNotification)
+  return
+    map:entry("onNoMatch", $on-no-match)
+        => map:with("onArchive", $on-archive)
+        => map:with("onMerge", $on-merge)
+        => map:with("onNotification", $on-notification)
+
+};
+
+(:
+ : Calculate information for each of the merge rules. Returns
+ : @param $default-merge-rule-info  The information for the default merge rule.
+ : @param $merge-rules Part of the options specifying the specific merge rules
+ : @param $property-defs Part of the options defining properties (legacy options not tied to emtity type)
+ : @param $merge-options  Options specifying how documents will be merged
+ : @param $target-entity-type-def  The entity type definition
+ : @param $target-entity-properties-info  Information about each of the properties in an Entity Type
+ : @param $property-names-to-values map:map Functions by property names that given a document will return the properties
+ : @param $merge-algorithms map:map of algorithms defined in the merge options
+ : @param namespaces map:map of prefixes to namespace URIs
+ : @return map:map* of information for each merge rule
+ :)
+declare function merge-impl:build-merge-rules-info(
+  $default-merge-rule-info,
+  $merge-rules,
+  $property-defs,
+  $merge-options,
+  $target-entity-type-def,
+  $target-entity-properties-info,
+  $property-names-to-values,
+  $merge-algorithms,
+  $namespaces
+) {
+  let $explicit-merge-rules :=
+    for $merge-rule in $merge-rules
+    let $merge-rule := merge-impl:expand-merge-rule($merge-options, $merge-rule)
+    let $property-name := fn:string(fn:head($merge-rule/(@property-name|propertyName|entityPropertyPath|documentXPath)))
+    let $property-def := $property-defs/(merging:property|properties)[(@name|name) = $property-name]
+    let $path := fn:head((
+        $merge-rule/documentXPath,
+        $property-def/(@path|path),
+        $target-entity-properties-info ! map:get(., $property-name) ! map:get(., "pathExpression")
+      ))
+    let $property-qname := fn:head((
+        $property-def[localname] ! fn:QName(fn:string(./namespace), fn:string(./localname)),
+        $property-def[@localname] ! fn:QName(fn:string(./@namespace), fn:string(./@localname)),
+        $target-entity-type-def ! fn:QName(fn:string(./namespaceURI), $property-name)
+      ))
+    let $to-property-values := $property-names-to-values => map:get($property-name)
+    let $algorithm-name := if (fn:exists($merge-rule/mergeFunction[fn:normalize-space(.)])) then
+                              fn:string($merge-rule/mergeModulePath) || ":" || fn:string($merge-rule/mergeFunction)
+                          else
+                              fn:string(fn:head($merge-rule/(@algorithm-ref|algorithmRef)))
+    let $merge-algorithm := $merge-algorithms => map:get($algorithm-name)
+    return (
+      xdmp:trace($const:TRACE-MERGE-RESULTS, "Explicit merge for property: " || $property-name),
+      map:entry("propertyName", $property-name)
+        => map:with("propertyQName", $property-qname)
+        => map:with("documentToValuesFunction", $to-property-values)
+        => map:with("mergeAlgorithm", $merge-algorithm)
+        => map:with("mergeAlgorithmName", $algorithm-name)
+        => map:with("mergeRule", $merge-rule)
+        => map:with("path", $path)
+        => map:with("namespaces", fn:head(($merge-rule/namespaces ! xdmp:from-json(.), $namespaces)))
+    )
+  let $implicit-merge-rules :=
+    for $top-level-property-name in map:keys($property-names-to-values)[fn:not(fn:contains(.,"."))]
+    let $prefix := $top-level-property-name || "."
+    where fn:empty($explicit-merge-rules[map:get(., "propertyName")[. = $top-level-property-name or fn:starts-with(., $prefix)]])
+    return
+      let $path := $target-entity-properties-info ! map:get(., $top-level-property-name) ! map:get(., "pathExpression")
+      let $to-property-values := $property-names-to-values => map:get($top-level-property-name)
+      let $merge-rule := merge-impl:expand-merge-rule($merge-options, ())
+      let $property-qname := fn:QName(fn:string($target-entity-type-def/namespaceURI), $top-level-property-name)
+      return (
+        xdmp:trace($const:TRACE-MERGE-RESULTS, "Implicit merge for top-level property: " || $top-level-property-name),
+        map:new((
+          $default-merge-rule-info,
+          map:entry("propertyName", $top-level-property-name)
+            => map:with("path", $path)
+            => map:with("propertyQName", $property-qname)
+            => map:with("documentToValuesFunction", $to-property-values)
+            => map:with("mergeRule", $merge-rule)
+        ))
+      )
+  return ($explicit-merge-rules, $implicit-merge-rules)
+};
+
+declare function merge-impl:build-prefix-map($source)
+{
+  if ($source instance of element()) then
+    map:new(
+      for $prefix in ($source ! fn:in-scope-prefixes(.))
+      where fn:not($prefix = "")
+      return
+        map:entry($prefix, fn:namespace-uri-for-prefix($prefix, $source))
+    )
+  else
+    map:map()
+};
+
+(:
+ : Get a function reference to the default merging function. The function must
+ : be in the http://marklogic.com/smart-mastering/survivorship/merging
+ : namespace.
+ : @param $name  localname of the function to be applied
+ : @param $arity  number of parameters the function takes
+ : @return function reference if found
+ :)
+declare function merge-impl:default-function-lookup(
+  $name as xs:string?,
+  $arity as xs:int
+) as function(*)?
+{
+  fn:function-lookup(
+    fn:QName(
+      "http://marklogic.com/smart-mastering/survivorship/merging",
+      if (fn:exists($name[. ne ""])) then
+        $name
+      else
+        "standard"
+    ),
+    $arity
+  )
+};
+
+(:
+ : Based on the merging options, this is a map from the algorithm names to the
+ : corresponding function references.
+ : @param $algorithms nodes with function information in the various formats
+ : @return map pointing from name strings to function references
+ :)
+declare function merge-impl:build-merging-map(
+  $algorithms as node()*
+) as map:map
+{
+    map:new((
+      for $algorithm as node() in $algorithms
+      let $name as xs:string? := $algorithm/(@name|name) ! fn:string(.)
+      let $function-name as xs:string := fn:string($algorithm/(@function|function|mergeFunction))
+      let $module-namespace as xs:string := fn:string($algorithm/(@namespace|namespace|mergeModuleNamespace))
+      let $module-path as xs:string := fn:string($algorithm/(@at|at|mergeModulePath))
+      return
+        map:entry(
+            if (fn:exists($name)) then
+              $name
+            else
+              $module-path || ":" || $function-name,
+            fun-ext:function-lookup(
+                $function-name,
+                $module-namespace,
+                $module-path,
+                merge-impl:default-function-lookup(?, 3)
+            )
+        )
+    ))
+};
+
+(:
+ : Take in a merge rule and if doesn't exist search for a default merge from the options.
+ : Also, look for any referenced merge strategies and pull in the properties from the strategy.
+ :
+ : @param $options node() the entire merge options
+ : @param $merge-details node the element or object-node describing how a merge should occur
+ : @return $merge-details node the element or object-node with details filled in from referenced strategy
+ :)
+declare function merge-impl:expand-merge-rule(
+  $options as node(),
+  $merge-details as node()?
+) as node()?
+{
+  let $merge-details :=
+    if (fn:exists($merge-details)) then
+      $merge-details
+    else
+      $options/*:merging/(merging:merge|self::object-node())[(@default|default)][fn:head(@default|default) cast as xs:boolean]
+  let $strategy-name := $merge-details/(@strategy|strategy|mergeStrategyName)
+  return
+    if (fn:exists($strategy-name)) then
+      let $strategy := $options/(merging:merging/merging:merge-strategy|mergeStrategies)[(@name|name|strategyName) eq $strategy-name]
+      return
+        if ($merge-details instance of object-node()) then
+          xdmp:to-json(
+            fn:fold-left(
+              function($json-obj, $node-name) {
+                $json-obj => map:with(fn:string($node-name), fn:head(($merge-details/*[fn:node-name() eq $node-name],$strategy/*[fn:node-name() eq $node-name])))
+              },
+              json:object(),
+              fn:distinct-values(($strategy/*, $merge-details/*) ! fn:node-name())
+            )
+          )/object-node()
+        else
+          element merging:merge {
+            for $node-name in fn:distinct-values(($strategy/@*, $merge-details/@*) ! fn:node-name())
+            return fn:head(($merge-details/@*[fn:node-name() eq $node-name],$strategy/@*[fn:node-name() eq $node-name])),
+            for $node-name in fn:distinct-values(($strategy/*, $merge-details/*) ! fn:node-name())
+            return fn:head(($merge-details/*[fn:node-name() eq $node-name],$strategy/*[fn:node-name() eq $node-name]))
+          }
+    else
+      $merge-details
+};

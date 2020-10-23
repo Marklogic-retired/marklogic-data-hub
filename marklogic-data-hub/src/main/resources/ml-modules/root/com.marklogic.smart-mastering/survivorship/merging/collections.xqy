@@ -171,8 +171,8 @@ declare function collection-impl:default-collection-handler(
   $collections-by-uri as map:map,
   $event-options as node()?
 ) {
-  if (fn:exists($event-options/*:set/*:collection[. ne ''])) then
-    $event-options/*:set/*:collection ! fn:string(.)
+  if (fn:exists($event-options/*:set//text()[fn:normalize-space(.) ne ''])) then
+    $event-options/*:set//text() ! fn:normalize-space(.)[. ne '']
   else (
     let $merge-options := collection-impl:get-options-root($event-options)
     let $match-options := matcher:get-options($merge-options/(merging:match-options|matchOptions), $const:FORMAT-XML)
@@ -192,7 +192,7 @@ declare function collection-impl:default-collection-handler(
               ()
         ))
     let $remove-collections := fn:distinct-values((
-        $event-options/*:remove/*:collection ! fn:string(.),
+        $event-options/*:remove//text() ! fn:normalize-space(.)[. ne ''],
         switch ($event-name)
           case $const:ON-ARCHIVE-EVENT return
             coll:content-collections($content-collection-options)
@@ -206,7 +206,7 @@ declare function collection-impl:default-collection-handler(
     return
       (
         $all-collections[fn:not(. = $remove-collections)],
-        $event-options/*:add/*:collection ! fn:string(.)
+        $event-options/*:add//text() ! fn:normalize-space(.)[. ne '']
       )[. ne '']
   )
 };
@@ -215,7 +215,8 @@ declare function collection-impl:get-options-root(
   $event-options as node()?
 ) as node()? {
   if (fn:exists($event-options)) then
-    fn:root($event-options)/(self::*:options|*:options)
+    let $root := fn:root($event-options)
+    return merge-impl:options-to-node($root)
   else
     ()
 };

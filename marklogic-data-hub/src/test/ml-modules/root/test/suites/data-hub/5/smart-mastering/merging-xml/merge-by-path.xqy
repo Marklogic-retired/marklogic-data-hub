@@ -43,14 +43,14 @@ let $merged-doc :=
   <custom>
     <unconfigured>unconfigured value 1b</unconfigured>
     <unconfigured>unconfigured value 2b</unconfigured>
-    <this><has><a><deep><path>deep value 12</path></deep></a></has></this>
+    <this><has:a><deep><path>deep value 12</path></deep></has:a></this>
   </custom>
 </headers>
  :)
 
 return (
   test:assert-equal("shallow value 1", $merged-doc/es:headers/shallow/fn:string()),
-  test:assert-equal("deep value 12", $merged-doc/es:headers/custom/this/has:a/deep/path/fn:string()),
-  test:assert-same-values(("unconfigured value 1a", "unconfigured value 2a"), $merged-doc/es:headers/es:unconfigured/fn:string()),
-  test:assert-same-values(("unconfigured value 1b", "unconfigured value 2b"), $merged-doc/es:headers/custom/unconfigured/fn:string())
+  test:assert-equal("deep value 12", $merged-doc/es:headers/custom/this/has:a/deep/path/fn:string(), "Mismatch on deep path. Actual headers: " || xdmp:describe(document {$merged-doc/es:headers}, (),())),
+  test:assert-same-values(("unconfigured value 1a", "unconfigured value 2a"), $merged-doc/es:headers/es:unconfigured/fn:string(), "Mismatch on unconfigured. Actual headers: " || xdmp:describe(document {$merged-doc/es:headers}, (),())),
+  test:assert-same-values(("unconfigured value 1b", "unconfigured value 2b"), $merged-doc/es:headers/custom/unconfigured/fn:string(), "Mismatch on custom unconfigured. Actual headers: " || xdmp:describe(document {$merged-doc/es:headers}, (),()))
 )

@@ -30,6 +30,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
+import module namespace merge-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
+  at "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 declare namespace sm = "http://marklogic.com/smart-mastering";
@@ -75,9 +77,11 @@ declare variable $_notifications-inserted := map:map();
 declare function notify-impl:build-match-notification(
   $threshold-label as xs:string,
   $uris as xs:string*,
-  $options as element(merging:options)?
+  $options as item()?
 ) as map:map?
 {
+  let $options-node := merge-impl:options-to-node($options)
+  let $target-collections := merge-impl:build-target-collections($options-node)
   let $existing-notification :=
     notify-impl:get-existing-match-notification($threshold-label, $uris)
   let $doc-uris :=
@@ -116,7 +120,7 @@ declare function notify-impl:build-match-notification(
           ),
           map:entry("collections", coll-impl:on-notification(
             map:map(),
-            $options/merging:algorithms/merging:collections/merging:on-notification
+              $target-collections => map:get("onNotification")
           ))
         ))
       )

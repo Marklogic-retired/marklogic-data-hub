@@ -26,3 +26,11 @@ declare function sm-es:get-entity-def-property(
 declare function sm-es:get-entity-property-info($entity-type-iri as xs:string, $property-path as xs:string) as map:map? {
   es-impl:get-entity-property-info($entity-type-iri, $property-path)
 };
+
+declare function sm-es:get-entity-property-info($entity-type-iri as xs:string) as map:map? {
+  es-impl:get-entity-property-info($entity-type-iri)
+};
+
+declare function sm-es:get-entity-type-namespaces($entity-type-iri as xs:string) as map:map {
+  es-impl:get-entity-type-namespaces($entity-type-iri)
+};
