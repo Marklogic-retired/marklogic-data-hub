@@ -1,0 +1,16 @@
+{
+  "matchSummary": {
+    "URIsToProcess": [
+      "NsCustMerged"
+    ],
+    "actionDetails": {
+      "NsCustMerged": {
+        "action": "merge",
+        "uris": [
+          "/content/NsCustMatchMerge1.xml",
+          "/content/NsCustMatchMerge2.xml"
+        ]
+      }
+    }
+  }
+}

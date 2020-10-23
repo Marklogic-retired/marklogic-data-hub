@@ -3,10 +3,10 @@ const test = require("/test/test-helper.xqy");
 
 const assertions = [];
 let caughtException = null;
-try {
+//try {
     merging.main({uri: '/merge-with-doc1.json'}, {mergeOptions: {}});
-} catch (e) {
-    caughtException = e;
-}
+//} catch (e) {
+//    caughtException = e;
+//}
 assertions.push(test.assertFalse(!!caughtException, `Call threw exception unexpectedly. (Exception: ${caughtException})`));
 assertions;

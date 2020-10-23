@@ -15,7 +15,9 @@
         </info>
         <exCustomer:NamespacedCustomer xmlns:exCustomer="http://example.org/customer">
             <exCustomer:customerId>104</exCustomer:customerId>
-            <exCustomer:name>Powers Bauer</exCustomer:name>
+            <exCustomer:name>Powers J. Bauer</exCustomer:name>
+            <exCustomer:nicknames datatype="array">PB</exCustomer:nicknames>
+            <exCustomer:nicknames datatype="array">Jay</exCustomer:nicknames>
             <exCustomer:shipping datatype="array">
                 <exAddress:Address xmlns:exAddress="http://example.org/address">
                     <exAddress:street>Willow Street</exAddress:street>

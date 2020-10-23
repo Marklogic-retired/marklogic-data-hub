@@ -25,6 +25,8 @@ module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl";
 
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
+  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 
 declare variable $write-objects-by-uri as map:map := map:map();
 
@@ -86,4 +88,78 @@ declare function util-impl:combine-maps($base-map as map:map, $maps as map:map*)
   fn:fold-left(function($map1,$map2) {
     $map1 + $map2
   }, $base-map, $maps)
+};
+
+(: Given a set of rules and the  :)
+declare function util-impl:properties-to-values-functions(
+    $rules as node()*,
+    $property-definitions as node()?,
+    $entity-type-iri as xs:string?,
+    $return-all-properties as xs:boolean,
+    $message-output as map:map?
+) {
+  let $xpath-namespaces :=
+    if (fn:exists($property-definitions/namespaces)) then
+      xdmp:from-json($property-definitions/namespaces)
+    else
+      map:new(
+        for $ns in $property-definitions/namespace::node()
+        let $localname := fn:local-name($ns)
+        where $localname ne ""
+        return map:entry($localname, fn:string($ns))
+      )
+  let $entity-property-info :=
+    if (fn:exists($entity-type-iri)) then
+      es-helper:get-entity-property-info($entity-type-iri)
+    else
+      map:map()
+  let $distinct-properties := fn:distinct-values((
+    $property-definitions/*:property/(@name|name) ! fn:string(.),
+    if ($return-all-properties) then
+      map:keys($entity-property-info)
+    else (
+      $rules/(@property-name|propertyName),
+      $rules/entityPropertyPath
+    ),
+    $rules/documentXPath
+  ))
+  return map:new(
+    for $property-name in $distinct-properties
+    let $entity-property-info := $entity-property-info => map:get($property-name)
+    let $property-definition := $property-definitions/*:property[(@name|name) = $property-name]
+    let $document-xpath-rule := fn:head(($property-definition[@path|path], $rules[documentXPath eq $property-name]))
+    let $function :=
+      if (fn:exists($entity-property-info)) then
+        let $xpath := $entity-property-info => map:get("pathExpression")
+        let $namespaces := $entity-property-info => map:get("namespaces")
+        return
+          function($document) {
+            xdmp:unpath($xpath, $namespaces, $document)
+          }
+      else if (fn:exists($document-xpath-rule)) then
+        let $xpath := fn:head(($document-xpath-rule/(@path|path),$property-name))
+        let $namespaces := fn:head(($document-xpath-rule/namespaces ! xdmp:from-json(.), $xpath-namespaces))
+        return
+          function($document) {
+            xdmp:unpath($xpath, $namespaces, $document)
+          }
+      else if (fn:exists($property-definition)) then
+        function($document) {
+          let $qname := fn:QName(fn:string($property-definition/(@namespace|namespace)), fn:string($property-definition/(@localname|localname)))
+          return $document/*:envelope/*:instance//*[fn:node-name(.) eq $qname]
+        }
+      else
+        util-impl:handle-option-messages("error", "Property information for '" || $property-name || "'" || (if (fn:exists($entity-type-iri)) then " entity <"||$entity-type-iri ||">" else "") || " not found!", $message-output)
+    return
+      map:entry($property-name, $function)
+  )
+};
+
+declare function util-impl:handle-option-messages($type as xs:string, $message as xs:string, $messages-output as map:map?) {
+  if (fn:exists($messages-output)) then
+    map:put($messages-output, $type, (map:get($messages-output, $type),$message))
+  else if ($type eq "error") then
+    fn:error((), 'RESTAPI-SRVEXERR', (400, $message))
+  else
+    xdmp:log($message, $type)
 };

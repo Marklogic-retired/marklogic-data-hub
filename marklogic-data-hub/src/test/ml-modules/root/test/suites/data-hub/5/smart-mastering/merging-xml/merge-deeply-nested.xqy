@@ -27,11 +27,11 @@ let $merged-doc :=
     },
     $lib:INVOKE_OPTIONS
   )
-
+let $instance-description := xdmp:quote($merged-doc/es:instance)
 let $assertions := (
-  test:assert-equal("another string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty1/fn:string()),
-  test:assert-equal("some string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty2/fn:string()),
-  test:assert-equal("another string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty3/fn:string()),
+  test:assert-equal("another string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty1/fn:string(), "Unexpected value for LowestProperty1. Instance: " || $instance-description),
+  test:assert-equal("some string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty2/fn:string(), "Unexpected value for LowestProperty2. Instance: " || $instance-description),
+  test:assert-equal("another string", $merged-doc/es:instance/TopProperty/nested:LowerProperty1/EvenLowerProperty/LowestProperty3/fn:string(), "Unexpected value for LowestProperty3. Instance: " || $instance-description),
   test:assert-equal(123, $merged-doc/es:instance/TopProperty/EntityReference/PropValue/fn:data())
 )
 

@@ -3,7 +3,7 @@
     "headers": {
       "sources": [
         {
-          "name": "loadCustomersJSON"
+          "name": "source 2"
         }
       ],
       "createdOn": "2020-08-20T05:27:43.360675Z",
@@ -19,6 +19,7 @@
       "Customer": {
         "customerId": 105,
         "name": "Hollan Welles",
+        "birthDate": "1985-01-01",
         "shipping": [
           {
             "Address": {

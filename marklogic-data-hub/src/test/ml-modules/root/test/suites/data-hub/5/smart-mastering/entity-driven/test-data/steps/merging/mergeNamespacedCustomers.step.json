@@ -1,0 +1,103 @@
+{
+  "name": "mergeNamespacedCustomers",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "mergeNamespacedCustomers-merging",
+  "targetEntityType": "http://example.org/NamespacedCustomer-0.0.1/NamespacedCustomer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['matchNamespacedCustomers'])",
+  "collections": ["mergeCustomers"],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "XML",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
+  "provenanceGranularityLevel": "fine",
+  "lastUpdatedLocation": {
+    "namespaces": { "es": "http://marklogic.com/entity-services" },
+    "documentXPath": "/es:envelope/es:headers/createdOn"
+  },
+  "mergeStrategies": [
+    {
+      "strategyName": "myFavoriteNameSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 8
+          }
+        ]
+      }
+    },
+    {
+      "strategyName": "myFavoriteBirthDateSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 12
+          }
+        ]
+      }
+    }
+  ],
+  "mergeRules": [
+    {
+      "entityPropertyPath": "name",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteNameSource"
+    },
+    {
+      "entityPropertyPath": "birthDate",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteBirthDateSource"
+    }
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [
+        "sm-NamespacedCustomer-mastered"
+      ],
+      "remove": [
+        "sm-NamespacedCustomer-archived"
+      ]
+    },
+    "onArchive": {
+      "add": [
+        "sm-NamespacedCustomer-archived"
+      ],
+      "remove": [
+        "sm-NamespacedCustomer-mastered"
+      ]
+    },
+    "onNoMatch": {
+      "add": [
+        "sm-NamespacedCustomer-mastered"
+      ],
+      "remove": [
+        "sm-NamespacedCustomer-archived"
+      ]
+    },
+    "onNotification": {
+      "add": [
+        "sm-NamespacedCustomer-notification"
+      ],
+      "remove": []
+    }
+  }
+}

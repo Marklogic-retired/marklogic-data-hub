@@ -56,30 +56,37 @@ function matchDetailsByMergedQuery(mergedQuery) {
  * @return {{contentCollection: string, mergedCollection: string, notificationCollection: string, archivedCollection: string, auditingCollection: string}} collectionInfo
  */
 function checkOptions(content, options, filteredContent = [], reqOptProperties = requiredOptionProperties) {
-  let hasRequiredOptions = reqOptProperties.every((propName) => !!options[propName]);
+  let existingRequiredOptions = reqOptProperties.filter((propNames) => {
+    if (Array.isArray(propNames)) {
+      return true;
+    } else {
+      return !!options[propNames];
+    }
+  });
+  let hasRequiredOptions = existingRequiredOptions.length === reqOptProperties.length;
   if (!hasRequiredOptions) {
-    throw new Error(`Missing the following required mastering options: ${xdmp.describe(requiredOptionProperties.filter((propName) => !options[propName]), emptySequence, emptySequence)}`);
+    let missingProperties = reqOptProperties.filter((propNames) => !existingRequiredOptions.includes(propNames));
+    throw new Error(`Missing the following required mastering options: ${xdmp.toJsonString(missingProperties)}`);
   }
+
   const targetEntityType = options.targetEntityType || options.targetEntity;
-  if (options.matchOptions) {
-    setCollectionDefaults(options.matchOptions, targetEntityType);
-  }
+  options.targetEntityType = targetEntityType;
+  const optionsRoot = (options.mergeOptions || options.matchOptions || options);
+  setCollectionDefaults(optionsRoot, targetEntityType);
+
+  let targetCollections = {};
+  ['onMerge', 'onNoMatch', 'onArchive', 'onNotification'].forEach((eventName) => {
+    targetCollections[eventName] = targetCollections[eventName] || {};
+  });
   if (options.mergeOptions) {
-    setCollectionDefaults(options.mergeOptions, targetEntityType);
-  }
-  if (!(options.matchOptions || options.mergeOptions)) {
-    setCollectionDefaults(options, targetEntityType);
-  }
-
-  if (reqOptProperties.includes('mergeOptions')) {
     options.mergeOptions.algorithms = options.mergeOptions.algorithms || {};
-    options.mergeOptions.algorithms.collections = options.mergeOptions.algorithms.collections || {};
-    ['onMerge', 'onNoMatch', 'onArchive', 'onNotification'].forEach((eventName) => {
-      options.mergeOptions.algorithms.collections[eventName] = options.mergeOptions.algorithms.collections[eventName] || {};
-    });
+    options.mergeOptions.algorithms.collections = Object.assign(targetCollections, options.mergeOptions.algorithms.collections);
+  } else if (options.mergeRules) {
+    options.targetCollections = options.targetCollections || {};
+    options.targetCollections = Object.assign(targetCollections, targetCollections);
   }
 
-  const collections = (options.matchOptions || options.mergeOptions || options).collections;
+  const collections = optionsRoot.collections;
   const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.content), masteringConsts['CONTENT-COLL']));
   const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.archived), masteringConsts['ARCHIVED-COLL']));
   const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.merged), masteringConsts['MERGED-COLL']));
@@ -103,13 +110,12 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
     }
   }
   // If target entity is set, we match on documents containing an entity instead of a content collection
-  if (!options.targetEntity) {
+  if (!options.targetEntityType) {
     if (content && !contentHasExpectedContentCollection) {
       if (contentHasTargetEntityCollection) {
         xdmp.log(`Expected collection "${contentCollection}" not found on content. Using entity collection "${options.targetEntity}" instead. \
         You may need to review your match/merge options`, 'notice');
-        options.matchOptions.collections.content.push(options.targetEntity);
-        options.mergeOptions.collections.content.push(options.targetEntity);
+        optionsRoot.collections.content.push(options.targetEntity);
       } else {
         xdmp.log(`Expected collection "${contentCollection}" not found on content. You may need to review your match/merge options`, 'warning');
       }

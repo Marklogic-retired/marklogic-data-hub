@@ -1,0 +1,16 @@
+{
+  "matchSummary": {
+    "URIsToProcess": [
+      "CustMerged"
+    ],
+    "actionDetails": {
+      "CustMerged": {
+        "action": "merge",
+        "uris": [
+          "/content/CustMatchMerge1.json",
+          "/content/CustMatchMerge2.json"
+        ]
+      }
+    }
+  }
+}

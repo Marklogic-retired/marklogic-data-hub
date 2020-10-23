@@ -25,6 +25,8 @@ import module namespace helper-impl = "http://marklogic.com/smart-mastering/help
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace json="http://marklogic.com/xdmp/json"
   at "/MarkLogic/json/json.xqy";
+import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
+  at "/com.marklogic.smart-mastering/impl/util.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
@@ -334,15 +336,6 @@ declare function opt-impl:options-to-json($options-xml as element(matcher:option
 
 declare variable $_cached-compiled-match-options as map:map := map:map();
 
-declare function opt-impl:handle-option-messages($type as xs:string, $message as xs:string, $messages-output as map:map?) {
-  if (fn:exists($messages-output)) then
-    map:put($messages-output, $type, (map:get($messages-output, $type),$message))
-  else if ($type eq "error") then
-    fn:error((), 'RESTAPI-SRVEXERR', (400, $message))
-  else
-    xdmp:log($message, $type)
-};
-
 declare function opt-impl:compile-match-options(
   $match-options as item() (: as node()|json:object :),
   $original-minimum-threshold as xs:double?
@@ -368,7 +361,9 @@ declare function opt-impl:compile-match-options(
 ) {
   let $match-options := if ($match-options instance of json:object) then
       xdmp:to-json($match-options)/object-node()
-    else if (fn:exists($match-options/(*:options|matchOptions))) then
+    else
+      $match-options
+  let $match-options := if (fn:exists($match-options/(*:options|matchOptions))) then
       $match-options/(*:options|matchOptions)
     else
       $match-options
@@ -379,7 +374,7 @@ declare function opt-impl:compile-match-options(
     map:get($_cached-compiled-match-options, $cache-id)
   else
     let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
-        xdmp:trace($const:TRACE-MATCH-RESULTS, "compiling match options: " || xdmp:describe($match-options, (), ()))
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "compiling match options: " || xdmp:to-json-string($match-options))
       else
         ()
     let $message-output :=
@@ -398,7 +393,7 @@ declare function opt-impl:compile-match-options(
         $original-minimum-threshold
     let $target-entity := $match-options/(*:target-entity|targetEntity|targetEntityType) ! fn:string(.)
     let $target-entity-def := es-helper:get-entity-def($target-entity)
-    let $match-rulesets := $match-options/(*:scoring|matchRulesets)
+    let $match-rulesets := $match-options/(*:scoring|matchRulesets)/(*:add|*:expand|*:reduce[fn:empty(parent::matchRulesets)]|self::matchRulesets)
     let $max-property-score := fn:max(($match-rulesets/(@weight|weight) ! fn:number(.)))
     let $algorithms := algorithms:build-algorithms-map((
       (: old algorithm format :)
@@ -411,17 +406,16 @@ declare function opt-impl:compile-match-options(
         1.0
       else
         64.0 div $max-property-score
-    let $xpath-namespaces :=
-      if (fn:exists($match-options/propertyDefs/namespaces)) then
-        $match-options/propertyDefs/namespaces cast as map:map
-      else
-        map:new(
-          for $ns in $match-options/*:property-defs/namespace::node()
-          return map:entry(fn:local-name($ns), fn:string($ns))
-        )
-    let $property-names-to-values := map:map()
+    let $property-names-to-values :=
+      util-impl:properties-to-values-functions(
+        ($match-rulesets[@property-name|propertyName],$match-rulesets/matchRules),
+        $match-options/(*:property-defs|propertyDefs),
+        $target-entity-def/entityIRI,
+        (: Don't need all property value queries :) fn:false(),
+        $message-output
+      )
     let $queries :=
-      for $rule-set in $match-rulesets/(*:add|*:expand|*:reduce[fn:empty(parent::matchRulesets)]|self::matchRulesets)
+      for $rule-set in $match-rulesets
       let $local-name := fn:local-name-from-QName(fn:node-name($rule-set))
       let $is-complex-rule := $local-name eq "matchRulesets"
       let $match-rules :=
@@ -446,59 +440,6 @@ declare function opt-impl:compile-match-options(
                 else
                   $match-rule/(@property-name|propertyName|((*:all-match|allMatch)/*:property))
             let $full-property-name := fn:normalize-space(fn:string-join($full-property-node, ", "))
-            let $match-value-function :=
-              if (map:contains($property-names-to-values, fn:string($full-property-name))) then
-                map:get($property-names-to-values, fn:string($full-property-name))
-              else
-                let $local-name :=
-                  if ($is-complex-rule) then
-                    fn:local-name-from-QName(fn:node-name(fn:head($full-property-node)))
-                  else
-                    $type
-                let $match-value-function :=
-                  switch ($local-name)
-                  case "entityPropertyPath" return
-                    let $property-info := es-helper:get-entity-property-info($target-entity, $full-property-name)
-                    return
-                      if (fn:empty($property-info)) then
-                        opt-impl:handle-option-messages("error", "Property information for '" || $full-property-name || "' in entity <"|| $target-entity ||"> not found!", $message-output)
-                      else
-                        let $xpath := $property-info => map:get("pathExpression")
-                        let $namespaces := $property-info => map:get("namespaces")
-                        return
-                          function($document) {
-                            xdmp:unpath($xpath, $namespaces, $document)
-                          }
-                  case "documentXPath" return
-                    function($document) {
-                      xdmp:unpath($full-property-name, $match-rule/namespaces ! (. cast as map:map), $document)
-                    }
-                  case "reduce" return
-                    function($document) { $document }
-                  default return
-                    let $property-definition := $match-options/(*:property-defs|propertyDefs)/*:property[(@name|name) = $full-property-name]
-                    return
-                      if (fn:exists($property-definition/(@path|path))) then
-                        function($document) {
-                        xdmp:unpath(fn:string($property-definition/(@path|path)), $xpath-namespaces, $document)
-                        }
-                      else if (fn:exists($target-entity-def)) then
-                        function($document) {
-                          if (fn:contains($full-property-name,".")) then
-                            xdmp:unpath("//" || fn:replace("","\.","/"), $xpath-namespaces, $document/*:envelope/*:instance)
-                          else
-                            let $qname := fn:QName($target-entity-def/namespaceUri, $full-property-name)
-                            return $document/*:envelope/*:instance/*/*[fn:node-name(.) eq $qname]
-                        }
-                      else
-                        function($document) {
-                          let $qname := fn:QName(fn:string($property-definition/(@namespace|namespace)), fn:string($property-definition/(@localname|localname)))
-                          return $document/*:envelope/*:instance//*[fn:node-name(.) eq $qname]
-                        }
-                return (
-                  map:put($property-names-to-values, fn:string($full-property-name), $match-value-function),
-                  $match-value-function
-                )
             let $algorithm-ref := if ($is-complex-rule) then
                 if ($type eq "custom") then
                   $match-rule/algorithmModulePath || ":" || $match-rule/algorithmFunction
@@ -521,7 +462,7 @@ declare function opt-impl:compile-match-options(
                   if (fn:exists($algorithm)) then
                     algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
                   else
-                    opt-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
+                    util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
               else if ($type eq "reduce") then
                 let $algorithm := $algorithm-ref ! map:get($algorithms, .)
                 return
@@ -530,7 +471,7 @@ declare function opt-impl:compile-match-options(
                   else
                       algorithms:standard-reduction-query(?, $match-rule, $match-options)
               else
-                opt-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
+                util-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
             return map:new((
               map:entry("propertyName",$full-property-name),
               map:entry("type",$type),
