@@ -17,18 +17,32 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
-const requiredOptionProperties = ['mergeOptions'];
+const quickStartRequiredOptionProperty = 'mergeOptions';
+const hubCentralRequiredOptionProperty = 'mergeRules';
+const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
 const processedURIs = [];
 
 function main(content, options) {
+  let isSeparateMergeStep = false;
   // These index references can't be out this function scope or the jobReport will error, since they don't exist for the jobs DB
+  if (options.stepId) {
+    const stepDoc = fn.head(cts.search(cts.andQuery([
+      cts.collectionQuery("http://marklogic.com/data-hub/steps"),
+      cts.jsonPropertyValueQuery("stepId", options.stepId, "case-insensitive")
+    ])));
+    if (stepDoc) {
+      options = stepDoc.toObject();
+      isSeparateMergeStep = true;
+    } else {
+      fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, `Could not find step with stepId ${options.stepId}`]));
+    }
+  }
   const jobID = datahub.flow.globalContext.jobId;
   const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
   const uriToTakeActionOn = content.uri;
   masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
-  const mergeOptions = new NodeBuilder().addNode({ options: options.mergeOptions }).toNode();
-  const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntity ? `-${options.targetEntity}`:''}`;
+  const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntityType ? `-${options.targetEntityType}`:''}`;
   const collectionQuery = cts.collectionQuery(matchSummaryCollection);
   const uriRangeQuery = cts.rangeQuery(urisPathReference, '=', uriToTakeActionOn);
   let relatedMatchSummaries = cts.search(
@@ -79,7 +93,7 @@ function main(content, options) {
   let results = mastering.buildContentObjectsFromMatchSummary(
     uriToTakeActionOn,
     matchSummaryJson,
-    mergeOptions,
+    options,
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
   );
   processedURIs.push(uriToTakeActionOn);

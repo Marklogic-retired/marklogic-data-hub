@@ -12,9 +12,6 @@
     </std-algorithm>
   </algorithms>
   <merging>
-    <merge property-name="ssn">
-      <source-ref document-uri="docA" />
-    </merge>
     <merge property-name="name"  max-values="1">
       <double-metaphone>
         <distance-threshold>50</distance-threshold>

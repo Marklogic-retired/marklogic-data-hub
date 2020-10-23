@@ -481,7 +481,7 @@ declare function matcher:build-match-notification(
 declare function matcher:build-match-notification(
   $threshold-label as xs:string,
   $uris as xs:string*,
-  $options as element()?
+  $options as item()?
 ) as map:map?
 {
   notify-impl:build-match-notification($threshold-label, $uris, $options)

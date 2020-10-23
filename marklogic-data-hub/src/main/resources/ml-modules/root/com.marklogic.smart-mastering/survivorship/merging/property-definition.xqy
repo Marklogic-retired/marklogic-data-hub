@@ -37,6 +37,16 @@ declare function prop-def:with-algorithm-info($prop-def as map:map, $algorithm-i
   $prop-def => map:with("algorithm", $algorithm-info)
 };
 
+declare function prop-def:with-retain-array($prop-def as map:map, $retain-array as xs:boolean) as map:map
+{
+  $prop-def => map:with("retainArray", $retain-array)
+};
+
+declare function prop-def:with-namespaces($prop-def as map:map, $namespaces as map:map?) as map:map
+{
+  $prop-def => map:with("namespaces", $namespaces)
+};
+
 declare function prop-def:with-extensions($prop-def as map:map, $extensions as map:map?) as map:map
 {
   map:new((

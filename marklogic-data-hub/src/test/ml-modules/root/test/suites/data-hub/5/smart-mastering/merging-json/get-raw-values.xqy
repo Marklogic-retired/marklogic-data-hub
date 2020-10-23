@@ -24,13 +24,17 @@ declare option xdmp:mapping "false";
 
 let $options := merge-impl:get-options($lib:OPTIONS-NAME-PATH, $const:FORMAT-XML)
 
-let $shallow-prop := $options/merging:property-defs/merging:property[@name="shallow"]
+let $compiled-merge-options := merge-impl:compile-merge-options($options)
 
-let $deep-prop := $options/merging:property-defs/merging:property[@name="deep"]
+let $merge-rules-info := $compiled-merge-options => map:get("mergeRulesInfo")
+
+let $shallow-prop := $merge-rules-info[map:get(., "propertyName") = "shallow"]
+
+let $deep-prop := $merge-rules-info[map:get(., "propertyName") = "deep"]
 
 let $docs := map:keys($lib:TEST-DATA) ! fn:doc(.)
 
-let $sources := merge-impl:get-sources($docs, $options)
+let $sources := merge-impl:get-sources($docs, $compiled-merge-options)
 
 let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
 
@@ -38,8 +42,7 @@ let $actual :=
   merge-impl:get-raw-values(
     $docs,
     $shallow-prop,
-    $sources-by-document-uri,
-    ()
+    $sources-by-document-uri
   )
 (:
  : Expecting all values from sources:
@@ -82,11 +85,7 @@ let $actual :=
   merge-impl:get-raw-values(
     $docs,
     $deep-prop,
-    $sources-by-document-uri,
-    map:new((
-      map:entry("es", "http://marklogic.com/entity-services"),
-      map:entry("has", "has")
-    ))
+    $sources-by-document-uri
   )
 
 (:

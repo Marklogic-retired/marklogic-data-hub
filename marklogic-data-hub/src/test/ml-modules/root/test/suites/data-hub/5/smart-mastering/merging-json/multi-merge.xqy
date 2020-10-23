@@ -254,7 +254,10 @@ let $assertions := (
     if (fn:deep-equal($expected, $merged-doc)) then
       test:success()
     else
-      fn:error(xs:QName("ASSERT-EQUAL-JSON-FAILED"), "Assert Equal Json failed", ($expected, $merged-doc))
+      fn:error(
+        xs:QName("ASSERT-EQUAL-JSON-FAILED"),
+        "Assert Equal Json failed.&#10;Expected: &#10;" ||  xdmp:to-json-string($expected) || "&#10;Actual: &#10;" || xdmp:to-json-string($merged-doc)
+      )
   )
 )
 

@@ -5,7 +5,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
 import module namespace merging = "http://marklogic.com/smart-mastering/merging"
   at "/com.marklogic.smart-mastering/merging.xqy";
 import module namespace merging-impl = "http://marklogic.com/smart-mastering/survivorship/merging"
-  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy";
+  at "/com.marklogic.smart-mastering/survivorship/merging/base.xqy",
+      "/com.marklogic.smart-mastering/survivorship/merging/options.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
@@ -23,11 +24,12 @@ declare function local:all-true($seq as xs:boolean*) as xs:boolean
 let $uris := map:keys($lib:TEST-DATA)
 let $docs := $uris ! fn:doc(.)
 let $merge-options := merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML)
-let $sources := merging-impl:get-sources($docs, $merge-options)
+let $compiled-merge-options := merging-impl:compile-merge-options($merge-options)
+let $sources := merging-impl:get-sources($docs, $compiled-merge-options)
 let $sources-by-document-uri := util-impl:combine-maps(map:map(),for $doc-uri in $sources/documentUri return map:entry($doc-uri, $doc-uri/..))
 let $instances := merging-impl:get-instances($docs)
 let $actual := merging-impl:build-final-properties(
-  $merge-options,
+  $compiled-merge-options,
   $instances,
   $docs,
   $sources-by-document-uri

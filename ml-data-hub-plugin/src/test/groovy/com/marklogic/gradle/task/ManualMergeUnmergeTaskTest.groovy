@@ -93,11 +93,11 @@ class ManualMergeUnmergeTaskTest extends BaseTest{
 
         then:
         result.task(':hubRunFlow').outcome == TaskOutcome.SUCCESS
-        //4 auditing docs are created after manualMergeUnmerge() is called. So 4 + 1
-        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing") == 5
-        //3 original documents get archived
-        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived") == 3
-        runInDatabase(mergedANDMastered, HubConfig.DEFAULT_FINAL_NAME).next().getNumber() == 1
+        //4 auditing docs are created after manualMergeUnmerge() is called. Blocked merges causes it to not add auditing document
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-auditing") == 4
+        //1 The merged document is achived since the merges were blocked by the unmerge
+        getDocCount(HubConfig.DEFAULT_FINAL_NAME, "sm-person-archived") == 1
+        runInDatabase(mergedANDMastered, HubConfig.DEFAULT_FINAL_NAME).next().getNumber() == 0
     }
 
     def "Verify manual merge with preview"() {

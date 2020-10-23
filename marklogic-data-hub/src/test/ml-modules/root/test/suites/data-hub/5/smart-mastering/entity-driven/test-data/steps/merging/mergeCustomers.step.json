@@ -1,0 +1,102 @@
+{
+  "name": "mergeCustomers",
+  "stepDefinitionName": "default-merging",
+  "stepDefinitionType": "merging",
+  "stepId": "mergeCustomers-merging",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['matchCustomers'])",
+  "collections": ["mergeCustomers"],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-common-writer,update",
+  "provenanceGranularityLevel": "fine",
+  "lastUpdatedLocation": {
+    "documentXPath": "/envelope/headers/createdOn"
+  },
+  "mergeStrategies": [
+    {
+      "strategyName": "myFavoriteNameSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 12
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 8
+          }
+        ]
+      }
+    },
+    {
+      "strategyName": "myFavoriteBirthDateSource",
+      "maxSources": 1,
+      "maxValues": 1,
+      "priorityOrder": {
+        "lengthWeight": 0,
+        "sources": [
+          {
+            "sourceName": "source 1",
+            "weight": 8
+          },
+          {
+            "sourceName": "source 2",
+            "weight": 12
+          }
+        ]
+      }
+    }
+  ],
+  "mergeRules": [
+    {
+      "entityPropertyPath": "name",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteNameSource"
+    },
+    {
+      "entityPropertyPath": "birthDate",
+      "mergeType": "strategy",
+      "mergeStrategyName": "myFavoriteBirthDateSource"
+    }
+  ],
+  "targetCollections": {
+    "onMerge": {
+      "add": [
+        "sm-Customer-mastered"
+      ],
+      "remove": [
+        "sm-Customer-archived"
+      ]
+    },
+    "onArchive": {
+      "add": [
+        "sm-Customer-archived"
+      ],
+      "remove": [
+        "sm-Customer-mastered"
+      ]
+    },
+    "onNoMatch": {
+      "add": [
+        "sm-Customer-mastered"
+      ],
+      "remove": [
+        "sm-Customer-archived"
+      ]
+    },
+    "onNotification": {
+      "add": [
+        "sm-Customer-notification"
+      ],
+      "remove": []
+    }
+  }
+}

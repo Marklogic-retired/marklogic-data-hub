@@ -17,7 +17,8 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
-const requiredOptionProperties = ['matchOptions'];
+const quickStartRequiredOptionProperty = 'matchOptions';
+const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
 
 /**
@@ -49,7 +50,6 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
 }
 
 function main(content, options) {
-  let isSeparateMatchStep = false;
   if (options.stepId) {
     const stepDoc = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/steps"),
@@ -57,12 +57,11 @@ function main(content, options) {
     ])));
     if (stepDoc) {
       options = stepDoc.toObject();
-      isSeparateMatchStep = true;
     } else {
       fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, `Could not find step with stepId ${options.stepId}`]));
     }
   }
-  const collectionInfo = masteringStepLib.checkOptions(null, options, null, (isSeparateMatchStep) ? []:requiredOptionProperties);
+  const collectionInfo = masteringStepLib.checkOptions(null, options, null, [[quickStartRequiredOptionProperty,hubCentralRequiredOptionProperty]]);
   const collections = ['datahubMasteringMatchSummary'];
   let targetEntityType = options.targetEntity || options.targetEntityType;
   if (targetEntityType) {
@@ -70,19 +69,12 @@ function main(content, options) {
   }
   const summaryCollection = collections[collections.length - 1];
   const filteredContent = filterContentAlreadyProcessed(content, summaryCollection, collectionInfo);
-  const nb = new NodeBuilder();
-  if (isSeparateMatchStep) {
-    nb.addNode(options);
-  } else {
-    nb.addNode({ options: options.matchOptions });
-  }
-  const matchOptions = nb.toNode();
   if (fn.count(filteredContent) === 0) {
     return emptySequence;
   }
   let matchSummaryJson = mastering.buildMatchSummary(
     filteredContent,
-    matchOptions,
+    options,
     options.filterQuery ? cts.query(options.filterQuery) : cts.trueQuery(),
     datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL || options.provenanceGranularityLevel === datahub.prov.FINE_LEVEL
   );
