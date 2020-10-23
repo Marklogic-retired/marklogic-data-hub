@@ -51,13 +51,13 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     }
 
     @Test
-    public void ingestWithIncorrectApi(){
+    public void ingestWithIncorrectApi() {
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
             () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("/incorrect.api")),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         System.out.println(ex.getMessage());
-        assertTrue( ex.getMessage().contains("Could not read non-existent document."));
+        assertTrue(ex.getMessage().contains("Could not read non-existent document."));
     }
 
     @Test
@@ -74,7 +74,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
     @Test
     public void ingestWithEmptyApiWithCustomEndpointState() {
-        ObjectNode  customEndpointState= objectMapper.createObjectNode();
+        ObjectNode customEndpointState = objectMapper.createObjectNode();
         customEndpointState.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
@@ -137,7 +137,12 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     public void testEndpointsAreLoaded() throws Exception {
         runAsAdmin().getModulesClient().newTextDocumentManager().delete(
             "/marklogic-data-hub-spark-connector/bulkIngester.api",
-            "/marklogic-data-hub-spark-connector/bulkIngester.sjs");
+            "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
+            "/marklogic-data-hub-spark-connector/initializeJob.api",
+            "/marklogic-data-hub-spark-connector/initializeJob.sjs",
+            "/marklogic-data-hub-spark-connector/finalizeJob.api",
+            "/marklogic-data-hub-spark-connector/finalizeJob.sjs");
+
 
         runAsDataHubOperator();
         DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap()).withBatchSize(3).withUriPrefix("/testFruit"));
@@ -147,6 +152,13 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         verifyFruitCount(1, "Verifying the data was written");
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.api");
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.sjs");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.sjs");
+
+        dataSourceWriter.get().commit(null);
+
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.sjs");
     }
 
     private void verifyModuleWasLoadedByConnector(String path) {
