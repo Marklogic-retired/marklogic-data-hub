@@ -1,4 +1,9 @@
 class AdvancedSettingsDialog {
+
+  getStepName(stepName: string) {
+    return cy.findByLabelText(`step-name-${stepName}`)
+  }
+
   /**
    * Set Source Database
    * @param dbName
@@ -73,7 +78,7 @@ class AdvancedSettingsDialog {
 
 
   toggleProcessors() {
-    cy.findByText('Processors').click();
+    cy.findByLabelText('processors-expand').trigger('mouseover').click();
   }
 
   getProcessors() {
@@ -95,7 +100,7 @@ class AdvancedSettingsDialog {
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
   setStepProcessor(fixturePath: string) {
-    cy.findByText('Processors').click();
+    cy.findByLabelText('processors-expand').trigger('mouseover').click();
     if(fixturePath === '')
         return cy.get('#processors').clear();
     else cy.fixture(fixturePath).then(content => {

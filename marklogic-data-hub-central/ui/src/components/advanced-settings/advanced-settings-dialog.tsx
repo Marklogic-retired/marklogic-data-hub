@@ -493,7 +493,7 @@ const AdvancedSettingsDialog = (props) => {
     destroyOnClose={true}
   >
     <p className={styles.title}>Advanced Step Settings</p>
-    <p className={styles.stepName}>{props.stepData.name}</p><br/>
+    <p aria-label={`step-name-${props.stepData.name}`} className={styles.stepName}>{props.stepData.name}</p><br/>
     <div className={styles.newDataForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
         {isCustomIngestion ? <Form.Item
@@ -719,7 +719,7 @@ const AdvancedSettingsDialog = (props) => {
               onClick={() => setProcessorsExpanded(!processorsExpanded)}
               rotate={processorsExpanded ? 90 : 0}
             />
-            <span className={styles.expandLabel} onClick={() => setProcessorsExpanded(!processorsExpanded)}>Processors</span>
+            <span aria-label="processors-expand" className={styles.expandLabel} onClick={() => setProcessorsExpanded(!processorsExpanded)}>Processors</span>
           </span>}
           labelAlign="left"
           className={styles.formItem}

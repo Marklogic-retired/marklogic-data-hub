@@ -8,12 +8,13 @@ import { Link, useHistory } from 'react-router-dom';
 
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
-import CreateEditMatchingDialog from './create-edit-matching-dialog/create-edit-matching-dialog';
+import CreateEditStepDialog from '../create-edit-step-dialog/create-edit-step-dialog';
 
 import sourceFormatOptions from '../../../config/formats.config';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import {
-  MatchingStep
+  MatchingStep,
+  StepType
 } from '../../../types/curation-types';
 import { ConfirmationType } from '../../../types/common-types';
 import { CurationContext } from '../../../util/curation-context';
@@ -40,9 +41,10 @@ const MatchingCard: React.FC<Props> = (props) => {
     const history = useHistory<any>();
     const { setActiveStep } = useContext(CurationContext);
 
-    const [newMatching, setNewMatching] = useState(false);
-    const [title, setTitle] = useState('');
-    const [matchingData, setMatchingData] = useState({});
+    const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
+    const [isEditing, toggleIsEditing] = useState(false);
+    const [editStepArtifact, setEditStepArtifact] = useState({});
+
     const [showLinks, setShowLinks] = useState('');
     const [showAdvancedSettings, toggleAdvancedSettings] = useState(false);
 
@@ -51,14 +53,14 @@ const MatchingCard: React.FC<Props> = (props) => {
     const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
 
     const openAddNewDialog = () => {
-        setTitle('New Matching');
-        setNewMatching(true);
+        // setTitle('New Matching');
+        // setNewMatching(true);
     };
 
     const openEditStepDialog = (index) => {
-        setTitle('Edit Matching');
-        setMatchingData(prevState => ({ ...prevState, ...props.matchingStepsArray[index]}));
-        setNewMatching(true);
+        // setTitle('Edit Matching');
+        // setMatchingData(prevState => ({ ...prevState, ...props.matchingStepsArray[index]}));
+        // setNewMatching(true);
     };
 
     const openMatchingSettingsDialog = (index) => {
@@ -213,16 +215,16 @@ const MatchingCard: React.FC<Props> = (props) => {
                         </div>
                     </Col>
                 )) : <span></span> }
-                <CreateEditMatchingDialog
-                    newMatching={newMatching}
-                    title={title}
-                    setNewMatching={setNewMatching}
-                    targetEntityType={props.entityName}
-                    createMatchingArtifact={props.createMatchingArtifact}
-                    deleteMatchingArtifact={props.deleteMatchingArtifact}
-                    matchingData={matchingData}
-                    canReadWrite={props.canWriteMatchMerge}
-                    canReadOnly={props.canReadMatchMerge}
+                <CreateEditStepDialog
+                  isVisible={showCreateEditStepModal}
+                  isEditing={isEditing}
+                  stepType={StepType.Matching}                                 
+                  editStepArtifactObject={editStepArtifact}
+                  targetEntityType={props.entityName}
+                  createStepArtifact={props.createMatchingArtifact}
+                  canReadWrite={props.canWriteMatchMerge}
+                  canReadOnly={props.canReadMatchMerge}
+                  toggleModal={toggleCreateEditStepModal}
                 />
             </Row>
             <ConfirmationModal
