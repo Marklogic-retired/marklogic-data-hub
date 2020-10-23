@@ -27,6 +27,8 @@ import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubAmpsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.impl.VersionInfo;
+import com.marklogic.hub.impl.Versions;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,6 +55,26 @@ public class DhsDeployer extends LoggingObject {
         HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
         dhsDeployer.setCommands(buildCommandsForSecurityAdmin());
         dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    /**
+     * Compares current ML version with the minimum required version and fails immediately
+     * if current ML version is lower than the minimum required version.
+     * @param hubConfig
+     */
+    public void checkCompatibility(HubConfig hubConfig) {
+        Versions versions = new Versions(hubConfig);
+        String mlVersionString = versions.getMarkLogicVersion();
+        Versions.MarkLogicVersion mlVersion = versions.getMLVersion(mlVersionString);
+        if (!((mlVersion.getMajor() > 10) || (mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 201) || (mlVersion.getMajor() == 9 && mlVersion.getMinor() >= 1100))) {
+            logger.warn("Cannot proceed as this version of Data Hub does not support the detected version of MarkLogic:");
+            logger.warn("MarkLogic host: " + hubConfig.getHost());
+            logger.warn("MarkLogic version: " + mlVersionString);
+            logger.warn("Data Hub client version: " + VersionInfo.getBuildVersion());
+            logger.warn("Please see https://docs.marklogic.com/datahub/refs/version-compatibility.html for information on the minimum required MarkLogic version.");
+
+            throw new RuntimeException("Cannot deploy due to version mismatch.");
+        }
     }
 
     /**
