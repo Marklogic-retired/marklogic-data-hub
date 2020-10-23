@@ -18,6 +18,7 @@ package com.marklogic.hub.spark.sql.sources.v2;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.TextDocumentManager;
 import com.marklogic.client.ext.helper.LoggingObject;
@@ -79,26 +80,26 @@ public class DefaultSource extends LoggingObject implements WriteSupport, Stream
 
 class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
-    private Map<String, String> map;
-    private StructType schema;
-    private boolean streaming;
-    private HubClient hubClient;
-    private HubClientConfig hubClientConfig;
+    private final Map<String, String> options;
+    private final StructType schema;
+    private final boolean streaming;
+    private final HubClient hubClient;
+    private final HubClientConfig hubClientConfig;
     private final JsonNode endpointParams;
     private final String jobId;
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    public HubDataSourceWriter(Map<String, String> map, StructType schema, Boolean streaming) {
-        this.map = map;
+    public HubDataSourceWriter(Map<String, String> options, StructType schema, Boolean streaming) {
+        this.options = options;
         this.schema = schema;
         this.streaming = streaming;
         this.objectMapper = new ObjectMapper();
 
-        this.hubClientConfig = DefaultSource.buildHubClientConfig(map);
+        this.hubClientConfig = DefaultSource.buildHubClientConfig(options);
         this.hubClient = HubClient.withHubClientConfig(hubClientConfig);
-        logger.info("Creating HubClient for host: " + hubClient.getStagingClient().getHost());
+        verifyUserIsAuthorized();
 
-        this.endpointParams = determineIngestionEndpointParams(map);
+        this.endpointParams = determineIngestionEndpointParams(options);
 
         this.jobId = initializeJob(schema);
         addJobIdToEndpointConstants();
@@ -106,7 +107,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     @Override
     public DataWriterFactory<InternalRow> createWriterFactory() {
-        return new HubDataWriterFactory(map, this.schema, endpointParams);
+        return new HubDataWriterFactory(options, this.schema, endpointParams);
     }
 
     @Override
@@ -133,6 +134,19 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             throw new UnsupportedOperationException("Abort without epoch should not be called with StreamWriter");
         }
         logger.info("Abort, messages: " + Arrays.asList(messages));
+    }
+
+    /**
+     * Note that this is only verifying that the user is able to authorized to connect to MarkLogic. A later call made
+     * by the connector to ML may fail because the call requires additional privileges that the user does not have.
+     */
+    private void verifyUserIsAuthorized() {
+        DatabaseClient.ConnectionResult result = hubClient.getStagingClient().checkConnection();
+        if (result.getStatusCode() == 401) {
+            throw new RuntimeException("User is unauthorized; " +
+                "please ensure you have the correct username and password for a MarkLogic user that has at least the data-hub-operator role");
+        }
+        logger.info("Created HubClient for host: " + hubClient.getStagingClient().getHost());
     }
 
     private JsonNode determineIngestionEndpointParams(Map<String, String> options) {

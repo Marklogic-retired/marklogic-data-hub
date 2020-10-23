@@ -143,17 +143,20 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
      * @return
      */
     protected DataWriter<InternalRow> buildDataWriter(DataSourceOptions dataSourceOptions) {
-        DefaultSource dataSource = new DefaultSource();
-        final String writeUUID = "doesntMatter";
-        final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
+        initializeDataSourceWriter(dataSourceOptions);
 
-        dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
         DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.get().createWriterFactory();
-
         final int partitionIdDoesntMatter = 0;
         final long taskId = 2;
         final int epochIdDoesntMatter = 0;
         return dataWriterFactory.createDataWriter(partitionIdDoesntMatter, taskId, epochIdDoesntMatter);
+    }
+
+    protected void initializeDataSourceWriter(DataSourceOptions dataSourceOptions) {
+        DefaultSource dataSource = new DefaultSource();
+        final String writeUUID = "doesntMatter";
+        final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
+        this.dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
     }
 
     /**
