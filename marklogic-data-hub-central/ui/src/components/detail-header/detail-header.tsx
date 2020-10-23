@@ -89,7 +89,7 @@ const DetailHeader: React.FC<Props> = (props) => {
       }  
     }
     else{
-        esEnvelope = props.document.content['es:envelope'];
+        esEnvelope = props.document['es:envelope'];
         if (esEnvelope) {
           if (esEnvelope.hasOwnProperty('es:headers')) {
             timestamp = esEnvelope['es:headers'].hasOwnProperty('createdOn') && esEnvelope['es:headers'].createdOn[0];
