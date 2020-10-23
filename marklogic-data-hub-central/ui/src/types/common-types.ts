@@ -13,5 +13,6 @@ export enum ConfirmationType {
   RevertAll = 'revertAllEntity',
   NavigationWarn = 'navigationWarn',
   DeleteStep = 'deleteStep',
-  AddStepToFlow = 'addStepToFlow'
+  AddStepToFlow = 'addStepToFlow',
+  DiscardChanges = 'discardChanges'
 }

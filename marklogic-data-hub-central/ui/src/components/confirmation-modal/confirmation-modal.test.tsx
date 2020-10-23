@@ -409,5 +409,74 @@ describe('Confirmation Modal Component', () => {
     userEvent.click(getByText('Yes'));
     expect(confirmAction).toBeCalledTimes(1);
   });
+
+  test('can render add step to flow confirmation', () => {
+    let boldTextArray = ['match-customer', 'customer-flow']
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { queryByLabelText, getByText, rerender, getByLabelText } =  render(
+      <ConfirmationModal
+        isVisible={false}
+        type={ConfirmationType.AddStepToFlow}
+        boldTextArray={boldTextArray}
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByLabelText('add-step-to-flow-text')).toBeNull();
+
+    rerender(<ConfirmationModal
+      isVisible={true}
+      type={ConfirmationType.AddStepToFlow}
+      boldTextArray={boldTextArray}
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getByLabelText('add-step-to-flow-text')).toBeInTheDocument();
+    expect(getByText(boldTextArray[0])).toBeInTheDocument();
+    expect(getByText(boldTextArray[1])).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
+  });
+
+  test('can render discard change confirmation', () => {
+    let toggleModal = jest.fn();
+    let confirmAction = jest.fn();
+
+    const { queryByLabelText, getByText, rerender } =  render(
+      <ConfirmationModal
+        isVisible={false}
+        type={ConfirmationType.DiscardChanges}
+        boldTextArray={[]}
+        toggleModal={toggleModal}
+        confirmAction={confirmAction}
+      />
+    );
+
+    expect(queryByLabelText('iscard-changes-text')).toBeNull();
+
+    rerender(<ConfirmationModal
+      isVisible={true}
+      type={ConfirmationType.DiscardChanges}
+      boldTextArray={[]}
+      toggleModal={toggleModal}
+      confirmAction={confirmAction}
+    />);
+
+    expect(getByText('Discard Changes?')).toBeInTheDocument();
+
+    userEvent.click(getByText('No'));
+    expect(toggleModal).toBeCalledTimes(1);
+
+    userEvent.click(getByText('Yes'));
+    expect(confirmAction).toBeCalledTimes(1);
+  });
 });
 
