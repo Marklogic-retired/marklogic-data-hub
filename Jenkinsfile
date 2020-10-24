@@ -87,12 +87,12 @@ def dhfqsLinuxTests(String mlVersion,String type){
             rm -rf $GRADLE_USER_HOME/caches;
             ./gradlew clean;
             ./gradlew build -x test --parallel -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;
-            nohup ./gradlew bootRun >> $WORKSPACE/bootRun.out &
-            sleep 60s;
-            nohup ./gradlew runUI >> $WORKSPACE/runUI.out &
+            nohup ./gradlew web:bootRun >> $WORKSPACE/bootRun.out &
+            sleep 120s;
+            nohup ./gradlew web:runUI >> $WORKSPACE/runUI.out &
             sleep 120s;
             cd web;
-            ./node_modules/.bin/ng e2e --devServerTarget="" --suite all --base-url http://localhost:4200 || true;
+            ./node_modules/.bin/ng e2e --devServerTarget="" --suite all || true;
             mkdir -p ${mlVersion};
             mv e2e/reports ${mlVersion};
             mv e2e/screenshoter-plugin ${mlVersion};
