@@ -46,6 +46,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     setPageQueryOptions,
     setEntity,
     setDatabase,
+    setLatestDatabase,
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -168,10 +169,20 @@ const Browse: React.FC<Props> = ({ location }) => {
       && location.state.hasOwnProperty('entityName')
       && location.state.hasOwnProperty('targetDatabase')
       && location.state.hasOwnProperty('jobId')) {
-      setLatestJobFacet(location.state['jobId'], location.state['entityName'], location.state['targetDatabase']);
+        setCardView(false);
+        setLatestJobFacet(location.state['jobId'], location.state['entityName'], location.state['targetDatabase']);
+    }
+    else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
+      setCardView(false);
+      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
     }
     else if (location.state && location.state.hasOwnProperty('entity')) {
+      setCardView(false);
       setEntityClearQuery(location.state['entity']);
+    }
+    else if (location.state && location.state.hasOwnProperty('targetDatabase')) {
+      setCardView(true);
+      setLatestDatabase(location.state['targetDatabase']);
     }
   }, [searchOptions.zeroState]);
 
