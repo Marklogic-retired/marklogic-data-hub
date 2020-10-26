@@ -53,7 +53,7 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, entityName: string, targetDatabase: string) => void;
+  setLatestJobFacet: (vals: string, entityName: string, targetDatabase?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -80,6 +80,7 @@ interface ISearchContextInterface {
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
   setDatabase: (option: string) => void;
+  setLatestDatabase: (option: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -119,6 +120,7 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   setSortOrder: () => { },
   setPageQueryOptions: () => { },
   setDatabase: () => { },
+  setLatestDatabase: () => { },
 });
 
 const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
@@ -242,13 +244,16 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       selectedFacets: {},
       start: 1,
       entityTypeIds: [option],
+      nextEntityType: option,
+      selectedTableProperties: [],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
       zeroState: false
     });
   };
 
-  const setLatestJobFacet = (vals: string, entityName: string, targetDatabase: string) => {
+ //The "targetDatabase" parameter is temporary optional. Passing the database from the model view needs to be handleled in the separate story DHFPROD-6152.
+  const setLatestJobFacet = (vals: string, entityName: string, targetDatabase?: string) => {
     let facets = {};
     facets = { createdByJob: { dataType: "string", stringValues: [vals] } };
     setSearchOptions({
@@ -256,13 +261,28 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       start: 1,
       selectedFacets: facets,
       entityTypeIds: [entityName],
+      nextEntityType: entityName,
+      selectedTableProperties: [],
       pageNumber: 1,
       pageLength: searchOptions.pageSize,
+      zeroState: false,
+      database: targetDatabase ? targetDatabase : 'final'
+    });
+  };
+
+  const setLatestDatabase = (targetDatabase: string) => {
+    setSearchOptions({
+      ...searchOptions,
+      start: 1,
+      selectedFacets: {},
+      entityTypeIds: [],
+      nextEntityType: 'All Data',
+      pageNumber: 1,
+      selectedTableProperties: [],
       zeroState: false,
       database: targetDatabase
     });
   };
-
 
   const clearFacet = (constraint: string, val: string) => {
     let facets = searchOptions.selectedFacets;
@@ -609,7 +629,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
         setPageWithEntity,
         setSortOrder,
         setPageQueryOptions,
-        setDatabase
+        setDatabase,
+        setLatestDatabase
       }}>
         {children}
       </SearchContext.Provider>
