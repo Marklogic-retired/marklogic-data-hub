@@ -45,7 +45,7 @@ const Query: React.FC<Props> = (props) => {
         setEntity,
         setNextEntity,
         setZeroState,
-        setQuery
+        setSavedQueries
     } = useContext(SearchContext);
 
     const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -102,6 +102,7 @@ const Query: React.FC<Props> = (props) => {
                 const response = await fetchQueries();
                 if (response.data) {
                     props.setQueries(response.data);
+                    setSavedQueries(response.data);
                 }
             }
         } catch (error) {

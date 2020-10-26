@@ -19,7 +19,8 @@ const QueryModal = (props) => {
         applySaveQuery,
         searchOptions,
         setManageQueryModal,
-        clearAllGreyFacets
+        clearAllGreyFacets,
+        setSavedQueries
     } = useContext(SearchContext);
 
     const { handleError } = useContext(UserContext);
@@ -39,6 +40,7 @@ const QueryModal = (props) => {
             const response = await fetchQueries();
             if (response['data']) {
                 props.setQueries(response['data']);
+                setSavedQueries(response['data']);
             }
         } catch (error) {
             handleError(error);
@@ -49,6 +51,7 @@ const QueryModal = (props) => {
         const response = await axios.put(`/api/entitySearch/savedQueries`, query);
         if (response.data) {
             props.setQueries(response.data);
+            setSavedQueries(response.data);
             return { code: response.status };
         }
     }

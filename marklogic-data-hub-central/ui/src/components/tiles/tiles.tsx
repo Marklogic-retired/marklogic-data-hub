@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Mosaic, MosaicWindow } from 'react-mosaic-component';
 import 'react-mosaic-component/react-mosaic-component.css';
-import { Tooltip, Menu, Dropdown } from 'antd';
 import { ArrowsAltOutlined, ShrinkOutlined, CloseOutlined } from '@ant-design/icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faCog } from "@fortawesome/free-solid-svg-icons";
 import styles from './tiles.module.scss';
 import './tiles.scss';
 import Run from '../../pages/Run';
-import { MLTooltip } from '@marklogic/design-system';
-
+import { MLTooltip, MLButton } from '@marklogic/design-system';
+import { SearchContext } from "../../util/search-context";
 
 interface Props {
     id: string;
@@ -26,45 +25,42 @@ const Tiles: React.FC<Props> = (props) => {
     const options = props.options;
     const controls = props.options.controls;
     const viewId = props.id;
+    const { savedQueries } = useContext(SearchContext);
 
     const showControl = (control) => {
         return controls.indexOf(control) !== -1;
-    }
+    };
 
     const onChange = (event) => {
         console.log('onChange', event);
-    }
+    };
 
     const onRelease = (event) => {
         console.log('onRelease', event);
-    }
+    };
 
     // TODO Implement newTab feature
     const onClickNewTab = (event) => {
         console.log('onClickNewTab', event);
-    }
+    };
 
     // TODO Implement maximize feature
     const onClickMaximize = (event) => {
         console.log('onClickMaximize', event);
-    }
+    };
 
     // TODO Implement minimize feature
     const onClickMinimize = (event) => {
         console.log('onClickMinimize', event);
-    }
+    };
 
     const onClickClose = () => {
         props.onTileClose();
-    }
+    };
 
-    const menu = (
-        <Menu onClick={props.onMenuClick}>
-            <Menu.Item key="1">
-                    Manage Queries
-            </Menu.Item>
-        </Menu>
-    );
+    const onMenuClick = () => {
+        props.onMenuClick();
+    };
 
     const renderHeader = function (props) {
         return (
@@ -85,17 +81,15 @@ const Tiles: React.FC<Props> = (props) => {
                 </div>
                 <div className={styles.controls}>
                     {showControl('menu') ? (
-                        <div>
-                            <Dropdown overlay={menu} trigger={['click']} placement="bottomLeft">
-                                <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                                    <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
-                                        <MLTooltip title={'Menu'} placement="top">
-                                            <FontAwesomeIcon icon={faCog} />
-                                        </MLTooltip>
-                                    </i> 
-                                </a>
-                            </Dropdown>
-                        </div>
+                        savedQueries.length ? ( // only display if there are saved queries
+                            <div>
+                                <i className={styles.faCog} aria-label={'menu'} style={{ color: options['color'] }}>
+                                    <MLButton id="manage-queries-button" onClick={onMenuClick} style={{height: '25px'}}>
+                                        <FontAwesomeIcon icon={faCog} style={{color: '#394494', fontSize: '14px', paddingRight: '4px', paddingTop: '1px'}}/> Manage Queries
+                                    </MLButton>
+                                </i>
+                            </div>
+                        ) : null
                     ) : null}
                     {showControl('newTab') ? (
                         <i className={styles.fa} aria-label={'newTab'} style={{ color: options['controlColor'] }} onClick={onClickNewTab}>
@@ -121,10 +115,10 @@ const Tiles: React.FC<Props> = (props) => {
                                 <CloseOutlined />
                             </MLTooltip>
                         </i>
-                        ) : null}
+                    ) : null}
                 </div>
             </div>
-        )
+        );
     };
 
     return (<>
@@ -138,7 +132,7 @@ const Tiles: React.FC<Props> = (props) => {
                     >
                         {!props.newStepToFlowOptions?.addingStepToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
                     </MosaicWindow>
-                )
+                );
             }}
             className={'mosaic-container mosaic-container-' + viewId}
             value={props.currentNode}
@@ -146,6 +140,6 @@ const Tiles: React.FC<Props> = (props) => {
             onRelease={onRelease}
         />
     </>);
-}
+};
 
 export default Tiles;
