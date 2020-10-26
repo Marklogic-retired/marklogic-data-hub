@@ -134,7 +134,7 @@ const ModelingTooltips = {
   entityEditedAlert: "You have pending changes for one or more entity types. To apply these changes to your Data Hub, either save the modified entity types or select 'Save All'.",
   noWriteAccess: 'Contact your security administrator for access.',
   addProperty: 'Click to add properties to this entity type.',
-  saveEntityConfirm: 'Applying changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.'
+  saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.'
 }
 
 const SecurityTooltips = {
