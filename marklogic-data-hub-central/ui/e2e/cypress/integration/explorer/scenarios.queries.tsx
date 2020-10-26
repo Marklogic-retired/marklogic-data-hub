@@ -589,6 +589,10 @@ describe('User without hub-central-saved-query-user role should not see saved qu
         browsePage.getSaveModalIcon().should('be.visible');
         browsePage.getSaveModalIcon().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
     });
+
+    it('verifies user without hub-central-saved-query-user can not manage queries', () => {
+        browsePage.getManageQueriesButton().should('not.be.visible');
+    })
 });
 
 

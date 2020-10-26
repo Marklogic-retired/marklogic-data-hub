@@ -480,9 +480,12 @@ class BrowsePage {
   }
 
   getManageQueriesModalOpened() {
-    cy.waitUntil(() => cy.get('.fa-cog')).click();
-    cy.waitUntil(() => cy.get('.ant-dropdown-menu-item')).click();
+    cy.get('#manage-queries-button').click();
     this.waitForTableToLoad();
+  }
+
+  getManageQueriesButton() {
+    return cy.get('#manage-queries-button');
   }
 
   //saved query dropdown
