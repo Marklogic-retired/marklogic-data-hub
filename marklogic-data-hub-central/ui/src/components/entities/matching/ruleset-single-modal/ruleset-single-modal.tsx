@@ -33,6 +33,7 @@ const MATCH_TYPE_OPTIONS = [
   { name: 'Double Metaphone', value: 'doubleMetaphone' },
   { name: 'Reduce', value: 'reduce' },
   { name: 'Zip', value: 'zip' },
+  { name: 'Custom', value: 'custom' },
 ];
 
 const { MLOption } = MLSelect;
@@ -56,6 +57,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [distanceThresholdValue, setDistanceThresholdValue] = useState('');
   const [distanceThresholdErrorMessage, setDistanceThresholdErrorMessage] = useState('');
   const [collationValue, setCollationValue] = useState('');
+
+  const [uriValue, setUriValue] = useState('');
+  const [uriErrorMessage, setUriErrorMessage] = useState('');
+  const [functionValue, setFunctionValue] = useState('');
+  const [functionErrorMessage, setFunctionErrorMessage] = useState('');
+  const [namespaceValue, setNamespaceValue] = useState('');
 
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
@@ -101,6 +108,28 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         setCollationValue(event.target.value);
         break;
 
+      case 'uri-input':
+        if (event.target.value === '') {
+          setUriErrorMessage('A URI is required');
+        } else {
+          setUriErrorMessage('');
+        }
+        setUriValue(event.target.value);
+        break;
+
+      case 'function-input':
+        if (event.target.value === '') {
+          setFunctionErrorMessage('A function is required');
+        } else {
+          setFunctionErrorMessage('');
+        }
+        setFunctionValue(event.target.value);
+        break;
+
+      case 'namespace-input':
+        setNamespaceValue(event.target.value);
+        break;
+
       default:
         break;
     }
@@ -124,6 +153,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setDistanceThresholdValue('');
     setDistanceThresholdErrorMessage('');
     setCollationValue('');
+    setUriValue('');
+    setUriErrorMessage('');
+    setFunctionValue('');
+    setFunctionErrorMessage('');
+    setNamespaceValue('');
   };
 
   const onSubmit = (event) => {
@@ -244,6 +278,48 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           setDistanceThresholdErrorMessage(distanceThresholdErrorMessage);
           break;
         }
+
+        case 'custom':
+          {
+            let uriErrorMessage = '';
+            if (uriValue === '') {
+              uriErrorMessage = 'A URI is required';
+            }
+  
+            let functionErrorMessage = '';
+            if (functionValue === '') {
+              functionErrorMessage = 'A function is required';
+            }
+    
+            let propertyName = selectedProperty || '';
+    
+            let customMatchRule: MatchRule = {
+              entityPropertyPath: propertyName,
+              matchType: matchType,
+              algorithmModulePath: uriValue,
+              algorithmModuleFunction: functionValue,
+              algorithmModuleNamespace: namespaceValue,
+              options: {}
+            };
+  
+            let matchRuleset: MatchRuleset = {
+              name: propertyName,
+              weight: 0,
+              matchRules: [customMatchRule]
+            };
+    
+            if (uriErrorMessage === '' && functionErrorMessage === '') {
+              // TODO save step to backend
+              let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+              newStepArtifact.matchRulesets.push(matchRuleset);
+              updateActiveStepArtifact(newStepArtifact);
+              props.toggleModal(false);
+              resetModal();
+            }
+            setUriErrorMessage(uriErrorMessage);
+            setFunctionErrorMessage(functionErrorMessage);
+            break;
+          }
 
       default:
         break;
@@ -386,6 +462,78 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     </>
   );
 
+  const renderCustomOptions = (
+    <>
+      <Form.Item
+        className={styles.formItem}
+        label={<span>
+          URI:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>}
+        colon={false}
+        labelAlign="left"
+        validateStatus={uriErrorMessage ? 'error' : ''}
+        help={uriErrorMessage}
+      >
+        <Input
+          id="uri-input"
+          aria-label="uri-input"
+          placeholder="Enter URI"
+          className={styles.input}
+          value={uriValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.uri}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
+      </Form.Item>
+      <Form.Item
+        className={styles.formItem}
+        label={<span>
+          Function:&nbsp;<span className={styles.asterisk}>*</span>
+          &nbsp;
+            </span>}
+        colon={false}
+        labelAlign="left"
+        validateStatus={functionErrorMessage ? 'error' : ''}
+        help={functionErrorMessage}
+      >
+        <Input
+          id="function-input"
+          aria-label="function-input"
+          placeholder="Enter a function"
+          className={styles.input}
+          value={functionValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.function}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
+      </Form.Item>
+      <Form.Item
+          className={styles.formItem}
+          label={<span>Namespace:</span>}
+          colon={false}
+          labelAlign="left"
+        >
+          <Input
+            id="namespace-input"
+            aria-label="namespace-input"
+            placeholder="Enter a namespace"
+            className={styles.input}
+            value={namespaceValue}
+            onChange={handleInputChange}
+            onBlur={handleInputChange}
+          />
+          <MLTooltip title={NewMatchTooltips.namespace}>
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
+          </MLTooltip>
+      </Form.Item>
+    </>
+  );
+
   const modalTitle = (
     <div>
       <div style={{ fontSize: '18px'}}>Add Match Ruleset for Single Property</div>
@@ -469,6 +617,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
         {matchType === 'synonym' && renderSynonymOptions}
         {matchType === 'doubleMetaphone' && renderDoubleMetaphoneOptions}
+        {matchType === 'custom' && renderCustomOptions}
         {modalFooter}
       </Form>
     </Modal>

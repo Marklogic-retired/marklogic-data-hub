@@ -58,15 +58,19 @@ const AdvCustomTooltips = {
 };
 
 const NewMatchTooltips = {
-    'name': 'The name of this matching configuration.',
-    'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
-    'description': 'The description of this matching configuration.',	    'targetDatabase': 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
-    'sourceQuery' : 'The collection or CTS query that selects the source data to process in this configuration.',
-    'thesaurusUri' : 'The path to the thesaurus used to determine synonyms',
-    'filter' : 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>',
-    'dictionaryUri' : 'The path to the dictionary used to compare words phonetically',
-    'distanceThreshold' : 'The phonetic distance below which 2 strings are considered similar',
-    'collation' : 'The URI for a collation, which specifies the order for sorting strings'
+    sourceDatabase: 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
+    description: 'The description of this matching configuration.',	    
+    targetDatabase: 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
+    sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.',
+    filter: 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>',
+    collation: 'The URI for a collation, which specifies the order for sorting strings',
+    namespace: 'The namespace of the module that contains the function.',
+    function: 'The function to run if this action definition is selected.',
+    name: 'The alias for this action definition.',
+    uri: 'The path to the module that contains the function.',
+    distanceThreshold: 'The threshold below which the phonetic difference (distance) between two strings is considered insignificant; i.e., the strings are similar to each other.',
+    dictionaryUri: 'The location of the phonetic dictionary that is stored in a database and used when comparing words phonetically.',
+    thesaurusUri: 'The location of the thesaurus that is stored in a MarkLogic Server database and used to determine synonyms.',
 }
 
 
