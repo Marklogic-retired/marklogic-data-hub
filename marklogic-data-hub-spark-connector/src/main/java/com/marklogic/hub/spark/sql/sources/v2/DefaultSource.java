@@ -28,6 +28,7 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.spark.dataservices.SparkService;
+import com.marklogic.hub.spark.sql.sources.v2.writer.AtLeastOneWriteFailedMessage;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriterFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.SaveMode;
@@ -44,7 +45,6 @@ import org.apache.spark.sql.types.StructType;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -112,28 +112,36 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     @Override
     public void commit(long epochId, WriterCommitMessage[] messages) {
-        finalizeJob("finished");
+        commit(messages);
     }
 
     @Override
     public void abort(long epochId, WriterCommitMessage[] messages) {
-        logger.info("Abort, epoch: " + epochId + "; messages: " + Arrays.asList(messages));
+        abort(messages);
     }
 
     @Override
     public void commit(WriterCommitMessage[] messages) {
-        if (streaming) {
-            throw new UnsupportedOperationException("Commit without epoch should not be called with StreamWriter");
-        }
-        finalizeJob("finished");
+        String status = atLeastOneWriteFailed(messages) ? "finished_with_errors" : "finished";
+        finalizeJob(status);
     }
 
     @Override
     public void abort(WriterCommitMessage[] messages) {
-        if (streaming) {
-            throw new UnsupportedOperationException("Abort without epoch should not be called with StreamWriter");
+        // Because an aborted job maps to a "canceled" DHF job, there's no use case yet for the messages
+        logger.error("Aborting job");
+        finalizeJob("canceled");
+    }
+
+    private boolean atLeastOneWriteFailed(WriterCommitMessage[] messages) {
+        if (messages != null) {
+            for (WriterCommitMessage message : messages) {
+                if (message instanceof AtLeastOneWriteFailedMessage) {
+                    return true;
+                }
+            }
         }
-        logger.info("Abort, messages: " + Arrays.asList(messages));
+        return false;
     }
 
     /**
