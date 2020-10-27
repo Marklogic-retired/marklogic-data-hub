@@ -22,6 +22,8 @@ public class Options {
     private String sourceType;
     private JsonNode ingestEndpointConstants;
     private JsonNode ingestEndpointState;
+    private String initializeJobApiPath;
+    private String finalizeJobApiPath;
     private Map<String, String> hubProperties;
 
     public Options() {
@@ -72,6 +74,13 @@ public class Options {
             params.put("ingestendpointparams", node.toString());
         }
 
+        if (initializeJobApiPath != null) {
+            params.put("initializejobapipath", initializeJobApiPath);
+        }
+        if (finalizeJobApiPath != null) {
+            params.put("finalizejobapipath", finalizeJobApiPath);
+        }
+
         return new DataSourceOptions(params);
     }
 
@@ -112,6 +121,16 @@ public class Options {
 
     public Options withIngestEndpointState(JsonNode ingestEndpointState) {
         this.ingestEndpointState = ingestEndpointState;
+        return this;
+    }
+
+    public Options withInitializeJobApiPath(String initializeJobApiPath) {
+        this.initializeJobApiPath = initializeJobApiPath;
+        return this;
+    }
+
+    public Options withFinalizeJobApiPath(String finalizeJobApiPath) {
+        this.finalizeJobApiPath = finalizeJobApiPath;
         return this;
     }
 }

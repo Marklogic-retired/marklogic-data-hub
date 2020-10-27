@@ -1,0 +1,14 @@
+{
+    "functionName": "finalizeJob",
+    "endpointDirectory": "/custom-job-endpoints/",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string"
+        },
+        {
+            "name": "status",
+            "datatype": "string"
+        }
+    ]
+}
