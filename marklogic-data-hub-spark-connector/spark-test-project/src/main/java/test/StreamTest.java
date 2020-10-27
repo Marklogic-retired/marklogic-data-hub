@@ -1,34 +1,31 @@
 package test;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.streaming.StreamingQueryException;
+import org.apache.spark.sql.types.StructType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-/**
- * Simple test program for verifying that the connector shadowJar works correctly within Spark. This is intended only
- * for manual ad hoc testing. The options for the connector default to a local DHF instance; customize those as needed.
- */
-public class SparkTest {
+public class StreamTest {
 
-    private static Logger logger = LoggerFactory.getLogger(SparkTest.class);
+    private static Logger logger = LoggerFactory.getLogger(StreamTest.class);
 
     private static String host = "localhost";
     private static String username = "test-data-hub-operator";
     private static String password = "password";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         setConnectionProperties(args);
 
         logger.info("Creating SparkSession");
         SparkSession sparkSession = SparkSession.builder()
             .master("local")
             .getOrCreate();
+
 
         try {
             writeRowsToDataHub(loadRowsFromTestFile(sparkSession));
@@ -41,6 +38,7 @@ public class SparkTest {
     private static void setConnectionProperties(String[] args) {
         if (args.length != 3) {
             logger.info("Defaulting to host=localhost and username=test-data-hub-operator");
+            username="test-data-hub-operator";
         } else {
             host = args[0];
             username = args[1];
@@ -52,8 +50,9 @@ public class SparkTest {
     private static Dataset<Row> loadRowsFromTestFile(SparkSession sparkSession) {
         final String filePath = getTestFilePath();
         logger.info("Loading from file: " + filePath);
-        Dataset<org.apache.spark.sql.Row> rows = sparkSession.read().option("header", true).csv(getTestFilePath());
-        logger.info("Number of rows loaded: " + rows.count());
+        StructType structType = sparkSession.read().option("header", true).csv(getTestFilePath()).schema();
+        logger.info("Schema of the input file is "+structType);
+        Dataset<org.apache.spark.sql.Row> rows = sparkSession.readStream().schema(structType).format("csv").option("header", true).csv("src/main/resources/data");
         return rows;
     }
 
@@ -76,17 +75,19 @@ public class SparkTest {
      *
      * @param rows
      */
-    private static void writeRowsToDataHub(Dataset<Row> rows) {
-        rows.write()
+    private static void writeRowsToDataHub(Dataset<Row> rows) throws StreamingQueryException {
+        rows.writeStream()
             .format("com.marklogic.hub.spark.sql.sources.v2")
             .option("mlHost", host)
             .option("mlUsername", username)
             .option("mlPassword", password)
-            .option("uriPrefix", "/SparkTest")
+            .option("uriPrefix", "/StreamTest")
             .option("collections", "sparkTestOne,sparkTestTwo")
             .option("hubDhs", "false")
             .option("hubSsl", "false")
-            .save();
+            .option("batchSize", "3")
+            .option("checkpointLocation", "src/main/resources/logs/"+System.currentTimeMillis())
+            .start()
+            .awaitTermination(3000);
     }
 }
-
