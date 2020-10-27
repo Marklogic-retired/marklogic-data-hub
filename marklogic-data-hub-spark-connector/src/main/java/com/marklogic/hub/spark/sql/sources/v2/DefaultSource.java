@@ -205,6 +205,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             try {
                 DocumentManager modMgr = hubClient.getModulesClient().newDocumentManager();
                 DocumentMetadataHandle metadata = buildDocumentMetadata();
+                logger.info("Loading module: " + modulePath);
                 modMgr.write(modulePath, metadata, new InputStreamHandle(new ClassPathResource(modulePath).getInputStream()).withFormat(format));
             } catch (IOException e) {
                 throw new RuntimeException("Unable to write endpoint at path: " + modulePath + "; cause: " + e.getMessage(), e);
