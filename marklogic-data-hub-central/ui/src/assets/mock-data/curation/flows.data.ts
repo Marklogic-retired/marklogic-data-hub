@@ -496,7 +496,8 @@ const jobRespSuccess = {
       "stepName": "Ingestion1",
       "stepDefinitionName": "default-ingestion",
       "stepDefinitionType": "ingestion",
-      "targetEntityType": "http://example.org/Customer-0.0.1/Customer"
+      "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+      "targetDatabase" : "staging"
   }
     },
     "jobStatus": "finished"

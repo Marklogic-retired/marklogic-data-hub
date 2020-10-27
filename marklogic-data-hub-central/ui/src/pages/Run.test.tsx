@@ -262,7 +262,14 @@ describe('Verify step running', () => {
         else{
             expect(getByText(' ')).toBeInTheDocument();
         }
-        fireEvent.click(getByText('Close'));
+
+        let exploreButton = await(waitForElement(() => getByText("Explore Loaded Data")));
+        fireEvent.click(exploreButton);
+    
+        await wait(() => {
+          expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
+            "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
+        });
 
         //Run mapping step
         runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
@@ -350,7 +357,14 @@ describe('Verify step running', () => {
         else{
             expect(getByText(' ')).toBeInTheDocument();
         }
-        fireEvent.click(getByText('Close'));
+
+        let exploreButton = await(waitForElement(() => getByText("Explore Loaded Data")));
+        fireEvent.click(exploreButton);
+    
+        await wait(() => {
+          expect(mockHistoryPush).toHaveBeenCalledWith({"pathname": "/tiles/explore",
+            "state": {"targetDatabase": "staging", "jobId": "e4590649-8c4b-419c-b6a1-473069186592"}});
+        });
 
         //Run mapping step
         runButton = await getByLabelText(`runStep-${steps[1].stepName}`);
@@ -367,6 +381,7 @@ describe('Verify step running', () => {
         else{
             expect(getByText(' ')).toBeInTheDocument();
         }
+        
         fireEvent.click(getByText('Close'));
 
         //Run match step
