@@ -180,9 +180,9 @@ const Browse: React.FC<Props> = ({ location }) => {
       setCardView(false);
       setEntityClearQuery(location.state['entity']);
     }
-    else if (location.state && location.state.hasOwnProperty('targetDatabase')) {
+    else if (location.state && location.state.hasOwnProperty('targetDatabase') && location.state.hasOwnProperty('jobId')) {
       setCardView(true);
-      setLatestDatabase(location.state['targetDatabase']);
+      setLatestDatabase(location.state['targetDatabase'], location.state['jobId']);
     }
   }, [searchOptions.zeroState]);
 

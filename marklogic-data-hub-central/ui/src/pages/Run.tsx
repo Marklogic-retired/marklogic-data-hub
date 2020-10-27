@@ -195,7 +195,7 @@ const Run = (props) => {
       if (stepType === 'ingestion') {
             history.push({
               pathname: "/tiles/explore",
-              state: {targetDatabase: targetDatabase}
+              state: {targetDatabase: targetDatabase, jobId: jobId}
             });
           } else if (stepType === 'mapping') {
             history.push(
