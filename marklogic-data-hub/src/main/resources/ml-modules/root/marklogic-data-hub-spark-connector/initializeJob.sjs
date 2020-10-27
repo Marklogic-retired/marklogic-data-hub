@@ -22,10 +22,21 @@ declareUpdate();
 var sparkMetadata = sparkMetadata != null ? fn.head(xdmp.fromJSON(sparkMetadata)) : {};
 
 const config = require("/com.marklogic.hub/config.sjs");
-const Jobs = require("/data-hub/5/impl/jobs.sjs");
-const jobs = new Jobs.Jobs(config);
 
 const id = sem.uuidString();
+
+//Adding this function to make it compatible with Datahub 5.2.x as this function doesn't exist <5.3.X.
+function buildJobPermissions(config) {
+  let permissionsString = config.JOBPERMISSIONS;
+  let permissions = xdmp.defaultPermissions().concat([xdmp.permission(config.FLOWDEVELOPERROLE, 'update'), xdmp.permission(config.FLOWOPERATORROLE, 'update')]);
+  if (permissionsString != null && permissionsString.indexOf("mlJobPermissions") < 0) {
+    let tokens = permissionsString.split(",");
+    for (let i = 0; i < tokens.length; i += 2) {
+      permissions.push(xdmp.permission(tokens[i], tokens[i + 1]));
+    }
+  }
+  return permissions;
+}
 
 xdmp.documentInsert(
   "/jobs/" + id + ".json",
@@ -38,7 +49,7 @@ xdmp.documentInsert(
       sparkMetadata
     }
   },
-  jobs.buildJobPermissions(config),
+  buildJobPermissions(config),
   ['Jobs', 'Job']
 );
 
