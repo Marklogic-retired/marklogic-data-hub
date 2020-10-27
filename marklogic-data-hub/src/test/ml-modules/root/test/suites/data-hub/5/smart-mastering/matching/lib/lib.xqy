@@ -10,6 +10,7 @@ declare variable $URI5 := "/source/2/doc2.json";
 declare variable $URI6 := "/source/3/doc3.json";
 declare variable $URI7 := "/source/3/doc4.xml";
 declare variable $URI8 := "/source/3/no-match.xml";
+declare variable $URI9 := "/source/4/null-node.json";
 
 declare variable $NAMESPACED-URI1 := "/source/1/namespaced-doc1.xml";
 declare variable $NAMESPACED-URI2 := "/source/2/namespaced-doc2.xml";
@@ -29,7 +30,8 @@ declare variable $TEST-DATA :=
     map:entry($URI4, "doc1.json"),
     map:entry($URI5, "doc2.json"),
     map:entry($URI6, "doc3.json"),
-    map:entry($URI7, "no-match.xml")
+    map:entry($URI7, "no-match.xml"),
+    map:entry($URI9, "null-node.json")
   ));
 
 declare variable $MATCH-OPTIONS-NAME := "match-test";
