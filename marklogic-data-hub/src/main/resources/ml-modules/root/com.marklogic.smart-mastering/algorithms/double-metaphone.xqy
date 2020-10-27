@@ -65,6 +65,7 @@ declare
     let $weight := $expand/(weight|@weight)
     let $expanded-values :=
       for $value in $expand-values
+      where $value castable as xs:string
       return
         spell:suggest($dictionary, $value, $spell-options)
     let $_ := xdmp:trace($const:TRACE-MATCH-RESULTS, "doubleMetaphone expanded values: " || xdmp:describe($expanded-values, (),()))
