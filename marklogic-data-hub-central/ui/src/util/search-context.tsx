@@ -80,7 +80,7 @@ interface ISearchContextInterface {
   savedQueries: any;
   setSavedQueries: (queries: any) => void;
   setDatabase: (option: string) => void;
-  setLatestDatabase: (option: string) => void;
+  setLatestDatabase: (option: string, jobId: string) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -270,11 +270,13 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   };
 
-  const setLatestDatabase = (targetDatabase: string) => {
+  const setLatestDatabase = (targetDatabase: string, jobId: string) => {
+    let facets = {};
+    facets = { createdByJob: { dataType: "string", stringValues: [jobId] } };
     setSearchOptions({
       ...searchOptions,
       start: 1,
-      selectedFacets: {},
+      selectedFacets: facets,
       entityTypeIds: [],
       nextEntityType: 'All Data',
       pageNumber: 1,
