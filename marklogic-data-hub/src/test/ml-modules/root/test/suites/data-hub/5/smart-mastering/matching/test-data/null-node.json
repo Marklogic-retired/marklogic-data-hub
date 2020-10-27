@@ -1,0 +1,26 @@
+{
+  "envelope": {
+    "headers": {
+      "id": [
+      ],
+      "sources": [
+      ]
+    },
+    "triples": [],
+    "instance": {
+      "MDM": {
+        "Person": {
+          "PersonType": {
+            "PersonName": {
+              "PersonNameType": {
+                "PersonSurName": null,
+                "PersonGivenName": null
+              }
+            }
+          }
+        }
+      }
+    },
+    "attachments": []
+  }
+}
