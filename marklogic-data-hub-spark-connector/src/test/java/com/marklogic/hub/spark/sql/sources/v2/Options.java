@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public class Options {
 
-    private Integer batchSize;
     private String uriPrefix;
     private String ingestApiPath;
     private String collections;
@@ -38,9 +37,6 @@ public class Options {
             params.putAll(hubProperties);
         }
 
-        if (batchSize != null) {
-            params.put("batchsize", batchSize + "");
-        }
         if (uriPrefix != null) {
             params.put("uriprefix", uriPrefix);
         }
@@ -77,11 +73,6 @@ public class Options {
         }
 
         return new DataSourceOptions(params);
-    }
-
-    public Options withBatchSize(Integer batchSize) {
-        this.batchSize = batchSize;
-        return this;
     }
 
     public Options withUriPrefix(String uriPrefix) {
@@ -123,5 +114,4 @@ public class Options {
         this.ingestEndpointState = ingestEndpointState;
         return this;
     }
-
 }

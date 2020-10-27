@@ -1,27 +1,34 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.FileHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.impl.HubClientImpl;
+import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriter;
 import com.marklogic.hub.test.AbstractHubClientTest;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.expressions.GenericInternalRow;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
-import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
+import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.apache.spark.unsafe.types.UTF8String;
 import org.junit.jupiter.api.BeforeEach;
+import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,7 +42,12 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         new StructField("fruitName", DataTypes.StringType, true, Metadata.empty()),
         new StructField("fruitColor", DataTypes.StringType, true, Metadata.empty()),
     });
-    protected Optional<DataSourceWriter> dataSourceWriter;
+
+    protected final static String CUSTOM_INGESTION_API_PATH = "/custom-ingestion-endpoint/endpoint.api";
+    protected final static String CUSTOM_INGESTION_ENDPOINT_PATH = "/custom-ingestion-endpoint/endpoint.sjs";
+
+    protected HubDataWriter hubDataWriter;
+    protected HubDataSourceWriter dataSourceWriter;
     private HubClientConfig hubClientConfig;
     private HubClient hubClient;
     private Properties testProperties;
@@ -99,11 +111,10 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
     }
 
     /**
-     * @return a default set of fruit-specific options to simplify writing tests. Uses a batch size of 1 so that there's
-     * no need for tests to call commit by default.
+     * @return a default set of fruit-specific options to simplify writing tests
      */
     protected Options newFruitOptions() {
-        return new Options(getHubPropertiesAsMap()).withBatchSize(1).withCollections("fruits");
+        return new Options(getHubPropertiesAsMap()).withCollections("fruits");
     }
 
     /**
@@ -113,6 +124,12 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         return getHubClient().getStagingClient().newServerEval()
             .javascript("cts.uris(null, null, cts.collectionQuery('fruits'))")
             .evalAs(String.class).split("\n");
+    }
+
+    protected int getFruitCount() {
+        return Integer.parseInt(getHubClient().getStagingClient().newServerEval()
+            .javascript("cts.estimate(cts.collectionQuery('fruits'))")
+            .evalAs(String.class));
     }
 
     /**
@@ -128,10 +145,9 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
      * Convenience method for building a DataWriter based on our Options convenience class.
      *
      * @param options
-     * @return
      */
-    protected DataWriter<InternalRow> buildDataWriter(Options options) {
-        return buildDataWriter(options.toDataSourceOptions());
+    protected void initializeDataWriter(Options options) {
+        initializeDataWriter(options.toDataSourceOptions());
     }
 
     /**
@@ -140,23 +156,23 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
      * call the factory/writer methods ourselves.
      *
      * @param dataSourceOptions
-     * @return
      */
-    protected DataWriter<InternalRow> buildDataWriter(DataSourceOptions dataSourceOptions) {
+    protected void initializeDataWriter(DataSourceOptions dataSourceOptions) {
         initializeDataSourceWriter(dataSourceOptions);
 
-        DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.get().createWriterFactory();
+        DataWriterFactory<InternalRow> dataWriterFactory = dataSourceWriter.createWriterFactory();
+
         final int partitionIdDoesntMatter = 0;
         final long taskId = 2;
         final int epochIdDoesntMatter = 0;
-        return dataWriterFactory.createDataWriter(partitionIdDoesntMatter, taskId, epochIdDoesntMatter);
+        this.hubDataWriter = (HubDataWriter)dataWriterFactory.createDataWriter(partitionIdDoesntMatter, taskId, epochIdDoesntMatter);
     }
 
     protected void initializeDataSourceWriter(DataSourceOptions dataSourceOptions) {
         DefaultSource dataSource = new DefaultSource();
         final String writeUUID = "doesntMatter";
         final SaveMode saveModeDoesntMatter = SaveMode.Overwrite;
-        this.dataSourceWriter = dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions);
+        this.dataSourceWriter = (HubDataSourceWriter)dataSource.createWriter(writeUUID, FRUIT_SCHEMA, saveModeDoesntMatter, dataSourceOptions).get();
     }
 
     /**
@@ -169,5 +185,57 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
             rowValues[i] = UTF8String.fromString(values[i]);
         }
         return new GenericInternalRow(rowValues);
+    }
+
+    protected WriterCommitMessage writeRows(GenericInternalRow... rows) {
+        Arrays.stream(rows).forEach(row -> hubDataWriter.write(row));
+        return hubDataWriter.commit();
+    }
+
+    protected WriterCommitMessage writeRowsAndCommitWithSourceWriter(GenericInternalRow... rows) {
+        WriterCommitMessage message = writeRows(rows);
+        dataSourceWriter.commit(new WriterCommitMessage[]{message});
+        return message;
+    }
+
+    /**
+     * Tests that need a custom ingestion endpoint can make use of this.
+     */
+    protected void installCustomIngestionEndpoint() {
+        GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
+            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
+
+        try {
+            mgr.write(CUSTOM_INGESTION_API_PATH, metadata,
+                new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.api").getFile()).withFormat(Format.JSON));
+            mgr.write(CUSTOM_INGESTION_ENDPOINT_PATH, metadata,
+                new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.sjs").getFile()).withFormat(Format.TEXT));
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    /**
+     * Use then you know there's only a single job document.
+     *
+     * @return
+     */
+    protected JsonNode getJobDocument() {
+        return getHubClient().getJobsClient().newServerEval()
+            .javascript("fn.head(cts.search(cts.collectionQuery('Job')))")
+            .evalAs(JsonNode.class);
+    }
+
+    /**
+     * Convenience method for getting the status when you know there's only one job document.
+     *
+     * @return
+     */
+    protected String getJobDocumentStatus() {
+        JsonNode job = getJobDocument();
+        assertTrue(job.has("job"));
+        assertTrue(job.get("job").has("jobStatus"));
+        return job.get("job").get("jobStatus").asText();
     }
 }
