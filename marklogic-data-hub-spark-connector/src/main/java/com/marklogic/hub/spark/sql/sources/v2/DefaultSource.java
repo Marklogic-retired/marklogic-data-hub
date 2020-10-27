@@ -88,6 +88,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private final JsonNode endpointParams;
     private final String jobId;
     private final ObjectMapper objectMapper;
+    private CustomJobApiDefinitions customJobApiDefinitions;
 
     public HubDataSourceWriter(Map<String, String> options, StructType schema, Boolean streaming) {
         this.options = options;
@@ -100,6 +101,14 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         verifyUserIsAuthorized();
 
         this.endpointParams = determineIngestionEndpointParams(options);
+
+        this.customJobApiDefinitions = readCustomJobApiDefinitions(options);
+        if (customJobApiDefinitions.getInitializeJobApiDefinition() == null) {
+            loadInitializeJobModulesIfNotPresent();
+        }
+        if (customJobApiDefinitions.getFinalizeJobApiDefinition() == null) {
+            loadFinalizeJobModulesIfNotPresent();
+        }
 
         this.jobId = initializeJob(schema);
         addJobIdToEndpointConstants();
@@ -235,8 +244,6 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private String initializeJob(StructType schema) {
-        loadJobEndpoints();
-
         ObjectNode sparkMetadata = objectMapper.createObjectNode();
         try {
             sparkMetadata.set("schema", objectMapper.readTree(schema.json()));
@@ -244,21 +251,44 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             logger.warn("Unable to read Spark schema as a JSON object; cause: " + e.getMessage() + "; the schema will not " +
                 "be persisted on the job document");
         }
-        String jobId = SparkService.on(hubClient.getJobsClient()).initializeJob(sparkMetadata);
+
+        String jobId = SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getInitializeJobApiDefinition()).initializeJob(sparkMetadata);
         logger.info("Initialized job; ID: " + jobId);
         return jobId;
     }
 
-    private void loadJobEndpoints() {
-        String initializeJobApiPath = "/marklogic-data-hub-spark-connector/initializeJob.api";
-        String initializaJobScriptPath = "/marklogic-data-hub-spark-connector/initializeJob.sjs";
-        loadModuleIfNotPresent(initializaJobScriptPath, Format.TEXT);
-        loadModuleIfNotPresent(initializeJobApiPath, Format.JSON);
+    private CustomJobApiDefinitions readCustomJobApiDefinitions(Map<String, String> options) {
+        InputStreamHandle initializeDefinition = null;
+        String key = "initializejobapipath";
+        if (options.containsKey(key)) {
+            try {
+                initializeDefinition = hubClient.getModulesClient().newDocumentManager().read(options.get(key), new InputStreamHandle());
+            } catch (Exception ex) {
+                throw new RuntimeException("Unable to read custom API module for initializing a job: " + options.get(key) + "; cause: " + ex.getMessage(), ex);
+            }
+        }
 
-        String finalizeJobApiPath = "/marklogic-data-hub-spark-connector/finalizeJob.api";
-        String finalizeJobScriptPath = "/marklogic-data-hub-spark-connector/finalizeJob.sjs";
-        loadModuleIfNotPresent(finalizeJobScriptPath, Format.TEXT);
-        loadModuleIfNotPresent(finalizeJobApiPath, Format.JSON);
+        InputStreamHandle finalizeDefinition = null;
+        key = "finalizejobapipath";
+        if (options.containsKey(key)) {
+            try {
+                finalizeDefinition = hubClient.getModulesClient().newDocumentManager().read(options.get(key), new InputStreamHandle());
+            } catch (Exception ex) {
+                throw new RuntimeException("Unable to read custom API module for finalizing a job: " + options.get(key) + "; cause: " + ex.getMessage(), ex);
+            }
+        }
+
+        return new CustomJobApiDefinitions(initializeDefinition, finalizeDefinition);
+    }
+
+    private void loadInitializeJobModulesIfNotPresent() {
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeJob.sjs", Format.TEXT);
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeJob.api", Format.JSON);
+    }
+
+    private void loadFinalizeJobModulesIfNotPresent() {
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeJob.sjs", Format.TEXT);
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeJob.api", Format.JSON);
     }
 
     private void addJobIdToEndpointConstants() {
@@ -271,13 +301,30 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private void finalizeJob(String status) {
-
-
         logger.info(format("Finalizing job; ID: %s; status: %s", jobId, status));
-        SparkService.on(hubClient.getJobsClient()).finalizeJob(jobId, status);
+        SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getFinalizeJobApiDefinition()).finalizeJob(jobId, status);
     }
 
     private boolean endpointExists(String scriptPath) {
         return !(hubClient.getModulesClient().newJSONDocumentManager().exists(scriptPath) == null);
+    }
+}
+
+class CustomJobApiDefinitions {
+
+    private InputStreamHandle initializeJobApiDefinition;
+    private InputStreamHandle finalizeJobApiDefinition;
+
+    public CustomJobApiDefinitions(InputStreamHandle initializeJobApiDefinition, InputStreamHandle finalizeJobApiDefinition) {
+        this.initializeJobApiDefinition = initializeJobApiDefinition;
+        this.finalizeJobApiDefinition = finalizeJobApiDefinition;
+    }
+
+    public InputStreamHandle getInitializeJobApiDefinition() {
+        return initializeJobApiDefinition;
+    }
+
+    public InputStreamHandle getFinalizeJobApiDefinition() {
+        return finalizeJobApiDefinition;
     }
 }
