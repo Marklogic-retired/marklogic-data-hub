@@ -191,7 +191,7 @@ const Flows: React.FC<Props> = (props) => {
         setStepDialogVisible(false);
         setAddStepDialogVisible(false);
     };
-    }
+    
     // Setup for file upload
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         noClick: true,
