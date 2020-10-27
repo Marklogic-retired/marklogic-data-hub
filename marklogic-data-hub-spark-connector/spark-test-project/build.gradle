@@ -34,3 +34,14 @@ task ingestDatabook(type: JavaExec) {
         password
     ]
 }
+
+task ingestDatabookViaStreamTest(type: JavaExec) {
+    description = "Run the test program to ingest the databook.csv contents via our Stream connector"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "test.StreamTest"
+    args = [
+        host,
+        username,
+        password
+    ]
+}
