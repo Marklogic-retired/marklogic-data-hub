@@ -32,26 +32,23 @@ import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.apache.spark.sql.types.StructType;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class HubDataWriter extends LoggingObject implements DataWriter<InternalRow> {
 
-    private List<String> records;
-    private InputCaller.BulkInputCaller<String> loader;
+    private InputCaller.BulkInputCaller<String> bulkInputCaller;
     private StructType schema;
-    private int batchSize;
+
+    private Throwable writeException;
 
     /**
      * @param hubClient
      * @param schema
-     * @param options   contains all the options provided by Spark, which will include all connector-specific properties
+     * @param options        contains all the options provided by Spark, which will include all connector-specific properties
+     * @param endpointParams
      */
     public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> options, JsonNode endpointParams) {
-        this.records = new ArrayList<>();
         this.schema = schema;
-        this.batchSize = options.containsKey("batchsize") ? Integer.parseInt(options.get("batchsize")) : 100;
 
         final String apiPath = endpointParams.get("apiPath").asText();
         logger.info("Will write to endpoint defined by: " + apiPath);
@@ -68,38 +65,48 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         if (endpointParams.hasNonNull("endpointConstants")) {
             callContext.withEndpointConstants(new JacksonHandle(endpointParams.get("endpointConstants")));
         }
-        this.loader = inputCaller.bulkCaller(callContext);
+        this.bulkInputCaller = inputCaller.bulkCaller(callContext);
+        configureErrorListenerOnBulkInputCaller();
     }
 
     @Override
     public void write(InternalRow record) {
-        records.add(convertRowToJSONString(record));
-        if (records.size() == batchSize) {
-            logger.debug("Writing records as batch size of " + batchSize + " has been reached");
-            writeRecords();
-        }
+        bulkInputCaller.accept(convertRowToJSONString(record));
     }
 
     @Override
     public WriterCommitMessage commit() {
-        if (!this.records.isEmpty()) {
-            logger.debug("Writing records on commit");
-            writeRecords();
+        logger.info("Committing; awaiting completion of all writes");
+        bulkInputCaller.awaitCompletion();
+        if (writeException != null) {
+            logger.info("At least one write failed");
+            return new AtLeastOneWriteFailedMessage();
         }
         return null;
     }
 
+    /**
+     * The most likely reason for this to be called is due to an uncaught exception from the write() method.
+     */
     @Override
     public void abort() {
-        logger.info("Abort");
+        logger.info("Abort called, so interrupting BulkInputCaller");
+        try {
+            bulkInputCaller.interrupt();
+            logger.info("Finished interrupting BulkInputCaller");
+        } catch (Exception ex) {
+            logger.warn("Unexpected error while interrupting BulkInputCaller: " + ex.getMessage(), ex);
+        }
     }
 
-    private void writeRecords() {
-        int recordCount = records.size();
-        records.forEach(loader::accept);
-        loader.awaitCompletion();
-        logger.debug("Wrote records, count: " + recordCount);
-        this.records.clear();
+    private void configureErrorListenerOnBulkInputCaller() {
+        this.bulkInputCaller.setErrorListener((retryCount, throwable, callContext1, input) -> {
+            if (this.writeException == null) {
+                this.writeException = throwable;
+            }
+            logger.error("Skipping failed write; cause: " + throwable.getMessage());
+            return IOEndpoint.BulkIOEndpointCaller.ErrorDisposition.SKIP_CALL;
+        });
     }
 
     private String convertRowToJSONString(InternalRow record) {

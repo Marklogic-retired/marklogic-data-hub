@@ -3,18 +3,9 @@ package com.marklogic.hub.spark.sql.sources.v2;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.FileHandle;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.JacksonHandle;
-import org.apache.spark.sql.catalyst.InternalRow;
-import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,15 +14,8 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
     private JsonNode writtenDocument;
 
     @BeforeEach
-    void installCustomEndpoint() throws IOException {
-        GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
-
-        mgr.write("/custom-ingestion-endpoint/endpoint.api", metadata,
-            new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.api").getFile()).withFormat(Format.JSON));
-        mgr.write("/custom-ingestion-endpoint/endpoint.sjs", metadata,
-            new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.sjs").getFile()).withFormat(Format.TEXT));
+    void beforeEach() {
+        installCustomIngestionEndpoint();
     }
 
     @Test
@@ -73,14 +57,13 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
     }
 
     private void writeRowUsingCustomEndpoint(ObjectNode customEndpointConstants, ObjectNode customEndpointState) {
-        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap())
-            .withIngestApiPath("/custom-ingestion-endpoint/endpoint.api")
+        initializeDataWriter(new Options(getHubPropertiesAsMap())
+            .withIngestApiPath(CUSTOM_INGESTION_API_PATH)
             .withIngestEndpointConstants(customEndpointConstants)
             .withIngestEndpointState(customEndpointState));
 
         try {
-            dataWriter.write(buildRow("apple", "red"));
-            dataWriter.commit();
+            writeRows(buildRow("apple", "red"));
 
         } catch (Exception ex) {
             throw new RuntimeException(ex);
