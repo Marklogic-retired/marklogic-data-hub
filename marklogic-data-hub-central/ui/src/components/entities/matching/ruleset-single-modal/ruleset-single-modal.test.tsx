@@ -136,4 +136,32 @@ describe('Matching Ruleset Single Modal component', () => {
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
   });
+
+  it('can select Custom ruleset type and click save', () => {
+    const toggleModalMock = jest.fn();
+
+    const { queryByText, getByText, getByLabelText } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Select property'));
+    userEvent.click(screen.getByText('nicknames'));
+
+    userEvent.click(screen.getByText('Select match type'));
+    userEvent.click(screen.getByText('Custom'));
+    userEvent.type(getByLabelText('uri-input'), '/custom-modules/matching/nameMatch.xqy');
+    userEvent.type(getByLabelText('function-input'), 'nameMatch');
+    userEvent.type(getByLabelText('namespace-input'), 'http://example.org/custom-modules/matching/nameMatch');
+
+
+    userEvent.click(getByText('Save'));
+    expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+  });
 });
