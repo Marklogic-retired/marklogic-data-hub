@@ -2,21 +2,16 @@ package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import org.apache.avro.data.Json;
-import org.apache.spark.sql.catalyst.InternalRow;
-import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteJobsDataTest extends AbstractSparkConnectorTest {
 
     @Test
-    void ingestDocsWithJobDoc() throws IOException {
-        DataWriter<InternalRow> dataWriter = buildDataWriter(newFruitOptions());
-        dataWriter.write(buildRow("pineapple", "green"));
+    void ingestDocsWithJobDoc() {
+        initializeDataWriter(newFruitOptions());
+        writeRows(buildRow("pineapple", "green"));
 
         DocumentMetadataHandle metadata = getFirstFruitMetadata();
         String jobId = metadata.getMetadataValues().get("datahubCreatedByJob");
@@ -45,7 +40,7 @@ public class WriteJobsDataTest extends AbstractSparkConnectorTest {
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("flow-operator-role").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("data-hub-job-internal").iterator().next());
 
-        dataSourceWriter.get().commit(null);
+        dataSourceWriter.commit(null);
 
         jobDoc = getJobDoc(jobUri);
         assertEquals("finished", jobDoc.get("job").get("jobStatus").asText());

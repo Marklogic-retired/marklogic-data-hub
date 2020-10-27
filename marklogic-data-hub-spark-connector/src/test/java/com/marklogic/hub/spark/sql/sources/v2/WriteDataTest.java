@@ -1,17 +1,14 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import org.apache.spark.sql.catalyst.InternalRow;
+import com.marklogic.hub.spark.sql.sources.v2.writer.AtLeastOneWriteFailedMessage;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
-import org.apache.spark.sql.sources.v2.writer.DataWriter;
-import org.junit.jupiter.api.Disabled;
+import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,31 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WriteDataTest extends AbstractSparkConnectorTest {
 
     @Test
-    void ingestThreeFruitsWithBatchSizeOfTwo() throws IOException {
-        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap()).withBatchSize(2).withUriPrefix("/testFruit"));
-
-        verifyFruitCount(0, "Shouldn't have any fruits ingested yet");
-
-        dataWriter.write(buildRow("apple", "red"));
-        verifyFruitCount(0, "Still shouldn't have any fruits ingested yet because batchSize is 2");
-
-        dataWriter.write(buildRow("banana", "yellow"));
-        verifyFruitCount(2, "Since batchSize is 2 and 2 records have been written, they should have been ingested into ML");
-
-        dataWriter.write(buildRow("canteloupe", "melon"));
-        verifyFruitCount(2, "Should still be at 2 since batchSize is 2 and only 1 has been written since last ingest");
-
-        dataWriter.commit();
-        verifyFruitCount(3, "The commit call should result in the 3rd fruit being ingested");
-    }
-
-    @Test
     public void ingestWithoutCustomApiWithCustomEndpointConstants() {
         ObjectNode customEndpointConstants = objectMapper.createObjectNode();
         customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
@@ -53,7 +31,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     @Test
     public void ingestWithIncorrectApi() {
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("/incorrect.api")),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("/incorrect.api")),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         System.out.println(ex.getMessage());
@@ -66,7 +44,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
@@ -78,7 +56,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointState.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> buildDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointState(customEndpointState)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointState(customEndpointState)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
@@ -93,7 +71,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         node.set("endpointState", null);
         params.put("ingestendpointparams", node.toString());
 
-        buildDataWriter(new DataSourceOptions(params));
+        initializeDataWriter(new DataSourceOptions(params));
         logger.info("No exception should have occurred because a null endpointConstant doesn't mean that Ernie tried to " +
             "set an endpointConstant without an apiPath");
     }
@@ -107,7 +85,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         node.set("endpointState", null);
         params.put("ingestendpointparams", node.toString());
 
-        buildDataWriter(new DataSourceOptions(params));
+        initializeDataWriter(new DataSourceOptions(params));
         logger.info("No exception should have occurred because a null endpointState doesn't mean that Ernie tried to " +
             "set an endpointState without an apiPath");
     }
@@ -120,21 +98,23 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         final String invalidJson = "{\"endpointConstants\":{}";
         params.put("ingestendpointparams", invalidJson);
 
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> buildDataWriter(new DataSourceOptions(params)));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> initializeDataWriter(new DataSourceOptions(params)));
         assertTrue(ex.getMessage().contains("Unable to parse ingestendpointparams"), "Unexpected error message: " + ex.getMessage());
     }
 
     @Test
-    @Disabled("Error handling needs to be reworked based on Java Client 5.3")
     void invalidPermissionsString() {
-        DataWriter<InternalRow> writer = buildDataWriter(newFruitOptions().withPermissions("rest-reader,read,rest-writer"));
-        RuntimeException ex = assertThrows(RuntimeException.class, () -> writer.write(buildRow("apple", "red")));
-        assertTrue(ex.getCause() instanceof FailedRequestException, "The Bulk Java client wraps the actual exception in a RuntimeException");
-        assertTrue(ex.getCause().getMessage().contains("Unable to parse permissions: rest-reader,read,rest-writer"), "Unexpected error message: " + ex.getCause().getMessage());
+        initializeDataWriter(newFruitOptions().withPermissions("rest-reader,read,rest-writer"));
+        WriterCommitMessage message = writeRows(buildRow("apple", "red"), buildRow("apple2", "also red"));
+        assertTrue(message instanceof AtLeastOneWriteFailedMessage);
+        assertEquals(0, getFruitCount(), "No records should have been written since the permissions are invalid; " +
+            "rest-writer is missing a capability. TODO We may want to enhance this so that this failure occurs " +
+            "before the job document is written, though we'd likely need to verify that each role name is correct " +
+            "as well, not just that the string is formatted correctly.");
     }
 
     @Test
-    public void testEndpointsAreLoaded() throws Exception {
+    public void testEndpointsAreLoaded() {
         runAsAdmin().getModulesClient().newTextDocumentManager().delete(
             "/marklogic-data-hub-spark-connector/bulkIngester.api",
             "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
@@ -145,9 +125,8 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
 
         runAsDataHubOperator();
-        DataWriter<InternalRow> dataWriter = buildDataWriter(new Options(getHubPropertiesAsMap()).withBatchSize(3).withUriPrefix("/testFruit"));
-        dataWriter.write(buildRow("apple", "red"));
-        dataWriter.commit();
+        initializeDataWriter(new Options(getHubPropertiesAsMap()).withUriPrefix("/testFruit"));
+        writeRows(buildRow("apple", "red"));
 
         verifyFruitCount(1, "Verifying the data was written");
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.api");
@@ -155,7 +134,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.api");
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.sjs");
 
-        dataSourceWriter.get().commit(null);
+        dataSourceWriter.commit(null);
 
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.api");
         verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.sjs");
