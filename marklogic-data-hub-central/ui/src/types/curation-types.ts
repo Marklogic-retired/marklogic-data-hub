@@ -53,7 +53,11 @@ export interface MatchRuleset {
 export interface MatchRule {
   entityPropertyPath: string,
   matchType: string,
-  options?: any
+  options?: any,
+  // custom options
+  algorithmModuleNamespace?: string,
+  algorithmModulePath?: string,
+  algorithmModuleFunction?: string,
 }
 
 export interface Threshold {
