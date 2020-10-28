@@ -1,0 +1,8 @@
+{
+  "name": "anotherSimpleCustomerFlow",
+  "steps": {
+    "1": {
+      "stepId": "simpleCustomerMapping-mapping"
+    }
+  }
+}

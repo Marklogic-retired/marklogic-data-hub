@@ -88,6 +88,14 @@
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "unsignedLong",
+      "namespace-uri": "",
+      "localname": "processedItemHashes",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ],
   "range-path-index": [

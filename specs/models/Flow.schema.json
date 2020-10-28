@@ -125,6 +125,10 @@
                       "type": "boolean",
                       "description": "If true, the query is applied to the documents that were created or modified in the same job that executes the step"
                     },
+                    "excludeAlreadyProcessed": {
+                      "type": "boolean",
+                      "description": "Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already"
+                    },
                     "provenanceGranularityLevel": {
                       "type": "string",
                       "description": "The granularity of the provenance tracking information: coarse (default) to store document-level provenance information only, fine to store document-level and property-level provenance information, or off to disable provenance tracking in future job runs. Applies only to mapping, matching, merging, mastering, and custom steps."

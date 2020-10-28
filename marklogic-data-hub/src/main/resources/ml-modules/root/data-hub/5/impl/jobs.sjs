@@ -242,14 +242,29 @@ class Jobs {
     }, this.config.JOBDATABASE);
   }
 
-  createBatch(jobId, step, stepNumber) {
+  /**
+   * Create a Batch document in the jobs database. A Batch is intended to capture the set of items processed by
+   * a given step.
+   *
+   * @param job the Job associated with this Batch. This is expected to be a JSON object with jobId as a key, rather
+   * than the Job document that is persisted, which has "job" as its only key.
+   * @param flowStep the step as defined in the flow being executed
+   * @param stepNumber the number of the step as defined in the flow being executed
+   * @returns {any}
+   */
+  createBatch(job, flowStep, stepNumber) {
     let requestTimestamp = xdmp.requestTimestamp();
     let reqTimeStamp = (requestTimestamp) ? xdmp.timestampToWallclock(requestTimestamp) : fn.currentDateTime();
+
+    const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
+
     let batch = {
       batch: {
-        jobId: jobId,
+        jobId: job.jobId,
         batchId: this.hubutils.uuid(),
-        step: step,
+        flowName: job.flow,
+        stepId : stepId,
+        step: flowStep,
         stepNumber: stepNumber,
         batchStatus: "started",
         timeStarted:  fn.currentDateTime(),
@@ -263,7 +278,11 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument("/jobs/batches/" + batch.batch.batchId + ".json", batch , this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE);
+    this.hubutils.writeDocument(
+      "/jobs/batches/" + batch.batch.batchId + ".json", batch,
+      this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE
+    );
+
     return batch;
   }
 
@@ -382,6 +401,8 @@ module.exports.updateBatch = module.amp(
     }
     docObj.batch.batchStatus = batchStatus;
     docObj.batch.uris = items;
+    docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(item));
+
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
     }
