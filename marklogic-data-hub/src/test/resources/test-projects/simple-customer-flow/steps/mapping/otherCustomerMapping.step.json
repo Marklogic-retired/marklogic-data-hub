@@ -1,0 +1,24 @@
+{
+  "name": "otherCustomerMapping",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "MAPPING",
+  "sourceQuery": "cts.collectionQuery('customer-input')",
+  "sourceDatabase": "data-hub-STAGING",
+  "targetDatabase": "data-hub-FINAL",
+  "collections": [
+    "Customer",
+    "other-customer-mapping"
+  ],
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "targetFormat": "json",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    }
+  },
+  "provenanceGranularityLevel": "off",
+  "namespaces": {},
+  "selectedSource": "query",
+  "stepId": "otherCustomerMapping-mapping"
+}

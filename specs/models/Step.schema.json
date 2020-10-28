@@ -122,6 +122,10 @@
       "type": "string",
       "description": "Defines the items to be processed by the step; must be a cts.query or cts.uris statement if sourceQueryIsScript is false"
     },
+    "excludeAlreadyProcessed": {
+      "type": "boolean",
+      "description": "Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already"
+    },
     "targetEntityType": {
       "type": "string",
       "description": "The identifier of an Entity Type. (IRI, with title as fallback)"
