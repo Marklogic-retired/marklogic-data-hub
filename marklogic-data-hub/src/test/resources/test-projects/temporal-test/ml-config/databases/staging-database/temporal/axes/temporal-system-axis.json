@@ -1,0 +1,13 @@
+{
+    "axis-name": "system",
+    "axis-start": {
+        "field-reference": {
+            "field-name": "systemStart"
+        }
+    },
+    "axis-end": {
+        "field-reference": {
+            "field-name": "systemEnd"
+        }
+    }
+}

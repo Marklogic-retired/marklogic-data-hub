@@ -30,7 +30,7 @@ public class DeployDatabaseFieldCommandTest extends HubTestBase {
     }
 
     private void givenTheFinalDatabaseHasACustomFieldAndIndexes() {
-        ObjectNode db = getFinalDatabaseProperties();
+        ObjectNode db = getDatabaseProperties("data-hub-FINAL");
 
         ObjectNode newNode = ObjectMapperFactory.getObjectMapper().createObjectNode();
         newNode.put("database-name", "data-hub-FINAL");

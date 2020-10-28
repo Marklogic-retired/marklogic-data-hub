@@ -55,6 +55,7 @@ import com.marklogic.hub.util.ComboListener;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.admin.AdminConfig;
+import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -66,6 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 import org.w3c.dom.Document;
@@ -462,7 +464,7 @@ public class HubTestBase {
     protected HubConfigImpl runAsAdmin() {
         return runAsUser("test-admin-for-data-hub-tests", "password");
     }
-    
+
     protected HubConfigImpl runAsUser(String mlUsername, String mlPassword) {
         adminHubConfig.setMlUsername(mlUsername);
         adminHubConfig.setMlPassword(mlPassword);
@@ -1294,5 +1296,73 @@ public class HubTestBase {
         assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "json-coll"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "json-map"));
         assertEquals(1, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+    }
+    protected ObjectNode getDatabaseProperties(String database) {
+        DatabaseManager mgr = new DatabaseManager(adminHubConfig.getManageClient());
+        try {
+            return (ObjectNode) ObjectMapperFactory.getObjectMapper().readTree(mgr.getPropertiesAsJson(database));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Intended to make it easy to specify a set of project files to load for a particular test.
+     *
+     * @param folderInClasspath
+     */
+    protected void installProjectInFolder(String folderInClasspath) {
+        long start = System.currentTimeMillis();
+        HubProject hubProject = runAsDataHubDeveloper().getHubProject();
+        try {
+            File testProjectDir = new ClassPathResource(folderInClasspath).getFile();
+
+            File dataDir = new File(testProjectDir, "data");
+            if (dataDir.exists()) {
+                FileUtils.copyDirectory(dataDir, new File(hubProject.getProjectDir().toFile(), "data"));
+            }
+
+            File entitiesDir = new File(testProjectDir, "entities");
+            if (entitiesDir.exists()) {
+                FileUtils.copyDirectory(entitiesDir, hubProject.getHubEntitiesDir().toFile());
+            }
+
+            File flowsDir = new File(testProjectDir, "flows");
+            if (flowsDir.exists()) {
+                FileUtils.copyDirectory(flowsDir, hubProject.getFlowsDir().toFile());
+            }
+
+            File inputDir = new File(testProjectDir, "input");
+            if (inputDir.exists()) {
+                FileUtils.copyDirectory(inputDir, new File(hubProject.getProjectDir().toFile(), "input"));
+            }
+
+            File mappingsDir = new File(testProjectDir, "mappings");
+            if (mappingsDir.exists()) {
+                FileUtils.copyDirectory(mappingsDir, hubProject.getHubMappingsDir().toFile());
+            }
+
+            File stepDefinitionsDir = new File(testProjectDir, "step-definitions");
+            if (stepDefinitionsDir.exists()) {
+                FileUtils.copyDirectory(stepDefinitionsDir, hubProject.getStepDefinitionsDir().toFile());
+            }
+
+            File modulesDir = new File(testProjectDir, "modules");
+            if (modulesDir.exists()) {
+                FileUtils.copyDirectory(modulesDir, hubProject.getModulesDir().toFile());
+            }
+
+            File configDir = new File(testProjectDir, "ml-config");
+            if (configDir.exists()) {
+                FileUtils.copyDirectory(configDir, hubProject.getUserConfigDir().toFile());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load project files: " + e.getMessage(), e);
+        }
+
+        installUserModules(runAsDataHubDeveloper(), true);
+
+        logger.info("Installed project from folder in classpath: " + folderInClasspath + "; time: " +
+            (System.currentTimeMillis() - start));
     }
 }
