@@ -42,7 +42,7 @@ const registeredArtifactTypes = {
     custom: CustomStep
 };
 
-const entityServiceDrivenArtifactTypes = ['mapping', 'custom'];
+const entityServiceDrivenArtifactTypes = ['mapping', 'custom', 'matching', 'merging'];
 
 function getArtifacts(artifactType, groupByEntityType = entityServiceDrivenArtifactTypes.includes(artifactType)) {
     const queries = [];

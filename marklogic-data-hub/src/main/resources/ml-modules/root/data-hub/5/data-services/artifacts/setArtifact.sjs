@@ -24,6 +24,10 @@ if ("ingestion" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-ingestion", "execute");
 } else if ("mapping" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-mapping", "execute");
+} else if ("matching" === artifactType || "merging" === artifactType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-match-merge", "execute");
+} else if ("custom" === artifactType) {
+  xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-custom", "execute");
 } else if ("flow" === artifactType || "stepDefinition" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 } else {
