@@ -35,7 +35,7 @@
       "type": "string",
       "description": "dateTime at which the job ended"
     },
-    "sparkMetadata": {
+    "externalMetadata": {
       "type": "object",
       "description": "Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector"
     },

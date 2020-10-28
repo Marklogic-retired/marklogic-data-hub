@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class HubDataWriterFactory extends LoggingObject implements DataWriterFactory<InternalRow> {
 
-    private StructType schema;
+    private StructType sparkSchema;
     private Map<String, String> options;
     private JsonNode endpointParams;
 
@@ -40,13 +40,13 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
      */
     public HubDataWriterFactory(Map<String, String> options, StructType schema, JsonNode endpointParams) {
         this.options = options;
-        this.schema = schema;
+        this.sparkSchema = schema;
         this.endpointParams = endpointParams;
     }
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
         HubClient client = HubClient.withHubClientConfig(DefaultSource.buildHubClientConfig(options));
-        return new HubDataWriter(client, schema, options, endpointParams);
+        return new HubDataWriter(client, sparkSchema, options, endpointParams);
     }
 }

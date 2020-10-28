@@ -3,7 +3,7 @@
     "endpointDirectory": "/custom-job-endpoints/",
     "params": [
         {
-            "name": "sparkMetadata",
+            "name": "externalMetadata",
             "datatype": "jsonDocument",
             "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
             "nullable": true

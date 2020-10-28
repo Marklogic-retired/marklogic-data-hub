@@ -1,8 +1,8 @@
 {
   "functionName" : "initializeJob",
-  "desc" : "Creates a job document with the given sparkMetadata as a property",
+  "desc" : "JSON object that, if not null, will be added to the job document with a key of 'externalMetadata",
   "params" : [ {
-    "name" : "sparkMetadata",
+    "name" : "externalMetadata",
     "datatype" : "jsonDocument",
     "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
     "nullable": true

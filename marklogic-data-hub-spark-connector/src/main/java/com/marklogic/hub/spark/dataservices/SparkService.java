@@ -49,34 +49,20 @@ public interface SparkService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_finalizeJob;
             private BaseProxy.DBFunctionRequest req_bulkIngest;
+            private BaseProxy.DBFunctionRequest req_finalizeJob;
             private BaseProxy.DBFunctionRequest req_initializeJob;
 
             private SparkServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/marklogic-data-hub-spark-connector/", servDecl);
 
-                this.req_finalizeJob = this.baseProxy.request(
-                    "finalizeJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_bulkIngest = this.baseProxy.request(
                     "bulkIngester.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                this.req_finalizeJob = this.baseProxy.request(
+                    "finalizeJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_initializeJob = this.baseProxy.request(
                     "initializeJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
-            }
-
-            @Override
-            public void finalizeJob(String jobId, String status) {
-                finalizeJob(
-                    this.req_finalizeJob.on(this.dbClient), jobId, status
-                    );
-            }
-            private void finalizeJob(BaseProxy.DBFunctionRequest request, String jobId, String status) {
-              request
-                      .withParams(
-                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
-                          BaseProxy.atomicParam("status", false, BaseProxy.StringType.fromString(status))
-                          ).responseNone();
             }
 
             @Override
@@ -94,16 +80,30 @@ public interface SparkService {
             }
 
             @Override
-            public String initializeJob(com.fasterxml.jackson.databind.JsonNode sparkMetadata) {
-                return initializeJob(
-                    this.req_initializeJob.on(this.dbClient), sparkMetadata
+            public void finalizeJob(String jobId, String status) {
+                finalizeJob(
+                    this.req_finalizeJob.on(this.dbClient), jobId, status
                     );
             }
-            private String initializeJob(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode sparkMetadata) {
+            private void finalizeJob(BaseProxy.DBFunctionRequest request, String jobId, String status) {
+              request
+                      .withParams(
+                          BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
+                          BaseProxy.atomicParam("status", false, BaseProxy.StringType.fromString(status))
+                          ).responseNone();
+            }
+
+            @Override
+            public String initializeJob(com.fasterxml.jackson.databind.JsonNode externalMetadata) {
+                return initializeJob(
+                    this.req_initializeJob.on(this.dbClient), externalMetadata
+                    );
+            }
+            private String initializeJob(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode externalMetadata) {
               return BaseProxy.StringType.toString(
                 request
                       .withParams(
-                          BaseProxy.documentParam("sparkMetadata", true, BaseProxy.JsonDocumentType.fromJsonNode(sparkMetadata))
+                          BaseProxy.documentParam("externalMetadata", true, BaseProxy.JsonDocumentType.fromJsonNode(externalMetadata))
                           ).responseSingle(false, null)
                 );
             }
@@ -111,15 +111,6 @@ public interface SparkService {
 
         return new SparkServiceImpl(db, serviceDeclaration);
     }
-
-  /**
-   * Update the job document after records have been written or an error has occurred
-   *
-   * @param jobId	ID of the job document
-   * @param status	Status of the job
-   * 
-   */
-    void finalizeJob(String jobId, String status);
 
   /**
    * Bulk ingestion endpoint for writing documents via the Spark connector
@@ -131,11 +122,20 @@ public interface SparkService {
     void bulkIngest(Reader endpointConstants, Stream<Reader> input);
 
   /**
-   * Creates a job document with the given sparkMetadata as a property
+   * Update the job document after records have been written or an error has occurred
    *
-   * @param sparkMetadata	provides input
+   * @param jobId	ID of the job document
+   * @param status	Status of the job
+   * 
+   */
+    void finalizeJob(String jobId, String status);
+
+  /**
+   * JSON object that, if not null, will be added to the job document with a key of 'externalMetadata
+   *
+   * @param externalMetadata	provides input
    * @return	The ID of the created job
    */
-    String initializeJob(com.fasterxml.jackson.databind.JsonNode sparkMetadata);
+    String initializeJob(com.fasterxml.jackson.databind.JsonNode externalMetadata);
 
 }
