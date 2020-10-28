@@ -379,7 +379,7 @@ function runMapping(mapping, uri, propMapping={"targetEntityType":mapping.target
         paths.pop();
       }
       else {
-         propMapping = addNode(propMapping, paths, mappedProperty,  false);
+        propMapping = addNode(propMapping, paths, mappedProperty,  false);
       }
     }
     if(mappedProperty && !mappedProperty.errorMessage && ! mappedProperty.hasOwnProperty("targetEntityType") && sourcedFrom.length > 0){
@@ -476,6 +476,7 @@ function getMarkLogicMappingFunctions() {
   return fn.head(datahub.hubUtils.queryLatest(function() {
     let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata")
     let ns = {"m":"http://marklogic.com/entity-services/mapping"};
+    const functionMap = new Map();
     let output = [];
 
     for (const metaData of fnMetadata){
@@ -483,16 +484,20 @@ function getMarkLogicMappingFunctions() {
         let j = 1;
         let fnLocation = metaData.xpath("/m:function-defs/@location",ns)
         for (const mlFunction of metaData.xpath("/m:function-defs/m:function-def",ns )){
-          let funcName = metaData.xpath("/m:function-defs/m:function-def["+j+"]/@name", ns);
+          let funcName = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/@name", ns));
           let params = String(metaData.xpath("/m:function-defs/m:function-def["+j+"]/m:parameters/m:parameter/@name",ns)).replace("\n",",");
           j++;
+
           let singleFunction ={};
           singleFunction["functionName"] = funcName;
           singleFunction["signature"] = funcName +"("+params+")";
           singleFunction["category"] = (String(fnLocation).includes("/data-hub/5/mapping-functions")) ? "builtin" : "custom";
-          output.push(singleFunction)
+          functionMap.set(funcName, singleFunction);
         }
       }
+    }
+    for (let value of functionMap.values()){
+      output.push(value);
     }
     return output;
   }, datahub.config.MODULESDATABASE));
@@ -528,30 +533,23 @@ function getXpathMappingFunctions() {
 function getFunctionsWithSignatures(xpathFunctions, excludeFunctions) {
   const response = [];
   //used to prevent duplicates(overloaded functions) in the response
-  const functionsAdded = [];
+  const functionMap = new Map();
   for (let i = 0; i < xpathFunctions.length; i++) {
     if (String(xpathFunctions[i]).includes("fn:")) {
       let signature = xdmp.functionSignature(xpathFunctions[i]).replace("function", xdmp.functionName(xpathFunctions[i]));
       signature = signature.match(/fn:(.*?) as.*?/)[1];
       let fn = String(xdmp.functionName(xpathFunctions[i])).replace("fn:", "");
       if (!excludeFunctions.includes(fn)) {
-        //Update the signature if the function is already added
-        if(functionsAdded.includes(fn)){
-          let addedFunction = response.find(func => {
-            return func.functionName == fn
-          });
-          addedFunction["signature"] = signature;
-        }
-        else{
-          let xpathFunction = {};
-          xpathFunction["functionName"] = fn;
-          xpathFunction["signature"] = signature;
-          xpathFunction["category"] = "xpath";
-          response.push(xpathFunction);
-          functionsAdded.push(fn);
-        }
+        let xpathFunction = {};
+        xpathFunction["functionName"] = fn;
+        xpathFunction["signature"] = signature;
+        xpathFunction["category"] = "xpath";
+        functionMap.set(fn, xpathFunction);
       }
     }
+  }
+  for (let value of functionMap.values()){
+    response.push(value);
   }
   return response;
 }
