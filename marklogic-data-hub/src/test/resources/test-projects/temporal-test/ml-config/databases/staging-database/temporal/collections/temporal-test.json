@@ -1,0 +1,8 @@
+{
+  "collection-name": "temporal/test",
+  "system-axis": "system",
+  "option": [
+    "updates-admin-override",
+    "override-priv=http://marklogic.com/xdmp/privileges/temporal-admin"
+  ]
+}
