@@ -1,36 +1,19 @@
 const test = require("/test/test-helper.xqy");
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-
-function invokeSetService(artifactType, artifactName, artifact) {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/setArtifact.sjs",
-        {artifactType, artifactName, artifact: xdmp.toJSON(artifact)}
-    ));
-}
-
-function invokeGetAllService(artifactType) {
-    return fn.head(xdmp.invoke(
-        "/data-hub/5/data-services/artifacts/getList.sjs",
-        {artifactType}
-    ));
-}
-
-function invokeValidateService(artifactType, artifactName, artifact) {
-  return Artifacts.validateArtifact(artifactType, artifactName, artifact);
-}
+const ArtifactService = require('../lib/artifactService.sjs');
 
 function updateMappingConfig(artifactName) {
-    const result = invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasMappingConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
+    const result = ArtifactService.invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-hasConfig', 'description': 'Mapping does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
     return [
         test.assertEqual(artifactName, result.name),
-        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType),
+        test.assertEqual("TestEntity-hasConfig", result.targetEntityType),
         test.assertEqual(100, result.batchSize)
     ];
 }
 
 function createMappingWithSameNameButDifferentEntityType(artifactName) {
   try {
-    invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-NoMappingConfig', 'selectedSource': 'query'});
+      ArtifactService.invokeSetService('mapping', artifactName, {'name': `${artifactName}`, 'targetEntityType': 'TestEntity-NoConfig', 'selectedSource': 'query'});
     return new Error("Expected a failure because another mapping exists with the same name but a different entity type. " +
       "Mapping names must be globally unique.");
   } catch (e) {
@@ -40,15 +23,15 @@ function createMappingWithSameNameButDifferentEntityType(artifactName) {
 }
 
 function getArtifacts() {
-    const artifactsByEntity = invokeGetAllService('mapping');
+    const artifactsByEntity = ArtifactService.invokeGetAllService('mapping');
     test.assertEqual(2, artifactsByEntity.length,
       "Should be an entry for each entity type, even if there are no mappings for a type");
     artifactsByEntity.forEach(entity => {
-        if (entity.entityType === 'TestEntity-hasMappingConfig') {
+        if (entity.entityType === 'TestEntity-hasConfig') {
             const artifacts = entity.artifacts;
             artifacts.forEach(mapping => {
                 if (mapping.name == 'TestMapping' || mapping.name === 'TestMapping2') {
-                    test.assertEqual("TestEntity-hasMappingConfig", mapping.targetEntityType);
+                    test.assertEqual("TestEntity-hasConfig", mapping.targetEntityType);
                     test.assertTrue(xdmp.castableAs('http://www.w3.org/2001/XMLSchema', 'dateTime', mapping.lastUpdated));
                 }
             })
@@ -57,17 +40,17 @@ function getArtifacts() {
 }
 
 function validArtifact() {
-    const result = invokeValidateService('mapping','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasMappingConfig', selectedSource: 'collection'});
+    const result = ArtifactService.invokeValidateService('mapping','validMapping', { name: 'validMapping', targetEntityType: 'TestEntity-hasConfig', selectedSource: 'collection'});
     return [
         test.assertEqual("validMapping", result.name),
-        test.assertEqual("TestEntity-hasMappingConfig", result.targetEntityType),
+        test.assertEqual("TestEntity-hasConfig", result.targetEntityType),
         test.assertEqual("collection", result.selectedSource)
     ];
 }
 
 function invalidArtifact() {
     try {
-        const result = invokeValidateService('mapping', "invalidMapping", { name: 'invalidMapping'});
+        const result = ArtifactService.invokeValidateService('mapping', "invalidMapping", { name: 'invalidMapping'});
         return [test.assertTrue(false, 'Should have thrown a validation error')];
     } catch (e) {
         let msg = e.data[2];

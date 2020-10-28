@@ -1,11 +1,11 @@
 {
   "info": {
-    "title": "TestEntity-NoMappingConfig",
+    "title": "TestEntity-hasConfig",
     "version": "0.0.1",
     "baseUri": "http://example.org/"
   },
   "definitions": {
-    "TestEntity-NoMappingConfig": {
+    "TestEntity-hasConfig": {
       "properties": {
         "prop1": {
           "datatype": "string"
