@@ -19,7 +19,7 @@ declareUpdate();
 
 // This is just for testing purposes
 
-var sparkMetadata = sparkMetadata != null ? fn.head(xdmp.fromJSON(sparkMetadata)) : {};
+var externalMetadata = externalMetadata != null ? fn.head(xdmp.fromJSON(externalMetadata)) : {};
 
 const id = "customId";
 
@@ -31,7 +31,7 @@ xdmp.documentInsert(
       user: xdmp.getCurrentUser(),
       jobStatus: "started",
       timeStarted: fn.currentDateTime(),
-      sparkMetadata
+      externalMetadata
     }
   },
   [xdmp.permission("data-hub-operator", "read"), xdmp.permission("data-hub-operator", "update")],

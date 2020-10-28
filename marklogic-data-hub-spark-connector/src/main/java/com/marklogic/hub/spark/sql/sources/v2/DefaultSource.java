@@ -81,7 +81,7 @@ public class DefaultSource extends LoggingObject implements WriteSupport, Stream
 class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     private final Map<String, String> options;
-    private final StructType schema;
+    private final StructType sparkSchema;
     private final boolean streaming;
     private final HubClient hubClient;
     private final HubClientConfig hubClientConfig;
@@ -92,7 +92,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     public HubDataSourceWriter(Map<String, String> options, StructType schema, Boolean streaming) {
         this.options = options;
-        this.schema = schema;
+        this.sparkSchema = schema;
         this.streaming = streaming;
         this.objectMapper = new ObjectMapper();
 
@@ -116,7 +116,7 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
 
     @Override
     public DataWriterFactory<InternalRow> createWriterFactory() {
-        return new HubDataWriterFactory(options, this.schema, endpointParams);
+        return new HubDataWriterFactory(options, this.sparkSchema, endpointParams);
     }
 
     @Override
@@ -244,15 +244,19 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private String initializeJob(StructType schema) {
-        ObjectNode sparkMetadata = objectMapper.createObjectNode();
+        ObjectNode externalMetadata = objectMapper.createObjectNode();
         try {
-            sparkMetadata.set("schema", objectMapper.readTree(schema.json()));
+            if(options.get("additionalexternalmetadata")!=null) {
+                externalMetadata = (ObjectNode) objectMapper.readTree(options.get("additionalexternalmetadata"));
+            }
+            externalMetadata.set("sparkSchema", objectMapper.readTree(schema.json()));
+
         } catch (Exception e) {
             logger.warn("Unable to read Spark schema as a JSON object; cause: " + e.getMessage() + "; the schema will not " +
                 "be persisted on the job document");
         }
 
-        String jobId = SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getInitializeJobApiDefinition()).initializeJob(sparkMetadata);
+        String jobId = SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getInitializeJobApiDefinition()).initializeJob(externalMetadata);
         logger.info("Initialized job; ID: " + jobId);
         return jobId;
     }

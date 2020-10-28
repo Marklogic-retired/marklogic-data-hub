@@ -25,6 +25,7 @@ public class Options {
     private String initializeJobApiPath;
     private String finalizeJobApiPath;
     private Map<String, String> hubProperties;
+    private JsonNode additionalExternalMetadata;
 
     public Options() {
     }
@@ -81,6 +82,10 @@ public class Options {
             params.put("finalizejobapipath", finalizeJobApiPath);
         }
 
+        if(additionalExternalMetadata != null) {
+            params.put("additionalexternalmetadata", additionalExternalMetadata.toString());
+        }
+
         return new DataSourceOptions(params);
     }
 
@@ -131,6 +136,11 @@ public class Options {
 
     public Options withFinalizeJobApiPath(String finalizeJobApiPath) {
         this.finalizeJobApiPath = finalizeJobApiPath;
+        return this;
+    }
+
+    public Options withExternalMetadata(JsonNode externalMetadata){
+        this.additionalExternalMetadata = externalMetadata;
         return this;
     }
 }

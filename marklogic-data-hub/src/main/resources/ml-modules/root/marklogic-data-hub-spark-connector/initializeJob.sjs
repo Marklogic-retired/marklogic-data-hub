@@ -19,7 +19,7 @@ declareUpdate();
 
 // No privilege required: This endpoint is called by the spark connector.
 
-var sparkMetadata = sparkMetadata != null ? fn.head(xdmp.fromJSON(sparkMetadata)) : {};
+var externalMetadata = externalMetadata != null ? fn.head(xdmp.fromJSON(externalMetadata)) : {};
 
 const config = require("/com.marklogic.hub/config.sjs");
 
@@ -46,7 +46,7 @@ xdmp.documentInsert(
       user: xdmp.getCurrentUser(),
       jobStatus: "started",
       timeStarted: fn.currentDateTime(),
-      sparkMetadata
+      externalMetadata
     }
   },
   buildJobPermissions(config),

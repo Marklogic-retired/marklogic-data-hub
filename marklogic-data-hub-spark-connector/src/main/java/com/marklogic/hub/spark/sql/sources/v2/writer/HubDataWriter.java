@@ -37,7 +37,7 @@ import java.util.Map;
 public class HubDataWriter extends LoggingObject implements DataWriter<InternalRow> {
 
     private InputCaller.BulkInputCaller<String> bulkInputCaller;
-    private StructType schema;
+    private StructType sparkSchema;
 
     private Throwable writeException;
 
@@ -48,7 +48,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
      * @param endpointParams
      */
     public HubDataWriter(HubClient hubClient, StructType schema, Map<String, String> options, JsonNode endpointParams) {
-        this.schema = schema;
+        this.sparkSchema = schema;
 
         final String apiPath = endpointParams.get("apiPath").asText();
         logger.info("Will write to endpoint defined by: " + apiPath);
@@ -113,7 +113,7 @@ public class HubDataWriter extends LoggingObject implements DataWriter<InternalR
         StringWriter jsonObjectWriter = new StringWriter();
         scala.collection.immutable.Map<String, String> emptyMap = scala.collection.immutable.Map$.MODULE$.empty();
         JacksonGenerator jacksonGenerator = new JacksonGenerator(
-            schema,
+            sparkSchema,
             jsonObjectWriter,
             new JSONOptions(emptyMap, DateTimeUtils.TimeZoneUTC().getID(), "")
         );
