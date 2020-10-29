@@ -14,7 +14,7 @@ import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 import { AuthoritiesContext } from "../../../util/authorities";
 import { CurationContext } from '../../../util/curation-context';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
-import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
+import { AdvMapTooltips, SecurityTooltips, NewMatchTooltips } from '../../../config/tooltips.config';
 import { ConfirmationType } from '../../../types/common-types';
 import { MatchingStep, StepType } from '../../../types/curation-types';
 
@@ -46,6 +46,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
   const [isEditing, toggleIsEditing] = useState(false);
   const [editStepArtifact, setEditStepArtifact] = useState({});
+  const [ matchingData, setMatchingData ] = useState({});
 
   const [showStepSettings, toggleStepSettings] = useState(false);
 
@@ -245,6 +246,14 @@ const MatchingCard: React.FC<Props> = (props) => {
           ))
         ) : null}
       </Row>
+    <AdvancedSettingsDialog
+        tooltipsData={NewMatchTooltips}
+        openAdvancedSettings={showStepSettings}
+        setOpenAdvancedSettings={toggleStepSettings}
+        stepData={matchingData}
+        activityType={StepType.Matching}
+        canWrite={authorityService.canWriteMatchMerge()}
+    />
       <CreateEditStepDialog
         isVisible={showCreateEditStepModal}
         isEditing={isEditing}

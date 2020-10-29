@@ -267,6 +267,8 @@ const advancedAPI = (axiosMock) => {
               return Promise.resolve({data:{...advancedData.stepLoad.data, stepDefinitionName:'custom-ingestion', name: 'CustomLoad'},status: 200});
           case '/api/steps/mapping/AdvancedMapping':
               return Promise.resolve(advancedData.stepMapping);
+          case '/api/steps/matching/AdvancedMatching':
+              return Promise.resolve(advancedData.stepMatching);
           default:
               return Promise.reject(new Error('not found'));
       }

@@ -20,6 +20,17 @@ const advancedMapping = {
     setOpenAdvancedSettings: jest.fn()
 };
 
+// Passed as prop
+const advancedMatching = {
+    activityType: 'matching',
+    canWrite: true,
+    openAdvancedSettings: true,
+    stepData: {
+        name: 'AdvancedMatching'
+    },
+    setOpenAdvancedSettings: jest.fn()
+};
+
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad
 const stepLoad = { "data" :
     {
@@ -53,7 +64,7 @@ const stepLoad = { "data" :
     "status": 200
 };
 
-// Returned from endpoint: /api/steps/ingestion/AdvancedMapping
+// Returned from endpoint: /api/steps/mapping/AdvancedMapping
 const stepMapping = { "data" :
     {
         "collections": [ "testCollection" ],
@@ -86,12 +97,45 @@ const stepMapping = { "data" :
     "status": 200
 };
 
+// Returned from endpoint: /api/steps/matching/AdvancedMatching
+const stepMatching = { "data" :
+        {
+            "collections": [ "testCollection" ],
+            "additionalCollections": [ "addedCollection" ],
+            "batchSize": 35,
+            "permissions": "data-hub-common,read,data-hub-common,update",
+            "name": "AdvancedMatching",
+            "targetEntityType": "http://example.org/Address-0.0.1/Test",
+            "description": "",
+            "selectedSource": "collection",
+            "sourceQuery": "cts.collectionQuery(['test'])",
+            "stepDefinitionName": "default-matching",
+            "stepDefinitionType": "matching",
+            "stepId": "AdvancedMatching-matching",
+            "sourceDatabase": "data-hub-FINAL",
+            "targetDatabase": "data-hub-FINAL",
+            "provenanceGranularityLevel": "coarse",
+            "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
+            "headers": {
+                "header": true
+            },
+            "processors": {
+                "processor": true
+            },
+            "customHook": {
+                "hook": true
+            }
+        },
+    "status": 200
+};
 const data = {
     advancedLoad: advancedLoad,
     customLoad: {...advancedLoad, stepData: {name: 'CustomLoad'}},
     advancedMapping: advancedMapping,
+    advancedMatching: advancedMatching,
     stepLoad: stepLoad,
     stepMapping: stepMapping,
+    stepMatching: stepMatching,
 };
 
 export default data;
