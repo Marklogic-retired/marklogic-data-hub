@@ -88,7 +88,8 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         );
         setCollections(srcCollection);
         }
-
+        
+        resetTouchedValues();
         setIsValid(true);
         setTobeDisabled(true);
 
@@ -107,15 +108,20 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
 
   const resetModal = () => {
     setStepName('');
-    setStepNameTouched(false);
     setDescription('');
-    setDescriptionTouched(false);
     setSelectedSource('collection');
-    setSelectedSourceTouched(false);
-    setCollectionsTouched(false);
     setTobeDisabled(false);
     setCollections('');
     setSrcQuery('');
+    resetTouchedValues();
+  }
+
+  const resetTouchedValues = () => {
+    setSelectedSourceTouched(false);
+    setCollectionsTouched(false);
+    setSrcQueryTouched(false);
+    setStepNameTouched(false);
+    setDescriptionTouched(false);
   }
 
   const onCancel = () => {
