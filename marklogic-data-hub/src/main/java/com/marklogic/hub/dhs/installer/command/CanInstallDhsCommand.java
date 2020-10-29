@@ -1,12 +1,9 @@
 package com.marklogic.hub.dhs.installer.command;
 
 import com.beust.jcommander.Parameters;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.dhs.installer.Options;
-import com.marklogic.hub.impl.Versions;
-import com.marklogic.hub.impl.Versions.MarkLogicVersion;
 import org.springframework.context.ApplicationContext;
 
 @Parameters(commandDescription = "Verify if current version of DHF can be installed in a DHS environment")

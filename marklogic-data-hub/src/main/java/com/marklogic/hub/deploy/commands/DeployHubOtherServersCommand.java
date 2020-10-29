@@ -20,7 +20,7 @@ import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.appservers.DeployOtherServersCommand;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.resource.ResourceManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -55,7 +55,7 @@ public class DeployHubOtherServersCommand extends DeployOtherServersCommand {
         Map<String, String> customTokens = appConfig.getCustomTokens();
         final String token = "%%mlServerVersion%%";
         try {
-            final String version = serverVersion != null ? serverVersion : new Versions(hubConfig).getMarkLogicVersion();
+            final String version = serverVersion != null ? serverVersion : new MarkLogicVersion(hubConfig.getManageClient()).getVersionString();
             customTokens.put(token, version.replaceAll("([^.]+)\\..*", "$1"));
         } catch (Exception ex) {
             logger.warn("Unable to determine the server version; cause: " + ex.getMessage());

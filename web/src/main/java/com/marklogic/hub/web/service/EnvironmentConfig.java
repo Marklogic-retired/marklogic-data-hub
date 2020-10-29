@@ -97,7 +97,7 @@ public class EnvironmentConfig {
         // As of 5.3.0, per DHFPROD-4912, we want this to fallback to the local project if the version can't be
         // determined from an installed DH (likely because DH is not yet installed)
         this.installedVersion = versions.getInstalledVersion(true);
-        this.marklogicVersion = versions.getMarkLogicVersion();
+        this.marklogicVersion = versions.getMarkLogicVersionString();
         this.runningVersion = this.mlSettings.getJarVersion();
         // The references in QS to "dhfversion" cannot be removed via DHFPROD-4912, as QS is unfortunately tightly
         // bound to this value. So we need something here. The new getLocalProjectVersion concept in 5.3 will work,

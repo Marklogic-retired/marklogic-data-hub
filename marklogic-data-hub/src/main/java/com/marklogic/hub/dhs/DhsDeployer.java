@@ -27,6 +27,8 @@ import com.marklogic.hub.deploy.commands.*;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubAmpsCommand;
 import com.marklogic.hub.dhs.installer.deploy.DeployHubQueryRolesetsCommand;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.MarkLogicVersion;
+import com.marklogic.hub.impl.VersionInfo;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ import java.util.regex.Pattern;
 public class DhsDeployer extends LoggingObject {
 
     public void deployAsDeveloper(HubConfigImpl hubConfig) {
+        throwExceptionIfMarkLogicVersionIsInvalid(hubConfig);
         prepareAppConfigForDeployingToDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
@@ -48,11 +51,23 @@ public class DhsDeployer extends LoggingObject {
     }
 
     public void deployAsSecurityAdmin(HubConfigImpl hubConfig) {
+        throwExceptionIfMarkLogicVersionIsInvalid(hubConfig);
         prepareAppConfigForDeployingToDhs(hubConfig);
 
         HubAppDeployer dhsDeployer = new HubAppDeployer(hubConfig.getManageClient(), hubConfig.getAdminManager(), null, null);
         dhsDeployer.setCommands(buildCommandsForSecurityAdmin());
         dhsDeployer.deploy(hubConfig.getAppConfig());
+    }
+
+    public void throwExceptionIfMarkLogicVersionIsInvalid(HubConfig hubConfig) {
+        MarkLogicVersion mlVersion = new MarkLogicVersion(hubConfig.getManageClient());
+        if (!mlVersion.supportsDataHubFramework()) {
+            throw new RuntimeException(String.format("Cannot proceed as this version of Data Hub does not support the detected version of MarkLogic:\n" +
+                    "MarkLogic host: %s\n" +
+                    "MarkLogic version: %s\n" +
+                    "Data Hub client version: %s\n" +
+                    "Please see https://docs.marklogic.com/datahub/refs/version-compatibility.html for information on the minimum required MarkLogic version.", hubConfig.getHost(), mlVersion.getVersionString(), VersionInfo.getBuildVersion()));
+        }
     }
 
     /**

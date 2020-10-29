@@ -3,9 +3,9 @@ package com.marklogic.hub.flow.impl;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
-import com.marklogic.hub.impl.Versions;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.database.Database;
@@ -27,8 +27,8 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
      */
     @Test
     void runFlowWithStemmingSearch() {
-        assumeTrue(new Versions(getHubConfig()).getMLVersion().getMajor() >= 10);
-        try{
+        assumeTrue(new MarkLogicVersion(getHubConfig().getManageClient()).getMajor() >= 10);
+        try {
             enableAdvancedStemming(true);
             installProjectInFolder("flow-runner-test");
 

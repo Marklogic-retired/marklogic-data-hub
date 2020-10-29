@@ -2,7 +2,7 @@ package com.marklogic.hub.dhs.installer.deploy;
 
 import com.marklogic.appdeployer.AppConfig;
 import com.marklogic.appdeployer.command.CommandContext;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.security.AbstractSecurityTest;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.security.QueryRolesetManager;
@@ -41,7 +41,7 @@ public class DeployHubQueryRolesetsCommandTest extends AbstractSecurityTest {
             assertEquals(201, receipt.getResponse().getStatusCodeValue(), "The query roleset should have been created " +
                 "successfully because data-hub-developer has the add-query-rolesets privilege");
 
-            if ("10.0-3".equals(new Versions(getHubClient()).getMarkLogicVersion())) {
+            if ("10.0-3".equals(new MarkLogicVersion(getHubClient().getManageClient()).getVersionString())) {
                 receipt = command.saveResource(mgr, new CommandContext(new AppConfig(), userWithRoleBeingTestedClient, null), payload);
                 Assertions.assertNull(receipt, "The receipt object will be null because the Manage API threw an exception, since a " +
                     "user without the security role can't call POST again on a query roleset, and the data-hub-developer " +

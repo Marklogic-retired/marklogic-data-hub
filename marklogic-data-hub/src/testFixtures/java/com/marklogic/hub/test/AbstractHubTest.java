@@ -8,7 +8,6 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.MarkLogicIOException;
 import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
@@ -22,7 +21,6 @@ import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.database.Database;
-import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import com.marklogic.mgmt.resource.security.ProtectedPathManager;
 import com.marklogic.mgmt.util.SimplePropertySource;
@@ -30,15 +28,12 @@ import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -325,7 +320,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     }
 
     protected boolean isVersionCompatibleWith520Roles() {
-        return new Versions(getHubClient()).isVersionCompatibleWith520Roles();
+        return new Versions(getHubClient()).getMarkLogicVersion().isVersionCompatibleWith520Roles();
     }
 
     /**
