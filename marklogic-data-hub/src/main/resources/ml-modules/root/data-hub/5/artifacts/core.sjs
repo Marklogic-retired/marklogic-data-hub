@@ -97,14 +97,14 @@ function getArtifactsGroupByEntity(queries) {
 
   // Find all matching artifacts
   const artifacts = cts.search(cts.andQuery(
-    queries.concat(cts.jsonPropertyValueQuery("targetEntityType", entityNamesAndTypeIds))
+    queries.concat(cts.jsonPropertyValueQuery(["targetEntityType","targetEntity"], entityNamesAndTypeIds))
   )).toArray();
 
   // Figure out where each artifact goes in the entityNameMap
   const artifactMap = {};
   artifacts.forEach(artifact => {
     artifact = artifact.toObject();
-    const targetEntityType = artifact.targetEntityType;
+    const targetEntityType = artifact.targetEntityType || artifact.targetEntity;
     if (entityNameMap[targetEntityType]) {
       entityNameMap[targetEntityType].artifacts.push(artifact);
     } else {
