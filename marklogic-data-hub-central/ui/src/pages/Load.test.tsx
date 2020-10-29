@@ -182,7 +182,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
-        const { getByText, getAllByText, getByLabelText } = render(
+        const { getByText, getAllByText, getByLabelText, getByTestId } = render(
           <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
@@ -210,7 +210,7 @@ describe('Load component', () => {
         expect(getByText('JSON')).toBeInTheDocument();
         expect(getByText('Last Updated: 01/01/2000 4:00AM')).toBeInTheDocument();
         expect(getByLabelText('icon: setting')).toBeInTheDocument();
-        expect(getByLabelText('icon: edit')).toBeInTheDocument();
+        expect(getByTestId('testLoad-edit')).toBeInTheDocument();
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 
     });
