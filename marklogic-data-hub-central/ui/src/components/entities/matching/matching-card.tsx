@@ -1,242 +1,278 @@
-import React, { CSSProperties, useState, useEffect, useContext } from 'react';
-import styles from './matching-card.module.scss';
-import {Card, Icon, Select, Row, Col, Modal} from 'antd';
+import React, { useState, useContext } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { Card, Icon, Row, Col, Select } from 'antd';
 import { MLTooltip } from '@marklogic/design-system';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
-import { Link, useHistory } from 'react-router-dom';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
+import styles from './matching-card.module.scss';
 
+import CreateEditStepDialog from '../create-edit-step-dialog/create-edit-step-dialog';
 import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
-import CreateEditStepDialog from '../create-edit-step-dialog/create-edit-step-dialog';
 
-import sourceFormatOptions from '../../../config/formats.config';
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
-import {
-  MatchingStep,
-  StepType
-} from '../../../types/curation-types';
-import { ConfirmationType } from '../../../types/common-types';
+import { AuthoritiesContext } from "../../../util/authorities";
 import { CurationContext } from '../../../util/curation-context';
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
+import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
+import { ConfirmationType } from '../../../types/common-types';
+import { MatchingStep, StepType } from '../../../types/curation-types';
 
-import MultiSlider from './multi-slider/multi-slider';
+interface Props {
+  matchingStepsArray: MatchingStep[];
+  flows: any;
+  entityName: any;
+  entityModel: any;
+  canReadMatchMerge: boolean;
+  canWriteMatchMerge: boolean;
+  deleteMatchingArtifact: (matchName) => void;
+  createMatchingArtifact: (matchingObj) => void;
+  addStepToFlow: any;
+  addStepToNew: any;
+  canWriteFlow: any;
+}
 
 const { Option } = Select;
 
-interface Props {
-    matchingStepsArray: MatchingStep[];
-    flows: any;
-    entityName: any;
-    deleteMatchingArtifact: any;
-    createMatchingArtifact: any;
-    canReadMatchMerge: any;
-    canWriteMatchMerge: any;
-    canWriteFlow: any;
-    entityModel: any;
-    addStepToFlow: any;
-    addStepToNew: any;
-}
-
 const MatchingCard: React.FC<Props> = (props) => {
-    const history = useHistory<any>();
-    const { setActiveStep } = useContext(CurationContext);
+  const history = useHistory<any>();
+  const authorityService = useContext(AuthoritiesContext);
+  const { setActiveStep } = useContext(CurationContext);
+  const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
+  const [selectVisible, setSelectVisible] = useState(false);
+  const [showLinks, setShowLinks] = useState('');
+  const [stepArtifact, setStepArtifact] = useState({});
 
-    const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
-    const [isEditing, toggleIsEditing] = useState(false);
-    const [editStepArtifact, setEditStepArtifact] = useState({});
+  const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
+  const [isEditing, toggleIsEditing] = useState(false);
+  const [editStepArtifact, setEditStepArtifact] = useState({});
 
-    const [showLinks, setShowLinks] = useState('');
-    const [showAdvancedSettings, toggleAdvancedSettings] = useState(false);
+  const [showStepSettings, toggleStepSettings] = useState(false);
 
-    const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
-    const [showConfirmModal, toggleConfirmModal] = useState(false);
-    const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
+  const [showConfirmModal, toggleConfirmModal] = useState(false);
+  const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
 
-    const openAddNewDialog = () => {
-        // setTitle('New Matching');
-        // setNewMatching(true);
-    };
+  const openAddStepDialog = () => {
+    setEditStepArtifact({});
+    toggleIsEditing(false);
+    toggleCreateEditStepModal(true);
+  };
 
-    const openEditStepDialog = (index) => {
-        // setTitle('Edit Matching');
-        // setMatchingData(prevState => ({ ...prevState, ...props.matchingStepsArray[index]}));
-        // setNewMatching(true);
-    };
+  const openEditStepDialog = (index) => {
+    setEditStepArtifact(props.matchingStepsArray[index])
+    toggleIsEditing(true);
+    toggleCreateEditStepModal(true);
+  };
 
-    const openMatchingSettingsDialog = (index) => {
-        //TODO add advanced settings functionality
-        console.log('Open settings');
-        //toggleAdvancedSettings(true);
-    };
+  const stepSettingsClicked = (index) => {
+    setStepArtifact(props.matchingStepsArray[index]);
+    toggleStepSettings(true);
+  };
 
-    //Custom CSS for source Format
-    const sourceFormatStyle = (sourceFmt) => {
-        let customStyles: CSSProperties = {
-            float: 'right',
-            backgroundColor: (sourceFmt.toUpperCase() === 'XML' ? sourceFormatOptions.xml.color : (sourceFmt.toUpperCase() === 'JSON' ? sourceFormatOptions.json.color : (sourceFmt.toUpperCase() === 'CSV' ? sourceFormatOptions.csv.color : sourceFormatOptions.default.color))),
-            fontSize: '12px',
-            borderRadius: '50%',
-            textAlign: 'left',
-            color: '#ffffff',
-            padding: '5px'
-        };
-        return customStyles;
-    };
+  const deleteStepClicked = (name) => {
+    toggleConfirmModal(true);
+    setConfirmType(ConfirmationType.DeleteStep)
+    setConfirmBoldTextArray([name]);
+  };
 
-    const handleMouseOver = (e, name) => {
-      // Handle all possible events from mouseover of card body
-      if (typeof e.target.className === 'string' &&
-          (e.target.className === 'ant-card-body' ||
-           e.target.className.startsWith('matching-card_cardContainer') ||
-           e.target.className.startsWith('matching-card_formatFileContainer') ||
-           e.target.className.startsWith('matching-card_sourceQuery') ||
-           e.target.className.startsWith('matching-card_lastUpdatedStyle'))
-      ) {
-          setShowLinks(name);
-      }
-    };
+  function handleMouseOver(e, name) {
+    // Handle all possible events from mouseover of card body
+    setSelectVisible(true);
+    if (typeof e.target.className === 'string' &&
+      (e.target.className === 'ant-card-body' ||
+        e.target.className.startsWith('merging-card_cardContainer') ||
+        e.target.className.startsWith('merging-card_formatFileContainer') ||
+        e.target.className.startsWith('merging-card_sourceQuery') ||
+        e.target.className.startsWith('merging-card_lastUpdatedStyle'))
+    ) {
+      setShowLinks(name);
+    }
+  }
+  function handleMouseLeave() {
+    setShowLinks('');
+    setSelectVisible(false);
+  }
 
-    const openStepDetails = (matchingStep: MatchingStep) => {
-        setActiveStep(matchingStep, props.entityModel['model']['definitions'], props.entityName);
-        history.push({ pathname: '/tiles/curate/match'});
-    };
+  function handleSelect(obj) {
+    let selectedNew = {...selected};
+    selectedNew[obj.loadName] = obj.flowName;
+    setSelected(selectedNew);
+    // TODO handle adding step to existing flow
+    //handleStepAdd(obj.mappingName, obj.flowName);
+  }
 
-    const handleCardDelete = (stepName) => {
-        setConfirmBoldTextArray([stepName]);
-        setConfirmType(ConfirmationType.DeleteStep);
-        toggleConfirmModal(true);
-    };
+  const confirmAction = () => {
+    if (confirmType === ConfirmationType.AddStepToFlow) {
+      // TODO add step to new flow
+    } else if (confirmType === ConfirmationType.DeleteStep) {
+        props.deleteMatchingArtifact(confirmBoldTextArray[0]);
+        toggleConfirmModal(false);
+    }
+  };
 
-    const handleSelect = (obj) => {
-        handleStepAdd(obj.mappingName, obj.flowName);
-    };
+  const openStepDetails = (matchingStep: MatchingStep) => {
+    setActiveStep(matchingStep, props.entityModel['model']['definitions'], props.entityName);
+    history.push({ pathname: '/tiles/curate/match'});
+  };
 
-    const handleStepAdd = (mappingName, flowName) => {
-      // TODO create new step
-      // setAddDialogVisible(true);
-      // setMappingArtifactName(mappingName);
-      // setFlowName(flowName);
-    };
+  const renderCardActions = (step, index) => {
+    return [
+      <MLTooltip title={'Edit'} placement="bottom">
+        <Icon 
+          className={styles.editIcon}
+          type="edit"
+          key ="last"
+          role="edit-merging button"
+          data-testid={step.name+'-edit'}
+          onClick={() => openEditStepDialog(index)}
+        />
+      </MLTooltip>,
 
-    const confirmAction = () => {
-        if (confirmType === ConfirmationType.AddStepToFlow) {
-          // TODO add step to new flow
-        } else if (confirmType === ConfirmationType.DeleteStep) {
-            props.deleteMatchingArtifact(confirmBoldTextArray[0]);
-            toggleConfirmModal(false);
-        }
-    };
+      <MLTooltip title={'Step Details'} placement="bottom">
+        <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}>
+          <FontAwesomeIcon 
+            icon={faSlidersH} 
+            data-testid={`${step.name}-stepDetails`} 
+            onClick={() => openStepDetails(step)}
+          />
+        </i>
+      </MLTooltip>,
 
-    return (
-        <div className={styles.matchingContainer}>
-            <Row gutter={16} type="flex" >
-                {props.canWriteMatchMerge ? (
-                    <Col >
-                        <Card
-                            size="small"
-                            className={styles.addNewCard}>
-                            <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={openAddNewDialog}/></div>
-                            <br />
-                            <p className={styles.addNewContent}>Add New</p>
-                        </Card>
-                    </Col>
-                ) : ''}
+      <MLTooltip title={'Settings'} placement="bottom">
+        <Icon 
+          type="setting"
+          key="setting"
+          role="settings-merging button"
+          data-testid={step.name+'-settings'}
+          onClick={() => stepSettingsClicked(index)}
+          />
+      </MLTooltip>,
 
-                {props && props.matchingStepsArray.length > 0 ? props.matchingStepsArray.map((elem,index) => (
-                    <Col key={index}>
-                        <div
-                            data-testid={`${props.entityName}-${elem.name}-step`}
-                            onMouseOver={(e) => handleMouseOver(e, elem.name)}
-                            onMouseLeave={(e) => setShowLinks('')}
+      props.canReadMatchMerge ? (
+      <MLTooltip title={'Delete'} placement="bottom">
+        <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
+          <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
+        </i>
+      </MLTooltip> 
+      ) : (
+      <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}>
+        <i role="disabled-delete-merging button" data-testid={step.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}>
+          <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
+        </i>
+      </MLTooltip> 
+      ),
+    ]
+  }
+  
+  return (
+    <div className={styles.matchContainer}>
+      <Row gutter={16} type="flex">
+        {props.canReadMatchMerge ? (
+          <Col>
+            <Card
+              size="small"
+              className={styles.addNewCard}>
+              <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={openAddStepDialog}/></div>
+              <br />
+              <p className={styles.addNewContent}>Add New</p>
+            </Card>
+          </Col>
+        ) : null}
+        {props.matchingStepsArray.length > 0 ? ( 
+          props.matchingStepsArray.map((step, index) => (
+            <Col key={index}>
+              <div
+                data-testid={`${props.entityName}-${step.name}-step`}
+                onMouseOver={(e) => handleMouseOver(e, step.name)}
+                onMouseLeave={(e) => handleMouseLeave()}
+              >
+                <Card
+                  actions={renderCardActions(step, index)}
+                  className={styles.cardStyle}
+                  size="small"
+                >
+                  <div className={styles.formatFileContainer}>
+                    <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 27, '...')}</span>
+                  </div>
+                  <br />
+                  {step.selectedSource === 'collection' ? (
+                    <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(step.sourceQuery)}</div>
+                  ) : (
+                    <div className={styles.sourceQuery}>Source Query: {getInitialChars(step.sourceQuery,32,'...')}</div>
+                  )}
+                  <br /><br />
+                  <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(step.lastUpdated)}</p>
+                  <div className={styles.cardLinks} style={{display: showLinks === step.name ? 'block' : 'none'}}>
+                  {props.canWriteMatchMerge ? (
+                    <Link 
+                      id="tiles-run-add" 
+                      to={{
+                        pathname: '/tiles/run/add',
+                        state: {
+                          stepToAdd : step.name,
+                          stepDefinitionType : 'merging'
+                      }}}
+                    >
+                      <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
+                    </Link> 
+                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div> 
+                  }
+                  <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
+                    Add step to an existing flow
+                    {selectVisible ? (
+                      <div className={styles.cardLinkSelect}>
+                        <Select
+                          style={{ width: '100%' }}
+                          value={selected[step.name] ? selected[step.name] : undefined}
+                          onChange={(flowName) => handleSelect({flowName: flowName, mappingName: step.name})}
+                          placeholder="Select Flow"
+                          defaultActiveFirstOption={false}
+                          disabled={!props.canWriteMatchMerge}
+                          data-testid={`${step.name}-flowsList`}
                         >
-                            <Card
-                                actions={[
-                                    <span></span>,
-                                    <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" onClick={() => openMatchingSettingsDialog(index)}/></MLTooltip>,
-                                    <MLTooltip title={'Edit'} placement="bottom"><Icon type="edit" key="edit" onClick={() => openEditStepDialog(index)}/></MLTooltip>,
-                                    props.canWriteMatchMerge ? (
-                                        <MLTooltip
-                                            title={'Delete'}
-                                            placement="bottom"
-                                        >
-                                            <i><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg" onClick={() => handleCardDelete(elem.name)} /></i>
-                                        </MLTooltip>
-                                    ) : (
-                                        <i><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i>
-                                    )
-                                ]}
-                                className={styles.cardStyle}
-                                size="small"
-                            >
-                                <div className={styles.formatFileContainer}>
-                                    <span className={styles.matchingNameStyle}>{getInitialChars(elem.name, 27, '...')}</span>
-
-                                </div><br />
-                                {elem.selectedSource === 'collection' ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery,32,'...')}</div>}
-                                <br /><br />
-                                <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-
-                                {/* Hover Over Menu */}
-                                <div className={styles.cardLinks} style={{display: showLinks === elem.name ? 'block' : 'none'}}>
-                                    <div
-                                        data-testid={`${elem.name}-stepDetails`}
-                                        className={styles.cardLink}
-                                        onClick={() => openStepDetails(elem)}
-                                    >Open step details</div>
-                                    {props.canWriteMatchMerge ? (
-                                        <Link id="tiles-run-add" to={
-                                            {pathname: '/tiles/run/add',
-                                            state: {
-                                                stepToAdd : elem.name,
-                                                stepDefinitionType : 'matching'
-                                            }}}
-                                        ><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>
-                                        </Link>
-                                    ) : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
-                                    <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
-                                        Add step to an existing flow
-                                        <div className={styles.cardLinkSelect}>
-                                            <Select
-                                                style={{ width: '100%' }}
-                                                onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
-                                                placeholder="Select Flow"
-                                                defaultActiveFirstOption={false}
-                                                disabled={!props.canWriteFlow}
-                                                data-testid={`${elem.name}-flowsList`}
-                                            >
-                                                { props.flows && props.flows.length > 0 && props.flows.map((flow, index) => (
-                                                    <Option aria-label={`${flow.name}-option`} value={flow.name} key={index}>{flow.name}</Option>
-                                                ))}
-                                            </Select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card>
-                        </div>
-                    </Col>
-                )) : <span></span> }
-                <CreateEditStepDialog
-                  isVisible={showCreateEditStepModal}
-                  isEditing={isEditing}
-                  stepType={StepType.Matching}                                 
-                  editStepArtifactObject={editStepArtifact}
-                  targetEntityType={props.entityName}
-                  createStepArtifact={props.createMatchingArtifact}
-                  canReadWrite={props.canWriteMatchMerge}
-                  canReadOnly={props.canReadMatchMerge}
-                  toggleModal={toggleCreateEditStepModal}
-                />
-            </Row>
-            <ConfirmationModal
-                isVisible={showConfirmModal}
-                type={confirmType}
-                boldTextArray={confirmBoldTextArray}
-                toggleModal={toggleConfirmModal}
-                confirmAction={confirmAction}
-            />
-        </div>
-    );
-
+                          {props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
+                            <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
+                          )) : null}
+                        </Select>
+                      </div> 
+                    ) : null}
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </Col>
+          ))
+        ) : null}
+      </Row>
+      <CreateEditStepDialog
+        isVisible={showCreateEditStepModal}
+        isEditing={isEditing}
+        stepType={StepType.Matching}                                 
+        editStepArtifactObject={editStepArtifact}
+        targetEntityType={props.entityName}
+        createStepArtifact={props.createMatchingArtifact}
+        canReadWrite={props.canWriteMatchMerge}
+        canReadOnly={props.canReadMatchMerge}
+        toggleModal={toggleCreateEditStepModal}
+      />
+      <AdvancedSettingsDialog
+        tooltipsData={AdvMapTooltips}
+        openAdvancedSettings={showStepSettings}
+        setOpenAdvancedSettings={toggleStepSettings}
+        stepData={stepArtifact}
+        activityType={StepType.Matching}
+        canWrite={authorityService.canWriteMatchMerge()}
+      />
+      <ConfirmationModal
+        isVisible={showConfirmModal}
+        type={confirmType}
+        boldTextArray={confirmBoldTextArray}
+        toggleModal={toggleConfirmModal}
+        confirmAction={confirmAction}
+      />
+    </div>
+  )
 };
 
 export default MatchingCard;
