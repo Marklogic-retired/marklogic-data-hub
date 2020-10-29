@@ -51,9 +51,9 @@ public class WriteJobsDataTest extends AbstractSparkConnectorTest {
 
     @Test
     void testDocsWithAdditionalExternalMetadata() {
-        ObjectNode externalMetadata = objectMapper.createObjectNode();
-        externalMetadata.put("jobName", "testJob");
-        initializeDataWriter(newFruitOptions().withExternalMetadata(externalMetadata));
+        ObjectNode additionalExternalMetadata = objectMapper.createObjectNode();
+        additionalExternalMetadata.put("jobName", "testJob");
+        initializeDataWriter(newFruitOptions().withAdditionalExternalMetadata(additionalExternalMetadata));
         writeRows(buildRow("pineapple", "green"));
 
         DocumentMetadataHandle metadata = getFirstFruitMetadata();
@@ -66,6 +66,17 @@ public class WriteJobsDataTest extends AbstractSparkConnectorTest {
         assertNotNull(jobDoc.get("job").get("externalMetadata"));
         assertNotNull(jobDoc.get("job").get("externalMetadata").get("jobName"));
         assertEquals("testJob", jobDoc.get("job").get("externalMetadata").get("jobName").asText());
+
+    }
+
+    @Test
+    void testDocsWithInvalidAdditionalExternalMetadata() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+            () -> initializeDataWriter(newFruitOptions().withAdditionalExternalMetadataAsString("testString")),
+            "Expected an error because additionalExternalMetadata is a String instead of Json"
+        );
+        assertTrue(ex.getMessage().contains("Unable to parse additionalExternalMetadata option as a JSON object; cause: Unrecognized token 'testString': " +
+            "was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')"));
 
     }
 

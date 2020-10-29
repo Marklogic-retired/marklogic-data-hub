@@ -249,6 +249,11 @@ class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             if(options.get("additionalexternalmetadata")!=null) {
                 externalMetadata = (ObjectNode) objectMapper.readTree(options.get("additionalexternalmetadata"));
             }
+        } catch(Exception e) {
+                throw new IllegalArgumentException("Unable to parse additionalExternalMetadata option as a JSON object; " +
+                    "cause: " + e.getMessage(), e);
+        }
+        try{
             externalMetadata.set("sparkSchema", objectMapper.readTree(schema.json()));
 
         } catch (Exception e) {
