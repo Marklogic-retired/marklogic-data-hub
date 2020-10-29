@@ -1,6 +1,5 @@
 package com.marklogic.hub.deploy.commands;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
@@ -9,7 +8,7 @@ import com.marklogic.appdeployer.command.UndoableCommand;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.configuration.Configuration;
@@ -17,7 +16,6 @@ import com.marklogic.mgmt.api.configuration.Configurations;
 import com.marklogic.mgmt.api.security.Privilege;
 import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.RolePrivilege;
-import com.marklogic.mgmt.cma.ConfigurationManager;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.mapper.ResourceMapper;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
@@ -117,10 +115,11 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
 
     @Override
     public void execute(CommandContext context) {
-        if (new Versions(hubConfig).isVersionCompatibleWith520Roles()) {
+        if (new MarkLogicVersion(hubConfig.getManageClient()).isVersionCompatibleWith520Roles()) {
             Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
             saveGranularPrivileges(context.getManageClient(), granularPrivileges);
-        } else {
+        }
+        else {
             logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
         }
     }
@@ -132,13 +131,14 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
      */
     @Override
     public void undo(CommandContext context) {
-        if (new Versions(hubConfig).isVersionCompatibleWith520Roles()) {
+        if (new MarkLogicVersion(hubConfig.getManageClient()).isVersionCompatibleWith520Roles()) {
             Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
             PrivilegeManager mgr = new PrivilegeManager(context.getManageClient());
             granularPrivileges.values().forEach(privilege -> {
                 mgr.deleteAtPath("/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute");
             });
-        } else {
+        }
+        else {
             logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
         }
     }

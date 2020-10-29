@@ -28,16 +28,11 @@ import com.marklogic.client.util.RequestParameters;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.error.ServerValidationException;
-import org.apache.commons.lang3.StringUtils;
+import com.marklogic.hub.MarkLogicVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 @Component
 public class Versions extends LoggingObject {
@@ -55,45 +50,10 @@ public class Versions extends LoggingObject {
         this.hubClient = hubClient;
     }
 
-    public class MarkLogicVersion {
-        private Integer major;
-        private Integer minor;
-        private boolean isNightly;
-        private String dateString;
-
-        public boolean isNightly() {
-            return isNightly;
-        }
-
-        public Integer getMajor() {
-            return major;
-        }
-
-        public Integer getMinor() {
-            return minor;
-        }
-
-        public String getDateString() {
-            return dateString;
-        }
-    }
-
     public Versions(HubConfig hubConfig) {
         this.hubConfig = hubConfig;
     }
 
-    /**
-     * The DHF 5.2.0 roles depend on granular privileges that are first available in ML 10.0-3.
-     *
-     * @return
-     */
-    public boolean isVersionCompatibleWith520Roles() {
-        Versions.MarkLogicVersion serverVersion = getMLVersion();
-        if (serverVersion.isNightly()) {
-            return (serverVersion.getMajor() == 10);
-        }
-        return (serverVersion.getMajor() == 10 && serverVersion.getMinor() >= 300);
-    }
 
     /**
      * Depends on being able to obtain the version from an installed DH.
@@ -193,7 +153,7 @@ public class Versions extends LoggingObject {
         return null;
     }
 
-    public String getMarkLogicVersion() {
+    public String getMarkLogicVersionString() {
         // this call specifically needs to access marklogic without a known database
         DatabaseClient client = hubClient != null ?
             hubClient.getStagingClient() :
@@ -209,54 +169,8 @@ public class Versions extends LoggingObject {
         }
     }
 
-    public MarkLogicVersion getMLVersion() {
-        String versionString = this.getMarkLogicVersion();
-        return getMLVersion(versionString);
-
-    }
-
-    public MarkLogicVersion getMLVersion(String versionString) {
-        MarkLogicVersion markLogicVersion = new MarkLogicVersion();
-        try {
-            if (versionString == null) {
-                versionString = this.getMarkLogicVersion();
-            }
-            int major = Integer.parseInt(versionString.replaceAll("([^.]+)\\..*", "$1"));
-            int minor = 0;
-            boolean isNightly = versionString.matches("[^-]+-(\\d{4})(\\d{2})(\\d{2})");
-
-            if (isNightly) {
-                String dateString = versionString.replaceAll("[^-]+-(\\d{4})(\\d{2})(\\d{2})", "$1-$2-$3");
-                markLogicVersion.dateString = dateString;
-                markLogicVersion.isNightly = true;
-            } else {
-                //Extract minor version in cases where versions is of type 9.0-6 or 9.0-6.2
-                if (versionString.matches("^.*-(.+)\\..*")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\..*", "$1"));
-                } else if (versionString.matches("^.*-(.+)$")) {
-                    minor = Integer.parseInt(versionString.replaceAll("^.*-(.+)$", "$1"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedMinor = minor < 10 ? StringUtils.leftPad(String.valueOf(minor), 2, "0") : String.valueOf(minor);
-
-                int hotFixNum = 0;
-
-                //Extract hotfix in cases where versions is of type 9.0-6.2, if not it will be 0
-                if (versionString.matches("^.*-(.+)\\.(.*)")) {
-                    hotFixNum = Integer.parseInt(versionString.replaceAll("^.*-(.+)\\.(.*)", "$2"));
-                }
-                //left pad minor version with 0 if it is < 10
-                String modifiedHotFixNum = hotFixNum < 10 ? StringUtils.leftPad(String.valueOf(hotFixNum), 2, "0") : String.valueOf(hotFixNum);
-                String alteredString = StringUtils.join(modifiedMinor, modifiedHotFixNum);
-                int ver = Integer.parseInt(alteredString);
-                markLogicVersion.minor = ver;
-            }
-            markLogicVersion.major = major;
-        } catch (Exception e) {
-            throw new ServerValidationException(e.toString());
-        }
-        return markLogicVersion;
-
+    public MarkLogicVersion getMarkLogicVersion() {
+        return new MarkLogicVersion(this.getMarkLogicVersionString());
     }
 
     public static int compare(String v1, String v2) {

@@ -12,8 +12,7 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.Amp;
 import com.marklogic.mgmt.resource.security.AmpManager;
@@ -39,13 +38,12 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     HubClient adminHubClient;
 
     @BeforeEach
-    void checkIfTestsCanBeRun(){
-        Versions.MarkLogicVersion mlVersion = new Versions(getHubClient()).getMLVersion();
-        assumeTrue(
-            (mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
-            (mlVersion.getMajor() > 10) ||(mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
+    void checkIfTestsCanBeRun() {
+        MarkLogicVersion mlVersion = new MarkLogicVersion(getHubClient().getManageClient());
+        assumeTrue((mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
+                (mlVersion.getMajor() > 10) || (mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
         );
-        if(operatorHubClient == null || adminHubClient == null){
+        if (operatorHubClient == null || adminHubClient == null) {
             operatorHubClient = runAsDataHubOperator();
             adminHubClient = runAsAdmin();
         }
@@ -83,7 +81,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
             amp = api.amp("getPiiData", "","/ampTest/testModule.sjs",HubConfig.DEFAULT_MODULES_DB_NAME );
             ampRoles = amp.getRole();
             // If server version > 10.0-4.4, PUT request should succeed, will log an error msg in case of 10.0-4.4, will fail otherwise
-            Versions.MarkLogicVersion mlVersion = new Versions(getHubClient()).getMLVersion();
+            MarkLogicVersion mlVersion = new MarkLogicVersion(getHubClient().getManageClient());
             if(mlVersion.isNightly() || mlVersion.getMinor() > 404){
                 Collections.sort(ampRoles);
                 Assertions.assertEquals(2, ampRoles.size());

@@ -7,8 +7,8 @@ import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.dhs.installer.InstallerCommand;
 import com.marklogic.hub.dhs.installer.Options;
 import com.marklogic.hub.impl.HubConfigImpl;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.impl.Versions;
-import com.marklogic.hub.impl.Versions.MarkLogicVersion;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
@@ -97,19 +97,19 @@ public abstract class AbstractInstallerCommand extends LoggingObject implements 
             logger.info("Will only check MarkLogic version to determine if Data Hub can be installed");
         }
 
-        MarkLogicVersion mlVersion = versions.getMLVersion(serverVersion);
+        MarkLogicVersion mlVersion = new MarkLogicVersion(serverVersion);
         return canInstallDhs(installedHubVersion, mlVersion);
     }
 
-    protected ObjectNode canInstallDhs(String installedHubVersion, MarkLogicVersion mlVersion){
+    protected ObjectNode canInstallDhs(String installedHubVersion, MarkLogicVersion mlVersion) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode node = mapper.createObjectNode();
-        if(installedHubVersion != null && Character.getNumericValue(installedHubVersion.charAt(0)) < 5){
+        if (installedHubVersion != null && Character.getNumericValue(installedHubVersion.charAt(0)) < 5) {
             node.put("canBeInstalled", false);
             node.put("message", "DHF cannot be upgraded when the major version of the existing DHF instance is 4");
         }
         else {
-            if(mlVersion.getMajor() > 10 || (mlVersion.getMajor().equals(10) && mlVersion.getMinor() >= 300)){
+            if (mlVersion.isVersionCompatibleWith520Roles()) {
                 node.put("canBeInstalled", true);
             }
             else {
