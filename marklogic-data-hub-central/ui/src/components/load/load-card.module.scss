@@ -1,10 +1,10 @@
-.loadCard{
+.loadCard {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 10px;
 }
-.cardStyle{
+.cardStyle {
     width: 300px;
     margin-top: 9px;
     text-align: left;
@@ -14,12 +14,12 @@
     margin-bottom: 10px;
 }
 
-.stepNameStyle{
+.stepNameStyle {
     font-size: 20px;
     padding-bottom: 2px;
 }
 
-.lastUpdatedStyle{
+.lastUpdatedStyle {
     font-size: 13px;
     margin-bottom: 0px;
 }
@@ -34,7 +34,7 @@
     align-items: flex-start;
     cursor: pointer;
 }
-.addNewCard{
+.addNewCard {
     width: 300px;
     margin-top: 9px;
     border: 1px solid #d7d6d6;
@@ -42,7 +42,7 @@
     text-align: center;
     align-content: center;
 }
-.plusIcon{
+.plusIcon {
     font-size: 80px;
     margin-top: 16px;
     color: #67749c;
@@ -61,11 +61,16 @@
     text-align: left;
 }
 
-.disabledDeleteIcon {
-    font-size: 21px;
+.disabledIcon {
+    font-size: 19px;
     opacity: 0.5;
     padding-bottom: 2px;
-    cursor: not-allowed;
+    cursor: not-allowed !important;
+}
+
+.runIcon {
+    font-size: 19px;
+    padding-top: 2px;
 }
 
 .cardLinks {
@@ -111,4 +116,17 @@
     float: left;
     width: auto;
     padding-bottom: 100%;
+}
+
+.stepLink {
+    color: #44499C;
+}
+
+.stepLinkExisting {
+    color: rgba(0, 0, 0, 0.65);
+}
+
+
+.stepLinkSelect {
+    margin-top: 5px;
 }
