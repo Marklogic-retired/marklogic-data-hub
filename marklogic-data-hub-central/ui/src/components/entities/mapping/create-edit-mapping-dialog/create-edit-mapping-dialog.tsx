@@ -17,6 +17,7 @@ const CreateEditMappingDialog = (props) => {
   const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
   const [isQuerySelected, setIsQuerySelected] = useState(false);
+
   //To check submit validity
   const [isMapNameTouched, setMapNameTouched] = useState(false);
   const [isDescriptionTouched, setDescriptionTouched] = useState(false);
@@ -84,12 +85,10 @@ const CreateEditMappingDialog = (props) => {
   }, [props.mapData, props.title, props.newMap]);
 
   const onCancel = () => {
-
     if (checkDeleteOpenEligibility()) {
       setDeleteDialogVisible(true);
     } else {
       props.setNewMap(false);
-
     }
   };
 
@@ -113,6 +112,10 @@ const CreateEditMappingDialog = (props) => {
   const onDelOk = () => {
     props.setNewMap(false);
     setDeleteDialogVisible(false);
+    
+    setMapNameTouched(false);
+    setCollectionsTouched(false);
+    setSrcQueryTouched(false);
   };
 
   const onDelCancel = () => {
@@ -137,6 +140,25 @@ const CreateEditMappingDialog = (props) => {
   </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    if (!mapName) {
+      // missing name
+      setMapNameTouched(true);
+    }
+    if (!collections && selectedSource === 'collection') {
+      // missing collections
+      setCollectionsTouched(true);
+    }
+    if (!srcQuery && selectedSource !== 'collection') {
+      // missing query
+      setSrcQueryTouched(true);
+    }
+    if (!mapName || (!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+      // if missing flags are set, do not submit handle
+      event.preventDefault();
+      return;
+    }
+    // else: all required fields are set
+
     if (event) event.preventDefault();
     let dataPayload;
     if(selectedSource === 'collection') {
@@ -474,7 +496,13 @@ const CreateEditMappingDialog = (props) => {
           <div className={styles.submitButtons}>
             <MLButton data-testid="mapping-dialog-cancel"  onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} data-testid="mapping-dialog-save" onClick={handleSubmit}>Save</MLButton>
+            <MLButton 
+              type="primary" 
+              htmlType="submit" 
+              disabled={!props.canReadWrite} 
+              data-testid="mapping-dialog-save" 
+              onClick={handleSubmit}
+            >Save</MLButton>
           </div>
         </Form.Item>
       </Form>
@@ -484,4 +512,3 @@ const CreateEditMappingDialog = (props) => {
 };
 
 export default CreateEditMappingDialog;
-

@@ -22,13 +22,13 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByLabelText('Collection')).toBeInTheDocument();
     expect(getByLabelText('Query')).toBeInTheDocument();
     expect(getByLabelText('collection-input')).toBeInTheDocument();
-    expect(getByText('Save')).toBeDisabled();
+    expect(getByText('Save')).toBeEnabled();
     expect(getByText('Cancel')).toBeEnabled();
     //Collection radio button should be selected by default
     expect(getByLabelText('Collection')).toBeChecked();
   });
 
-  test('Verify mapping name, source query is mandatory and Save button is disabled', async () => {
+  test('Verify mapping name, source query is mandatory and Save button is always enabled', async () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
@@ -36,7 +36,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     // Enter the value for name input.
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
     expect(nameInput).toHaveValue('testCreateMap');
-    expect(saveButton).toBeDisabled(); // It should be disabled since no value is provided yet for Collection or Query.
+    expect(saveButton).toBeEnabled();
 
     //Providing the value for Collection field now so that Save button can be enabled.
     const collInput = document.querySelector(('#collList .ant-input'))
@@ -46,12 +46,12 @@ describe('Create/Edit Mapping Step artifact component', () => {
       }
     });    
     expect(collInput).toHaveValue('testCollection');
-    expect(saveButton).toBeEnabled(); //Should be enabled now as all the mandatory fields have values.
+    expect(saveButton).toBeEnabled();
 
     //Removing the value of Name field to check if getting the error what name field is required.
     fireEvent.change(nameInput, { target: {value: ''}});
     expect(getByText('Name is required')).toBeInTheDocument();
-    expect(saveButton).toBeDisabled();
+    expect(saveButton).toBeEnabled();
 
     //Adding the value for name field to test if Source Query /Collections fields are 'Required', in the next test case.
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
@@ -65,9 +65,8 @@ describe('Create/Edit Mapping Step artifact component', () => {
       }
     });        
     expect(getByText('Collection or Query is required')).toBeInTheDocument();
-    expect(saveButton).toBeDisabled();
+    expect(saveButton).toBeEnabled();
 
-    //Adding the collection value now to see if we go back to enabling the save button once collection value is provided.
     await wait(() => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
@@ -82,16 +81,16 @@ describe('Create/Edit Mapping Step artifact component', () => {
         fireEvent.change(collInput, { target: {value: ''} });
       }
     });        
-    expect(saveButton).toBeDisabled(); // Checking if the Save button is disabled again , before updating the value for Query.
+    expect(saveButton).toBeEnabled();
     fireEvent.click(getByLabelText('Query'));  //updating the value of Query field now.
     const queryInput = getByPlaceholderText('Enter source query');
     fireEvent.change(queryInput, { target: {value: 'cts.collectionQuery(["testCollection"])'}});
-    expect(saveButton).toBeEnabled(); //Should be disabled since neither Query nor Collection field has any value.
+    expect(saveButton).toBeEnabled();
 
     //Removing source field value now to check if we get the validation error as 'Collection or Query is required'.
     fireEvent.change(queryInput, { target: {value: ''}});
     expect(getByText('Collection or Query is required')).toBeInTheDocument();
-    expect(saveButton).toBeDisabled();
+    expect(saveButton).toBeEnabled();
   });
 
   test('Verify able to type in input fields and typeahead search in collections field', async () => {
@@ -149,6 +148,42 @@ describe('Create/Edit Mapping Step artifact component', () => {
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
 
+  });
+
+  test('Verify Save button requires all mandatory fields', async () => {
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const nameInput = getByPlaceholderText('Enter name');
+    const collInput = document.querySelector(('#collList .ant-input'));
+
+    // click save without any input
+    fireEvent.click(getByText('Save'));
+
+    // both messages should show when both boxes are empty
+    expect(getByText('Name is required')).toBeInTheDocument(); 
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
+
+    // enter name only
+    fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
+    expect(nameInput).toHaveValue('testCreateMap');
+
+    fireEvent.click(getByText('Save'));
+    
+    // error message for name should not appear
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
+
+    // clear name and enter collection only
+    fireEvent.change(nameInput, { target: {value: ''}});
+    await wait(() => {
+      if(collInput){
+        fireEvent.change(collInput, { target: {value: 'testCollection'} });
+      }
+    });    
+    expect(collInput).toHaveValue('testCollection');
+
+    fireEvent.click(getByText('Save'));
+
+    // error message for empty collection should not appear
+    expect(getByText('Name is required')).toBeInTheDocument(); 
   });
 
   test('Verify New Mapping Step modal closes when Cancel is clicked', () => {

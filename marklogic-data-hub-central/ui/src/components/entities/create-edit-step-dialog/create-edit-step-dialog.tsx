@@ -149,9 +149,30 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
   const confirmAction = () => {
     toggleConfirmModal(false);
     props.toggleModal(false);
+
+    resetTouchedValues()
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    if (!stepName) {
+      // missing name
+      setStepNameTouched(true);
+    }
+    if (!collections && selectedSource === 'collection') {
+      // missing collection (if collection is selected)
+      setCollectionsTouched(true);
+    }
+    if (!srcQuery && selectedSource !== 'collection') {
+      // missing query (if query is selected)
+      setSrcQueryTouched(true);
+    }
+    if (!stepName || (!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+      // if missing flags are set, do not submit handle
+      event.preventDefault();
+      return;
+    }
+    // else: all required fields are set
+
     if (event) event.preventDefault();
     let dataPayload;
     if(selectedSource === 'collection') {
@@ -381,7 +402,10 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
           <Form.Item label={<span>
             Source Query:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
-              </span>} labelAlign="left">
+              </span>} labelAlign="left"
+              validateStatus={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'error'}
+              help={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'Collection or Query is required'}
+            >
             <Radio.Group
               id="srcType"
               options={srcTypeOptions}
@@ -422,7 +446,12 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
             <div className={styles.submitButtons}>
               <MLButton onClick={() => onCancel()}>Cancel</MLButton>
               &nbsp;&nbsp;
-              <MLButton type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
+              <MLButton
+                type="primary"
+                htmlType="submit"
+                disabled={!props.canReadWrite} 
+                onClick={handleSubmit}
+              >Save</MLButton>
             </div>
           </Form.Item>
         </Form>
