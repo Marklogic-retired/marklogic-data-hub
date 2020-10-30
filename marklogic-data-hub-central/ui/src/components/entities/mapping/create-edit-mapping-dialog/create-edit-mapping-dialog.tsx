@@ -17,11 +17,14 @@ const CreateEditMappingDialog = (props) => {
   const [selectedSource, setSelectedSource] = useState(props.mapData && props.mapData != {} ? props.mapData.selectedSource : 'collection')
   const [srcQuery, setSrcQuery] = useState(props.mapData && props.mapData != {} ? props.mapData.sourceQuery : '');
   const [isQuerySelected, setIsQuerySelected] = useState(false);
+
   //To check submit validity
   const [isMapNameTouched, setMapNameTouched] = useState(false);
+  const [isNameMissingOnSave, setNameMissingOnSave] = useState(false);
   const [isDescriptionTouched, setDescriptionTouched] = useState(false);
   const [isCollectionsTouched, setCollectionsTouched] = useState(false);
   const [isSrcQueryTouched, setSrcQueryTouched] = useState(false);
+  const [isQueryMissingOnSave, setQueryMissingOnSave] = useState(false);
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false);
@@ -84,7 +87,8 @@ const CreateEditMappingDialog = (props) => {
   }, [props.mapData, props.title, props.newMap]);
 
   const onCancel = () => {
-
+    setNameMissingOnSave(false)
+    setQueryMissingOnSave(false)
     if (checkDeleteOpenEligibility()) {
       setDeleteDialogVisible(true);
     } else {
@@ -236,6 +240,7 @@ const CreateEditMappingDialog = (props) => {
       else {
         setMapNameTouched(true);
         setMapName(event.target.value);
+        setNameMissingOnSave(false)
         if (event.target.value.length > 0) {
           if (collections|| srcQuery) {
               setIsValid(true);
@@ -274,6 +279,7 @@ const CreateEditMappingDialog = (props) => {
       else {
         setSrcQueryTouched(true);
         setSrcQuery(event.target.value);
+        setQueryMissingOnSave(false)
         if (event.target.value.length > 0) {
           if (mapName) {
             setIsValid(true);
@@ -290,6 +296,7 @@ const CreateEditMappingDialog = (props) => {
       else {
         setCollectionsTouched(true);
         setCollections(event.target.value);
+        setQueryMissingOnSave(false)
         if (props.mapData && props.mapData.collection) {
           if (props.mapData.collection === event.target.value) {
 
@@ -393,8 +400,8 @@ const CreateEditMappingDialog = (props) => {
           Name:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
             </span>} labelAlign="left"
-          validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? '' : 'error') : 'error'}
-          help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :'') : 'Name is required'}
+          validateStatus={(mapName || !isMapNameTouched && !isNameMissingOnSave) ? (!isNameDuplicate ? '' : 'error') : 'error'}
+          help={(mapName || !isMapNameTouched && !isNameMissingOnSave) ? (isNameDuplicate ? errorMessage :'') : 'Name is required'}
         >
           <Input
             id="name"
@@ -429,8 +436,8 @@ const CreateEditMappingDialog = (props) => {
           Source Query:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
             </span>} labelAlign="left"
-            validateStatus={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'error'}
-            help={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? '' : 'Collection or Query is required'}
+            validateStatus={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched) && !isQueryMissingOnSave) ? '' : 'error'}
+            help={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched) && !isQueryMissingOnSave) ? '' : 'Collection or Query is required'}
             >
           <Radio.Group
             id="srcType"
@@ -480,12 +487,20 @@ const CreateEditMappingDialog = (props) => {
               disabled={!props.canReadWrite} 
               data-testid="mapping-dialog-save" 
               onClick={(e) => {
-                if (isValid) {
-                  return
-                } else {
+                setNameMissingOnSave(false)
+                setQueryMissingOnSave(false)
+                if (!mapName) {
+                  setNameMissingOnSave(true)
                   e.preventDefault()
-                  alert("Required fields must be filled out")
+                  // alert("Name must be filled out")
                 }
+                if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+                  setQueryMissingOnSave(true)
+                  e.preventDefault()
+                  // alert("Collection or query must be filled out")
+                }
+
+                // else: all entries are valid and form should be submitted
               }}
             >Save</MLButton>
           </div>
@@ -497,4 +512,3 @@ const CreateEditMappingDialog = (props) => {
 };
 
 export default CreateEditMappingDialog;
-

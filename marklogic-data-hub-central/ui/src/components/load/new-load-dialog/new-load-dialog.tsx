@@ -16,6 +16,7 @@ const NewLoadDialog = (props) => {
   const [otherSeparator, setOtherSeparator] = useState('');
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
+  const [isNameMissingOnSave, setNameMissingOnSave] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
@@ -66,6 +67,7 @@ const NewLoadDialog = (props) => {
   }, [props.stepData, props.title, props.newLoad]);
 
   const onCancel = () => {
+    setNameMissingOnSave(false)
     if(checkDeleteOpenEligibility()) {
       setDeleteDialogVisible(true);
     } else {
@@ -181,6 +183,7 @@ const NewLoadDialog = (props) => {
         if (event.target.value.length == 0) {
           setIsValid(false);
         } else if (srcFormat && tgtFormat) {
+          setNameMissingOnSave(false)
           setIsValid(true);
         }
       }
@@ -265,8 +268,8 @@ const NewLoadDialog = (props) => {
 
           &nbsp;
             </span>} labelAlign="left"
-          validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
-          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}
+          validateStatus={(stepName || !isStepNameTouched && !isNameMissingOnSave) ? '' : 'error'}
+          help={(stepName || !isStepNameTouched && !isNameMissingOnSave) ? '' : 'Name is required'}
           >
           <Input
             id="name"
@@ -381,11 +384,13 @@ const NewLoadDialog = (props) => {
               htmlType="submit" 
               disabled={!props.canReadWrite} 
               onClick={(e) => {
-                if (isValid) {
+                setNameMissingOnSave(false)
+                if (!!stepName) {
                   return
                 } else {
+                  setNameMissingOnSave(true)
                   e.preventDefault()
-                  alert("Name cannot be blank")
+                  // alert("Name cannot be blank")
                 }
               }}
             >Save</MLButton>
@@ -398,4 +403,3 @@ const NewLoadDialog = (props) => {
 };
 
 export default NewLoadDialog;
-

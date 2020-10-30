@@ -55,9 +55,11 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
 
   //To check submit validity
   const [isStepNameTouched, setStepNameTouched] = useState(false);
+  const [isNameMissingOnSave, setNameMissingOnSave] = useState(false);
   const [isDescriptionTouched, setDescriptionTouched] = useState(false);
   const [isCollectionsTouched, setCollectionsTouched] = useState(false);
   const [isSrcQueryTouched, setSrcQueryTouched] = useState(false);
+  const [isQueryMissingOnSave, setQueryMissingOnSave] = useState(false);
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false);
@@ -119,6 +121,8 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
   }
 
   const onCancel = () => {
+    setNameMissingOnSave(false)
+    setQueryMissingOnSave(false)
     if (checkDeleteOpenEligibility()) {
       toggleConfirmModal(true);
     } else {
@@ -229,6 +233,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
       else {
         setStepNameTouched(true);
         setStepName(event.target.value);
+        setNameMissingOnSave(false)
         if (event.target.value.length > 0) {
           if (JSON.stringify(collections) !== JSON.stringify([]) || srcQuery) {
             setIsValid(true);
@@ -261,6 +266,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
       else {
         setSrcQueryTouched(true);
         setSrcQuery(event.target.value);
+        setQueryMissingOnSave(false)
         if (event.target.value.length > 0) {
           if (stepName) {
             setIsValid(true);
@@ -277,6 +283,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
       else {
         setCollectionsTouched(true);
         setCollections(event.target.value);
+        setQueryMissingOnSave(false)
         if (props.isEditing && props.editStepArtifactObject.collection) {
           if (props.editStepArtifactObject.collection === event.target.value) {
             setCollectionsTouched(false);
@@ -340,8 +347,8 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
             Name:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
               </span>} labelAlign="left"
-            validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
-            help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}
+            validateStatus={(stepName || !isStepNameTouched && !isNameMissingOnSave) ? '' : 'error'}
+            help={(stepName || !isStepNameTouched && !isNameMissingOnSave) ? '' : 'Name is required'}
           >
             <Input
               id="name"
@@ -375,7 +382,10 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
           <Form.Item label={<span>
             Source Query:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
-              </span>} labelAlign="left">
+              </span>} labelAlign="left"
+              validateStatus={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched) && !isQueryMissingOnSave) ? '' : 'error'}
+              help={((collections && selectedSource === 'collection') || (srcQuery && selectedSource !== 'collection') || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched) && !isQueryMissingOnSave) ? '' : 'Collection or Query is required'}
+            >
             <Radio.Group
               id="srcType"
               options={srcTypeOptions}
@@ -421,12 +431,20 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
                 htmlType="submit"
                 disabled={!props.canReadWrite} 
                 onClick={(e) => {
-                  if (isValid) {
-                    return
-                  } else {
+                  setNameMissingOnSave(false)
+                  setQueryMissingOnSave(false)
+                  if (!mapName) {
+                    setNameMissingOnSave(true)
                     e.preventDefault()
-                    alert("Required fields must be filled out")
+                    // alert("Name must be filled out")
                   }
+                  if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+                    setQueryMissingOnSave(true)
+                    e.preventDefault()
+                    // alert("Collection or query must be filled out")
+                  }
+  
+                  // else: all entries are valid and form should be submitted
                 }}
               >Save</MLButton>
             </div>

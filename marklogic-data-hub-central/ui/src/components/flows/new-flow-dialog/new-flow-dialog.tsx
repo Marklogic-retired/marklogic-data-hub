@@ -11,6 +11,7 @@ const NewFlowDialog = (props) => {
   const [description, setDescription] = useState(props.flowData && props.flowData != {} ? props.flowData.description : '');
 
   const [isFlowNameTouched, setFlowNameTouched] = useState(false);
+  const [isNameMissingOnSave, setNameMissingOnSave] = useState(false);
 
   const [, setIsLoading] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
@@ -37,6 +38,7 @@ const NewFlowDialog = (props) => {
   }, [props.title, props.newFlow]);
 
   const onCancel = () => {
+    setNameMissingOnSave(false)
     props.setNewFlow(false);
     if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
       props.setOpenNewFlow(false);
@@ -76,6 +78,7 @@ const NewFlowDialog = (props) => {
       }
       else {
         setFlowNameTouched(true);
+        setNameMissingOnSave(false)
         setFlowName(event.target.value);
       }
     }
@@ -115,8 +118,8 @@ const NewFlowDialog = (props) => {
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
             </span>} labelAlign="left"
-          validateStatus={(flowName || !isFlowNameTouched) ? '' : 'error'}
-          help={(flowName || !isFlowNameTouched) ? '' : 'Name is required'}>
+          validateStatus={(flowName || !isFlowNameTouched && !isNameMissingOnSave) ? '' : 'error'}
+          help={(flowName || !isFlowNameTouched && !isNameMissingOnSave) ? '' : 'Name is required'}>
           <Input
             id="name"
             placeholder="Enter name"
@@ -155,11 +158,13 @@ const NewFlowDialog = (props) => {
               type="primary"
               htmlType="submit"
               onClick={(e) => {
+                setNameMissingOnSave(false)
                 if (!!flowName) {
                   return
                 } else {
+                  setNameMissingOnSave(true)
                   e.preventDefault()
-                  alert("Name cannot be blank")
+                  //alert("Name cannot be blank")
                 }
               }}
             >
