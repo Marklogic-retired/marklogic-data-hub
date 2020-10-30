@@ -144,8 +144,16 @@ const NewLoadDialog = (props) => {
             <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
           </div>
     </Modal>;
-
+  
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    if (!stepName) {
+      // missing name
+      setStepNameTouched(true);
+      event.preventDefault();
+      return;
+    }
+    // else: submit handle
+
     if (event) event.preventDefault();
 
     let dataPayload;
@@ -426,7 +434,13 @@ const NewLoadDialog = (props) => {
           <div className={styles.submitButtons}>
             <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton aria-label="Save" type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
+            <MLButton 
+              aria-label="Save" 
+              type="primary" 
+              htmlType="submit" 
+              disabled={!props.canReadWrite} 
+              onClick={handleSubmit}
+            >Save</MLButton>
           </div>
         </Form.Item>
       </Form>
@@ -436,4 +450,3 @@ const NewLoadDialog = (props) => {
 };
 
 export default NewLoadDialog;
-

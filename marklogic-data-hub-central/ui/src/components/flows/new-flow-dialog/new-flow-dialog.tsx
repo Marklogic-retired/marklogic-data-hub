@@ -51,6 +51,13 @@ const NewFlowDialog = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+    if (!flowName) {
+      // missing name
+      setFlowNameTouched(true);
+      event.preventDefault();
+      return;
+    }
+
     if (event) event.preventDefault();
     let dataPayload = {
         name: flowName,
@@ -155,7 +162,6 @@ const NewFlowDialog = (props) => {
               aria-label="Save"
               type="primary"
               htmlType="submit"
-              disabled={!flowName}
               onClick={handleSubmit}
             >
               Save

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
+import { render, fireEvent, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import NewLoadDialog from './new-load-dialog';
 import {BrowserRouter} from "react-router-dom";
@@ -100,6 +100,36 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
     expect(queryByText('Source Name')).not.toBeInTheDocument();
     expect(queryByText('Source Type')).not.toBeInTheDocument();
+  });
+
+  test('Verify name is required for form submission and error messaging appears', async () => {
+    const { debug, baseElement, queryByText, getByText} = 
+    render(
+      <BrowserRouter><NewLoadDialog newLoad={true}
+      title={'New Loading Step'}
+      setNewLoad={() => {}}
+      createLoadArtifact={() => {}}
+      stepData={{}}
+      canReadWrite={true}
+      canReadOnly={false}/></BrowserRouter>
+    );
+    const nameInput = baseElement.querySelector('#name');
+
+    // error should not appear before anything is touched
+    expect(queryByText('Name is required')).toBeNull();
+
+    fireEvent.click(getByText('Save'));
+
+    // message should appear when save button is clicked
+    expect(queryByText('Name is required')).toBeInTheDocument();
+
+    // enter in a name and verify message disappears
+    fireEvent.change(nameInput, { target: {value: 'testLoadStep'} });
+    await wait(() => {
+        expect(nameInput).toHaveValue('testLoadStep');
+    }); 
+    
+    expect(queryByText('Name is required')).toBeNull();
   });
 
 });

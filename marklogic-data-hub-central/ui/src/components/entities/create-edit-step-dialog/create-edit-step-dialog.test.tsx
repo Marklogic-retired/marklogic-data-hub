@@ -6,6 +6,7 @@ import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from 'axios';
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import { ConfirmationType } from '../../../types/common-types';
+import { selectedPropertyDefinitions } from '../../../assets/mock-data/explore/entity-search';
 
 jest.mock('axios');
 describe('Create Edit Step Dialog component', () => {
@@ -46,16 +47,18 @@ describe('Create Edit Step Dialog component', () => {
     expect(getByLabelText('Collection')).toBeInTheDocument();
     expect(getByLabelText('Query')).toBeInTheDocument();
     expect(getByLabelText('collection-input')).toBeInTheDocument();
-    expect(getByText('Save')).toBeDisabled();
+    expect(getByText('Save')).toBeEnabled();
     expect(getByText('Cancel')).toBeEnabled();
     //Collection radio button should be selected by default
     expect(getByLabelText('Collection')).toBeChecked();
   });
 
-    test('Verify merging name is mandatory and Save button is disabled', () => {
+    test('Verify save button is always enabled', () => {
         const { getByText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
         const nameInput = getByPlaceholderText('Enter name');
         const saveButton = getByText('Save');
+
+        expect(saveButton).toBeEnabled(); // button should be enabled without any input
 
         fireEvent.change(nameInput, { target: {value: 'testCreateMerging'}});
         expect(nameInput).toHaveValue('testCreateMerging');
@@ -63,9 +66,45 @@ describe('Create Edit Step Dialog component', () => {
 
         fireEvent.change(nameInput, { target: {value: ''}});
         expect(getByText('Name is required')).toBeInTheDocument();
-        expect(saveButton).toBeDisabled();
+        expect(saveButton).toBeEnabled();
     });
 
+    test('Verify Save button requires all mandatory fields', async () => {
+      const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+      const nameInput = getByPlaceholderText('Enter name');
+      const collInput = document.querySelector(('#collList .ant-input'));
+  
+      // click save without any input
+      fireEvent.click(getByText('Save'));
+  
+      // both messages should show when both boxes are empty
+      expect(getByText('Name is required')).toBeInTheDocument(); 
+      expect(getByText('Collection or Query is required')).toBeInTheDocument();
+  
+      // enter name only
+      fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
+      expect(nameInput).toHaveValue('testCreateMap');
+  
+      fireEvent.click(getByText('Save'));
+      
+      // error message for name should not appear
+      expect(getByText('Collection or Query is required')).toBeInTheDocument();
+  
+      // clear name and enter collection only
+      fireEvent.change(nameInput, { target: {value: ''}});
+      await wait(() => {
+        if(collInput){
+          fireEvent.change(collInput, { target: {value: 'testCollection'} });
+        }
+      });    
+      expect(collInput).toHaveValue('testCollection');
+  
+      fireEvent.click(getByText('Save'));
+  
+      // error message for empty collection should not appear
+      expect(getByText('Name is required')).toBeInTheDocument(); 
+    });
+  
     test('Verify able to type in input fields and typeahead search in collections field', async () => {
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
         const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
