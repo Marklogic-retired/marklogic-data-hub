@@ -16,10 +16,10 @@ via the gitignore'd gradle-local.properties file, or via the command line:
 
     ./gradlew ingestDatabook -Phost=somewhere -Pusername=someone -Ppassword=something
 
-For further customization of the options sent to the Spark connector, you'll need to modify the SparkTest program itself.
+For further customization of the options sent to the Spark connector, you'll need to modify the WriteTest program itself.
 
 You can also run this via an IDE. If using Intellij, it is recommended to import this as a separate Intellij project - i.e.
 don't import the build.gradle file into your DHF project. Make sure you set the project JDK to Java 8, and you should be 
-able to run the SparkTest program as a regular Java program. That will typically be helpful for debugging and stepping 
+able to run the WriteTest program as a regular Java program. That will typically be helpful for debugging and stepping 
 through the code.
 

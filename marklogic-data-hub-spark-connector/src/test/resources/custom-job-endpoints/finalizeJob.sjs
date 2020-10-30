@@ -24,4 +24,6 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
 
-Jobs.updateJob(datahub, jobId, "Custom: " + status, null, null, null, null);
+const alwaysUseThisStatus = "stop-on-error";
+
+Jobs.updateJob(datahub, jobId, alwaysUseThisStatus, null, null, null, null);

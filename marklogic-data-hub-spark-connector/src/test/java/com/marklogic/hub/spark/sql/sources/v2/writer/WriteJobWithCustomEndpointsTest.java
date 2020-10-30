@@ -1,9 +1,10 @@
-package com.marklogic.hub.spark.sql.sources.v2;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     }
 
     @Test
-    void invalidInitializeEndpoint()  {
+    void invalidInitializeEndpoint() {
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
             initializeDataWriter(newFruitOptions().withInitializeJobApiPath("/missing.api")));
         assertTrue(ex.getMessage().startsWith("Unable to read custom API module for initializing a job"),
@@ -71,7 +72,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     }
 
     @Test
-    void invalidFinalizeEndpoint()  {
+    void invalidFinalizeEndpoint() {
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
             initializeDataWriter(newFruitOptions().withFinalizeJobApiPath("/missing.api")));
         assertTrue(ex.getMessage().startsWith("Unable to read custom API module for finalizing a job"),
@@ -84,7 +85,9 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     }
 
     private void verifyCustomFinalizeEndpointIsUsed() {
-        assertEquals("Custom: finished", getJobDocumentStatus(),
-            "The custom finalizeJob endpoint is expected to add 'Custom: ' as a prefix to the job status");
+        assertEquals("stop-on-error", getJobDocumentStatus(),
+            "The custom finalizeJob endpoint is expected to always set 'stop-on-error' as the status. This is done " +
+                "so that the jobs.sjs module doesn't see some unrecognized status and then try to update the job " +
+                "document, which fails when running this test against DHF 5.2.x.");
     }
 }

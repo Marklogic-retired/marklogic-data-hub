@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.spark.sql.sources.v2.DefaultSource;
+import com.marklogic.hub.spark.sql.sources.v2.Util;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.writer.DataWriter;
 import org.apache.spark.sql.sources.v2.writer.DataWriterFactory;
@@ -46,7 +47,7 @@ public class HubDataWriterFactory extends LoggingObject implements DataWriterFac
 
     @Override
     public DataWriter<InternalRow> createDataWriter(int partitionId, long taskId, long epochId) {
-        HubClient client = HubClient.withHubClientConfig(DefaultSource.buildHubClientConfig(options));
+        HubClient client = HubClient.withHubClientConfig(Util.buildHubClientConfig(options));
         return new HubDataWriter(client, sparkSchema, options, endpointParams);
     }
 }

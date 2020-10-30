@@ -1,9 +1,11 @@
-package com.marklogic.hub.spark.sql.sources.v2;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
+import com.marklogic.hub.spark.sql.sources.v2.Options;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

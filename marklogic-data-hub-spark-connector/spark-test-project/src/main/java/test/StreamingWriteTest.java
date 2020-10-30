@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
-public class StreamTest {
+public class StreamingWriteTest {
 
-    private static Logger logger = LoggerFactory.getLogger(StreamTest.class);
+    private static Logger logger = LoggerFactory.getLogger(StreamingWriteTest.class);
 
     private static String host = "localhost";
     private static String username = "test-data-hub-operator";

@@ -1,10 +1,11 @@
-package com.marklogic.hub.spark.sql.sources.v2;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ResourceNotFoundException;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.hub.spark.sql.sources.v2.writer.AtLeastOneWriteFailedMessage;
+import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
+import com.marklogic.hub.spark.sql.sources.v2.Options;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.junit.jupiter.api.Test;
