@@ -193,6 +193,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
   const updateSelectedFacets = (constraint: string, vals: string[], datatype: string, isNested: boolean, toDelete = false, toDeleteAll: boolean = false) => {
     let facets = { ...allSelectedFacets };
+    let greyFacets = { ...greyedOptions.selectedFacets };
     let type = '';
     let valueKey = '';
     let facetName = constraint;
@@ -226,6 +227,13 @@ const Sidebar: React.FC<Props> = (props) => {
           [valueKey]: vals
         }
       };
+      greyFacets = {
+        ...greyFacets,
+        [facetName]: {
+          dataType: type,
+          [valueKey]: vals
+        }
+      };
     } else {
       delete facets[facetName];
     }
@@ -242,7 +250,7 @@ const Sidebar: React.FC<Props> = (props) => {
     }
     else {
       setAllSelectedFacets(facets);
-      setAllGreyedOptions(facets);
+      setAllGreyedOptions(greyFacets);
     }
   }
 
