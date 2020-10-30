@@ -433,7 +433,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
                 onClick={(e) => {
                   setNameMissingOnSave(false)
                   setQueryMissingOnSave(false)
-                  if (!mapName) {
+                  if (!stepName) {
                     setNameMissingOnSave(true)
                     e.preventDefault()
                     // alert("Name must be filled out")
