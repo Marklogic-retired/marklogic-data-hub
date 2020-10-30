@@ -392,6 +392,32 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTotalDocuments().should('be.equal', 2);
   });
 
+  it('verify hub properties grey facets are not being removed when entity properties are selected', () => {
+    browsePage.selectEntity('Customer');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
+    browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getHubPropertiesExpanded();
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').click();
+    browsePage.getFacetItemCheckbox('flow', 'CurateCustomerJSON').click();
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').should('be.visible');
+    browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').should('be.checked');
+    browsePage.getFacetItemCheckbox('flow', 'CurateCustomerJSON').should('be.visible');
+    browsePage.getFacetItemCheckbox('flow', 'CurateCustomerJSON').should('be.checked');
+    browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
+    browsePage.getGreySelectedFacets('CurateCustomerJSON').should('exist');
+    browsePage.clickClearFacetSearchSelection('Adams Cole');
+    browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
+    browsePage.getFacetItemCheckbox('name', 'Bowman Hale').click();
+    browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
+    browsePage.getGreySelectedFacets('CurateCustomerJSON').should('exist');
+    browsePage.getGreySelectedFacets('Bowman Hale').should('exist');
+    browsePage.getFacetApplyButton().click();
+    browsePage.getSelectedFacet('mapCustomersJSON').should('exist');
+    browsePage.getSelectedFacet('CurateCustomerJSON').should('exist');
+    browsePage.getSelectedFacet('Bowman Hale').should('exist');
+  });
+
   it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
