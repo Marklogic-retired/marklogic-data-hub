@@ -425,7 +425,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
                     return
                   } else {
                     e.preventDefault()
-                    alert("Name cannot be blank")
+                    alert("Required fields must be filled out")
                   }
                 }}
               >Save</MLButton>
