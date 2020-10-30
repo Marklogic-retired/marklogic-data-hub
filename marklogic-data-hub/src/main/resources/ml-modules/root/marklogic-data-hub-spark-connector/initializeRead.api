@@ -1,0 +1,17 @@
+{
+    "functionName": "initializeRead",
+    "desc": "Determines the schema and set of partitions based on the user's inputs",
+    "params": [
+        {
+            "name": "inputs",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "desc": "JSON object defining the inputs for the export query; supports view, schema, sqlCondition, and partitionCount"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+        "desc": "JSON object containing a 'schema' object and a 'partitions' "
+    }
+}

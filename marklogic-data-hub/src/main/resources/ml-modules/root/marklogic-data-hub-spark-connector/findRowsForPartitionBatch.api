@@ -1,0 +1,25 @@
+{
+    "endpoint": "/marklogic-data-hub-spark-connector/findRowsForPartitionBatch.sjs",
+    "desc": "Finds rows matching the user's query for the partition batch, all of which is defined in endpointConstants",
+    "functionName": "findRowsForPartitionBatch",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "endpointConstants",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "desc": "A JSON array for each matching row for the given partition batch",
+        "multiple": true,
+        "nullable": true
+    }
+}

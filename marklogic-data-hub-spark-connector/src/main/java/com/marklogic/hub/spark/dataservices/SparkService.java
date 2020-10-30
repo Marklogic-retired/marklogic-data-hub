@@ -49,34 +49,57 @@ public interface SparkService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_bulkIngest;
+            private BaseProxy.DBFunctionRequest req_initializeRead;
+            private BaseProxy.DBFunctionRequest req_findRowsForPartitionBatch;
             private BaseProxy.DBFunctionRequest req_finalizeJob;
+            private BaseProxy.DBFunctionRequest req_bulkIngest;
             private BaseProxy.DBFunctionRequest req_initializeJob;
 
             private SparkServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/marklogic-data-hub-spark-connector/", servDecl);
 
-                this.req_bulkIngest = this.baseProxy.request(
-                    "bulkIngester.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                this.req_initializeRead = this.baseProxy.request(
+                    "initializeRead.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_findRowsForPartitionBatch = this.baseProxy.request(
+                    "findRowsForPartitionBatch.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_finalizeJob = this.baseProxy.request(
                     "finalizeJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_bulkIngest = this.baseProxy.request(
+                    "bulkIngester.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_initializeJob = this.baseProxy.request(
                     "initializeJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
-            public void bulkIngest(Reader endpointConstants, Stream<Reader> input) {
-                bulkIngest(
-                    this.req_bulkIngest.on(this.dbClient), endpointConstants, input
+            public com.fasterxml.jackson.databind.JsonNode initializeRead(com.fasterxml.jackson.databind.JsonNode inputs) {
+                return initializeRead(
+                    this.req_initializeRead.on(this.dbClient), inputs
                     );
             }
-            private void bulkIngest(BaseProxy.DBFunctionRequest request, Reader endpointConstants, Stream<Reader> input) {
-              request
+            private com.fasterxml.jackson.databind.JsonNode initializeRead(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode inputs) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
                       .withParams(
-                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromReader(endpointConstants)),
-                          BaseProxy.documentParam("input", true, BaseProxy.JsonDocumentType.fromReader(input))
-                          ).responseNone();
+                          BaseProxy.documentParam("inputs", false, BaseProxy.JsonDocumentType.fromJsonNode(inputs))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public Stream<Reader> findRowsForPartitionBatch(Reader endpointState, Reader endpointConstants) {
+                return findRowsForPartitionBatch(
+                    this.req_findRowsForPartitionBatch.on(this.dbClient), endpointState, endpointConstants
+                    );
+            }
+            private Stream<Reader> findRowsForPartitionBatch(BaseProxy.DBFunctionRequest request, Reader endpointState, Reader endpointConstants) {
+              return BaseProxy.JsonDocumentType.toReader(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("endpointState", true, BaseProxy.JsonDocumentType.fromReader(endpointState)),
+                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromReader(endpointConstants))
+                          ).responseMultiple(true, Format.JSON)
+                );
             }
 
             @Override
@@ -90,6 +113,20 @@ public interface SparkService {
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
                           BaseProxy.atomicParam("status", false, BaseProxy.StringType.fromString(status))
+                          ).responseNone();
+            }
+
+            @Override
+            public void bulkIngest(Reader endpointConstants, Stream<Reader> input) {
+                bulkIngest(
+                    this.req_bulkIngest.on(this.dbClient), endpointConstants, input
+                    );
+            }
+            private void bulkIngest(BaseProxy.DBFunctionRequest request, Reader endpointConstants, Stream<Reader> input) {
+              request
+                      .withParams(
+                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromReader(endpointConstants)),
+                          BaseProxy.documentParam("input", true, BaseProxy.JsonDocumentType.fromReader(input))
                           ).responseNone();
             }
 
@@ -113,13 +150,21 @@ public interface SparkService {
     }
 
   /**
-   * Bulk ingestion endpoint for writing documents via the Spark connector
+   * Determines the schema and set of partitions based on the user's inputs
    *
-   * @param endpointConstants	provides input
-   * @param input	provides input
-   * 
+   * @param inputs	JSON object defining the inputs for the export query; supports view, schema, sqlCondition, and partitionCount
+   * @return	JSON object containing a 'schema' object and a 'partitions' 
    */
-    void bulkIngest(Reader endpointConstants, Stream<Reader> input);
+    com.fasterxml.jackson.databind.JsonNode initializeRead(com.fasterxml.jackson.databind.JsonNode inputs);
+
+  /**
+   * Finds rows matching the user's query for the partition batch, all of which is defined in endpointConstants
+   *
+   * @param endpointState	provides input
+   * @param endpointConstants	provides input
+   * @return	A JSON array for each matching row for the given partition batch
+   */
+    Stream<Reader> findRowsForPartitionBatch(Reader endpointState, Reader endpointConstants);
 
   /**
    * Update the job document after records have been written or an error has occurred
@@ -129,6 +174,15 @@ public interface SparkService {
    * 
    */
     void finalizeJob(String jobId, String status);
+
+  /**
+   * Bulk ingestion endpoint for writing documents via the Spark connector
+   *
+   * @param endpointConstants	provides input
+   * @param input	provides input
+   * 
+   */
+    void bulkIngest(Reader endpointConstants, Stream<Reader> input);
 
   /**
    * JSON object that, if not null, will be added to the job document with a key of 'externalMetadata

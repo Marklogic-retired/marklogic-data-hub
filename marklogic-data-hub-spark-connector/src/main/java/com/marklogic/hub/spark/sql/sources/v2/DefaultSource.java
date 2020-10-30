@@ -16,11 +16,14 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.hub.spark.sql.sources.v2.reader.HubDataSourceReader;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataSourceWriter;
 import org.apache.spark.sql.SaveMode;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
+import org.apache.spark.sql.sources.v2.ReadSupport;
 import org.apache.spark.sql.sources.v2.StreamWriteSupport;
 import org.apache.spark.sql.sources.v2.WriteSupport;
+import org.apache.spark.sql.sources.v2.reader.DataSourceReader;
 import org.apache.spark.sql.sources.v2.writer.DataSourceWriter;
 import org.apache.spark.sql.sources.v2.writer.streaming.StreamWriter;
 import org.apache.spark.sql.streaming.OutputMode;
@@ -28,7 +31,7 @@ import org.apache.spark.sql.types.StructType;
 
 import java.util.Optional;
 
-public class DefaultSource extends LoggingObject implements WriteSupport, StreamWriteSupport {
+public class DefaultSource extends LoggingObject implements WriteSupport, StreamWriteSupport, ReadSupport {
 
     @Override
     public Optional<DataSourceWriter> createWriter(String writeUUID, StructType schema, SaveMode mode, DataSourceOptions options) {
@@ -39,5 +42,10 @@ public class DefaultSource extends LoggingObject implements WriteSupport, Stream
     @Override
     public StreamWriter createStreamWriter(String queryId, StructType schema, OutputMode mode, DataSourceOptions options) {
         return new HubDataSourceWriter(options.asMap(), schema, true);
+    }
+
+    @Override
+    public DataSourceReader createReader(DataSourceOptions options) {
+        return new HubDataSourceReader(options);
     }
 }

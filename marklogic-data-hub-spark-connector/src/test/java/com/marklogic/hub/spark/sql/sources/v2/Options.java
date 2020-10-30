@@ -28,6 +28,11 @@ public class Options {
     private JsonNode additionalExternalMetadata;
     private String additionalExternalMetadataAsString;
 
+    // Read options
+    private String view;
+    private String schema;
+    private String sqlCondition;
+
     public Options() {
     }
 
@@ -83,11 +88,21 @@ public class Options {
             params.put("finalizejobapipath", finalizeJobApiPath);
         }
 
-        if(additionalExternalMetadata != null) {
+        if (additionalExternalMetadata != null) {
             params.put("additionalexternalmetadata", additionalExternalMetadata.toString());
         }
         if(additionalExternalMetadataAsString !=null) {
             params.put("additionalexternalmetadata", additionalExternalMetadataAsString);
+        }
+
+        if (view != null) {
+            params.put("view", view);
+        }
+        if (schema != null) {
+            params.put("schema", schema);
+        }
+        if (sqlCondition != null) {
+            params.put("sqlcondition", sqlCondition);
         }
 
         return new DataSourceOptions(params);
@@ -150,6 +165,21 @@ public class Options {
 
     public Options withAdditionalExternalMetadataAsString(String additionalExternalMetadataAsString){
         this.additionalExternalMetadataAsString = additionalExternalMetadataAsString;
+        return this;
+    }
+
+    public Options withView(String view) {
+        this.view = view;
+        return this;
+    }
+
+    public Options withSchema(String schema) {
+        this.schema = schema;
+        return this;
+    }
+
+    public Options withSqlCondition(String sqlCondition) {
+        this.sqlCondition = sqlCondition;
         return this;
     }
 }
