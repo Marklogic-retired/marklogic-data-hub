@@ -1,9 +1,9 @@
-package com.marklogic.hub.spark.sql.sources.v2;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.Format;
-import com.marklogic.hub.spark.sql.sources.v2.writer.AtLeastOneWriteFailedMessage;
+import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import org.apache.spark.sql.sources.v2.writer.WriterCommitMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class HandleFailedWriteTest extends AbstractSparkConnectorTest {
     void setupCustomIngestionEndpointThatThrowsAnErrorForBanana() {
         installCustomIngestionEndpoint();
 
-        String moduleTextThatCanThrowError = "declareUpdate(); const ds = require('/data-hub/5/data-services/ds-utils.sjs'); var input; " +
+        String moduleTextThatCanThrowError = "declareUpdate(); var input; " +
             "let role = 'data-hub-operator'; " +
             "var inputArray; " +
             "if (input instanceof Sequence) { " +
@@ -26,7 +26,7 @@ public class HandleFailedWriteTest extends AbstractSparkConnectorTest {
             "  inputArray = [fn.head(xdmp.fromJSON(input))]; " +
             "} " +
             "for (var fruit of inputArray) {" +
-            "  if (fruit.fruitName == 'banana') { ds.throwServerError('Throwing error because fruitName is banana'); }" +
+            "  if (fruit.fruitName == 'banana') { fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, 'Throwing error because fruitName is banana'])); } " +
             "  else {" +
             "    xdmp.documentInsert('/test/' + fruit.fruitName + '.json', fruit, [xdmp.permission(role, 'read'), xdmp.permission(role, 'update')], 'fruits');" +
             "  }" +

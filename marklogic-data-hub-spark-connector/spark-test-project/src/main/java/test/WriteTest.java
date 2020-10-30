@@ -1,9 +1,7 @@
 package test;
 
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +12,9 @@ import java.io.File;
  * Simple test program for verifying that the connector shadowJar works correctly within Spark. This is intended only
  * for manual ad hoc testing. The options for the connector default to a local DHF instance; customize those as needed.
  */
-public class SparkTest {
+public class WriteTest {
 
-    private static Logger logger = LoggerFactory.getLogger(SparkTest.class);
+    private static Logger logger = LoggerFactory.getLogger(WriteTest.class);
 
     private static String host = "localhost";
     private static String username = "test-data-hub-operator";

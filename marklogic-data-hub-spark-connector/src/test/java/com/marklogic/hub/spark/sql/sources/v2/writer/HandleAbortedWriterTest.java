@@ -1,5 +1,6 @@
-package com.marklogic.hub.spark.sql.sources.v2;
+package com.marklogic.hub.spark.sql.sources.v2.writer;
 
+import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
