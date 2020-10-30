@@ -121,7 +121,6 @@ const LoginForm: React.FC = () => {
               id="submit"
               type="primary"
               size="default"
-              disabled={!username || !password}
               htmlType="submit"
             >
               Log In

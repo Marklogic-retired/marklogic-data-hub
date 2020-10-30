@@ -154,8 +154,14 @@ const NewFlowDialog = (props) => {
               aria-label="Save"
               type="primary"
               htmlType="submit"
-              disabled={!flowName}
-              onClick={handleSubmit}
+              onClick={(e) => {
+                if (!!flowName) {
+                  return
+                } else {
+                  e.preventDefault()
+                  alert("Name cannot be blank")
+                }
+              }}
             >
               Save
             </MLButton></> :

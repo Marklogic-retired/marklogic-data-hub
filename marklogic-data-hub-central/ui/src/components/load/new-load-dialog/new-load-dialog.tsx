@@ -375,7 +375,20 @@ const NewLoadDialog = (props) => {
           <div className={styles.submitButtons}>
             <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton aria-label="Save" type="primary" htmlType="submit" disabled={!isValid || !props.canReadWrite} onClick={handleSubmit}>Save</MLButton>
+            <MLButton 
+              aria-label="Save" 
+              type="primary" 
+              htmlType="submit" 
+              disabled={!props.canReadWrite} 
+              onClick={(e) => {
+                if (isValid) {
+                  return
+                } else {
+                  e.preventDefault()
+                  alert("Name cannot be blank")
+                }
+              }}
+            >Save</MLButton>
           </div>
         </Form.Item>
       </Form>
