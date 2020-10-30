@@ -53,8 +53,8 @@ class HubUtils {
   writeDocuments(writeQueue, permissions = 'xdmp.defaultPermissions()', collections = [], database = xdmp.databaseName(xdmp.database())){
     return fn.head(xdmp.eval(`
     const temporal = require("/MarkLogic/temporal.xqy");
-
-    const temporalCollections = temporal.collections().toArray().reduce((acc, col) => {
+    const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
+    const temporalCollections = temporalLib.getTemporalCollections().toArray().reduce((acc, col) => {
       acc[col] = true;
       return acc;
     }, {});
@@ -79,10 +79,11 @@ class HubUtils {
           if (metadata) {
             delete metadata.temporalDocURI;
           }
+          const collectionsReservedForTemporal = ['latest', content.uri];
           temporal.documentInsert(temporalCollection, content.uri, content.value,
             {
               permissions,
-              collections: collections.filter((col) => !temporalCollections[col]),
+              collections: collections.filter((col) => !(temporalCollections[col] || collectionsReservedForTemporal.includes(col))),
               metadata
             }
            );
