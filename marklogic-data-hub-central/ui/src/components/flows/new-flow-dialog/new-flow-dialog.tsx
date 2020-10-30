@@ -38,14 +38,14 @@ const NewFlowDialog = (props) => {
 
   const onCancel = () => {
     props.setNewFlow(false);
-    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
       props.setOpenNewFlow(false);
     }
   }
 
   const onOk = () => {
     props.setNewFlow(false);
-    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
       props.setOpenNewFlow(false);
     }
   }
@@ -61,9 +61,10 @@ const NewFlowDialog = (props) => {
       await props.updateFlow(dataPayload, flowName);
     } else {
       await props.createFlow(dataPayload);
-      if(props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow){
+      if(props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
         await props.addStepToFlow(props.newStepToFlowOptions.newStepName, flowName, props.newStepToFlowOptions.stepDefinitionType);
         props.setOpenNewFlow(false);
+        props.setAddedFlowName(flowName);
       }
     }
     props.setNewFlow(false);

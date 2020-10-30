@@ -203,7 +203,7 @@ describe("Mapping Card component", () => {
        expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
   });
 
-  test('Verify Card sort order and adding the step to an existing flow where step DOES NOT exist', async () => {
+  test('Verify Card sort order, adding the step to an existing flow, and running the step in an existing flow where step DOES NOT exist', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
     let mapping = data.mappings.data[0].artifacts.concat(data.mappings.data[1].artifacts);
@@ -243,7 +243,7 @@ describe("Mapping Card component", () => {
 
     // Open menu, choose flow
     fireEvent.click(getByTestId('Mapping2-flowsList'));
-    fireEvent.click(getByText('testFlow'));
+    fireEvent.click(getByLabelText('testFlow-option'));
 
     // Dialog appears, click 'Yes' button
     expect(getByLabelText('step-not-in-flow')).toBeInTheDocument();
@@ -253,9 +253,26 @@ describe("Mapping Card component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add'); })
     // TODO- E2E test to check if the Run tile is loaded or not.
 
+   
+    //Verify run step in an existing flow where step does not exist yet
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId('Mapping2-run'));
+
+    //'Run in an existing Flow'
+    fireEvent.click(getByTestId('Mapping2-run-flowsList'));
+    fireEvent.click(getByLabelText('testFlow-run-option'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-not-in-flow-run')).toBeInTheDocument();
+    fireEvent.click(getByTestId('Mapping2-to-testFlow-Confirm'));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add-run'); })
+
   });
 
-  test('Adding the step to an existing flow where step DOES exist', async () => {
+  test('Adding the step to an existing flow and running the step in an existing flow where step DOES exist', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping', 'writeMapping', 'writeFlow']);
     let getByText, getByLabelText, getByTestId;
@@ -284,6 +301,22 @@ describe("Mapping Card component", () => {
     //Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add'); })
     //TODO- E2E test to check if the Run tile is loaded or not.
+
+    //Verify run step in an existing flow where step does exist
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId('Mapping1-run'));
+
+    //'Run in an existing Flow'
+    fireEvent.click(getByTestId('Mapping1-run-flowsList'));
+    fireEvent.click(getByLabelText('testFlow-run-option'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-in-flow-run')).toBeInTheDocument();
+    fireEvent.click(getByTestId('Mapping1-to-testFlow-Confirm'));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add-run'); })
 
   });
 
@@ -322,6 +355,17 @@ describe("Mapping Card component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     })
 
+    //Verify run step in an new flow 
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId('Mapping1-run'));
+
+    //'Run in a new Flow'
+    fireEvent.click(getByTestId('Mapping1-run-toNewFlow'));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add-run'); })
+
   });
 
   test('Verify Mapping card allows step to be added to flow with writeFlow authority', async () => {
@@ -357,12 +401,12 @@ describe("Mapping Card component", () => {
 
   });
 
-  test('Verify Mapping card does not allow a step to be added to flow with readFlow authority only', async () => {
+  test('Verify Mapping card does not allow a step to be added to flow or run in a flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readMapping','readFlow']);
     const mappingStepName = mapping[0].name;
     const mockAddStepToFlow = jest.fn();
-    const {getByText, queryByText, queryByTestId} = render(
+    const {getByText, queryByText, queryByTestId, getByRole } = render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
         {...mappingProps}
         canReadOnly={authorityService.canReadMapping()}
@@ -382,6 +426,13 @@ describe("Mapping Card component", () => {
     // test adding to new flow
     expect(queryByTestId(`${mappingStepName}-toNewFlow`)).not.toBeInTheDocument();
     expect(queryByTestId(`${mappingStepName}-disabledToNewFlow`)).toBeInTheDocument();
+
+     // test run icon displays correct tooltip when disabled
+     fireEvent.mouseOver(getByRole('disabled-run-mapping'));
+     await wait (() => expect(getByText('Run: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+ 
+     await fireEvent.click(getByRole('disabled-run-mapping'));
+     expect(queryByTestId('Mapping1-run-flowsList')).not.toBeInTheDocument();
 
   });
 });
