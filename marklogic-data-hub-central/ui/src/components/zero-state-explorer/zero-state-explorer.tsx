@@ -133,7 +133,7 @@ const ZeroStateExplorer = (props) => {
                     <div className={styles.input}>
                       <Input
                         style={{ width: 700 }}
-                        placeholder="Search for text"
+                        placeholder="Enter text to search for"
                         addonBefore={entityMenu}
                         onChange={onChange}
                         allowClear

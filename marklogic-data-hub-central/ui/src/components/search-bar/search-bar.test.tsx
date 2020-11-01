@@ -11,7 +11,7 @@ describe('Search Bar', () => {
 
   test('Verify the search bar and entity select options', () => {
     const { getByPlaceholderText, getByText } = render(<SearchBar entities={entities} cardView={false}/>);
-    const searchInput = getByPlaceholderText("Type search text");
+    const searchInput = getByPlaceholderText("Enter text to search for");
     expect(searchInput).toHaveAttribute('value', '');
     userEvent.type(searchInput, 'test');
     expect(searchInput).toHaveAttribute('value', 'test');
