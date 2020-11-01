@@ -250,7 +250,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
             );
         })}
         {props.greyFacets.length > 0 &&
-        <MLTooltip title={'Apply all changes'}>
+        <MLTooltip title={'Apply all facets'}>
             <FontAwesomeIcon
                 icon={faCheckSquare}
                 onClick={() => applyFacet()}
@@ -262,7 +262,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
         </MLTooltip>
         }
         {props.greyFacets.length > 0 &&
-        <MLTooltip title={'Discard all changes'}>
+        <MLTooltip title={'Discard all facets'}>
             <FontAwesomeIcon
                 icon={faWindowClose}
                 onClick={clearGreyFacets}
