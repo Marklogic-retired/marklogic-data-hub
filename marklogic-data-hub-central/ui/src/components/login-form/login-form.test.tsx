@@ -23,7 +23,7 @@ describe('Login page test', () => {
     expect(userField).toBeInTheDocument();
     expect(passField).toBeInTheDocument();
     expect(loginBtn).toBeInTheDocument();
-    expect(loginBtn).toBeDisabled();
+    expect(loginBtn).toBeEnabled();
 
     expect(loginBtn).toBeDisabled();
     fireEvent.change(userField, { target: {value: 'user'} });

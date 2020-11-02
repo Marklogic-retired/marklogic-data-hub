@@ -46,7 +46,7 @@ describe('Create Edit Step Dialog component', () => {
     expect(getByLabelText('Collection')).toBeInTheDocument();
     expect(getByLabelText('Query')).toBeInTheDocument();
     expect(getByLabelText('collection-input')).toBeInTheDocument();
-    expect(getByText('Save')).toBeDisabled();
+    expect(getByText('Save')).toBeEnabled();
     expect(getByText('Cancel')).toBeEnabled();
     //Collection radio button should be selected by default
     expect(getByLabelText('Collection')).toBeChecked();
@@ -63,7 +63,7 @@ describe('Create Edit Step Dialog component', () => {
 
         fireEvent.change(nameInput, { target: {value: ''}});
         expect(getByText('Name is required')).toBeInTheDocument();
-        expect(saveButton).toBeDisabled();
+        expect(saveButton).toBeEnabled();
     });
 
     test('Verify able to type in input fields and typeahead search in collections field', async () => {
