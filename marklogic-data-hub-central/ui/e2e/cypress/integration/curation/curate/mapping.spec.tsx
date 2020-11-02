@@ -208,7 +208,42 @@ describe('Mapping', () => {
 
     runPage.runStep(mapStep).click();
     cy.verifyStepRunResult('success','Mapping', mapStep);
-    runPage.explorerLink().click();
+
+    tiles.closeRunMessage().click();
+    runPage.deleteStep(mapStep).click();
+    loadPage.confirmationOptions('Yes').click();
+
+    //Verify Run Map step in an existing Flow
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
+    curatePage.toggleEntityTypeId('Order');
+    curatePage.runStepInCardView(mapStep).click();
+    curatePage.runStepInExistingFlow(mapStep, flowName);
+    curatePage.addStepToFlowRunConfirmationMessage().should('be.visible');
+    curatePage.confirmAddStepToFlow(mapStep, flowName);
+    //Step should automatically run
+    cy.verifyStepRunResult('success','Mapping', mapStep);
+    tiles.closeRunMessage().click();
+
+    //Delete the flow
+    runPage.deleteFlow(flowName).click();
+    runPage.deleteFlowConfirmationMessage(flowName).should('be.visible');
+    loadPage.confirmationOptions('Yes').click();
+
+    //Verify Run Map step in a new Flow
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
+    curatePage.toggleEntityTypeId('Order');
+    curatePage.runStepInCardView(mapStep).click();
+    curatePage.runInNewFlow(mapStep).click({force: true});
+    cy.findByText('New Flow').should('be.visible');
+    runPage.setFlowName(flowName);
+    runPage.setFlowDescription(`${flowName} description`);
+    loadPage.confirmationOptions('Save').click();
+    //Step should automatically run
+    cy.verifyStepRunResult('success','Mapping', mapStep);
+
+    runPage.explorerLink().click()
     browsePage.getTableViewInstanceIcon().click();
 
     detailPage.getDocumentSource().should('contain', 'backup-ABC123');

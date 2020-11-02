@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext} from 'react';
 import styles from './mapping-card.module.scss';
-import {Card, Icon, Row, Col, Modal, Select} from 'antd';
+import {Card, Icon, Tooltip, Dropdown, Row, Col, Modal, Select, Menu} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
 import { convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
@@ -58,6 +58,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [sortedMapping, setSortedMappings] = useState(props.data);
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
     const [selectVisible, setSelectVisible] = useState(false);
+    const [addRun, setAddRun] = useState(false);
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -169,13 +170,13 @@ const MappingCard: React.FC<Props> = (props) => {
             setIsLoading(true);
             let response = await getUris(stepName,20);
               if (response.status === 200) {
-               if(response.data.length > 0){
+               if (response.data.length > 0) {
                    setDisableURINavRight(response.data.length > 1 ? false : true);
                    setDocUris(response.data);
                    setSourceURI(response.data[0]);
                    fetchSrcDocFromUri(stepName ,response.data[0]);
               }
-               else{
+               else {
                    setIsLoading(false);
                }
             }
@@ -195,15 +196,15 @@ const MappingCard: React.FC<Props> = (props) => {
             let srcDocResp = await getDoc(stepName, uri);
             if (srcDocResp.status === 200) {
                 let parsedDoc: any;
-                if(typeof(srcDocResp.data) === 'string'){
+                if (typeof(srcDocResp.data) === 'string') {
                     parsedDoc = getParsedXMLDoc(srcDocResp);
                     setSourceFormat('xml');
                 } else {
                     parsedDoc = srcDocResp.data;
                     setSourceFormat('json');
                 }
-                if(parsedDoc['envelope']){
-                    if(parsedDoc['envelope'].hasOwnProperty('@xmlns')){
+                if (parsedDoc['envelope']) {
+                    if (parsedDoc['envelope'].hasOwnProperty('@xmlns')) {
 
                         let nmspcURI = parsedDoc['envelope']['@xmlns'];
                         let indCheck = nmspcURI.lastIndexOf('/');
@@ -219,7 +220,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 let sDta = generateNestedDataSource(docRoot,nestedDoc);
                 setSourceData([]);
                 setSourceData([...sDta]);
-                if(typeof(srcDocResp.data) === 'string'){
+                if (typeof(srcDocResp.data) === 'string') {
                     let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,props.data[index].name);
                     updateMappingWithNamespaces(mData);
                 }
@@ -362,7 +363,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
                 if (val && val.constructor && val.constructor.name === "Object") {
                     let tempNS = parentNamespace;
-                    if(val.hasOwnProperty('@xmlns')){
+                    if (val.hasOwnProperty('@xmlns')) {
                         parentNamespace = updateParentNamespace(val);
                         currentDefaultNamespace = val['@xmlns'];
                     }
@@ -373,7 +374,7 @@ const MappingCard: React.FC<Props> = (props) => {
                     generateNestedDataSource(val, propty.children, parentNamespace, currentDefaultNamespace);
                     nestedDoc.push(propty);
 
-                    if(parentNamespace !== tempNS){
+                    if (parentNamespace !== tempNS) {
                         parentNamespace = tempNS;
                     }
                 } else if (val && Array.isArray(val)) {
@@ -405,7 +406,7 @@ const MappingCard: React.FC<Props> = (props) => {
                         val.forEach(obj => {
                             let tempNS = parentNamespace;
                             let childDefaultNamespace = currentDefaultNamespace;
-                            if(obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')){
+                            if (obj.constructor.name === "Object" && obj.hasOwnProperty('@xmlns')) {
                                 parentNamespace = updateParentNamespace(obj);
                                 childDefaultNamespace = obj['@xmlns'];
                             }
@@ -414,7 +415,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
                             generateNestedDataSource(obj, propty.children, parentNamespace, childDefaultNamespace);
                             nestedDoc.push(propty);
-                            if(parentNamespace !== tempNS){
+                            if (parentNamespace !== tempNS) {
                                 parentNamespace = tempNS;
                             }
                         });
@@ -498,7 +499,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 let dataTp = getDatatype(val);
                 parentKey = parentKey ? parentKey + '/' + key : key;
                 EntitYTableKeyIndex = EntitYTableKeyIndex + 1;
-                if(val.$ref || val.items.$ref) {
+                if (val.$ref || val.items.$ref) {
                     let ref = val.$ref ? val.$ref : val.items.$ref;
                     tgtRefs[parentKey] = ref;
                 }
@@ -566,6 +567,15 @@ const MappingCard: React.FC<Props> = (props) => {
         let selectedNew = {...selected};
         selectedNew[obj.loadName] = obj.flowName;
         setSelected(selectedNew);
+        setAddRun(false);
+        handleStepAdd(obj.mappingName, obj.flowName);
+    }
+
+    function handleSelectAddRun(obj) {
+        let selectedNew = {...selected};
+        selectedNew[obj.loadName] = obj.flowName;
+        setSelected(selectedNew);
+        setAddRun(true);
         handleStepAdd(obj.mappingName, obj.flowName);
     }
 
@@ -585,17 +595,64 @@ const MappingCard: React.FC<Props> = (props) => {
     const onAddOk = async (lName, fName) => {
         await props.addStepToFlow(lName, fName, 'mapping');
         setAddDialogVisible(false);
+        
+        if (addRun) {
+            history.push({
+                pathname: '/tiles/run/add-run',
+                state: {
+                    flowName: fName,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true,
+                    addFlowDirty: true,
+                    stepToAdd : mappingArtifactName,
+                    stepDefinitionType : 'mapping'
+                }
+            })
+        } else {
+            history.push({
+                pathname: '/tiles/run/add',
+                state: {
+                    flowName: fName,
+                    addFlowDirty: true,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true
+                }
+            })
+        }
+    }
 
-        history.push({
-            pathname: '/tiles/run/add',
-            state: {
-                flowName: fName,
-                addFlowDirty: true,
-                flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-                existingFlow: true
-            }
-        });
-    };
+    const menu = (name) => (
+        <Menu style={{right: '80px'}}>
+            <Menu.Item key="0">
+                { <Link data-testid="link" id="tiles-add-run" to={
+                                        {pathname: '/tiles/run/add-run',
+                                        state: {
+                                            stepToAdd : name,
+                                            stepDefinitionType : 'mapping',
+                                            existingFlow : false
+                                        }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+            </Menu.Item>
+            <Menu.Item key="1">
+                <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
+                    <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+                        <Select
+                            style={{ width: '100%' }}
+                            value={selected[name] ? selected[name] : undefined}
+                            onChange={(flowName) => handleSelectAddRun({flowName: flowName, mappingName: name})}
+                            placeholder="Select Flow"
+                            defaultActiveFirstOption={false}
+                            disabled={!props.canWriteFlow}
+                            data-testid={`${name}-run-flowsList`}
+                        >
+                            { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
+                                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
+                            )) : null}
+                        </Select>
+                    </div>
+                </div>
+            </Menu.Item>
+        </Menu>
+    );
 
     const addConfirmation = (
         <Modal
@@ -609,8 +666,8 @@ const MappingCard: React.FC<Props> = (props) => {
         >
             <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
                 { isStepInFlow(mappingArtifactName, flowName) ?
-                    <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Add another instance of the step?</p> :
-                    <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+                    !addRun ? <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
+                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p> 
                 }
             </div>
         </Modal>
@@ -639,7 +696,10 @@ const MappingCard: React.FC<Props> = (props) => {
                                     <MLTooltip title={'Edit'} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(elem.name, index)}/></i></MLTooltip>,
                                     <MLTooltip title={'Step Details'} placement="bottom"><i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name,index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" role="settings-mapping button" data-testid={elem.name+'-settings'} onClick={() => OpenMappingSettingsDialog(index)}/></MLTooltip>,
-                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" data-testid={elem.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
+                                    <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>    
+                                    {props.canReadWrite ?<MLTooltip title={'Run'} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+'-run'}/></i></MLTooltip> : <MLTooltip title={'Run: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-run-mapping button" data-testid={elem.name+'-disabled-run'}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
+                                    </Dropdown>,
+                                    props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" data-testid={elem.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
                                 ]}
                                 className={styles.cardStyle}
                                 size="small"

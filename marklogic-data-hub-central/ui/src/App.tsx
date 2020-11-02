@@ -56,7 +56,7 @@ const App: React.FC<Props> = ({history, location}) => {
     if (user.authenticated){
       if (location.pathname === '/') {
         history.push(user.pageRoute);
-      } else if (location.pathname === '/tiles/run/add'){
+      } else if (location.pathname === '/tiles/run/add' || location.pathname === '/tiles/run/add-run'){
         history.push('/tiles/run');
       } else {
         history.push(location.pathname);
@@ -125,7 +125,10 @@ const App: React.FC<Props> = ({history, location}) => {
                   <TilesView id='run'/>
                 </PrivateRoute>
                 <PrivateRoute path="/tiles/run/add" exact>
-                  <TilesView id='run' addingStepToFlow='true' />
+                <TilesView id='run' addingStepToFlow='true' startRunStep={false}/>
+                </PrivateRoute>
+                <PrivateRoute path="/tiles/run/add-run" exact>
+                  <TilesView id='run' addingStepToFlow='true' startRunStep={true}/>
                 </PrivateRoute>
                 <PrivateRoute path="/tiles/explore" exact>
                   <TilesView id='explore'/>

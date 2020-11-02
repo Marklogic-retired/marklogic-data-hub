@@ -107,6 +107,8 @@ const TilesView = (props) => {
     const getNewStepToFlowOptions = () => {
         return !props.addingStepToFlow ? { addingStepToFlow: false } : {
             addingStepToFlow: true,
+            startRunStep: props.startRunStep,
+            flowName : location.state?.flowName,
             newStepName: location.state?.stepToAdd,
             stepDefinitionType: location.state?.stepDefinitionType,
             existingFlow: location.state?.existingFlow || false,
