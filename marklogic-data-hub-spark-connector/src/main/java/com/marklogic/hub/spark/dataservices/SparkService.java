@@ -49,29 +49,29 @@ public interface SparkService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_bulkIngest;
-            private BaseProxy.DBFunctionRequest req_finalizeJob;
-            private BaseProxy.DBFunctionRequest req_initializeJob;
+            private BaseProxy.DBFunctionRequest req_writeRecords;
+            private BaseProxy.DBFunctionRequest req_finalizeWrite;
+            private BaseProxy.DBFunctionRequest req_initializeWrite;
 
             private SparkServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/marklogic-data-hub-spark-connector/", servDecl);
 
-                this.req_bulkIngest = this.baseProxy.request(
-                    "bulkIngester.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
-                this.req_finalizeJob = this.baseProxy.request(
-                    "finalizeJob.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_initializeJob = this.baseProxy.request(
-                    "initializeJob.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
+                this.req_writeRecords = this.baseProxy.request(
+                    "writeRecords.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                this.req_finalizeWrite = this.baseProxy.request(
+                    "finalizeWrite.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_initializeWrite = this.baseProxy.request(
+                    "initializeWrite.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
 
             @Override
-            public void bulkIngest(Reader endpointConstants, Stream<Reader> input) {
-                bulkIngest(
-                    this.req_bulkIngest.on(this.dbClient), endpointConstants, input
+            public void writeRecords(Reader endpointConstants, Stream<Reader> input) {
+                writeRecords(
+                    this.req_writeRecords.on(this.dbClient), endpointConstants, input
                     );
             }
-            private void bulkIngest(BaseProxy.DBFunctionRequest request, Reader endpointConstants, Stream<Reader> input) {
+            private void writeRecords(BaseProxy.DBFunctionRequest request, Reader endpointConstants, Stream<Reader> input) {
               request
                       .withParams(
                           BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromReader(endpointConstants)),
@@ -80,12 +80,12 @@ public interface SparkService {
             }
 
             @Override
-            public void finalizeJob(String jobId, String status) {
-                finalizeJob(
-                    this.req_finalizeJob.on(this.dbClient), jobId, status
+            public void finalizeWrite(String jobId, String status) {
+                finalizeWrite(
+                    this.req_finalizeWrite.on(this.dbClient), jobId, status
                     );
             }
-            private void finalizeJob(BaseProxy.DBFunctionRequest request, String jobId, String status) {
+            private void finalizeWrite(BaseProxy.DBFunctionRequest request, String jobId, String status) {
               request
                       .withParams(
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
@@ -94,12 +94,12 @@ public interface SparkService {
             }
 
             @Override
-            public String initializeJob(com.fasterxml.jackson.databind.JsonNode externalMetadata) {
-                return initializeJob(
-                    this.req_initializeJob.on(this.dbClient), externalMetadata
+            public String initializeWrite(com.fasterxml.jackson.databind.JsonNode externalMetadata) {
+                return initializeWrite(
+                    this.req_initializeWrite.on(this.dbClient), externalMetadata
                     );
             }
-            private String initializeJob(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode externalMetadata) {
+            private String initializeWrite(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode externalMetadata) {
               return BaseProxy.StringType.toString(
                 request
                       .withParams(
@@ -113,29 +113,29 @@ public interface SparkService {
     }
 
   /**
-   * Bulk ingestion endpoint for writing documents via the Spark connector
+   * Supports the Spark connector in writing many records at once
    *
    * @param endpointConstants	provides input
    * @param input	provides input
    * 
    */
-    void bulkIngest(Reader endpointConstants, Stream<Reader> input);
+    void writeRecords(Reader endpointConstants, Stream<Reader> input);
 
   /**
-   * Update the job document after records have been written or an error has occurred
+   * Finalize a write process, which includes updating the job document
    *
    * @param jobId	ID of the job document
    * @param status	Status of the job
    * 
    */
-    void finalizeJob(String jobId, String status);
+    void finalizeWrite(String jobId, String status);
 
   /**
-   * JSON object that, if not null, will be added to the job document with a key of 'externalMetadata
+   * Initializes a write process, which includes creating a job document
    *
-   * @param externalMetadata	provides input
+   * @param externalMetadata	Optional JSON object that will be added to the job document if not null
    * @return	The ID of the created job
    */
-    String initializeJob(com.fasterxml.jackson.databind.JsonNode externalMetadata);
+    String initializeWrite(com.fasterxml.jackson.databind.JsonNode externalMetadata);
 
 }

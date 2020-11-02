@@ -1,0 +1,16 @@
+{
+    "functionName": "finalizeWrite",
+    "desc": "Finalize a write process, which includes updating the job document",
+    "params": [
+        {
+            "name": "jobId",
+            "datatype": "string",
+            "desc": "ID of the job document"
+        },
+        {
+            "name": "status",
+            "datatype": "string",
+            "desc": "Status of the job"
+        }
+    ]
+}
