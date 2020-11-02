@@ -105,7 +105,7 @@ public class TemporalWriteTest extends AbstractHubCoreTest {
         InputCaller<String> endpoint = InputCaller.on(
             getHubClient().getStagingClient(),
             getHubClient().getModulesClient().newTextDocumentManager()
-                .read("/marklogic-data-hub-spark-connector/bulkIngester.api", new StringHandle()),
+                .read("/marklogic-data-hub-spark-connector/writeRecords.api", new StringHandle()),
             new StringHandle().withFormat(Format.JSON)
         );
         InputCaller.BulkInputCaller<String> bulkInputCaller = endpoint.bulkCaller(endpoint.newCallContext()

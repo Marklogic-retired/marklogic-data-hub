@@ -36,7 +36,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private final JsonNode endpointParams;
     private final String jobId;
     private final ObjectMapper objectMapper;
-    private CustomJobApiDefinitions customJobApiDefinitions;
+    private CustomWriteApiDefinitions customWriteApiDefinitions;
 
     public HubDataSourceWriter(Map<String, String> options, StructType schema, Boolean streaming) {
         this.options = options;
@@ -48,17 +48,17 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         this.hubClient = HubClient.withHubClientConfig(hubClientConfig);
         verifyUserIsAuthorized();
 
-        this.endpointParams = determineIngestionEndpointParams(options);
+        this.endpointParams = determineWriteRecordsEndpointParams(options);
 
-        this.customJobApiDefinitions = readCustomJobApiDefinitions(options);
-        if (customJobApiDefinitions.getInitializeJobApiDefinition() == null) {
-            loadInitializeJobModulesIfNotPresent();
+        this.customWriteApiDefinitions = readCustomJobApiDefinitions(options);
+        if (customWriteApiDefinitions.getInitializeWriteApiDefinition() == null) {
+            loadInitializeModulesIfNotPresent();
         }
-        if (customJobApiDefinitions.getFinalizeJobApiDefinition() == null) {
-            loadFinalizeJobModulesIfNotPresent();
+        if (customWriteApiDefinitions.getFinalizeWriteApiDefinition() == null) {
+            loadFinalizeModulesIfNotPresent();
         }
 
-        this.jobId = initializeJob(schema);
+        this.jobId = initializeWrite(schema);
         addJobIdToEndpointConstants();
     }
 
@@ -80,14 +80,14 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     @Override
     public void commit(WriterCommitMessage[] messages) {
         String status = atLeastOneWriteFailed(messages) ? "finished_with_errors" : "finished";
-        finalizeJob(status);
+        finalizeWrite(status);
     }
 
     @Override
     public void abort(WriterCommitMessage[] messages) {
         // Because an aborted job maps to a "canceled" DHF job, there's no use case yet for the messages
         logger.error("Aborting job");
-        finalizeJob("canceled");
+        finalizeWrite("canceled");
     }
 
     private boolean atLeastOneWriteFailed(WriterCommitMessage[] messages) {
@@ -114,13 +114,13 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         logger.info("Created HubClient for host: " + hubClient.getStagingClient().getHost());
     }
 
-    private JsonNode determineIngestionEndpointParams(Map<String, String> options) {
+    private JsonNode determineWriteRecordsEndpointParams(Map<String, String> options) {
         ObjectNode endpointParams;
-        if (options.containsKey("ingestendpointparams")) {
+        if (options.containsKey("writerecordsendpointparams")) {
             try {
-                endpointParams = (ObjectNode) objectMapper.readTree(options.get("ingestendpointparams"));
+                endpointParams = (ObjectNode) objectMapper.readTree(options.get("writerecordsendpointparams"));
             } catch (IOException e) {
-                throw new IllegalArgumentException("Unable to parse ingestendpointparams, cause: " + e.getMessage(), e);
+                throw new IllegalArgumentException("Unable to parse writerecordsendpointparams, cause: " + e.getMessage(), e);
             }
         } else {
             endpointParams = objectMapper.createObjectNode();
@@ -129,15 +129,15 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         boolean doesNotHaveApiPath = (!endpointParams.hasNonNull("apiPath") || StringUtils.isEmpty(endpointParams.get("apiPath").asText()));
         boolean hasEndpointConstantsOrEndpointState = endpointParams.hasNonNull("endpointConstants") || endpointParams.hasNonNull("endpointState");
         if (doesNotHaveApiPath && hasEndpointConstantsOrEndpointState) {
-            throw new IllegalArgumentException("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.");
+            throw new IllegalArgumentException("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.");
         }
 
         // Always load writeLib, as a custom endpoint may need it
         loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/writeLib.sjs", Format.TEXT);
 
         if (doesNotHaveApiPath) {
-            String apiPath = "/marklogic-data-hub-spark-connector/bulkIngester.api";
-            String scriptPath = "/marklogic-data-hub-spark-connector/bulkIngester.sjs";
+            String apiPath = "/marklogic-data-hub-spark-connector/writeRecords.api";
+            String scriptPath = "/marklogic-data-hub-spark-connector/writeRecords.sjs";
             loadModuleIfNotPresent(scriptPath, Format.TEXT);
             loadModuleIfNotPresent(apiPath, Format.JSON);
 
@@ -194,7 +194,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         return metadata;
     }
 
-    private String initializeJob(StructType schema) {
+    private String initializeWrite(StructType schema) {
         ObjectNode externalMetadata = objectMapper.createObjectNode();
         try {
             if (options.get("additionalexternalmetadata") != null) {
@@ -212,14 +212,14 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
                 "be persisted on the job document");
         }
 
-        String jobId = SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getInitializeJobApiDefinition()).initializeJob(externalMetadata);
-        logger.info("Initialized job; ID: " + jobId);
+        String jobId = SparkService.on(hubClient.getJobsClient(), customWriteApiDefinitions.getInitializeWriteApiDefinition()).initializeWrite(externalMetadata);
+        logger.info("Initialized write; job ID: " + jobId);
         return jobId;
     }
 
-    private CustomJobApiDefinitions readCustomJobApiDefinitions(Map<String, String> options) {
+    private CustomWriteApiDefinitions readCustomJobApiDefinitions(Map<String, String> options) {
         InputStreamHandle initializeDefinition = null;
-        String key = "initializejobapipath";
+        String key = "initializewriteapipath";
         if (options.containsKey(key)) {
             try {
                 initializeDefinition = hubClient.getModulesClient().newDocumentManager().read(options.get(key), new InputStreamHandle());
@@ -229,7 +229,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         }
 
         InputStreamHandle finalizeDefinition = null;
-        key = "finalizejobapipath";
+        key = "finalizewriteapipath";
         if (options.containsKey(key)) {
             try {
                 finalizeDefinition = hubClient.getModulesClient().newDocumentManager().read(options.get(key), new InputStreamHandle());
@@ -238,17 +238,17 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             }
         }
 
-        return new CustomJobApiDefinitions(initializeDefinition, finalizeDefinition);
+        return new CustomWriteApiDefinitions(initializeDefinition, finalizeDefinition);
     }
 
-    private void loadInitializeJobModulesIfNotPresent() {
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeJob.sjs", Format.TEXT);
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeJob.api", Format.JSON);
+    private void loadInitializeModulesIfNotPresent() {
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.sjs", Format.TEXT);
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.api", Format.JSON);
     }
 
-    private void loadFinalizeJobModulesIfNotPresent() {
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeJob.sjs", Format.TEXT);
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeJob.api", Format.JSON);
+    private void loadFinalizeModulesIfNotPresent() {
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.sjs", Format.TEXT);
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.api", Format.JSON);
     }
 
     private void addJobIdToEndpointConstants() {
@@ -260,9 +260,9 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         }
     }
 
-    private void finalizeJob(String status) {
-        logger.info(format("Finalizing job; ID: %s; status: %s", jobId, status));
-        SparkService.on(hubClient.getJobsClient(), customJobApiDefinitions.getFinalizeJobApiDefinition()).finalizeJob(jobId, status);
+    private void finalizeWrite(String status) {
+        logger.info(format("Finalizing write; job ID: %s; status: %s", jobId, status));
+        SparkService.on(hubClient.getJobsClient(), customWriteApiDefinitions.getFinalizeWriteApiDefinition()).finalizeWrite(jobId, status);
     }
 
     private boolean endpointExists(String scriptPath) {
@@ -270,21 +270,21 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 }
 
-class CustomJobApiDefinitions {
+class CustomWriteApiDefinitions {
 
-    private InputStreamHandle initializeJobApiDefinition;
-    private InputStreamHandle finalizeJobApiDefinition;
+    private InputStreamHandle initializeWriteApiDefinition;
+    private InputStreamHandle finalizeWriteApiDefinition;
 
-    public CustomJobApiDefinitions(InputStreamHandle initializeJobApiDefinition, InputStreamHandle finalizeJobApiDefinition) {
-        this.initializeJobApiDefinition = initializeJobApiDefinition;
-        this.finalizeJobApiDefinition = finalizeJobApiDefinition;
+    public CustomWriteApiDefinitions(InputStreamHandle initializeWriteApiDefinition, InputStreamHandle finalizeWriteApiDefinition) {
+        this.initializeWriteApiDefinition = initializeWriteApiDefinition;
+        this.finalizeWriteApiDefinition = finalizeWriteApiDefinition;
     }
 
-    public InputStreamHandle getInitializeJobApiDefinition() {
-        return initializeJobApiDefinition;
+    public InputStreamHandle getInitializeWriteApiDefinition() {
+        return initializeWriteApiDefinition;
     }
 
-    public InputStreamHandle getFinalizeJobApiDefinition() {
-        return finalizeJobApiDefinition;
+    public InputStreamHandle getFinalizeWriteApiDefinition() {
+        return finalizeWriteApiDefinition;
     }
 }
