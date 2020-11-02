@@ -1,7 +1,7 @@
 import React, {CSSProperties, useContext, useState, useEffect} from 'react';
 import styles from './load-card.module.scss';
 import { useHistory } from 'react-router-dom';
-import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select} from 'antd';
+import {Card, Icon, Tooltip, Popover, Row, Col, Modal, Select, Dropdown, Menu} from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationCircle, faPencilAlt} from '@fortawesome/free-solid-svg-icons';
 import {faTrashAlt} from '@fortawesome/free-regular-svg-icons';
@@ -45,6 +45,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
     const [selectVisible, setSelectVisible] = useState(false);
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
+    const [addRun, setAddRun] = useState(false);
 
     useEffect(() => {
        let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
@@ -130,6 +131,15 @@ const LoadCard: React.FC<Props> = (props) => {
         let selectedNew = {...selected};
         selectedNew[obj.loadName] = obj.flowName;
         setSelected(selectedNew);
+        setAddRun(false);
+        handleStepAdd(obj.loadName, obj.flowName);
+    }
+
+    function handleSelectAddRun(obj) {
+        let selectedNew = {...selected};
+        selectedNew[obj.loadName] = obj.flowName;
+        setSelected(selectedNew);
+        setAddRun(true);
         handleStepAdd(obj.loadName, obj.flowName);
     }
 
@@ -150,22 +160,70 @@ const LoadCard: React.FC<Props> = (props) => {
     const onAddOk = async (lName, fName) => {
         await props.addStepToFlow(lName, fName);
         setAddDialogVisible(false);
-        history.push({
-            pathname: '/tiles/run/add',
-            state: {
-                flowName: fName,
-                addFlowDirty: true,
-                flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-                existingFlow: true
-            }
-        });
-    };
+
+        if(addRun) {
+            history.push({
+                pathname: '/tiles/run/add-run',
+                state: {
+                    flowName: fName,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true,
+                    addFlowDirty: true,
+                    stepToAdd : loadArtifactName,
+                    stepDefinitionType : 'ingestion'
+                }
+            })
+        }else {
+            history.push({
+                pathname: '/tiles/run/add',
+                state: {
+                    flowName: fName,
+                    addFlowDirty: true,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true
+                }
+            })
+        }
+    }   
 
     const onCancel = () => {
         setDialogVisible(false);
         setAddDialogVisible(false);
         setSelected({}); // reset menus on cancel
     };
+
+    const menu = (name) => (
+        <Menu style={{right: '80px'}}>
+            <Menu.Item key="0">
+                { <Link data-testid="link" id="tiles-run-add" to={
+                                        {pathname: '/tiles/run/add-run',
+                                        state: {
+                                            stepToAdd : name,
+                                            stepDefinitionType : 'ingestion',
+                                            existingFlow : false
+                                        }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+            </Menu.Item>
+            <Menu.Item key="1">
+                <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
+                    <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+                        <Select
+                            style={{ width: '100%' }}
+                            value={selected[name] ? selected[name] : undefined}
+                            onChange={(flowName) => handleSelectAddRun({flowName: flowName, loadName: name})}
+                            placeholder="Select Flow"
+                            defaultActiveFirstOption={false}
+                            disabled={!props.canWriteFlow}
+                            data-testid={`${name}-run-flowsList`}
+                        >
+                            { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
+                                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
+                            )) : null}
+                        </Select>
+                    </div>
+                </div>
+            </Menu.Item>
+        </Menu>
+    );
 
     const deleteConfirmation = (
         <Modal
@@ -197,8 +255,8 @@ const LoadCard: React.FC<Props> = (props) => {
         >
             <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
                 { isStepInFlow(loadArtifactName, flowName) ?
-                    <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Add another instance of the step?</p> :
-                    <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+                    !addRun ? <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
+                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p> 
                 }
             </div>
         </Modal>
@@ -225,7 +283,10 @@ const LoadCard: React.FC<Props> = (props) => {
                             actions={[
                             <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" key="setting" data-testid={elem.name+'-settings'} onClick={() => OpenLoadSettingsDialog(index)}/></MLTooltip>,
                             <MLTooltip title={'Edit'} placement="bottom"><i key="edit"></i><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+'-edit'} onClick={() => OpenEditStepDialog(index)}/></MLTooltip>,
-                                props.canReadWrite ?<MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i data-testid={elem.name+'-disabled-delete'}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip>,
+                            <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>    
+                            {props.canReadWrite ?<MLTooltip title={'Run'} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+'-run'}/></i></MLTooltip> : <MLTooltip title={'Run: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-run-load button" data-testid={elem.name+'-disabled-run'}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
+                            </Dropdown>,
+                            props.canReadWrite ?<MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i data-testid={elem.name+'-disabled-delete'}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
                             ]}
                             className={styles.cardStyle}
                             size="small"
@@ -256,7 +317,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                             disabled={!props.canWriteFlow}
                                         >
                                             { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                                                <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
+                                                <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                                             )) : null}
                                         </Select>
                                     </div> : null}

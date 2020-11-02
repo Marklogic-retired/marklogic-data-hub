@@ -81,6 +81,23 @@ class CuratePage {
         return cy.findByTestId(`${stepName}-edit`);
     }
 
+    runStepInCardView(stepName: string) {
+        return cy.findByTestId(`${stepName}-run`);
+    }
+
+    runInNewFlow(stepName: string) {
+        return cy.findByTestId(`${stepName}-run-toNewFlow`);
+    };
+
+    runExistingFlowsList(stepName: string) {
+        return cy.findByTestId(`${stepName}-run-flowsList`);
+    }
+
+    runStepInExistingFlow(stepName: string, flowName: string) {
+        this.runExistingFlowsList(stepName).click({force: true});
+        cy.findByLabelText(`${flowName}-run-option`).click({force:true});
+    }
+
     verifyStepNameIsVisible(stepName: string) {
         cy.get('#name').should('be.visible');
         cy.findByText(stepName).should('be.visible');
@@ -106,8 +123,16 @@ class CuratePage {
         return cy.findByLabelText('step-not-in-flow');
     }
 
+    addStepToFlowRunConfirmationMessage() {
+        return cy.findByLabelText('step-not-in-flow-run');
+    }
+
     addStepExistingToFlowConfirmationMessage() {
         return cy.findByLabelText('step-in-flow');
+    }
+
+    addStepExistingToFlowRunConfirmationMessage() {
+        return cy.findByLabelText('step-in-flow-run');
     }
 
     confirmAddStepToFlow(stepName: string, flowName: string) {
