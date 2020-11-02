@@ -47,43 +47,39 @@ public interface MappingService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_testMapping;
-            private BaseProxy.DBFunctionRequest req_getDocument;
-            private BaseProxy.DBFunctionRequest req_getUris;
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
+            private BaseProxy.DBFunctionRequest req_getDocument;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
+            private BaseProxy.DBFunctionRequest req_getNewDocument;
+            private BaseProxy.DBFunctionRequest req_getUris;
+            private BaseProxy.DBFunctionRequest req_testMapping;
 
             private MappingServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/mapping/", servDecl);
 
-                this.req_testMapping = this.baseProxy.request(
-                    "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
-                this.req_getDocument = this.baseProxy.request(
-                    "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
-                this.req_getUris = this.baseProxy.request(
-                    "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_generateMappingTransforms = this.baseProxy.request(
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_getDocument = this.baseProxy.request(
+                    "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
+                this.req_getNewDocument = this.baseProxy.request(
+                    "getNewDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_getUris = this.baseProxy.request(
+                    "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_testMapping = this.baseProxy.request(
+                    "testMapping.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_MIXED);
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
-                return testMapping(
-                    this.req_testMapping.on(this.dbClient), uri, database, jsonMapping
+            public void generateMappingTransforms() {
+                generateMappingTransforms(
+                    this.req_generateMappingTransforms.on(this.dbClient)
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode testMapping(BaseProxy.DBFunctionRequest request, String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri)),
-                          BaseProxy.atomicParam("database", false, BaseProxy.StringType.fromString(database)),
-                          BaseProxy.documentParam("jsonMapping", false, BaseProxy.JsonDocumentType.fromJsonNode(jsonMapping))
-                          ).responseSingle(false, Format.JSON)
-                );
+            private void generateMappingTransforms(BaseProxy.DBFunctionRequest request) {
+              request.responseNone();
             }
 
             @Override
@@ -99,6 +95,34 @@ public interface MappingService {
                           BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
                           BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri))
                           ).responseSingle(false, Format.TEXT)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
+                return getMappingFunctions(
+                    this.req_getMappingFunctions.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getNewDocument(String stepName, String uri) {
+                return getNewDocument(
+                    this.req_getNewDocument.on(this.dbClient), stepName, uri
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getNewDocument(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
+                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
 
@@ -119,24 +143,19 @@ public interface MappingService {
             }
 
             @Override
-            public void generateMappingTransforms() {
-                generateMappingTransforms(
-                    this.req_generateMappingTransforms.on(this.dbClient)
+            public com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
+                return testMapping(
+                    this.req_testMapping.on(this.dbClient), uri, database, jsonMapping
                     );
             }
-            private void generateMappingTransforms(BaseProxy.DBFunctionRequest request) {
-              request.responseNone();
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
-                return getMappingFunctions(
-                    this.req_getMappingFunctions.on(this.dbClient)
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request) {
+            private com.fasterxml.jackson.databind.JsonNode testMapping(BaseProxy.DBFunctionRequest request, String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping) {
               return BaseProxy.JsonDocumentType.toJsonNode(
-                request.responseSingle(false, Format.JSON)
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri)),
+                          BaseProxy.atomicParam("database", false, BaseProxy.StringType.fromString(database)),
+                          BaseProxy.documentParam("jsonMapping", false, BaseProxy.JsonDocumentType.fromJsonNode(jsonMapping))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
         }
@@ -145,14 +164,12 @@ public interface MappingService {
     }
 
   /**
-   * Invokes the testMapping operation on the database server
+   * Generates a transform in the modules database for each legacy mapping or mapping step
    *
-   * @param uri	provides input
-   * @param database	provides input
-   * @param jsonMapping	provides input
-   * @return	as output
+   * 
+   * 
    */
-    com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
+    void generateMappingTransforms();
 
   /**
    * Gets the document based on the given URI from the source database associated with the given step name
@@ -164,6 +181,23 @@ public interface MappingService {
     java.lang.String getDocument(String stepName, String uri);
 
   /**
+   * Invokes the getMappingFunctions operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
+
+  /**
+   * Gets the document based on the given URI from the source database associated with the given step name
+   *
+   * @param stepName	provides input
+   * @param uri	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getNewDocument(String stepName, String uri);
+
+  /**
    * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
    *
    * @param stepName	provides input
@@ -173,19 +207,13 @@ public interface MappingService {
     com.fasterxml.jackson.databind.JsonNode getUris(String stepName, Integer limit);
 
   /**
-   * Generates a transform in the modules database for each legacy mapping or mapping step
+   * Invokes the testMapping operation on the database server
    *
-   * 
-   * 
-   */
-    void generateMappingTransforms();
-
-  /**
-   * Invokes the getMappingFunctions operation on the database server
-   *
-   * 
+   * @param uri	provides input
+   * @param database	provides input
+   * @param jsonMapping	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
+    com.fasterxml.jackson.databind.JsonNode testMapping(String uri, String database, com.fasterxml.jackson.databind.JsonNode jsonMapping);
 
 }

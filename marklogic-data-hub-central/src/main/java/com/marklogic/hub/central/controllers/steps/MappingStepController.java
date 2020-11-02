@@ -2,8 +2,9 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.DatabaseClient;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.controllers.BaseController;
-import com.marklogic.hub.central.managers.MapSearchManager;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MappingService;
@@ -81,6 +82,20 @@ public class MappingStepController extends BaseController {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{stepName}/newDoc", method = RequestMethod.GET)
+    @ApiOperation(value = "Returns an XML or JSON source document as a string of JSON")
+    @Secured("ROLE_readMapping")
+    public ResponseEntity<JsonNode> getNewDocument(@PathVariable String stepName, @PathVariable String docUri) {
+        // Step defines which database to pull the identified doc from.
+        final JsonNode stepNode = newService().getStep(STEP_DEFINITION_TYPE, stepName);
+        final String databaseName = stepNode.get("sourceDatabase").asText();
+        // In the hub context, we're presuming staging or final.
+        final DatabaseClient databaseClient = databaseName.toLowerCase().equals(getHubClient().getDbName(DatabaseKind.STAGING).toLowerCase()) ?
+            getHubClient().getStagingClient() :
+            getHubClient().getFinalClient();
+        return ResponseEntity.ok(MappingService.on(databaseClient).getNewDocument(stepName, docUri));
     }
 
     private StepService newService() {
