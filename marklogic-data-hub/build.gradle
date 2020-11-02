@@ -29,9 +29,16 @@ group = 'com.marklogic'
 sourceCompatibility = "9"
 targetCompatibility = "9"
 
-// Something changed with 5.5.0 such that "test --tests" doesn't work with Gradle 6.2 or 6.5
-ext.junitPlatformVersion = '1.4.2'
-ext.junitJupiterVersion  = '5.4.2'
+ext {
+    // Something changed with 5.5.0 such that "test --tests" doesn't work with Gradle 6.2 or 6.5
+    junitPlatformVersion = '1.4.2'
+    junitJupiterVersion  = '5.4.2'
+
+    dataServicesGroup = "Data Services"
+    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
+
+    thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
+}
 
 dependencies {
     // Forcing use of 1.3.71 - which is what OkHttp 4.7.2 wants, which is what Java Client 5.3 uses - so that 1.2.x
@@ -99,6 +106,19 @@ configurations.all {
     exclude group: "org.slf4j", module: "slf4j-log4j12"
     exclude group: "log4j", module: "log4j"
 }
+
+task extractFastXmlParserZip(type: Copy) {
+    doFirst {
+        new File(thirdPartySourcePath).mkdirs()
+    }
+    description = "Extract fast-xml-parser.zip so that its files will be available when bootstrapping the test app and when building the DHF core JAR"
+    from zipTree('src/main/third-party/fast-xml-parser.zip')
+    destinationDir = new File(thirdPartySourcePath)
+}
+
+// Ensure that the fast-xml-parser files are available before any DHF jars are built
+processResources.dependsOn extractFastXmlParserZip
+
 
 // The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
 // This jar is only meant to be used by the DHS team for installing DHF into DHS
@@ -180,11 +200,6 @@ processResources {
     filesMatching("**/version.properties") {
         expand(project: project)
     }
-}
-
-ext {
-    dataServicesGroup = "Data Services"
-    dataServicesPath = "src/main/resources/ml-modules/root/data-hub/5/data-services"
 }
 
 task generateDataService(type: JavaExec) {
@@ -458,6 +473,7 @@ task setupSSL{
     }
 }
 
+bootstrap.dependsOn extractFastXmlParserZip
 bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is downloaded
 
 setupSSL.dependsOn(testClasses)
