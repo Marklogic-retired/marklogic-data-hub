@@ -78,4 +78,32 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
   });
 
+  test('Verify clicking "Save" with no name shows error', () => {
+    const { 
+      debug, 
+      baseElement, 
+      queryAllByText, 
+      getAllByLabelText, 
+      queryAllByPlaceholderText, 
+      getByText, 
+      getByLabelText 
+    } = render(
+      <BrowserRouter><NewLoadDialog newLoad={true}
+      title={'Edit Loading Step'}
+      setNewLoad={() => {}}
+      createLoadArtifact={() => {}}
+      stepData={{}}
+      canReadWrite={true}
+      canReadOnly={false}/></BrowserRouter>
+    );
+
+    // message should not show when opening new dialogue box
+    expect(getByText('Name is required')).not.toBeInTheDocument(); 
+
+    fireEvent.click(getByLabelText('Save'));
+
+    // message should appear when save button is clicked
+    expect(getByText('Name is required')).toBeInTheDocument(); 
+  });
+
 });
