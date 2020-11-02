@@ -1,0 +1,24 @@
+<configuration>
+
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="WARN">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+  <logger name="com.marklogic.hub" level="INFO" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <!-- Shuts up a warning from o.s.h.c.j.Jackson2ObjectMapperBuilder -->
+  <logger name="org.springframework.http.converter.json" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+</configuration>
