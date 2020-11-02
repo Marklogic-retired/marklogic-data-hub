@@ -25,7 +25,6 @@ describe('Login page test', () => {
     expect(loginBtn).toBeInTheDocument();
     expect(loginBtn).toBeEnabled();
 
-    expect(loginBtn).toBeDisabled();
     fireEvent.change(userField, { target: {value: 'user'} });
     expect(loginBtn).toBeDisabled();
     fireEvent.change(passField, { target: {value: 'pass'} });
