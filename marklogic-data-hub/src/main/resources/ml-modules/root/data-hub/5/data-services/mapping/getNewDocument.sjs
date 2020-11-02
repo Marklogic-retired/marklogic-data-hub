@@ -17,6 +17,8 @@
 
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
+const core = require('/data-hub/5/artifacts/core.sjs')
+
 var stepName, uri;
 
 const rtn = {
@@ -25,7 +27,16 @@ const rtn = {
   format: null
 }
 
-const doc = cts.doc(uri);
+// Offer the mapping step to define the doc's database.
+const mappingStep = core.getArtifact("mapping", stepName);
+let doc;
+if(mappingStep.sourceDatabase) {
+  doc = fn.head(xdmp.eval(`cts.doc('${uri}')`, null, {database: xdmp.database(mappingStep.sourceDatabase)}));
+} else{
+  doc = cts.doc(uri);
+}
+
+// Populate return object.
 if (doc !== null) {
   rtn.format = doc.documentFormat;
   if (rtn.format.toUpperCase() === 'JSON') {
