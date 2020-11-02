@@ -26,7 +26,7 @@ const defaultNSAttrName = nsAttrStartsWith;
 const nonDefaultNSAttrStartsWith = nsAttrStartsWith + nsPrefixDelim
 
 // Set up for parser
-const parser = require('/fast-xml-parser/src/parser.js');
+const parser = require('/data-hub/third-party/fast-xml-parser/src/parser.js');
 const parserOptions = {
   attributeNamePrefix: attrStartsWith,
   attrNodeName: false, //default is 'false'
