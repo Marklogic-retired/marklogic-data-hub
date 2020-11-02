@@ -132,6 +132,9 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             throw new IllegalArgumentException("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.");
         }
 
+        // Always load writeLib, as a custom endpoint may need it
+        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/writeLib.sjs", Format.TEXT);
+
         if (doesNotHaveApiPath) {
             String apiPath = "/marklogic-data-hub-spark-connector/bulkIngester.api";
             String scriptPath = "/marklogic-data-hub-spark-connector/bulkIngester.sjs";

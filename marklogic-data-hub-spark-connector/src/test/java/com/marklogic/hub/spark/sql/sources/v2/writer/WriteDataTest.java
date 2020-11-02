@@ -117,6 +117,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     @Test
     public void testEndpointsAreLoaded() {
         runAsAdmin().getModulesClient().newTextDocumentManager().delete(
+            "/marklogic-data-hub-spark-connector/writeLib.sjs",
             "/marklogic-data-hub-spark-connector/bulkIngester.api",
             "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
             "/marklogic-data-hub-spark-connector/initializeJob.api",
