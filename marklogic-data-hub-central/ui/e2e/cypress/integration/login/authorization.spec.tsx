@@ -101,10 +101,6 @@ describe('login', () => {
       toolbar.getLoadToolbarIcon().click();
       loadPage.loadView('th-large').should('be.visible');
       loadPage.addNewButton('card').should('not.be.visible');
-      loadPage.stepSettings(stepName).click();
-      loadPage.stepNameInSettings().should('have.text', stepName);
-      loadPage.saveSettings(stepName).should('be.disabled');
-      loadPage.cancelSettings(stepName).click();
       loadPage.editStepInCardView(stepName).click();
       loadPage.saveButton().should('be.disabled');
       loadPage.cancelButton().click();
@@ -118,9 +114,6 @@ describe('login', () => {
       loadPage.loadView('table').click();
       tiles.waitForTableToLoad();
       loadPage.addToFlowDisabled(stepName).should('exist');
-      loadPage.stepSettings(stepName).click();
-      loadPage.saveSettings(stepName).should('be.disabled');
-      loadPage.cancelSettings(stepName).click();
       loadPage.stepName(stepName).click();
       loadPage.saveButton().should('be.disabled');
       loadPage.cancelButton().click();
@@ -141,9 +134,6 @@ describe('login', () => {
       curatePage.toggleEntityTypeId(entityTypeId);
       curatePage.verifyTabs(entityTypeId, 'be.visible', 'not.exist');
       curatePage.addNewStep().should('not.be.visible');
-      curatePage.stepSettings(mapStepName).click();
-      curatePage.saveSettings(mapStepName).should('be.disabled');
-      curatePage.cancelSettings(mapStepName).click();
       curatePage.editStep(mapStepName).click();
       curatePage.verifyStepNameIsVisible(mapStepName);
       curatePage.saveEdit().should('be.disabled');

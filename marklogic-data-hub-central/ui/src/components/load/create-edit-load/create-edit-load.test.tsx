@@ -1,31 +1,31 @@
 import React from 'react';
 import { render, fireEvent, waitForElement, wait } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import NewLoadDialog from './new-load-dialog';
-import {BrowserRouter} from "react-router-dom";
-import {NewLoadTooltips} from '../../../config/tooltips.config';
-import axiosMock from 'axios';
+import CreateEditLoad from './create-edit-load';
+import { BrowserRouter } from "react-router-dom";
+import { NewLoadTooltips } from '../../../config/tooltips.config';
 
-jest.mock('axios');
+describe('New/edit load step configuration', () => {
 
-axiosMock['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-axiosMock.post['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-axiosMock.get['mockImplementation'](jest.fn(() => Promise.resolve({ status: 200, data: {} })));
-
-describe('New/edit load data configuration', () => {
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
+  const loadProps = {
+    tabKey: '1',
+    isNewStep: false,
+    openStepSettings: true,
+    setOpenStepSettings: () => {},
+    createLoadArtifact: () => {},
+    stepData: {},
+    canReadWrite: true,
+    canReadOnly: false,
+    currentTab: '1',
+    setIsValid: () => {},
+    resetTabs: () => {},
+    setHasChanged: () => {}
+  }
 
   test('fields non-Delimited Text render', async () => {
-    const { debug, baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText, getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                           title={'Edit Loading Step'}
-                                                           setNewLoad={() => {}}
-                                                           createLoadArtifact={() => {}}
-                                                           stepData={{}}
-                                                           canReadWrite={true}
-                                                           canReadOnly={false}/></BrowserRouter>);
+    const { baseElement, queryAllByText, getAllByLabelText, queryAllByPlaceholderText, getByText, getByLabelText } = render(<BrowserRouter>
+      <CreateEditLoad {...loadProps} />
+    </BrowserRouter>);
     expect(getByLabelText('newLoadCardTitle')).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter name')[0]).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter description')[0]).toBeInTheDocument();
@@ -40,23 +40,23 @@ describe('New/edit load data configuration', () => {
     expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
     expect(queryAllByPlaceholderText('Enter URI Prefix')[0]).toBeInTheDocument();
     let tooltip  = getAllByLabelText('icon: question-circle');
-    //Tooltip for name
+    // Tooltip for name
     fireEvent.mouseOver(tooltip[0]);
     await waitForElement(() => getByText(NewLoadTooltips.name));
-    //Tooltip for Description
+    // Tooltip for Description
     fireEvent.mouseOver(tooltip[1]);
     await waitForElement(() => getByText(NewLoadTooltips.description));
-    //Tooltip for Source Format
+    // Tooltip for Source Format
     fireEvent.mouseOver(tooltip[2]);
     await waitForElement(() => getByText(NewLoadTooltips.sourceFormat));
-    //Tooltip for Target Format
+    // Tooltip for Target Format
     fireEvent.mouseOver(tooltip[3]);
     await waitForElement(() => getByText(NewLoadTooltips.targetFormat));
     fireEvent.mouseOver(tooltip[4]);
     await waitForElement(() => getByText(NewLoadTooltips.sourceName));
     fireEvent.mouseOver(tooltip[5]);
     await waitForElement(() => getByText(NewLoadTooltips.sourceType));
-    //Tooltip for Target URI Prefix
+    // Tooltip for Target URI Prefix
     fireEvent.mouseOver(tooltip[6]);
     await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix));
     expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
@@ -65,13 +65,9 @@ describe('New/edit load data configuration', () => {
 
   test('fields with Delimited Text render', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'json'};
-    const { baseElement, queryAllByPlaceholderText, getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                                                                title={'Edit Loading Step'}
-                                                                                                setNewLoad={() => {}}
-                                                                                                createLoadArtifact={() => {}}
-                                                                                                stepData={stepData}
-                                                                                                canReadWrite={true}
-                                                                                                canReadOnly={false}/></BrowserRouter>);
+    const { baseElement, queryAllByPlaceholderText, getByLabelText } = render(<BrowserRouter>
+      <CreateEditLoad {...loadProps} stepData={stepData} />
+    </BrowserRouter>);
     expect(getByLabelText('newLoadCardTitle')).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter name')[0]).toBeInTheDocument();
     expect(queryAllByPlaceholderText('Enter description')[0]).toBeInTheDocument();
@@ -88,13 +84,9 @@ describe('New/edit load data configuration', () => {
 
   test('targetFormat with Text should not display sourceName and sourceType', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'txt'};
-    const { baseElement, queryAllByPlaceholderText, getByLabelText, queryByText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
-                                                                                                           title={'Edit Loading Step'}
-                                                                                                           setNewLoad={() => {}}
-                                                                                                           createLoadArtifact={() => {}}
-                                                                                                           stepData={stepData}
-                                                                                                           canReadWrite={true}
-                                                                                                           canReadOnly={false}/></BrowserRouter>);
+    const { baseElement, queryByText } = render(<BrowserRouter>
+      <CreateEditLoad {...loadProps} stepData={stepData} />
+    </BrowserRouter>);
 
     expect(baseElement.querySelector('#sourceFormat')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
@@ -103,17 +95,10 @@ describe('New/edit load data configuration', () => {
   });
 
   test('Verify name is required for form submission and error messaging appears', async () => {
-    const { debug, baseElement, queryByText, getByText} = 
-    render(
-      <BrowserRouter><NewLoadDialog newLoad={true}
-      title={'New Loading Step'}
-      setNewLoad={() => {}}
-      createLoadArtifact={() => {}}
-      stepData={{}}
-      canReadWrite={true}
-      canReadOnly={false}/></BrowserRouter>
-    );
-    const nameInput = baseElement.querySelector('#name');
+    const { debug, baseElement, queryByText, getByText, getByPlaceholderText} = 
+    render(<BrowserRouter><CreateEditLoad {...loadProps} /></BrowserRouter>);
+    const nameInput = getByPlaceholderText('Enter name');
+
 
     // error should not appear before anything is touched
     expect(queryByText('Name is required')).toBeNull();

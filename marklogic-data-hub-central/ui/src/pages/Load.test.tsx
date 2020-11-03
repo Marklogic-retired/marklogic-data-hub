@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, fireEvent, waitForElement, act, cleanup } from '@testing-library/react';
+import { render, fireEvent, wait, waitForElement, act, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import {AuthoritiesContext, AuthoritiesService} from '../util/authorities';
 import axiosMock from 'axios';
@@ -28,7 +28,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion']);
 
-        const { getByText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = render(
+        const { debug, baseElement, getByText, getByPlaceholderText, getAllByText, getByLabelText, getByTestId, queryByTestId, queryByText, queryByTitle } = render(
           <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
@@ -43,44 +43,48 @@ describe('Load component', () => {
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
 
-        // test settings
+        // Open settings
         await act(async () => {
-            await fireEvent.click(getByTestId('testLoad-settings'));
+            await fireEvent.click(getByText('testLoad'));
         });
+        expect(getByText('Loading Step Settings')).toBeInTheDocument();
+        expect(getByText('Basic')).toHaveClass('ant-tabs-tab-active');
+        expect(getByText('Advanced')).not.toHaveClass('ant-tabs-tab-active');
+
+        // Basic settings
+        expect(getByPlaceholderText('Enter name')).toHaveValue('testLoad');
+        expect(getByPlaceholderText('Enter name')).toBeDisabled();
+        expect(getByPlaceholderText('Enter description')).toBeDisabled();
+        expect(baseElement.querySelector('#sourceFormat')).toHaveClass('ant-select-disabled');
+        expect(baseElement.querySelector('#targetFormat')).toHaveClass('ant-select-disabled');
+        expect(baseElement.querySelector('#outputUriPrefix')).toHaveClass('ant-input-disabled');
+
+        // Advanced settings
+        await wait(() => {
+            fireEvent.click(getByText('Advanced'));
+        });
+        expect(getByText('Basic')).not.toHaveClass('ant-tabs-tab-active');
+        expect(getByText('Advanced')).toHaveClass('ant-tabs-tab-active');
+        debug();
         expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
         expect(getByLabelText('headers-textarea')).toBeDisabled();
         fireEvent.click(getByText('Processors'));
         expect(getByLabelText('processors-textarea')).toBeDisabled();
         fireEvent.click(getByText('Custom Hook'));
         expect(getByLabelText('customHook-textarea')).toBeDisabled();
-        expect(getByText('Save')).toBeDisabled();
+        expect(getByTestId('testLoad-save-settings')).toBeDisabled();
         await act(async () => {
-            await fireEvent.click(getByText('Cancel'));
+            await fireEvent.click(getByTestId('testLoad-cancel-settings'));
         });
+
         // test delete
         expect(queryByTestId('testLoad-delete')).not.toBeInTheDocument();
-
-        //test edit
-        fireEvent.click(getAllByText('testLoad')[0]);
-        expect(getByText('Edit Loading Step')).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
 
         // Check card layout
         fireEvent.click(getByLabelText('switch-view-card'));
 
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
-
-        // test settings
-        await act(async () => {
-            await fireEvent.click(getByLabelText('icon: setting'));
-        });
-        expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
-        expect(getByText('Save')).toBeDisabled();
-        await act(async () => {
-            await fireEvent.click(getByText('Cancel'));
-        });
 
         // test delete
         expect(queryByTitle('delete')).not.toBeInTheDocument();
@@ -90,7 +94,7 @@ describe('Load component', () => {
         const authorityService = new AuthoritiesService();
         authorityService.setAuthorities(['readIngestion','writeIngestion']);
 
-        const { getByText, getAllByText, getByLabelText, getByTestId, queryAllByText } = render(
+        const { debug, baseElement, getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId, queryAllByText } = render(
           <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
         );
 
@@ -105,9 +109,28 @@ describe('Load component', () => {
         // test 'Add New' button
         expect(getByText('Add New')).toBeInTheDocument();
 
-        // test settings
-        fireEvent.click(getByTestId('testLoad-settings'));
-        expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
+        // Open settings
+        await act(async () => {
+            await fireEvent.click(getByText('testLoad'));
+        });
+        expect(getByText('Loading Step Settings')).toBeInTheDocument();
+        expect(getByText('Basic')).toHaveClass('ant-tabs-tab-active');
+        expect(getByText('Advanced')).not.toHaveClass('ant-tabs-tab-active');
+
+        // Basic settings
+        expect(getByPlaceholderText('Enter name')).toHaveValue('testLoad');
+        expect(getByPlaceholderText('Enter name')).toBeDisabled();
+        expect(getByPlaceholderText('Enter description')).toBeEnabled();
+        expect(baseElement.querySelector('#sourceFormat')).not.toHaveClass('ant-select-disabled');
+        expect(baseElement.querySelector('#targetFormat')).not.toHaveClass('ant-select-disabled');
+        expect(baseElement.querySelector('#outputUriPrefix')).not.toHaveClass('ant-input-disabled');
+
+        // Advanced settings
+        await wait(() => {
+            fireEvent.click(getByText('Advanced'));
+        });
+        expect(getByText('Basic')).not.toHaveClass('ant-tabs-tab-active');
+        expect(getByText('Advanced')).toHaveClass('ant-tabs-tab-active');
         expect(getByLabelText('headers-textarea')).not.toBeDisabled();
         fireEvent.click(getByText('Processors'));
         expect(getByLabelText('processors-textarea')).not.toBeDisabled();
@@ -138,15 +161,9 @@ describe('Load component', () => {
         fireEvent.change(getByLabelText('customHook-textarea'), { target: { value: '{"goodJSON": true}' }});
         expect(queryAllByText('Invalid JSON').length === 0);
 
-        expect(getByText('Save')).not.toBeDisabled();
-        fireEvent.click(getByText('Cancel'));
+        expect(getByTestId('testLoad-save-settings')).not.toBeDisabled();
+        fireEvent.click(getByTestId('testLoad-cancel-settings'));
         fireEvent.click(getAllByText('No')[0]); // Handle cancel confirmation
-
-        //test edit
-        fireEvent.click(getAllByText('testLoad')[0]);
-        expect(await(waitForElement(() => getByText('Edit Loading Step')))).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).not.toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
 
         // test delete
         fireEvent.click(getByTestId('testLoad-delete'));
@@ -156,18 +173,6 @@ describe('Load component', () => {
         fireEvent.click(getByLabelText('switch-view-card'));
         // test 'Add New' button
         expect(getByText('Add New')).toBeInTheDocument();
-
-        // test settings
-        fireEvent.click(getByLabelText('icon: setting'));
-        expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
-        expect(getByText('Save')).not.toBeDisabled();
-        fireEvent.click(getByText('Cancel'));
-
-        //test edit
-        fireEvent.click(getByTestId('testLoad-edit'));
-        expect(await(waitForElement(() => getByText('Edit Loading Step')))).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).not.toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
 
         // test delete
         fireEvent.click(getByTestId('testLoad-delete'));
@@ -201,7 +206,6 @@ describe('Load component', () => {
         expect(getByText('Test JSON.')).toBeInTheDocument();
         expect(getAllByText('json').length > 0);
         expect(getByText('01/01/2000 4:00AM')).toBeInTheDocument();
-        expect(getByLabelText('icon: setting')).toBeInTheDocument();
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 
         // Check card view
@@ -209,7 +213,6 @@ describe('Load component', () => {
         expect(getByText('testLoad')).toBeInTheDocument();
         expect(getByText('JSON')).toBeInTheDocument();
         expect(getByText('Last Updated: 01/01/2000 4:00AM')).toBeInTheDocument();
-        expect(getByLabelText('icon: setting')).toBeInTheDocument();
         expect(getByTestId('testLoad-edit')).toBeInTheDocument();
         expect(getByLabelText('icon: delete')).toBeInTheDocument();
 

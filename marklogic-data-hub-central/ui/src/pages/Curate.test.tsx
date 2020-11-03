@@ -44,15 +44,9 @@ describe('Curate component', () => {
         // test 'Add New' button
         expect(queryByText('Add New')).not.toBeInTheDocument();
 
-        // test settings
-        fireEvent.click(getByTestId('Mapping2-settings'));
-        expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
-        expect(getAllByText('Save')[0]).toBeDisabled();
-        fireEvent.click(getAllByText('Cancel')[0]);
-
-        //test edit
+        // test edit
         fireEvent.click(getByTestId('Mapping2-edit'));
-        expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Mapping Step Settings')))).toBeInTheDocument();
         expect(getAllByText('Save')[0]).toBeDisabled();
         fireEvent.click(getAllByText('Cancel')[0]);
 
@@ -80,15 +74,9 @@ describe('Curate component', () => {
         // test 'Add New' button
         expect(getByText('Add New')).toBeInTheDocument();
 
-        // test settings
-        fireEvent.click(getByTestId('Mapping1-settings'));
-        expect(await(waitForElement(() => getByText('Target Database')))).toBeInTheDocument();
-        expect(getByTestId('Mapping1-save-settings')).not.toBeDisabled();
-        fireEvent.click(getByTestId('Mapping1-cancel-settings'));
-
-        //test edit
+        // test edit
         fireEvent.click(getByTestId('Mapping1-edit'));
-        expect(await(waitForElement(() => getByText('Edit Mapping Step')))).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText('Mapping Step Settings')))).toBeInTheDocument();
         expect(getByTestId('mapping-dialog-save')).not.toBeDisabled();
         fireEvent.click(getByTestId('mapping-dialog-cancel'));
 

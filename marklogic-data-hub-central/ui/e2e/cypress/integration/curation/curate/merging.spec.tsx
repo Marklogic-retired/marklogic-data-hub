@@ -2,8 +2,7 @@ import { Application } from "../../../support/application.config";
 import { toolbar } from "../../../support/components/common";
 import { createEditStepDialog } from '../../../support/components/merging/index';
 import curatePage from "../../../support/pages/curate";
-import { confirmationModal } from '../../../support/components/common/index';
-import { ConfirmationType } from '../../../support/types/modeling-types';
+import { confirmYesNo } from '../../../support/components/common/index';
 import 'cypress-wait-until';
 
 describe('Merging', () => {
@@ -54,8 +53,8 @@ describe('Merging', () => {
     createEditStepDialog.stepDescriptionInput().clear().type('UPDATED - merge order step example');
     createEditStepDialog.cancelButton('merging').click();
 
-    confirmationModal.getDiscardChangesText().should('be.visible');
-    confirmationModal.getYesButton(ConfirmationType.discardChanges).click();
+    confirmYesNo.getDiscardText().should('be.visible');
+    confirmYesNo.getYesButton().click();
 
     //Check if the changes are reverted back when discarded all changes.
     curatePage.editStep(mergeStep).click();

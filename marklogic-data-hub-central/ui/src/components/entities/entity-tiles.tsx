@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { Collapse, Menu } from 'antd';
 import axios from 'axios';
+import { createStep, getSteps, getStep, deleteStep } from '../../api/steps';
 import styles from './entity-tiles.module.scss';
 import MappingCard from './mapping/mapping-card';
 import MatchingCard from './matching/matching-card';
@@ -86,8 +87,7 @@ const EntityTiles = (props) => {
     const getMappingArtifacts = async () => {
         try {
             if (canReadMapping) {
-              let response = await axios.get('/api/steps/mapping');
-
+              let response = await getSteps('mapping');
               if (response.status === 200) {
                 let mapArtifacts = response.data;
                 mapArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1);
@@ -100,10 +100,9 @@ const EntityTiles = (props) => {
             }
     };
 
-    const getMappingArtifactByMapName = async (entityTypeId,mapName) => {
+    const getMappingArtifactByMapName = async (entityTypeId, mapName) => {
         try {
-            let response = await axios.get(`/api/steps/mapping/${mapName}`);
-
+            let response = await getStep(mapName, 'mapping');
             if (response.status === 200) {
                 let mapArtifacts = response.data;
 
@@ -114,26 +113,25 @@ const EntityTiles = (props) => {
             }
           } catch (error) {
               let message = error;
-              console.error('Error while fetching the mapping!', message);
+              console.error('Error getting mapping', message);
           }
     };
 
     const deleteMappingArtifact = async (mapName) => {
         try {
-            let response = await axios.delete(`/api/steps/mapping/${mapName}`);
-
+            let response = await deleteStep(mapName, 'mapping');
             if (response.status === 200) {
               updateIsLoadingFlag();
             }
           } catch (error) {
               let message = error.response.data.message;
-              console.error('Error while deleting the mapping!', message);
+              console.error('Error deleting mapping', message);
           }
     };
 
     const createMappingArtifact = async (mapping) => {
         try {
-            let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
+            let response = await createStep(mapping.name, 'mapping', mapping);
             if (response.status === 200) {
               updateIsLoadingFlag();
               return {code: response.status};
@@ -144,7 +142,7 @@ const EntityTiles = (props) => {
             let message = error;
             let code = error.response.data.code;
             let details = error.response.data.details;
-            console.error('Error while creating the mapping!', message);
+            console.error('Error creating mapping', message);
             let err={code: code,
                     message: details};
             return err;
@@ -153,7 +151,7 @@ const EntityTiles = (props) => {
 
     const updateMappingArtifact = async (mapping) => {
         try {
-            let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
+            let response = await createStep(mapping.name, 'mapping', mapping);
             if (response.status === 200) {
               return true;
             } else {
@@ -161,7 +159,7 @@ const EntityTiles = (props) => {
             }
           } catch (error) {
             let message = error;
-            console.error('Error while updating the mapping!', message);
+            console.error('Error updating mapping', message);
             return false;
           }
     };
@@ -279,7 +277,8 @@ const EntityTiles = (props) => {
                     entityModel={props.entityModels[entityType]}
                     canWriteFlow={props.canWriteFlow}
                     addStepToFlow={props.addStepToFlow}
-                    addStepToNew={props.addStepToNew}/>
+                    addStepToNew={props.addStepToNew}
+                />
             </div>;
         }
         else if (viewData[index] === 'match-' + entityType){

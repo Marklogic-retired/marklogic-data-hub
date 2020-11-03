@@ -1,11 +1,12 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait, screen } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
-import CreateEditStepDialog from './create-edit-step-dialog';
+import CreateEditStep from './create-edit-step';
 import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from 'axios';
 import { stringSearchResponse } from "../../../assets/mock-data/explore/facet-props";
 import { ConfirmationType } from '../../../types/common-types';
+import { debug } from 'console';
 
 jest.mock('axios');
 describe('Create Edit Step Dialog component', () => {
@@ -17,7 +18,7 @@ describe('Create Edit Step Dialog component', () => {
 
   test('Verify Edit Merging dialog renders correctly for a read only user', () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(
-      <CreateEditStepDialog {...data.editMerging} canReadWrite={false} />
+      <CreateEditStep {...data.editMerging} canReadWrite={false} />
     );
 
     const stepName = getByPlaceholderText('Enter name');
@@ -39,15 +40,13 @@ describe('Create Edit Step Dialog component', () => {
 
     expect(getByText('Save')).toBeDisabled();
     expect(getByText('Cancel')).toBeEnabled();
-    expect(getByLabelText('Close')).toBeEnabled();
   });
 
   test('Verify New Merging Dialog renders ', () => {
     const { getByText, getByLabelText, getByPlaceholderText } = render(
-      <CreateEditStepDialog {...data.newMerging} />
+      <CreateEditStep {...data.newMerging} />
     );
 
-    expect(getByText('New Merging Step')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter name')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
     expect(getByLabelText('Collection')).toBeInTheDocument();
@@ -61,7 +60,7 @@ describe('Create Edit Step Dialog component', () => {
   });
 
   test('Verify save button is always enabled', () => {
-    const { getByText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+    const { getByText, getByPlaceholderText } = render(<CreateEditStep {...data.newMerging} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
 
@@ -77,7 +76,7 @@ describe('Create Edit Step Dialog component', () => {
   });
 
   test('Verify Save button requires all mandatory fields', async () => {
-    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStep {...data.newMerging} />);
     const nameInput = getByPlaceholderText('Enter name');
     const collInput = document.querySelector(('#collList .ant-input'));
 
@@ -114,7 +113,7 @@ describe('Create Edit Step Dialog component', () => {
 
   test('Verify able to type in input fields and typeahead search in collections field', async () => {
     axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({ status: 200, data: stringSearchResponse })));
-    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStep {...data.newMerging} />);
 
     const descInput = getByPlaceholderText('Enter description');
     const collInput = document.querySelector(('#collList .ant-input'))
@@ -157,7 +156,7 @@ describe('Create Edit Step Dialog component', () => {
 
   test('Verify able to type in input fields and typeahead search in collections field', async () => {
     axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({ status: 200, data: stringSearchResponse })));
-    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStep {...data.newMerging} />);
 
     const descInput = getByPlaceholderText('Enter description');
     const collInput = document.querySelector(('#collList .ant-input'))
@@ -204,47 +203,31 @@ describe('Create Edit Step Dialog component', () => {
 
   });
 
-  test('Verify new merging modal closes when Cancel is clicked', () => {
-    const { getByText, rerender, queryByText } = render(<CreateEditStepDialog {...data.newMerging} />);
-
-    expect(getByText('New Merging Step')).toBeInTheDocument();
-    fireEvent.click(getByText('Cancel'));
-    expect(data.newMerging.toggleModal).toHaveBeenCalledTimes(1);
-
-  });
-
-  test('Verify new merging modal closes when "x" is clicked', () => {
-    const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditStepDialog {...data.newMerging} />);
-    expect(getByText('New Merging Step')).toBeInTheDocument();
-    fireEvent.click(getByLabelText('Close'));
-    expect(data.newMerging.toggleModal).toHaveBeenCalledTimes(1);
-  });
-
-  test('Verify delete dialog modal when Cancel is clicked', async () => {
-    const { getByLabelText, getByText } = render(<CreateEditStepDialog {...data.newMerging} />);
+  test('Verify discard changes modal when Cancel is clicked', async () => {
+    const { getByLabelText, getByText } = render(<CreateEditStep {...data.newMerging} />);
+    // Add change to form
     userEvent.click(getByLabelText('Query'));
+
     userEvent.click(getByText('Cancel'));
     await wait(() =>
-      expect(screen.getByLabelText('discard-changes-text')).toBeInTheDocument(),
+      expect(screen.getByLabelText('confirm-body')).toBeInTheDocument(),
     );
-    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DiscardChanges}-yes`));
-    expect(data.newMerging.toggleModal).toHaveBeenCalledTimes(1);
-  });
+    // Cancel discarding changes
+    userEvent.click(screen.getByLabelText(`No`));
+    expect(data.newMerging.setOpenStepSettings).toHaveBeenCalledTimes(0);
 
-  test('Verify delete dialog modal when "x" is clicked and cancel discarding changes', async () => {
-    const { getByLabelText, getByText, queryByText } = render(<CreateEditStepDialog {...data.newMerging} />);
-    expect(getByLabelText('Query')).toBeInTheDocument();
-    userEvent.click(getByLabelText('Query'));
-    userEvent.click(getByLabelText('Close'));
+    userEvent.click(getByText('Cancel'));
     await wait(() =>
-      expect(screen.getByLabelText('discard-changes-text')).toBeInTheDocument(),
+      expect(screen.getByLabelText('confirm-body')).toBeInTheDocument(),
     );
-    userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DiscardChanges}-no`));
-    expect(data.newMerging.toggleModal).toHaveBeenCalledTimes(0);
+    // Discard changes
+    userEvent.click(screen.getByLabelText(`Yes`));
+    expect(data.newMerging.setOpenStepSettings).toHaveBeenCalledTimes(1);
+
   });
 
   test('Verify Edit Merging dialog renders correctly', () => {
-    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditStepDialog {...data.editMerging} />);
+    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditStep {...data.editMerging} />);
     expect(getByPlaceholderText('Enter name')).toHaveValue('mergeCustomers');
     expect(getByPlaceholderText('Enter name')).toBeDisabled();
     expect(getByPlaceholderText('Enter description')).toHaveValue('merge customer description');

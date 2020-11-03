@@ -55,14 +55,11 @@ describe('Load data component', () => {
     expect(dataRow.getByText(data.loadData.data[1].sourceFormat)).toBeInTheDocument();
     expect(dataRow.getByText(data.loadData.data[1].targetFormat)).toBeInTheDocument();
     expect(dataRow.getByText('04/15/2020 2:22PM')).toBeInTheDocument();
-    expect(dataRow.getByTestId(`${data.loadData.data[1].name}-settings`)).toBeInTheDocument();
     expect(dataRow.getByTestId(`${data.loadData.data[1].name}-delete`)).toBeInTheDocument();
 
     // check if delete tooltip appears
     fireEvent.mouseOver(getByTestId(data.loadData.data[1].name + '-delete'));
     await wait (() => expect(getByText('Delete')).toBeInTheDocument());
-
-    expect(getAllByLabelText('icon: setting').length).toBe(3);
 
     //verify load list table enforces last updated sort order by default
     let loadTable: any = document.querySelectorAll('.ant-table-row-level-0');
@@ -135,33 +132,36 @@ describe('Load data component', () => {
   });
 
   test('Verify Load settings from list view renders correctly', async () => {
-    const {getByText, getByTestId, getByTitle,queryByTitle, getByPlaceholderText} = render(<MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>);
+    const {getByText, getAllByText, getByTestId, getByTitle, queryByTitle, queryByText, getByPlaceholderText} = render(
+      <MemoryRouter><LoadList {...data.loadData} /></MemoryRouter>
+    );
 
-    // NOTE see config/advanced-settings.data.ts for test data
+    // Click name to open default Basic settings
     await wait(() => {
-      fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
+        fireEvent.click(getByText(data.loadData.data[0].name));
     });
-    //set permissions without any errors and hit 'Save'
-    let targetPermissions = getByPlaceholderText("Please enter target permissions");
-    fireEvent.change(targetPermissions, { target: { value: 'role1,read' }});
-    let saveButton = getByText('Save');
+    expect(getByText('Basic')).toHaveClass('ant-tabs-tab-active');
+    expect(getByText('Advanced')).not.toHaveClass('ant-tabs-tab-active');
 
+    // Basic settings values
+    expect(getByText('testLoad')).toBeInTheDocument();
+    expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
+    expect(getAllByText('JSON').length === 2);
+    expect(getByPlaceholderText("Enter URI Prefix")).toBeInTheDocument();
+    // Note: Can't test mock API call since is being called by <Load> parent, which isn't being rendered in this test
+
+    // Switch to Advanced settings
     await wait(() => {
-        fireEvent.click(saveButton);
+      fireEvent.click(getByText('Advanced'));
     });
-    expect(axiosMock.post).toHaveBeenCalledTimes(1);
-
-    //open settings again
-
-    await wait(() => {
-        fireEvent.click(getByTestId(data.loadData.data[0].name+'-settings'));
-    });
-    let targetCollection = getByTitle('addedCollection'); // Additional target collection (Added by user)
-    let stepName = loadData.loads.data[0].name;
-
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
-    // Check if the settings API is being called.
     expect(axiosMock.get).toBeCalledWith('/api/steps/ingestion/' + data.loadData.data[0].name);
+    expect(getByText('Basic')).not.toHaveClass('ant-tabs-tab-active');
+    expect(getByText('Advanced')).toHaveClass('ant-tabs-tab-active');
+    let saveButton = getAllByText('Save'); // Each tab has a Save button
+    let stepName = loadData.loads.data[0].name;
+    let targetCollection = getByTitle('addedCollection'); // Additional target collection (Added by user)
+    
+    // Advanced settings values
     expect(getByText('Target Collections')).toBeInTheDocument();
     expect(targetCollection).toBeInTheDocument(); //Should be available in the document
     expect(targetCollection).not.toBe(stepName); //Should not be same as the default collection
@@ -171,20 +171,28 @@ describe('Load data component', () => {
     expect(getByText('Batch Size')).toBeInTheDocument();
     expect(getByPlaceholderText('Please enter batch size')).toHaveValue('35');
 
-    targetPermissions = getByPlaceholderText("Please enter target permissions");
-    saveButton = getByText('Save');
+    // Update permissions
+    let targetPermissions = getByPlaceholderText("Please enter target permissions");
 
-    fireEvent.change(targetPermissions, { target: { value: 'role1' }});
+    fireEvent.change(targetPermissions, { target: { value: 'role1' }}); // BAD permissions
+    expect(targetPermissions).toHaveValue('role1');
     fireEvent.blur(targetPermissions);
-    expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+    expect(getByTestId('validationError')).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
 
-    fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
+    fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }}); // BAD permissions
+    expect(targetPermissions).toHaveValue('role1,reader');
     fireEvent.blur(targetPermissions);
-    expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
+    expect(getByTestId('validationError')).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.invalidCapabilities);
 
-    fireEvent.change(targetPermissions, { target: { value: ' ' }});
+    fireEvent.change(targetPermissions, { target: { value: ' ' }}); // BAD permissions
+    expect(targetPermissions).toHaveValue(' ');
     fireEvent.blur(targetPermissions);
-    expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+    expect(getByTestId('validationError')).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+
+    fireEvent.change(targetPermissions, { target: { value: 'role1,read' }}); // GOOD permissions
+    expect(targetPermissions).toHaveValue('role1,read');
+    fireEvent.blur(targetPermissions);
+    expect(getByTestId('validationError')).toHaveTextContent('');
 
   });
 

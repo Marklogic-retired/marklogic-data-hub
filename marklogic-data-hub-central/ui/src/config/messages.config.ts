@@ -4,6 +4,13 @@ const AdvancedSettingsMessages = {
         'invalidCapabilities' : 'The string contains invalid capabilities. Capabilities must be read, insert, update or execute.'
     }
 };
+
+const ConfirmYesNoMessages = {
+        'discardChanges' : 'Discard changes?',
+        'saveChanges' : 'Save changes?'
+};
+
 export {
-    AdvancedSettingsMessages
+    AdvancedSettingsMessages,
+    ConfirmYesNoMessages
 };

@@ -2,8 +2,7 @@ import { Application } from "../../../support/application.config";
 import { toolbar } from "../../../support/components/common";
 import { createEditStepDialog } from '../../../support/components/merging/index';
 import curatePage from "../../../support/pages/curate";
-import { confirmationModal } from '../../../support/components/common/index';
-import { ConfirmationType } from '../../../support/types/modeling-types';
+import { confirmYesNo } from '../../../support/components/common/index';
 import 'cypress-wait-until';
 
 describe('Matching', () => {
@@ -52,8 +51,8 @@ describe('Matching', () => {
     createEditStepDialog.stepDescriptionInput().clear().type('UPDATED - match customer step example');
     createEditStepDialog.cancelButton('matching').click();
 
-    confirmationModal.getDiscardChangesText().should('be.visible');
-    confirmationModal.getYesButton(ConfirmationType.discardChanges).click();
+    confirmYesNo.getDiscardText().should('be.visible');
+    confirmYesNo.getYesButton().click();
 
     //Check if the changes are reverted back when discarded all changes.
     curatePage.editStep(matchStep).click();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, cleanup, wait } from '@testing-library/react';
-import CreateEditMappingDialog from './create-edit-mapping-dialog';
+import CreateEditMapping from './create-edit-mapping';
 import data from "../../../../assets/mock-data/curation/common.data";
 import axiosMock from 'axios';
 import {stringSearchResponse} from "../../../../assets/mock-data/explore/facet-props";
@@ -14,9 +14,10 @@ describe('Create/Edit Mapping Step artifact component', () => {
 });
 
   test('Verify New Mapping Step dialog renders ', () => {
-    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const { getByText, getByLabelText, getByPlaceholderText } = render(
+      <CreateEditMapping {...data.newMap} />
+    );
 
-    expect(getByText('New Mapping Step')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter name')).toBeInTheDocument();
     expect(getByPlaceholderText('Enter description')).toBeInTheDocument();
     expect(getByLabelText('Collection')).toBeInTheDocument();
@@ -29,7 +30,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
   });
 
   test('Verify mapping name, source query is mandatory and Save button is always enabled', async () => {
-    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMapping {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');
 
@@ -95,7 +96,9 @@ describe('Create/Edit Mapping Step artifact component', () => {
 
   test('Verify able to type in input fields and typeahead search in collections field', async () => {
     axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
-    const { getByText, getByLabelText, getByPlaceholderText, getByTestId, debug } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const { getByText, getByLabelText, getByPlaceholderText, getByTestId, debug } = render(
+      <CreateEditMapping {...data.newMap} />
+    );
 
     const descInput = getByPlaceholderText('Enter description');
     const saveButton = getByText('Save');
@@ -151,7 +154,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
   });
 
   test('Verify Save button requires all mandatory fields', async () => {
-    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMapping {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const collInput = document.querySelector(('#collList .ant-input'));
 
@@ -187,48 +190,40 @@ describe('Create/Edit Mapping Step artifact component', () => {
   });
 
   test('Verify New Mapping Step modal closes when Cancel is clicked', () => {
-    const { getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    const { getByText, rerender, queryByText } = render(<CreateEditMapping {...data.newMap} />);
 
-    expect(getByText('New Mapping Step')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     //setting newMap to false to close the modal
-    rerender(<CreateEditMappingDialog newMap={false}/>);
+    rerender(<CreateEditMapping {...data.newMap} openStepSettings={false}/>);
     //queryByText returns null and getByText throws an error. So we use queryByText to verify element not present scenarios
-    expect(queryByText('New Mapping Step')).not.toBeInTheDocument();
   });
 
-  test('Verify New Mapping Step modal closes when "x" is clicked', () => {
-    const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-    expect(getByText('New Mapping Step')).toBeInTheDocument();
-    fireEvent.click(getByLabelText('Close'));
-    rerender(<CreateEditMappingDialog newMap={false}/>);
-    expect(queryByText('New Mapping Step')).not.toBeInTheDocument();
-  });
-
-  test('Verify delete dialog modal when Cancel is clicked', () => {
-    const { getByLabelText, getByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+  test('Verify delete dialog modal when Cancel is clicked', async () => {
+    const { getByLabelText, getByText } = render(<CreateEditMapping {...data.newMap} />);
     fireEvent.click(getByLabelText('Query'));
+
     fireEvent.click(getByText('Cancel'));
-    expect(getByText('Discard changes?')).toBeInTheDocument();
-    expect(getByText('Yes')).toBeInTheDocument();
-    expect(getByText('No')).toBeInTheDocument();
-    /* Enhance the test later to include verification on No and Yes clicks
-    fireEvent.click(getByText('No'));
-    rerender(<CreateEditMappingDialog isSrcQueryTouched={false} deleteDialogVisible={false} />);
-    expect(queryByText('Discard changes?')).not.toBeInTheDocument();*/
-  });
+    await wait(() =>
+      expect(getByLabelText('confirm-body')).toBeInTheDocument(),
+    );
+    // Cancel discarding changes
+    fireEvent.click(getByLabelText(`No`));
+    expect(data.newMap.setOpenStepSettings).toHaveBeenCalledTimes(0);
 
-  test('Verify delete dialog modal when "x" is clicked', () => {
-    const { getByLabelText, getByText, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-    fireEvent.click(getByLabelText('Query'));
-    fireEvent.click(getByLabelText('Close'));
-    expect(queryByText('Discard changes?')).toBeInTheDocument();
-    expect(getByText('Yes')).toBeInTheDocument();
-    expect(getByText('No')).toBeInTheDocument();
+    fireEvent.click(getByText('Cancel'));
+    await wait(() =>
+      expect(getByLabelText('confirm-body')).toBeInTheDocument(),
+    );
+    // Discard changes
+    fireEvent.click(getByLabelText(`Yes`));
+    expect(data.newMap.setOpenStepSettings).toHaveBeenCalledTimes(1);
+
   });
 
   test('Verify Edit Mapping Step dialog renders correctly', () => {
-    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.editMap} />);
+    const { getByText, getByPlaceholderText, getByLabelText } = render(
+      <CreateEditMapping {...data.editMap} />
+    );
     expect(getByPlaceholderText('Enter name')).toHaveValue('testMap');
     expect(getByPlaceholderText('Enter name')).toBeDisabled();
     expect(getByPlaceholderText('Enter description')).toHaveValue('Description of testMap');
@@ -245,7 +240,9 @@ describe('Create/Edit Mapping Step artifact component', () => {
   });
 
   test('Verify Edit Mapping Step dialog renders correctly for a read only user', () => {
-    const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.editMap} canReadOnly={true} canReadWrite={false}/>);
+    const { getByText, getByPlaceholderText, getByLabelText } = render(
+      <CreateEditMapping {...data.editMap} canReadOnly={true} canReadWrite={false}/>
+    );
 
     expect(getByPlaceholderText('Enter name')).toHaveValue('testMap');
     expect(getByPlaceholderText('Enter name')).toBeDisabled();
@@ -259,7 +256,6 @@ describe('Create/Edit Mapping Step artifact component', () => {
 
     expect(getByText('Save')).toBeDisabled();
     expect(getByText('Cancel')).toBeEnabled();
-    expect(getByLabelText('Close')).toBeEnabled();
   });
 
 

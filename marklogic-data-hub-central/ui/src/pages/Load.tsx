@@ -7,6 +7,7 @@ import LoadList from '../components/load/load-list';
 import LoadCard from '../components/load/load-card';
 import { UserContext } from '../util/user-context';
 import axios from 'axios';
+import { createStep, getSteps, deleteStep } from '../api/steps';
 import { AuthoritiesContext } from "../util/authorities";
 import tiles from '../config/tiles.config';
 
@@ -15,9 +16,9 @@ export type ViewType =  'card' | 'list';
 const INITIAL_VIEW: ViewType = 'card';
 
 const Load: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation<any>();
   let [view, setView] = useState(location.state?.viewMode ? location.state.viewMode : INITIAL_VIEW);
+  const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
   const [page, setPage] = useState(1)
@@ -31,7 +32,7 @@ const Load: React.FC = () => {
   const canReadWrite = authorityService.canWriteLoad();
   const canWriteFlow = authorityService.canWriteFlow();
 
-  //Set context for switching views
+  // Set context for switching views
   const handleViewSelection = (view) => {
     setView(view);
   };
@@ -49,60 +50,57 @@ const Load: React.FC = () => {
       return (() => {
         setLoadArtifacts([]);
         setFlows([]);
-      });
-  }, [isLoading]);
+      })
+  }, [loading]);
 
-  //CREATE/POST load data Artifact
+  // CREATE/POST load step
   const createLoadArtifact = async (ingestionStep) => {
     try {
-      setIsLoading(true);
-
-      let response = await axios.post(`/api/steps/ingestion/${ingestionStep.name}`, ingestionStep);
+      setLoading(true);
+      let response = await createStep(ingestionStep.name, 'ingestion', ingestionStep);
       if (response.status === 200) {
-        setIsLoading(false);
+        setLoading(false);
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error('Error While creating the Load Data artifact!', message);
-      setIsLoading(false);
+      console.error('Error creating load step', message)
+      setLoading(false);
       handleError(error);
     }
 
   };
 
-  //GET all the data load artifacts
+  // GET all load steps
   const getLoadArtifacts = async () => {
     try {
-      let response = await axios.get('/api/steps/ingestion');
-
+      let response = await getSteps('ingestion');
       if (response.status === 200) {
         setLoadArtifacts([...response.data]);
       }
     } catch (error) {
         let message = error.response.data.message;
-        console.error('Error while fetching load data artifacts', message);
+        console.error('Error getting load steps', message);
         handleError(error);
     }
   };
 
-  //DELETE Load Data Artifact
+  // DELETE load step
   const deleteLoadArtifact = async (loadName) => {
     try {
-      setIsLoading(true);
-      let response = await axios.delete(`/api/steps/ingestion/${loadName}`);
-
+      setLoading(true);
+      let response = await deleteStep(loadName, 'ingestion');
       if (response.status === 200) {
-        setIsLoading(false);
+        setLoading(false);
       }
     } catch (error) {
         let message = error.response.data.message;
-        console.error('Error while deleting load data artifact.', message);
-        setIsLoading(false);
+        console.error('Error deleting load step', message);
+        setLoading(false);
         handleError(error);
     }
   };
 
-  //GET all the flow artifacts
+  // GET all the flow artifacts
   const getFlows = async () => {
     try {
         let response = await axios.get('/api/flows');
@@ -118,16 +116,16 @@ const Load: React.FC = () => {
   // POST load data step to new flow
   const addStepToNew = async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
 
       //if (response.status === 200) {
         console.log('POST addStepToNew');
-        setIsLoading(false);
+        setLoading(false);
       //}
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding load data step to new flow.', message);
-        setIsLoading(false);
+        setLoading(false);
         handleError(error);
     }
   };
@@ -139,17 +137,17 @@ const Load: React.FC = () => {
       "stepDefinitionType": "ingestion"
     };
     try {
-      setIsLoading(true);
+      setLoading(true);
       let url = '/api/flows/' + flowName + '/steps';
       let body = stepToAdd;
       let response = await axios.post(url, body);
       if (response.status === 200) {
-        setIsLoading(false);
+        setLoading(false);
       }
     } catch (error) {
         let message = error.response.data.message;
         console.error('Error while adding load data step to flow.', message);
-        setIsLoading(false);
+        setLoading(false);
         Modal.error({
           content: 'Error adding step "' + loadArtifactName + '" to flow "' + flowName + '."',
         });
