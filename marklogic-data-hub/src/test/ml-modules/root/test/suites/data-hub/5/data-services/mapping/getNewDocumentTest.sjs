@@ -3,79 +3,10 @@ const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 const hubTest = require("/test/data-hub-test-helper.sjs");
 
-const jsonUri = '/test/sampleCustomerDoc.json';
-const jsonInput = {
-  envelope:{
-    instance:{
-      CustOrders:{
-        CustomerID:204,
-        Name:{
-          FirstName: 'Jacqueline',
-          LastName: 'Knowles'
-        },
-        Nicknames:{
-          Nickname:[
-            'Jack',
-            'Sparrow'
-          ]
-        }
-      }
-    }
-  }
-};
-
-const xmlUri = '/test/sampleCustomerDoc.xml';
-const xmlInput = `
-<Order xmlns="https://www.w3schools.com/OrderNS">
-  <RequiredDate>1996-09-23T13:27:06</RequiredDate>
-  <ShipName>B's Beverages</ShipName>
-  <OrderDetails xmlns="https://www.w3schools.com/OD" xmlns:OD="https://www.w3schools.com/OD"
-        xmlns:OtherNS="https://www.w3schools.com/OtherNS"
-        in="this attr should be 'in' in the output"
-        OD:in2="this attr should be 'in2' in the output"
-        OtherNS:out="this attr should be '@OtherNS:out' in the output">
-    <OrderDetail xmlns:Wash="https://www.w3schools.com/Washington">
-      <Wash:UnitPrice xmlns:Omega="Omega">26.6000</Wash:UnitPrice>
-      <Wash:Discount>0</Wash:Discount>
-      <Wash:Quantity>9</Wash:Quantity>
-      <Wash:ProductID>64</Wash:ProductID>
-    </OrderDetail>
-    <OrderDetail xmlns:Cali="https://www.w3schools.com/California">
-      <Cali:UnitPrice>27.2000</Cali:UnitPrice>
-      <Cali:Discount>0</Cali:Discount>
-      <Cali:Quantity>40</Cali:Quantity>
-      <Cali:ProductID xmlns:Product="https://www.w3schools.com/ProductNS">60</Cali:ProductID>
-    </OrderDetail>
-  </OrderDetails>
-  <ShippedDate xmlns:SD="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>
-  <ShippedDate xmlns:SD="https://www.w3schools.com/SD2">1997-02-13T120:15:26</ShippedDate>
-  <ShipCity>London</ShipCity>
-  <CustomerID>BSBEV</CustomerID>
-  <ShipVia xmlns="https://www.w3schools.com/SV">3</ShipVia>
-  <ShipPostalCode>EC2 5NT</ShipPostalCode>
-  <OrderID>10289</OrderID>
-  <OrderDate>1996-08-26T07:24:10</OrderDate>
-  <ShipRegion>null</ShipRegion>
-  <ShipAddress>Fauntleroy Circus</ShipAddress>
-  <ShipCountry>UK</ShipCountry>
-  <EmployeeID>7</EmployeeID>
-  <Freight>22.7700</Freight>
-  <Element1 xmlns="https://www.microsoft.com/Gamma">Should *not* be in an array.</Element1>
-  <Element1 xmlns="https://www.amazon.com/Gamma">Should *not* be in an array.</Element1>
-  <Element2>Should be in an array.</Element2>
-  <Element2>Should be in an array.</Element2>
-  <MarkupScenarios>
-    <EmptyElementWithoutAttributes/>
-    <EmptyElementWithAttribute attr="hello"/>
-    <NoTextOrAttrs></NoTextOrAttrs>
-    <JustText>Hello</JustText>
-    <JustAttr attr="Howdy"></JustAttr>
-    <AttrAndText attr="myattr">Some Text</AttrAndText>
-    <AttrTextAndChild attr="whohoo!">How are <b>you</b> doing?</AttrTextAndChild>
-    <MultipleTextNodes>1st text node<subscript>1</subscript>2nd text node<superscript>2</superscript></MultipleTextNodes>
-    <ExampleWithCDATA>Text outside <![CDATA[Text inside]]> More text outside</ExampleWithCDATA>
-  </MarkupScenarios>
-</Order>`;
+// Test data vars
+const stepName = 'prospect2CustomerMappingStep';
+const jsonUri = '/content/sampleCustomerDoc.json';
+const xmlUri = '/content/sampleCustomerDoc.xml';
 
 function invokeService(stepName, uri) {
   return fn.head(hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
@@ -84,13 +15,16 @@ function invokeService(stepName, uri) {
 }
 
 function loadTestData() {
-  const perms = [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-operator", "read"), xdmp.permission("data-hub-operator", "update")];
-  dataHub.hubUtils.writeDocument(jsonUri, jsonInput, perms, ['Customer'], dataHub.config.FINALDATABASE);
-  dataHub.hubUtils.writeDocument(xmlUri, fn.head(xdmp.unquote(xmlInput)), perms, ['Customer'], dataHub.config.FINALDATABASE);
+  // Found it difficult to figure out how to load a mapping step via test-data directory and get it into the collection
+  // required by mapping.sjs' getArtifactNode().  Going this route instead.
+  const stepService = require("../lib/stepService.sjs");
+  stepService.createDefaultMappingStep(stepName);
+  stepService.saveStep('mapping',
+    {name: stepName, sourceDatabase: 'data-hub-FINAL', sourceQuery: 'cts.collectionQuery("raw-content")'});
 }
 
 function testJsonInput() {
-  const result = invokeService('someStepName', jsonUri);
+  const result = invokeService(stepName, jsonUri);
   return [
     test.assertExists(result.data, 'Top-level "data" property does not exist'),
     test.assertEqual(204, Number(result.data.CustOrders.CustomerID)),
@@ -101,7 +35,7 @@ function testJsonInput() {
 }
 
 function testXmlInput() {
-  const result = invokeService('someStepName', xmlUri);
+  const result = invokeService(stepName, xmlUri);
   const expectedNamespaces = {
     "OD": "https://www.w3schools.com/OD",
     "OtherNS": "https://www.w3schools.com/OtherNS",
@@ -180,4 +114,3 @@ function testXmlInput() {
   .concat(loadTestData())
   .concat(testJsonInput())
   .concat(testXmlInput())
-  // No need to delete test data.
