@@ -2,6 +2,8 @@ package com.marklogic.hub.flow;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.job.JobStatus;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.Test;
 
@@ -101,9 +103,15 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
 
         // Run the step again, verify nothing is processed
         response = runFlow(new FlowInputs(flowName, stepNumber).withOptions(buildExcludeOptions()));
-        assertEquals(0, response.getStepResponses().get(stepNumber).getSuccessfulEvents(),
+        assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus(), "Even though no items were processed, " +
+            "no errors occurred, so the status should still be finished");
+
+        RunStepResponse stepResponse = response.getStepResponses().get(stepNumber);
+        assertEquals(JobStatus.COMPLETED_PREFIX + stepNumber, stepResponse.getStatus(), "Even though no items were " +
+            "processed, the step did complete, so the status should reflect that");
+        assertEquals(0, stepResponse.getSuccessfulEvents(),
             "All 3 items have already been processed, so no items should have been processed this time");
-        assertEquals(3, response.getStepResponses().get(stepNumber).getTotalEvents());
+        assertEquals(3, stepResponse.getTotalEvents());
     }
 
     private void verifyFirstBatchDocument(String flowName, String stepId) {
