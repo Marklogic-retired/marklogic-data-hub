@@ -140,6 +140,14 @@ const NewLoadDialog = (props) => {
     </Modal>;
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+
+    setNameMissingOnSave(false)
+    if (!stepName) {
+      // name is missing: set flag and do not submit form
+      setNameMissingOnSave(true)
+      return
+    }
+
     if (event) event.preventDefault();
 
     let dataPayload;
@@ -383,16 +391,7 @@ const NewLoadDialog = (props) => {
               type="primary" 
               htmlType="submit" 
               disabled={!props.canReadWrite} 
-              onClick={(e) => {
-                setNameMissingOnSave(false)
-                if (!!stepName) {
-                  return
-                } else {
-                  setNameMissingOnSave(true)
-                  e.preventDefault()
-                  // alert("Name cannot be blank")
-                }
-              }}
+              onClick={handleSubmit}
             >Save</MLButton>
           </div>
         </Form.Item>

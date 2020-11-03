@@ -150,6 +150,19 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
+
+    setNameMissingOnSave(false)
+    setQueryMissingOnSave(false)
+    if (!stepName) {
+      // missing name: set flag
+      setNameMissingOnSave(true)
+    }
+    if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+      // missing collection or query: set flag
+      setQueryMissingOnSave(true)
+    }
+    if (isNameMissingOnSave || isQueryMissingOnSave) {return} // if flags are set, then do not submit form
+
     if (event) event.preventDefault();
     let dataPayload;
     if(selectedSource === 'collection') {
@@ -430,22 +443,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
                 type="primary"
                 htmlType="submit"
                 disabled={!props.canReadWrite} 
-                onClick={(e) => {
-                  setNameMissingOnSave(false)
-                  setQueryMissingOnSave(false)
-                  if (!stepName) {
-                    setNameMissingOnSave(true)
-                    e.preventDefault()
-                    // alert("Name must be filled out")
-                  }
-                  if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
-                    setQueryMissingOnSave(true)
-                    e.preventDefault()
-                    // alert("Collection or query must be filled out")
-                  }
-  
-                  // else: all entries are valid and form should be submitted
-                }}
+                onClick={handleSubmit}
               >Save</MLButton>
             </div>
           </Form.Item>

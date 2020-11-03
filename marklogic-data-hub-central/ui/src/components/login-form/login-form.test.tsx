@@ -26,7 +26,7 @@ describe('Login page test', () => {
     expect(loginBtn).toBeEnabled();
 
     fireEvent.change(userField, { target: {value: 'user'} });
-    expect(loginBtn).toBeDisabled();
+    expect(loginBtn).toBeEnabled();
     fireEvent.change(passField, { target: {value: 'pass'} });
     //Verifying that login button is enabled only when all three input fields are entered by user
     expect(loginBtn).toBeEnabled();
