@@ -25,6 +25,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 
@@ -46,9 +47,8 @@ public class CollectorImpl implements Collector {
     @Override
     public DiskQueue<String> run(String flow, String step, Map<String, Object> options) {
         final DatabaseClient stagingClient = hubClient.getStagingClient();
-        try {
-            DiskQueue<String> results = new DiskQueue<>(5000);
 
+        try {
             String uriString = String.format(
                 "%s://%s:%d/v1/internal/hubcollector5?flow-name=%s&database=%s&step=%s",
                 stagingClient.getSecurityContext().getSSLContext() != null ? "https" : "http",
@@ -69,17 +69,26 @@ public class CollectorImpl implements Collector {
              */
             OkHttpClient ok = (OkHttpClient) stagingClient.getClientImplementation();
             Request request = new Request.Builder().url(uriString).get().build();
-            Response response = ok.newCall(request).execute();
 
-            try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    results.add(line);
-                }
+            Response response = ok.newCall(request).execute();
+            if (response.isSuccessful()) {
+                return readItems(response);
+            } else {
+                throw new RuntimeException(String.format("Unable to collect items to process for flow %s and step %s; cause: %s", flow, step, response.body().string()));
             }
-            return results;
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Unable to collect items to process for flow %s and step %s; cause: %s", flow, step, e));
+        } catch (IOException ex) {
+            throw new RuntimeException(String.format("Unexpected IO exception when collecting items to process for flow %s and step %s; cause: %s", flow, step, ex));
         }
+    }
+
+    private DiskQueue<String> readItems(Response response) throws IOException {
+        DiskQueue<String> results = new DiskQueue<>(5000);
+        try (BufferedReader reader = new BufferedReader(response.body().charStream())) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                results.add(line);
+            }
+        }
+        return results;
     }
 }
