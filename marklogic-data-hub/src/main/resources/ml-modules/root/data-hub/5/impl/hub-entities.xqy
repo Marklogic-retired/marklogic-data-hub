@@ -570,8 +570,8 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                     return
                       element tde:column {
                         $column/@*,
+                        hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-definitions),
                         if (fn:starts-with($column/tde:name, $join-prefix)) then (
-                          hent:fix-tde($column/(tde:name|tde:scalar-type), $entity-model-contexts, $uber-definitions),
                           let $tde-val := fn:string($column/tde:val)
                           let $primary-key := $uber-definitions => map:get($tde-val) => map:get("primaryKey")
                           return
@@ -580,12 +580,12 @@ declare function hent:fix-tde($nodes as node()*, $entity-model-contexts as xs:st
                                 $generated-primary-key-expression
                               else
                                 $tde-val || "/" || $primary-key
-                            },
-                          $default-nullable,
-                          $default-invalid-values,
-                          hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
+                            }
                         ) else
-                          hent:fix-tde($column/node(), $entity-model-contexts, $uber-definitions)
+                          hent:fix-tde($column/tde:val, $entity-model-contexts, $uber-definitions),
+                        $default-nullable,
+                        $default-invalid-values,
+                        hent:fix-tde($column/(tde:default|tde:reindexing|tde:collation), $entity-model-contexts, $uber-definitions)
                       }
                   }
                 }
