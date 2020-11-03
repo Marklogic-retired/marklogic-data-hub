@@ -6,6 +6,7 @@ import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from 'axios';
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import { ConfirmationType } from '../../../types/common-types';
+import { selectedPropertyDefinitions } from '../../../assets/mock-data/explore/entity-search';
 
 jest.mock('axios');
 describe('Create Edit Step Dialog component', () => {
@@ -66,60 +67,36 @@ describe('Create Edit Step Dialog component', () => {
         expect(saveButton).toBeEnabled();
     });
 
-    test('Verify clicking "Save" with no name or collection shows error', () => {
-      const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+    test('Verify clicking "Save" with no collection shows error', async () => {
+      const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+
+      fireEvent.change(getByPlaceholderText('Enter name'), { target: {value: ''}});
   
-      // message should not show when opening new dialogue box
-      expect(getByText('Name is required')).not.toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
-  
-      fireEvent.click(getByLabelText('Save'));
+      fireEvent.click(getByText('Save'));
   
       // both messages should show when both boxes are empty
-      expect(queryByText('Name is required')).toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).toBeInTheDocument();
-    });
-  
-    test('Verify clicking "Save" with a name but no collection shows error', () => {
-      const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-      const nameInput = getByPlaceholderText('Enter name');
-  
-      // messages should not show when opening new dialogue box
-      expect(getByText('Name is required')).not.toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
-  
-      fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
-      expect(nameInput).toHaveValue('testCreateMap');
-  
-      fireEvent.click(getByLabelText('Save'));
-      
-      // error message for name should not appear
-      expect(queryByText('Name is required')).not.toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).toBeInTheDocument();
-    });
-  
-    test('Verify clicking "Save" with any collection but no name shows error', () => {
-      const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
-      const collInput = document.querySelector(('#collList .ant-input'))
-  
-      // messages should not show when opening new dialogue box
-      expect(getByText('Name is required')).not.toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
-  
-      await wait(() => {
-        if(collInput){
-          fireEvent.change(collInput, { target: {value: 'testCollection'} });
-        }
-      });    
-      expect(collInput).toHaveValue('testCollection');
-  
-      fireEvent.click(getByLabelText('Save'));
-  
-      // error message for empty collection should not appear
-      expect(queryByText('Name is required')).toBeInTheDocument(); 
-      expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
+      expect(getByText('Name is required')).toBeInTheDocument();
+      expect(getByText('Collection or Query is required')).toBeInTheDocument();
     });
 
+    test('Verify clicking "Save" with no name shows error', async () => {
+      const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);
+
+      const collInput = document.querySelector(('#collList .ant-input'))
+      
+      await wait(() => {
+        if(collInput){
+          fireEvent.change(collInput, { target: {value: ''} });
+        }
+      });
+  
+      fireEvent.click(getByText('Save'));
+  
+      // both messages should show when both boxes are empty
+      expect(getByText('Name is required')).toBeInTheDocument();
+      expect(getByText('Collection or Query is required')).toBeInTheDocument();
+    });
+  
     test('Verify able to type in input fields and typeahead search in collections field', async () => {
         axiosMock.post['mockImplementationOnce'](jest.fn(() => Promise.resolve({status: 200, data: stringSearchResponse})));
         const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditStepDialog {...data.newMerging} />);

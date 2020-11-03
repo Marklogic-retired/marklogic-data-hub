@@ -97,10 +97,7 @@ describe('New/edit load data configuration', () => {
       canReadOnly={false}/></BrowserRouter>
     );
 
-    // message should not show when opening new dialogue box
-    expect(getByText('Name is required')).not.toBeInTheDocument(); 
-
-    fireEvent.click(getByLabelText('Save'));
+    fireEvent.click(getByText('Save'));
 
     // message should appear when save button is clicked
     expect(getByText('Name is required')).toBeInTheDocument(); 

@@ -151,46 +151,33 @@ describe('Create/Edit Mapping Step artifact component', () => {
 
   });
 
-  test('Verify clicking "Save" with no name or collection shows error', () => {
-    const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+  test('Verify clicking "Save" with neither name nor collection shows error', () => {
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
 
-    // message should not show when opening new dialogue box
-    expect(getByText('Name is required')).not.toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
-
-    fireEvent.click(getByLabelText('Save'));
+    fireEvent.click(getByText('Save'));
 
     // both messages should show when both boxes are empty
-    expect(queryByText('Name is required')).toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).toBeInTheDocument();
+    expect(getByText('Name is required')).toBeInTheDocument(); 
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
   });
 
-  test('Verify clicking "Save" with a name but no collection shows error', () => {
-    const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+  test('Verify clicking "Save" with name but no collection shows error', () => {
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
-
-    // messages should not show when opening new dialogue box
-    expect(getByText('Name is required')).not.toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
 
     fireEvent.change(nameInput, { target: {value: 'testCreateMap'}});
     expect(nameInput).toHaveValue('testCreateMap');
 
-    fireEvent.click(getByLabelText('Save'));
+    fireEvent.click(getByText('Save'));
     
     // error message for name should not appear
-    expect(queryByText('Name is required')).not.toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).toBeInTheDocument();
+    expect(getByText('Collection or Query is required')).toBeInTheDocument();
   });
 
-  test('Verify clicking "Save" with any collection but no name shows error', () => {
-    const { getByLabelText, getByText, rerender, queryByText } = render(<CreateEditMappingDialog {...data.newMap} />);
+  test('Verify clicking "Save" with collection but no name shows error', async () => {
+    const { getByText, getByLabelText, getByPlaceholderText } = render(<CreateEditMappingDialog {...data.newMap} />);
+
     const collInput = document.querySelector(('#collList .ant-input'))
-
-    // messages should not show when opening new dialogue box
-    expect(getByText('Name is required')).not.toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
-
     await wait(() => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
@@ -198,11 +185,10 @@ describe('Create/Edit Mapping Step artifact component', () => {
     });    
     expect(collInput).toHaveValue('testCollection');
 
-    fireEvent.click(getByLabelText('Save'));
+    fireEvent.click(getByText('Save'));
 
     // error message for empty collection should not appear
-    expect(queryByText('Name is required')).toBeInTheDocument(); 
-    expect(queryByText('Collection or Query is required')).not.toBeInTheDocument();
+    expect(getByText('Name is required')).toBeInTheDocument(); 
   });
 
   test('Verify New Mapping Step modal closes when Cancel is clicked', () => {
