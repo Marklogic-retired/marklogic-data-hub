@@ -1,23 +1,33 @@
-import {
-  Modal,
-  Form,
-  Input,
-  Icon,
-  Select,
-} from 'antd';
 import React, { useState, useEffect } from 'react';
-import styles from './advanced-settings-dialog.module.scss';
-import { AdvancedSettings } from '../../config/tooltips.config';
+import { Form, Input, Icon, Select } from 'antd';
+import styles from './advanced-settings.module.scss';
+import { AdvancedSettingsTooltips } from '../../config/tooltips.config';
 import { AdvancedSettingsMessages } from '../../config/messages.config';
-import Axios from 'axios';
+import { createStep, getStep } from '../../api/steps';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
-
+import './advanced-settings.scss';
+import ConfirmYesNo from '../common/confirm-yes-no/confirm-yes-no';
 
 const { TextArea } = Input;
 const { Option } = Select;
 
-const AdvancedSettingsDialog = (props) => {
-  const tooltips = Object.assign({}, AdvancedSettings, props.tooltipsData);
+type Props = {
+  tabKey: string;
+  tooltipsData: any;
+  openStepSettings: boolean;
+  setOpenStepSettings: any;
+  stepData: any;
+  updateLoadArtifact: any;
+  activityType: any;
+  canWrite: boolean;
+  currentTab: string;
+  setIsValid?: any;
+  resetTabs?: any;
+  setHasChanged?: any;
+}
+
+const AdvancedSettings: React.FC<Props> = (props) => {
+  const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
   const invalidJSONMessage = 'Invalid JSON';
 
@@ -81,27 +91,33 @@ const AdvancedSettingsDialog = (props) => {
   const [customHookValid, setCustomHookValid] = useState(true);
   const [additionalSettings, setAdditionalSettings] = useState('');
 
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [loading,setLoading] = useState(false);
+  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
+  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [changed, setChanged] = useState(false);
 
   const canReadWrite = props.canWrite;
 
+  const initStep = () => {
+    setSourceDatabaseTouched(false);
+    setTargetDatabaseTouched(false);
+    setAddCollTouched(false);
+    setTargetPermissionsTouched(false);
+    setTargetFormatTouched(false);
+    setProvGranularityTouched(false);
+    setValidateEntityTouched(false);
+    setBatchSizeTouched(false);
+    setHeadersTouched(false);
+    setProcessorsTouched(false);
+    setCustomHookTouched(false);
+    setTargetPermissionsTouched(false);
+  }
+
   useEffect(() => {
-    getSettingsArtifact();
+    getSettings();
+    initStep();
 
     return () => {
-      setSourceDatabaseTouched(false);
-      setTargetDatabaseTouched(false);
-      setAddCollTouched(false);
-      setTargetPermissionsTouched(false);
-      setTargetFormatTouched(false);
-      setProvGranularityTouched(false);
-      setValidateEntityTouched(false);
-      setBatchSizeTouched(false);
-      setHeadersTouched(false);
-      setProcessorsTouched(false);
-      setCustomHookTouched(false);
-      setTargetPermissionsTouched(false);
 
       setStepDefinitionName('');
       setIsCustomIngestion(false);
@@ -128,7 +144,7 @@ const AdvancedSettingsDialog = (props) => {
       setCustomHookValid(true);
       setTargetPermissionsValid(true);
     };
-  },[props.openAdvancedSettings  ,loading]);
+  },[props.openStepSettings, loading])
 
   const isFormValid = () => {
     return headersValid && processorsValid && customHookValid && targetPermissionsValid;
@@ -156,28 +172,26 @@ const AdvancedSettingsDialog = (props) => {
     }
   };
 
-  // CREATE/POST settings Artifact
-  const createSettingsArtifact = async (settingsObj) => {
+  const createSettings = async (settingsObj) => {
     if (props.stepData.name) {
       try {
         setLoading(true);
-        let response = await Axios.post(`/api/steps/${stepType}/${props.stepData.name}`, settingsObj);
+        let response = await createStep(props.stepData.name, stepType, settingsObj);
         if (response.status === 200) {
           setLoading(false);
         }
       } catch (error) {
         let message = error.response.data.message;
-        console.error('Error while creating the activity settings artifact', message);
+        console.error('Error while creating the step', message)
         setLoading(false);
       }
     }
   };
 
-  // GET the settings artifact
-  const getSettingsArtifact = async () => {
+  const getSettings = async () => {
     if (props.stepData.name) {
       try {
-        let response = await Axios.get(`/api/steps/${stepType}/${props.stepData.name}`);
+        let response = await getStep(props.stepData.name, stepType);
         if (response.status === 200) {
           if(stepType === 'ingestion' && response.data.stepDefinitionName !== 'default-ingestion'){
               setIsCustomIngestion(true);
@@ -213,7 +227,7 @@ const AdvancedSettingsDialog = (props) => {
         }
       } catch (error) {
         let message = error.response;
-        console.error('Error while fetching load settings artifacts', message || error);
+        console.error('Error while fetching settings artifact', message || error);
         setSourceDatabase(defaultSourceDatabase);
         setTargetDatabase(defaultTargetDatabase);
         setAdditionalCollections([]);
@@ -233,19 +247,28 @@ const AdvancedSettingsDialog = (props) => {
   };
 
   const onCancel = () => {
-    if(checkDeleteOpenEligibility()){
-      setDeleteDialogVisible(true);
+    if (hasFormChanged()) {
+      setDiscardChangesVisible(true);
     } else {
-      props.setOpenAdvancedSettings(false);
+      props.setOpenStepSettings(false)
+      props.resetTabs();
     }
   };
 
-  const onOk = () => {
-    props.setOpenAdvancedSettings(false);
-  };
+  useEffect(() => {
+    if (props.currentTab !== props.tabKey && hasFormChanged()) {
+      setSaveChangesVisible(true);
+    }
+  }, [props.currentTab])
+
+  // On change of any form field, update the changed flag for parent
+  useEffect(() => {
+    props.setHasChanged(hasFormChanged());
+    setChanged(false);
+  }, [changed])
 
   //Check if Delete Confirmation dialog should be opened or not.
-  const checkDeleteOpenEligibility = () => {
+  const hasFormChanged = () => {
       if ( !sourceDatabaseTouched
         && !targetDatabaseTouched
         && !addCollTouched
@@ -264,55 +287,72 @@ const AdvancedSettingsDialog = (props) => {
       }
   };
 
-  const onDelOk = () => {
-    props.setOpenAdvancedSettings(false);
-    setDeleteDialogVisible(false);
-  };
+  const discardOk = () => {
+    props.setOpenStepSettings(false);
+    props.resetTabs();
+    props.setIsValid(true);
+    setDiscardChangesVisible(false);
+  }
 
-  const onDelCancel = () => {
-    setDeleteDialogVisible(false);
-  };
+  const discardCancel = () => {
+    setDiscardChangesVisible(false);
+  }
 
-  const deleteConfirmation = <Modal
-      visible={deleteDialogVisible}
-      bodyStyle={{textAlign: 'center'}}
-      width={250}
-      maskClosable={false}
-      destroyOnClose={true}
-      closable={false}
-      footer={null}
-  >
-      <span className={styles.ConfirmationMessage}>Discard changes?</span><br/><br/>
-      <div >
-          <MLButton aria-label="No" onClick={() => onDelCancel()}>No</MLButton>&nbsp;&nbsp;
-          <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
-        </div>
-  </Modal>;
+  const discardChanges = <ConfirmYesNo
+    visible={discardChangesVisible}
+    type='discardChanges'
+    onYes={discardOk}
+    onNo={discardCancel}
+  />;
+
+  const saveOk = () => {
+    createSettings(getPayload());
+    props.updateLoadArtifact(getPayload());
+    setSaveChangesVisible(false)
+  }
+
+  const saveCancel = () => {
+    setSaveChangesVisible(false);
+    getSettings();
+    initStep();
+  }
+  const saveChanges = <ConfirmYesNo
+    visible={saveChangesVisible}
+    type='saveChanges'
+    onYes={saveOk}
+    onNo={saveCancel}
+  />;
+
+  const getPayload = () => {
+    return {
+      collections: defaultCollections,
+      additionalCollections: additionalCollections,
+      sourceDatabase: usesSourceDatabase ? sourceDatabase: null,
+      targetDatabase: targetDatabase,
+      targetFormat: targetFormat,
+      permissions: targetPermissions,
+      headers: isEmptyString(headers) ? {} : parseJSON(headers),
+      processors: isEmptyString(processors) ? [] : parseJSON(processors),
+      provenanceGranularityLevel: provGranularity,
+      validateEntity: validateEntity,
+      batchSize: batchSize,
+      customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
+    }
+  }
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
-    let dataPayload = {
-        collections: defaultCollections,
-        additionalCollections: additionalCollections,
-        sourceDatabase: usesSourceDatabase ? sourceDatabase: null,
-        targetDatabase: targetDatabase,
-        targetFormat: targetFormat,
-        permissions: targetPermissions,
-        headers: isEmptyString(headers) ? {} : parseJSON(headers),
-        processors: isEmptyString(processors) ? [] : parseJSON(processors),
-        provenanceGranularityLevel: provGranularity,
-        validateEntity: validateEntity,
-        batchSize: batchSize,
-        customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
-      };
-      createSettingsArtifact(dataPayload);
-      props.setOpenAdvancedSettings(false);
+    let payload = getPayload();
+    createSettings(payload);
+    props.setOpenStepSettings(false);
+    props.resetTabs();
   };
 
   const isPermissionsValid = () => {
     if (targetPermissions && targetPermissions.trim().length === 0) {
         setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+        props.setIsValid(false);
         return false;
     }
 
@@ -322,16 +362,19 @@ const AdvancedSettingsDialog = (props) => {
             let role = permissionArray[i];
             if (i + 1 >= permissionArray.length || (!role ||!role.trim())) {
                 setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+                props.setIsValid(false);
                 return false;
             }
             let capability = permissionArray[i + 1];
             if(!validCapabilities.includes(capability)){
                 setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.invalidCapabilities);
+                props.setIsValid(false);
                 return false;
             }
         }
     }
     setPermissionValidationError('');
+    props.setIsValid(true);
     return true;
   };
 
@@ -352,6 +395,7 @@ const AdvancedSettingsDialog = (props) => {
   };
 
   const handleChange = (event) => {
+
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setTargetPermissionsTouched(true);
@@ -388,19 +432,23 @@ const AdvancedSettingsDialog = (props) => {
       setBatchSize(event.target.value);
       setBatchSizeTouched(true);
     }
-  };
+    setChanged(true);
+  }
 
   const handleBlur = (event) => {
     if (event.target.id === 'headers') {
       setHeadersValid(isValidJSON(event.target.value));
+      props.setIsValid(isValidJSON(event.target.value));
     }
 
     if (event.target.id === 'processors') {
       setProcessorsValid(isValidJSON(event.target.value));
+      props.setIsValid(isValidJSON(event.target.value));
     }
 
     if (event.target.id === 'customHook') {
       setCustomHookValid(isValidJSON(event.target.value));
+      props.setIsValid(isValidJSON(event.target.value));
     }
 
     if (event.target.id === 'batchSize'){
@@ -411,7 +459,8 @@ const AdvancedSettingsDialog = (props) => {
     if (event.target.id === 'targetPermissions') {
         setTargetPermissionsValid(isPermissionsValid());
     }
-
+    
+    setChanged(true);
   };
 
   const handleSourceDatabase = (value) => {
@@ -422,6 +471,7 @@ const AdvancedSettingsDialog = (props) => {
         setSourceDatabaseTouched(true);
         setSourceDatabase(value);
     }
+    setChanged(true);
   };
 
   const handleTargetDatabase = (value) => {
@@ -432,6 +482,7 @@ const AdvancedSettingsDialog = (props) => {
       setTargetDatabaseTouched(true);
       setTargetDatabase(value);
     }
+    setChanged(true);
   };
 
   const handleAddColl = (value) => {
@@ -443,6 +494,7 @@ const AdvancedSettingsDialog = (props) => {
       // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
       setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
     }
+    setChanged(true);
   };
 
   const handleTargetFormat = (value) => {
@@ -453,6 +505,7 @@ const AdvancedSettingsDialog = (props) => {
       setTargetFormat(value);
       setTargetFormatTouched(true);
     }
+    setChanged(true);
   };
 
   const handleProvGranularity = (value) => {
@@ -463,6 +516,7 @@ const AdvancedSettingsDialog = (props) => {
       setProvGranularityTouched(true);
       setProvGranularity(value);
     }
+    setChanged(true);
   };
 
   const handleValidateEntity = (value) => {
@@ -490,20 +544,7 @@ const AdvancedSettingsDialog = (props) => {
 
   const provGranOpts = Object.keys(provGranularityOptions).map(d => <Option data-testid={`provOptions-${d}`} key={provGranularityOptions[d]}>{d}</Option>);
   const valEntityOpts = Object.keys(validateEntityOptions).map( (d, index) => <Option data-testid={`entityValOpts-${index}`} key={validateEntityOptions[d]}>{d}</Option>);
-  return <Modal
-    visible={props.openAdvancedSettings}
-    title={null}
-    width="700px"
-    onCancel={() => onCancel()}
-    onOk={() => onOk()}
-    okText="Save"
-    className={styles.SettingsModal}
-    footer={null}
-    maskClosable={false}
-    destroyOnClose={true}
-  >
-    <p className={styles.title}>Advanced Step Settings</p>
-    <p aria-label={`step-name-${props.stepData.name}`} className={styles.stepName}>{props.stepData.name}</p><br/>
+  return (
     <div className={styles.newDataForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={true}>
         {isCustomIngestion ? <Form.Item
@@ -529,7 +570,7 @@ const AdvancedSettingsDialog = (props) => {
             {sourceDbOptions}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.sourceDatabase}>
+            <MLTooltip title={tooltips.sourceDatabase} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -551,7 +592,7 @@ const AdvancedSettingsDialog = (props) => {
             {targetDbOptions}
           </Select>
           <div className={styles.selectTooltip}>
-            <MLTooltip title={tooltips.targetDatabase}>
+            <MLTooltip title={tooltips.targetDatabase} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -577,7 +618,7 @@ const AdvancedSettingsDialog = (props) => {
             })}
           </Select>
           <div className={styles.inputTooltip}>
-            <MLTooltip title={tooltips.additionalCollections}>
+            <MLTooltip title={tooltips.additionalCollections} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -604,7 +645,7 @@ const AdvancedSettingsDialog = (props) => {
             className={styles.inputWithTooltip}
           />
           <div className={styles.inputTooltip}>
-            <MLTooltip title={tooltips.targetPermissions}>
+            <MLTooltip title={tooltips.targetPermissions} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -699,7 +740,7 @@ const AdvancedSettingsDialog = (props) => {
         </Form.Item>
         { usesHeaders ? <>
         <div className={styles.textareaTooltip}>
-          <MLTooltip title={tooltips.headers}>
+          <MLTooltip title={tooltips.headers} placement={'right'}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
           </MLTooltip>
         </div>
@@ -738,7 +779,7 @@ const AdvancedSettingsDialog = (props) => {
         />
         { processorsExpanded ? <div className={styles.expandContainer}>
           <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.processors}>
+            <MLTooltip title={tooltips.processors} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -772,7 +813,7 @@ const AdvancedSettingsDialog = (props) => {
         />
         { customHookExpanded ? <div className={styles.expandContainer}>
           <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.customHook}>
+            <MLTooltip title={tooltips.customHook} placement={'right'}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
@@ -818,9 +859,11 @@ const AdvancedSettingsDialog = (props) => {
           </div>
         </Form.Item>
       </Form>
-    </div>
-    {deleteConfirmation}
-  </Modal>;
-};
+      {discardChanges}
+      {saveChanges}
+    </div> 
+  );
 
-export default AdvancedSettingsDialog;
+}
+
+export default AdvancedSettings;

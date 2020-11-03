@@ -1,12 +1,27 @@
-import { Modal, Form, Input, Icon, Select } from "antd";
 import React, { useState, useEffect } from "react";
-import styles from './new-load-dialog.module.scss';
+import { Form, Input, Icon, Select } from "antd";
+import styles from './create-edit-load.module.scss';
 import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
-import {NewLoadTooltips} from '../../../config/tooltips.config';
+import { NewLoadTooltips } from '../../../config/tooltips.config';
+import ConfirmYesNo from '../../common/confirm-yes-no/confirm-yes-no';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 
+interface Props {
+  tabKey: string;
+  openStepSettings: boolean;
+  setOpenStepSettings: any;
+  isNewStep: boolean;
+  canReadWrite: boolean;
+  canReadOnly: boolean;
+  createLoadArtifact
+  stepData: any;
+  currentTab: string;
+  setIsValid?: any;
+  resetTabs?: any;
+  setHasChanged?: any;
+}
 
-const NewLoadDialog = (props) => {
+const CreateEditLoad: React.FC<Props> = (props) => {
   const [stepName, setStepName] = useState('');
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
@@ -19,30 +34,36 @@ const NewLoadDialog = (props) => {
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isValid, setIsValid] = useState(false);
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
+  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
+  const [changed, setChanged] = useState(false);
+
+  const initStep = () => {
+    setStepName(props.stepData.name);
+    setDescription(props.stepData.description);
+    setSrcFormat(props.stepData.sourceFormat);
+    if(props.stepData.separator){
+      if([',','\\t','|',';'].includes(props.stepData.separator)){
+        setFieldSeparator(props.stepData.separator);
+      } else {
+        setFieldSeparator('Other');
+        setOtherSeparator(props.stepData.separator);
+      }
+    }
+    setTgtFormat(props.stepData.targetFormat);
+    setOutputUriPrefix(props.stepData.outputURIPrefix);
+    setIsValid(true);
+    setTobeDisabled(true);
+  }
 
   useEffect(() => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step') {
-      setStepName(props.stepData.name);
-      setDescription(props.stepData.description);
-      setSrcFormat(props.stepData.sourceFormat);
-      if(props.stepData.separator){
-        if([',','\\t','|',';'].includes(props.stepData.separator)){
-          setFieldSeparator(props.stepData.separator);
-        } else {
-          setFieldSeparator('Other');
-          setOtherSeparator(props.stepData.separator);
-        }
-      }
-
-      setTgtFormat(props.stepData.targetFormat);
-      setSourceName(props.stepData.sourceName);
-      setSourceType(props.stepData.sourceType);
-      setOutputUriPrefix(props.stepData.outputURIPrefix);
-      setIsValid(true);
-      setTobeDisabled(true);
-    } else {
+    // Edit step
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && !props.isNewStep) {
+      initStep();
+    } 
+    // New step
+    else {
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
@@ -55,9 +76,8 @@ const NewLoadDialog = (props) => {
       setOutputUriPrefix('');
       setIsValid(false);
     }
-
+    // Reset
     return (() => {
-
       setStepName('');
       setStepNameTouched(false);
       setDescription('');
@@ -71,94 +91,101 @@ const NewLoadDialog = (props) => {
       setTobeDisabled(false);
     });
 
-  }, [props.stepData, props.title, props.newLoad]);
+  }, [props.stepData, props.isNewStep]);
 
   const onCancel = () => {
-    if(checkDeleteOpenEligibility()) {
-      setDeleteDialogVisible(true);
+    if (hasFormChanged()) {
+      setDiscardChangesVisible(true);
     } else {
-      props.setNewLoad(false);
+      props.setOpenStepSettings(false);
+      props.resetTabs();
     }
   };
 
-  const checkDeleteOpenEligibility = () => {
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.title === 'Edit Loading Step'){
-      if(stepName === props.stepData.name && description === props.stepData.description
-      && srcFormat === props.stepData.sourceFormat && tgtFormat === props.stepData.targetFormat
-      && outputUriPrefix === props.stepData.outputURIPrefix) {
-        if((props.stepData.separator && fieldSeparator === 'Other' && otherSeparator === props.stepData.separator) ||
-         (props.stepData.separator && fieldSeparator !== 'Other' && fieldSeparator === props.stepData.separator) ||
-         (!props.stepData.separator && fieldSeparator === ',' && otherSeparator === '')) {
+  useEffect(() => {
+    if (props.currentTab !== props.tabKey && hasFormChanged()) {
+      setSaveChangesVisible(true);
+    }
+  }, [props.currentTab])
+
+  // On change of any form field, update the changed flag for parent
+  useEffect(() => {
+    props.setHasChanged(hasFormChanged());
+    setChanged(false);
+  }, [changed])
+
+  const hasFormChanged = () => {
+    const step = props.stepData;
+    // Edit
+    if (step && JSON.stringify(step) != JSON.stringify({}) && !props.isNewStep){
+      // Any settings changed (excluding separator)?
+      if (
+        stepName === step.name && description === step.description && srcFormat === step.sourceFormat 
+        && tgtFormat === step.targetFormat && sourceName === step.sourceName && sourceType === step.sourceType
+        && outputUriPrefix === step.outputURIPrefix
+      ) {
+        // Separator?
+        if((step.separator && fieldSeparator === 'Other' && otherSeparator === step.separator) ||
+          (step.separator && fieldSeparator !== 'Other' && fieldSeparator === step.separator) ||
+          (!step.separator && (fieldSeparator === ',' || !fieldSeparator) && otherSeparator === '')) {
           return false;
         }
-        else {
-          return true;
-        }
+        else return true;
       }
-      else {
-          return true;
-      }
+      else return true;
     }
+    // New
     else {
-      if(stepName === '' && description === '' && srcFormat === 'json' && tgtFormat === 'json' && outputUriPrefix === '') {
+      // Any settings changed (excluding separator)?
+      if(stepName === '' && description === '' && srcFormat === 'json' && tgtFormat === 'json' 
+        && sourceName === '' && sourceType === '' && outputUriPrefix === '') {
+        // Separator?
         if(fieldSeparator === ',' && otherSeparator === '') {
-            return false;
+          return false;
         }
-        else {
-          return true;
-        }
+        else return true;
       }
-      else {
-        return true;
-      }
+      else return true;
     }
   };
 
-  const onOk = () => {
-    props.setNewLoad(false);
-  };
+  const discardOk = () => {
+    props.setOpenStepSettings(false);
+    setDiscardChangesVisible(false)
+  }
 
-  const onDelOk = () => {
-    props.setNewLoad(false);
-    setDeleteDialogVisible(false);
-  };
+  const discardCancel = () => {
+    setDiscardChangesVisible(false)
+  }
 
-  const onDelCancel = () => {
-    setDeleteDialogVisible(false);
-  };
+  const discardChanges = <ConfirmYesNo
+    visible={discardChangesVisible}
+    type='discardChanges'
+    onYes={discardOk}
+    onNo={discardCancel}
+  />;
 
-  const deleteConfirmation = <Modal
-        visible={deleteDialogVisible}
-        bodyStyle={{textAlign: 'center'}}
-        width={250}
-        maskClosable={false}
-        closable={false}
-        footer={null}
-        destroyOnClose={true}
-    >
-        <span className={styles.ConfirmationMessage}>Discard changes?</span>
-        <br/><br/>
-        <div >
-            <MLButton aria-label="No" onClick={() => onDelCancel()}>No</MLButton>
-            &nbsp;&nbsp;
-            <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
-          </div>
-    </Modal>;
-  
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    if (!stepName) {
-      // missing name
-      setStepNameTouched(true);
-      event.preventDefault();
-      return;
-    }
-    // else: submit handle
+  const saveOk = () => {
+    props.createLoadArtifact(getPayload());
+    setSaveChangesVisible(false)
+  }
 
-    if (event) event.preventDefault();
+  const saveCancel = () => {
+    setSaveChangesVisible(false);
+    initStep();
+  }
 
-    let dataPayload;
+  const saveChanges = <ConfirmYesNo
+    visible={saveChangesVisible}
+    type='saveChanges'
+    onYes={saveOk}
+    onNo={saveCancel}
+  />;
+
+  const getPayload = () => {
+    let result;
     if(srcFormat === 'csv'){
-       dataPayload = {
+      result = {
         name: stepName,
         description: description,
         sourceFormat: srcFormat,
@@ -169,7 +196,7 @@ const NewLoadDialog = (props) => {
         outputURIPrefix: outputUriPrefix,
       };
     } else {
-       dataPayload = {
+      result = {
         name: stepName,
         description: description,
         sourceFormat: srcFormat,
@@ -177,17 +204,32 @@ const NewLoadDialog = (props) => {
         sourceName: sourceName,
         sourceType: sourceType,
         outputURIPrefix: outputUriPrefix
-      };
-      if(props.stepData.separator){
-        dataPayload.separator = null;
+      }
+      if (props.stepData.separator) {
+        result.separator = null;
       }
     }
-    setIsValid(true);
+    return result;
+  }
 
-    //Call create data load artifact API function
-    props.createLoadArtifact(dataPayload);
-    props.setNewLoad(false);
-  };
+  const handleSubmit = (event: { preventDefault: () => void; }) => {
+    if (!stepName) {
+      // missing name
+      setStepNameTouched(true);
+      event.preventDefault();
+      return;
+    }
+    // else: submit handle
+    
+    if (event) event.preventDefault();
+
+    setIsValid(true);
+    props.setIsValid(true);
+
+    props.createLoadArtifact(getPayload());
+    props.setOpenStepSettings(false);
+    props.resetTabs();
+  }
 
   const handleChange = (event) => {
     if (event.target.id === 'name') {
@@ -200,12 +242,13 @@ const NewLoadDialog = (props) => {
 
         if (event.target.value.length == 0) {
           setIsValid(false);
+          props.setIsValid(false);
         } else if (srcFormat && tgtFormat) {
           setIsValid(true);
+          props.setIsValid(true);
         }
       }
     }
-
     if (event.target.id === 'description') {
       setDescription(event.target.value);
     }
@@ -217,12 +260,14 @@ const NewLoadDialog = (props) => {
     if (event.target.id === 'sourceType') {
       setSourceType(event.target.value);
     }
+    setChanged(true);
   };
 
   const handleOutputUriPrefix = (event) => {
     if (event.target.id === 'outputUriPrefix') {
       setOutputUriPrefix(event.target.value);
     }
+    setChanged(true);
   };
 
   const handleSrcFormat = (value) => {
@@ -232,6 +277,7 @@ const NewLoadDialog = (props) => {
         setFieldSeparator(',');
       }
     }
+    setChanged(true);
   };
 
   const handleFieldSeparator = (value) => {
@@ -241,12 +287,14 @@ const NewLoadDialog = (props) => {
         setOtherSeparator('');
       }
     }
+    setChanged(true);
   };
 
   const handleOtherSeparator = (event) => {
     if (event.target.id === 'otherSeparator') {
       setOtherSeparator(event.target.value);
     }
+    setChanged(true);
   };
 
   const handleTgtFormat = (value) => {
@@ -257,6 +305,7 @@ const NewLoadDialog = (props) => {
         setSourceType('');
       }
     }
+    setChanged(true);
   };
 
   const formItemLayout = {
@@ -274,20 +323,7 @@ const NewLoadDialog = (props) => {
   const fsoptions = Object.keys(fieldSeparatorOptions).map(d => <Select.Option key={fieldSeparatorOptions[d]}>{d}</Select.Option>);
   const toptions = Object.keys(tgtOptions).map(d => <Select.Option key={tgtOptions[d]}>{d}</Select.Option>);
 
-
-  return (<Modal visible={props.newLoad}
-    title={null}
-    width="55em"
-    onCancel={() => onCancel()}
-    onOk={() => onOk()}
-    okText="Save"
-    className={styles.modal}
-    footer={null}
-    maskClosable={false}
-    destroyOnClose={true}>
-
-    <p className={styles.title}>{props.title}</p>
-    <br/>
+  return (
     <div className={styles.newDataLoadForm}>
         <div className={styles.newLoadCardTitle} aria-label={'newLoadCardTitle'}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
@@ -306,7 +342,7 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={'right'}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
@@ -320,7 +356,7 @@ const NewLoadDialog = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description} placement={'right'}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
         </Form.Item>
@@ -339,7 +375,7 @@ const NewLoadDialog = (props) => {
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat}>
+          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat} placement={'right'}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
@@ -367,7 +403,7 @@ const NewLoadDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
+        </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator} placement={'right'}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip></span>}</span>
         </Form.Item> : ''}
@@ -383,7 +419,7 @@ const NewLoadDialog = (props) => {
             style={{width: '95%'}}>
             {toptions}
           </Select>&nbsp;&nbsp;
-              <MLTooltip title={NewLoadTooltips.targetFormat}>
+              <MLTooltip title={NewLoadTooltips.targetFormat} placement={'right'}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
@@ -397,7 +433,7 @@ const NewLoadDialog = (props) => {
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName} placement={'right'}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
         </Form.Item>}
@@ -411,7 +447,7 @@ const NewLoadDialog = (props) => {
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType} placement={'right'}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
         </Form.Item>}
@@ -426,10 +462,11 @@ const NewLoadDialog = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewLoadTooltips.outputURIPrefix}>
+          <MLTooltip title={NewLoadTooltips.outputURIPrefix} placement={'right'}>
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip>
         </Form.Item>
+
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
@@ -444,9 +481,10 @@ const NewLoadDialog = (props) => {
           </div>
         </Form.Item>
       </Form>
+      {discardChanges}
+      {saveChanges}
     </div>
-    {deleteConfirmation}
-  </Modal>);
-};
+  );
+}
 
-export default NewLoadDialog;
+export default CreateEditLoad;

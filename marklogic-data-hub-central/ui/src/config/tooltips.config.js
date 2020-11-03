@@ -1,4 +1,4 @@
-const AdvancedSettings = {
+const AdvancedSettingsTooltips = {
     'name': 'The name of this step definition.',
     'description': 'The description of this step definition.',
     'sourceQuery' : 'The collection tag or CTS query that selects the source data to process in this step.',
@@ -178,7 +178,7 @@ const MergingStepDetailText = {
 }
 
 export {
-    AdvancedSettings,
+    AdvancedSettingsTooltips,
     NewFlowTooltips,
     NewLoadTooltips,
     AdvLoadTooltips,

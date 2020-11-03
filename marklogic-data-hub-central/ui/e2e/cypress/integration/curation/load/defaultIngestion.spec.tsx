@@ -58,9 +58,9 @@ describe('Default ingestion ', () => {
         loadPage.saveButton().click();
         cy.findByText('UPDATE').should('be.visible');
 
-        //Verify Settings
-        loadPage.stepSettings(stepName).click();
-        loadPage.stepNameInSettings().should('have.text', stepName);
+        //Verify Advanced Settings
+        loadPage.stepName(stepName).click();
+        loadPage.switchEditAdvanced().click();  // Advanced tab
         loadPage.selectTargetDB('FINAL');
         loadPage.targetCollectionInput().type('e2eTestCollection{enter}test1{enter}test2{enter}');
         cy.findByText('Default Collections').click();
@@ -192,10 +192,10 @@ describe('Default ingestion ', () => {
         cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
 
-        //Verify Settings
+        //Verify Advanced Settings
         cy.waitForAsyncRequest();
-        loadPage.stepSettings(stepName).click();
-        loadPage.stepNameInSettings().should('have.text', stepName);
+        loadPage.editStepInCardView(stepName).click();
+        loadPage.switchEditAdvanced().click(); // Advanced tab
         loadPage.selectTargetDB('STAGING');
         loadPage.targetCollectionInput().type('e2eTestCollection{enter}test1{enter}test2{enter}');
         cy.findByText('Default Collections').click();

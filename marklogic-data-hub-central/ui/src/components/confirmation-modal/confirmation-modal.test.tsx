@@ -460,7 +460,7 @@ describe('Confirmation Modal Component', () => {
       />
     );
 
-    expect(queryByLabelText('iscard-changes-text')).toBeNull();
+    expect(queryByLabelText('discard-changes-text')).toBeNull();
 
     rerender(<ConfirmationModal
       isVisible={true}

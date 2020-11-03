@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
 import {fireEvent, render, wait, cleanup, waitForElement} from '@testing-library/react';
-import { AdvancedSettingsMessages } from '../../../config/messages.config';
 import MappingCard from './mapping-card';
 import axiosMock from 'axios';
 import data from "../../../assets/mock-data/curation/flows.data";
@@ -81,8 +80,6 @@ describe("Mapping Card component", () => {
     await wait (() => expect(getByText('Edit')).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId('Mapping1-stepDetails'));
     await wait (() => expect(getByText('Step Details')).toBeInTheDocument());
-    fireEvent.mouseOver(getByRole('settings-mapping'));
-    await wait (() => expect(getByText('Settings')).toBeInTheDocument());
     expect(queryAllByRole('delete-mapping')).toHaveLength(0);
 
     // test delete icon displays correct tooltip when disabled
@@ -116,7 +113,6 @@ describe("Mapping Card component", () => {
 
     expect(getByRole("edit-mapping")).toBeInTheDocument();
     expect(getByTestId("Mapping1-stepDetails")).toBeInTheDocument();
-    expect(getByRole("settings-mapping")).toBeInTheDocument();
     expect(queryAllByRole('disabled-delete-mapping')).toHaveLength(0);
     expect(getByRole('delete-mapping')).toBeInTheDocument();
 
@@ -158,11 +154,11 @@ describe("Mapping Card component", () => {
 
   });
 
-  test('Open Advanced Step settings', async () => {
+  test('Open step settings', async () => {
       const authorityService = new AuthoritiesService();
       authorityService.setAuthorities(['writeMapping', 'readMapping']);
         let mapping = data.mappings.data[0].artifacts;
-      const {getByText,getByRole, getByPlaceholderText} = render(
+      const {debug, getByText, getByLabelText, getByTestId, queryByText, getByPlaceholderText} = render(
         <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard
           {...mappingProps}
           canReadWrite={true}
@@ -170,43 +166,54 @@ describe("Mapping Card component", () => {
         /></AuthoritiesContext.Provider></Router>
       );
 
+      // Open default Basic settings
       await wait(() => {
-          fireEvent.click(getByRole("settings-mapping"));
+          fireEvent.click(getByTestId("Mapping1-edit"));
       });
-      //set permissions without any errors and hit 'Save'
-      let targetPermissions = getByPlaceholderText("Please enter target permissions");
-      fireEvent.change(targetPermissions, { target: { value: 'role1,read' }});
-      let saveButton = getByText('Save');
+      expect(getByText('Mapping Step Settings')).toBeInTheDocument();
+      debug
+      expect(getByText('Basic')).toHaveClass('ant-tabs-tab-active');
+      expect(getByText('Advanced')).not.toHaveClass('ant-tabs-tab-active');
 
+      // Basic settings values
+      expect(getByPlaceholderText('Enter name')).toHaveValue('Mapping1');
+      expect(getByPlaceholderText('Enter name')).toBeDisabled();
+      expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
+
+      expect(getByLabelText('Collection')).toBeChecked();
+      const collInput = document.querySelector(('#collList .ant-input'))
+      expect(collInput).toHaveValue('default-ingestion');
+
+      fireEvent.click(getByLabelText('Query'));
+      expect(getByPlaceholderText('Enter source query')).toHaveTextContent("cts.collectionQuery(['default-ingestion'])");
+
+      // Switch to Advanced settings
       await wait(() => {
-          fireEvent.click(saveButton);
+        fireEvent.click(getByText('Advanced'));
       });
-      expect(axiosMock.post).toHaveBeenCalledTimes(1);
+      expect(getByText('Basic')).not.toHaveClass('ant-tabs-tab-active');
+      expect(getByText('Advanced')).toHaveClass('ant-tabs-tab-active');
 
-      //Open settings again
-      await wait(() => {
-          fireEvent.click(getByRole("settings-mapping"));
-      });
-
+      // Advanced settings values
+      expect(getByText('Source Database')).toBeInTheDocument();
+      expect(getByText('data-hub-STAGING')).toBeInTheDocument();
+      expect(getByText('Target Database')).toBeInTheDocument();
+      expect(getByText('data-hub-FINAL')).toBeInTheDocument();
       expect(getByText('Batch Size')).toBeInTheDocument();
       expect(getByPlaceholderText('Please enter batch size')).toHaveValue('50');
+      expect(getByText('Target Permissions')).toBeInTheDocument();
+      expect(getByPlaceholderText("Please enter target permissions")).toHaveValue('data-hub-common,read,data-hub-common,update');
+      expect(getByText('Entity Validation')).toBeInTheDocument();
+      expect(getByText('Please select Entity Validation')).toBeInTheDocument();
+      expect(getByText('Header Content')).toBeInTheDocument();
+      expect(getByText('Processors')).toBeInTheDocument();
+      expect(getByText('Custom Hook')).toBeInTheDocument();
 
-      targetPermissions = getByPlaceholderText("Please enter target permissions");
-      expect(targetPermissions).toHaveValue('data-hub-common,read,data-hub-common,update');
-      saveButton = getByText('Save');
+      fireEvent.click(getByLabelText('Close'));
+      await wait(() => {
+        expect(queryByText('Mapping Step Settings')).not.toBeInTheDocument();
+      });
 
-      fireEvent.change(targetPermissions, { target: { value: 'role1' }});
-      expect(targetPermissions).toHaveValue('role1');
-      fireEvent.blur(targetPermissions);
-
-      expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
-      fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
-      fireEvent.blur(targetPermissions);
-      expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
-
-      fireEvent.change(targetPermissions, { target: { value: ',,,' }});
-      fireEvent.blur(targetPermissions);
-      expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
   });
 
   test('Verify Card sort order, adding the step to an existing flow, and running the step in an existing flow where step DOES NOT exist', async () => {

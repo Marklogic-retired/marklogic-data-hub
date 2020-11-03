@@ -341,22 +341,29 @@ const mapProps = {
 };
 
 const newMap = {
-  title: 'New Mapping Step',
-  newMap: true,
-  setNewMap: jest.fn(),
+  tabKey: '1',
+  isNewStep: true,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  createMappingArtifact: jest.fn(),
+  stepData: {},
+  targetEntityType: '',
+  sourceDatabase: '',
   canReadWrite: true,
-  isMapNameTouched: false,
-  isDescriptionTouched: false,
-  isSelectedSourceTouched: false,
-  isCollectionsTouched: false,
-  isSrcQueryTouched: false,
-  deleteDialogVisible: false
-};
+  canReadOnly: false,
+  currentTab: '1',
+  setIsValid: jest.fn(),
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn()
+}
 
 const editMap = {
-  title: 'Edit Mapping Step',
-  newMap: true,
-  mapData: {
+  tabKey: '1',
+  isNewStep: false,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  createLoadArtifact: jest.fn(),
+  stepData: {
     name: 'testMap',
     description: 'Description of testMap',
     targetEntityType: 'Person',
@@ -367,8 +374,15 @@ const editMap = {
       name: { sourcedFrom: 'name' }
     }
   },
-  canReadWrite: true
-};
+  targetEntityType: '',
+  sourceDatabase: '',
+  canReadWrite: true,
+  canReadOnly: false,
+  currentTab: '1',
+  setIsValid: jest.fn(),
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn()
+}
 
 const advancedSettings = {
   activityType: 'mapping',
@@ -423,11 +437,18 @@ const namespacedXmlInstance = "<Document><content><es:envelope xmlns:es=\"http:/
 const noNamespaceXmlInstance = "<Document><content><envelope xmlns:es=\"http://marklogic.com/entity-services\"><instance><Person><fname xsi:type=\"xs:string\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\">Alexandra</fname></Person></instance></envelope></content></Document>";
 
 const viewCustom = {
-    viewCustom: true,
-    setViewCustom: jest.fn(),
-    canReadWrite: false,
-    customData: customData[0]
-};
+  tabKey: '1',
+  openStepSettings: true,
+  setOpenStepSettings: () => {},
+  createLoadArtifact: () => {},
+  stepData: customData[0],
+  canReadWrite: false,
+  canReadOnly: false,
+  currentTab: '1',
+  setIsValid: () => {},
+  resetTabs: () => {},
+  setHasChanged: () => {}
+}
 
 const data = {
   data: {

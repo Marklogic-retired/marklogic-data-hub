@@ -7,16 +7,14 @@ import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
 import styles from './matching-card.module.scss';
 
-import CreateEditStepDialog from '../create-edit-step-dialog/create-edit-step-dialog';
-import AdvancedSettingsDialog from "../../advanced-settings/advanced-settings-dialog";
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 
-import { AuthoritiesContext } from "../../../util/authorities";
 import { CurationContext } from '../../../util/curation-context';
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
 import { AdvMapTooltips, SecurityTooltips, NewMatchTooltips } from '../../../config/tooltips.config';
 import { ConfirmationType } from '../../../types/common-types';
 import { MatchingStep, StepType } from '../../../types/curation-types';
+import Steps from "../../steps/steps";
 
 interface Props {
   matchingStepsArray: MatchingStep[];
@@ -36,7 +34,6 @@ const { Option } = Select;
 
 const MatchingCard: React.FC<Props> = (props) => {
   const history = useHistory<any>();
-  const authorityService = useContext(AuthoritiesContext);
   const { setActiveStep } = useContext(CurationContext);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
   const [selectVisible, setSelectVisible] = useState(false);
@@ -54,11 +51,28 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
 
+  const [openStepSettings, setOpenStepSettings] = useState(false);
+  const [isNewStep, setIsNewStep] = useState(false);
+
+  const OpenAddNew = () => {
+    setIsNewStep(true);
+    setOpenStepSettings(true);
+  }
+
   const openAddStepDialog = () => {
     setEditStepArtifact({});
     toggleIsEditing(false);
     toggleCreateEditStepModal(true);
   };
+
+  const OpenStepSettings = (index) => {
+    setIsNewStep(false);
+    //setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+    setEditStepArtifact(props.matchingStepsArray[index]);
+    setOpenStepSettings(true);
+    toggleIsEditing(true);
+    toggleCreateEditStepModal(true);
+  }
 
   const openEditStepDialog = (index) => {
     setEditStepArtifact(props.matchingStepsArray[index])
@@ -70,6 +84,17 @@ const MatchingCard: React.FC<Props> = (props) => {
     setStepArtifact(props.matchingStepsArray[index]);
     toggleStepSettings(true);
   };
+
+  const createMatchingArtifact = async (payload) => {
+    // Update local form state, then save to db
+    setEditStepArtifact(payload);
+    props.createMatchingArtifact(payload);
+}
+
+const updateMatchingArtifact = (payload) => {
+    // Update local form state
+    setEditStepArtifact(payload);
+}
 
   const deleteStepClicked = (name) => {
     toggleConfirmModal(true);
@@ -126,7 +151,7 @@ const MatchingCard: React.FC<Props> = (props) => {
           key ="last"
           role="edit-merging button"
           data-testid={step.name+'-edit'}
-          onClick={() => openEditStepDialog(index)}
+          onClick={() => OpenStepSettings(index)}
         />
       </MLTooltip>,
 
@@ -140,15 +165,15 @@ const MatchingCard: React.FC<Props> = (props) => {
         </i>
       </MLTooltip>,
 
-      <MLTooltip title={'Settings'} placement="bottom">
-        <Icon 
-          type="setting"
-          key="setting"
-          role="settings-merging button"
-          data-testid={step.name+'-settings'}
-          onClick={() => stepSettingsClicked(index)}
-          />
-      </MLTooltip>,
+      // <MLTooltip title={'Settings'} placement="bottom">
+      //   <Icon 
+      //     type="setting"
+      //     key="setting"
+      //     role="settings-merging button"
+      //     data-testid={step.name+'-settings'}
+      //     onClick={() => stepSettingsClicked(index)}
+      //     />
+      // </MLTooltip>,
 
       props.canWriteMatchMerge ? (
       <MLTooltip title={'Delete'} placement="bottom">
@@ -174,7 +199,7 @@ const MatchingCard: React.FC<Props> = (props) => {
             <Card
               size="small"
               className={styles.addNewCard}>
-              <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={openAddStepDialog}/></div>
+              <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
               <br />
               <p className={styles.addNewContent}>Add New</p>
             </Card>
@@ -246,33 +271,6 @@ const MatchingCard: React.FC<Props> = (props) => {
           ))
         ) : null}
       </Row>
-    <AdvancedSettingsDialog
-        tooltipsData={NewMatchTooltips}
-        openAdvancedSettings={showStepSettings}
-        setOpenAdvancedSettings={toggleStepSettings}
-        stepData={matchingData}
-        activityType={StepType.Matching}
-        canWrite={authorityService.canWriteMatchMerge()}
-    />
-      <CreateEditStepDialog
-        isVisible={showCreateEditStepModal}
-        isEditing={isEditing}
-        stepType={StepType.Matching}                                 
-        editStepArtifactObject={editStepArtifact}
-        targetEntityType={props.entityName}
-        createStepArtifact={props.createMatchingArtifact}
-        canReadWrite={props.canWriteMatchMerge}
-        canReadOnly={props.canReadMatchMerge}
-        toggleModal={toggleCreateEditStepModal}
-      />
-      <AdvancedSettingsDialog
-        tooltipsData={AdvMapTooltips}
-        openAdvancedSettings={showStepSettings}
-        setOpenAdvancedSettings={toggleStepSettings}
-        stepData={stepArtifact}
-        activityType={StepType.Matching}
-        canWrite={authorityService.canWriteMatchMerge()}
-      />
       <ConfirmationModal
         isVisible={showConfirmModal}
         type={confirmType}
@@ -280,6 +278,25 @@ const MatchingCard: React.FC<Props> = (props) => {
         toggleModal={toggleConfirmModal}
         confirmAction={confirmAction}
       />
+      <Steps
+          // Basic Settings
+          isNewStep={isNewStep}
+          //createStep={createMappingArtifact}
+          createStep={createMatchingArtifact}
+          stepData={editStepArtifact}
+          canReadOnly={props.canReadMatchMerge}
+          canReadWrite={props.canWriteMatchMerge}
+          canWrite={props.canWriteMatchMerge}
+          // Advanced Settings
+          tooltipsData={AdvMapTooltips}
+          openStepSettings={openStepSettings}
+          setOpenStepSettings={setOpenStepSettings}
+          updateStep={updateMatchingArtifact}
+          activityType={StepType.Matching}
+          targetEntityType={props.entityName}
+      />
+
+
     </div>
   )
 };

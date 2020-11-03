@@ -1,15 +1,15 @@
 import React from 'react';
 import axiosMock from 'axios';
 import { fireEvent, render, wait, waitForElement, act, cleanup } from "@testing-library/react";
-import AdvancedSettingsDialog from './advanced-settings-dialog';
+import AdvancedSettings from './advanced-settings';
 import mocks from '../../api/__mocks__/mocks.data';
 import data from '../../assets/mock-data/curation/advanced-settings.data';
-import {AdvancedSettings} from "../../config/tooltips.config";
+import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
 
 jest.mock('axios');
 
-describe('Advanced Step Settings dialog', () => {
+describe('Advanced step settings', () => {
 
   beforeEach(() => {
     mocks.advancedAPI(axiosMock);
@@ -22,14 +22,11 @@ describe('Advanced Step Settings dialog', () => {
 
   test('Verify settings for Load', async () => {
     const { getByText, getAllByText, queryByText } = render(
-      <AdvancedSettingsDialog {...data.advancedLoad} />
+      <AdvancedSettings {...data.advancedLoad} />
     );
 
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     //'Step Definition Name' should be present only for custom ingestion steps
     expect(queryByText('Step Definition Name')).not.toBeInTheDocument();
-    //Verify if the step name is available in the settings dialog
-    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedLoad.stepData.name);
 
     expect(queryByText('Source Database')).not.toBeInTheDocument();
     expect(getByText('Target Database')).toBeInTheDocument();
@@ -38,7 +35,7 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Target Collections')).toBeInTheDocument();
     expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections')).toBeInTheDocument();
-    expect((await(waitForElement(() => getAllByText('AdvancedLoad')))).length > 0);
+    expect((await(waitForElement(() => getAllByText('testCollection')))).length > 0);
 
     expect(getByText('Target Permissions')).toBeInTheDocument();
 
@@ -67,13 +64,9 @@ describe('Advanced Step Settings dialog', () => {
      field which should be present*/
   test('Verify settings for Custom Load step', async () => {
       const { getByText, getAllByText, queryByText } = render(
-          <AdvancedSettingsDialog {...data.customLoad} />
+          <AdvancedSettings {...data.customLoad} />
       );
 
-      expect(getByText('Advanced Step Settings')).toBeInTheDocument();
-
-      //Verify if the step name is available in the settings dialog
-      expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.customLoad.stepData.name);
       expect(queryByText('Source Database')).not.toBeInTheDocument();
       expect(getByText('Target Database')).toBeInTheDocument();
       expect(getByText('data-hub-STAGING')).toBeInTheDocument();
@@ -107,13 +100,8 @@ describe('Advanced Step Settings dialog', () => {
 
   test('Verify settings for Mapping', async () => {
     const { getByText, getAllByText } = render(
-      <AdvancedSettingsDialog {...data.advancedMapping} />
+      <AdvancedSettings {...data.advancedMapping} />
     );
-
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
-
-    //Verify if the step name is available in the settings dialog
-    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedMapping.stepData.name);
 
     expect(getByText('Source Database')).toBeInTheDocument();
     expect(getByText('data-hub-STAGING')).toBeInTheDocument();
@@ -123,7 +111,7 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Target Collections')).toBeInTheDocument();
     expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections')).toBeInTheDocument();
-    expect((await(waitForElement(() => getAllByText('AdvancedMapping')))).length > 0);
+    expect((await(waitForElement(() => getAllByText('testCollection')))).length > 0);
 
     expect(getByText('Target Permissions')).toBeInTheDocument();
 
@@ -151,13 +139,8 @@ describe('Advanced Step Settings dialog', () => {
 
   test('Verify settings for Matching', async () => {
     const { getByText, getAllByText } = render(
-        <AdvancedSettingsDialog {...data.advancedMatching} />
+        <AdvancedSettings {...data.advancedMatching} />
     );
-
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
-
-    //Verify if the step name is available in the settings dialog
-    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedMatching.stepData.name);
 
     expect(getByText('Source Database')).toBeInTheDocument();
     expect(getByText('data-hub-FINAL')).toBeInTheDocument();
@@ -167,7 +150,6 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Target Collections')).toBeInTheDocument();
     expect(getByText('Please add target collections')).toBeInTheDocument();
     expect(getByText('Default Collections')).toBeInTheDocument();
-    expect((await(waitForElement(() => getAllByText('AdvancedMatching')))).length > 0);
 
     expect(getByText('Target Permissions')).toBeInTheDocument();
 
@@ -180,7 +162,7 @@ describe('Advanced Step Settings dialog', () => {
     expect(getByText('Custom Hook')).toBeInTheDocument();
 
     fireEvent.click(getByText('Processors'));
-    expect(getByText('{ "processor": true }')).toBeInTheDocument();
+    expect((await(waitForElement(() => getByText('{ "processor": true }'))))).toBeInTheDocument();
 
     fireEvent.click(getByText('Custom Hook'));
     expect(getByText('{ "hook": true }')).toBeInTheDocument();
@@ -191,7 +173,7 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping} />
       );
       getByText = renderResults.getByText;
       getAllByText = renderResults.getAllByText;
@@ -280,7 +262,7 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, getByLabelText, queryAllByText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping} />
       );
       getByText = renderResults.getByText;
       getByLabelText = renderResults.getByLabelText;
@@ -324,7 +306,7 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} canWrite={false} />
+        <AdvancedSettings {...data.advancedMapping} canWrite={false} />
       );
       getByText = renderResults.getByText;
       getByPlaceholderText = renderResults.getByPlaceholderText;
@@ -349,7 +331,7 @@ describe('Advanced Step Settings dialog', () => {
 
   test('Verify post is called when Mapping settings are saved', async () => {
     // Enhance this test once DHFPROD-4712 is fixed
-    const { getByText } = render(<AdvancedSettingsDialog {...data.advancedMapping} />);
+    const { getByText } = render(<AdvancedSettings {...data.advancedMapping} />);
     expect(getByText('Save')).toBeInTheDocument();
     await wait(() => {
       fireEvent.click(getByText('Save'));
@@ -358,7 +340,7 @@ describe('Advanced Step Settings dialog', () => {
   });
 
   test('Verify post is called when Load settings are saved', async () => {
-    const { getByText } = render(<AdvancedSettingsDialog {...data.advancedLoad} />);
+    const { getByText } = render(<AdvancedSettings {...data.advancedLoad} />);
     expect(getByText('Save')).toBeInTheDocument();
     await wait(() => {
       fireEvent.click(getByText('Save'));
@@ -370,13 +352,12 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, queryByText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping} />
       );
       getByText = renderResults.getByText;
       queryByText = renderResults.queryByText;
     });
 
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     expect(queryByText('Discard changes?')).not.toBeInTheDocument();
   });
@@ -385,13 +366,12 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, queryByText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping} />
       );
       getByText = renderResults.getByText;
       queryByText = renderResults.queryByText;
     });
 
-    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
     fireEvent.click(getByText('Cancel'));
     expect(queryByText('Discard changes?')).not.toBeInTheDocument();
   });
@@ -400,7 +380,7 @@ describe('Advanced Step Settings dialog', () => {
     let getByText, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
+        <AdvancedSettings {...data.advancedMapping} />
       );
       getByText = renderResults.getByText;
       getByPlaceholderText = renderResults.getByPlaceholderText;
@@ -423,28 +403,29 @@ describe('Advanced Step Settings dialog', () => {
     expect(yesButton.onclick).toHaveBeenCalledTimes(1);
   });
 
-  test('Verify discard dialog modal when "x" is clicked', async () => {
-    let getByText, getByPlaceholderText, getByLabelText;
-    await act(async () => {
-      const renderResults = render(
-        <AdvancedSettingsDialog {...data.advancedMapping} />
-      );
-      getByText = renderResults.getByText;
-      getByPlaceholderText = renderResults.getByPlaceholderText;
-      getByLabelText = renderResults.getByLabelText;
-    });
+  // TODO handle this functionality in the <Step> parent DHFPROD-6037
+  // test('Verify discard dialog modal when "x" is clicked', async () => {
+  //   let getByText, getByPlaceholderText, getByLabelText;
+  //   await act(async () => {
+  //     const renderResults = render(
+  //       <AdvancedSettings {...data.advancedMapping} />
+  //     );
+  //     getByText = renderResults.getByText;
+  //     getByPlaceholderText = renderResults.getByPlaceholderText;
+  //     getByLabelText = renderResults.getByLabelText;
+  //   });
 
-    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'permissions-changed' }});
-    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('permissions-changed');
-    fireEvent.click(getByLabelText('Close'));
-    expect(getByText('Discard changes?')).toBeInTheDocument();
-    expect(getByText('Yes')).toBeInTheDocument();
-    expect(getByText('No')).toBeInTheDocument();
-  });
+  //   fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'permissions-changed' }});
+  //   expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('permissions-changed');
+  //   fireEvent.click(getByLabelText('Close'));
+  //   expect(getByText('Discard changes?')).toBeInTheDocument();
+  //   expect(getByText('Yes')).toBeInTheDocument();
+  //   expect(getByText('No')).toBeInTheDocument();
+  // });
 
   test('Verify tooltips', async () => {
     const { getByText, getAllByLabelText } = render(
-      <AdvancedSettingsDialog {...data.advancedMapping} />
+      <AdvancedSettings {...data.advancedMapping} />
     );
     fireEvent.click(getByText('Processors'));
     fireEvent.click(getByText('Custom Hook'));
@@ -453,7 +434,7 @@ describe('Advanced Step Settings dialog', () => {
       'targetFormat', 'provGranularity','validateEntity', 'batchSize', 'headers', 'processors', 'customHook'];
     tips.forEach(async (tip, i) => {
       fireEvent.mouseOver(tipIcons[i]);
-      await waitForElement(() => getByText(AdvancedSettings[tip]));
+      await waitForElement(() => getByText(AdvancedSettingsTooltips[tip]));
     });
   });
 
