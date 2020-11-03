@@ -50,7 +50,7 @@ public interface MappingService {
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getDocument;
             private BaseProxy.DBFunctionRequest req_getMappingFunctions;
-            private BaseProxy.DBFunctionRequest req_getNewDocument;
+            private BaseProxy.DBFunctionRequest req_getDocumentForTesting;
             private BaseProxy.DBFunctionRequest req_getUris;
             private BaseProxy.DBFunctionRequest req_testMapping;
 
@@ -64,7 +64,7 @@ public interface MappingService {
                     "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
-                this.req_getNewDocument = this.baseProxy.request(
+                this.req_getDocumentForTesting = this.baseProxy.request(
                     "getNewDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
                     "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
@@ -111,12 +111,12 @@ public interface MappingService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getNewDocument(String stepName, String uri) {
-                return getNewDocument(
-                    this.req_getNewDocument.on(this.dbClient), stepName, uri
+            public com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri) {
+                return getDocumentForTesting(
+                    this.req_getDocumentForTesting.on(this.dbClient), stepName, uri
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode getNewDocument(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
+            private com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(BaseProxy.DBFunctionRequest request, String stepName, String uri) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
@@ -189,13 +189,13 @@ public interface MappingService {
     com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
 
   /**
-   * Gets the document based on the given URI from the source database associated with the given step name
+   * Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.
    *
    * @param stepName	provides input
    * @param uri	provides input
    * @return	as output
    */
-    com.fasterxml.jackson.databind.JsonNode getNewDocument(String stepName, String uri);
+    com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri);
 
   /**
    * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 

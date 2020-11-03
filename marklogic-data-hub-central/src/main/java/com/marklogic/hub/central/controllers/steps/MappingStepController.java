@@ -81,11 +81,11 @@ public class MappingStepController extends BaseController {
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{stepName}/newDoc", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns an XML or JSON source document as a string of JSON")
+    @RequestMapping(value = "/{stepName}/testingDoc", method = RequestMethod.GET)
+    @ApiOperation(value = "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.")
     @Secured("ROLE_readMapping")
-    public ResponseEntity<JsonNode> getNewDocument(@PathVariable String stepName, @PathVariable String docUri) {
-        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getNewDocument(stepName, docUri));
+    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @PathVariable String docUri) {
+        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocumentForTesting(stepName, docUri));
     }
 
     private StepService newService() {

@@ -1,6 +1,6 @@
 {
-    "functionName": "getNewDocument",
-    "desc": "Gets the document based on the given URI from the source database associated with the given step name",
+    "functionName": "getDocumentForTesting",
+    "desc": "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.",
     "params": [
         {
             "name": "stepName",

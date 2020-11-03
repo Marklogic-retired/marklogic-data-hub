@@ -10,7 +10,7 @@ const xmlUri = '/content/sampleCustomerDoc.xml';
 
 function invokeService(stepName, uri) {
   return fn.head(hubTest.runWithRolesAndPrivileges(['hub-central-mapping-reader'], [],
-    "/data-hub/5/data-services/mapping/getNewDocument.sjs", {stepName, uri}
+    "/data-hub/5/data-services/mapping/getDocumentForTesting.sjs", {stepName, uri}
   ));
 }
 
