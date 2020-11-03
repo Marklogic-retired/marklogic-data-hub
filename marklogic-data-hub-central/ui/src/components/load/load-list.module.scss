@@ -1,10 +1,10 @@
-.loadList{
+.loadList {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
 }
 
-.addNewContainer{
+.addNewContainer {
     display: flex;
     flex-direction: row-reverse;
     width: 100%;
@@ -45,20 +45,20 @@
     font-size: 19px;
 }
 
-.stepLink{
+.stepLink {
     color: #44499C;
 }
 
-.stepLinkExisting{
+.stepLinkExisting {
     color: rgba(0, 0, 0, 0.65);
 }
 
 
-.stepLinkSelect{
+.stepLinkSelect {
     margin-top: 5px;
 }
 
-.disabledStepLink{
+.disabledStepLink {
     color: #999;
     cursor: not-allowed;
 }
@@ -78,6 +78,31 @@
     padding-bottom: 2px;
     cursor: not-allowed;
 }
+
+.disabledRunIcon {
+    font-size: 20px;
+    opacity: 0.5;
+    padding-bottom: 2px;
+    padding-right: 7px;
+    cursor: not-allowed !important;
+}
+
+.dropdownMenu {
+    right: '80px';
+}
+
+.flowSelect {
+    width: 100%;
+}
+
+.runIcon {
+    font-size: 20px;
+    padding-top: 2px;
+    padding-right: 7px;
+    color: #44499C;
+    cursor: pointer;
+}
+
 .sourceFormatFS{
     font-size: 12px;
     color: #999;

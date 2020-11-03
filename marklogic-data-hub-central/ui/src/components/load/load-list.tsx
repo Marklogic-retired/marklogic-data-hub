@@ -41,6 +41,7 @@ const LoadList: React.FC<Props> = (props) => {
     const [stepData,setStepData] = useState({});
     const [openLoadSettings, setOpenLoadSettings] = useState(false);
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
+    const [addRun, setAddRun] = useState(false);
 
     const pageSizeOptions = props.data.length > 40 ? ['10', '20', '30', '40', props.data.length] : ['10', '20', '30', '40'];
 
@@ -92,6 +93,14 @@ const LoadList: React.FC<Props> = (props) => {
         handleStepAdd(obj.loadName, obj.flowName);
     }
 
+    function handleSelectAddRun(obj) {
+        let selectedNew = {...selected};
+        selectedNew[obj.loadName] = obj.flowName;
+        setSelected(selectedNew);
+        setAddRun(true);
+        handleStepAdd(obj.loadName, obj.flowName);
+    }
+
     const isStepInFlow = (loadName, flowName) => {
         let result = false;
         let flow;
@@ -109,21 +118,35 @@ const LoadList: React.FC<Props> = (props) => {
     const onAddOk = async (lName, fName) => {
         await props.addStepToFlow(lName, fName);
         setAddDialogVisible(false);
-        history.push({
-            pathname: '/tiles/run/add',
-            state: {
-                flowName: fName,
-                addFlowDirty: true,
-                flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-                existingFlow: true
-            }
-        });
-    };
+        if(addRun) {
+            history.push({
+                pathname: '/tiles/run/add-run',
+                state: {
+                    flowName: fName,
+                    addFlowDirty: true,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true,
+                    stepToAdd : loadArtifactName,
+                    stepDefinitionType : 'ingestion'
+                }
+            })
+        }else {
+            history.push({
+                pathname: '/tiles/run/add',
+                state: {
+                    flowName: fName,
+                    addFlowDirty: true,
+                    flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+                    existingFlow: true
+                }
+            })
+        }
+    }
 
     const addConfirmation = (
         <Modal
             visible={addDialogVisible}
-            okText={<div aria-label="Yes">Yes</div>}
+            okText={<div aria-label="Yes" data-testid={`${loadArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
             cancelText={<div aria-label="No">No</div>}
             onOk={() => onAddOk(loadArtifactName, flowName)}
             onCancel={() => onCancel()}
@@ -132,15 +155,48 @@ const LoadList: React.FC<Props> = (props) => {
         >
             <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
                 { isStepInFlow(loadArtifactName, flowName) ?
-                    <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Add another instance of the step?</p> :
-                    <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
+                    !addRun ? <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
+                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p> 
                 }
             </div>
         </Modal>
     );
 
+    const runMenu = (name) => (
+        <Menu className={styles.dropdownMenu}>
+            <Menu.Item key="0">
+                { <Link data-testid="link" id="tiles-run-add" to={
+                                        {pathname: '/tiles/run/add-run',
+                                        state: {
+                                            stepToAdd : name,
+                                            stepDefinitionType : 'ingestion',
+                                            existingFlow : false
+                                        }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+            </Menu.Item>
+            <Menu.Item key="1">
+                <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
+                    <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+                        <Select
+                            className={styles.flowSelect}
+                            value={selected[name] ? selected[name] : undefined}
+                            onChange={(flowName) => handleSelectAddRun({flowName: flowName, loadName: name})}
+                            placeholder="Select Flow"
+                            defaultActiveFirstOption={false}
+                            disabled={!props.canWriteFlow}
+                            data-testid={`${name}-run-flowsList`}
+                        >
+                            { props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
+                                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
+                            )) : null}
+                        </Select>
+                    </div>
+                </div>
+            </Menu.Item>
+        </Menu>
+    );
+
     const menu = (name) => (
-        <Menu style={{right: '80px'}}>
+        <Menu className={styles.dropdownMenu}>
             <Menu.Item key="0">
                 { <Link data-testid="link" id="tiles-run-add" to={
                                         {pathname: '/tiles/run/add',
@@ -154,7 +210,7 @@ const LoadList: React.FC<Props> = (props) => {
                 <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
                     <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
                         <Select
-                            style={{ width: '100%' }}
+                            className={styles.flowSelect}
                             value={selected[name] ? selected[name] : undefined}
                             onChange={(flowName) => handleSelect({flowName: flowName, loadName: name})}
                             placeholder="Select Flow"
@@ -171,6 +227,8 @@ const LoadList: React.FC<Props> = (props) => {
             </Menu.Item>
         </Menu>
     );
+
+
     const deleteConfirmation = <Modal
         visible={dialogVisible}
         okText={<div aria-label="Yes">Yes</div>}
@@ -239,8 +297,11 @@ const LoadList: React.FC<Props> = (props) => {
             key: 'actions',
             render: (text, row) => (
                 <span>
-                    <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={['hover']} disabled = {!props.canWriteFlow} placement="bottomCenter">
-                        {props.canWriteFlow ? <span className={'AddToFlowIcon'} aria-label = {row.name+'-add-icon'}></span> : <MLTooltip title={'Add to Flow: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '225px'}}><span aria-label = {row.name+'-disabled-add-icon'} className={'disabledAddToFlowIcon'}></span></MLTooltip>}
+                    <Dropdown data-testid={`${row.name}-run-dropdown`} overlay={runMenu(row.name)} trigger={['click']} disabled = {!props.canWriteFlow} placement="bottomCenter">    
+                        {props.canReadWrite ?<MLTooltip title={'Run'} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name+'-run'}/></i></MLTooltip> : <MLTooltip title={'Run: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-run-load button" data-testid={row.name+'-disabled-run'}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i></MLTooltip>}
+                    </Dropdown>
+                    <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={['click']} disabled = {!props.canWriteFlow} placement="bottomCenter">
+                        {props.canWriteFlow ? <MLTooltip title={'Add to Flow'} placement="bottom"><span className={'AddToFlowIcon'} aria-label = {row.name+'-add-icon'}></span></MLTooltip> : <MLTooltip title={'Add to Flow: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '225px'}}><span aria-label = {row.name+'-disabled-add-icon'} className={'disabledAddToFlowIcon'}></span></MLTooltip>}
                     </Dropdown>
                     <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></MLTooltip>
                     &nbsp;&nbsp;

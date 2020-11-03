@@ -213,9 +213,9 @@ describe('Load data component', () => {
     //Check if the list is rendered properly
     expect(getByText('testLoadXML')).toBeInTheDocument();
 
-    fireEvent.mouseOver(getByLabelText('testLoadXML-add-icon')); // Hover over the Add to Flow Icon to get more options
+    fireEvent.click(getByLabelText('testLoadXML-add-icon')); // Click the Add to Flow Icon to get more options
 
-    //Verify if the flow related options are availble on mouseOver
+    //Verify if the flow related options are availble on click
     await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
@@ -253,9 +253,9 @@ describe('Load data component', () => {
       </MemoryRouter>
     );
 
-    fireEvent.mouseOver(getByLabelText('testLoadXML-add-icon')); // Hover over the Add to Flow Icon to get more options
+    fireEvent.click(getByLabelText('testLoadXML-add-icon')); // Clik over the Add to Flow Icon to get more options
 
-    //Verify if the flow related options are availble on mouseOver
+    //Verify if the flow related options are availble on click
     await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
     await waitForElement(() => expect(getByTestId(`testLoadXML-toExistingFlow`))); // check if option 'Add to an existing Flow' is visible
 
@@ -269,6 +269,71 @@ describe('Load data component', () => {
     expect(getByLabelText('step-in-flow')).toBeInTheDocument();
     fireEvent.click(getByLabelText('Yes'));
     
+  });
+
+  test('Load List - Run step in an existing flow where step DOES NOT exist', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
+    const { getByLabelText, getByTestId } = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            {...data.loadData}
+            flows={data.flowsAdd}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    )
+
+    //Verify run step in an existing flow where step does not exist yet
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId('testLoadXML-run'));
+
+    //'Run in an existing Flow'
+    fireEvent.click(getByTestId('testLoadXML-run-flowsList'));
+    fireEvent.click(getByLabelText('FlowStepNoExist-run-option'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-not-in-flow-run')).toBeInTheDocument();
+    fireEvent.click(getByTestId('testLoadXML-to-FlowStepNoExist-Confirm'));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add-run'); })
+
+  });
+
+  test('Load List - Run step in an existing flow where step DOES exist', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
+    const { getByLabelText, getByTestId } = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            {...data.loadData}
+            flows={data.flowsAdd}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    )
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId('testLoadXML-run'));
+
+    //'Run in an existing Flow'
+    fireEvent.click(getByTestId('testLoadXML-run-flowsList'));
+    fireEvent.click(getByLabelText('FlowStepExist-run-option'));
+
+    //Dialog appears, click 'Yes' button
+    expect(getByLabelText('step-in-flow-run')).toBeInTheDocument();
+    fireEvent.click(getByTestId('testLoadXML-to-FlowStepExist-Confirm'));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add-run'); })
   });
 
   test('Load List - Add step to an new Flow', async () => {
@@ -290,7 +355,7 @@ describe('Load data component', () => {
     //Check if the list is rendered properly
     expect(getByText('testLoadXML')).toBeInTheDocument();
 
-    fireEvent.mouseOver(getByLabelText('testLoadXML-add-icon')); // Hover over the Add to Flow Icon to get more options
+    fireEvent.click(getByLabelText('testLoadXML-add-icon')); // Click over the Add to Flow Icon to get more options
 
     //Verify if the flow related options are availble on mouseOver
     await waitForElement(() => expect(getByTestId(`testLoadXML-toNewFlow`))); // check if option 'Add to a new Flow' is visible
@@ -328,9 +393,9 @@ describe('Load data component', () => {
 
     const loadStepName = data.loadData.data[0].name;
 
-    fireEvent.mouseOver(getByLabelText('testLoad-add-icon'));
+    fireEvent.click(getByLabelText('testLoad-add-icon'));
 
-    //verify components and text appear on hover
+    //verify components and text appear on click
     await waitForElement(() => expect(getByTestId(`${loadStepName}-toNewFlow`)));
     await waitForElement(() => expect(getByTestId(`${loadStepName}-toExistingFlow`)));
     await waitForElement(() => expect(getByTestId(`${loadStepName}-flowsList`)));
@@ -346,14 +411,14 @@ describe('Load data component', () => {
     //TODO: Mock addStepToNew not implemented yet
   });
 
-  test('Verify Load list does not allow a step to be added to flow with readFlow authority only', async () => {
+  test('Verify Load list does not allow a step to be added to flow or run in a flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion','readFlow']);
     const mockAddStepToFlow = jest.fn();
     const mockAddStepToNew = jest.fn();
     const mockCreateLoadArtifact = jest.fn();
     const mockDeleteLoadArtifact = jest.fn();
-    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
+    const {getByText, queryByTestId, getByLabelText, getByTestId, queryByText, getByRole} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadList
       addStepToFlow={mockAddStepToFlow}
       addStepToNew={mockAddStepToNew}
       canReadOnly={authorityService.canReadLoad()}
@@ -380,6 +445,13 @@ describe('Load data component', () => {
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-delete'));
     await wait (() => expect(getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
-  });
+
+    // test run icon displays correct tooltip when disabled
+    fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-run'));
+    await wait (() => expect(getByText('Run: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+
+    await fireEvent.click(getByTestId(loadStepName + '-disabled-run'));
+    expect(queryByTestId(`${loadStepName}-run-flowsList`)).not.toBeInTheDocument()
+  })
 
 });
