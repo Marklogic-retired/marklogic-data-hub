@@ -52,14 +52,19 @@ const NewFlowDialog = (props) => {
     }
   };
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
+  const onSave = (event) => {
     setNameMissingOnSave(false)
     if (!flowName) {
       // name is missing: set flag and do not submit form
       setNameMissingOnSave(true)
+      event.preventDefault()
       return
     }
+    // else: submit handle to create new flow
+    handleSubmit(event)
+  }
 
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
     let dataPayload = {
         name: flowName,
@@ -164,7 +169,7 @@ const NewFlowDialog = (props) => {
               aria-label="Save"
               type="primary"
               htmlType="submit"
-              onClick={handleSubmit}
+              onClick={(e) => onSave(e)}
             >
               Save
             </MLButton></> :

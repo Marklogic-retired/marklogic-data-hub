@@ -138,16 +138,19 @@ const NewLoadDialog = (props) => {
             <MLButton aria-label="Yes" type="primary" htmlType="submit" onClick={onDelOk}>Yes</MLButton>
           </div>
     </Modal>;
-
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-
+  
+  const onSave = (event) => {
     setNameMissingOnSave(false)
     if (!stepName) {
       // name is missing: set flag and do not submit form
       setNameMissingOnSave(true)
-      return
+      event.preventDefault()
     }
+    // else: submit handle to create new loading step
+    handleSubmit(event)
+  }
 
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
     let dataPayload;
@@ -391,7 +394,7 @@ const NewLoadDialog = (props) => {
               type="primary" 
               htmlType="submit" 
               disabled={!props.canReadWrite} 
-              onClick={handleSubmit}
+              onClick={(e) => onSave(e)}
             >Save</MLButton>
           </div>
         </Form.Item>

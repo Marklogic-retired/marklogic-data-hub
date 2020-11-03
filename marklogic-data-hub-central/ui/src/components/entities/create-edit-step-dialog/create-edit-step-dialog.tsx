@@ -131,6 +131,23 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
     }
   };
 
+  const onSave = (event) => {
+    setNameMissingOnSave(false)
+    setQueryMissingOnSave(false)
+    if (!stepName) {
+      // missing name: set flag
+      setNameMissingOnSave(true)
+    }
+    if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+      // missing collection or query: set flag
+      setQueryMissingOnSave(true)
+    }
+    if (isNameMissingOnSave || isQueryMissingOnSave) {event.preventDefault()} // if flags are set, then do not submit form
+
+    // else: submit handle and create new merging step
+    handleSubmit(event)
+  }
+
   const checkDeleteOpenEligibility = () => {
     if (!isStepNameTouched
       && !isDescriptionTouched
@@ -150,19 +167,6 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
-
-    setNameMissingOnSave(false)
-    setQueryMissingOnSave(false)
-    if (!stepName) {
-      // missing name: set flag
-      setNameMissingOnSave(true)
-    }
-    if ((!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
-      // missing collection or query: set flag
-      setQueryMissingOnSave(true)
-    }
-    if (isNameMissingOnSave || isQueryMissingOnSave) {return} // if flags are set, then do not submit form
-
     if (event) event.preventDefault();
     let dataPayload;
     if(selectedSource === 'collection') {
@@ -443,7 +447,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
                 type="primary"
                 htmlType="submit"
                 disabled={!props.canReadWrite} 
-                onClick={handleSubmit}
+                onClick={(e) => onSave(e)}
               >Save</MLButton>
             </div>
           </Form.Item>

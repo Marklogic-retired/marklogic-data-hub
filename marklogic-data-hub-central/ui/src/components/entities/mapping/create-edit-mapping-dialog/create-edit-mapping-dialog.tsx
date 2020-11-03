@@ -140,8 +140,7 @@ const CreateEditMappingDialog = (props) => {
     </div>
   </Modal>;
 
-  const handleSubmit = async (event: { preventDefault: () => void; }) => {
-
+  const onSave = (event) => {
     setNameMissingOnSave(false)
     setQueryMissingOnSave(false)
     if (!mapName) {
@@ -152,10 +151,13 @@ const CreateEditMappingDialog = (props) => {
       // missing collections or query: set flag
       setQueryMissingOnSave(true)
     }
-    if (isNameMissingOnSave || isQueryMissingOnSave) {return} // if missing flags are set, do nothing
+    if (isNameMissingOnSave || isQueryMissingOnSave) {event.preventDefault()} // if missing flags are set, do nothing
 
-    // else: all entries are valid and form should be submitted
+    // else: submit handle to create new mapping step
+    handleSubmit(event)
+  }
 
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
     let dataPayload;
     if(selectedSource === 'collection') {
@@ -501,7 +503,7 @@ const CreateEditMappingDialog = (props) => {
               htmlType="submit" 
               disabled={!props.canReadWrite} 
               data-testid="mapping-dialog-save" 
-              onClick={handleSubmit}
+              onClick={(e) => onSave(e)}
             >Save</MLButton>
           </div>
         </Form.Item>
