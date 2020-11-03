@@ -30,13 +30,19 @@ fn.head(datahub.hubUtils.queryLatest(function() {
     jobQueries.push(cts.collectionQuery('Job'));
     jobQueries.push(cts.jsonPropertyValueQuery("flow",flowWithStepDetails.name));
     jobQueries.push(cts.jsonPropertyValueQuery("stepName",step.stepName));
+    //A flow may contain same step more then once. 'status' in step response always contains step number
+    jobQueries.push(cts.jsonPropertyWordQuery("status",step.stepNumber));
+
     let latestJob = fn.head(fn.subsequence(cts.search(cts.andQuery(jobQueries),[cts.indexOrder(cts.jsonPropertyReference("timeStarted"), "descending")]), 1, 1));
     if(latestJob) {
       latestJob = latestJob.toObject();
-      step.jobId = latestJob.job.jobId;
-      let stepRunResponse = latestJob.job.stepResponses[step.stepNumber];
-      step.lastRunStatus = stepRunResponse.status;
-      step.stepEndTime = stepRunResponse.stepEndTime;
+      let stepRunResponses = latestJob.job.stepResponses;
+      if(stepRunResponses && stepRunResponses[step.stepNumber]){
+        let stepRunResponse = stepRunResponses[step.stepNumber];
+        step.jobId = latestJob.job.jobId;
+        step.lastRunStatus = stepRunResponse.status;
+        step.stepEndTime = stepRunResponse.stepEndTime;
+      }
     }
   });
 }, datahub.config.JOBDATABASE));
