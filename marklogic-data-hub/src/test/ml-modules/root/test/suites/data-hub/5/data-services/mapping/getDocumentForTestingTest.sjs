@@ -1,6 +1,4 @@
 const test = require("/test/test-helper.xqy");
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const dataHub = DataHubSingleton.instance();
 const hubTest = require("/test/data-hub-test-helper.sjs");
 
 // Test data vars
@@ -110,7 +108,28 @@ function testXmlInput() {
   ];
 }
 
+function testNonExistentDoc() {
+  const tests = [];
+  const uri = '/uri/to/non-existent/doc.json';
+
+  // An alternative to test.assertThrowsError*().
+  try {
+    invokeService(stepName, uri);
+    tests.push(test.fail('Exception not thrown when attempting to process a non-existent document.'));
+  } catch (e) {
+    tests.concat([
+      test.assertTrue(e.data && Array.isArray(e.data) && e.data.length === 2,
+        "Expected exception object's 'data' property to be an array of two items"),
+      test.assertEqual('404', e.data[0], 'Expected an exception code of 404'),
+      test.assertEqual(`Could not find a document with URI: ${uri}`, e.data[1])
+    ]);
+  }
+
+  return tests;
+}
+
 []
   .concat(loadTestData())
   .concat(testJsonInput())
   .concat(testXmlInput())
+  .concat(testNonExistentDoc())

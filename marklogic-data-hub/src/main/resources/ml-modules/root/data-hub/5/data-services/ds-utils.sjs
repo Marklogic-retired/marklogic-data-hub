@@ -29,6 +29,10 @@ function throwForbidden(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([403, message]));
 }
 
+function throwNotFound(message) {
+  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([404, message]));
+}
+
 function throwServerError(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([500, message]));
 }
@@ -36,5 +40,6 @@ function throwServerError(message) {
 module.exports = {
   throwBadRequest,
   throwForbidden,
+  throwNotFound,
   throwServerError
 };

@@ -18,6 +18,7 @@
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
 const core = require('/data-hub/5/artifacts/core.sjs')
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 
 var stepName, uri;
 
@@ -36,18 +37,20 @@ if(mappingStep.sourceDatabase) {
   doc = cts.doc(uri);
 }
 
+if (doc === null) {
+  ds.throwNotFound(`Could not find a document with URI: ${uri}`);
+}
+
 // Populate return object.
-if (doc !== null) {
-  rtn.format = doc.documentFormat;
-  if (rtn.format.toUpperCase() === 'JSON') {
-    rtn.data = (doc.root.hasOwnProperty('envelope') && doc.root.envelope.hasOwnProperty('instance')) ?
-      doc.root.envelope.instance :
-      doc.root;
-  } else {
-    const transformResult = require('./xmlToJsonForMapping.sjs').transform(doc.root);
-    rtn.data = transformResult.data;
-    rtn.namespaces = transformResult.namespaces;
-  }
+rtn.format = doc.documentFormat;
+if (rtn.format.toUpperCase() === 'JSON') {
+  rtn.data = (doc.root.hasOwnProperty('envelope') && doc.root.envelope.hasOwnProperty('instance')) ?
+    doc.root.envelope.instance :
+    doc.root;
+} else {
+  const transformResult = require('./xmlToJsonForMapping.sjs').transform(doc.root);
+  rtn.data = transformResult.data;
+  rtn.namespaces = transformResult.namespaces;
 }
 
 rtn;
