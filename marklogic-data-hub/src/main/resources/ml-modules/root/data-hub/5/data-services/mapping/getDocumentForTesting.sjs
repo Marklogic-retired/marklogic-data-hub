@@ -31,9 +31,9 @@ const rtn = {
 // Offer the mapping step to define the doc's database.
 const mappingStep = core.getArtifact('mapping', stepName);
 let doc;
-if(mappingStep.sourceDatabase) {
+if (mappingStep.sourceDatabase) {
   doc = fn.head(xdmp.eval(`cts.doc('${uri}')`, null, {database: xdmp.database(mappingStep.sourceDatabase)}));
-} else{
+} else {
   doc = cts.doc(uri);
 }
 
