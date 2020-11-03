@@ -1,0 +1,32 @@
+{
+  "job": {
+    "jobId": "567da405-c1e9-4fa7-8269-d9cdfe3b4b9a",
+    "flow": "flowWithStepDetails",
+    "user": "pari",
+    "lastAttemptedStep": "4",
+    "lastCompletedStep": "4",
+    "jobStatus": "finished",
+    "timeStarted": "2019-06-28T23:11:28.802106Z",
+    "timeEnded": "2019-06-28T23:11:31.026434Z",
+    "stepResponses": {
+      "4": {
+        "flowName": "flowWithStepDetails",
+        "stepName": "testMapper",
+        "stepDefinitionName": "entity-services-mapping",
+        "stepDefinitionType": "mapping",
+        "stepOutput":  null,
+        "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+        "fullOutput": null,
+        "status": "completed step 4",
+        "totalEvents": 3,
+        "successfulEvents": 3,
+        "failedEvents": 0,
+        "successfulBatches": 3,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2019-06-28T23:11:28.836606Z",
+        "stepEndTime": "2019-06-28T23:11:30.836606Z"
+      }
+    }
+  }
+}

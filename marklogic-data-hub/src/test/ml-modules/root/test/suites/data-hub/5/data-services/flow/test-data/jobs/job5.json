@@ -1,0 +1,48 @@
+{
+  "job": {
+    "jobId": "350e45u9-c1e9-4fa7-8269-d9aefe3b4b9a",
+    "flow": "flowWithStepDetails",
+    "user": "pari",
+    "lastAttemptedStep": "5",
+    "lastCompletedStep": "5",
+    "jobStatus": "finished",
+    "timeStarted": "2020-06-27T23:11:22.802106Z",
+    "timeEnded": "2020-06-27T23:11:33.026434Z",
+    "stepResponses": {
+      "3": {
+        "flowName": "flowWithStepDetails",
+        "stepName": "testIngestion",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 3",
+        "totalEvents": 829,
+        "successfulEvents": 829,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2020-06-27T23:11:22.836606Z",
+        "stepEndTime": "2020-06-27T23:11:27.462273Z"
+      },
+      "5": {
+        "flowName": "flowWithStepDetails",
+        "stepName": "testIngestion",
+        "stepDefinitionName": "default-ingestion",
+        "stepDefinitionType": "ingestion",
+        "stepOutput": null,
+        "fullOutput": null,
+        "status": "completed step 5",
+        "totalEvents": 829,
+        "successfulEvents": 829,
+        "failedEvents": 0,
+        "successfulBatches": 9,
+        "failedBatches": 0,
+        "success": true,
+        "stepStartTime": "2020-06-27T23:11:27.836606Z",
+        "stepEndTime": "2020-06-27T23:11:32.572273Z"
+      }
+    }
+  }
+}
