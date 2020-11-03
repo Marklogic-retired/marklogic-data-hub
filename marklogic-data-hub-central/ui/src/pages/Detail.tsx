@@ -89,6 +89,13 @@ const Detail: React.FC<Props> = ({ history, location }) => {
             if(result.data.isHubEntityInstance) {
               initializeEntityInstance(document);
             }
+          } else if (content === 'text') {
+            setContentType('text');
+            setData(result.data.data);
+            setEntityInstanceFlag(result.data.data);
+            if(result.data.isHubEntityInstance) {
+              initializeEntityInstance(document);
+            }
           }
           //Setting the data for sources metadata table
           setSources(result.data.sources);
@@ -214,7 +221,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
       sortOrder: detailPagePreferences['sortOrder'] ? detailPagePreferences['sortOrder'] : [],
       sources: detailPagePreferences['sources'] ? detailPagePreferences['sources'] : [],
       primaryKey: detailPagePreferences['primaryKey'] ? detailPagePreferences['primaryKey'] : '',
-      uri: detailPagePreferences['uri'] ? detailPagePreferences['uri'] : ''
+      uri: detailPagePreferences['uri'] ? detailPagePreferences['uri'] : '',
+      targetDatabase: detailPagePreferences['database'] ? detailPagePreferences['database'] : ''
     };
     setParentPagePreferences({ ...userPref });
   };
@@ -288,7 +296,8 @@ const Detail: React.FC<Props> = ({ history, location }) => {
          tableView: location.state && location.state.hasOwnProperty('tableView') ? location.state['tableView'] : parentPagePreferences['tableView'],
          sortOrder: location.state && location.state.hasOwnProperty('sortOrder') ? location.state['sortOrder'] : parentPagePreferences['sortOrder'],
          sources: location.state && location.state.hasOwnProperty('sources') ? location.state['sources'] : parentPagePreferences['sources'],
-         isEntityInstance: location.state && location.state.hasOwnProperty('isEntityInstance') ? location.state['isEntityInstance'] : parentPagePreferences['isEntityInstance']
+         isEntityInstance: location.state && location.state.hasOwnProperty('isEntityInstance') ? location.state['isEntityInstance'] : parentPagePreferences['isEntityInstance'],
+         targetDatabase: location.state && location.state.hasOwnProperty('targetDatabase') ? location.state['targetDatabase'] : parentPagePreferences['targetDatabase'],
         }
    };
 

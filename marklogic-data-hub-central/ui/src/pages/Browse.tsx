@@ -162,7 +162,8 @@ const Browse: React.FC<Props> = ({ location }) => {
         location.state['start'],
         location.state['searchFacets'],
         location.state['query'],
-        location.state['sortOrder']);
+        location.state['sortOrder'],
+        location.state['targetDatabase']);
       location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
     }
     else if (location.state

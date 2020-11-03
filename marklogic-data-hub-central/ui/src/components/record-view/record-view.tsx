@@ -126,7 +126,8 @@ const RecordCardView = (props) => {
           uri: elem.uri,
           entityInstance: elem.entityInstance ? elem.entityInstance : undefined,
           database: searchOptions.database,
-          isEntityInstance: false
+          isEntityInstance: false,
+          targetDatabase: searchOptions.database
       }
     }
 
@@ -155,15 +156,24 @@ const RecordCardView = (props) => {
                       </span>
                     </MLPopover>
                     <span className={styles.sourceFormat}
-                      style={sourceFormatStyle(elem.format)}
+                      style={sourceFormatStyle(elem.format)} 
                       data-testid={elem.uri + '-sourceFormat'}
                     >{sourceFormatOptions[elem.format].label}</span>
-                    <Link to={getLinkProperties(elem)} id={'instance'}
-                    data-cy='instance'>
-                    <MLTooltip title={'Detail view'} placement="bottom"
-                    ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={elem.format === 'binary' ? styles.detailLinkIconDisabled : styles.detailLinkIcon} size="lg" /></i>
-                    </MLTooltip>
-                    </Link>
+                    {elem.format === 'binary' ? 
+                      <span id={'instance'}
+                        data-cy='instance'>
+                        <MLTooltip title={'Detail view'} placement="bottom"
+                        ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" /></i>
+                        </MLTooltip>
+                      </span>
+                    :
+                      <Link to={getLinkProperties(elem)} id={'instance'}
+                        data-cy='instance'>
+                        <MLTooltip title={'Detail view'} placement="bottom"
+                        ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" /></i>
+                        </MLTooltip>
+                      </Link>
+                    }
                   </span>
                 </div>
                 <div className={styles.snippetContainer} data-testid={elem.uri + '-snippet'} >
