@@ -271,6 +271,11 @@ class LoadPage {
         this.addToNewFlow(stepName).click();
     }
 
+    addStepToNewFlowListView(stepName: string){
+        cy.findByLabelText(`${stepName}-add-icon`).click();
+        this.addToNewFlow(stepName).click({force: true});
+    }
+
     existingFlowsList(stepName: string) {
         return cy.findByTestId(`${stepName}-flowsList`);
     }
