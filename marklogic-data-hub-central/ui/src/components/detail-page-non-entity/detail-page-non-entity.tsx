@@ -102,11 +102,11 @@ const DetailPageNonEntity = (props) => {
         <AsyncLoader />
     </div>
         :
-        props.contentType === 'json' ?
-            selected === 'instance' ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state['id'] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <JsonView document={props.data} />)
-            :
-            selected === 'instance' ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state['id'] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <XmlView document={props.xml} />)
-
+        props.contentType && props.contentType === 'json' ?
+        selected === 'instance' ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state['id'] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <JsonView document={props.data} />)
+        : props.contentType === 'xml' ?
+          selected === 'instance' ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state['id'] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <XmlView document={props.xml} />)
+        : <pre data-testid="text-container" className={styles.textContainer}>{props.data}</pre>
 
     const viewSelector = <div id='menu' className={styles.menu}>
         <Menu id='subMenu' onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={[selected]}>
@@ -125,6 +125,26 @@ const DetailPageNonEntity = (props) => {
         </Menu>
     </div>
 
+    const textViewSelector = <div id='menu' className={styles.menuText}>
+    <Menu id='subMenu' mode="horizontal" selectedKeys={['record']}>
+      <Menu.Item key="record" id='record' data-cy="source-view">
+        <MLTooltip title={'Show the complete record'} >
+          <FontAwesomeIcon icon={faCode} size="lg" />
+          <span className={styles.subMenu}>Record</span>
+        </MLTooltip>
+      </Menu.Item>
+    </Menu>
+  </div>
+
+  const nonEntityMenu = () => {
+    if (props.contentType === 'json' || props.contentType === 'xml') {
+      return viewSelector;
+    } else if (props.contentType === 'text') {
+      return textViewSelector;
+    }
+  }
+
+
     return (
         <div id='detailPageNonEntityContainer' className={styles.container}>
             <Layout>
@@ -142,7 +162,7 @@ const DetailPageNonEntity = (props) => {
                                 <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleRight} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-expanded"/></span>{' Metadata'}</span></span>}
                         </span>
                     </div>
-                    <div>{viewSelector}</div>
+                    <div>{nonEntityMenu()}</div>
                     <div className={styles.documentContainer}>
                         <div className={styles.contentElements}>{contentElements}</div>
                     </div>

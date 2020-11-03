@@ -29,7 +29,7 @@
   }
 
   .contentElements {
-    width: 80%;
+    width: 90%;
     min-width: 40em;
     padding-left: 40px;
     padding-top: 20px;
@@ -121,4 +121,22 @@
   display: inline-flex;
   vertical-align: top;
   align-items: flex-start;
+}
+
+.textContainer {
+  width: 100%;
+}
+
+.menuText {
+  width: 13.3em;
+  //display: flex;
+  //justify-content: flex-end;
+  //text-align: center;
+  padding-left: 40px;
+  font-size: 14px;
+  font-weight: bold;
+
+  .fileSearchIcon {
+    font-size: 20px;
+  }
 }
