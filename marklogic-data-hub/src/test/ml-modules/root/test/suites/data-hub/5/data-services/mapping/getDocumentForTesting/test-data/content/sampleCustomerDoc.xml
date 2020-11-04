@@ -21,17 +21,8 @@
   </OrderDetails>
   <ShippedDate xmlns:SD="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>
   <ShippedDate xmlns:SD="https://www.w3schools.com/SD2">1997-02-13T120:15:26</ShippedDate>
-  <ShipCity>London</ShipCity>
-  <CustomerID>BSBEV</CustomerID>
   <ShipVia xmlns="https://www.w3schools.com/SV">3</ShipVia>
   <ShipPostalCode>EC2 5NT</ShipPostalCode>
-  <OrderID>10289</OrderID>
-  <OrderDate>1996-08-26T07:24:10</OrderDate>
-  <ShipRegion>null</ShipRegion>
-  <ShipAddress>Fauntleroy Circus</ShipAddress>
-  <ShipCountry>UK</ShipCountry>
-  <EmployeeID>7</EmployeeID>
-  <Freight>22.7700</Freight>
   <Element1 xmlns="https://www.microsoft.com/Gamma">Should *not* be in an array.</Element1>
   <Element1 xmlns="https://www.amazon.com/Gamma">Should *not* be in an array.</Element1>
   <Element2>Should be in an array.</Element2>
@@ -43,7 +34,7 @@
     <JustText>Hello</JustText>
     <JustAttr attr="Howdy"></JustAttr>
     <AttrAndText attr="myattr">Some Text</AttrAndText>
-    <AttrTextAndChild attr="whohoo!">How are <b>you</b> doing?</AttrTextAndChild>
+    <AttrTextAndChild attr="woohoo!">How are <b>you</b> doing?</AttrTextAndChild>
     <MultipleTextNodes>1st text node<subscript>1</subscript>2nd text node<superscript>2</superscript></MultipleTextNodes>
     <ExampleWithCDATA>Text outside <![CDATA[Text inside]]> More text outside</ExampleWithCDATA>
   </MarkupScenarios>
