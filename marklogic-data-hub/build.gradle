@@ -112,7 +112,7 @@ task extractFastXmlParserZip(type: Copy) {
         new File(thirdPartySourcePath).mkdirs()
     }
     description = "Extract fast-xml-parser.zip so that its files will be available when bootstrapping the test app and when building the DHF core JAR"
-    from zipTree('src/main/third-party/fast-xml-parser.zip')
+    from zipTree('src/main/third-party/fast-xml-parser-3.17.1.zip')
     destinationDir = new File(thirdPartySourcePath)
 }
 
