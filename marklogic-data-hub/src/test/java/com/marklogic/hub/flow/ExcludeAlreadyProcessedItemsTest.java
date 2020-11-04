@@ -112,6 +112,11 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
         assertEquals(0, stepResponse.getSuccessfulEvents(),
             "All 3 items have already been processed, so no items should have been processed this time");
         assertEquals(3, stepResponse.getTotalEvents());
+        assertEquals(1, stepResponse.getSuccessfulBatches(),
+            "Even though no items were processed, the batch should be regarded as having completed successfully, " +
+                "since no errors were thrown. This represents a change from prior to this ticket - DHFPROD-5977 - " +
+                "where the number of items that failed and that were processed were both zero, the batch was " +
+                "considered to have failed, even though an error was not thrown.");
     }
 
     private void verifyFirstBatchDocument(String flowName, String stepId) {
