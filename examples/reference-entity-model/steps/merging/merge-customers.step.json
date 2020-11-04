@@ -6,43 +6,19 @@
   "targetEntity" : "Customer",
   "sourceDatabase" : "data-hub-FINAL",
   "collections" : [ "merged-customer", "merge-customers" ],
-  "mergeOptions" : {
-    "propertyDefs" : {
-      "properties" : [ {
-        "namespace" : "",
-        "localname" : "customerId",
-        "name" : "customerId"
-      }, {
-        "namespace" : "",
-        "localname" : "name",
-        "name" : "name"
-      } ]
-    },
-    "algorithms" : {
-      "stdAlgorithm" : {
-        "timestamp" : {
-          "path" : ""
-        }
-      },
-      "collections" : {
-        "onNoMatch" : {
-          "add" : {
-            "collection" : [ "" ]
-          },
-          "remove" : {
-            "collection" : [ "" ]
-          },
-          "set" : {
-            "collection" : [ "" ]
-          }
-        }
-      }
-    },
-    "merging" : [ {
-      "propertyName" : "CustomerID",
-      "sourceWeights" : [ ]
-    } ]
-  },
   "targetFormat" : "json",
-  "stepId" : "merge-customers-merging"
+  "stepId" : "merge-customers-merging",
+  "mergeStrategies" : [ ],
+  "mergeRules" : [ {
+    "entityPropertyPath": "customerId",
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  } ],
+  "targetCollections" : {
+    "onNoMatch" : {
+      "add" : [],
+      "remove" : []
+    }
+  }
 }
