@@ -1,0 +1,19 @@
+{
+  "envelope":{
+    "instance":{
+      "CustOrders":{
+        "CustomerID":204,
+        "Name":{
+          "FirstName":"Jacqueline",
+          "LastName":"Knowles"
+        },
+        "Nicknames":{
+          "Nickname":[
+            "Jack",
+            "Sparrow"
+          ]
+        }
+      }
+    }
+  }
+}

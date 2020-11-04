@@ -2,8 +2,6 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/steps/mapping")
@@ -84,18 +81,11 @@ public class MappingStepController extends BaseController {
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{stepName}/newDoc", method = RequestMethod.GET)
-    @ApiOperation(value = "Returns an XML or JSON source document as a string of JSON")
+    @RequestMapping(value = "/{stepName}/testingDoc", method = RequestMethod.GET)
+    @ApiOperation(value = "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.")
     @Secured("ROLE_readMapping")
-    public ResponseEntity<JsonNode> getNewDocument(@PathVariable String stepName, @PathVariable String docUri) {
-        // Step defines which database to pull the identified doc from.
-        final JsonNode stepNode = newService().getStep(STEP_DEFINITION_TYPE, stepName);
-        final String databaseName = stepNode.get("sourceDatabase").asText();
-        // In the hub context, we're presuming staging or final.
-        final DatabaseClient databaseClient = databaseName.toLowerCase().equals(getHubClient().getDbName(DatabaseKind.STAGING).toLowerCase()) ?
-            getHubClient().getStagingClient() :
-            getHubClient().getFinalClient();
-        return ResponseEntity.ok(MappingService.on(databaseClient).getNewDocument(stepName, docUri));
+    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @RequestParam String docUri) {
+        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocumentForTesting(stepName, docUri));
     }
 
     private StepService newService() {
