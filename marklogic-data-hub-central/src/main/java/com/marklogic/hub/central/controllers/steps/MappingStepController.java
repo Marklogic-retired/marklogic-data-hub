@@ -84,7 +84,7 @@ public class MappingStepController extends BaseController {
     @RequestMapping(value = "/{stepName}/testingDoc", method = RequestMethod.GET)
     @ApiOperation(value = "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.")
     @Secured("ROLE_readMapping")
-    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @PathVariable String docUri) {
+    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @RequestParam String docUri) {
         return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocumentForTesting(stepName, docUri));
     }
 

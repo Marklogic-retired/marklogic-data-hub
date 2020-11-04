@@ -49,8 +49,8 @@ public interface MappingService {
 
             private BaseProxy.DBFunctionRequest req_generateMappingTransforms;
             private BaseProxy.DBFunctionRequest req_getDocument;
-            private BaseProxy.DBFunctionRequest req_getMappingFunctions;
             private BaseProxy.DBFunctionRequest req_getDocumentForTesting;
+            private BaseProxy.DBFunctionRequest req_getMappingFunctions;
             private BaseProxy.DBFunctionRequest req_getUris;
             private BaseProxy.DBFunctionRequest req_testMapping;
 
@@ -62,10 +62,10 @@ public interface MappingService {
                     "generateMappingTransforms.sjs", BaseProxy.ParameterValuesKind.NONE);
                 this.req_getDocument = this.baseProxy.request(
                     "getDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_getDocumentForTesting = this.baseProxy.request(
+                    "getDocumentForTesting.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getMappingFunctions = this.baseProxy.request(
                     "getMappingFunctions.sjs", BaseProxy.ParameterValuesKind.NONE);
-                this.req_getDocumentForTesting = this.baseProxy.request(
-                    "getNewDocument.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_getUris = this.baseProxy.request(
                     "getUris.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
                 this.req_testMapping = this.baseProxy.request(
@@ -99,18 +99,6 @@ public interface MappingService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
-                return getMappingFunctions(
-                    this.req_getMappingFunctions.on(this.dbClient)
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request.responseSingle(false, Format.JSON)
-                );
-            }
-
-            @Override
             public com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri) {
                 return getDocumentForTesting(
                     this.req_getDocumentForTesting.on(this.dbClient), stepName, uri
@@ -123,6 +111,18 @@ public interface MappingService {
                           BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName)),
                           BaseProxy.atomicParam("uri", false, BaseProxy.StringType.fromString(uri))
                           ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode getMappingFunctions() {
+                return getMappingFunctions(
+                    this.req_getMappingFunctions.on(this.dbClient)
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode getMappingFunctions(BaseProxy.DBFunctionRequest request) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request.responseSingle(false, Format.JSON)
                 );
             }
 
@@ -181,14 +181,6 @@ public interface MappingService {
     java.lang.String getDocument(String stepName, String uri);
 
   /**
-   * Invokes the getMappingFunctions operation on the database server
-   *
-   * 
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
-
-  /**
    * Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.
    *
    * @param stepName	provides input
@@ -196,6 +188,14 @@ public interface MappingService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode getDocumentForTesting(String stepName, String uri);
+
+  /**
+   * Invokes the getMappingFunctions operation on the database server
+   *
+   * 
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode getMappingFunctions();
 
   /**
    * Gets the list of URIs that match the 'sourceQuery' from source db  associated with given step name. The uri count is specified by 'limit' parameter 
