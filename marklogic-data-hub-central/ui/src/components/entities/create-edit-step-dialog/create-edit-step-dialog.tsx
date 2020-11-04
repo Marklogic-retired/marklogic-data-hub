@@ -142,7 +142,10 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
       // missing collection or query: set flag
       setQueryMissingOnSave(true)
     }
-    if (isNameMissingOnSave || isQueryMissingOnSave) {event.preventDefault()} // if flags are set, then do not submit form
+    if (isNameMissingOnSave || isQueryMissingOnSave) {
+      event.preventDefault()
+      return
+    } // if flags are set, then do not submit form
 
     // else: submit handle and create new merging step
     handleSubmit(event)

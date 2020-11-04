@@ -28,7 +28,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByLabelText('Collection')).toBeChecked();
   });
 
-  test('Verify mapping name, source query is mandatory and Save button is disabled', async () => {
+  test('Verify mapping name, source query is mandatory and Save button is always enabled', async () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(<CreateEditMappingDialog {...data.newMap} />);
     const nameInput = getByPlaceholderText('Enter name');
     const saveButton = getByText('Save');

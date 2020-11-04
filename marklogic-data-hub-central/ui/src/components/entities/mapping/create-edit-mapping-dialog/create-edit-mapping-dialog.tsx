@@ -140,7 +140,7 @@ const CreateEditMappingDialog = (props) => {
     </div>
   </Modal>;
 
-  const onSave = (event) => {
+  const onSave = async (event) => {
     setNameMissingOnSave(false)
     setQueryMissingOnSave(false)
     if (!mapName) {
@@ -151,10 +151,14 @@ const CreateEditMappingDialog = (props) => {
       // missing collections or query: set flag
       setQueryMissingOnSave(true)
     }
-    if (isNameMissingOnSave || isQueryMissingOnSave) {event.preventDefault()} // if missing flags are set, do nothing
+    if (isNameMissingOnSave || isQueryMissingOnSave) {
+      // if missing flags are set, do nothing
+      event.preventDefault()
+      return
+    }
 
     // else: submit handle to create new mapping step
-    handleSubmit(event)
+    // handleSubmit(event)
   }
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
@@ -503,7 +507,7 @@ const CreateEditMappingDialog = (props) => {
               htmlType="submit" 
               disabled={!props.canReadWrite} 
               data-testid="mapping-dialog-save" 
-              onClick={(e) => onSave(e)}
+              onClick={onSave}
             >Save</MLButton>
           </div>
         </Form.Item>

@@ -145,6 +145,7 @@ const NewLoadDialog = (props) => {
       // name is missing: set flag and do not submit form
       setNameMissingOnSave(true)
       event.preventDefault()
+      return
     }
     // else: submit handle to create new loading step
     handleSubmit(event)
