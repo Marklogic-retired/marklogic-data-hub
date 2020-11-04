@@ -264,24 +264,28 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     public void testInvalidQueryCollector(){
         runAsDataHubOperator();
 
+        // Build options with an invalid source query
         Map<String,Object> opts = new HashMap<>();
         opts.put("sourceQuery", "cts.collectionQuer('xml-coll')");
-        //Flow finishing with "finished_with_errors" status
+
         RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
-        Assertions.assertTrue(JobStatus.FINISHED_WITH_ERRORS.toString().equalsIgnoreCase(resp.getJobStatus()));
-        RunStepResponse stepResp = resp.getStepResponses().get("6");
-        Assertions.assertTrue(stepResp.getStatus().equalsIgnoreCase("failed step 6"));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+        assertEquals(JobStatus.FINISHED_WITH_ERRORS.toString(), resp.getJobStatus(), "Since one step completed and " +
+            "the other failed, the status should be finished with errors");
+        RunStepResponse stepResponse = resp.getStepResponses().get("6");
+        assertEquals("failed step 6", stepResponse.getStatus());
+        assertEquals(1, stepResponse.getStepOutput().size(), "Expecting an error message due to the invalid sourceQuery");
+        assertTrue(stepResponse.getStepOutput().get(0).contains("cts.collectionQuer is not a function"));
 
-        //Flow finishing with "failed" status
         resp = runFlow("testFlow", "6", UUID.randomUUID().toString(), opts, null);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map") == 0);
-        Assertions.assertTrue(JobStatus.FAILED.toString().equalsIgnoreCase(resp.getJobStatus()));
-        stepResp = resp.getStepResponses().get("6");
-        Assertions.assertTrue(stepResp.getStatus().equalsIgnoreCase("failed step 6"));
+        assertEquals(0, getDocCount(HubConfig.DEFAULT_FINAL_NAME, "xml-map"));
+        assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "Since all steps failed (there was just one step), " +
+            "the status should be failed");
+        stepResponse = resp.getStepResponses().get("6");
+        assertEquals("failed step 6", stepResponse.getStatus());
     }
 
     @Test

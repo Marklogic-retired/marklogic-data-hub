@@ -29,6 +29,7 @@ if(doc) {
     record["recordMetadata"] = xdmp.documentGetMetadata(docUri);
     record["isHubEntityInstance"] = entitySearchLib.isHubEntityInstance(docUri);
     record["recordType"] = getDocumentType(nodeKind);
+    record["sources"] = entitySearchLib.getEntitySources(docUri);
 }
 
 function getDocumentType(nodeKind) {

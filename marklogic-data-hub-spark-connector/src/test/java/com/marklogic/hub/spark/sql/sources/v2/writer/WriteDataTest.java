@@ -23,10 +23,10 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
@@ -45,10 +45,10 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withWriteRecordsEndpointConstants(customEndpointConstants)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
@@ -57,10 +57,10 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointState.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withIngestEndpointState(customEndpointState)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withWriteRecordsEndpointState(customEndpointState)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
-        assertEquals("Cannot set endpointConstants or endpointState in ingestionendpointparams unless apiPath is defined as well.", ex.getMessage());
+        assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
         ObjectNode node = objectMapper.createObjectNode();
         node.set("endpointState", null);
-        params.put("ingestendpointparams", node.toString());
+        params.put("writerecordsendpointparams", node.toString());
 
         initializeDataWriter(new DataSourceOptions(params));
         logger.info("No exception should have occurred because a null endpointConstant doesn't mean that Ernie tried to " +
@@ -84,7 +84,7 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
 
         ObjectNode node = objectMapper.createObjectNode();
         node.set("endpointState", null);
-        params.put("ingestendpointparams", node.toString());
+        params.put("writerecordsendpointparams", node.toString());
 
         initializeDataWriter(new DataSourceOptions(params));
         logger.info("No exception should have occurred because a null endpointState doesn't mean that Ernie tried to " +
@@ -97,10 +97,10 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         params.putAll(getHubPropertiesAsMap());
 
         final String invalidJson = "{\"endpointConstants\":{}";
-        params.put("ingestendpointparams", invalidJson);
+        params.put("writerecordsendpointparams", invalidJson);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> initializeDataWriter(new DataSourceOptions(params)));
-        assertTrue(ex.getMessage().contains("Unable to parse ingestendpointparams"), "Unexpected error message: " + ex.getMessage());
+        assertTrue(ex.getMessage().contains("Unable to parse writerecordsendpointparams"), "Unexpected error message: " + ex.getMessage());
     }
 
     @Test
@@ -117,12 +117,13 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     @Test
     public void testEndpointsAreLoaded() {
         runAsAdmin().getModulesClient().newTextDocumentManager().delete(
-            "/marklogic-data-hub-spark-connector/bulkIngester.api",
-            "/marklogic-data-hub-spark-connector/bulkIngester.sjs",
-            "/marklogic-data-hub-spark-connector/initializeJob.api",
-            "/marklogic-data-hub-spark-connector/initializeJob.sjs",
-            "/marklogic-data-hub-spark-connector/finalizeJob.api",
-            "/marklogic-data-hub-spark-connector/finalizeJob.sjs");
+            "/marklogic-data-hub-spark-connector/writeLib.sjs",
+            "/marklogic-data-hub-spark-connector/writeRecords.api",
+            "/marklogic-data-hub-spark-connector/writeRecords.sjs",
+            "/marklogic-data-hub-spark-connector/initializeWrite.api",
+            "/marklogic-data-hub-spark-connector/initializeWrite.sjs",
+            "/marklogic-data-hub-spark-connector/finalizeWrite.api",
+            "/marklogic-data-hub-spark-connector/finalizeWrite.sjs");
 
 
         runAsDataHubOperator();
@@ -130,15 +131,15 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         writeRows(buildRow("apple", "red"));
 
         verifyFruitCount(1, "Verifying the data was written");
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.api");
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/bulkIngester.sjs");
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.api");
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeJob.sjs");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/writeRecords.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/writeRecords.sjs");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeWrite.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/initializeWrite.sjs");
 
         dataSourceWriter.commit(null);
 
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.api");
-        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeJob.sjs");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeWrite.api");
+        verifyModuleWasLoadedByConnector("/marklogic-data-hub-spark-connector/finalizeWrite.sjs");
     }
 
     private void verifyModuleWasLoadedByConnector(String path) {

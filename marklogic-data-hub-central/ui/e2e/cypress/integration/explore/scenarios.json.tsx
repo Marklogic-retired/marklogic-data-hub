@@ -7,6 +7,7 @@ import homePage from "../../support/pages/home";
 import { Application } from '../../support/application.config';
 import { toolbar } from "../../support/components/common";
 import 'cypress-wait-until';
+import detailPageNonEntity from '../../support/pages/detail-nonEntity';
 
 
 describe('json scenario for snippet on browse documents page', () => {
@@ -649,7 +650,7 @@ describe('scenarios for All Data zero state and explore pages.', () => {
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
-  it('verify All Data for final/staging databases', () => {
+  it('verify All Data for final/staging databases and non-entity detail page', () => {
     //switch on zero state page and select query parameters for final database
     cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
     browsePage.getFinalDatabaseButton().click();
@@ -698,8 +699,24 @@ describe('scenarios for All Data zero state and explore pages.', () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getTotalDocuments().should('be.equal', 2);
+    
+    //Verifying non-entity detail page for JSON document
+    browsePage.clearSearchText();
+    
+    cy.waitUntil(() => browsePage.getNavigationIconForDocument('/steps/custom/mapping-step.step.json')).click();
+    browsePage.waitForSpinnerToDisappear();
 
-    browsePage.selectEntity('Customer');
-    browsePage.getSelectedEntity().should('contain', 'Customer');
+    detailPageNonEntity.getInstanceView().should('exist');
+    detailPageNonEntity.getDocumentUri().should('contain', '/steps/custom/mapping-step.step.json');
+    detailPageNonEntity.getSourceTable().should('exist');
+    detailPageNonEntity.getHistoryTable().should('exist');
+    detailPageNonEntity.getDocumentTable().should('exist');
+    detailPageNonEntity.getRecordView().click();
+    detailPage.getDocumentJSON().should('exist');
+    detailPageNonEntity.clickBackButton();
+
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Data');
   });
 });

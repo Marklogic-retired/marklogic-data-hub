@@ -1,0 +1,142 @@
+.title {
+  color: #5B69AF;
+  cursor: pointer;
+}
+.menu {
+  width: 25em;
+  padding-left: 40px;
+  font-size: 14px;
+  font-weight: bold;
+
+  .fileSearchIcon {
+    font-size: 20px;
+  }
+}
+
+.subMenu {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.detailContentNonEntityInstance {
+  background: #fff;
+  padding: 18px 0px;
+  max-height: 100vh;
+
+  .detailContent {
+    background: #fff;
+    padding: 18px 36px;
+  }
+
+  .contentElements {
+    width: 90%;
+    min-width: 40em;
+    padding-left: 40px;
+    padding-top: 20px;
+  }
+}
+  
+.detailContentNonEntityHeader {
+  background: #fff;
+  display: flex;
+  justify-content: space-between;
+  
+  .backButtonHeader {
+    margin-right: 30px;
+    display: flex;
+  }
+  
+  .metadataCollapseIconContainer {
+    display: flex; 
+    align-items: center;
+  
+    > .metadataCollapseIcon {
+  
+      .collapseIconsAlignment {
+        background-color: #e7e7e8;
+        padding: 3px 3px;
+        border-radius: 5px 0px 0px 5px;
+        cursor: pointer;
+      }
+      
+      .collapseExpandIcons {
+        font-size: 16px;
+        color: #000; 
+      }
+    }
+  }
+}
+
+.documentContainer {
+  padding-top: 10px;
+  max-height: 60vh;
+  overflow: auto;
+}
+  
+.siderParent {
+  overflow: auto;
+  //height: '77vh',
+  height : 82vh;
+  background-color: #fff;
+  border-left: 1px solid #777777;
+  box-shadow: -1px 0px 4px #777777;
+}
+.siderContainerNonEntity {
+  padding: 92px 36px 72px 36px;
+  
+  .uri {
+    font-weight: bold;
+  }
+  
+  .metadataTableLabel {
+    padding-top: 20px;
+    font-size: 16px;
+  }
+  
+  .sourcesMetadataTable {
+    padding-top: 5px;
+    width: 400px;
+    
+    & thead > tr > th {
+      color: #44499C;
+      background-color: #E7E7E8;
+    };
+  }
+  
+  .historyMetadataTable {
+    padding-top: 5px;
+    & thead > tr > th {
+      color: #44499C;
+      background-color: #E7E7E8;
+    };
+  }
+} 
+
+.noneValue {
+  color: #CCCCCC;
+}
+
+.validValue {
+  width: 100%;
+  display: inline-flex;
+  vertical-align: top;
+  align-items: flex-start;
+}
+
+.textContainer {
+  width: 100%;
+}
+
+.menuText {
+  width: 13.3em;
+  //display: flex;
+  //justify-content: flex-end;
+  //text-align: center;
+  padding-left: 40px;
+  font-size: 14px;
+  font-weight: bold;
+
+  .fileSearchIcon {
+    font-size: 20px;
+  }
+}

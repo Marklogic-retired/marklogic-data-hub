@@ -2,7 +2,7 @@ package com.marklogic.hub.dhs.installer.deploy;
 
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.command.security.DeployAmpsCommand;
-import com.marklogic.hub.impl.Versions;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.SaveReceipt;
 import com.marklogic.mgmt.resource.ResourceManager;
@@ -58,18 +58,14 @@ public class DeployHubAmpsCommand extends DeployAmpsCommand {
             return receipt;
         }
 
-        private boolean cannotUpdateAmps(){
-            try{
-                Versions.MarkLogicVersion mlVersion = new Versions().getMLVersion(getManageClient().getXml("/manage")
-                    .getElementValue("/node()/c:version"));
-                // Users should be able to update amps on versions > 10.0-4.4
-                return mlVersion.isNightly() == true ? false: (mlVersion.getMajor() == 10 && mlVersion.getMinor() == 404);
+        private boolean cannotUpdateAmps() {
+            try {
+                return new MarkLogicVersion(getManageClient()).cannotUpdateAmps();
             }
-            catch (Exception e){
+            catch (Exception e) {
                 logger.warn("Could not determine MarkLogic version; cause: " + e.getMessage() + "; will assume that user can update amps and will throw original exception");
                 return false;
             }
-
         }
     }
 

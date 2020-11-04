@@ -79,10 +79,18 @@ class LoadPage {
         return cy.findByLabelText('step-not-in-flow');
     }
 
+    addStepToFlowRunConfirmationMessage() {
+        return cy.findByLabelText('step-not-in-flow-run');
+    }
+
     addStepExistingToFlowConfirmationMessage() {
         return cy.findByLabelText('step-in-flow');
     }
     
+    addStepExistingToFlowRunConfirmationMessage() {
+        return cy.findByLabelText('step-in-flow-run');
+    }
+        
     pagination() {
 
     }
@@ -237,6 +245,23 @@ class LoadPage {
         return cy.findByTestId(`${stepName}-edit`);
     }
 
+    runStepInCardView(stepName: string) {
+        return cy.findByTestId(`${stepName}-run`);
+    }
+
+    runInNewFlow(stepName: string) {
+        return cy.findByTestId(`${stepName}-run-toNewFlow`);
+    };
+
+    runExistingFlowsList(stepName: string) {
+        return cy.findByTestId(`${stepName}-run-flowsList`);
+    }
+
+    runStepInExistingFlow(stepName: string, flowName: string) {
+        this.runExistingFlowsList(stepName).click({force: true});
+        cy.findByLabelText(`${flowName}-run-option`).click({force: true});
+    }
+
     addToNewFlow(stepName: string) {
         return cy.findByTestId(`${stepName}-toNewFlow`);
     }
@@ -253,7 +278,7 @@ class LoadPage {
     addStepToExistingFlow(stepName: string, flowName: string) {
         this.stepName(stepName).trigger('mouseover');
         this.existingFlowsList(stepName).click();
-        cy.findByLabelText(flowName).click();
+        cy.findByLabelText(`${flowName}-option`).click();
     }
 
 }

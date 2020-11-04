@@ -14,18 +14,23 @@ import java.util.Map;
  */
 public class Options {
 
+    // All connector-specific options
     private String uriPrefix;
-    private String ingestApiPath;
+    private String writeRecordsApiPath;
     private String collections;
     private String permissions;
     private String sourceName;
     private String sourceType;
-    private JsonNode ingestEndpointConstants;
-    private JsonNode ingestEndpointState;
-    private String initializeJobApiPath;
-    private String finalizeJobApiPath;
-    private Map<String, String> hubProperties;
+    private JsonNode writeRecordsEndpointConstants;
+    private JsonNode writeRecordsEndpointState;
+    private String initializeWriteApiPath;
+    private String finalizeWriteApiPath;
     private JsonNode additionalExternalMetadata;
+
+    // Can contain any DHF properties - e.g. mlHost, mlUsername, etc
+    private Map<String, String> hubProperties;
+
+    // Not an option, but rather used for testing an invalid JSON object
     private String additionalExternalMetadataAsString;
 
     public Options() {
@@ -61,26 +66,26 @@ public class Options {
             params.put("sourceType", sourceType);
         }
 
-        if (ingestApiPath != null || ingestEndpointConstants != null || ingestEndpointState != null) {
+        if (writeRecordsApiPath != null || writeRecordsEndpointConstants != null || writeRecordsEndpointState != null) {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode node = mapper.createObjectNode();
-            if (ingestApiPath != null) {
-                node.put("apiPath", ingestApiPath);
+            if (writeRecordsApiPath != null) {
+                node.put("apiPath", writeRecordsApiPath);
             }
-            if (ingestEndpointConstants != null) {
-                node.set("endpointConstants", ingestEndpointConstants);
+            if (writeRecordsEndpointConstants != null) {
+                node.set("endpointConstants", writeRecordsEndpointConstants);
             }
-            if (ingestEndpointState != null) {
-                node.set("endpointState", ingestEndpointState);
+            if (writeRecordsEndpointState != null) {
+                node.set("endpointState", writeRecordsEndpointState);
             }
-            params.put("ingestendpointparams", node.toString());
+            params.put("writerecordsendpointparams", node.toString());
         }
 
-        if (initializeJobApiPath != null) {
-            params.put("initializejobapipath", initializeJobApiPath);
+        if (initializeWriteApiPath != null) {
+            params.put("initializewriteapipath", initializeWriteApiPath);
         }
-        if (finalizeJobApiPath != null) {
-            params.put("finalizejobapipath", finalizeJobApiPath);
+        if (finalizeWriteApiPath != null) {
+            params.put("finalizewriteapipath", finalizeWriteApiPath);
         }
 
         if(additionalExternalMetadata != null) {
@@ -99,7 +104,7 @@ public class Options {
     }
 
     public Options withIngestApiPath(String ingestApiPath) {
-        this.ingestApiPath = ingestApiPath;
+        this.writeRecordsApiPath = ingestApiPath;
         return this;
     }
 
@@ -123,23 +128,23 @@ public class Options {
         return this;
     }
 
-    public Options withIngestEndpointConstants(JsonNode ingestEndpointConstants) {
-        this.ingestEndpointConstants = ingestEndpointConstants;
+    public Options withWriteRecordsEndpointConstants(JsonNode writeRecordsEndpointConstants) {
+        this.writeRecordsEndpointConstants = writeRecordsEndpointConstants;
         return this;
     }
 
-    public Options withIngestEndpointState(JsonNode ingestEndpointState) {
-        this.ingestEndpointState = ingestEndpointState;
+    public Options withWriteRecordsEndpointState(JsonNode writeRecordsEndpointState) {
+        this.writeRecordsEndpointState = writeRecordsEndpointState;
         return this;
     }
 
-    public Options withInitializeJobApiPath(String initializeJobApiPath) {
-        this.initializeJobApiPath = initializeJobApiPath;
+    public Options withInitializeWriteApiPath(String initializeWriteApiPath) {
+        this.initializeWriteApiPath = initializeWriteApiPath;
         return this;
     }
 
-    public Options withFinalizeJobApiPath(String finalizeJobApiPath) {
-        this.finalizeJobApiPath = finalizeJobApiPath;
+    public Options withFinalizeWriteApiPath(String finalizeWriteApiPath) {
+        this.finalizeWriteApiPath = finalizeWriteApiPath;
         return this;
     }
 

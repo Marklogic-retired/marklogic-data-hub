@@ -1,11 +1,11 @@
 import {
     Modal,
     Form,
-    Icon,
+    Icon, Radio, Input, Menu,
 } from 'antd';
 import React, { useState, useContext, useEffect } from 'react';
 import styles from './add-merge-rule-dialog.module.scss';
-import { MLButton, MLTooltip, MLInput, MLSelect } from '@marklogic/design-system';
+import { MLButton, MLTooltip, MLInput, MLSelect, MLDropdown } from '@marklogic/design-system';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons";
 import EntityPropertyTreeSelect from '../../../entity-property-tree-select/entity-property-tree-select';
@@ -13,6 +13,8 @@ import { Definition } from '../../../../types/modeling-types';
 import { CurationContext } from '../../../../util/curation-context';
 import arrayIcon from '../../../../assets/icon_array.png';
 import { MergeRuleTooltips } from '../../../../config/tooltips.config';
+import MultiSlider from "../../matching/multi-slider/multi-slider";
+import { DownOutlined } from '@ant-design/icons';
 
 type Props = {
     data: any;
@@ -140,8 +142,22 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         } else {
                 props.setOpenAddMergeRuleDialog(false);
         }
-        
+
     };
+
+    const menu = (
+        <Menu>
+            <Menu.Item key="1">
+                1
+            </Menu.Item>
+        </Menu>
+    );
+
+    let priorityOrderOptions:any[] = [];
+
+    const handleSlider = () => {
+
+    }
 
     return (
         <Modal
@@ -254,7 +270,58 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                             </Form.Item>
                         </> : ''
                     }
-
+                    {mergeType === 'Property-specific' ?
+                        <>
+                            <Form.Item
+                                colon={false}
+                                label='Max Values:'
+                                labelAlign="left"
+                            >
+                                <Radio.Group  defaultValue={1} onChange={handleChange} id="max-values">
+                                    <Radio value={1} > All</Radio>
+                                    <Radio value={2} ><Input id="max-values-rule-input" placeholder={'Enter max values'} onChange={handleChange} ></Input></Radio>
+                                </Radio.Group>
+                                <MLTooltip title={''}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip>
+                            </Form.Item>
+                            <Form.Item
+                                colon={false}
+                                label='Max Sources:'
+                                labelAlign="left"
+                            >
+                                <Radio.Group  defaultValue={1} onChange={handleChange} id="max-sources">
+                                    <Radio value={1} > All</Radio>
+                                    <Radio value={2} ><Input id="max-sources-rule-input" onChange={handleChange} placeholder={'Enter max sources'}></Input></Radio>
+                                </Radio.Group>
+                                <MLTooltip title={''}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip>
+                            </Form.Item>
+                            <div className={styles.priorityOrderContainer} data-testid={'priorityOrderSlider'}>
+                                <div><p className={styles.priorityText}>Priority Order<MLTooltip title={''}>
+                                    <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                                </MLTooltip></p></div>
+                                <div className={styles.addButtonContainer}>
+                                    <MLDropdown
+                                        overlay={menu}
+                                        trigger={[
+                                            'click'
+                                        ]}
+                                    >
+                                        <MLButton aria-label="add-length" size="default" >
+                                            Length{' '}
+                                            <DownOutlined />
+                                        </MLButton>
+                                    </MLDropdown>
+                                    <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton}>Add</MLButton>
+                                </div>
+                                <div>
+                                    <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider}/>
+                                </div>
+                            </div>
+                        </> : ''
+                    }
                     <Form.Item className={styles.submitButtonsForm}>
                         <div className={styles.submitButtons}>
                             <MLButton onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;

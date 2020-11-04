@@ -1,5 +1,11 @@
 <?xml  version="1.0" encoding="UTF-8"?>
 <envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>testSourceForCustomerXML</name>
+            <datahubSourceType>testSourceTypeXML</datahubSourceType>
+        </sources>
+    </headers>
     <instance>
         <info>
             <title>Customer</title>

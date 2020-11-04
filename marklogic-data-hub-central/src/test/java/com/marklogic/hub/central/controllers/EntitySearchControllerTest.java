@@ -33,13 +33,6 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     private ObjectNode savedQueryResponse;
 
-    // Range constraints from Entity Services weren't returned until ML 10.0-4
-    // Putting this at top of file to avoid rebase conflicts with 5.4-develop
-    private boolean supportsRangeIndexConstraints() {
-        Versions.MarkLogicVersion mlVersion = new Versions(getHubConfig()).getMLVersion();
-        Integer major = mlVersion.getMajor();
-        return major > 10 && (major == 10 && mlVersion.getMinor() >= 400);
-    }
 
     @Test
     void testCRUDOnSavedQuery() throws Exception {
@@ -147,7 +140,7 @@ public class EntitySearchControllerTest extends AbstractMvcTest {
 
     @Test
     void testRowExportWithPathRangeQuery() throws Exception {
-        assumeTrue(supportsRangeIndexConstraints());
+        assumeTrue(new Versions(getHubConfig()).getMarkLogicVersion().supportsRangeIndexConstraints());
         ReferenceModelProject project = installOnlyReferenceModelEntities(true);
         deployEntityIndexes();
 
