@@ -1,0 +1,38 @@
+plugins {
+    id "java"
+    id "net.saliman.properties" version "1.5.1"
+    id "net.foragerr.jmeter" version "1.1.0-4.0"
+}
+
+jmeter {
+    // See https://github.com/jmeter-gradle-plugin/jmeter-gradle-plugin/wiki/Getting-Started
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":marklogic-data-hub"))
+    implementation(testFixtures(project(":marklogic-data-hub")))
+
+    // Forcing usage of logback for logging
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation group: "org.slf4j", name: "jcl-over-slf4j", version: "1.7.30"
+    implementation group: "org.slf4j", name: "slf4j-api", version: "1.7.30"
+}
+
+task createCustomers(type: JavaExec) {
+    description = "Create N customer instances in the final database, where N is defined by customerCount"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.marklogic.hub.performance.CreateCustomers"
+    args = [customerCount]
+
+    // For every ml* Gradle property, add it to the system properties that this program runs with
+    project.properties.keySet().stream().forEach{key ->
+        if (key.startsWith("ml")) {
+            systemProperty key, project.property(key)
+        }
+    }
+}

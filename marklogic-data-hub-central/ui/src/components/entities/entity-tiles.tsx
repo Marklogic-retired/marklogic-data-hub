@@ -151,7 +151,6 @@ const EntityTiles = (props) => {
 
     const updateMappingArtifact = async (mapping) => {
         try {
-
             let response = await axios.post(`/api/steps/mapping/${mapping.name}`, mapping);
             if (response.status === 200) {
               return true;
@@ -166,68 +165,56 @@ const EntityTiles = (props) => {
     };
 
     const getMatchingArtifacts = async () => {
-      //Use mock matching step
-      setMatchingArtifacts([matchingStep]);
-        // try {
-        //     if (props.canReadMatchMerge) {
-        //       let response = await axios.get('/api/steps/matching');
-        //       if (response.status === 200) {
-        //         let matchArtifacts = response.data;
-        //         matchArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-        //         setMatchingArtifacts([...matchArtifacts]);
-        //       }
-        //     }
-        //   } catch (error) {
-        //       let message = error;
-        //       console.error('Error while fetching matching artifacts', message);
-        //   }
+      try {
+        if (props.canReadMatchMerge) {
+            let response = await axios.get('/api/steps/matching');
+            if (response.status === 200) {
+                let entArt = response.data;
+                entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+                setMatchingArtifacts([...entArt]);
+            }
+        }
+      } catch (error) {
+        let message = error;
+        console.error('Error while fetching matching artifacts', message);
+      }
     };
 
     const deleteMatchingArtifact = async (matchingName) => {
-      console.log('delete matching step', matchingName);
-        // try {
-        //     let response = await axios.delete(`/api/steps/matching/${matchingName}`);
-
-        //     if (response.status === 200) {
-        //       updateIsLoadingFlag();
-        //     }
-        //   } catch (error) {
-        //       let message = error.response.data.message;
-        //       console.error('Error while deleting matching artifact.', message);
-        //   }
+        try {
+          let response = await axios.delete(`/api/steps/matching/${matchingName}`);
+          if (response.status === 200) {
+            updateIsLoadingFlag();
+          }
+        } catch (error) {
+          let message = error.response.data.message;
+          console.error('Error while deleting matching artifact.', message);
+        }
     };
 
     const createMatchingArtifact = async (matchingObj) => {
-      console.log('create matching step', matchingObj);
-        // try {
-        //     let response = await axios.post(`/api/steps/matching/${matchingObj.name}`, matchingObj);
-        //     if (response.status === 200) {
-        //       updateIsLoadingFlag();
-        //     }
-        //   } catch (error) {
-        //     let message = error.response.data.message;
-        //     console.error('Error While creating the matching artifact!', message);
-        //   }
+      try {
+        let response = await axios.post(`/api/steps/matching/${matchingObj.name}`, matchingObj);
+        if (response.status === 200) {
+          updateIsLoadingFlag();
+        }
+      } catch (error) {
+        let message = error.response.data.message;
+        console.error('Error While creating the matching artifact!', message);
+      }
     };
 
     const getMergingArtifacts = async () => {
-      //TODO add endpoint functionality
       if (props.canReadMatchMerge) {
-        // use Mock step
-        setMergingArtifacts([mergingStep])
-        // try {
-        //   let response = await axios.get('/api/steps/merging');
-        //   if (response.status === 200) {
-        //     //let mergeArtifacts = response.data;
-        //     console.log('get merge artifacts', response)
-
-        //     setMergingArtifacts(response.data);
-        //   }
-
-        //   } catch (error) {
-        //       let message = error;
-        //       console.error('Error while fetching matching artifacts', message);
-        //   }
+        try {
+            let response = await axios.get('/api/steps/merging');
+            if (response.status === 200) {
+                setMergingArtifacts(response.data);
+            }
+        } catch (error) {
+            let message = error;
+            console.error('Error while fetching matching artifacts', message);
+        }
       }
     };
 

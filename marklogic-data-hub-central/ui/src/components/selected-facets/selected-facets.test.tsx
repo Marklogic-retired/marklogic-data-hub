@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitForElement, fireEvent } from '@testing-library/react';
 import SelectedFacets from './selected-facets';
 
 
@@ -84,4 +83,25 @@ test('Selected Facets: Numeric facet selected', () => {
   let clearAllButton = getByTestId('clear-all-button');
   expect(getByText(/sliderMock: 10 ~ 50/i)).toBeInTheDocument();
   expect(clearAllButton).toBeInTheDocument();
+});
+
+test('Grey Facets: Verify apply/discard icons', async () => {
+  const { getByTestId, getByText } = render(
+      <SelectedFacets
+          selectedFacets={[]}
+          greyFacets={[{constraint: 'Collection', facet: 'productMapping'}]}
+          toggleApplyClicked={jest.fn()}
+          toggleApply={jest.fn()}
+          showApply={false}
+          applyClicked={true}
+      />,
+  );
+  let discardButton = getByTestId('clear-all-grey-button');
+  let applyButton = getByTestId('facet-apply-button');
+  expect(discardButton).toBeInTheDocument();
+  expect(applyButton).toBeInTheDocument();
+  fireEvent.mouseOver(applyButton);
+  await(waitForElement(() => (getByText('Apply all facets'))));
+  fireEvent.mouseOver(discardButton);
+  await(waitForElement(() => (getByText('Discard all facets'))));
 });

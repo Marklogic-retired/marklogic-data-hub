@@ -31,3 +31,81 @@
   padding: 10px;
   font-size: 18px;
 }
+
+.contentHeader{
+  background-color: #fff;
+  border-right: 1px solid grey;
+}
+
+.detailContentNonEntityInstance {
+  background: #fff;
+  padding: 18px 0px;
+  max-height: 100vh;
+  //border-right: 1px solid grey;
+  //box-shadow: 2px 0px red;
+}
+
+.detailContentNonEntityHeader {
+  background: #fff;
+  //padding: 18px 0px;
+  //border: 1px solid red;
+  display: flex;
+  justify-content: space-between;
+
+  .backButtonHeader {
+    //border: 1px solid red; 
+    margin-right: 30px;
+    display: flex;
+    //width: 60%;
+  }
+
+  .documentMetadataContainer {
+    display: flex; 
+    align-items: center;
+
+    > .metadataCollapseIcon {
+
+      .collapseIconsAlignment{
+        background-color: #e7e7e8;
+        padding: 3px 3px;
+        border-radius: 5px 0px 0px 5px;
+        cursor: pointer;
+      }
+    
+      .collapseExpandIcons{
+        font-size: 16px;
+        color: #000; 
+      }
+    }
+  }
+}
+
+.siderParent {
+  overflow: auto;
+  //height: '77vh',
+  height : 82vh;
+  background-color: #fff;
+  border-left: 1px solid #777777;
+  box-shadow: -1px 0px 4px #777777;
+}
+.siderContainerNonEntity{
+  padding: 72px 36px;
+
+  .uri {
+    font-weight: bold;
+  }
+
+  .metadataTableLabel{
+    padding-top: 20px;
+  }
+
+  .sourcesMetadataTable{
+    padding-top: 5px;
+    width: 400px;
+  }
+
+  .historyMetadataTable{
+    padding-top: 5px;
+  }
+}
+

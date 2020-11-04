@@ -71,7 +71,7 @@ const SearchBar: React.FC<Props> = props => {
                   value={searchString}
                   onChange={onChange}
                   addonBefore={entityMenu}
-                  placeholder="Type search text"
+                  placeholder="Enter text to search for"
                   enterButton="Search"
                   size="large"
                   allowClear

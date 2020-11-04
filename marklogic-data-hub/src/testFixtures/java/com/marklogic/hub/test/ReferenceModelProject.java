@@ -3,8 +3,11 @@ package com.marklogic.hub.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.marklogic.client.document.DocumentWriteOperation;
+import com.marklogic.client.document.DocumentWriteSet;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.impl.DocumentWriteOperationImpl;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
@@ -49,6 +52,15 @@ public class ReferenceModelProject extends TestObject {
     }
 
     public void createCustomerInstance(Customer customer, String databaseType, Format contentFormat, String xmlNamespace) {
+        GenericDocumentManager mgr = databaseType.equalsIgnoreCase("staging") ? hubClient.getStagingClient().newDocumentManager()
+            : hubClient.getFinalClient().newDocumentManager();
+        mgr.setContentFormat(contentFormat);
+        DocumentWriteSet writeSet = mgr.newWriteSet();
+        writeSet.add(buildCustomerInstanceToWrite(customer, contentFormat, xmlNamespace));
+        mgr.write(writeSet);
+    }
+
+    public DocumentWriteOperation buildCustomerInstanceToWrite(Customer customer, Format contentFormat, String xmlNamespace) {
         String customerEntityType = "Customer";
 
         Map<String, Object> infoMap = new LinkedHashMap<>();
@@ -74,9 +86,6 @@ public class ReferenceModelProject extends TestObject {
         byte[] instanceBytes;
         ByteArrayInputStream instanceByteStream = null;
         String fileExtension;
-        GenericDocumentManager mgr = databaseType.equalsIgnoreCase("staging") ? hubClient.getStagingClient().newDocumentManager()
-                : hubClient.getFinalClient().newDocumentManager();
-        mgr.setContentFormat(contentFormat);
 
         try {
             if (Format.XML.equals(contentFormat)) {
@@ -103,6 +112,10 @@ public class ReferenceModelProject extends TestObject {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
             .withCollections(customerEntityType)
             .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-        mgr.write("/" + customerEntityType + customer.customerId + fileExtension, metadata, new InputStreamHandle(instanceByteStream));
+
+        String uri = "/" + customerEntityType + customer.customerId + fileExtension;
+
+        return new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
+            uri, metadata, new InputStreamHandle(instanceByteStream));
     }
 }

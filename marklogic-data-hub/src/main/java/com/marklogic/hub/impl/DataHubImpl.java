@@ -253,7 +253,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     @Override
     public boolean isServerVersionValid(String versionString) {
         try{
-            Versions.MarkLogicVersion serverVersion = versions.getMLVersion(versionString);
+            MarkLogicVersion serverVersion = new MarkLogicVersion(versionString);
             if (!(serverVersion.getMajor() == 9 || serverVersion.getMajor() == 10)) {
                 return false;
             }
@@ -495,7 +495,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
         }
 
 
-        serverVersion = versions.getMarkLogicVersion();
+        serverVersion = versions.getMarkLogicVersionString();
         serverVersionOk = isServerVersionValid(serverVersion);
         Map<String, Object> response = new HashMap<>();
         response.put("serverVersion", serverVersion);
@@ -877,7 +877,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
     @Override
     public String getServerVersion() {
         if(serverVersion == null) {
-            serverVersion = versions.getMarkLogicVersion();
+            serverVersion = versions.getMarkLogicVersionString();
         }
         return serverVersion;
     }

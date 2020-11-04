@@ -172,16 +172,46 @@ describe('Default ingestion ', () => {
         runPage.setFlowDescription(`${flowName} description`);
         loadPage.confirmationOptions('Save').click();
         cy.verifyStepAddedToFlow('Load', stepName);
+        runPage.deleteStep(stepName).click();
+        loadPage.confirmationOptions('Yes').click();
 
-        //Run the flow with invalid input
-        runPage.runStep(stepName).click();
+        //Verify Run Load step in an Existing Flow
+        cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
+        loadPage.runStepInCardView(stepName).click();
+        loadPage.runStepInExistingFlow(stepName, flowName);
+        loadPage.addStepToFlowRunConfirmationMessage().should('be.visible');
+        loadPage.confirmationOptions('Yes').click();
+        cy.verifyStepAddedToFlow('Load', stepName);
+        //Upload file to start running, test with invalid input
         cy.uploadFile('input/test-1');
         cy.verifyStepRunResult('failed','Ingestion', stepName)
-            .should('contain.text', 'Document is not JSON');
+        .should('contain.text', 'Document is not JSON');
         tiles.closeRunMessage().click();
 
         //Run the flow with JSON input
         runPage.runStep(stepName).click();
+        cy.uploadFile('input/test-1.json');
+        cy.verifyStepRunResult('success','Ingestion', stepName);
+        tiles.closeRunMessage().click();
+        runPage.deleteStep(stepName).click();
+        loadPage.confirmationOptions('Yes').click();
+        //Delete the flow
+        runPage.deleteFlow(flowName).click();
+        runPage.deleteFlowConfirmationMessage(flowName).should('be.visible');
+        loadPage.confirmationOptions('Yes').click();
+
+        //Verify Run Load step in a New Flow
+        cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
+        loadPage.runStepInCardView(stepName).click();
+        loadPage.runInNewFlow(stepName).click({force: true});
+        cy.findByText('New Flow').should('be.visible');
+        runPage.setFlowName(flowName);
+        runPage.setFlowDescription(`${flowName} description`);
+        loadPage.confirmationOptions('Save').click();
+        cy.verifyStepAddedToFlow('Load', stepName);
+        //Upload file to start running
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
         tiles.closeRunMessage().click();

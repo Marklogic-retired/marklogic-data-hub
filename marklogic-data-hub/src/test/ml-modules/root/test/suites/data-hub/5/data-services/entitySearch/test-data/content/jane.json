@@ -1,5 +1,11 @@
 {
   "envelope": {
+    "headers": {
+      "sources": [{
+        "name": "testSourceForCustomer",
+        "datahubSourceType": "testSourceType"
+      }]
+    },
     "instance": {
       "info": {
         "title": "Customer",

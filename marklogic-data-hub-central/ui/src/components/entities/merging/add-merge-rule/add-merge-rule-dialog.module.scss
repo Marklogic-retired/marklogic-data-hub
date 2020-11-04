@@ -13,21 +13,21 @@
     justify-content: flex-end;
     margin-top: 8px;
     margin-bottom: -16px;
-  
+
     .legendText {
       font-size: 14px;
       margin-left: 10px;
     }
-  
+
     .structuredIcon {
       color: #5B69AF;
       font-size: 14px;
     }
-  
+
     .arrayImage {
       margin-bottom: 4px
     }
-  
+
 }
 
 .questionCircle {
@@ -59,4 +59,24 @@
 
 .input{
     width: 400px !important;
+}
+
+.priorityOrderContainer{
+    background-color: #F4F4F4;;
+}
+
+.priorityText{
+    padding: 14px;
+    font-weight: bold;
+}
+
+.addButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -48px;
+    margin-right: 12px;
+
+    .addSliderButton {
+        margin-left: 10px;
+    }
 }

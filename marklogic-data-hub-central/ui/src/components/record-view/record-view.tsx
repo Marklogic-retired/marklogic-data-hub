@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useEffect } from 'react';
 import styles from './record-view.module.scss';
 import { Card, Icon, Row, Col, Popover } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,9 +11,14 @@ import { FileOutlined } from '@ant-design/icons';
 import { OverflowTooltip } from '../overflow-tooltip/overflow-tooltip';
 import { MLTooltip, MLPopover } from '@marklogic/design-system';
 import { CardViewDateConverter } from '../../util/date-conversion';
+import { Link } from 'react-router-dom';
+import { SearchContext } from '../../util/search-context';
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);
+  const {
+    searchOptions
+} = useContext(SearchContext);
 
   const handleDetailViewNavigation = () => {
   };
@@ -103,6 +108,32 @@ const RecordCardView = (props) => {
     );
   };
 
+  const getLinkProperties = (elem) => {
+    let sources = elem.hubMetadata && elem.hubMetadata.hasOwnProperty('sources') ? elem.hubMetadata['sources'] : [];
+    
+    let linkObject = {
+      pathname: '/tiles/explore/detail', state: {
+          selectedValue: 'instance',
+          entity: searchOptions.entityTypeIds,
+          pageNumber: searchOptions.pageNumber,
+          start: searchOptions.start,
+          searchFacets: searchOptions.selectedFacets,
+          query: searchOptions.query,
+          tableView: props.tableView,
+          sortOrder: searchOptions.sortOrder,
+          sources: sources,
+          primaryKey: elem.primaryKey?.propertyPath === 'uri' ? '' : elem.primaryKey?.propertyValue,
+          uri: elem.uri,
+          entityInstance: elem.entityInstance ? elem.entityInstance : undefined,
+          database: searchOptions.database,
+          isEntityInstance: false,
+          targetDatabase: searchOptions.database
+      }
+    }
+
+    return linkObject;
+  }
+
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
       <Row gutter={24} type="flex" >
@@ -125,12 +156,24 @@ const RecordCardView = (props) => {
                       </span>
                     </MLPopover>
                     <span className={styles.sourceFormat}
-                      style={sourceFormatStyle(elem.format)}
+                      style={sourceFormatStyle(elem.format)} 
                       data-testid={elem.uri + '-sourceFormat'}
                     >{sourceFormatOptions[elem.format].label}</span>
-                    <MLTooltip title={'Detail view'} placement="bottom"
-                    ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={elem.format === 'binary' ? styles.detailLinkIconDisabled : styles.detailLinkIcon} size="lg" /></i>
-                    </MLTooltip>
+                    {elem.format === 'binary' ? 
+                      <span id={'instance'}
+                        data-cy='instance'>
+                        <MLTooltip title={'Detail view'} placement="bottom"
+                        ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIconDisabled} size="lg" /></i>
+                        </MLTooltip>
+                      </span>
+                    :
+                      <Link to={getLinkProperties(elem)} id={'instance'}
+                        data-cy='instance'>
+                        <MLTooltip title={'Detail view'} placement="bottom"
+                        ><i role="detail-link icon" data-testid={elem.uri + '-detailViewIcon'}><FontAwesomeIcon icon={faExternalLinkAlt} className={styles.detailLinkIcon} size="lg" /></i>
+                        </MLTooltip>
+                      </Link>
+                    }
                   </span>
                 </div>
                 <div className={styles.snippetContainer} data-testid={elem.uri + '-snippet'} >

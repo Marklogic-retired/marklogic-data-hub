@@ -1,0 +1,17 @@
+{
+    "functionName": "initializeWrite",
+    "desc": "Initializes a write process, which includes creating a job document",
+    "params": [
+        {
+            "name": "externalMetadata",
+            "desc": "Optional JSON object that will be added to the job document if not null",
+            "datatype": "jsonDocument",
+            "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "string",
+        "desc": "The ID of the created job"
+    }
+}

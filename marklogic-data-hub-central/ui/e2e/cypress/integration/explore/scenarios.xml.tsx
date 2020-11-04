@@ -5,6 +5,7 @@ import detailPage from '../../support/pages/detail';
 import { Application } from '../../support/application.config';
 import {toolbar} from "../../support/components/common";
 import 'cypress-wait-until';
+import detailPageNonEntity from '../../support/pages/detail-nonEntity';
 
 describe('xml scenario for snippet view on browse documents page', () => {
 
@@ -171,3 +172,30 @@ describe('xml scenario for table on browse documents page', () => {
 
 });
 
+describe('xml scenario for All Data option and non-entity detail page', () => {
+
+  //login with valid account and go to /browse page
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.selectEntity('All Data');
+  });
+
+  it('verify record view of the XML document in non-entity detail page', () => {
+    cy.waitUntil(() => browsePage.getNavigationIconForDocument('/dictionary/first-names.xml')).click();
+    browsePage.waitForSpinnerToDisappear();
+    detailPageNonEntity.getInstanceView().should('exist');
+    detailPageNonEntity.getRecordView().click();
+    detailPageNonEntity.getDocumentXML().should('exist');
+    detailPageNonEntity.getDocumentUri().should('contain', '/dictionary/first-names.xml');
+    detailPageNonEntity.getSourceTable().should('exist');
+    detailPageNonEntity.getHistoryTable().should('exist');
+    detailPageNonEntity.clickBackButton();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Data');
+  });
+});

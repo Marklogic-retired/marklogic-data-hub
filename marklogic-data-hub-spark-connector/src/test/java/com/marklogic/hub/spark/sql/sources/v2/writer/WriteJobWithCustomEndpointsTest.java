@@ -21,7 +21,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
 
         final String path = "/custom-job-endpoints/";
-        Stream.of("initializeJob", "finalizeJob").forEach(moduleName -> {
+        Stream.of("initializeWrite", "finalizeWrite").forEach(moduleName -> {
             String apiPath = path + moduleName + ".api";
             String scriptPath = path + moduleName + ".sjs";
             mgr.write(apiPath, metadata, new InputStreamHandle(readInputStreamFromClasspath(apiPath)).withFormat(Format.JSON));
@@ -32,11 +32,11 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     @Test
     void bothEndpointsAreCustom() {
         initializeDataWriter(newFruitOptions()
-            .withInitializeJobApiPath("/custom-job-endpoints/initializeJob.api")
-            .withFinalizeJobApiPath("/custom-job-endpoints/finalizeJob.api")
+            .withInitializeWriteApiPath("/custom-job-endpoints/initializeWrite.api")
+            .withFinalizeWriteApiPath("/custom-job-endpoints/finalizeWrite.api")
         );
 
-        verifyCustomInitializeJobEndpointIsUsed();
+        verifyCustomInitializeEndpointIsUsed();
         dataSourceWriter.commit(null);
         verifyCustomFinalizeEndpointIsUsed();
     }
@@ -44,10 +44,10 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     @Test
     void customInitializeEndpoint() {
         initializeDataWriter(newFruitOptions()
-            .withInitializeJobApiPath("/custom-job-endpoints/initializeJob.api")
+            .withInitializeWriteApiPath("/custom-job-endpoints/initializeWrite.api")
         );
 
-        verifyCustomInitializeJobEndpointIsUsed();
+        verifyCustomInitializeEndpointIsUsed();
         dataSourceWriter.commit(null);
         assertEquals("finished", getJobDocumentStatus());
     }
@@ -55,7 +55,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     @Test
     void customFinalizeEndpoint() {
         initializeDataWriter(newFruitOptions()
-            .withFinalizeJobApiPath("/custom-job-endpoints/finalizeJob.api")
+            .withFinalizeWriteApiPath("/custom-job-endpoints/finalizeWrite.api")
         );
 
         assertFalse("customId".equals(getJobDocument().get("job").get("jobId")), "Verifying that the custom initialization endpoint is not used");
@@ -66,7 +66,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     @Test
     void invalidInitializeEndpoint() {
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
-            initializeDataWriter(newFruitOptions().withInitializeJobApiPath("/missing.api")));
+            initializeDataWriter(newFruitOptions().withInitializeWriteApiPath("/missing.api")));
         assertTrue(ex.getMessage().startsWith("Unable to read custom API module for initializing a job"),
             "Expected friendly error message for when the API module is invalid (in this case, it's not found)");
     }
@@ -74,19 +74,19 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     @Test
     void invalidFinalizeEndpoint() {
         RuntimeException ex = assertThrows(RuntimeException.class, () ->
-            initializeDataWriter(newFruitOptions().withFinalizeJobApiPath("/missing.api")));
+            initializeDataWriter(newFruitOptions().withFinalizeWriteApiPath("/missing.api")));
         assertTrue(ex.getMessage().startsWith("Unable to read custom API module for finalizing a job"),
             "Expected friendly error message for when the API module is invalid (in this case, it's not found)");
     }
 
-    private void verifyCustomInitializeJobEndpointIsUsed() {
+    private void verifyCustomInitializeEndpointIsUsed() {
         assertEquals("customId", getJobDocument().get("job").get("jobId").asText(),
-            "The custom initializeJob endpoint is expected to always use 'customId' as the jobId");
+            "The custom initializeWrite endpoint is expected to always use 'customId' as the jobId");
     }
 
     private void verifyCustomFinalizeEndpointIsUsed() {
         assertEquals("stop-on-error", getJobDocumentStatus(),
-            "The custom finalizeJob endpoint is expected to always set 'stop-on-error' as the status. This is done " +
+            "The custom finalizeWrite endpoint is expected to always set 'stop-on-error' as the status. This is done " +
                 "so that the jobs.sjs module doesn't see some unrecognized status and then try to update the job " +
                 "document, which fails when running this test against DHF 5.2.x.");
     }

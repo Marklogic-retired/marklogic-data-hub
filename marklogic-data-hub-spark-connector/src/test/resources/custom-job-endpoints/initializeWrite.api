@@ -1,5 +1,5 @@
 {
-    "functionName": "initializeJob",
+    "functionName": "initializeWrite",
     "endpointDirectory": "/custom-job-endpoints/",
     "params": [
         {

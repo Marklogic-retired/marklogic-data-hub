@@ -286,7 +286,7 @@ public class QueryStepRunner implements StepRunner {
     }
 
     private DiskQueue<String> runCollector(String sourceDatabase) {
-        Collector c = new CollectorImpl(hubClient, sourceDatabase);
+        CollectorImpl collector = new CollectorImpl(hubClient, sourceDatabase);
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
@@ -295,7 +295,7 @@ public class QueryStepRunner implements StepRunner {
         final DiskQueue<String> uris ;
         try {
             if(! isStopped.get()) {
-                uris = c.run(this.flow.getName(), step, options);
+                uris = collector.run(this.flow.getName(), step, options);
             }
             else {
                 uris = null;
@@ -472,18 +472,7 @@ public class QueryStepRunner implements StepRunner {
                 ((DiskQueue<String>)uris).close();
             }
 
-            String stepStatus;
-            if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
-                stepStatus = JobStatus.STOP_ON_ERROR_PREFIX + step;
-            } else if( isStopped.get()){
-                stepStatus = JobStatus.CANCELED_PREFIX + step;
-            } else if (stepMetrics.getFailedEventsCount() > 0 && stepMetrics.getSuccessfulEventsCount() > 0) {
-                stepStatus = JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
-            } else if (stepMetrics.getFailedEventsCount() == 0 && stepMetrics.getSuccessfulEventsCount() > 0)  {
-                stepStatus = JobStatus.COMPLETED_PREFIX + step;
-            } else {
-                stepStatus = JobStatus.FAILED_PREFIX + step;
-            }
+            String stepStatus = determineStepStatus(stepMetrics);
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
                 listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), "");
@@ -523,5 +512,24 @@ public class QueryStepRunner implements StepRunner {
 
         runningThread.start();
         return runStepResponse;
+    }
+
+    private String determineStepStatus(StepMetrics stepMetrics) {
+        if (stepMetrics.getFailedEventsCount() > 0 && stopOnFailure) {
+            return JobStatus.STOP_ON_ERROR_PREFIX + step;
+        } else if( isStopped.get()){
+            return JobStatus.CANCELED_PREFIX + step;
+        } else if (stepMetrics.getFailedEventsCount() > 0 && stepMetrics.getSuccessfulEventsCount() > 0) {
+            return JobStatus.COMPLETED_WITH_ERRORS_PREFIX + step;
+        } else if (stepMetrics.getFailedEventsCount() == 0)  {
+            // Based on DHFPROD-5997, it is possible for a step to complete successfully but not process anything.
+            // Previously, this was treated as a failure. I think one reason for that was because when the collector
+            // threw an error due to e.g. an invalid source query, it was not treated as an error. In fact, the error
+            // message would be sent as a single item to be processed by the step, which then resulted in the step not
+            // processing anything. CollectorImpl now properly throws an exception when it gets back a non-200 response,
+            // which means that a count of zero failed events should indicate successful completion.
+            return JobStatus.COMPLETED_PREFIX + step;
+        }
+        return JobStatus.FAILED_PREFIX + step;
     }
 }

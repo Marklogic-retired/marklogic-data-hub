@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Table } from 'antd';
+import styles from './table-view.module.scss';
 
 interface Props {
   document: any;
   contentType: string;
   location: {};
+  isEntityInstance: boolean;
 }
 
 const TableView: React.FC<Props> = (props) => {
@@ -47,7 +49,7 @@ const TableView: React.FC<Props> = (props) => {
     {
       title: 'Property',
       dataIndex: 'property',
-      width: '20%',
+      width: props.isEntityInstance ? '20%' : '40%',
     },
     {
       title: 'Value',
@@ -64,14 +66,14 @@ const TableView: React.FC<Props> = (props) => {
         } as React.CSSProperties;
         return <p onClick={() => handleClick()} style={pStyle}>{value}</p>;
       },
-      width: '80%',
+      width: props.isEntityInstance ? '80%' : '60%',
     }
   ];
 
 
   return (
       <Table
-          className="document-table-demo"
+          className={props.isEntityInstance ? "document-table-demo": styles.tableViewNonEntity}
           rowKey="key"
           dataSource={data}
           columns={columns}

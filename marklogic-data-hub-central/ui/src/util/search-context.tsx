@@ -74,7 +74,7 @@ interface ISearchContextInterface {
   setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
-  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: []) => void;
+  setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
   setSortOrder: (propertyName: string, sortOrder: any) => void;
   setPageQueryOptions: (query: any) => void;
   savedQueries: any;
@@ -519,7 +519,7 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
     });
   };
 
-  const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string, sortOrder: []  ) => {
+  const setPageWithEntity = (option: [], pageNumber: number, start : number, facets: any, searchString: string, sortOrder: [], targetDatabase: string  ) => {
     setSearchOptions({
       ...searchOptions,
       entityTypeIds: option,
@@ -528,7 +528,8 @@ const SearchProvider: React.FC<{ children: any }> = ({ children }) => {
       start: start,
       pageNumber : pageNumber,
       sortOrder: sortOrder,
-      zeroState: false
+      zeroState: false,
+      database: targetDatabase,
     });
   };
 

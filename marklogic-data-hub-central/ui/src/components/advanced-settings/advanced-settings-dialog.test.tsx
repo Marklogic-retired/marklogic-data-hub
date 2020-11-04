@@ -148,6 +148,44 @@ describe('Advanced Step Settings dialog', () => {
 
   });
 
+  test('Verify settings for Matching', async () => {
+    const { getByText, getAllByText } = render(
+        <AdvancedSettingsDialog {...data.advancedMatching} />
+    );
+
+    expect(getByText('Advanced Step Settings')).toBeInTheDocument();
+
+    //Verify if the step name is available in the settings dialog
+    expect(document.querySelector('div p:nth-child(2)').textContent).toEqual(data.advancedMatching.stepData.name);
+
+    expect(getByText('Source Database')).toBeInTheDocument();
+    expect(getByText('data-hub-FINAL')).toBeInTheDocument();
+    expect(getByText('Target Database')).toBeInTheDocument();
+    expect(getByText('data-hub-FINAL')).toBeInTheDocument();
+
+    expect(getByText('Target Collections')).toBeInTheDocument();
+    expect(getByText('Please add target collections')).toBeInTheDocument();
+    expect(getByText('Default Collections')).toBeInTheDocument();
+    expect((await(waitForElement(() => getAllByText('AdvancedMatching')))).length > 0);
+
+    expect(getByText('Target Permissions')).toBeInTheDocument();
+
+    expect(getByText('Batch Size')).toBeInTheDocument();
+
+    expect(getByText('Provenance Granularity')).toBeInTheDocument();
+    expect(getByText('Coarse-grained')).toBeInTheDocument();
+
+    expect(getByText('Processors')).toBeInTheDocument();
+    expect(getByText('Custom Hook')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Processors'));
+    expect(getByText('{ "processor": true }')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Custom Hook'));
+    expect(getByText('{ "hook": true }')).toBeInTheDocument();
+
+  });
+
   test('Verify form fields can be input/selected', async () => {
     let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText;
     await act(async () => {

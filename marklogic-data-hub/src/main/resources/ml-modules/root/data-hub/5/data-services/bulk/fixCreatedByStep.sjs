@@ -90,7 +90,6 @@ if (uris.length == 0) {
             {database: xdmp.database(config.JOBDATABASE)}
           ));
           if (influencedByTriple) {
-            console.log("Using influencedBy!");
             stepName = sem.tripleObject(influencedByTriple);
           }
 
