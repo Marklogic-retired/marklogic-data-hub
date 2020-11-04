@@ -1,0 +1,45 @@
+
+.title {
+    font-size :24px;
+    font-weight: 500;
+}
+.submitButtonsForm {
+    margin-top: 20px;
+    display: flex;
+    justify-content: flex-end
+}
+
+.submitButtons {
+    text-align: right;
+    width: 102%;
+}
+
+.priorityOrderContainer{
+    background-color: #F4F4F4;;
+}
+
+.priorityText{
+    padding: 14px;
+    font-weight: bold;
+}
+
+.questionCircle {
+    font-size: 12px;
+    color: #7F86B5;
+    margin-left: 20px;
+}
+
+.addButtonContainer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -48px;
+    margin-right: 12px;
+
+    .addSliderButton {
+        margin-left: 10px;
+    }
+}
+
+.asterisk{
+    color: #DB4f59;
+}

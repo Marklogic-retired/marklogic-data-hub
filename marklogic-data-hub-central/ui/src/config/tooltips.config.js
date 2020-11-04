@@ -30,6 +30,8 @@ const NewLoadTooltips = {
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
     'targetFormat': 'The format of the processed record.',
+    'sourceName': 'The name of the source of the files.',
+    'sourceType': 'The type of source of the files.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
     'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.'
 };
@@ -161,6 +163,12 @@ const MergeRuleTooltips = {
     namespace : 'The namespace of the module that contains the function to run.'
 }
 
+const MergingStepDetailText = {
+  description: 'Each merge step is associated with a match step. After the match step is run, there is a set of matched entities associated with each match threshold. Depending on the action specified for the match \n' +
+    'threshold, the merge step will either merge the matched entities, create notifications for the matched entities, or perform a custom action. When entities are merged, all the property values from the \n' +
+    'matched entities are combined into the merged entity by default. To define exceptions to this default behavior, create merge strategies and merge rules.'
+}
+
 export {
     AdvancedSettings,
     NewFlowTooltips,
@@ -178,5 +186,6 @@ export {
     AdvCustomTooltips,
     SecurityTooltips,
     MatchingStepDetailText,
-    MergeRuleTooltips
+    MergeRuleTooltips,
+    MergingStepDetailText
 }

@@ -16,6 +16,7 @@ import MatchingDetailStep from '../components/entities/matching/matching-step-de
 import { AuthoritiesContext } from "../util/authorities";
 import { SearchContext } from '../util/search-context';
 import { useHistory, useLocation } from 'react-router-dom';
+import MergingStepDetail from "../components/entities/merging/merging-step-detail/merging-step-detail";
 import { ConfigProvider } from 'antd';
 
 export type TileId = 'load' | 'model' | 'curate' | 'run' | 'explore';
@@ -42,6 +43,8 @@ const TilesView = (props) => {
     const setCurateView = () => {
         if (location.pathname.startsWith('/tiles/curate/match')) {
             return <MatchingDetailStep/>;
+        } else if (location.pathname.startsWith('/tiles/curate/merge')) {
+            return <MergingStepDetail/>;
         } else {
             return <Curate/>;
         }
@@ -117,7 +120,7 @@ const TilesView = (props) => {
             { (searchOptions.view !== null) ?  (
                 <div className={styles.tilesViewContainer}>
                     { (selection !== '') ?  (
-                    <ConfigProvider	
+                    <ConfigProvider
                         getPopupContainer={(node) => {
                             if(node) {
                                 return node.parentNode ?  node.parentNode as HTMLElement : document.body;

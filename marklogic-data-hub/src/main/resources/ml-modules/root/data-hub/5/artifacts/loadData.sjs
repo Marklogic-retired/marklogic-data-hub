@@ -64,7 +64,6 @@ function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   return {
     headers: {
-      sources: [{name: artifactName}],
       createdOn: "currentDateTime",
       createdBy: "currentUser"
     },

@@ -35,7 +35,20 @@ export const customerMergingStep = {
   curationOptions:   {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
-      stepArtifact: [],
+      stepArtifact: mergingStep.artifacts[0],
+      entityName: mergingStep.entityType,
+      isModified: false
+    }
+  },
+  setActiveStep: jest.fn(),
+  updateActiveStepArtifact: jest.fn()
+};
+
+export const customerMergingStepEmpty = {
+  curationOptions:   {
+    entityDefinitionsArray: customerEntityDefsArray,
+    activeStep: {
+      stepArtifact: mergingStep.artifacts[1],
       entityName: mergingStep.entityType,
       isModified: false
     }

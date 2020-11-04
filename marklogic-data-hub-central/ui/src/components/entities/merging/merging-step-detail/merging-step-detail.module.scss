@@ -1,0 +1,83 @@
+.pageHeader {
+    padding-bottom: 10px;
+}
+
+.headerDescription {
+    padding: 0 0 10px 57px;
+}
+
+.stepNumberContainer {
+    display: flex;
+    margin-bottom: 10px;
+
+    .stepText {
+        margin: 8px 0 0 12px;
+    }
+}
+
+.mergingDetailContainer {
+    padding: 20px;
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .italic {
+        font-style: italic;
+    }
+
+    .greyContainer {
+        padding: 10px;
+        margin-left: 2%;
+        margin-bottom: 35px;
+        border-radius: 5px;
+    }
+
+    .topHeader {
+        display: grid;
+        grid-template-columns: 90% 10%;
+    }
+
+    .addButtonContainer {
+        display: flex;
+        justify-content: flex-end;
+
+        .addMergeButton {
+            padding-left: 25px;
+            padding-right: 25px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .link {
+        margin-left: 10px;
+        color: #5B69AF;
+        cursor: pointer;
+    }
+}
+
+.disabledDeleteIcon{
+    color: grey;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.enabledDeleteIcon{
+    color:#B32424
+}
+
+.priorityOrderContainer{
+    background-color: #F4F4F4;
+    max-width: 98%;
+}
+
+.priorityText{
+    padding: 14px;
+    font-weight: bold;
+}
+
+.questionCircle {
+    font-size: 12px;
+    color: #7F86B5;
+    margin-left: 6px;
+}

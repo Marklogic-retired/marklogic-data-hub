@@ -10,7 +10,7 @@ import './entity-tiles.scss'
 import MergingCard from './merging/merging-card';
 
 import { matchingStep } from '../../assets/mock-data/curation/matching';
-import { mergingStepCustomer } from '../../assets/mock-data/curation/merging'
+import { mergingStep } from '../../assets/mock-data/curation/merging'
 
 const EntityTiles = (props) => {
     const entityModels = props.entityModels || {};
@@ -166,17 +166,15 @@ const EntityTiles = (props) => {
     };
 
     const getMatchingArtifacts = async () => {
-      // Use mock matching step
+      //Use mock matching step
       setMatchingArtifacts([matchingStep]);
         // try {
         //     if (props.canReadMatchMerge) {
-        //       let response = await axios.get('/api/artifacts/matching');
+        //       let response = await axios.get('/api/steps/matching');
         //       if (response.status === 200) {
-        //         let entArt = response.data;
-        //         console.log('get matching artifacts reps', response)
-        //         /* Below sort should be enabled once the api is working properly and response has valid array data */
-        //         //entArt.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
-        //         setMatchingArtifacts([...entArt]);
+        //         let matchArtifacts = response.data;
+        //         matchArtifacts.sort((a, b) => (a.entityType > b.entityType) ? 1 : -1)
+        //         setMatchingArtifacts([...matchArtifacts]);
         //       }
         //     }
         //   } catch (error) {
@@ -186,35 +184,37 @@ const EntityTiles = (props) => {
     };
 
     const deleteMatchingArtifact = async (matchingName) => {
-        try {
-            let response = await axios.delete(`/api/artifacts/matching/${matchingName}`);
+      console.log('delete matching step', matchingName);
+        // try {
+        //     let response = await axios.delete(`/api/steps/matching/${matchingName}`);
 
-            if (response.status === 200) {
-              updateIsLoadingFlag();
-            }
-          } catch (error) {
-              let message = error.response.data.message;
-              console.error('Error while deleting matching artifact.', message);
-          }
+        //     if (response.status === 200) {
+        //       updateIsLoadingFlag();
+        //     }
+        //   } catch (error) {
+        //       let message = error.response.data.message;
+        //       console.error('Error while deleting matching artifact.', message);
+        //   }
     };
 
     const createMatchingArtifact = async (matchingObj) => {
-        try {
-            let response = await axios.post(`/api/artifacts/matching/${matchingObj.name}`, matchingObj);
-            if (response.status === 200) {
-              updateIsLoadingFlag();
-            }
-          } catch (error) {
-            let message = error.response.data.message;
-            console.error('Error While creating the matching artifact!', message);
-          }
+      console.log('create matching step', matchingObj);
+        // try {
+        //     let response = await axios.post(`/api/steps/matching/${matchingObj.name}`, matchingObj);
+        //     if (response.status === 200) {
+        //       updateIsLoadingFlag();
+        //     }
+        //   } catch (error) {
+        //     let message = error.response.data.message;
+        //     console.error('Error While creating the matching artifact!', message);
+        //   }
     };
 
     const getMergingArtifacts = async () => {
       //TODO add endpoint functionality
       if (props.canReadMatchMerge) {
         // use Mock step
-        setMergingArtifacts([mergingStepCustomer])
+        setMergingArtifacts([mergingStep])
         // try {
         //   let response = await axios.get('/api/steps/merging');
         //   if (response.status === 200) {

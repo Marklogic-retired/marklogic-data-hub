@@ -75,7 +75,7 @@ assertions.push(
   test.assertEqual("", flowStep.fileLocations.outputURIPrefix),
   test.assertEqual(",", flowStep.fileLocations.separator),
 
-  test.assertEqual("myIngester", options.headers.sources[0].name),
+  test.assertEqual(null, options.headers.sources),
   test.assertEqual("currentDateTime", options.headers.createdOn),
   test.assertEqual("currentUser", options.headers.createdBy),
 

@@ -11,6 +11,8 @@ const NewLoadDialog = (props) => {
   const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
+  const [sourceName, setSourceName] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceName : '');
+  const [sourceType, setSourceType] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceType : '');
   const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIPrefix : '');
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
   const [otherSeparator, setOtherSeparator] = useState('');
@@ -36,6 +38,8 @@ const NewLoadDialog = (props) => {
       }
 
       setTgtFormat(props.stepData.targetFormat);
+      setSourceName(props.stepData.sourceName);
+      setSourceType(props.stepData.sourceType);
       setOutputUriPrefix(props.stepData.outputURIPrefix);
       setIsValid(true);
       setTobeDisabled(true);
@@ -47,6 +51,8 @@ const NewLoadDialog = (props) => {
       setFieldSeparator(',');
       setOtherSeparator('');
       setTgtFormat('json');
+      setSourceName('');
+      setSourceType('');
       setOutputUriPrefix('');
       setIsValid(false);
     }
@@ -60,6 +66,8 @@ const NewLoadDialog = (props) => {
       setFieldSeparator(',');
       setOtherSeparator('');
       setTgtFormat('json');
+      setSourceName('');
+      setSourceType('');
       setOutputUriPrefix('');
       setTobeDisabled(false);
     });
@@ -162,6 +170,8 @@ const NewLoadDialog = (props) => {
         sourceFormat: srcFormat,
         separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
         targetFormat: tgtFormat,
+        sourceName: sourceName,
+        sourceType: sourceType,
         outputURIPrefix: outputUriPrefix,
       };
     } else {
@@ -170,6 +180,8 @@ const NewLoadDialog = (props) => {
         description: description,
         sourceFormat: srcFormat,
         targetFormat: tgtFormat,
+        sourceName: sourceName,
+        sourceType: sourceType,
         outputURIPrefix: outputUriPrefix
       };
       if(props.stepData.separator){
@@ -205,6 +217,13 @@ const NewLoadDialog = (props) => {
       setDescription(event.target.value);
     }
 
+    if (event.target.id === 'sourceName') {
+      setSourceName(event.target.value);
+    }
+
+    if (event.target.id === 'sourceType') {
+      setSourceType(event.target.value);
+    }
   };
 
   const handleOutputUriPrefix = (event) => {
@@ -240,6 +259,10 @@ const NewLoadDialog = (props) => {
   const handleTgtFormat = (value) => {
     if (value !== ' ') {
       setTgtFormat(value);
+      if(value !== 'json' && value !== 'xml') {
+        setSourceName('');
+        setSourceType('');
+      }
     }
   };
 
@@ -371,6 +394,34 @@ const NewLoadDialog = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
+        {(tgtFormat === 'json' || tgtFormat === 'xml') && <Form.Item label={<span>
+          Source Name:&nbsp;
+            </span>} labelAlign="left">
+          <Input
+              id="sourceName"
+              placeholder="Enter Source Name"
+              value={sourceName}
+              onChange={handleChange}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </MLTooltip>
+        </Form.Item>}
+        {(tgtFormat === 'json' || tgtFormat === 'xml') && <Form.Item label={<span>
+          Source Type:&nbsp;
+            </span>} labelAlign="left">
+          <Input
+              id="sourceType"
+              placeholder="Enter Source Type"
+              value={sourceType}
+              onChange={handleChange}
+              disabled={props.canReadOnly && !props.canReadWrite}
+              className={styles.input}
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType}>
+          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+        </MLTooltip>
+        </Form.Item>}
         <Form.Item label={<span>
           Target URI Prefix:&nbsp;
             </span>} labelAlign="left">

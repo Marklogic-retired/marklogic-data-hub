@@ -1,9 +1,22 @@
 // Test data for merging
 
-const mergingData = {
+const mergingDataProps = {
     data: [],
     openAddMergeRuleDialog: true,
     setOpenAddMergeRuleDialog: jest.fn()
 };
 
-export default mergingData;
+const editMergingDataProps = {
+    data: [],
+    strategyName: '',
+    editMergeStrategyDialog: true,
+    setOpenEditMergeStrategyDialog: jest.fn()
+};
+
+
+const data = {
+    mergingDataProps,
+    editMergingDataProps
+};
+
+export default data;

@@ -50,18 +50,9 @@ const SearchResult: React.FC<Props> = (props) => {
     }
 
     if ((props.item.format === 'json' || props.item.format === 'xml') && props.item.hasOwnProperty('sources')) {
-        if (!props.item.sources.length) {
-            // content data does not exist in payload
-            setAlertMessage('Error', 'No instance information in payload');
-        } else {
-            if (Array.isArray(props.item.sources)) {
-                sourcesVal = props.item.sources.map(src => {
-                    return src.name;
-                }).join(', ');
-            } else {
-                sourcesVal = props.item.sources.name;
-            }
-        }
+        sourcesVal = props.item.sources.map(src => {
+            return src.name;
+        }).join(', ');
     }
 
     function getSnippet() {

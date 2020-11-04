@@ -233,7 +233,7 @@ const Run = (props) => {
     function showSuccess(stepName, stepType, entityName, targetDatabase, jobId, stepNumber) {
       Modal.success({
            title:<div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
-            icon: <Icon type="check-circle" theme="filled"/>, 
+            icon: <Icon type="check-circle" theme="filled"/>,
             okText: 'Close',
             mask: false,
             width:650,
@@ -241,7 +241,7 @@ const Run = (props) => {
              <div data-testid='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
                <span className={styles.exploreIcon}></span>
                <span className={styles.exploreText}>Explore Curated Data</span>
-             </div> : stepType.toLowerCase() === 'ingestion' ? 
+             </div> : stepType.toLowerCase() === 'ingestion' ?
              <div data-testid='explorer-link' onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
                <span className={styles.exploreIcon}></span>
                <span className={styles.exploreText}>Explore Loaded Data</span>
@@ -280,14 +280,14 @@ const Run = (props) => {
     function showErrors(stepName, stepType, errors, response, entityName, targetDatabase, jobId, stepNumber) {
       Modal.error({
          title: <p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed with errors</p>,
-         icon: <Icon type="exclamation-circle" theme="filled"/>, 
+         icon: <Icon type="exclamation-circle" theme="filled"/>,
          content: (
              <div id="error-list">
                  {(stepType.toLowerCase() === 'mapping' && entityName) ?
                    <div onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
                      <span className={styles.exploreIcon}></span>
                      <span className={styles.exploreText}>Explore Curated Data</span>
-                 </div> : stepType.toLowerCase() === 'ingestion' ? 
+                 </div> : stepType.toLowerCase() === 'ingestion' ?
                    <div onClick={()=> goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
                      <span className={styles.exploreIcon}></span>
                      <span className={styles.exploreText}>Explore Loaded Data</span>
@@ -311,7 +311,7 @@ const Run = (props) => {
     function showFailed(stepName, stepType, errors) {
         Modal.error({
             title: <div id="error-title"><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> failed</p></div>,
-            icon: <Icon type="exclamation-circle" theme="filled"/>, 
+            icon: <Icon type="exclamation-circle" theme="filled"/>,
             content: (
                 <div id="error-list">
                     {errors.map((e, i) => {
@@ -379,7 +379,6 @@ const Run = (props) => {
         let response;
         try {
             setUploadError('');
-            setIsLoading(true);
             if (formData){
                 response = await axios.post('/api/flows/' + flowId + '/steps/' + stepNumber, formData, {headers: {
                     'Content-Type': 'multipart/form-data; boundary=${formData._boundary}', crossorigin: true
@@ -397,18 +396,15 @@ const Run = (props) => {
                     .then(function(response: any) {
                         setRunEnded({flowId: flowId, stepId: stepNumber});
                         showStepRunResponse(stepDetails, jobId, response);
-                        setIsLoading(false);
                     }).catch(function(error) {
                         console.error('Flow timeout', error);
                         setRunEnded({flowId: flowId, stepId: stepNumber});
-                        setIsLoading(false);
                     });
                 }, pollConfig.interval);
             }
         } catch (error) {
             console.error('Error running step', error);
             setRunEnded({flowId: flowId, stepId: stepNumber});
-            setIsLoading(false);
             if (error.response && error.response.data && ( error.response.data.message.includes('The total size of all files in a single upload must be 100MB or less.') ||  error.response.data.message.includes('Uploading files to server failed') )) {
                 setUploadError(error.response.data.message);
             }

@@ -65,3 +65,27 @@ export interface Threshold {
   action: string,
   score: number
 }
+
+export interface MergingStep {
+  name: string,
+  stepDefinitionName: string,
+  stepDefinitionType: string,
+  stepId: string,
+  targetEntityType: string,
+  description: string,
+  selectedSource: string,
+  sourceQuery: string,
+  collections: any,
+  additionalCollections: any,
+  sourceDatabase: string,
+  targetDatabase: string,
+  targetFormat: string,
+  permissions: string,
+  provenanceGranularityLevel: string,
+  lastUpdatedLocation: {
+     namespaces: {},
+     documentXPath: string,
+  },
+  mergeStrategies: any[],
+  mergeRules: any[],
+}

@@ -47,6 +47,7 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void getMatchingSteps() throws Exception {
+        installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
         postJson(PATH + "/firstStep", newDefaultMatchingStep("firstStep"));
@@ -59,8 +60,12 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
             .andDo(result -> {
                 ArrayNode array = (ArrayNode) parseJsonResponse(result);
                 assertEquals(2, array.size());
-
-                List<String> actual = Arrays.asList(array.get(0).get("name").asText(), array.get(1).get("name").asText());
+                int entityIndex = 0;
+                if (array.get(entityIndex).get("entityType").asText().equals("Order")) {
+                    entityIndex = 1;
+                }
+                JsonNode artifactsArray = array.get(entityIndex).get("artifacts");
+                List<String> actual = Arrays.asList(artifactsArray.get(0).get("name").asText(), artifactsArray.get(1).get("name").asText());
                 assertTrue(actual.contains("firstStep"));
                 assertTrue(actual.contains("secondStep"));
             });

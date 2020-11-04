@@ -6,7 +6,6 @@ import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from 'axios';
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import { ConfirmationType } from '../../../types/common-types';
-import { selectedPropertyDefinitions } from '../../../assets/mock-data/explore/entity-search';
 
 jest.mock('axios');
 describe('Create Edit Step Dialog component', () => {

@@ -35,6 +35,8 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#otherSeparator')).not.toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
+    expect(queryAllByPlaceholderText('Enter Source Name')[0]).toBeInTheDocument();
+    expect(queryAllByPlaceholderText('Enter Source Type')[0]).toBeInTheDocument();
     expect(queryAllByText("Target URI Preview:").length ).toEqual(0);
     expect(queryAllByPlaceholderText('Enter URI Prefix')[0]).toBeInTheDocument();
     let tooltip  = getAllByLabelText('icon: question-circle');
@@ -50,8 +52,12 @@ describe('New/edit load data configuration', () => {
     //Tooltip for Target Format
     fireEvent.mouseOver(tooltip[3]);
     await waitForElement(() => getByText(NewLoadTooltips.targetFormat));
-    //Tooltip for Target URI Prefix
     fireEvent.mouseOver(tooltip[4]);
+    await waitForElement(() => getByText(NewLoadTooltips.sourceName));
+    fireEvent.mouseOver(tooltip[5]);
+    await waitForElement(() => getByText(NewLoadTooltips.sourceType));
+    //Tooltip for Target URI Prefix
+    fireEvent.mouseOver(tooltip[6]);
     await waitForElement(() => getByText(NewLoadTooltips.outputURIPrefix));
     expect(getByText("Target Format:")).toHaveTextContent('Target Format: *');
     expect(getByText("Target URI Prefix:")).toHaveTextContent('Target URI Prefix:');
@@ -59,7 +65,7 @@ describe('New/edit load data configuration', () => {
 
   test('fields with Delimited Text render', () => {
     const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'json'};
-    const { baseElement, queryAllByPlaceholderText,getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
+    const { baseElement, queryAllByPlaceholderText, getByLabelText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
                                                                                                 title={'Edit Loading Step'}
                                                                                                 setNewLoad={() => {}}
                                                                                                 createLoadArtifact={() => {}}
@@ -74,6 +80,8 @@ describe('New/edit load data configuration', () => {
     expect(baseElement.querySelector('#fieldSeparator')).toBeInTheDocument();
     expect(baseElement.querySelector('#otherSeparator')).toBeInTheDocument();
     expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
+    expect(queryAllByPlaceholderText('Enter Source Name')[0]).toBeInTheDocument();
+    expect(queryAllByPlaceholderText('Enter Source Type')[0]).toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriReplacement')).not.toBeInTheDocument();
     expect(baseElement.querySelector('#outputUriPrefix')).toBeInTheDocument();
   });
@@ -101,6 +109,22 @@ describe('New/edit load data configuration', () => {
 
     // message should appear when save button is clicked
     expect(getByText('Name is required')).toBeInTheDocument(); 
+  });
+  
+  test('targetFormat with Text should not display sourceName and sourceType', () => {
+    const stepData = { sourceFormat: 'csv', separator: '||', targetFormat: 'txt'};
+    const { baseElement, queryAllByPlaceholderText, getByLabelText, queryByText } = render(<BrowserRouter><NewLoadDialog newLoad={true}
+                                                                                                           title={'Edit Loading Step'}
+                                                                                                           setNewLoad={() => {}}
+                                                                                                           createLoadArtifact={() => {}}
+                                                                                                           stepData={stepData}
+                                                                                                           canReadWrite={true}
+                                                                                                           canReadOnly={false}/></BrowserRouter>);
+
+    expect(baseElement.querySelector('#sourceFormat')).toBeInTheDocument();
+    expect(baseElement.querySelector('#targetFormat')).toBeInTheDocument();
+    expect(queryByText('Source Name')).not.toBeInTheDocument();
+    expect(queryByText('Source Type')).not.toBeInTheDocument();
   });
 
 });
