@@ -31,12 +31,12 @@ describe('login', () => {
   });
 
   it('should verify all the error conditions for login', () => {
-      //Verify username/password is required and login button is disabled
+      //Verify username/password is required and login button is enabled
       loginPage.getUsername().type('{enter}').blur();
       loginPage.getPassword().type('{enter}').blur();
       cy.contains('Username is required');
       cy.contains('Password is required');
-      loginPage.getLoginButton().should('be.disabled');
+      loginPage.getLoginButton().should('be.enabled');
 
       //Verify invalid credentials error message
       loginPage.getUsername().type('test');
