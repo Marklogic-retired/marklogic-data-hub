@@ -77,7 +77,7 @@ describe('Mapping', () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
     curatePage.toggleEntityTypeId('Order');
-    cy.waitUntil(() => curatePage.addNewMapStep().click());
+    cy.waitUntil(() => curatePage.addNewStep().click());
 
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription('An order mapping with custom processors');
@@ -170,7 +170,7 @@ describe('Mapping', () => {
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
     curatePage.toggleEntityTypeId('Order');
-    cy.waitUntil(() => curatePage.addNewMapStep().click());
+    cy.waitUntil(() => curatePage.addNewStep().click());
 
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription('An order mapping with custom header');

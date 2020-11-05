@@ -18,6 +18,7 @@ export const mergingStep = {
         "targetDatabase": "data-hub-FINAL",
         "targetFormat": "JSON",
         "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "timestamp": "/envelope/headers/createdOn",
         "provenanceGranularityLevel": "fine",
         "lastUpdatedLocation": {
           "namespaces": { "es": "http://marklogic.com/entity-services" },
@@ -133,6 +134,7 @@ export const mergingStep = {
         "targetDatabase": "data-hub-FINAL",
         "targetFormat": "JSON",
         "permissions": "data-hub-common,read,data-hub-common-writer,update",
+        "timestamp": "/envelope/headers/createdOn",
         "provenanceGranularityLevel": "fine",
         "lastUpdatedLocation": {
           "namespaces": { "es": "http://marklogic.com/entity-services" },

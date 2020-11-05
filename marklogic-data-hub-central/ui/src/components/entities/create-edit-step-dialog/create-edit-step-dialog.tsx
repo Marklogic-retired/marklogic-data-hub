@@ -6,7 +6,7 @@ import styles from './create-edit-step-dialog.module.scss';
 import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 
 import { UserContext } from '../../../util/user-context';
-import { NewMatchTooltips } from '../../../config/tooltips.config';
+import { NewMatchTooltips, NewMergeTooltips } from '../../../config/tooltips.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system'; 
 import { ConfirmationType } from '../../../types/common-types';
 import { StepType } from '../../../types/curation-types';
@@ -59,6 +59,8 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
   const [isCollectionsTouched, setCollectionsTouched] = useState(false);
   const [isSrcQueryTouched, setSrcQueryTouched] = useState(false);
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
+  const [timestamp, setTimestamp] = useState('');
+  const [isTimestampTouched, setTimestampTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false);
 
@@ -88,7 +90,11 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         );
         setCollections(srcCollection);
         }
-        
+
+        if (props.stepType === StepType.Merging) {
+          setTimestamp(props.editStepArtifactObject.timestamp);
+        }
+
         resetTouchedValues();
         setIsValid(true);
         setTobeDisabled(true);
@@ -113,6 +119,9 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
     setTobeDisabled(false);
     setCollections('');
     setSrcQuery('');
+    if (props.stepType === StepType.Merging) {
+      setTimestamp('');
+    }
     resetTouchedValues();
   }
 
@@ -122,6 +131,9 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
     setSrcQueryTouched(false);
     setStepNameTouched(false);
     setDescriptionTouched(false);
+    if (props.stepType === StepType.Merging) {
+      setTimestampTouched(false);
+    }
   }
 
   const onCancel = () => {
@@ -139,6 +151,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
       && !isSelectedSourceTouched
       && !isCollectionsTouched
       && !isSrcQueryTouched
+      && !isTimestampTouched
     ) {
       return false;
     } else {
@@ -193,6 +206,9 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         sourceQuery: srcQuery
       };
     }
+    if(props.stepType === StepType.Merging) {
+      dataPayload['timestamp'] = timestamp;
+    }
 
     setIsValid(true);
     props.createStepArtifact(dataPayload);
@@ -211,9 +227,11 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
             "pattern": value,
         }
         const response = await axios.post(`/api/entitySearch/facet-values?database=staging`, data)
-        setCollectionOptions(response.data);
+        if(response?.status === 200) {
+          setCollectionOptions(response.data);
+        }
       } catch (error) {
-        console.log(error)
+        console.error(error)
         handleError(error);
     }
 
@@ -257,7 +275,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         setStepNameTouched(true);
         setStepName(event.target.value);
         if (event.target.value.length > 0) {
-          if (JSON.stringify(collections) !== JSON.stringify([]) || srcQuery) {
+          if (collections || srcQuery) {
             setIsValid(true);
           }
         } else {
@@ -318,6 +336,21 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         }
       }
     }
+
+    if (event.target.id === 'timestamp') {
+      if (event.target.value === ' ') {
+        setTimestampTouched(false);
+      }
+      else {
+        setTimestampTouched(true);
+        setTimestamp(event.target.value);
+        if (props.isEditing && props.editStepArtifactObject.timestamp) {
+          if (event.target.value === props.editStepArtifactObject.timestamp) {
+            setTimestampTouched(false);
+          }
+        }
+      }
+    }
   };
 
   const handleSelectedSource = (event) => {
@@ -331,7 +364,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
         setSelectedSourceTouched(false);
       }
       if (event.target.value === 'collection') {
-        if (stepName && JSON.stringify(collections) !== JSON.stringify([])) {
+        if (stepName && collections) {
           setIsValid(true);
         } else {
           setIsValid(false);
@@ -394,7 +427,7 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
             />&nbsp;&nbsp;
-            <MLTooltip title={NewMatchTooltips.description}>
+            <MLTooltip title={NewMergeTooltips.description}>
           <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
         </MLTooltip>
           </Form.Item>
@@ -441,17 +474,30 @@ const CreateEditStepDialog: React.FC<Props>  = (props) => {
             <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
           </MLTooltip></span>}
           </Form.Item>
+          {props.stepType === StepType.Merging ?
+              <Form.Item label={<span>
+                Timestamp Path:
+                &nbsp;
+                </span>} labelAlign="left"
+                className={styles.timestamp}>
+                <Input
+                  id="timestamp"
+                  placeholder="Enter path to the timestamp"
+                  value={timestamp}
+                  onChange={handleChange}
+                  disabled={props.canReadOnly && !props.canReadWrite}
+                  className={styles.input}
+                />&nbsp;&nbsp;
+              <MLTooltip title={NewMergeTooltips.timestampPath}>
+                  <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+                </MLTooltip>
+              </Form.Item> : ''}
 
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
-              <MLButton onClick={() => onCancel()}>Cancel</MLButton>
+              <MLButton data-testid={`${props.stepType}-dialog-cancel`} onClick={() => onCancel()}>Cancel</MLButton>
               &nbsp;&nbsp;
-              <MLButton
-                type="primary"
-                htmlType="submit"
-                disabled={!props.canReadWrite} 
-                onClick={handleSubmit}
-              >Save</MLButton>
+              <MLButton type="primary" htmlType="submit" disabled={!props.canReadWrite} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton>
             </div>
           </Form.Item>
         </Form>

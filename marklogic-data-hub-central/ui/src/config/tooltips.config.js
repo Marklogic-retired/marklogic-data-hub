@@ -89,7 +89,8 @@ const NewCustomTooltips = {
 };
 
 const NewMergeTooltips = {
-    'timestampPath': 'The field to use to determine which values to include in the merged property, based on their recency.'
+    'description':'The description of this merge configuration.',
+    'timestampPath': 'The path to a timestamp field within the record. This field is used to determine which values to include in the merged property, based on their recency.'
 };
 
 const AdvMergeTooltips = {

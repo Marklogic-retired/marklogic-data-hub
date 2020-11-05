@@ -61,7 +61,11 @@ class CuratePage {
         cy.findByTestId(`${entityTypeId}-Custom`).should(customTabShould);
     }
 
-    addNewMapStep() {
+    selectMergeTab(entityTypeId: string) {
+        cy.findByTestId(`${entityTypeId}-Merge`).click();
+    }
+
+    addNewStep() {
         return cy.findByLabelText('icon: plus-circle');
     }
 

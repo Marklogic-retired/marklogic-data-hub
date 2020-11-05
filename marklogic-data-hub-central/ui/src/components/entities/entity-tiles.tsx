@@ -45,6 +45,8 @@ const EntityTiles = (props) => {
             view = 'custom-';
           } else if (location.state.stepDefinitionType === 'matching') {
             view = 'match-';
+          } else if (location.state.stepDefinitionType === 'merging') {
+            view = 'merge-';
           }
           const activeLocationEntityTypes = [location.state.targetEntityType || 'No Entity Type'];
           setLocationEntityType(activeLocationEntityTypes);
@@ -219,33 +221,27 @@ const EntityTiles = (props) => {
     };
 
     const deleteMergingArtifact = async (mergeName) => {
-      //TODO add endpoint functionality
-      console.log('delete Merge Step', mergeName);
-      // try {
-      //     let response = await axios.delete(`/api/steps/merging/${mergeName}`);
-      //     console.log('delete response', response);
-      //     if (response.status === 200) {
-      //       updateIsLoadingFlag();
-      //     }
-      //   } catch (error) {
-      //       let message = error.response.data.message;
-      //       console.error('Error while deleting matching artifact.', message);
-      //   }
+      try {
+          let response = await axios.delete(`/api/steps/merging/${mergeName}`);
+          if (response.status === 200) {
+            updateIsLoadingFlag();
+          }
+        } catch (error) {
+            let message = error.response.data.message;
+            console.error('Error while deleting matching artifact.', message);
+        }
     };
 
     const createMergingArtifact = async (mergingObj) => {
-      //TODO add endpoint functionality
-      console.log('createMergeStep', mergingObj)
-        // try {
-        //     let response = await axios.post(`/api/steps/merging/${mergingObj.name}`, mergingObj);
-        //     console.log('create merge artifact repsone', response)
-        //     if (response.status === 200) {
-        //       updateIsLoadingFlag();
-        //     }
-        //   } catch (error) {
-        //     let message = error.response.data.message;
-        //     console.error('Error While creating the matching artifact!', message);
-        //   }
+        try {
+            let response = await axios.post(`/api/steps/merging/${mergingObj.name}`, mergingObj);
+            if (response.status === 200) {
+              updateIsLoadingFlag();
+            }
+          } catch (error) {
+            let message = error.response.data.message;
+            console.error('Error While creating the matching artifact!', message);
+          }
     };
 
     const getCustomArtifacts = async () => {
