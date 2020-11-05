@@ -1,0 +1,25 @@
+{
+    "endpoint": "/marklogic-data-hub-spark-connector/readRows.sjs",
+    "desc": "Return a JSON array for each row that matches the user's query, as defined by the endpointConstants",
+    "functionName": "readRows",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "endpointConstants",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "desc": "A JSON array for each matching row for the given partition batch",
+        "multiple": true,
+        "nullable": true
+    }
+}
