@@ -140,7 +140,7 @@ describe('login', () => {
       toolbar.getCurateToolbarIcon().click();
       curatePage.toggleEntityTypeId(entityTypeId);
       curatePage.verifyTabs(entityTypeId, 'be.visible', 'not.exist');
-      curatePage.addNewMapStep().should('not.be.visible');
+      curatePage.addNewStep().should('not.be.visible');
       curatePage.stepSettings(mapStepName).click();
       curatePage.saveSettings(mapStepName).should('be.disabled');
       curatePage.cancelSettings(mapStepName).click();

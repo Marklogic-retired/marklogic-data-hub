@@ -298,7 +298,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getSelectedQuery().should('contain', 'select a query');
         // Should comment below line after DHFPROD-5392 is done
         browsePage.getHubPropertiesExpanded();
-        browsePage.getFacetItemCheckbox('collection', 'Person').click();
+        browsePage.getFacetItemCheckbox('collection', 'Person').click({force: true});
         browsePage.getFacetApplyButton().click();
         browsePage.getSaveModalIcon().should('not.be.visible');
     });

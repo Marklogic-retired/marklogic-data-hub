@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Card, Icon, Row, Col, Select } from 'antd';
 import { MLTooltip } from '@marklogic/design-system';
@@ -14,7 +14,7 @@ import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
 
 import { AuthoritiesContext } from "../../../util/authorities";
 import { CurationContext } from '../../../util/curation-context';
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from '../../../util/conversionFunctions';
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
 import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
 import { ConfirmationType } from '../../../types/common-types';
 import { MergingStep, StepType} from '../../../types/curation-types';
@@ -52,6 +52,12 @@ const MergingCard: React.FC<Props> = (props) => {
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
+  const [sortedMergingSteps, setSortedMergingSteps] = useState(props.mergingStepsArray);
+
+  useEffect(() => {
+    let sortedArray = props.mergingStepsArray.length > 1 ? sortStepsByUpdated(props.mergingStepsArray) : props.mergingStepsArray;
+    setSortedMergingSteps(sortedArray);
+  },[props.mergingStepsArray]);
 
   const openAddStepDialog = () => {
     setEditStepArtifact({});
@@ -68,7 +74,6 @@ const MergingCard: React.FC<Props> = (props) => {
   const stepSettingsClicked = (index) => {
     setStepArtifact(props.mergingStepsArray[index]);
     toggleStepSettings(true);
-    console.log(props.mergingStepsArray)
   }
 
   const openStepDetails = (mergingStep: MergingStep) => {
@@ -146,7 +151,7 @@ const MergingCard: React.FC<Props> = (props) => {
           />
       </MLTooltip>,
 
-      props.canReadMatchMerge ? (
+      props.canWriteMatchMerge ? (
       <MLTooltip title={'Delete'} placement="bottom">
         <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
@@ -165,7 +170,7 @@ const MergingCard: React.FC<Props> = (props) => {
   return (
     <div className={styles.mergeContainer}>
       <Row gutter={16} type="flex">
-        {props.canReadMatchMerge ? (
+        {props.canWriteMatchMerge ? (
           <Col>
             <Card
               size="small"
@@ -176,8 +181,8 @@ const MergingCard: React.FC<Props> = (props) => {
             </Card>
           </Col>
         ) : null}
-        {props.mergingStepsArray.length > 0 ? (
-          props.mergingStepsArray.map((step, index) => (
+        {sortedMergingSteps && sortedMergingSteps.length > 0 ? (
+          sortedMergingSteps.map((step, index) => (
             <Col key={index}>
               <div
                 data-testid={`${props.entityName}-${step.name}-step`}

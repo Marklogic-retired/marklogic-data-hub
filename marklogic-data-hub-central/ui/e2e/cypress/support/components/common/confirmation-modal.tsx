@@ -57,6 +57,9 @@ class ConfirmationModal {
   getIdentifierText() {
     return cy.findByLabelText('identifier-text');
   }
+  getDiscardChangesText() {
+    return cy.findByLabelText('discard-changes-text');
+  }
 }
 
 const confirmationModal = new ConfirmationModal();
