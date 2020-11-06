@@ -28,6 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "jobStatus",
     "timeStarted",
     "timeEnded",
+    "externalMetadata",
     "stepResponses"
 })
 public class JobSchema {
@@ -78,6 +79,13 @@ public class JobSchema {
     @JsonProperty("timeEnded")
     @JsonPropertyDescription("dateTime at which the job ended")
     private String timeEnded;
+    /**
+     * Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector
+     * 
+     */
+    @JsonProperty("externalMetadata")
+    @JsonPropertyDescription("Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector")
+    private ExternalMetadata externalMetadata;
     /**
      * For each step that was executed, a key with a name equaling the step number of the step will be present
      * 
@@ -217,6 +225,24 @@ public class JobSchema {
     }
 
     /**
+     * Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector
+     * 
+     */
+    @JsonProperty("externalMetadata")
+    public ExternalMetadata getExternalMetadata() {
+        return externalMetadata;
+    }
+
+    /**
+     * Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector
+     * 
+     */
+    @JsonProperty("externalMetadata")
+    public void setExternalMetadata(ExternalMetadata externalMetadata) {
+        this.externalMetadata = externalMetadata;
+    }
+
+    /**
      * For each step that was executed, a key with a name equaling the step number of the step will be present
      * 
      */
@@ -280,6 +306,10 @@ public class JobSchema {
         sb.append('=');
         sb.append(((this.timeEnded == null)?"<null>":this.timeEnded));
         sb.append(',');
+        sb.append("externalMetadata");
+        sb.append('=');
+        sb.append(((this.externalMetadata == null)?"<null>":this.externalMetadata));
+        sb.append(',');
         sb.append("stepResponses");
         sb.append('=');
         sb.append(((this.stepResponses == null)?"<null>":this.stepResponses));
@@ -303,6 +333,7 @@ public class JobSchema {
         result = ((result* 31)+((this.jobStatus == null)? 0 :this.jobStatus.hashCode()));
         result = ((result* 31)+((this.stepResponses == null)? 0 :this.stepResponses.hashCode()));
         result = ((result* 31)+((this.timeEnded == null)? 0 :this.timeEnded.hashCode()));
+        result = ((result* 31)+((this.externalMetadata == null)? 0 :this.externalMetadata.hashCode()));
         result = ((result* 31)+((this.lastAttemptedStep == null)? 0 :this.lastAttemptedStep.hashCode()));
         result = ((result* 31)+((this.timeStarted == null)? 0 :this.timeStarted.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
@@ -321,7 +352,7 @@ public class JobSchema {
             return false;
         }
         JobSchema rhs = ((JobSchema) other);
-        return (((((((((((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId)))&&((this.jobStatus == rhs.jobStatus)||((this.jobStatus!= null)&&this.jobStatus.equals(rhs.jobStatus))))&&((this.stepResponses == rhs.stepResponses)||((this.stepResponses!= null)&&this.stepResponses.equals(rhs.stepResponses))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.lastAttemptedStep == rhs.lastAttemptedStep)||((this.lastAttemptedStep!= null)&&this.lastAttemptedStep.equals(rhs.lastAttemptedStep))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.user == rhs.user)||((this.user!= null)&&this.user.equals(rhs.user))))&&((this.lastCompletedStep == rhs.lastCompletedStep)||((this.lastCompletedStep!= null)&&this.lastCompletedStep.equals(rhs.lastCompletedStep))))&&((this.flow == rhs.flow)||((this.flow!= null)&&this.flow.equals(rhs.flow))));
+        return ((((((((((((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId)))&&((this.jobStatus == rhs.jobStatus)||((this.jobStatus!= null)&&this.jobStatus.equals(rhs.jobStatus))))&&((this.stepResponses == rhs.stepResponses)||((this.stepResponses!= null)&&this.stepResponses.equals(rhs.stepResponses))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.externalMetadata == rhs.externalMetadata)||((this.externalMetadata!= null)&&this.externalMetadata.equals(rhs.externalMetadata))))&&((this.lastAttemptedStep == rhs.lastAttemptedStep)||((this.lastAttemptedStep!= null)&&this.lastAttemptedStep.equals(rhs.lastAttemptedStep))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.user == rhs.user)||((this.user!= null)&&this.user.equals(rhs.user))))&&((this.lastCompletedStep == rhs.lastCompletedStep)||((this.lastCompletedStep!= null)&&this.lastCompletedStep.equals(rhs.lastCompletedStep))))&&((this.flow == rhs.flow)||((this.flow!= null)&&this.flow.equals(rhs.flow))));
     }
 
 }
