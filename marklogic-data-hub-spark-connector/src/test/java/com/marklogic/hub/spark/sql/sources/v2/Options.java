@@ -15,6 +15,7 @@ import java.util.Map;
 public class Options {
 
     // All connector-specific options
+    private String uriTemplate;
     private String uriPrefix;
     private String writeRecordsApiPath;
     private String collections;
@@ -49,6 +50,9 @@ public class Options {
         Map<String, String> params = new HashMap<>();
         if (hubProperties != null) {
             params.putAll(hubProperties);
+        }
+        if (uriTemplate != null) {
+            params.put("uritemplate", uriTemplate);
         }
 
         if (uriPrefix != null) {
@@ -109,8 +113,12 @@ public class Options {
         if (sqlCondition != null) {
             params.put("sqlcondition", sqlCondition);
         }
-
         return new DataSourceOptions(params);
+    }
+
+    public Options withUriTemplate(String uriTemplate) {
+        this.uriTemplate = uriTemplate;
+        return this;
     }
 
     public Options withUriPrefix(String uriPrefix) {
