@@ -77,9 +77,40 @@ function buildMetadata(endpointConstants) {
   return metadata;
 }
 
+/**
+ * Generate an uri for an input object.
+ *
+ * @param uriTemplateRegEx The precompiled URI regular expression or null if not used.
+ * @param record The record we want to create an URI for.
+ * @param endpointConstants The input options
+ * @returns A random or template generated URI based on the options.
+ */
 function generateUri(record, endpointConstants) {
-  const uriPrefix = endpointConstants.uriprefix != null ? endpointConstants.uriprefix : "";
-  return uriPrefix + sem.uuidString() + ".json";
+  let uriTemplateRegEx = endpointConstants.uriTemplateRegEx;
+  if ( !uriTemplateRegEx ) {
+    // we cache the regex for this batch.s
+    uriTemplateRegEx = endpointConstants.uritemplate ? new RegExp("{([^}]+)}", 'gi') : null;
+    endpointConstants.uriTemplateRegEx = uriTemplateRegEx;
+  }
+  if ( uriTemplateRegEx === null ) {
+    const uriPrefix = endpointConstants.uriprefix != null ? endpointConstants.uriprefix : "";
+    return uriPrefix + sem.uuidString() + ".json";
+  } else {
+    return endpointConstants.uritemplate.replace(uriTemplateRegEx, function (match, group) {
+      let propertyValue = record[group];
+      const type = typeof propertyValue;
+      if ( propertyValue === null ) {
+        throw new Error("Property ["+group+"] is null. This can't be used in a uri template.");
+      } else if ( type === "undefined") {
+        throw new Error("Property ["+group+"] is undefined. This can't be used in a uri template.");
+      } else if ( type === "object" ) {
+        throw new Error("Property ["+group+"] is an object. This can't be used in a uri template.");
+      } else if ( type === "function" ) {
+        throw new Error("Property ["+group+"] is a function. This can't be used in a uri template.");
+      }
+      return String(propertyValue);
+    });
+  }
 }
 
 function normalizeInputToArray(input) {

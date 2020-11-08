@@ -43,11 +43,10 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         this.sparkSchema = schema;
         this.streaming = streaming;
         this.objectMapper = new ObjectMapper();
-
         this.hubClientConfig = Util.buildHubClientConfig(options);
         this.hubClient = HubClient.withHubClientConfig(hubClientConfig);
         verifyUserIsAuthorized();
-
+        validateUriTemplateIfPresent();
         this.endpointParams = determineWriteRecordsEndpointParams(options);
 
         this.customWriteApiDefinitions = readCustomJobApiDefinitions(options);
@@ -99,6 +98,48 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             }
         }
         return false;
+    }
+
+    /**
+     * Validate the URI template if present in the options.
+     *
+     * A valid URI template:
+     * - Has no missing opening or closing curly brackets.
+     * - Each token has >0 characters.
+     * - Has no nested curcly brackets.
+     */
+    private void validateUriTemplateIfPresent() {
+        String uriTemplate = options.get("uritemplate");
+        if ( uriTemplate == null ) {
+            return;
+        }
+        boolean inToken = false;
+        int tokenSize = 0;
+        char[] chars = uriTemplate.toCharArray();
+        for ( char ch : chars ) {
+            if ( ch == '}' ) {
+                if ( !inToken ) {
+                    throw new IllegalArgumentException("Closing curly bracket found without opening bracket. uritemplate=" + uriTemplate + ".");
+                }
+                if ( tokenSize == 0 ) {
+                    throw new IllegalArgumentException("UriTemplate has empty tokens. uritemplate=" + uriTemplate + ".");
+                }
+                inToken = false;
+            } else if ( ch == '{' ) {
+                if ( inToken ) {
+                    throw new IllegalArgumentException("Nested tokens in uritemplate=" + uriTemplate + ".");
+                }
+                inToken = true;
+                tokenSize = 0;
+            } else {
+                if (inToken) {
+                    tokenSize++;
+                }
+            }
+        }
+        if ( inToken ) {
+            throw new IllegalArgumentException("Unclosed token in uritemplate=" + uriTemplate + ".");
+        }
     }
 
     /**
@@ -161,7 +202,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
      * @param options
      */
     private void applyOptionsToEndpointConstants(ObjectNode endpointConstants, Map<String, String> options) {
-        Stream.of("collections", "permissions", "sourcename", "sourcetype", "uriprefix").forEach(key -> {
+        Stream.of("collections", "permissions", "sourcename", "sourcetype", "uriprefix","uritemplate").forEach(key -> {
             if (options.containsKey(key)) {
                 endpointConstants.put(key, options.get(key));
             }
