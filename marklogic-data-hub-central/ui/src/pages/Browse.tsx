@@ -409,14 +409,14 @@ const Browse: React.FC<Props> = ({ location }) => {
                         defaultValue={tableView ? 'table' : 'snippet'}
                         onChange={e => handleViewChange(e.target.value)}
                       >
-                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} >
-                          <i data-cy="facet-view" id={'snippetView'}><MLTooltip title={'Snippet View'}>
-                            {!tableView ? <FontAwesomeIcon icon={faStream} /> : <FontAwesomeIcon icon={faStream} style={{ color: '#CCC' }} />}
-                          </MLTooltip></i>
-                        </MLRadio.MLButton>
                         <MLRadio.MLButton aria-label="switch-view-table" value={'table'} >
                           <i data-cy="table-view" id={'tableView'}><MLTooltip title={'Table View'}>{
                             tableView ? <FontAwesomeIcon icon={faTable} /> : <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} />}
+                          </MLTooltip></i>
+                        </MLRadio.MLButton>
+                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} >
+                          <i data-cy="facet-view" id={'snippetView'}><MLTooltip title={'Snippet View'}>
+                            {!tableView ? <FontAwesomeIcon icon={faStream} /> : <FontAwesomeIcon icon={faStream} style={{ color: '#CCC' }} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
                       </MLRadio.MLGroup>
