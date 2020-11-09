@@ -50,9 +50,9 @@ describe("Facet component", () => {
 
     expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
     expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();
-    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(180deg);');
+    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(-90deg);');
     fireEvent.click(getByTestId('sales_region-toggle'));
-    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(180deg);');
+    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(-90deg);');
   });
 
   it("Search link shown only when facet number greater than limit" , () => {

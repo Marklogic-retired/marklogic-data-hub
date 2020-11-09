@@ -495,7 +495,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <Collapse
         className={styles.sideBarFacets}
         activeKey={activeKey}
-        expandIcon={panelProps => <Icon type="down" rotate={panelProps.isActive ? 0 : 180} data-testid='toggle' />}
+        expandIcon={panelProps => <Icon className={styles.toggleIcon} type="down" rotate={panelProps.isActive ? 0 : -90} data-testid='toggle' />}
         expandIconPosition="right"
         bordered={false}
         onChange={setActive}

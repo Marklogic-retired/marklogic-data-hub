@@ -131,14 +131,14 @@ describe("Sidebar createdOn face time window dropdown", () => {
             />
         );
         expect(document.querySelector('#database [data-icon=down]')).toBeInTheDocument();
-        expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(-90deg);');
         userEvent.click(getByText('Database'));
-        expect(document.querySelector('#database [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#database [data-icon=down]')).toHaveStyle('transform: rotate(-90deg);');
 
         expect(document.querySelector('#hub-properties [data-icon=down]')).toBeInTheDocument();
-        expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(-90deg);');
         userEvent.click(getByText('Hub Properties'));
-        expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(-90deg);');
     });
 
     test("Collapse/Expand carets render properly for database, entity and hub properties", () => {
@@ -154,17 +154,17 @@ describe("Sidebar createdOn face time window dropdown", () => {
             />
         );
         expect(document.querySelector('#database [data-icon=down]')).toBeInTheDocument();
-        expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#database [data-icon=down]')).not.toHaveStyle('transform: rotate(-90deg);');
         userEvent.click(getByText('Database'));
-        expect(document.querySelector('#database [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#database [data-icon=down]')).toHaveStyle('transform: rotate(-90deg);');
         expect(document.querySelector('#entity-properties [data-icon=down]')).toBeInTheDocument();
-        expect(document.querySelector('#entity-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#entity-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(-90deg);');
         userEvent.click(getByText('Entity Properties'));
-        expect(document.querySelector('#entity-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#entity-properties [data-icon=down]')).toHaveStyle('transform: rotate(-90deg);');
         expect(document.querySelector('#hub-properties [data-icon=down]')).toBeInTheDocument();
-        expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#hub-properties [data-icon=down]')).toHaveStyle('transform: rotate(-90deg);');
         userEvent.click(getByText('Hub Properties'));
-        expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(180deg);');
+        expect(document.querySelector('#hub-properties [data-icon=down]')).not.toHaveStyle('transform: rotate(-90deg);');
     });
 
 
