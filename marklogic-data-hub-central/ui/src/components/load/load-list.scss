@@ -3,7 +3,7 @@
     src: url(../../fonts/ML_IconFont2.ttf)  format('truetype');
 }
 
-.AddToFlowIcon::before{ 
+.AddToFlowIcon::before { 
     content: "\61";
     font-family: AddToFlowIcon;
     font-size: 24px; 
@@ -15,7 +15,7 @@
     cursor: pointer;
 }
 
-.disabledAddToFlowIcon::before{ 
+.disabledAddToFlowIcon::before { 
     content: "\61";
     font-family: AddToFlowIcon;
     font-size: 24px; 

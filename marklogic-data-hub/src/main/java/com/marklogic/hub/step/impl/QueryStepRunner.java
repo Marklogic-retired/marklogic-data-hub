@@ -406,7 +406,11 @@ public class QueryStepRunner implements StepRunner {
                         }
                     }
 
-                    if (response.errorCount < response.totalCount) {
+                    // Prior to DHFPROD-5997 / 5.4.0, if the count of errors and total count of events were both zero,
+                    // then the batch was considered to have failed. I don't think this could have possibly happened though
+                    // prior to 5997. Now that 5997 can filter out items after they've been collected, failed batches is
+                    // only incremented if there are actually errors (which seems intuitive too). 
+                    if (response.errorCount < 1) {
                         stepMetrics.getSuccessfulBatches().addAndGet(1);
                     } else {
                         stepMetrics.getFailedBatches().addAndGet(1);

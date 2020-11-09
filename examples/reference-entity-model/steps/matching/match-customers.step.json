@@ -7,32 +7,21 @@
   "targetEntity" : "Customer",
   "sourceDatabase" : "data-hub-FINAL",
   "collections" : [ "matched-customers", "match-customers" ],
-  "matchOptions" : {
-    "dataFormat" : "json",
-    "propertyDefs" : {
-      "property" : [ {
-        "localname" : "customerId",
-        "name" : "customerId"
-      } ]
-    },
-    "scoring" : {
-      "add" : [ {
-        "propertyName" : "customerId",
-        "weight" : "10"
-      } ]
-    },
-    "thresholds" : {
-      "threshold" : [ {
-        "above" : "10",
-        "label" : "Definitive Match",
-        "action" : "merge"
-      } ]
-    },
-    "tuning" : {
-      "maxScan" : 200
-    }
-  },
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
-  "stepId" : "match-customers-matching"
+  "stepId" : "match-customers-matching",
+  "matchRulesets" : [ {
+    "name" : "customerId - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "customerId",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "Definitive Match",
+    "action" : "merge",
+    "score" : 10
+  } ]
 }
