@@ -6,6 +6,8 @@ plugins {
 
 jmeter {
     // See https://github.com/jmeter-gradle-plugin/jmeter-gradle-plugin/wiki/Getting-Started
+    jmTestFiles = [file("src/test/jmeter/jmeter_example.jmx")]
+    enableExtendedReports = true
 }
 
 repositories {
