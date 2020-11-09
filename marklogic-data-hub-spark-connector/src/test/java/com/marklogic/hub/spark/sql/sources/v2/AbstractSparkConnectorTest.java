@@ -110,11 +110,15 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         return params;
     }
 
+    protected Options newOptions() {
+        return new Options(getHubPropertiesAsMap());
+    }
+
     /**
      * @return a default set of fruit-specific options to simplify writing tests
      */
     protected Options newFruitOptions() {
-        return new Options(getHubPropertiesAsMap()).withCollections("fruits");
+        return newOptions().withCollections("fruits");
     }
 
     /**

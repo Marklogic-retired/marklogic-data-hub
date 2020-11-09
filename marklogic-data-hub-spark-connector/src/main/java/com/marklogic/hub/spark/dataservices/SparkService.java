@@ -50,7 +50,9 @@ public interface SparkService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_writeRecords;
+            private BaseProxy.DBFunctionRequest req_initializeRead;
             private BaseProxy.DBFunctionRequest req_finalizeWrite;
+            private BaseProxy.DBFunctionRequest req_readRows;
             private BaseProxy.DBFunctionRequest req_initializeWrite;
 
             private SparkServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
@@ -59,8 +61,12 @@ public interface SparkService {
 
                 this.req_writeRecords = this.baseProxy.request(
                     "writeRecords.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                this.req_initializeRead = this.baseProxy.request(
+                    "initializeRead.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_finalizeWrite = this.baseProxy.request(
                     "finalizeWrite.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS);
+                this.req_readRows = this.baseProxy.request(
+                    "readRows.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_initializeWrite = this.baseProxy.request(
                     "initializeWrite.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
@@ -80,6 +86,21 @@ public interface SparkService {
             }
 
             @Override
+            public com.fasterxml.jackson.databind.JsonNode initializeRead(com.fasterxml.jackson.databind.JsonNode inputs) {
+                return initializeRead(
+                    this.req_initializeRead.on(this.dbClient), inputs
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode initializeRead(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode inputs) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("inputs", false, BaseProxy.JsonDocumentType.fromJsonNode(inputs))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
             public void finalizeWrite(String jobId, String status) {
                 finalizeWrite(
                     this.req_finalizeWrite.on(this.dbClient), jobId, status
@@ -91,6 +112,22 @@ public interface SparkService {
                           BaseProxy.atomicParam("jobId", false, BaseProxy.StringType.fromString(jobId)),
                           BaseProxy.atomicParam("status", false, BaseProxy.StringType.fromString(status))
                           ).responseNone();
+            }
+
+            @Override
+            public Stream<Reader> readRows(Reader endpointState, Reader endpointConstants) {
+                return readRows(
+                    this.req_readRows.on(this.dbClient), endpointState, endpointConstants
+                    );
+            }
+            private Stream<Reader> readRows(BaseProxy.DBFunctionRequest request, Reader endpointState, Reader endpointConstants) {
+              return BaseProxy.JsonDocumentType.toReader(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("endpointState", true, BaseProxy.JsonDocumentType.fromReader(endpointState)),
+                          BaseProxy.documentParam("endpointConstants", true, BaseProxy.JsonDocumentType.fromReader(endpointConstants))
+                          ).responseMultiple(true, Format.JSON)
+                );
             }
 
             @Override
@@ -122,6 +159,14 @@ public interface SparkService {
     void writeRecords(Reader endpointConstants, Stream<Reader> input);
 
   /**
+   * Determines the schema and set of partitions based on the user's inputs
+   *
+   * @param inputs	JSON object defining the inputs for the export query; supports view, schema, sqlCondition, and partitionCount
+   * @return	JSON object containing a 'schema' object and a 'partitions' 
+   */
+    com.fasterxml.jackson.databind.JsonNode initializeRead(com.fasterxml.jackson.databind.JsonNode inputs);
+
+  /**
    * Finalize a write process, which includes updating the job document
    *
    * @param jobId	ID of the job document
@@ -129,6 +174,15 @@ public interface SparkService {
    * 
    */
     void finalizeWrite(String jobId, String status);
+
+  /**
+   * Return a JSON array for each row that matches the user's query, as defined by the endpointConstants
+   *
+   * @param endpointState	provides input
+   * @param endpointConstants	provides input
+   * @return	A JSON array for each matching row for the given partition batch
+   */
+    Stream<Reader> readRows(Reader endpointState, Reader endpointConstants);
 
   /**
    * Initializes a write process, which includes creating a job document

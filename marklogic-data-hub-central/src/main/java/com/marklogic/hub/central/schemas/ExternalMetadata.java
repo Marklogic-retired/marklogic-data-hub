@@ -11,14 +11,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
- * Any properties defined in this object are passed to the invoked module
+ * Captures metadata related to Spark when a document is ingested via the Data Hub Spark connector
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 
 })
-public class Vars__1 {
+public class ExternalMetadata {
 
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -36,7 +36,7 @@ public class Vars__1 {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Vars__1 .class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(ExternalMetadata.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("additionalProperties");
         sb.append('=');
         sb.append(((this.additionalProperties == null)?"<null>":this.additionalProperties));
@@ -61,10 +61,10 @@ public class Vars__1 {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Vars__1) == false) {
+        if ((other instanceof ExternalMetadata) == false) {
             return false;
         }
-        Vars__1 rhs = ((Vars__1) other);
+        ExternalMetadata rhs = ((ExternalMetadata) other);
         return ((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties)));
     }
 

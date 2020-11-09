@@ -47,6 +47,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
     "constrainSourceQueryToJob",
     "sourceQueryIsScript",
     "sourceQuery",
+    "excludeAlreadyProcessed",
     "targetEntityType",
     "name"
 })
@@ -184,6 +185,13 @@ public class StepSchema {
     @JsonProperty("sourceQuery")
     @JsonPropertyDescription("Defines the items to be processed by the step; must be a cts.query or cts.uris statement if sourceQueryIsScript is false")
     private String sourceQuery;
+    /**
+     * Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already
+     * 
+     */
+    @JsonProperty("excludeAlreadyProcessed")
+    @JsonPropertyDescription("Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already")
+    private Boolean excludeAlreadyProcessed;
     /**
      * The identifier of an Entity Type. (IRI, with title as fallback)
      * 
@@ -567,6 +575,24 @@ public class StepSchema {
     }
 
     /**
+     * Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already
+     * 
+     */
+    @JsonProperty("excludeAlreadyProcessed")
+    public Boolean getExcludeAlreadyProcessed() {
+        return excludeAlreadyProcessed;
+    }
+
+    /**
+     * Added in 5.4.0; if true, then any items returned by the sourceQuery will be excluded from processing if a Batch document indicates that the item was processed by this step already
+     * 
+     */
+    @JsonProperty("excludeAlreadyProcessed")
+    public void setExcludeAlreadyProcessed(Boolean excludeAlreadyProcessed) {
+        this.excludeAlreadyProcessed = excludeAlreadyProcessed;
+    }
+
+    /**
      * The identifier of an Entity Type. (IRI, with title as fallback)
      * 
      */
@@ -700,6 +726,10 @@ public class StepSchema {
         sb.append('=');
         sb.append(((this.sourceQuery == null)?"<null>":this.sourceQuery));
         sb.append(',');
+        sb.append("excludeAlreadyProcessed");
+        sb.append('=');
+        sb.append(((this.excludeAlreadyProcessed == null)?"<null>":this.excludeAlreadyProcessed));
+        sb.append(',');
         sb.append("targetEntityType");
         sb.append('=');
         sb.append(((this.targetEntityType == null)?"<null>":this.targetEntityType));
@@ -747,6 +777,7 @@ public class StepSchema {
         result = ((result* 31)+((this.sourceQueryIsScript == null)? 0 :this.sourceQueryIsScript.hashCode()));
         result = ((result* 31)+((this.targetEntityType == null)? 0 :this.targetEntityType.hashCode()));
         result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
+        result = ((result* 31)+((this.excludeAlreadyProcessed == null)? 0 :this.excludeAlreadyProcessed.hashCode()));
         result = ((result* 31)+((this.additionalProperties == null)? 0 :this.additionalProperties.hashCode()));
         result = ((result* 31)+((this.batchSize == null)? 0 :this.batchSize.hashCode()));
         return result;
@@ -761,7 +792,7 @@ public class StepSchema {
             return false;
         }
         StepSchema rhs = ((StepSchema) other);
-        return (((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.additionalSettings == rhs.additionalSettings)||((this.additionalSettings!= null)&&this.additionalSettings.equals(rhs.additionalSettings))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.targetEntityType == rhs.targetEntityType)||((this.targetEntityType!= null)&&this.targetEntityType.equals(rhs.targetEntityType))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
+        return ((((((((((((((((((((((((((((this.stepUpdate == rhs.stepUpdate)||((this.stepUpdate!= null)&&this.stepUpdate.equals(rhs.stepUpdate)))&&((this.sourceQuery == rhs.sourceQuery)||((this.sourceQuery!= null)&&this.sourceQuery.equals(rhs.sourceQuery))))&&((this.provenanceGranularityLevel == rhs.provenanceGranularityLevel)||((this.provenanceGranularityLevel!= null)&&this.provenanceGranularityLevel.equals(rhs.provenanceGranularityLevel))))&&((this.acceptsBatch == rhs.acceptsBatch)||((this.acceptsBatch!= null)&&this.acceptsBatch.equals(rhs.acceptsBatch))))&&((this.customHook == rhs.customHook)||((this.customHook!= null)&&this.customHook.equals(rhs.customHook))))&&((this.validateEntity == rhs.validateEntity)||((this.validateEntity!= null)&&this.validateEntity.equals(rhs.validateEntity))))&&((this.stepId == rhs.stepId)||((this.stepId!= null)&&this.stepId.equals(rhs.stepId))))&&((this.description == rhs.description)||((this.description!= null)&&this.description.equals(rhs.description))))&&((this.processors == rhs.processors)||((this.processors!= null)&&this.processors.equals(rhs.processors))))&&((this.sourceDatabase == rhs.sourceDatabase)||((this.sourceDatabase!= null)&&this.sourceDatabase.equals(rhs.sourceDatabase))))&&((this.collections == rhs.collections)||((this.collections!= null)&&this.collections.equals(rhs.collections))))&&((this.permissions == rhs.permissions)||((this.permissions!= null)&&this.permissions.equals(rhs.permissions))))&&((this.additionalSettings == rhs.additionalSettings)||((this.additionalSettings!= null)&&this.additionalSettings.equals(rhs.additionalSettings))))&&((this.stepDefinitionName == rhs.stepDefinitionName)||((this.stepDefinitionName!= null)&&this.stepDefinitionName.equals(rhs.stepDefinitionName))))&&((this.outputFormat == rhs.outputFormat)||((this.outputFormat!= null)&&this.outputFormat.equals(rhs.outputFormat))))&&((this.additionalCollections == rhs.additionalCollections)||((this.additionalCollections!= null)&&this.additionalCollections.equals(rhs.additionalCollections))))&&((this.headers == rhs.headers)||((this.headers!= null)&&this.headers.equals(rhs.headers))))&&((this.threadCount == rhs.threadCount)||((this.threadCount!= null)&&this.threadCount.equals(rhs.threadCount))))&&((this.stepDefinitionType == rhs.stepDefinitionType)||((this.stepDefinitionType!= null)&&this.stepDefinitionType.equals(rhs.stepDefinitionType))))&&((this.constrainSourceQueryToJob == rhs.constrainSourceQueryToJob)||((this.constrainSourceQueryToJob!= null)&&this.constrainSourceQueryToJob.equals(rhs.constrainSourceQueryToJob))))&&((this.targetDatabase == rhs.targetDatabase)||((this.targetDatabase!= null)&&this.targetDatabase.equals(rhs.targetDatabase))))&&((this.sourceQueryIsScript == rhs.sourceQueryIsScript)||((this.sourceQueryIsScript!= null)&&this.sourceQueryIsScript.equals(rhs.sourceQueryIsScript))))&&((this.targetEntityType == rhs.targetEntityType)||((this.targetEntityType!= null)&&this.targetEntityType.equals(rhs.targetEntityType))))&&((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name))))&&((this.excludeAlreadyProcessed == rhs.excludeAlreadyProcessed)||((this.excludeAlreadyProcessed!= null)&&this.excludeAlreadyProcessed.equals(rhs.excludeAlreadyProcessed))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.batchSize == rhs.batchSize)||((this.batchSize!= null)&&this.batchSize.equals(rhs.batchSize))));
     }
 
     public enum OutputFormat {
