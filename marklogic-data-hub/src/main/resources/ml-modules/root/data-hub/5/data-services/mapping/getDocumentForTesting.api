@@ -1,0 +1,18 @@
+{
+    "functionName": "getDocumentForTesting",
+    "desc": "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.",
+    "params": [
+        {
+            "name": "stepName",
+            "datatype": "string"
+        },
+        {
+            "name": "uri",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}

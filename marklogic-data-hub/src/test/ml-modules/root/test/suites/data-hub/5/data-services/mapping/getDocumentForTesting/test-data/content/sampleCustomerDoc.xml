@@ -1,0 +1,41 @@
+<Order xmlns="https://www.w3schools.com/OrderNS">
+  <RequiredDate>1996-09-23T13:27:06</RequiredDate>
+  <ShipName>B's Beverages</ShipName>
+  <OrderDetails xmlns="https://www.w3schools.com/OD" xmlns:OD="https://www.w3schools.com/OD"
+                xmlns:OtherNS="https://www.w3schools.com/OtherNS"
+                in="this attr should be 'in' in the output"
+                OD:in2="this attr should be 'in2' in the output"
+                OtherNS:out="this attr should be '@OtherNS:out' in the output">
+    <OrderDetail xmlns:Wash="https://www.w3schools.com/Washington">
+      <Wash:UnitPrice xmlns:Omega="Omega">26.6000</Wash:UnitPrice>
+      <Wash:Discount>0</Wash:Discount>
+      <Wash:Quantity>9</Wash:Quantity>
+      <Wash:ProductID>64</Wash:ProductID>
+    </OrderDetail>
+    <OrderDetail xmlns:Cali="https://www.w3schools.com/California">
+      <Cali:UnitPrice>27.2000</Cali:UnitPrice>
+      <Cali:Discount>0</Cali:Discount>
+      <Cali:Quantity>40</Cali:Quantity>
+      <Cali:ProductID xmlns:Product="https://www.w3schools.com/ProductNS">60</Cali:ProductID>
+    </OrderDetail>
+  </OrderDetails>
+  <ShippedDate xmlns:SD="https://www.w3schools.com/SD1">1996-08-28T19:15:26</ShippedDate>
+  <ShippedDate xmlns:SD="https://www.w3schools.com/SD2">1997-02-13T120:15:26</ShippedDate>
+  <ShipVia xmlns="https://www.w3schools.com/SV">3</ShipVia>
+  <ShipPostalCode>EC2 5NT</ShipPostalCode>
+  <Element1 xmlns="https://www.microsoft.com/Gamma">Should *not* be in an array.</Element1>
+  <Element1 xmlns="https://www.amazon.com/Gamma">Should *not* be in an array.</Element1>
+  <Element2>Should be in an array.</Element2>
+  <Element2>Should be in an array.</Element2>
+  <MarkupScenarios>
+    <EmptyElementWithoutAttributes/>
+    <EmptyElementWithAttribute attr="hello"/>
+    <NoTextOrAttrs></NoTextOrAttrs>
+    <JustText>Hello</JustText>
+    <JustAttr attr="Howdy"></JustAttr>
+    <AttrAndText attr="myattr">Some Text</AttrAndText>
+    <AttrTextAndChild attr="woohoo!">How are <b>you</b> doing?</AttrTextAndChild>
+    <MultipleTextNodes>1st text node<subscript>1</subscript>2nd text node<superscript>2</superscript></MultipleTextNodes>
+    <ExampleWithCDATA>Text outside <![CDATA[Text inside]]> More text outside</ExampleWithCDATA>
+  </MarkupScenarios>
+</Order>
