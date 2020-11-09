@@ -16,7 +16,7 @@ const MultiSlider = (props) => {
                            }) { return (
         <>
             <div className={'tooltipContainer'} style={{ left: `${percent}%` }}>
-                {activeHandleIdOptions.hasOwnProperty('prop') && options[0].prop == activeHandleIdOptions['prop'] ? <div className="tooltip">
+                {activeHandleIdOptions.hasOwnProperty('prop') && options[0].prop == activeHandleIdOptions['prop'] && activeHandleIdOptions.hasOwnProperty('type') && options[0].type == activeHandleIdOptions['type']? <div className="tooltip">
                     {options.map((opt, i) => (
                         <div className="activeTooltipText" data-testid={`${options[0].prop}-active-tooltip`} key={i}>
                             <span data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span> {opt.type.length ? `-  ${opt.type}` : ''}</span>

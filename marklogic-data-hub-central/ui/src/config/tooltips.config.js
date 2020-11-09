@@ -61,7 +61,7 @@ const AdvCustomTooltips = {
 
 const NewMatchTooltips = {
     sourceDatabase: 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
-    description: 'The description of this matching configuration.',	    
+    description: 'The description of this matching configuration.',
     targetDatabase: 'The database where to store the processed data. Must be the same as the Matching Step *Source Database*.',
     sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.',
     filter: 'A node in the thesaurus to use as a filter. Example: <thsr:qualifier>birds</thsr:qualifier>',
@@ -161,7 +161,14 @@ const SecurityTooltips = {
 const MergeRuleTooltips = {
     uri : 'The path to the custom module that contains the merge function to run.',
     function : 'The merge function to run.',
-    namespace : 'The namespace of the module that contains the function to run.'
+    namespace : 'The namespace of the module that contains the function to run.',
+    maxValues: 'The maximum number of values to allow in the merged property. The default is 99.',
+    maxSources: 'The maximum number of data sources from which to get values to merge. For example, to copy values from a single source, set maxSources to 1.',
+    priorityOrder: ''
+}
+
+const MergeStrategyTooltips = {
+  delete:'Cannot delete strategies that are being used by Merge Rules'
 }
 
 const MergingStepDetailText = {
@@ -188,5 +195,6 @@ export {
     SecurityTooltips,
     MatchingStepDetailText,
     MergeRuleTooltips,
-    MergingStepDetailText
+    MergingStepDetailText,
+    MergeStrategyTooltips
 }
