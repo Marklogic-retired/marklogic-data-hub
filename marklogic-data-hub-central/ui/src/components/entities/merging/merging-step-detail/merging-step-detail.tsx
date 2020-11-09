@@ -8,7 +8,7 @@ import { CurationContext } from '../../../../util/curation-context';
 import {
     MergingStep
 } from '../../../../types/curation-types';
-import { MergingStepDetailText } from '../../../../config/tooltips.config';
+import {MergeStrategyTooltips, MergingStepDetailText} from '../../../../config/tooltips.config';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
@@ -72,7 +72,7 @@ const MergingStepDetail: React.FC = () => {
             title: 'Strategy Name',
             dataIndex: 'strategyName',
             key: 'strategyName',
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => a.strategyName.localeCompare(b.strategyName),
             width: 200,
             sortDirections: ["ascend", "descend", "ascend"],
             render: text => {
@@ -87,7 +87,9 @@ const MergingStepDetail: React.FC = () => {
             title: 'Max Values',
             dataIndex: 'maxValues',
             key: 'maxValues',
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => {a = a.maxValues || '';
+                               b = b.maxValues || '';
+                               return a.localeCompare(b)},
             sortDirections: ["ascend", "descend", "ascend"],
             width: 200,
         },
@@ -96,7 +98,9 @@ const MergingStepDetail: React.FC = () => {
             dataIndex: 'maxSources',
             key: 'maxSources',
             sortDirections: ["ascend", "descend", "ascend"],
-            sorter: (a, b) => a.edited.localeCompare(b.edited),
+            sorter: (a, b) => {a = a.maxSources || '';
+                b = b.maxSources || '';
+                return a.localeCompare(b)},
             width: 200,
         },
         {
@@ -104,7 +108,7 @@ const MergingStepDetail: React.FC = () => {
             dataIndex: 'delete',
             key: 'delete',
             align: 'center' as 'center',
-            render: text => <a data-testid={'delete'}>{text}</a>,
+            render: text => <MLTooltip title={MergeStrategyTooltips.delete}><a data-testid={'delete'}>{text}</a></MLTooltip>,
             width: 75
         }
     ];
@@ -114,7 +118,9 @@ const MergingStepDetail: React.FC = () => {
             title: 'Property',
             dataIndex: 'property',
             key: 'property',
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => {a = a.property || '';
+                b = b.property || '';
+                return a.localeCompare(b)},
             width: 200,
             sortDirections: ["ascend", "descend", "ascend"],
         },
@@ -122,7 +128,9 @@ const MergingStepDetail: React.FC = () => {
             title: 'Merge Type',
             dataIndex: 'mergeType',
             key: 'mergeType',
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            sorter: (a, b) => {a = a.mergeType || '';
+                b = b.mergeType || '';
+                return a.localeCompare(b)},
             sortDirections: ["ascend", "descend", "ascend"],
             width: 200,
         },
@@ -131,7 +139,9 @@ const MergingStepDetail: React.FC = () => {
             dataIndex: 'strategy',
             key: 'strategy',
             sortDirections: ["ascend", "descend", "ascend"],
-            sorter: (a, b) => a.edited.localeCompare(b.edited),
+            sorter: (a, b) => {a = a.strategy || '';
+                b = b.strategy || '';
+                return a.localeCompare(b)},
             width: 200,
         },
         {

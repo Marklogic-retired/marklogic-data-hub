@@ -30,9 +30,14 @@
 
 }
 
+.maxInput {
+    width: 150px;
+}
+
 .questionCircle {
     font-size: 12px;
     color: #7F86B5;
+    margin-left: 3px;
 }
 
 .asterisk{
@@ -79,4 +84,8 @@
     .addSliderButton {
         margin-left: 10px;
     }
+}
+
+.dropdownOptionsSelect{
+    width:120px !important;
 }

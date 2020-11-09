@@ -4,13 +4,22 @@ import AddMergeRuleDialog from './add-merge-rule-dialog';
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from '../../../../util/curation-context';
 import {customerMergingStep} from '../../../../assets/mock-data/curation/curation-context-mock';
+import { updateMergingArtifact } from '../../../../api/merging';
+
+
+jest.mock('../../../../api/merging');
+const mockMergingUpdate = updateMergingArtifact as jest.Mock;
 
 describe('Add Merge Rule Dialog component', () => {
 
-    afterEach(cleanup);
+    afterEach(() => {
+        jest.clearAllMocks();
+        cleanup();
+    });
 
-    test('Verify Add Merge Rule dialog with custom mergeType renders correctly', () => {
-        const {getByText, getByTestId, getByLabelText, queryByLabelText, getByPlaceholderText} = render(
+    it('Verify Add Merge Rule dialog with custom mergeType renders correctly', () => {
+        mockMergingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
+        const {getByText, getByTestId, getByLabelText, queryByLabelText} = render(
             <CurationContext.Provider value={customerMergingStep}>
                 <AddMergeRuleDialog
                     {...data.mergingDataProps}
@@ -58,10 +67,11 @@ describe('Add Merge Rule Dialog component', () => {
 
         fireEvent.click(saveButton); //Modal will close now
         expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
 
     });
 
-    test('Verify Add Merge Rule dialog with property-specific mergeType renders correctly', () => {
+    it('Verify Add Merge Rule dialog with property-specific mergeType renders correctly', () => {
         const {getByText, getByTestId, getByLabelText, queryByLabelText, getByPlaceholderText} = render(
             <CurationContext.Provider value={customerMergingStep}>
                 <AddMergeRuleDialog
@@ -70,8 +80,14 @@ describe('Add Merge Rule Dialog component', () => {
             </CurationContext.Provider>
         );
 
+        expect(getByText('Add Merge Rule')).toBeInTheDocument();
+        expect(getByText('Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.')).toBeInTheDocument();
+        expect(getByTestId('multipleIconLegend')).toBeInTheDocument();
+        expect(getByTestId('structuredIconLegend')).toBeInTheDocument();
+        expect(getByLabelText('formItem-Property')).toBeInTheDocument();
+
         fireEvent.click(getByText('Select property'));
-        fireEvent.click(getByText('customerId'));
+        fireEvent.click(getByText('name'));
 
         //Confirming that max values, max sources and add button are not available now, because property-specific merge type is not selected yet.
         expect(queryByLabelText('Enter max values')).not.toBeInTheDocument();
@@ -91,6 +107,79 @@ describe('Add Merge Rule Dialog component', () => {
         expect(getByLabelText('add-slider-button')).toBeInTheDocument();
 
         fireEvent.click(saveButton); //Modal will close now
+        expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
     });
 
+    it('Verify Add Merge Rule dialog with strategy mergeType renders correctly', () => {
+        const {getByText, getByTestId, getByLabelText, queryByLabelText} = render(
+            <CurationContext.Provider value={customerMergingStep}>
+                <AddMergeRuleDialog
+                    {...data.mergingDataProps}
+                />
+            </CurationContext.Provider>
+        );
+
+        expect(getByText('Add Merge Rule')).toBeInTheDocument();
+        expect(getByText('Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.')).toBeInTheDocument();
+        expect(getByTestId('multipleIconLegend')).toBeInTheDocument();
+        expect(getByTestId('structuredIconLegend')).toBeInTheDocument();
+        expect(getByLabelText('formItem-Property')).toBeInTheDocument();
+
+        fireEvent.click(getByText('Select property'));
+        fireEvent.click(getByText('name'));
+        //Checking if strategy name input field is available now, because strategy merge type is not selected yet.
+        expect(queryByLabelText('Enter strategy name')).not.toBeInTheDocument();
+
+        //Selecting the merge type to strategy
+        fireEvent.click(getByLabelText('mergeType-select'));
+        fireEvent.click(getByTestId('mergeTypeOptions-Strategy'));
+
+        let strategyName = getByLabelText('strategy-name-input');
+        let saveButton = getByText('Save');
+
+        //Checking if strategy name is available now, since merge type is strategy.
+        expect(strategyName).toBeInTheDocument();
+        fireEvent.click(saveButton); //Will throw an error because strategy name is mandatory field.
+
+        //verify if the below error message is displayed properly
+        expect(getByText('Strategy Name is required')).toBeInTheDocument();
+
+        //Enter the values for strategy name to see save button gets enabled.
+        fireEvent.change(strategyName, {target: {value: 'customerMerge'}});
+
+        fireEvent.click(saveButton); //Modal will close now
+        expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('Verify if add merge rule dialog can be saved without property and mergetype values', () => {
+        const {getByText} = render(
+            <CurationContext.Provider value={customerMergingStep}>
+                <AddMergeRuleDialog
+                    {...data.mergingDataProps}
+                />
+            </CurationContext.Provider>
+        );
+        let saveButton = getByText('Save');
+        fireEvent.click(saveButton);
+        expect(getByText('Property is required')).toBeInTheDocument();
+        expect(getByText('Merge type is required')).toBeInTheDocument();
+        expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(0);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
+    });
+
+    it('Verify if add merge rule dialog can be closed without saving', () => {
+        const {getByText} = render(
+            <CurationContext.Provider value={customerMergingStep}>
+                <AddMergeRuleDialog
+                    {...data.mergingDataProps}
+                />
+            </CurationContext.Provider>
+        );
+        let cancelButton = getByText('Cancel');
+        fireEvent.click(cancelButton);
+        expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
+    });
 });

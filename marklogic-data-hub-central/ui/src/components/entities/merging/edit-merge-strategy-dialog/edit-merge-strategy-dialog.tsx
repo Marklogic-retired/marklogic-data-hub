@@ -90,7 +90,6 @@ const EditMergeStrategyDialog: React.FC<Props> = (props) => {
 
     const parsedEditedFormDetails = (data) => {
         for(let key of data){
-            console.log(data)
             if(props.strategyName === key.strategyName){
                 if(key.hasOwnProperty('priorityOrder')){
                     for(let key1 of key.priorityOrder.sources){
