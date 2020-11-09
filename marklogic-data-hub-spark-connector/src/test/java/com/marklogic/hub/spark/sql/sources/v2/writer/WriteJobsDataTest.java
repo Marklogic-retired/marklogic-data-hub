@@ -45,9 +45,14 @@ public class WriteJobsDataTest extends AbstractSparkConnectorTest {
         dataSourceWriter.commit(null);
 
         jobDoc = getJobDoc(jobUri);
-        assertEquals("finished", jobDoc.get("job").get("jobStatus").asText());
-        assertNotNull(jobDoc.get("job").get("timeEnded"));
-
+        String status = jobDoc.get("job").get("jobStatus").asText();
+        if(canUpdateJobDoc()){
+            assertEquals("finished", status);
+            assertNotNull(jobDoc.get("job").get("timeEnded"));
+        }
+        else{
+            verifyJobDocumentWasNotUpdated(status);
+        }
     }
 
     @Test

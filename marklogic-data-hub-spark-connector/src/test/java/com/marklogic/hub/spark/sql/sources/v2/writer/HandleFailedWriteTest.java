@@ -58,9 +58,14 @@ public class HandleFailedWriteTest extends AbstractSparkConnectorTest {
 
     private void verifyJobFinishedWithErrors() {
         JsonNode job = getJobDocument();
-        assertEquals("finished_with_errors", job.get("job").get("jobStatus").asText(),
-            "Since the DataSourceWriter received at least one FailedWriteSkipMessage, the job should have a status " +
+        String status = job.get("job").get("jobStatus").asText();
+        if(canUpdateJobDoc()){
+            assertEquals("finished_with_errors", status, "Since the DataSourceWriter received at least one FailedWriteSkipMessage, the job should have a status " +
                 "of finished_with_errors");
+        }
+        else{
+            verifyJobDocumentWasNotUpdated(status);
+        }
     }
 
     private void verifyOneFruitWasWritten() {
