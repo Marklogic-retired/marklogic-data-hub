@@ -169,7 +169,7 @@ const Facet: React.FC<Props> = (props) => {
           >Clear
           </div>
           <div className={styles.toggle} onClick={() => toggleShow(!show)} data-testid={stringConverter(props.name) + "-toggle"}>
-            <Icon style={{ fontSize: '12px' }} type='down' rotate={show ? 0 : 180} />
+            <Icon className={styles.toggleIcon} type='down' rotate={show ? 0 : -90} />
           </div>
         </div>
       </div>
@@ -182,7 +182,7 @@ const Facet: React.FC<Props> = (props) => {
           data-cy="show-more"
           data-testid={`show-more-${stringConverter(props.name)}`}
         >{(more) ? '<< less' : 'more >>'}</div>
-        {(props.facetType === 'xs:string' || 'collection') && (checkedFacets.length >= SEARCH_MINIMUM) && 
+        {(props.facetType === 'xs:string' || 'collection') && (checkedFacets.length >= SEARCH_MINIMUM) &&
         <div className={styles.searchValues}>
           <PopOverSearch
               referenceType={props.referenceType}
