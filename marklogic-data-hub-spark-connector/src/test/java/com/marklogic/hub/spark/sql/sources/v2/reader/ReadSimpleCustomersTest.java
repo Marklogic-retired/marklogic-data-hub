@@ -1,7 +1,9 @@
 package com.marklogic.hub.spark.sql.sources.v2.reader;
 
+import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import com.marklogic.hub.spark.sql.sources.v2.Options;
 import com.marklogic.hub.test.Customer;
@@ -12,6 +14,8 @@ import org.apache.spark.sql.sources.v2.reader.InputPartitionReader;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.FileCopyUtils;
 
@@ -27,6 +31,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * columns - an int, a string, and a date.
  */
 public class ReadSimpleCustomersTest extends AbstractSparkConnectorTest {
+
+    @BeforeEach
+    void setup() {
+        MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
+        Assumptions.assumeTrue(
+            version.getMajor() > 10 || (version.getMajor() == 10 && version.getMinor() >= 500),
+            "The Read capability depends on rowID support in Optic, which was added to ML in 10.0-5; version: "
+                + version.getVersionString()
+        );
+    }
 
     @Test
     void differentSqlConditionsAndPartitionCounts() {
@@ -80,6 +94,12 @@ public class ReadSimpleCustomersTest extends AbstractSparkConnectorTest {
 
     private void loadTenCustomers() {
         ReferenceModelProject project = new ReferenceModelProject(getHubClient());
+
+        // Gotta use data-hub-operator so that these tests can pass on 5.2.x
+        project.setCustomerDocumentMetadata(new DocumentMetadataHandle()
+            .withCollections(ReferenceModelProject.CUSTOMER_ENTITY_TYPE)
+            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE));
+
         for (int i = 0; i <= 9; i++) {
             Customer c = new Customer(i, "Customer" + i);
             c.setCustomerSince("2020-01-1" + i);

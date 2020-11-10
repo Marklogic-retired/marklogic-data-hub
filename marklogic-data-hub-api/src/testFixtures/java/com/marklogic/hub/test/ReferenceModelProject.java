@@ -22,10 +22,17 @@ public class ReferenceModelProject extends TestObject {
 
     public final static String INPUT_COLLECTION = "customer-input";
 
+    public final static String CUSTOMER_ENTITY_TYPE = "Customer";
     private HubClient hubClient;
+    private DocumentMetadataHandle customerDocumentMetadata;
 
     public ReferenceModelProject(HubClient hubClient) {
         this.hubClient = hubClient;
+
+        customerDocumentMetadata = new DocumentMetadataHandle()
+            .withCollections(CUSTOMER_ENTITY_TYPE)
+            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+
     }
 
     public void createRawCustomer(int customerId, String name) {
@@ -61,10 +68,8 @@ public class ReferenceModelProject extends TestObject {
     }
 
     public DocumentWriteOperation buildCustomerInstanceToWrite(Customer customer, Format contentFormat, String xmlNamespace) {
-        String customerEntityType = "Customer";
-
         Map<String, Object> infoMap = new LinkedHashMap<>();
-        infoMap.put("title", customerEntityType);
+        infoMap.put("title", CUSTOMER_ENTITY_TYPE);
         infoMap.put("version", "0.0.1");
         infoMap.put("baseUri", "http://example.org/");
 
@@ -78,7 +83,7 @@ public class ReferenceModelProject extends TestObject {
 
         Map<String, Object> instanceMap = new LinkedHashMap<>();
         instanceMap.put("info", infoMap);
-        instanceMap.put(customerEntityType, customerProps);
+        instanceMap.put(CUSTOMER_ENTITY_TYPE, customerProps);
 
         Map<String, Object> entityInstanceMap = new LinkedHashMap<>();
         entityInstanceMap.put("instance", instanceMap);
@@ -109,13 +114,18 @@ public class ReferenceModelProject extends TestObject {
             throw new RuntimeException(ex);
         }
 
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withCollections(customerEntityType)
-            .withPermission("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-
-        String uri = "/" + customerEntityType + customer.customerId + fileExtension;
+        String uri = "/" + CUSTOMER_ENTITY_TYPE + customer.customerId + fileExtension;
 
         return new DocumentWriteOperationImpl(DocumentWriteOperation.OperationType.DOCUMENT_WRITE,
-            uri, metadata, new InputStreamHandle(instanceByteStream));
+            uri, customerDocumentMetadata, new InputStreamHandle(instanceByteStream));
+    }
+
+    /**
+     * Override the metadata object that is used for inserting Customer records.
+     *
+     * @param customerDocumentMetadata
+     */
+    public void setCustomerDocumentMetadata(DocumentMetadataHandle customerDocumentMetadata) {
+        this.customerDocumentMetadata = customerDocumentMetadata;
     }
 }

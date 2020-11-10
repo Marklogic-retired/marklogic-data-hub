@@ -31,8 +31,14 @@ public class HandleAbortedWriterTest extends AbstractSparkConnectorTest {
         assertEquals(2, getFruitCount(), "Just verifying the two fruits were written");
 
         dataSourceWriter.abort(null);
-        assertEquals("canceled", getJobDocumentStatus(), "If the DataSourceWriter is aborted for any reason, the job " +
-            "document should have a status of 'canceled'. Note that this does not imply whether any writes failed. " +
-            "But that is a limitation of the JobStatus class in DHF.");
+        if(canUpdateJobDoc()){
+            assertEquals("canceled", getJobDocumentStatus(), "If the DataSourceWriter is aborted for any reason, the job " +
+                "document should have a status of 'canceled'. Note that this does not imply whether any writes failed. " +
+                "But that is a limitation of the JobStatus class in DHF.");
+        }
+        else{
+            verifyJobDocumentWasNotUpdated(getJobDocumentStatus());
+        }
+
     }
 }

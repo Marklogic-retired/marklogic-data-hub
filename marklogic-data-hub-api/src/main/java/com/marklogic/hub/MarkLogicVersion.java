@@ -18,6 +18,10 @@ package com.marklogic.hub;
 import com.marklogic.mgmt.ManageClient;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Can parse the version string returned by the Manage API so that clients can determine if the version of MarkLogic
+ * supports a particular capability.
+ */
 public class MarkLogicVersion {
 
     private final String versionString;
@@ -140,7 +144,7 @@ public class MarkLogicVersion {
         }
     }
 
-    protected String getMarkLogicVersionString(ManageClient manageClient) {
+    private String getMarkLogicVersionString(ManageClient manageClient) {
         try {
             return manageClient.getXml("/manage").getElementValue("/node()/c:version");
         }
