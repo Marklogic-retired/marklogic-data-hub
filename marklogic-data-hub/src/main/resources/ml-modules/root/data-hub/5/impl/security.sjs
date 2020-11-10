@@ -50,6 +50,17 @@ function getAuthorities() {
   return authorities;
 }
 
+function currentUserHasRole(roleName) {
+  for (const roleId of xdmp.getCurrentRoles()) {
+    if (roleName === xdmp.roleName(roleId)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 module.exports = {
-  getAuthorities
+  getAuthorities,
+  currentUserHasRole
 };

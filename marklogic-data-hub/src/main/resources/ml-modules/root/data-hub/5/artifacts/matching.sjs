@@ -16,6 +16,7 @@
 'use strict';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
+const Security = require("/data-hub/5/impl/security.sjs");
 
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
@@ -64,7 +65,7 @@ function validateArtifact(artifact) {
 
 function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
-  return {
+  let artifact = {
     batchSize: 100,
     threadCount: 1,
     sourceDatabase: dataHub.config.FINALDATABASE,
@@ -75,8 +76,15 @@ function defaultArtifact(artifactName) {
       "mastering-summary"
     ],
     permissions: defaultPermissions,
-    targetFormat: "json",
-    matchOptions: {
+    targetFormat: "json"
+  };
+
+  if (Security.currentUserHasRole("hub-central-match-merge-writer")) {
+    artifact["matchRulesets"] = artifact.matchRulesets || [];
+    artifact["thresholds"] = artifact.thresholds || [];
+  }
+  else {
+    artifact["matchOptions"] = {
       dataFormat: "json",
       propertyDefs: {
         property: []
@@ -102,7 +110,9 @@ function defaultArtifact(artifactName) {
         maxScan: 200
       }
     }
-  };
+  }
+
+  return artifact;
 }
 
 module.exports = {
