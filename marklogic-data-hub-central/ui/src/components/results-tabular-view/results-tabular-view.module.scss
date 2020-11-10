@@ -6,7 +6,8 @@
 .tabular {
     margin-top: 20px;
     overflow: auto;
-    height: 46vh;
+    max-height: 46vh;
+    min-height: 42vh;
     display: grid;
 }
 

@@ -38,7 +38,7 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
 
         verifyCustomInitializeEndpointIsUsed();
         dataSourceWriter.commit(null);
-        verifyCustomFinalizeEndpointIsUsed();
+        verifyStatusIsStopOnError();
     }
 
     @Test
@@ -85,6 +85,15 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     }
 
     private void verifyCustomFinalizeEndpointIsUsed() {
+        if(canUpdateJobDoc()){
+            verifyStatusIsStopOnError();
+        }
+        else{
+            verifyJobDocumentWasNotUpdated(getJobDocumentStatus());
+        }
+    }
+
+    private void verifyStatusIsStopOnError(){
         assertEquals("stop-on-error", getJobDocumentStatus(),
             "The custom finalizeWrite endpoint is expected to always set 'stop-on-error' as the status. This is done " +
                 "so that the jobs.sjs module doesn't see some unrecognized status and then try to update the job " +
