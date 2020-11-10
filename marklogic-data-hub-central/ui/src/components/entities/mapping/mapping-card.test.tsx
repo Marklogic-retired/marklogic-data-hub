@@ -197,21 +197,16 @@ describe("Mapping Card component", () => {
 
       fireEvent.change(targetPermissions, { target: { value: 'role1' }});
       expect(targetPermissions).toHaveValue('role1');
-      await wait(() => {
-          fireEvent.click(saveButton);
-      });
-      expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
-       fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
-       await wait(() => {
-           fireEvent.click(saveButton);
-       });
-       expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
+      fireEvent.blur(targetPermissions);
 
-       fireEvent.change(targetPermissions, { target: { value: ',,,' }});
-       await wait(() => {
-           fireEvent.click(saveButton);
-       });
-       expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+      expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
+      fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
+      fireEvent.blur(targetPermissions);
+      expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
+
+      fireEvent.change(targetPermissions, { target: { value: ',,,' }});
+      fireEvent.blur(targetPermissions);
+      expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
   });
 
   test('Verify Card sort order, adding the step to an existing flow, and running the step in an existing flow where step DOES NOT exist', async () => {
@@ -264,7 +259,7 @@ describe("Mapping Card component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add'); });
     // TODO- E2E test to check if the Run tile is loaded or not.
 
-   
+
     //Verify run step in an existing flow where step does not exist yet
 
     //Click play button 'Run' icon
@@ -366,7 +361,7 @@ describe("Mapping Card component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith('/tiles/run/add');
     });
 
-    //Verify run step in an new flow 
+    //Verify run step in an new flow
 
     //Click play button 'Run' icon
     fireEvent.click(getByTestId('Mapping1-run'));
@@ -441,7 +436,7 @@ describe("Mapping Card component", () => {
      // test run icon displays correct tooltip when disabled
      fireEvent.mouseOver(getByRole('disabled-run-mapping'));
      await wait (() => expect(getByText('Run: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
- 
+
      await fireEvent.click(getByRole('disabled-run-mapping'));
      expect(queryByTestId('Mapping1-run-flowsList')).not.toBeInTheDocument();
 

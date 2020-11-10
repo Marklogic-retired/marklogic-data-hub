@@ -5,6 +5,7 @@ import AdvancedSettingsDialog from './advanced-settings-dialog';
 import mocks from '../../api/__mocks__/mocks.data';
 import data from '../../assets/mock-data/curation/advanced-settings.data';
 import {AdvancedSettings} from "../../config/tooltips.config";
+import {AdvancedSettingsMessages} from "../../config/messages.config";
 
 jest.mock('axios');
 
@@ -235,8 +236,16 @@ describe('Advanced Step Settings dialog', () => {
     //https://github.com/testing-library/react-testing-library/issues/375
     //Solution in github wont work because our list for additional collection is empty to start with
 
-    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'permissions-changed' }});
-    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('permissions-changed');
+    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-operator' }});
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator');
+    fireEvent.blur(getByPlaceholderText('Please enter target permissions'));
+    expect(getByTestId('validationError')).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+
+    fireEvent.change(getByPlaceholderText('Please enter target permissions'), { target: { value: 'data-hub-operator,read' }});
+    expect(getByPlaceholderText('Please enter target permissions')).toHaveValue('data-hub-operator,read');
+    fireEvent.blur(getByPlaceholderText('Please enter target permissions'));
+    expect(getByTestId('validationError')).toHaveTextContent('');
+
 
     fireEvent.change(getByLabelText('headers-textarea'), { target: { value: 'headers-changed' }});
     expect(getByLabelText('headers-textarea')).toHaveValue('headers-changed');

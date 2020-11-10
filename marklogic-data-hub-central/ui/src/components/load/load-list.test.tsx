@@ -175,21 +175,15 @@ describe('Load data component', () => {
     saveButton = getByText('Save');
 
     fireEvent.change(targetPermissions, { target: { value: 'role1' }});
-    await wait(() => {
-        fireEvent.click(saveButton);
-    });
+    fireEvent.blur(targetPermissions);
     expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
 
     fireEvent.change(targetPermissions, { target: { value: 'role1,reader' }});
-    await wait(() => {
-        fireEvent.click(saveButton);
-    });
+    fireEvent.blur(targetPermissions);
     expect(getByText(AdvancedSettingsMessages.targetPermissions.invalidCapabilities)).toBeInTheDocument();
 
     fireEvent.change(targetPermissions, { target: { value: ' ' }});
-    await wait(() => {
-        fireEvent.click(saveButton);
-    });
+    fireEvent.blur(targetPermissions);
     expect(getByText(AdvancedSettingsMessages.targetPermissions.incorrectFormat)).toBeInTheDocument();
 
   });
@@ -268,7 +262,7 @@ describe('Load data component', () => {
     //Dialog appears, click 'Yes' button
     expect(getByLabelText('step-in-flow')).toBeInTheDocument();
     fireEvent.click(getByLabelText('Yes'));
-    
+
   });
 
   test('Load List - Run step in an existing flow where step DOES NOT exist', async () => {

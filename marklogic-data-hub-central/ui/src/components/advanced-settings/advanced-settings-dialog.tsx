@@ -43,6 +43,7 @@ const AdvancedSettingsDialog = (props) => {
   const validCapabilities = ['read', 'update', 'insert', 'execute'];
   const [targetPermissionsTouched, setTargetPermissionsTouched] = useState(false);
   const [permissionValidationError, setPermissionValidationError] = useState('');
+  const [targetPermissionsValid, setTargetPermissionsValid] = useState(true);
 
   const usesTargetFormat = stepType === 'mapping';
   const defaultTargetFormat = 'JSON';
@@ -100,6 +101,7 @@ const AdvancedSettingsDialog = (props) => {
       setHeadersTouched(false);
       setProcessorsTouched(false);
       setCustomHookTouched(false);
+      setTargetPermissionsTouched(false);
 
       setStepDefinitionName('');
       setIsCustomIngestion(false);
@@ -124,11 +126,12 @@ const AdvancedSettingsDialog = (props) => {
       setHeadersValid(true);
       setProcessorsValid(true);
       setCustomHookValid(true);
+      setTargetPermissionsValid(true);
     };
   },[props.openAdvancedSettings  ,loading]);
 
   const isFormValid = () => {
-    return headersValid && processorsValid && customHookValid;
+    return headersValid && processorsValid && customHookValid && targetPermissionsValid;
   };
 
   // Convert JSON from JavaScript object to formatted string
@@ -303,10 +306,8 @@ const AdvancedSettingsDialog = (props) => {
         batchSize: batchSize,
         customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
       };
-    if (isPermissionsValid()) {
-        createSettingsArtifact(dataPayload);
-        props.setOpenAdvancedSettings(false);
-    }
+      createSettingsArtifact(dataPayload);
+      props.setOpenAdvancedSettings(false);
   };
 
   const isPermissionsValid = () => {
@@ -330,6 +331,7 @@ const AdvancedSettingsDialog = (props) => {
             }
         }
     }
+    setPermissionValidationError('');
     return true;
   };
 
@@ -353,6 +355,9 @@ const AdvancedSettingsDialog = (props) => {
     if (event.target.id === 'targetPermissions') {
       setTargetPermissions(event.target.value);
       setTargetPermissionsTouched(true);
+      if(!targetPermissionsValid && isPermissionsValid()){
+          setTargetPermissionsValid(true);
+      }
     }
 
     if (event.target.id === 'headers') {
@@ -402,6 +407,11 @@ const AdvancedSettingsDialog = (props) => {
       setBatchSize(event.target.value);
       setBatchSizeTouched(true);
     }
+
+    if (event.target.id === 'targetPermissions') {
+        setTargetPermissionsValid(isPermissionsValid());
+    }
+
   };
 
   const handleSourceDatabase = (value) => {
@@ -589,6 +599,7 @@ const AdvancedSettingsDialog = (props) => {
             placeholder="Please enter target permissions"
             value={targetPermissions}
             onChange={handleChange}
+            onBlur={handleBlur}
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
           />
@@ -597,7 +608,7 @@ const AdvancedSettingsDialog = (props) => {
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
-          <div className={styles.validationError}>
+          <div className={styles.validationError} data-testid='validationError'>
               {permissionValidationError}
           </div>
         </Form.Item>
