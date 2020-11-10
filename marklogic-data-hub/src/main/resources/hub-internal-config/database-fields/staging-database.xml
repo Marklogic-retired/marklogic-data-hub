@@ -1,5 +1,11 @@
 <database-properties xmlns="http://marklogic.com/manage">
   <database-name>%%mlStagingDbName%%</database-name>
+  <path-namespaces>
+    <path-namespace>
+      <prefix>es</prefix>
+      <namespace-uri>http://marklogic.com/entity-services</namespace-uri>
+    </path-namespace>
+  </path-namespaces>
   <fields>
     <field>
       <field-name>datahubCreatedOn</field-name>
@@ -75,6 +81,42 @@
       <excluded-elements/>
       <tokenizer-overrides/>
     </field>
+    <field>
+      <field-name>datahubSourceName</field-name>
+      <field-path>
+        <path>/(es:envelope|envelope)/(es:headers|headers)/sources/name</path>
+        <weight>1.0</weight>
+      </field-path>
+      <stemmed-searches>off</stemmed-searches>
+      <word-searches>true</word-searches>
+      <field-value-searches>true</field-value-searches>
+      <field-value-positions>false</field-value-positions>
+      <fast-phrase-searches>false</fast-phrase-searches>
+      <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
+      <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
+      <word-lexicons/>
+      <included-elements/>
+      <excluded-elements/>
+      <tokenizer-overrides/>
+    </field>
+    <field>
+      <field-name>datahubSourceType</field-name>
+      <field-path>
+        <path>/(es:envelope|envelope)/(es:headers|headers)/sources/datahubSourceType</path>
+        <weight>1.0</weight>
+      </field-path>
+      <stemmed-searches>off</stemmed-searches>
+      <word-searches>true</word-searches>
+      <field-value-searches>true</field-value-searches>
+      <field-value-positions>false</field-value-positions>
+      <fast-phrase-searches>false</fast-phrase-searches>
+      <fast-case-sensitive-searches>false</fast-case-sensitive-searches>
+      <fast-diacritic-sensitive-searches>false</fast-diacritic-sensitive-searches>
+      <word-lexicons/>
+      <included-elements/>
+      <excluded-elements/>
+      <tokenizer-overrides/>
+    </field>
   </fields>
   <range-field-indexes>
     <range-field-index>
@@ -102,6 +144,20 @@
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
       <field-name>datahubCreatedInFlow</field-name>
+      <range-value-positions>true</range-value-positions>
+      <invalid-values>reject</invalid-values>
+    </range-field-index>
+    <range-field-index>
+      <scalar-type>string</scalar-type>
+      <collation>http://marklogic.com/collation/</collation>
+      <field-name>datahubSourceName</field-name>
+      <range-value-positions>true</range-value-positions>
+      <invalid-values>reject</invalid-values>
+    </range-field-index>
+    <range-field-index>
+      <scalar-type>string</scalar-type>
+      <collation>http://marklogic.com/collation/</collation>
+      <field-name>datahubSourceType</field-name>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-field-index>

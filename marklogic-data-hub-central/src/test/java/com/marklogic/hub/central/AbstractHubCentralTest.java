@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Intended base class for any test that wishes to connect to MarkLogic. Tests that do not have any need to connect to
@@ -76,8 +77,8 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
 
         testHubProject = new HubProjectImpl();
         testHubConfig = new HubConfigImpl(testHubProject);
-
         resetHubProject();
+        testHubConfig.applyProperties(new Properties());
 
         // Run as the least-privileged HC user
         runAsHubCentralUser();
@@ -126,9 +127,9 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
      */
     @Override
     protected HubClient runAsUser(String username, String password) {
-        // Initialize a new HubConfigImpl
-        testHubConfig = hubCentral.newHubConfig(username, password);
-        testHubConfig.setHubProject(testHubProject);
+        // Need to create the project directory before applying properties
+        testHubConfig.createProject(testProjectDirectory);
+        testHubConfig.applyProperties(hubCentral.buildPropertySource(username, password));
 
         // Update the provider with a new HubClient
         hubClientProvider.setHubClientDelegate(testHubConfig.newHubClient());

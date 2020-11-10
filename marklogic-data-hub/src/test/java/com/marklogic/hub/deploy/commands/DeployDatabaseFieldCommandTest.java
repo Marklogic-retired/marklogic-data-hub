@@ -10,9 +10,13 @@ import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
 
@@ -20,7 +24,7 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
     public void test() {
         givenTheFinalDatabaseHasACustomFieldAndIndexes();
         whenTheDatabaseFieldCommandIsExecuted();
-        thenTheCustomFieldAndIndexesStillExist();
+        thenTheCustomFieldAndIndexesAndNamespacesStillExist();
     }
 
     private void givenTheFinalDatabaseHasACustomFieldAndIndexes() {
@@ -36,6 +40,12 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         fieldPath.put("path", "/myPath");
         fieldPath.put("weight", 1);
 
+        ObjectNode newFieldWithNamespace = ((ArrayNode) newNode.get("field")).addObject();
+        newFieldWithNamespace.put("field-name", "fieldWithNamespace");
+        ObjectNode fieldPathWithNamespace = newFieldWithNamespace.putObject("field-path");
+        fieldPathWithNamespace.put("path", "/oex:myPath");
+        fieldPathWithNamespace.put("weight", 1);
+
         ArrayNode indexes;
         if (db.has("range-field-index")) {
             indexes = (ArrayNode) db.get("range-field-index");
@@ -49,6 +59,14 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         index.put("invalid-values", "reject");
         index.put("range-value-positions", false);
         index.put("collation", "http://marklogic.com/collation/");
+
+        ObjectNode indexWithNamespace = indexes.addObject();
+        indexWithNamespace.put("scalar-type", "string");
+        indexWithNamespace.put("field-name", "fieldWithNamespace");
+        indexWithNamespace.put("invalid-values", "reject");
+        indexWithNamespace.put("range-value-positions", false);
+        indexWithNamespace.put("collation", "http://marklogic.com/collation/");
+
 
         ArrayNode pathIndexes;
         if (db.has("range-path-index")) {
@@ -64,6 +82,13 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         pathIndex.put("range-value-positions", false);
         pathIndex.put("collation", "http://marklogic.com/collation/");
 
+        ArrayNode namespaces = (ArrayNode) db.get("path-namespace");
+        newNode.set("path-namespace", namespaces);
+
+        ObjectNode namespace = namespaces.addObject();
+        namespace.put("prefix", "oex");
+        namespace.put("namespace-uri", "http://example.org/");
+
         new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
     }
 
@@ -71,31 +96,20 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         new DeployDatabaseFieldCommand().execute(newCommandContext());
     }
 
-    private void thenTheCustomFieldAndIndexesStillExist() {
+    private void thenTheCustomFieldAndIndexesAndNamespacesStillExist() {
         ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.FINAL));
 
         ArrayNode fields = (ArrayNode) db.get("field");
-        // There could be other fields, so loop through the list to verify the custom one is there
-        JsonNode myField = null;
-        for (int i = 0; i < fields.size(); i++) {
-            JsonNode field = fields.get(i);
-            if ("myField".equals(field.get("field-name").asText())) {
-                myField = field;
-                break;
-            }
-        }
-        assertNotNull(myField, "Expected to find the myField custom field that was added before executing the command");
+        List<String> fieldNames = new ArrayList<>();
+        fields.forEach(field -> fieldNames.add(field.get("field-name").asText()));
+        assertTrue(fieldNames.containsAll(Arrays.asList("myField", "fieldWithNamespace", "datahubSourceName", "datahubSourceType")),
+                "Expected to find the myField, fieldWithNamespace fields that was added before executing the command along with atahubSourceName, datahubSourceType OOTB fields");
 
         ArrayNode indexes = (ArrayNode) db.get("range-field-index");
-        JsonNode myIndex = null;
-        for (int i = 0; i < indexes.size(); i++) {
-            JsonNode field = indexes.get(i);
-            if ("myField".equals(field.get("field-name").asText())) {
-                myIndex = field;
-                break;
-            }
-        }
-        assertNotNull(myIndex, "Expected to find the myField range index that was added before executing the command");
+        List<String> fieldIndexNames = new ArrayList<>();
+        indexes.forEach(rangeFieldIndex -> fieldIndexNames.add(rangeFieldIndex.get("field-name").asText()));
+        assertTrue(fieldIndexNames.containsAll(Arrays.asList("myField", "fieldWithNamespace", "datahubSourceName", "datahubSourceType")),
+                "Expected to find the myField, fieldWithNamespace range field index that was added before executing the command along with datahubSourceName and datahubSourceType OOTB indexes");
 
         ArrayNode pathIndexes = (ArrayNode) db.get("range-path-index");
         JsonNode myPathIndex = null;
@@ -107,6 +121,13 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
             }
         }
         assertNotNull(myPathIndex, "Expected to find the /myPath range index that was added before executing the command");
+
+        ArrayNode namespaces = (ArrayNode) db.get("path-namespace");
+        assertEquals(2, namespaces.size());
+
+        List<String> prefixes = new ArrayList<>();
+        namespaces.forEach(namespaceObject -> prefixes.add(namespaceObject.get("prefix").asText()));
+        assertTrue(prefixes.containsAll(Arrays.asList("es", "oex")));
     }
 
     /**
@@ -117,20 +138,24 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.FINAL));
 
         ArrayNode array = (ArrayNode) db.get("field");
+        List fieldsToBeRemoved = new ArrayList(List.of("myField", "fieldWithNamespace"));
         for (int i = 0; i < array.size(); i++) {
             JsonNode field = array.get(i);
-            if ("myField".equals(field.get("field-name").asText())) {
+            if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {
                 array.remove(i);
-                break;
+                fieldsToBeRemoved.remove(field.get("field-name").asText());
+                if(fieldsToBeRemoved.size() == 0) break;
             }
         }
 
         array = (ArrayNode) db.get("range-field-index");
+        fieldsToBeRemoved = new ArrayList(List.of("myField", "fieldWithNamespace"));
         for (int i = 0; i < array.size(); i++) {
             JsonNode field = array.get(i);
-            if ("myField".equals(field.get("field-name").asText())) {
+            if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {
                 array.remove(i);
-                break;
+                fieldsToBeRemoved.remove(field.get("field-name").asText());
+                if(fieldsToBeRemoved.size() == 0) break;
             }
         }
 
@@ -149,6 +174,17 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         newNode.set("range-field-index", db.get("range-field-index"));
         newNode.set("range-path-index", db.get("range-path-index"));
 
+        new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
+
+        // Namespaces can be removed after the indexes using the namespace are deleted
+        array = (ArrayNode) db.get("path-namespace");
+        for (int i = 0; i < array.size(); i++) {
+            JsonNode namespace = array.get(i);
+            if ("oex".equals(namespace.get("prefix").asText())) {
+                array.remove(i);
+                break;
+            }
+        }
         new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
     }
 }

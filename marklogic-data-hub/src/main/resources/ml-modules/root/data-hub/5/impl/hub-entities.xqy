@@ -197,6 +197,22 @@ declare %private function hent:fix-options-for-explorer(
               <search:facet-option>descending</search:facet-option>
             </search:range>
           </search:constraint>,
+          <search:constraint name="sourceName">
+            <search:range>
+              <search:field name="datahubSourceName"/>
+              <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
+            </search:range>
+          </search:constraint>,
+          <search:constraint name="sourceType">
+            <search:range>
+              <search:field name="datahubSourceType"/>
+              <search:facet-option>limit=25</search:facet-option>
+              <search:facet-option>frequency-order</search:facet-option>
+              <search:facet-option>descending</search:facet-option>
+            </search:range>
+          </search:constraint>,
           hent:build-sort-operator($sortable-properties, $entity-namespace-map),
           hent:fix-options-for-explorer($n/node(), $sortable-properties, $entity-namespace-map),
           <search:transform-results apply="snippet">
