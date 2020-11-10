@@ -345,17 +345,17 @@ const EntityTiles = (props) => {
                 <Panel header={<span data-testid={entityType}>{entityType}</span>} key={entityModels[entityType].entityTypeId}>
                     <div className={styles.switchMapMaster}>
                     <Menu mode="horizontal" defaultSelectedKeys={['map-' + entityType]}>
-                        {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
+                      {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index,'map', entityType)}>
                             Map
-                        </Menu.Item>: null}
-                        {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
-                            Custom
                         </Menu.Item>: null}
                       {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Match`} key={`match-${entityType}`} onClick={() => updateView(index,'match', entityType)}>
                             Match
                         </Menu.Item>: null}
                       {props.canReadMatchMerge  ? <Menu.Item data-testid={`${entityType}-Merge`} key={`merge-${entityType}`} onClick={() => updateView(index,'merge', entityType)}>
                             Merge
+                        </Menu.Item>: null}
+                      {props.canReadCustom ? <Menu.Item data-testid={`${entityType}-Custom`} key={`custom-${entityType}`} onClick={() => updateView(index,'custom', entityType)}>
+                            Custom
                         </Menu.Item>: null}
                     </Menu>
                     </div>
