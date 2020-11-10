@@ -1,4 +1,5 @@
 const test = require("/test/test-helper.xqy");
+const hubTest = require("/test/data-hub-test-helper.sjs");
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const ArtifactService = require('../lib/artifactService.sjs');
 
@@ -38,9 +39,37 @@ function getArtifacts() {
         }
     });
 }
+function setMergingConfigWithHCRole() {
+  hubTest.runWithRolesAndPrivileges(['hub-central-match-merge-writer'], [],
+    function() {
+      let artifactName1 = "HCMerging1";
+      const result1 = ArtifactService.invokeSetService('merging', artifactName1, {'name': `${artifactName1}`, 'targetEntityType': 'TestEntity-hasConfig', 'description': 'Merging does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
+      let artifactName2 = "HCMerging2";
+      const result2 = ArtifactService.invokeSetService('merging', artifactName2, {'name': `${artifactName2}`, 'mergeRules': [{"entityPropertyPath": "thePath"}], 'mergeStrategies': [{"strategyName": "theStrategy"}], 'targetCollections': {"onMerge": {"add": ["sm-Customer-mastered"]}}, 'targetEntityType': 'TestEntity-hasConfig', 'description': 'Merging does ...', 'selectedSource': 'query', 'sourceQuery': 'cts.collectionQuery(\"default-ingestion\")', 'collections': ['RAW-COL']});
+      return [
+        test.assertEqual(artifactName1, result1.name),
+        test.assertNotExists(result1.mergeOptions, "Setting merging config with HC role, mergeOptions should not exist (1)"),
+        test.assertExists(result1.mergeRules, "Setting merging config with HC role, mergeRules array should be added"),
+        test.assertExists(result1.mergeStrategies, "Setting merging config with HC role, mergeStrategies array should be added"),
+        test.assertExists(result1.targetCollections, "Setting merging config with HC role, targetCollections object should be added"),
+        test.assertExists(result1.targetCollections.onMerge, "Setting merging config with HC role, targetCollections onMerge object should be added"),
+        test.assertExists(result1.targetCollections.onNoMatch, "Setting merging config with HC role, targetCollections onNoMatch object should be added"),
+        test.assertExists(result1.targetCollections.onArchive, "Setting merging config with HC role, targetCollections onArchive object should be added"),
+        test.assertExists(result1.targetCollections.onNotification, "Setting merging config with HC role, targetCollections onNotification object should be added"),
+
+        test.assertEqual(artifactName2, result2.name),
+        test.assertNotExists(result2.mergeOptions, "Setting merging config with HC role, mergeOptions should not exist (2)"),
+        test.assertExists(result2.mergeRules[0].entityPropertyPath, "Setting merging config with HC role, mergeRules should be preserved"),
+        test.assertExists(result2.mergeStrategies[0].strategyName, "Setting merging config with HC role, mergeStrategies should be preserved"),
+        test.assertEqual(result2.targetCollections.onMerge.add[0], "sm-Customer-mastered", "Setting merging config with HC role, targetCollections should be preserved")
+      ];
+    }
+  )
+}
 
 []
     .concat(updateMergingConfig('TestMerging'))
     .concat(createMergingWithSameNameButDifferentEntityType('TestMerging'))
     .concat(updateMergingConfig('TestMerging2'))
-    .concat(getArtifacts());
+    .concat(getArtifacts())
+    .concat(setMergingConfigWithHCRole());
