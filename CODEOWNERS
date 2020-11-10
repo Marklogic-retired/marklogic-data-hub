@@ -4,16 +4,20 @@
 # These owners will be the default owners for everything in the repo.
 
 # Order is important. The last matching pattern has the most precedence.
-examples/* @rjrudin @srinathgit @bsrikan
+examples/* @rjrudin @srinathgit
 
-marklogic-data-hub/* @rjrudin @srinathgit @bsrikan @ryanjdew @fsnow @rahulvudutala @akshaysonvane
+marklogic-data-hub/* @rjrudin @srinathgit @ryanjdew @fsnow @rahulvudutala @akshaysonvane
 
-marklogic-data-hub-central/src/* @rjrudin @srinathgit @bsrikan @ryanjdew @rahulvudutala @akshaysonvane
+marklogic-data-hub-central/src/* @rjrudin @srinathgit @ryanjdew @rahulvudutala @akshaysonvane
 
-marklogic-data-hub-central/ui/* @wooldridge @bsrikan @briantang @xnikhil08 @Sanjeevani19 @timur-isangulov @brucean52 @akshaysonvane @AkshayBajajML @rahulvudutala @saarimrahman
+marklogic-data-hub-central/ui/* @wooldridge @briantang @xnikhil08 @Sanjeevani19 @timur-isangulov @brucean52 @akshaysonvane @AkshayBajajML @rahulvudutala @saarimrahman
 
-ml-data-hub-plugin/* @rjrudin @srinathgit @bsrikan
+marklogic-data-hub-spark-connector/* @rjrudin @srinathgit @anu3990 @SameeraPriyathamTadikonda
 
-specs/* @rjrudin @ryanjdew
+ml-data-hub-plugin/* @rjrudin @srinathgit
 
-web/* @wooldridge @srinathgit @bsrikan
+performance-tests/* @rjrudin @srinathgit @devinnicholson
+
+specs/* @rjrudin @ryanjdew @srinathgit
+
+web/* @wooldridge @srinathgit

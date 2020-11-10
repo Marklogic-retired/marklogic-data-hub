@@ -7,6 +7,7 @@ import com.marklogic.client.io.FileHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
+import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.hub.impl.HubClientImpl;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataSourceWriter;
 import com.marklogic.hub.spark.sql.sources.v2.writer.HubDataWriter;
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -241,5 +243,14 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         assertTrue(job.has("job"));
         assertTrue(job.get("job").has("jobStatus"));
         return job.get("job").get("jobStatus").asText();
+    }
+
+    protected boolean canUpdateJobDoc(){
+      MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
+      return version.getMajor().equals(9) ? false : true;
+    }
+
+    protected void verifyJobDocumentWasNotUpdated(String status){
+        assertEquals("started", status, "Status will remain 'started' as calling amped sjs function fails in 9.0-x server");
     }
 }

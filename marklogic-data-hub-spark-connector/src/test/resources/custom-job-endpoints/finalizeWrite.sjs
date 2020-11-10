@@ -26,4 +26,11 @@ const Jobs = require("/data-hub/5/impl/jobs.sjs");
 
 const alwaysUseThisStatus = "stop-on-error";
 
-Jobs.updateJob(datahub, jobId, alwaysUseThisStatus, null, null, null, null);
+try{
+  Jobs.updateJob(datahub, jobId, alwaysUseThisStatus, null, null, null, null);
+}
+catch(ex){
+  console.log("Failed to update job document; cause: " + ex);
+}
+
+

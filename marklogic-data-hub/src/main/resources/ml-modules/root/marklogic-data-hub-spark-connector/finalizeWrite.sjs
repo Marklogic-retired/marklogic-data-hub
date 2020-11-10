@@ -24,4 +24,10 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const Jobs = require("/data-hub/5/impl/jobs.sjs");
 
-Jobs.updateJob(datahub, jobId, status, null, null, null, null);
+try{
+  Jobs.updateJob(datahub, jobId, status, null, null, null, null);
+}
+catch(ex){
+  console.log("Failed to update job document; cause: " + ex);
+}
+
