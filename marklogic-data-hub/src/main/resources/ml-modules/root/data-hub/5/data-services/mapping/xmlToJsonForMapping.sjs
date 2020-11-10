@@ -68,22 +68,20 @@ function _getValueInfo(value) {
   let isScalar = true;
   let defaultNS = null;
   if (_isObject(value)) {
-    for (let [key2, value2] of Object.entries(value)) {
-      if (!key2.startsWith(textStartsWith) && !key2.startsWith(nsAttrStartsWith)) {
+    for (let key of Object.keys(value)) {
+      if (!key.startsWith(textStartsWith) && !key.startsWith(nsAttrStartsWith)) {
         isScalar = false;
       }
-      if (key2 === defaultNSAttrName) {
+      if (key === defaultNSAttrName) {
         defaultNS = {
-          prefix: _determineFinalNSPrefix(null, value2),
-          uri: value2
+          prefix: _determineFinalNSPrefix(null, value[key]),
+          uri: value[key]
         }
       }
     }
   }
-  if (isScalar) {
-    if (value.hasOwnProperty(textPropName)) {
-      value = value[textPropName];
-    }
+  if (isScalar && value.hasOwnProperty(textPropName)) {
+    value = value[textPropName];
   }
   return {
     isArray: isScalar ? false : Array.isArray(value),
@@ -95,11 +93,11 @@ function _getValueInfo(value) {
 
 // An indirectly recursive function.
 function _transform(jsonIn, defaultNS, jsonOut) {
-  for (let [key, value] of Object.entries(jsonIn)) {
+  for (let key of Object.keys(jsonIn)) {
     if (_isAttr(key)) {
-      _transformAttr(jsonOut, key, value, defaultNS);
+      _transformAttr(jsonOut, key, jsonIn[key], defaultNS);
     } else {
-      _transformObject(jsonOut, key, value, defaultNS);
+      _transformObject(jsonOut, key, jsonIn[key], defaultNS);
     }
   }
   return jsonOut;
@@ -194,13 +192,13 @@ function _conditionallyCollectNonDefaultNSs() {
 
 // Only expected caller is conditionallyCollectNonDefaultNSs()
 function _collectNonDefaultNSs(obj) {
-  for (let [key, value] of Object.entries(obj)) {
+  for (let key of Object.keys(obj)) {
     if (_isAttr(key)) {
       if (key.startsWith(nonDefaultNSAttrStartsWith)) {
-        _determineFinalNSPrefix(key.substr(nonDefaultNSAttrStartsWith.length), value);
+        _determineFinalNSPrefix(key.substr(nonDefaultNSAttrStartsWith.length), obj[key]);
       }
-    } else if (_isObject(value)) {
-      _collectNonDefaultNSs(value);
+    } else if (_isObject(obj[key])) {
+      _collectNonDefaultNSs(obj[key]);
     }
   }
 }
@@ -222,11 +220,11 @@ function _determineFinalNSPrefix(currentPrefix, uri) {
   let attemptsCurrent = 1,
     key,
     value;
-  const entries = Object.entries(namespaces);
+  const keys = Object.keys(namespaces);
   // Going by array length as we may restart the loop (up to attemptsMax times).
-  for (let i = 0; i < entries.length; i++) {
-    key = entries[i][0];
-    value = entries[i][1];
+  for (let i = 0; i < keys.length; i++) {
+    key = keys[i];
+    value = namespaces[key];
     if (uri === value) {
       return key;
     }
