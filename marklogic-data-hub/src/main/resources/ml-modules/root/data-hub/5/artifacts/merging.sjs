@@ -16,6 +16,7 @@
 'use strict';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
+const Security = require("/data-hub/5/impl/security.sjs");
 
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
@@ -64,7 +65,7 @@ function validateArtifact(artifact) {
 
 function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
-  return {
+  let artifact = {
     batchSize: 100,
     threadCount: 1,
     sourceDatabase: dataHub.config.FINALDATABASE,
@@ -73,8 +74,21 @@ function defaultArtifact(artifactName) {
     targetEntity: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('mastering-summary')",
     collections: [],
-    targetFormat: "json",
-    mergeOptions: {
+    targetFormat: "json"
+  };
+
+  if (Security.currentUserHasRole("hub-central-match-merge-writer")) {
+    artifact["mergeRules"] = artifact.mergeRules || [];
+    artifact["mergeStrategies"] = artifact.mergeStrategies || [];
+    artifact["targetCollections"] = artifact.targetCollections || {
+      "onMerge": { "add": [], "remove": [] },
+      "onNoMatch": { "add": [], "remove": [] },
+      "onArchive": { "add": [], "remove": [] },
+      "onNotification": { "add": [], "remove": [] }
+    };
+  }
+  else {
+    artifact["mergeOptions"] = {
       propertyDefs: {
         properties: [],
         namespaces: {}
@@ -89,7 +103,9 @@ function defaultArtifact(artifactName) {
       mergeStrategies: [],
       merging: []
     }
-  };
+  }
+
+  return artifact;
 }
 
 module.exports = {
