@@ -95,7 +95,7 @@ class UpdateIndexesTaskTest extends BaseTest {
 		assert (getFinalIndexValuesSize('//m:range-path-index') == 3)
 
         //Test to verify xml DB index configs get updated per DHFPROD-3674
-        assert (getStagingIndexValuesSize('//m:field') == 6)
-        assert (getFinalIndexValuesSize('//m:field') == 6)
+        assert (getStagingIndexValuesSize('//m:range-field-index') == 6)
+        assert (getFinalIndexValuesSize('//m:range-field-index') == 6)
 	}
 }

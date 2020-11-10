@@ -1,5 +1,11 @@
 <database-properties xmlns="http://marklogic.com/manage">
   <database-name>%%mlStagingDbName%%</database-name>
+  <path-namespaces>
+    <path-namespace>
+      <prefix>es</prefix>
+      <namespace-uri>http://marklogic.com/entity-services</namespace-uri>
+    </path-namespace>
+  </path-namespaces>
   <fields>
     <field>
       <field-name>datahubCreatedOn</field-name>

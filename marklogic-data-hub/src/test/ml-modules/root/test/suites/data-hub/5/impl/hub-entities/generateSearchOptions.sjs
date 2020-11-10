@@ -409,6 +409,39 @@ function verifySnippetOptions() {
   ]
 }
 
+function verifySourceNameAndSourceTypeOptions() {
+  const input = [{
+    "info" : {
+      "title": "Book"
+    },
+    "definitions": {
+      "Book": {
+        "properties": {
+          "bookId": {"datatype": "integer", "facetable": true, "sortable": true, "collation": "http://marklogic.com/collation/"}
+        }
+      }
+    }
+  }];
+
+  const expOptions = hent.dumpSearchOptions(input, true);
+  return [
+    test.assertExists(expOptions.xpath("/*:constraint[@name = 'sourceName']")),
+    test.assertExists(expOptions.xpath("/*:constraint[@name = 'sourceName', @facet = 'true']")),
+    test.assertExists(expOptions.xpath("/*:constraint[contains(@name, 'sourceName')]/*:range/*:field[contains(@name, 'datahubSourceName')]")),
+    test.assertEqual("limit=25", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceName')]/*:range/*:facet-option[1]/text()"))),
+        "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"),
+    test.assertEqual("frequency-order", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceName')]/*:range/*:facet-option[2]/text()")))),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceName')]/*:range/*:facet-option[3]/text()")))),
+    test.assertExists(expOptions.xpath("/*:constraint[@name = 'sourceType']")),
+    test.assertExists(expOptions.xpath("/*:constraint[@name = 'sourceType', @facet = 'true']")),
+    test.assertExists(expOptions.xpath("/*:constraint[contains(@name, 'sourceType')]/*:range/*:field[contains(@name, 'datahubSourceType')]")),
+    test.assertEqual("limit=25", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceType')]/*:range/*:facet-option[1]/text()"))),
+        "To avoid displaying large numbers of values in facets in Explorer, range constraints default to a max of 25 values"),
+    test.assertEqual("frequency-order", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceType')]/*:range/*:facet-option[2]/text()")))),
+    test.assertEqual("descending", xs.string(fn.head(expOptions.xpath("/*:constraint[contains(@name, 'sourceType')]/*:range/*:facet-option[3]/text()")))),
+  ]
+}
+
 []
   .concat(entityDefWithNamespace())
   .concat(generateOptionsWithElementRangeIndex())
@@ -419,4 +452,5 @@ function verifySnippetOptions() {
   .concat(verifySortOptionDatatypeWhenEntityPropertyIsUpdated())
   .concat(testHubCentralSupportedDatatypeMappingsForSort())
   .concat(generateExplorerOptionsWithoutContainerConstraint())
-  .concat(verifySnippetOptions());
+  .concat(verifySnippetOptions())
+  .concat(verifySourceNameAndSourceTypeOptions());

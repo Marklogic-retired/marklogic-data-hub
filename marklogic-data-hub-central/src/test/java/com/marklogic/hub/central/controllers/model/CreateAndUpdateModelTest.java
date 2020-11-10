@@ -7,6 +7,7 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.central.controllers.ModelController;
+import com.marklogic.hub.deploy.commands.DeployDatabaseFieldCommand;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import com.marklogic.mgmt.ManageClient;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -174,9 +176,10 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         assertEquals("someProperty", rangeIndexes.get(1).getLocalname());
 
         List<PathIndex> pathIndexes = db.getRangePathIndex();
-        assertEquals(2, pathIndexes.size());
-        assertEquals("//*:instance/testPathIndexForDHFPROD4704", pathIndexes.get(0).getPathExpression());
-        assertEquals("/(es:envelope|envelope)/(es:instance|instance)/Customer/someOtherProperty", pathIndexes.get(1).getPathExpression());
+        List<String> pathExpressions = new ArrayList<>();
+        assertEquals(4, pathIndexes.size(), "OOTB indexes URIsToProcess and uris path indexes exists along with above deployed indexes in the test");
+        pathIndexes.forEach(pathIndex -> pathExpressions.add(pathIndex.getPathExpression()));
+        assertTrue(pathExpressions.containsAll(Arrays.asList("//*:instance/testPathIndexForDHFPROD4704", "/(es:envelope|envelope)/(es:instance|instance)/Customer/someOtherProperty")));
     }
 
     private void loadUnrelatedIndexes() {
@@ -216,6 +219,8 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         Database db = new Database(new API(manageClient), stagingName);
         db.setRangePathIndex(new ArrayList<>());
         db.setRangeElementIndex(new ArrayList<>());
+        db.setRangeFieldIndex(new ArrayList<>());
+        db.setField(new ArrayList<>());
         db.save();
         db.setDatabaseName(finalName);
         db.save();
@@ -223,5 +228,13 @@ public class CreateAndUpdateModelTest extends AbstractModelTest {
         Stream.of(stagingName, finalName).forEach(databaseKind ->
             manageClient.putJson("/manage/v2/databases/" + databaseKind + "/properties", indexConfig)
         );
+        // Deploying removed OOTB field indexes so that generate search options will not fail
+        deployDataHubDefaultFields();
+    }
+
+    private void deployDataHubDefaultFields() {
+        runAsDataHubDeveloper();
+        new DeployDatabaseFieldCommand().execute(newCommandContext());
+        runAsTestUserWithRoles("hub-central-entity-model-writer");
     }
 }
