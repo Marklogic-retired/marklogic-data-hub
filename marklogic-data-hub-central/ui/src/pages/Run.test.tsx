@@ -569,8 +569,8 @@ describe('Verify Run CRUD operations', () => {
         fireEvent.click(getByText(existingFlowName));
         expect(getByPlaceholderText('Enter name')).toBeDisabled();
         expect(getByPlaceholderText('Enter description')).toBeDisabled();
-        expect(queryByText('Save')).not.toBeInTheDocument();
-        fireEvent.click(getByText('Close'));
+        expect(queryByText('Save')).toBeDisabled();
+        fireEvent.click(getByText('Cancel'));
 
     });
 });
