@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Axios from "axios";
 import { Form, Input, Icon, Select } from 'antd';
 import styles from './advanced-settings.module.scss';
 import { AdvancedSettingsTooltips } from '../../config/tooltips.config';
@@ -7,6 +8,7 @@ import { createStep, getStep } from '../../api/steps';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import './advanced-settings.scss';
 import ConfirmYesNo from '../common/confirm-yes-no/confirm-yes-no';
+import AdvancedTargetCollections from "./advanced-target-collections";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -48,6 +50,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
   const [additionalCollections, setAdditionalCollections ] = useState<any[]>([]);
   const [addCollTouched, setAddCollTouched] = useState(false);
+  const usesAdvancedTargetCollections = stepType === 'merging';
+  const [advancedTargetCollectionsTouched, setAdvancedTargetCollectionsTouched] = useState(false);
+  const [defaultTargetCollections, setDefaultTargetCollections] = useState<any>({});
+  const [targetCollections, setTargetCollections ] = useState<any>(null);
 
   const [targetPermissions, setTargetPermissions] = useState('');
   const validCapabilities = ['read', 'update', 'insert', 'execute'];
@@ -62,8 +68,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [targetFormatTouched, setTargetFormatTouched] = useState(false);
 
   const defaultprovGranularity = 'coarse';
-  const provGranularityOptions = { 'Coarse-grained': 'coarse', 'Off': 'off' };
-  const [provGranularity, setProvGranularity] = useState('coarse');
+  const fineGrainProvAvailable = stepType === 'matching' || stepType === 'merging';
+  const provGranularityOptions = fineGrainProvAvailable ? { 'Coarse-grained': 'coarse', 'Fine-grained': 'fine', 'Off': 'off' } : { 'Coarse-grained': 'coarse', 'Off': 'off' };
+  const [provGranularity, setProvGranularity] = useState(defaultprovGranularity);
   const [provGranularityTouched, setProvGranularityTouched] = useState(false);
 
   const defaultValidateEntity = 'doNotValidate';
@@ -118,13 +125,13 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     initStep();
 
     return () => {
-
       setStepDefinitionName('');
       setIsCustomIngestion(false);
 
       setSourceDatabase(defaultSourceDatabase);
       setTargetDatabase(defaultTargetDatabase);
       setAdditionalCollections([]);
+      setTargetCollections(null);
       setTargetPermissions('');
       setPermissionValidationError('');
       setTargetFormat(defaultTargetFormat);
@@ -224,6 +231,15 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           if(response.data.additionalSettings){
               setAdditionalSettings(formatJSON(response.data.additionalSettings));
           }
+          if (usesAdvancedTargetCollections) {
+            const targetEntityType = response.data.targetEntityType || response.data.targetEntity;
+            const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURI(targetEntityType)}`;
+            const defaultCollectionsResp = await Axios.get(defaultCollectionsURL);
+            if (defaultCollectionsResp.status === 200) {
+              setDefaultTargetCollections(defaultCollectionsResp.data);
+            }
+            setTargetCollections(response.data.targetCollections || {});
+          }
         }
       } catch (error) {
         let message = error.response;
@@ -272,6 +288,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if ( !sourceDatabaseTouched
         && !targetDatabaseTouched
         && !addCollTouched
+        && !advancedTargetCollectionsTouched
         && !targetPermissionsTouched
         && !headersTouched
         && !targetFormatTouched
@@ -337,6 +354,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       validateEntity: validateEntity,
       batchSize: batchSize,
       customHook: isEmptyString(customHook) ? {} : parseJSON(customHook),
+      targetCollections: usesAdvancedTargetCollections ? targetCollections : undefined,
     }
   }
 
@@ -497,6 +515,16 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setChanged(true);
   };
 
+  const handleAdvancedTargetCollections = (value) => {
+    if (!value) {
+      setAdvancedTargetCollectionsTouched(false);
+    }
+    else {
+      setAdvancedTargetCollectionsTouched(true);
+      setTargetCollections(value);
+    }
+  };
+
   const handleTargetFormat = (value) => {
     if (value === ' ' || value === targetFormat) {
       setTargetFormatTouched(false);
@@ -597,6 +625,22 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             </MLTooltip>
           </div>
         </Form.Item>
+        {usesAdvancedTargetCollections ? <Form.Item
+            label={<span>Target Collections:</span>}
+            labelAlign="left"
+            labelCol={
+              { span: 24 }
+            }
+            wrapperCol={
+              { offset: 1, span: 22 }
+            }
+        >
+          <AdvancedTargetCollections
+              defaultTargetCollections={defaultTargetCollections}
+              targetCollections={targetCollections}
+              setTargetCollections={handleAdvancedTargetCollections}
+              canWrite={canReadWrite}/>
+        </Form.Item> :
         <Form.Item
           label={<span>Target Collections</span>}
           labelAlign="left"
@@ -622,14 +666,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
-        </Form.Item>
-        <Form.Item
+        </Form.Item>}
+        {usesAdvancedTargetCollections ? null : <Form.Item
           label={<span className={styles.defaultCollectionsLabel}>Default Collections</span>}
           labelAlign="left"
           className={styles.formItem}
         >
         <div className={styles.defaultCollections}>{defaultCollections.map((collection, i) => {return <div data-testid={`defaultCollections-${collection}`} key={i}>{collection}</div>;})}</div>
-        </Form.Item>
+        </Form.Item>}
         <Form.Item
           label={<span>Target Permissions</span>}
           labelAlign="left"

@@ -48,6 +48,23 @@ const advancedMatching = {
     setHasChanged: jest.fn()
 };
 
+const advancedMerging = {
+    tabKey: '2',
+    tooltipsData: {},
+    openStepSettings: true,
+    setOpenStepSettings: jest.fn(),
+    openAdvancedSettings: true,
+    setOpenAdvancedSettings: jest.fn(),
+    stepData: {name: 'AdvancedMerging'},
+    updateLoadArtifact: jest.fn(),
+    activityType: 'merging',
+    canWrite: true,
+    currentTab: '2',
+    setIsValid: true,
+    resetTabs: jest.fn(),
+    setHasChanged: jest.fn()
+};
+
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad
 const stepLoad = { "data" :
     {
@@ -146,22 +163,64 @@ const stepMatching = { "data" :
     "status": 200
 };
 
-// TODO add mock data for merging
-// const stepMerging = { "data" :
-//      {
-//
-//      }
-//  
-// }
+// Returned from endpoint: /api/steps/merging/AdvancedMerging
+const stepMerging = { "data" :
+        {
+            "batchSize": 35,
+            "permissions": "data-hub-common,read,data-hub-common,update",
+            "name": "AdvancedMerging",
+            "targetEntityType": "http://example.org/Address-0.0.1/Test",
+            "targetCollections": {
+                "onMerge": { "add": ["merged"]},
+                "onNoMatch": { "add": ["noMatch"]},
+                "onArchive": { "add": ["archived"]},
+                "onNotification": { "add": ["notification"]}
+            },
+            "description": "",
+            "selectedSource": "collection",
+            "sourceQuery": "cts.collectionQuery(['test'])",
+            "stepDefinitionName": "default-merging",
+            "stepDefinitionType": "merging",
+            "stepId": "AdvancedMerging-merging",
+            "sourceDatabase": "data-hub-FINAL",
+            "targetDatabase": "data-hub-FINAL",
+            "provenanceGranularityLevel": "coarse",
+            "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
+            "headers": {
+                "header": true
+            },
+            "processors": {
+                "processor": true
+            },
+            "customHook": {
+                "hook": true
+            }
+        },
+    "status": 200
+};
+
+// Returned from endpoint: /api/steps/merging/defaultCollections/${encodeURI(targetEntityType)}
+const defaultTargetCollections = { "data" :
+    {
+        "onMerge": ["sm-Test-merged", "sm-Test-mastered"],
+        "onNoMatch": ["sm-Test-mastered"],
+        "onArchive": ["sm-Test-archived"],
+        "onNotification": ["sm-Test-notification"]
+    },
+    "status": 200
+};
 
 const data = {
     advancedLoad: advancedLoad,
     customLoad: {...advancedLoad, stepData: {name: 'CustomLoad'}},
     advancedMapping: advancedMapping,
     advancedMatching: advancedMatching,
+    advancedMerging: advancedMerging,
     stepLoad: stepLoad,
     stepMapping: stepMapping,
     stepMatching: stepMatching,
+    stepMerging: stepMerging,
+    defaultTargetCollections: defaultTargetCollections,
 };
 
 export default data;

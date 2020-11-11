@@ -259,6 +259,7 @@ const advancedAPI = (axiosMock) => {
   axiosMock.post['mockImplementationOnce'](jest.fn(() =>
       Promise.resolve({ status: 200, data: {} })));
   return axiosMock.get['mockImplementation']((url) => {
+    const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURI(advancedData.stepMerging.data.targetEntityType)}`;
       switch (url) {
           case '/api/steps/ingestion/AdvancedLoad':
               return Promise.resolve(advancedData.stepLoad);
@@ -269,6 +270,10 @@ const advancedAPI = (axiosMock) => {
               return Promise.resolve(advancedData.stepMapping);
           case '/api/steps/matching/AdvancedMatching':
               return Promise.resolve(advancedData.stepMatching);
+          case '/api/steps/merging/AdvancedMerging':
+              return Promise.resolve(advancedData.stepMerging);
+          case defaultCollectionsURL:
+              return Promise.resolve(advancedData.defaultTargetCollections);
           default:
               return Promise.reject(new Error('not found'));
       }

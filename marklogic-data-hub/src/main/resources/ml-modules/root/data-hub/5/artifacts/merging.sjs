@@ -72,6 +72,7 @@ function defaultArtifact(artifactName) {
     permissions: defaultPermissions,
     targetEntity: "Change this to a valid entity type name; e.g. Customer",
     sourceQuery: "cts.collectionQuery('mastering-summary')",
+    provenanceGranularityLevel: 'coarse',
     collections: [],
     targetFormat: "json"
   };

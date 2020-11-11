@@ -169,6 +169,78 @@ describe('Advanced step settings', () => {
 
   });
 
+  test('Verify settings for Merging', async () => {
+    const { queryByText, getByLabelText, getByTestId, getByText, getAllByText } = render(
+        <AdvancedSettings {...data.advancedMerging} />
+    );
+
+    expect(getByText('Source Database')).toBeInTheDocument();
+    expect(getByText('data-hub-FINAL')).toBeInTheDocument();
+    expect(getByText('Target Database')).toBeInTheDocument();
+    expect(getByText('data-hub-FINAL')).toBeInTheDocument();
+
+    expect(getByText('Target Collections:')).toBeInTheDocument();
+    expect(getByText('Default Collections')).toBeInTheDocument();
+    expect(getByText('Additional Collections')).toBeInTheDocument();
+    // merge collections are present
+    expect((await(waitForElement(() => getAllByText('Merge')))).length > 0);
+    expect(getByText('sm-Test-merged sm-Test-mastered')).toBeInTheDocument();
+    expect(getByText('merged')).toBeInTheDocument();
+
+    // Can edit the additional collections
+    fireEvent.click(getByTestId('onMerge-edit'));
+    let collectionInput = getByLabelText('additionalColl-select-onMerge').getElementsByTagName('input').item(0);
+    // test discarding a collection update
+    fireEvent.input(collectionInput, {target: {value: 'discardedMergeCollection'}});
+    expect(collectionInput).toHaveValue('discardedMergeCollection');
+    fireEvent.keyDown(collectionInput, { keyCode: 13, key: 'Enter' });
+    expect(collectionInput).toHaveValue('');
+    fireEvent.click(getByTestId('onMerge-discard'));
+    expect(queryByText('merged discardedMergeCollection')).not.toBeInTheDocument();
+
+    // test keeping a collection update
+    fireEvent.click(getByTestId('onMerge-edit'));
+    collectionInput = getByLabelText('additionalColl-select-onMerge').getElementsByTagName('input').item(0);
+    fireEvent.input(collectionInput, {target: {value: 'keptMergeCollection'}});
+    expect(collectionInput).toHaveValue('keptMergeCollection');
+    fireEvent.keyDown(collectionInput, { keyCode: 13, key: 'Enter' });
+    expect(collectionInput).toHaveValue('');
+    fireEvent.click(getByTestId('onMerge-keep'));
+    expect(getByText('merged keptMergeCollection')).toBeInTheDocument();
+
+    // test no match collections
+    expect(getByText('No Match')).toBeInTheDocument();
+    expect(getByText('sm-Test-mastered')).toBeInTheDocument();
+    expect(getByText('noMatch')).toBeInTheDocument();
+
+    // test archive collections
+    expect(getByText('Archive')).toBeInTheDocument();
+    expect(getByText('sm-Test-archived')).toBeInTheDocument();
+    expect(getByText('archived')).toBeInTheDocument();
+
+    // test notification collections
+    expect(getByText('Notification')).toBeInTheDocument();
+    expect(getByText('sm-Test-notification')).toBeInTheDocument();
+    expect(getByText('notification')).toBeInTheDocument();
+
+    expect(getByText('Target Permissions')).toBeInTheDocument();
+
+    expect(getByText('Batch Size')).toBeInTheDocument();
+
+    expect(getByText('Provenance Granularity')).toBeInTheDocument();
+    expect(getByText('Coarse-grained')).toBeInTheDocument();
+
+    expect(getByText('Processors')).toBeInTheDocument();
+    expect(getByText('Custom Hook')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Processors'));
+    expect(getByText('{ "processor": true }')).toBeInTheDocument();
+
+    fireEvent.click(getByText('Custom Hook'));
+    expect(getByText('{ "hook": true }')).toBeInTheDocument();
+
+  });
+
   test('Verify form fields can be input/selected', async () => {
     let getByText, getAllByText, getByLabelText, getByTestId, getAllByTestId, getByPlaceholderText;
     await act(async () => {

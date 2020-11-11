@@ -1,6 +1,6 @@
 import { Application } from "../../../support/application.config";
 import { toolbar } from "../../../support/components/common";
-import { createEditStepDialog } from '../../../support/components/merging/index';
+import { createEditStepDialog, advancedSettings } from '../../../support/components/merging/index';
 import curatePage from "../../../support/pages/curate";
 import { confirmYesNo } from '../../../support/components/common/index';
 import 'cypress-wait-until';
@@ -60,5 +60,26 @@ describe('Merging', () => {
     curatePage.editStep(mergeStep).click();
     createEditStepDialog.stepDescriptionInput().should('not.have.value', 'UPDATED - merge order step example');
 
+    // Test advanced settings
+    curatePage.switchEditAdvanced().click();
+    advancedSettings.setTargetCollection('onMerge', 'discardedMerged');
+    advancedSettings.discardTargetCollection('onMerge');
+    cy.findAllByText('discardedMerged').should('not.exist');
+    advancedSettings.cancelSettingsButton(mergeStep).click();
+    confirmYesNo.getDiscardText().should('not.be.visible');
+
+    curatePage.editStep(mergeStep).click();
+    curatePage.switchEditAdvanced().click();
+    advancedSettings.setTargetCollection('onMerge', 'keptMerged');
+    advancedSettings.keepTargetCollection('onMerge');
+    cy.findAllByText('keptMerged').should('exist');
+    advancedSettings.cancelSettingsButton(mergeStep).click();
+    confirmYesNo.getDiscardText().should('be.visible');
+    confirmYesNo.getNoButton().click();
+
+    advancedSettings.saveSettingsButton(mergeStep).click();
+    curatePage.editStep(mergeStep).click();
+    curatePage.switchEditAdvanced().click();
+    cy.findAllByText('keptMerged').should('exist');
   });
 });
