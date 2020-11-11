@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+  <headers/>
+  <triples/>
+  <instance>
+    <Order xmlns="https://www.w3schools.com/OrderNS">
+      <RequiredDate xmlns="">1996-09-23T13:27:06</RequiredDate>
+    </Order>
+  </instance>
+  <attachments/>
+</envelope>
