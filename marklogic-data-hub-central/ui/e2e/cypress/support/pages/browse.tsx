@@ -293,6 +293,7 @@ class BrowsePage {
   }
 
   clickColumnTitle(index: number) {
+    cy.wait(500);
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).click();
   }
 
@@ -313,7 +314,7 @@ class BrowsePage {
   }
 
   getTableViewSourceIcon() {
-    return cy.get('.ant-table-row:last-child [data-cy=source]');
+    return cy.getAttached('.ant-table-row:last-child [data-cy=source]');
   }
 
   getExpandableTableView() {
@@ -349,6 +350,7 @@ class BrowsePage {
   }
 
   selectColumnSelectorProperty(name:string) {
+    cy.waitUntil(() => cy.findByTestId('column-selector-popover'));
     return cy.get('li[data-testid=node-' + name + '] .ant-tree-checkbox').click();
   }
 

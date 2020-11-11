@@ -374,6 +374,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectQuery('reset-query');
         browsePage.clickColumnTitle(2);
         browsePage.getResetQueryButton().click();
+        cy.waitForAsyncRequest();
         browsePage.getResetConfirmationYesClick();
         browsePage.getEditSaveChangesButton().click();
         browsePage.getExploreButton().should('be.visible');
@@ -382,6 +383,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.selectQuery('reset-query');
         cy.waitForAsyncRequest();
         browsePage.getAppliedFacets('Adams Cole').should('exist');
+        cy.wait(500)
         browsePage.getSortIndicatorDesc().should('have.css', 'background-color', 'rgba(0, 0, 0, 0)');
         browsePage.getTableCell(1,2).should('contain', '103');
         browsePage.getTableCell(2,2).should('contain', '102');
@@ -408,7 +410,7 @@ describe('save/manage queries scenarios, developer role', () => {
         browsePage.getColumnSelector().should('be.visible');
         browsePage.selectColumnSelectorProperty('status');
         browsePage.getColumnSelectorApply().click({force: true});
-        browsePage.getResetQueryButton().click();
+        browsePage.getResetQueryButton().click({force: true});
         //verifying the confirmation modal appearing and selection cancel
         browsePage.getResetConfirmationNoClick();
         // browsePage.getResetQueryButton().click();

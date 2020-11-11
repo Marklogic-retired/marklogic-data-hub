@@ -9,6 +9,84 @@ import { toolbar } from "../../support/components/common";
 import 'cypress-wait-until';
 import detailPageNonEntity from '../../support/pages/detail-nonEntity';
 
+describe('scenarios for All Data zero state and explore pages.', () => {
+
+  beforeEach(() => {
+    cy.visit('/');
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+  });
+
+  it('verify All Data for final/staging databases and non-entity detail page', () => {
+    //switch on zero state page and select query parameters for final database
+    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.getTableViewButton().click();
+    browsePage.selectEntity('All Data');
+    browsePage.getSearchText().type('Adams');
+    browsePage.getExploreButton().click();
+    //verify the query data for final database on explore page
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    cy.contains('Showing 1-2 of 2 results', { timeout: 5000 })
+    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'ColeAdams');
+    browsePage.search('Barbi');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getTotalDocuments().should('be.equal', 0);
+
+    //switch to staging database and verify data for query parameters 
+    browsePage.getStagingDatabaseButton().click();
+    cy.waitForAsyncRequest();
+    browsePage.search('Adams');
+    cy.get('.ant-input-search-button').click();
+    cy.waitForAsyncRequest();
+    cy.contains('Showing 1-2 of 2 results', { timeout: 5000 })
+    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'Adams');
+    browsePage.search('Barbi');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getTotalDocuments().should('be.equal', 1);
+    browsePage.getAllDataSnippetByUri('/json/clients/client1.json').should('contain', 'Barbi');
+
+    //Verify if switching between All Data and specific entities works properly
+    browsePage.getFinalDatabaseButton().click();
+    cy.waitForAsyncRequest();
+    browsePage.selectEntity('Customer');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'Customer');
+    browsePage.getTotalDocuments().should('be.equal', 10);
+    browsePage.selectEntity('All Data');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Data');
+    browsePage.search('Adams');
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    cy.contains('Showing 1-2 of 2 results', { timeout: 5000 })
+
+    //Verifying non-entity detail page for JSON document
+    browsePage.clearSearchText();
+    
+    cy.waitUntil(() => browsePage.getNavigationIconForDocument('/steps/custom/mapping-step.step.json')).click();
+    browsePage.waitForSpinnerToDisappear();
+
+    detailPageNonEntity.getInstanceView().should('exist');
+    detailPageNonEntity.getDocumentUri().should('contain', '/steps/custom/mapping-step.step.json');
+    detailPageNonEntity.getSourceTable().should('exist');
+    detailPageNonEntity.getHistoryTable().should('exist');
+    detailPageNonEntity.getDocumentTable().should('exist');
+    detailPageNonEntity.getRecordView().click();
+    detailPage.getDocumentJSON().should('exist');
+    detailPageNonEntity.clickBackButton();
+
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Data');
+  });
+});
 
 describe('json scenario for snippet on browse documents page', () => {
 
@@ -337,6 +415,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getTableView().should('have.css', 'color', 'rgb(91, 105, 175)');
 
     //Navigating to detail view
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => browsePage.getTableViewSourceIcon()).click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
@@ -443,13 +522,13 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getShowMoreLink().first().click();
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
     browsePage.getGreySelectedFacets('Adams Cole').should('exist');
+    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('be.checked');
     browsePage.selectDateRange();
     browsePage.getSelectedFacet('birthDate:').should('exist');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
     browsePage.getGreySelectedFacets('adamscole@nutralab.com').should('exist');
     browsePage.getFacetApplyButton().click();
     browsePage.clickClearFacetSearchSelection('birthDate');
-    browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('be.checked');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').should('be.checked');
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
@@ -637,86 +716,5 @@ describe('scenarios for final/staging databases for zero state and explore pages
     browsePage.search('Barbi');
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should('be.equal', 1);
-  });
-});
-
-
-describe('scenarios for All Data zero state and explore pages.', () => {
-
-  beforeEach(() => {
-    cy.visit('/');
-    cy.contains(Application.title);
-    cy.loginAsDeveloper().withRequest();
-    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
-  });
-
-  it('verify All Data for final/staging databases and non-entity detail page', () => {
-    //switch on zero state page and select query parameters for final database
-    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.getTableViewButton().click();
-    browsePage.selectEntity('All Data');
-    browsePage.getSearchText().type('Adams');
-    browsePage.getExploreButton().click();
-    browsePage.waitForSpinnerToDisappear();
-
-    //verify the query data for final database on explore page
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2);
-    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'ColeAdams');
-    browsePage.search('Barbi');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 0);
-
-    //switch to staging database and verify data for query parameters 
-    browsePage.getStagingDatabaseButton().click();
-    browsePage.search('Adams');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2);
-    browsePage.getAllDataSnippetByUri('/json/customers/Cust2.json').should('contain', 'Adams');
-    browsePage.search('Barbi');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 1);
-    browsePage.getAllDataSnippetByUri('/json/clients/client1.json').should('contain', 'Barbi');
-
-    //Verify if switching between All Data and specific entities works properly
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.selectEntity('Customer');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should('contain', 'Customer');
-    browsePage.getTotalDocuments().should('be.equal', 10);
-
-    browsePage.selectEntity('All Data');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should('contain', 'All Data');
-    browsePage.search('Adams');
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should('be.equal', 2);
-    
-    //Verifying non-entity detail page for JSON document
-    browsePage.clearSearchText();
-    
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument('/steps/custom/mapping-step.step.json')).click();
-    browsePage.waitForSpinnerToDisappear();
-
-    detailPageNonEntity.getInstanceView().should('exist');
-    detailPageNonEntity.getDocumentUri().should('contain', '/steps/custom/mapping-step.step.json');
-    detailPageNonEntity.getSourceTable().should('exist');
-    detailPageNonEntity.getHistoryTable().should('exist');
-    detailPageNonEntity.getDocumentTable().should('exist');
-    detailPageNonEntity.getRecordView().click();
-    detailPage.getDocumentJSON().should('exist');
-    detailPageNonEntity.clickBackButton();
-
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should('contain', 'All Data');
   });
 });
