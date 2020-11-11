@@ -421,7 +421,7 @@ describe('Entity Modeling: Writer Role', () => {
     //propertyTable.getWildcardIcon('street').should('exist');
 
     // add structured property to structured type
-    propertyTable.getAddPropertyToStructureType('Address').click();
+    propertyTable.getAddPropertyToStructureType('Address').click({force: true});
     propertyModal.newPropertyName('zip');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();

@@ -237,3 +237,12 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // failing the test
     return false;
   });
+
+  Cypress.Commands.add("getAttached", selector => {
+    const getElement = typeof selector === "object" ? selector : $d => $d.find(selector);
+    let $el = null;
+    return cy.document().should($d => {
+      $el = getElement(Cypress.$($d));
+      expect(Cypress.dom.isDetached($el)).to.be.false;
+    }).then(() => cy.wrap($el));
+  });
