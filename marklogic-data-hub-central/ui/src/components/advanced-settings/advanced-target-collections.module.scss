@@ -1,0 +1,35 @@
+.preWrap {
+  white-space: pre-wrap;
+}
+
+.questionCircle {
+  font-size: 12px;
+  vertical-align: top;
+  margin-top: 6px;
+  color: #7F86B5;
+}
+
+.keepDiscard {
+  width: 54px;
+  position: relative;
+  margin-left: -38px;
+  text-align: center;
+
+  .iconLink {
+    float: left;
+    text-align: center;
+    .checkIcon {
+      left: 4px;
+    }
+    .timesIcon {
+      left: 5px;
+    }
+  }
+}
+
+.iconLink {
+  color: #5B69AF;
+  font-size: 14px;
+  margin-left: 8px;
+  cursor: pointer;
+}
