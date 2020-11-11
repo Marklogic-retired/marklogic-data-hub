@@ -2,7 +2,7 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.junit.jupiter.api.BeforeEach;
+import com.marklogic.client.FailedRequestException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -13,8 +13,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -113,6 +112,49 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
             .session(mockHttpSession))
             .andDo(result -> {
                 assertTrue(result.getResolvedException() instanceof AccessDeniedException);
+            });
+    }
+
+    @Test
+    void nonExistentTestingDoc() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/reference-project");
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+        final String uri = "/uri/to/non-existent/doc.json";
+        mockMvc.perform(get(PATH + "/{stepName}/testingDoc", "testMap")
+            .param("docUri", uri)
+            .session(mockHttpSession))
+            .andDo(result -> {
+                Exception e = result.getResolvedException();
+                if (e != null) {
+                    if (e instanceof FailedRequestException) {
+                        FailedRequestException fre = (FailedRequestException) result.getResolvedException();
+                        assertEquals("Could not find a document with URI: " + uri, fre.getServerStatus(),
+                            "Unexpected server status value.");
+                        assertEquals(404, fre.getServerStatusCode(), "Unexpected server status code.");
+                    } else {
+                        fail("Expected FailedRequestException but received " + e.getClass().getName());
+                    }
+                } else {
+                    fail("Expected an exception but one was not thrown.");
+                }
+            });
+    }
+
+    @Test
+    void existentTestingDoc() throws Exception {
+        runAsDataHubDeveloper();
+        installProjectInFolder("test-projects/reference-project");
+        loginAsTestUserWithRoles("hub-central-mapping-reader");
+        final String uri = "/entities/Customer.entity.json"; // not a data file per se but in reference-project.
+        mockMvc.perform(get(PATH + "/{stepName}/testingDoc", "testMap")
+            .param("docUri", uri)
+            .session(mockHttpSession))
+            .andDo(result -> {
+                Exception e = result.getResolvedException();
+                if (e != null) {
+                    fail("The following exception was thrown when no exception was expected: " + e.toString());
+                }
             });
     }
 

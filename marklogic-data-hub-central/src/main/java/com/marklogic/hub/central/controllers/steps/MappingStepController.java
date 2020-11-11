@@ -3,7 +3,6 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
-import com.marklogic.hub.central.managers.MapSearchManager;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.MappingService;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping("/api/steps/mapping")
@@ -81,6 +79,13 @@ public class MappingStepController extends BaseController {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
         return new ResponseEntity<>(body, headers, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{stepName}/testingDoc", method = RequestMethod.GET)
+    @ApiOperation(value = "Get an XML or JSON source document (and additional information all formatted as a string of JSON) to facilitate testing a map.")
+    @Secured("ROLE_readMapping")
+    public ResponseEntity<JsonNode> getDocumentForTesting(@PathVariable String stepName, @RequestParam String docUri) {
+        return ResponseEntity.ok(MappingService.on(getHubClient().getStagingClient()).getDocumentForTesting(stepName, docUri));
     }
 
     private StepService newService() {
