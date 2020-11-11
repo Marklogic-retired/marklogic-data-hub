@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
  * The logging will show each row - you may want to comment that out in case you're DHF instance has a large number of
  * rows.
  */
-public class ReadCustomers {
+public class QueryDatabook {
 
-    private static Logger logger = LoggerFactory.getLogger(ReadCustomers.class);
+    private static Logger logger = LoggerFactory.getLogger(QueryDatabook.class);
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf()
@@ -31,21 +31,27 @@ public class ReadCustomers {
 
         SQLContext sqlContext = new SQLContext(session);
 
+        String host = args[0];
+        String username = args[1];
+        String password = args[2];
+
         Dataset<Row> rows = sqlContext.read()
             // Specify the package of the DH Spark connector so Spark uses our DataReader
             .format("com.marklogic.hub.spark.sql.sources.v2")
 
             // Connection properties
-            .option("mlHost", "localhost")
-            .option("mlUsername", "hub-operator")
-            .option("mlPassword", "password")
+            .option("mlHost", host)
+            .option("mlUsername", username)
+            .option("mlPassword", password)
             .option("hubDhs", "false")
             .option("hubSsl", "false")
-
+            // for this sample we read directly from staging because we also the demo ingest
+            // is stored in staging.
+            .option("mlFinalPort",8010)
             // Query properties
-            .option("view", "Customer")
-            .option("schema", "Customer") // optional
-            .option("sqlCondition", "customerId > 200") // optional
+            .option("view", "dataBook")
+            .option("schema", "schema") // optional
+            .option("sqlCondition", "LastName='Cedric'") // optional
             .load() // does not actually load the data, but creates the Dataset
             .cache(); // forces the data to be loaded and stored in memory
 

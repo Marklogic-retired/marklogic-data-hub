@@ -11,19 +11,20 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 
 public class StreamingWriteTest {
+    private static String host;
+    private static String username;
+    private static String password;
 
     private static Logger logger = LoggerFactory.getLogger(StreamingWriteTest.class);
 
-    private static String host = "localhost";
-    private static String username = "test-data-hub-operator";
-    private static String password = "password";
-
     public static void main(String[] args) throws Exception {
-        setConnectionProperties(args);
+        if ( !setConnectionProperties(args) ) {
+            return;
+        }
 
         logger.info("Creating SparkSession");
         SparkSession sparkSession = SparkSession.builder()
-            .master("local")
+            .master("local[*]")
             .getOrCreate();
 
 
@@ -35,15 +36,16 @@ public class StreamingWriteTest {
         }
     }
 
-    private static void setConnectionProperties(String[] args) {
+    private static boolean setConnectionProperties(String[] args) {
         if (args.length != 3) {
-            logger.info("Defaulting to host=localhost and username=test-data-hub-operator");
-            username="test-data-hub-operator";
+            logger.info("Usage: WriteTest <host> <username> <password>");
+            return false;
         } else {
             host = args[0];
             username = args[1];
             password = args[2];
             logger.info(String.format("Will write to '%s' as user '%s'", host, username));
+            return true;
         }
     }
 
@@ -82,10 +84,11 @@ public class StreamingWriteTest {
             .option("mlUsername", username)
             .option("mlPassword", password)
             .option("uriPrefix", "/StreamTest")
-            .option("collections", "sparkTestOne,sparkTestTwo")
+            .option("collections", "dataBook,sparkTestOne,sparkTestTwo")
             .option("hubDhs", "false")
             .option("hubSsl", "false")
             .option("batchSize", "3")
+            .option("uriTemplate","/dataBook/{LastName}/{FirstName}.json")
             .option("checkpointLocation", "src/main/resources/logs/"+System.currentTimeMillis())
             .start()
             .awaitTermination(3000);

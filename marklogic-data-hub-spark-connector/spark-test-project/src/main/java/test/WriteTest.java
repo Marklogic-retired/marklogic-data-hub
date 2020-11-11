@@ -15,17 +15,18 @@ import java.io.File;
 public class WriteTest {
 
     private static Logger logger = LoggerFactory.getLogger(WriteTest.class);
-
-    private static String host = "localhost";
-    private static String username = "test-data-hub-operator";
-    private static String password = "password";
+    private static String host;
+    private static String username;
+    private static String password;
 
     public static void main(String[] args) {
-        setConnectionProperties(args);
+        if ( !setConnectionProperties(args) ) {
+            return;
+        }
 
         logger.info("Creating SparkSession");
         SparkSession sparkSession = SparkSession.builder()
-            .master("local")
+            .master("local[*]")
             .getOrCreate();
 
         try {
@@ -36,14 +37,16 @@ public class WriteTest {
         }
     }
 
-    private static void setConnectionProperties(String[] args) {
+    private static boolean setConnectionProperties(String[] args) {
         if (args.length != 3) {
-            logger.info("Defaulting to host=localhost and username=test-data-hub-operator");
+            logger.info("Usage: WriteTest <host> <username> <password>");
+            return false;
         } else {
             host = args[0];
             username = args[1];
             password = args[2];
             logger.info(String.format("Will write to '%s' as user '%s'", host, username));
+            return true;
         }
     }
 
@@ -81,7 +84,8 @@ public class WriteTest {
             .option("mlUsername", username)
             .option("mlPassword", password)
             .option("uriPrefix", "/SparkTest")
-            .option("collections", "sparkTestOne,sparkTestTwo")
+            .option("uriTemplate","/dataBook/{LastName}/{FirstName}.json")
+            .option("collections", "dataBook,sparkTestOne,sparkTestTwo")
             .option("hubDhs", "false")
             .option("hubSsl", "false")
             .save();

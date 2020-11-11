@@ -10,6 +10,14 @@ You can run this via the local Gradle wrapper against your local DHF instance (b
 requires Java 8):
 
     ./gradlew ingestDatabook
+
+For the streaming demo run:
+
+    ./gradlew ingestDatabookViaStreamTest
+ 
+Once ingested the data can be exported via:
+
+    ./gradlew queryDatabook
     
 The default host/username/password are defined in the gradle.properties file in this directory. You can override these 
 via the gitignore'd gradle-local.properties file, or via the command line:
