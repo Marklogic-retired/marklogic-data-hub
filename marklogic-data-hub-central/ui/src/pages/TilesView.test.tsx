@@ -273,8 +273,8 @@ describe('Tiles View component tests for Developer user', () => {
         expect(queryByText('Yes')).not.toBeInTheDocument();
         // test description
         fireEvent.click(getByText('testFlow'));
-        expect(queryByText('Save')).not.toBeInTheDocument();
-        fireEvent.click(getByText('Close'));
+        expect(queryByText('Save')).toBeDisabled();
+        fireEvent.click(getByText('Cancel'));
 
         // test run
         fireEvent.click(getByLabelText('icon: right'));
