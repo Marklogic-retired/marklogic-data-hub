@@ -96,21 +96,34 @@ function generateUri(record, endpointConstants) {
     const uriPrefix = endpointConstants.uriprefix != null ? endpointConstants.uriprefix : "";
     return uriPrefix + sem.uuidString() + ".json";
   } else {
-    return endpointConstants.uritemplate.replace(uriTemplateRegEx, function (match, group) {
-      let propertyValue = record[group];
-      const type = typeof propertyValue;
-      if ( propertyValue === null ) {
-        throw new Error("Property ["+group+"] is null. This can't be used in a uri template.");
-      } else if ( type === "undefined") {
-        throw new Error("Property ["+group+"] is undefined. This can't be used in a uri template.");
-      } else if ( type === "object" ) {
-        throw new Error("Property ["+group+"] is an object. This can't be used in a uri template.");
-      } else if ( type === "function" ) {
-        throw new Error("Property ["+group+"] is a function. This can't be used in a uri template.");
-      }
-      return String(propertyValue);
+    const uriTemplate = endpointConstants.uritemplate;
+    return uriTemplate.replace(uriTemplateRegEx, function (match, group) {
+      return convertPropertyValueToString(record, group, uriTemplate);
     });
   }
+}
+
+/**
+ * Used when replacing property references in a uriTemplate.
+ *
+ * @param record
+ * @param propertyName
+ * @param uriTemplate
+ * @returns {string}
+ */
+function convertPropertyValueToString(record, propertyName, uriTemplate) {
+  let propertyValue = record[propertyName];
+  const type = typeof propertyValue;
+  if (propertyValue === null) {
+    throw new Error("Property '" + propertyName + "' is null, but is required by uriTemplate: " + uriTemplate);
+  } else if (type === "undefined") {
+    throw new Error("Property '" + propertyName + "' is undefined, but is required by uriTemplate: " + uriTemplate);
+  } else if (type === "object") {
+    throw new Error("Property '" + propertyName + "' is an object, but must be a scalar value as it is used in uriTemplate: " + uriTemplate);
+  } else if (type === "function") {
+    throw new Error("Property '" + propertyName + "' is a function, but must be a scalar value as it is used in uriTemplate: " + uriTemplate);
+  }
+  return String(propertyValue);
 }
 
 function normalizeInputToArray(input) {
@@ -129,6 +142,7 @@ function normalizeInputToArray(input) {
 module.exports = {
   buildHeaders,
   buildInsertOptions,
+  convertPropertyValueToString,
   generateUri,
   normalizeInputToArray
 }

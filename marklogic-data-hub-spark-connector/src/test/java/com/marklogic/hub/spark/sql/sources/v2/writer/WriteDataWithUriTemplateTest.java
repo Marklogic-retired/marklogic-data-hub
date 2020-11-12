@@ -15,38 +15,38 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class WriteDataWithUriTemplateTest extends AbstractSparkConnectorTest {
 
     @Test
-    void testInvalidUriTemplate1() {
+    void openingBraceWithoutClosingBrace() {
         String uriTemplate = "{property1.json";
         RuntimeException e = assertThrows(RuntimeException.class, () -> initializeDataWriter(newFruitOptions().withUriTemplate(uriTemplate)));
-        assertEquals("Unclosed token in uritemplate={property1.json.",e.getMessage());
+        assertEquals("Invalid uritemplate: {property1.json; opening brace without closing brace", e.getMessage());
     }
 
     @Test
-    void testInvalidUriTemplate2() {
+    void closingBraceBeforeOpeningBrace() {
         String uriTemplate = "property2}.json";
         RuntimeException e = assertThrows(RuntimeException.class, () -> initializeDataWriter(newFruitOptions().withUriTemplate(uriTemplate)));
-        assertEquals("Closing curly bracket found without opening bracket. uritemplate=property2}.json.",e.getMessage());
+        assertEquals("Invalid uritemplate: property2}.json; closing brace found before opening brace", e.getMessage());
     }
 
     @Test
-    void testInvalidUriTemplate3() {
+    void openingBraceInsteadOfClosingBraceWithEqualCountsOfBraces() {
         String uriTemplate = "{{property1}property2}.json";
         RuntimeException e = assertThrows(RuntimeException.class, () -> initializeDataWriter(newFruitOptions().withUriTemplate(uriTemplate)));
-        assertEquals("Nested tokens in uritemplate={{property1}property2}.json.",e.getMessage());
+        assertEquals("Invalid uritemplate: {{property1}property2}.json; expected closing brace, but found opening brace", e.getMessage());
     }
 
     @Test
-    void testInvalidUriTemplate4() {
-        String uriTemplate = "{{property1}.json";
+    void openingBraceInsteadOfClosingBrace() {
+        String uriTemplate = "{property1{}.json";
         RuntimeException e = assertThrows(RuntimeException.class, () -> initializeDataWriter(newFruitOptions().withUriTemplate(uriTemplate)));
-        assertEquals("Nested tokens in uritemplate={{property1}.json.",e.getMessage());
+        assertEquals("Invalid uritemplate: {property1{}.json; expected closing brace, but found opening brace", e.getMessage());
     }
 
     @Test
-    void testInvalidUriTemplate5() {
+    void noColumnNameInBraces() {
         String uriTemplate = "/a/b/c/{}.json";
         RuntimeException e = assertThrows(RuntimeException.class, () -> initializeDataWriter(newFruitOptions().withUriTemplate(uriTemplate)));
-        assertEquals("UriTemplate has empty tokens. uritemplate=/a/b/c/{}.json.",e.getMessage());
+        assertEquals("Invalid uritemplate: /a/b/c/{}.json; no column name within opening and closing brace", e.getMessage());
     }
 
     @Test
@@ -54,22 +54,22 @@ public class WriteDataWithUriTemplateTest extends AbstractSparkConnectorTest {
         initializeDataWriter(newFruitOptions().withUriTemplate("/fruit/{fruitColor}/{fruitName}.json"));
         writeRows(buildRow("pineapple", "green"));
         String uri = getFruitUris()[0];
-        assertEquals("/fruit/green/pineapple.json",uri);
+        assertEquals("/fruit/green/pineapple.json", uri);
     }
 
     @Test
     void ingestDocWithUriTemplateNullInContent() {
         initializeDataWriter(newFruitOptions().withUriTemplate("/fruit/{fruitColor}/{fruitName}.json"));
-        WriterCommitMessage response = writeRows(buildRow("pineapple",null));
+        WriterCommitMessage response = writeRows(buildRow("pineapple", null));
         assertNotNull(response);
-        assertEquals(AtLeastOneWriteFailedMessage.class,response.getClass());
+        assertEquals(AtLeastOneWriteFailedMessage.class, response.getClass());
     }
 
     @Test
     void ingestDocWithUriTemplateUndefinedInContent() {
         initializeDataWriter(newFruitOptions().withUriTemplate("/fruit/{fruitColor}/{fruitName}/{doesnotexist}.json"));
-        WriterCommitMessage response = writeRows(buildRow("pineapple",null));
+        WriterCommitMessage response = writeRows(buildRow("pineapple", null));
         assertNotNull(response);
-        assertEquals(AtLeastOneWriteFailedMessage.class,response.getClass());
+        assertEquals(AtLeastOneWriteFailedMessage.class, response.getClass());
     }
 }
