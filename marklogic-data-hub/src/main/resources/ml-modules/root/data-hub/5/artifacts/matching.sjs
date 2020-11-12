@@ -16,7 +16,6 @@
 'use strict';
 
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const Security = require("/data-hub/5/impl/security.sjs");
 
 // define constants for caching expensive operations
 const dataHub = DataHubSingleton.instance();
@@ -78,40 +77,8 @@ function defaultArtifact(artifactName) {
     permissions: defaultPermissions,
     targetFormat: "json"
   };
-
-  if (Security.currentUserHasRole("hub-central-match-merge-writer")) {
-    artifact["matchRulesets"] = artifact.matchRulesets || [];
-    artifact["thresholds"] = artifact.thresholds || [];
-  }
-  else {
-    artifact["matchOptions"] = {
-      dataFormat: "json",
-      propertyDefs: {
-        property: []
-      },
-      algorithms: {
-        algorithm: []
-      },
-      collections: {
-        content: []
-      },
-      scoring: {
-        add: [],
-        expand: [],
-        reduce: []
-      },
-      actions: {
-        action: []
-      },
-      thresholds: {
-        threshold: []
-      },
-      tuning: {
-        maxScan: 200
-      }
-    }
-  }
-
+  artifact["matchRulesets"] = artifact.matchRulesets || [];
+  artifact["thresholds"] = artifact.thresholds || [];
   return artifact;
 }
 

@@ -181,10 +181,13 @@ public class CreateStepTest extends AbstractHubCoreTest {
             assertEquals(false, step.get("stepUpdate").asBoolean());
             if ("matching".equalsIgnoreCase(stepType)) {
                 assertNotNull( step.get("matchRulesets"));
+                assertNotNull( step.get("thresholds"));
                 assertEquals(true, step.get("acceptsBatch").asBoolean());
             }
             else {
                 assertNotNull( step.get("mergeRules"));
+                assertNotNull( step.get("mergeStrategies"));
+                assertNotNull( step.get("targetCollections"));
                 assertEquals(false, step.get("acceptsBatch").asBoolean());
             }
         }
