@@ -1,0 +1,31 @@
+{
+  "$optic": {
+    "ns": "op",
+    "fn": "operators",
+    "args": [
+      {
+        "ns": "op",
+        "fn": "from-view",
+        "args": [
+          "Customer",
+          "Customer",
+          "",
+          null
+        ]
+      },
+      {
+        "ns": "op",
+        "fn": "where",
+        "args": [
+          {
+            "ns": "op",
+            "fn": "sql-condition",
+            "args": [
+              "customerId < 5"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

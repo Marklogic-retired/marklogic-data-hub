@@ -1,0 +1,62 @@
+{
+  "$optic": {
+    "ns": "op",
+    "fn": "operators",
+    "args": [
+      {
+        "ns": "op",
+        "fn": "from-view",
+        "args": [
+          "Customer",
+          "Customer",
+          null,
+          null
+        ]
+      },
+      {
+        "ns": "op",
+        "fn": "where",
+        "args": [
+          {
+            "ns": "op",
+            "fn": "sql-condition",
+            "args": [
+              "customerId < 2"
+            ]
+          }
+        ]
+      },
+      {
+        "ns": "op",
+        "fn": "group-by",
+        "args": [
+          [
+            {
+              "ns": "op",
+              "fn": "col",
+              "args": [
+                "customerId"
+              ]
+            }
+          ],
+          null
+        ]
+      },
+      {
+        "ns": "op",
+        "fn": "order-by",
+        "args": [
+          [
+            {
+              "ns": "op",
+              "fn": "col",
+              "args": [
+                "customerId"
+              ]
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

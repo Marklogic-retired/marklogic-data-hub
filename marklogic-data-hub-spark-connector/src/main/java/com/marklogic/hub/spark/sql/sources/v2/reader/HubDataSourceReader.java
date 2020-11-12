@@ -3,6 +3,7 @@ package com.marklogic.hub.spark.sql.sources.v2.reader;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.spark.dataservices.SparkService;
@@ -17,6 +18,7 @@ import org.apache.spark.sql.types.StructType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Responsible for calling the initialization endpoint which allows it to know how many input partitions to
@@ -42,13 +44,25 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         logger.debug("Created: " + toString());
 
         this.options = dataSourceOptions.asMap();
+        validateOptions();
+
+        this.initializationResponse = initializeRead(partitionCountProvider);
+        this.schema = (StructType) StructType.fromJson(initializationResponse.get("schema").toString());
+    }
+
+    private void validateOptions() {
+        if (options.containsKey("serializedplan")) {
+            Stream.of("view", "schema", "sqlcondition").forEach(key -> {
+                if (options.containsKey(key)) {
+                    throw new IllegalArgumentException(format("The '%s' option may not be specified when 'serializedplan' is also specified", key));
+                }
+            });
+            return;
+        }
 
         if (!options.containsKey("view")) {
             throw new RuntimeException("The 'view' option must define a TDE view name from which to retrieve rows");
         }
-
-        this.initializationResponse = initializeRead(partitionCountProvider);
-        this.schema = (StructType) StructType.fromJson(initializationResponse.get("schema").toString());
     }
 
     private JsonNode initializeRead(PartitionCountProvider partitionCountProvider) {
@@ -58,8 +72,22 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         inputs.put("sqlCondition", options.get("sqlcondition"));
         inputs.put("partitionCount", partitionCountProvider.getPartitionCount());
 
-        HubClient hubClient = HubClient.withHubClientConfig(Util.buildHubClientConfig(options));
-        return SparkService.on(hubClient.getFinalClient()).initializeRead(inputs);
+        if (options.containsKey("serializedplan")) {
+            try {
+                inputs.set("serializedPlan", new ObjectMapper().readTree(options.get("serializedplan")));
+            } catch (Exception ex) {
+                throw new IllegalArgumentException("Unable to read serializedplan as a JSON object; cause: " + ex.getMessage(), ex);
+            }
+        }
+
+        try {
+            return SparkService.on(
+                HubClient.withHubClientConfig(Util.buildHubClientConfig(options)).getFinalClient()
+            ).initializeRead(inputs);
+        } catch (FailedRequestException ex) {
+            throw new RuntimeException("Unable to initialize read, cause: " + ex.getMessage(), ex);
+        }
+
     }
 
     @Override

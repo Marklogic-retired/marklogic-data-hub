@@ -34,6 +34,14 @@ public abstract class TestObject extends LoggingObject {
         }
     }
 
+    protected String readStringFromClasspath(String path) {
+        try {
+            return new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath(path)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected ObjectNode readJsonObject(String json) {
         try {
             return (ObjectNode) objectMapper.readTree(json);

@@ -216,6 +216,8 @@ function makePartitionsWithRows(parameterizedPlan, partitionCount) {
 
 module.exports = {
   buildSchemaFieldsBasedOnTdeColumns,
+  getSchemaName,
+  getViewName,
   makePartitionsWithRows,
   parameterizePlan
 }
