@@ -38,6 +38,7 @@ public class Options {
     private String view;
     private String schema;
     private String sqlCondition;
+    private String serializedPlan;
 
     public Options() {
     }
@@ -112,6 +113,9 @@ public class Options {
         }
         if (sqlCondition != null) {
             params.put("sqlcondition", sqlCondition);
+        }
+        if (serializedPlan != null) {
+            params.put("serializedplan", serializedPlan);
         }
         return new DataSourceOptions(params);
     }
@@ -193,6 +197,11 @@ public class Options {
 
     public Options withSqlCondition(String sqlCondition) {
         this.sqlCondition = sqlCondition;
+        return this;
+    }
+
+    public Options withSerializedPlan(String serializedPlan) {
+        this.serializedPlan = serializedPlan;
         return this;
     }
 }

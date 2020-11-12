@@ -15,20 +15,27 @@
  */
 'use strict';
 
+const ds = require("/data-hub/5/data-services/ds-utils.sjs");
 const op = require('/MarkLogic/optic');
 const readLib = require("readLib.sjs");
 
+function buildOriginalPlan(inputs) {
+  if (inputs.serializedPlan) {
+    return op.import(inputs.serializedPlan);
+  }
+
+  // The qualifier of "" will only work for non-joins; it's intended to provide simple column names for Spark
+  let originalPlan = op.fromView(inputs.schema, inputs.view, "");
+  if (inputs.sqlCondition) {
+    originalPlan = originalPlan.where(op.sqlCondition(inputs.sqlCondition));
+  }
+  return originalPlan;
+}
+
+
 var inputs = fn.head(xdmp.fromJSON(inputs));
 
-const viewName = inputs.view;
-const schemaName = inputs.schema;
-
-// Use an empty qualifier to ensure "simple" names without view/schema in them are returned
-// Will likely need to modify once joins are supported
-let originalPlan = op.fromView(schemaName, viewName, "");
-if (inputs.sqlCondition) {
-  originalPlan = originalPlan.where(op.sqlCondition(inputs.sqlCondition));
-}
+const originalPlan = buildOriginalPlan(inputs);
 
 // If there are no matching rows, null will be returned
 const parameterizedPlan = readLib.parameterizePlan(originalPlan.export());
@@ -38,8 +45,12 @@ const partitions = parameterizedPlan != null ?
   readLib.makePartitionsWithRows(parameterizedPlan, inputs.partitionCount) : [];
 
 // If there are no partitions, no reason to build schema fields
-const schemaFields = partitions.length > 0 ?
-  readLib.buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName) : [];
+let schemaFields = [];
+if (partitions.length > 0) {
+  const schemaName = readLib.getSchemaName(parameterizedPlan);
+  const viewName = readLib.getViewName(parameterizedPlan);
+  schemaFields = readLib.buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName);
+}
 
 const response = {
   "schema": {
