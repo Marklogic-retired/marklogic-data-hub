@@ -119,15 +119,15 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         for ( char ch : chars ) {
             if ( ch == '}' ) {
                 if ( !inToken ) {
-                    throw new IllegalArgumentException("Closing curly bracket found without opening bracket. uritemplate=" + uriTemplate + ".");
+                    throw new IllegalArgumentException(format("Invalid uritemplate: %s; closing brace found before opening brace", uriTemplate));
                 }
                 if ( tokenSize == 0 ) {
-                    throw new IllegalArgumentException("UriTemplate has empty tokens. uritemplate=" + uriTemplate + ".");
+                    throw new IllegalArgumentException(format("Invalid uritemplate: %s; no column name within opening and closing brace", uriTemplate));
                 }
                 inToken = false;
             } else if ( ch == '{' ) {
                 if ( inToken ) {
-                    throw new IllegalArgumentException("Nested tokens in uritemplate=" + uriTemplate + ".");
+                    throw new IllegalArgumentException(format("Invalid uritemplate: %s; expected closing brace, but found opening brace", uriTemplate));
                 }
                 inToken = true;
                 tokenSize = 0;
@@ -138,7 +138,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
             }
         }
         if ( inToken ) {
-            throw new IllegalArgumentException("Unclosed token in uritemplate=" + uriTemplate + ".");
+            throw new IllegalArgumentException(format("Invalid uritemplate: %s; opening brace without closing brace", uriTemplate));
         }
     }
 
