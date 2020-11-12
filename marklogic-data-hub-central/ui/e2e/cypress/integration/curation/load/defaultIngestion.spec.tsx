@@ -89,6 +89,13 @@ describe('Default ingestion ', () => {
         loadPage.saveSettings(stepName).click();
         loadPage.stepName(stepName).should('be.visible');
 
+        //Cancel Add to New Flow
+        loadPage.addStepToNewFlowListView(stepName);
+        cy.findByText('New Flow').should('be.visible');
+        loadPage.confirmationOptions('Cancel').click();
+        //should route user back to load page list view
+        cy.waitUntil(() => loadPage.addNewButton('list').should('be.visible'));
+
         //Add step to a new flow
         loadPage.addStepToNewFlowListView(stepName);
         cy.findByText('New Flow').should('be.visible');
@@ -217,6 +224,13 @@ describe('Default ingestion ', () => {
         loadPage.saveSettings(stepName).click();
         cy.waitForAsyncRequest();
         loadPage.stepName(stepName).should('be.visible');
+
+        //Cancel Add to New Flow
+        loadPage.addStepToNewFlow(stepName);
+        cy.findByText('New Flow').should('be.visible');
+        loadPage.confirmationOptions('Cancel').click();
+        //should route user back to load page card view
+        cy.waitUntil(() => loadPage.addNewButton('card').should('be.visible'));
 
         //Verify Add to New Flow
         loadPage.addStepToNewFlow(stepName);

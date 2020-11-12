@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import styles from './new-flow-dialog.module.scss';
 import {NewFlowTooltips} from '../../../config/tooltips.config';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
+import { Link, useHistory } from 'react-router-dom';
 
 
 const NewFlowDialog = (props) => {
@@ -15,6 +16,7 @@ const NewFlowDialog = (props) => {
   const [, setIsLoading] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
 
+  let history = useHistory();
   useEffect(() => {
     if (props.flowData && JSON.stringify(props.flowData) != JSON.stringify({}) && props.title === 'Edit Flow') {
       setFlowName(props.flowData.name);
@@ -40,6 +42,19 @@ const NewFlowDialog = (props) => {
     props.setNewFlow(false);
     if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
       props.setOpenNewFlow(false);
+    }
+
+    //add information about mapping step, load card, load list, pagination.
+    if(props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow){
+      history.push({pathname: `/tiles/${props.newStepToFlowOptions.stepDefinitionType === 'ingestion' ? 'load': 'curate'}`,
+      state: {
+          stepDefinitionType : props.newStepToFlowOptions.stepDefinitionType,
+          targetEntityType: props.newStepToFlowOptions.targetEntityType,
+          viewMode: props.newStepToFlowOptions.viewMode,
+          pageSize: props.newStepToFlowOptions.pageSize,
+          sortOrderInfo: props.newStepToFlowOptions.sortOrderInfo,
+          page: props.newStepToFlowOptions.page
+      }});
     }
   };
 

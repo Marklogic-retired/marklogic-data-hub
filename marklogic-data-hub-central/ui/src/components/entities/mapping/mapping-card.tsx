@@ -87,7 +87,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [mapIndex, setMapIndex] = useState(-1);
     let namespaceString = '';
 
-        //To navigate to bench view with parameters
+    //To navigate to bench view with parameters
     let history = useHistory();
 
     useEffect(() => {
@@ -629,6 +629,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                         state: {
                                             stepToAdd : name,
                                             stepDefinitionType : 'mapping',
+                                            targetEntityType: props.entityModel.entityTypeId,
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
             </Menu.Item>
@@ -716,6 +717,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                     {pathname: '/tiles/run/add',
                                     state: {
                                         stepToAdd : elem.name,
+                                        targetEntityType: props.entityModel.entityTypeId,
                                         stepDefinitionType : 'mapping'
                                     }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
                                     <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
