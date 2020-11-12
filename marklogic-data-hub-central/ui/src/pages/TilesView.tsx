@@ -111,6 +111,11 @@ const TilesView = (props) => {
             flowName : location.state?.flowName,
             newStepName: location.state?.stepToAdd,
             stepDefinitionType: location.state?.stepDefinitionType,
+            viewMode: location.state?.viewMode,
+            pageSize: location.state?.pageSize,
+            page: location.state?.page,
+            sortOrderInfo: location.state?.sortOrderInfo,
+            targetEntityType: location.state?.targetEntityType,
             existingFlow: location.state?.existingFlow || false,
             flowsDefaultKey: location.state?.flowsDefaultKey || ['-1']
         };

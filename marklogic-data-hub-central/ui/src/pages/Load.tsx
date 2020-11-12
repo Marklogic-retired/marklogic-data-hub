@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import {Modal} from 'antd';
 import styles from './Load.module.scss';
+import { useLocation } from "react-router-dom";
 import SwitchView from '../components/load/switch-view';
 import LoadList from '../components/load/load-list';
 import LoadCard from '../components/load/load-card';
@@ -14,10 +15,14 @@ export type ViewType =  'card' | 'list';
 const INITIAL_VIEW: ViewType = 'card';
 
 const Load: React.FC = () => {
-  let [view, setView] = useState(INITIAL_VIEW);
   const [isLoading, setIsLoading] = useState(false);
+  const location = useLocation<any>();
+  let [view, setView] = useState(location.state?.viewMode ? location.state.viewMode : INITIAL_VIEW);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [sortedInfo, setSortedInfo] = useState({columnKey: '', order: ''});
   const { handleError } = useContext(UserContext);
 
   //For role based privileges
@@ -30,6 +35,13 @@ const Load: React.FC = () => {
   const handleViewSelection = (view) => {
     setView(view);
   };
+
+  useEffect(() => {
+    setPage(location.state?.page);
+    setPageSize(location.state?.pageSize);
+    setView(location.state?.viewMode ? location.state?.viewMode : view);
+    setSortedInfo(location.state?.sortOrderInfo);
+  }, [location]);
 
   useEffect(() => {
       getLoadArtifacts();
@@ -173,6 +185,9 @@ const Load: React.FC = () => {
         canWriteFlow={canWriteFlow}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
+        page={page}
+        pageSize={pageSize}
+        sortOrderInfo={sortedInfo}
       />
     </div>;
   }

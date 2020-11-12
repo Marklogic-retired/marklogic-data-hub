@@ -203,6 +203,13 @@ describe('Mapping', () => {
     // close modal
     cy.get('body').type('{esc}');
 
+    //Cancel add to new flow 
+    curatePage.addToNewFlow('Order', mapStep);
+    cy.findByText('New Flow').should('be.visible');
+    loadPage.confirmationOptions('Cancel').click();
+    //should route user back to curate page
+    cy.waitUntil(() => curatePage.getEntityTypePanel('Order').should('be.visible'));
+
     curatePage.openExistingFlowDropdown('Order', mapStep);
     curatePage.getExistingFlowFromDropdown(flowName).click();
     curatePage.addStepToFlowConfirmationMessage();

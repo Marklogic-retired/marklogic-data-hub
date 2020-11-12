@@ -25,13 +25,17 @@ interface Props {
     canReadOnly: any;
     addStepToFlow: any;
     addStepToNew: any;
+    page: any;
+    pageSize: any;
+    sortOrderInfo: any;
   }
 
 const LoadList: React.FC<Props> = (props) => {
     const activityType = 'ingestion';
     const location = useLocation<any>();
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [page, setPage] = useState(props.page);
+    const [pageSize, setPageSize] = useState(props.pageSize);
+    const [sortedInfo, setSortedInfo] = useState(props.sortOrderInfo);
     const [newDataLoad, setNewDataLoad] = useState(false);
     const [title, setTitle] = useState('');
     const [dialogVisible, setDialogVisible] = useState(false);
@@ -49,6 +53,10 @@ const LoadList: React.FC<Props> = (props) => {
       if (location.state && location.state.stepToView) {
         const stepIndex = props.data.findIndex((step) => step.stepId === location.state.stepToView);
         setPage(Math.floor(stepIndex / pageSize) + 1);
+      }else{
+        setSortedInfo(props.sortOrderInfo);
+        setPage(props.page);
+        setPageSize(props.pageSize);
       }
     }, [location, props.data]);
 
@@ -100,6 +108,11 @@ const LoadList: React.FC<Props> = (props) => {
         setAddRun(true);
         handleStepAdd(obj.loadName, obj.flowName);
     }
+
+    const handleTableChange = (pagination, filter, sorter) => {
+        setSortedInfo({columnKey: sorter.columnKey, order: sorter.order});
+    }
+
 
     const isStepInFlow = (loadName, flowName) => {
         let result = false;
@@ -170,6 +183,10 @@ const LoadList: React.FC<Props> = (props) => {
                                         state: {
                                             stepToAdd : name,
                                             stepDefinitionType : 'ingestion',
+                                            viewMode: 'list',
+                                            pageSize: pageSize,
+                                            page: page,
+                                            sortOrderInfo: sortedInfo,
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
             </Menu.Item>
@@ -203,6 +220,10 @@ const LoadList: React.FC<Props> = (props) => {
                                         state: {
                                             stepToAdd : name,
                                             stepDefinitionType : 'ingestion',
+                                            viewMode: 'list',
+                                            pageSize: pageSize,
+                                            page: page,
+                                            sortOrderInfo: sortedInfo,
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
             </Menu.Item>
@@ -252,13 +273,15 @@ const LoadList: React.FC<Props> = (props) => {
           ),
           sortDirections: ["ascend", "descend", "ascend"],
           sorter: (a:any, b:any) => a.name.localeCompare(b.name),
+          sortOrder: (sortedInfo && sortedInfo.columnKey === 'name') ? sortedInfo.order : '',
         },
         {
           title: <span data-testid="loadTableDescription">Description</span>,
           dataIndex: 'description',
           key: 'description',
           sortDirections: ["ascend", "descend", "ascend"],
-          sorter: (a:any, b:any) => a.description?.localeCompare(b.description)
+          sorter: (a:any, b:any) => a.description?.localeCompare(b.description),
+          sortOrder: (sortedInfo && sortedInfo.columnKey === 'description') ? sortedInfo.order : '',
         },
         {
             title: <span data-testid="loadTableSourceFormat">Source Format</span>,
@@ -272,6 +295,7 @@ const LoadList: React.FC<Props> = (props) => {
             ),
             sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => a.sourceFormat.localeCompare(b.sourceFormat),
+            sortOrder: (sortedInfo && sortedInfo.columnKey === 'sourceFormat') ? sortedInfo.order : '',
         },
         {
             title: <span data-testid="loadTableTargetFormat">Target Format</span>,
@@ -279,6 +303,7 @@ const LoadList: React.FC<Props> = (props) => {
             key: 'targetFormat',
             sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => a.targetFormat.localeCompare(b.targetFormate),
+            sortOrder: (sortedInfo && sortedInfo.columnKey === 'targetFormat') ? sortedInfo.order : '',
         },
         {
             title: <span data-testid="loadTableDate">Last Updated</span>,
@@ -289,7 +314,8 @@ const LoadList: React.FC<Props> = (props) => {
             ),
             sortDirections: ["ascend", "descend", "ascend"],
             sorter: (a:any, b:any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
-            defaultSortOrder: "descend"
+            defaultSortOrder: "descend",
+            sortOrder: (sortedInfo && sortedInfo.columnKey === 'lastUpdated') ? sortedInfo.order : 'descend',
         },
         {
             title: 'Action',
@@ -314,10 +340,14 @@ const LoadList: React.FC<Props> = (props) => {
     ];
 
     // need special handlePagination for direct links to load steps that can be on another page
-    const handlePagination = (page, pageSize) => {
-      setPage(page);
-      setPageSize(pageSize);
+    const handlePagination = (page) => {
+        setPage(page);
     };
+
+    const handlePageSizeChange = (pageSize) => {
+        setPageSize(pageSize);
+    }
+
     return (
     <div id="load-list" aria-label="load-list" className={styles.loadList}>
         <div className={styles.addNewContainer}>
@@ -326,11 +356,12 @@ const LoadList: React.FC<Props> = (props) => {
             </div> : ''}
         </div>
         <Table
-            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions, onChange: handlePagination, defaultCurrent: page, current: page}}
+            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: page, current: page, pageSize: pageSize}}
             className={styles.loadTable}
             columns={columns}
             dataSource={props.data}
             rowKey="name"
+            onChange={handleTableChange}
         />
         <NewLoadDialog
             newLoad={newDataLoad}

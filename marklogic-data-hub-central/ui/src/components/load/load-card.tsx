@@ -200,6 +200,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                         state: {
                                             stepToAdd : name,
                                             stepDefinitionType : 'ingestion',
+                                            viewMode: 'card',
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
             </Menu.Item>
@@ -302,6 +303,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                     state: {
                                         stepToAdd : elem.name,
                                         stepDefinitionType : 'ingestion',
+                                        viewMode: 'card',
                                         existingFlow: false
                                     }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>: <div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
