@@ -33,6 +33,7 @@ const envelope = record.document.envelope;
 
   //should add default metadata
   test.assertExists(record.metadata.datahubCreatedOn),
-  test.assertEqual("test-data-hub-developer",record.metadata.datahubCreatedBy),
+  test.assertExists(record.metadata.datahubCreatedBy),
+  test.assertNotEqual('', record.metadata.datahubCreatedBy),
   test.assertExists(record.metadata.datahubCreatedByJob)
 ];
