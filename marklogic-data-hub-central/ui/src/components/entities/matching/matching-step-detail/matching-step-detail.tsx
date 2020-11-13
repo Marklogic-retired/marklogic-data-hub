@@ -1,18 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { MLPageHeader, MLButton, MLDropdown, MLMenu } from '@marklogic/design-system';
 import styles from './matching-step-detail.module.scss';
 
 import RulesetSingleModal from '../ruleset-single-modal/ruleset-single-modal';
+import MultiSlider from "../multi-slider/multi-slider";
 import NumberIcon from '../../../number-icon/number-icon';
+import ThresholdModal from '../threshold-modal/threshold-modal';
 
 import { CurationContext } from '../../../../util/curation-context';
-import {
-  MatchingStep
-} from '../../../../types/curation-types';
+import { MatchingStep } from '../../../../types/curation-types';
 import { MatchingStepDetailText } from '../../../../config/tooltips.config';
-import MultiSlider from "../multi-slider/multi-slider";
+import { updateMatchingArtifact } from '../../../../api/matching';
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: '',
@@ -40,11 +41,16 @@ const MatchingStepDetail: React.FC = () => {
   const { curationOptions, updateActiveStepArtifact } = useContext(CurationContext);
 
   const [matchingStep, setMatchingStep] = useState<MatchingStep>(DEFAULT_MATCHING_STEP);
+  const [deleteOptions, setDeleteOptions] = useState({});
+  const [editThreshold, setEditThreshold] = useState({});
 
+  const [showThresholdModal, toggleShowThresholdModal] = useState(false);
   const [showRulesetSingleModal, toggleShowRulesetSingleModal] = useState(false);
 
   const [moreThresholdText, toggleMoreThresholdText] = useState(true);
   const [moreRulesetText, toggleMoreRulesetText] = useState(true);
+
+  const [showDeleteModal, toggleShowDeleteModal] = useState(false);
 
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
@@ -71,7 +77,7 @@ const MatchingStepDetail: React.FC = () => {
       const matchRuleOptionsObject = {
           props: [{
               prop: i.name,
-              type: i.matchRules.length <= 1 ? i.matchRules[0]['matchType'] : ''
+              type: i.matchRules.length > 0 ? i.matchRules[0]['matchType'] : ''
           }],
           value: i.weight
       };
@@ -89,10 +95,87 @@ const MatchingStepDetail: React.FC = () => {
       return matchThresholdOptionsObject;
   });
 
-  const handleSlider = (values) => {
-        // TODO put match options to backend
-        //console.log('handleSlider', values);
-    };
+  const handleSlider = async (values, options) => {
+    if (options['sliderType'] === 'threshold') {
+
+      let stepArtifact = curationOptions.activeStep.stepArtifact;
+      let stepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
+      let index = stepArtifactThresholds.findIndex( threshold => threshold.thresholdName === options['prop'] );
+      let updateThreshold = stepArtifactThresholds.find( threshold => threshold.thresholdName === options['prop'])
+      let changedSlider = values.find( item => item['props']['prop'] === options['prop'])
+
+      updateThreshold['score'] = parseInt(changedSlider['value'].toFixed(1));
+      stepArtifactThresholds[index] = updateThreshold;
+      stepArtifact['thresholds'] = stepArtifactThresholds;
+
+      await updateMatchingArtifact(stepArtifact);
+      updateActiveStepArtifact(stepArtifact);
+    } else if (options['sliderType'] === 'ruleSet') {
+
+    }
+  };
+
+  const handleSliderEdit = (options) => {
+    if (options['sliderType'] === 'threshold') {
+      let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
+      let index = updateStepArtifactThresholds.findIndex( threshold => threshold.thresholdName === options['prop'] );
+      let editThreshold = updateStepArtifactThresholds[index];
+      setEditThreshold({...editThreshold, index });
+      toggleShowThresholdModal(true);
+    } else if (options['sliderType'] === 'ruleSet') {
+
+    }
+  };
+
+  const handleSliderDelete = (options) => {
+    setDeleteOptions(options);
+    toggleShowDeleteModal(true);
+  };
+
+  const deleteConfirm = async () => {
+    if (deleteOptions['sliderType'] === 'threshold') {
+      let stepArtifact = curationOptions.activeStep.stepArtifact;
+      let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
+      let index = updateStepArtifactThresholds.findIndex( threshold => threshold.thresholdName === deleteOptions['prop'] );
+
+      updateStepArtifactThresholds.splice(index, 1);
+      stepArtifact.thresholds = updateStepArtifactThresholds;
+
+      await updateMatchingArtifact(stepArtifact);
+      updateActiveStepArtifact(stepArtifact);
+      toggleShowDeleteModal(false);
+    } else if (deleteOptions['sliderType'] === 'ruleSet') {
+
+    }
+  }
+
+  const deleteModal = (
+    <Modal
+      width={500}
+      visible={showDeleteModal}
+      destroyOnClose={true}
+      closable={false}
+      className={styles.confirmModal}
+      maskClosable={false}
+      footer={null}
+    >
+      <p className={styles.deleteMessage}>Are you sure you want to delete a threshold <b>{deleteOptions['prop']} - {deleteOptions['type']}</b>?</p>
+      <div className={styles.footer}>
+        <MLButton
+          aria-label={`delete-slider-confirm`}
+          size="default"
+          onClick={() => toggleShowDeleteModal(false)}
+        >No</MLButton>
+        <MLButton
+          className={styles.saveButton}
+          aria-label={`delete-slider-confirm`}
+          type="primary"
+          size="default"
+          onClick={() => deleteConfirm()}
+        >Yes</MLButton>
+    </div>
+    </Modal>
+  )
 
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
@@ -130,10 +213,19 @@ const MatchingStepDetail: React.FC = () => {
             </div>
 
             <div className={styles.addButtonContainer}>
-                <MLButton aria-label="add-threshold" type="primary" size="default" className={styles.addThresholdButton}>Add</MLButton>
+                <MLButton 
+                  aria-label="add-threshold"
+                  type="primary"
+                  size="default"
+                  className={styles.addThresholdButton}
+                  onClick={() => {
+                    setEditThreshold({});
+                    toggleShowThresholdModal(true)
+                  }}
+                >Add</MLButton>
             </div>
           </div>
-            <MultiSlider options={matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} type={'threshold'}/>
+            <MultiSlider options={matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={'threshold'}/>
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -167,7 +259,7 @@ const MatchingStepDetail: React.FC = () => {
               </MLDropdown>
             </div>
           </div>
-            <MultiSlider options={matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} type={'ruleSet'}/>
+            <MultiSlider options={matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={'ruleSet'}/>
         </div>
 
       </div>
@@ -175,6 +267,12 @@ const MatchingStepDetail: React.FC = () => {
         isVisible={showRulesetSingleModal}
         toggleModal={toggleShowRulesetSingleModal}
       />
+      <ThresholdModal
+        isVisible={showThresholdModal}
+        editThreshold={editThreshold}
+        toggleModal={toggleShowThresholdModal}
+      />
+      {deleteModal}
     </>
   );
 };

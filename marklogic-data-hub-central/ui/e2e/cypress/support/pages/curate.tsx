@@ -65,6 +65,10 @@ class CuratePage {
         cy.findByTestId(`${entityTypeId}-Merge`).click();
     }
 
+    selectMatchTab(entityTypeId: string) {
+      cy.findByTestId(`${entityTypeId}-Match`).click();
+    }
+
     addNewStep() {
         return cy.findByLabelText('icon: plus-circle');
     }
