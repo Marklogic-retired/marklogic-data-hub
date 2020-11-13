@@ -38,24 +38,23 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
     let entityDefArray = definitionsParser(modelDefinition);
     setCurationOptions({ 
       ...curationOptions,
-      activeStep: { isModified: false, stepArtifact, entityName },
+      activeStep: { ...curationOptions.activeStep, stepArtifact, entityName },
       entityDefinitionsArray: entityDefArray
     });
   };
 
   const updateActiveStepArtifact = (stepArtifact: any) => {
-    let updatedStep = { ...curationOptions.activeStep, isModified: true, stepArtifact };
+    let updatedStep = { ...curationOptions.activeStep, stepArtifact };
     setCurationOptions({ 
       ...curationOptions,
       activeStep: updatedStep,
     });
   };
-
   return (
     <CurationContext.Provider value={{
       curationOptions,
       setActiveStep,
-      updateActiveStepArtifact
+      updateActiveStepArtifact,
     }}>
       {children}
     </CurationContext.Provider>

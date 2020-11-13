@@ -63,7 +63,10 @@ export interface MatchRule {
 export interface Threshold {
   thresholdName: string,
   action: string,
-  score: number
+  score: number,
+  actionModulePath?: string,
+  actionModuleNamespace?: string,
+  actionModuleFunction?: string,
 }
 
 export interface MergingStep {

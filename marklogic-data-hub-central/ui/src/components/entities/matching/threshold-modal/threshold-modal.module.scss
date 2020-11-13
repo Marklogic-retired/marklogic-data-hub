@@ -1,0 +1,31 @@
+
+.matchTypeSelect {
+  width: 400px !important;
+}
+
+.icon {
+  position: absolute;
+  top: 0px;
+  right: -20px;
+  font-size: 12px;
+  color: #7F86B5;
+}
+
+.asterisk {
+  color: #B32424;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+
+  .saveButton {
+    margin-left: 5px;
+  }
+}
+
+.input {
+  position: relative;
+  width: 400px;
+}
+

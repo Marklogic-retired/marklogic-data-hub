@@ -150,7 +150,7 @@ const MatchingCard: React.FC<Props> = (props) => {
           />
       </MLTooltip>,
 
-      props.canReadMatchMerge ? (
+      props.canWriteMatchMerge ? (
       <MLTooltip title={'Delete'} placement="bottom">
         <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
@@ -169,7 +169,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   return (
     <div className={styles.matchContainer}>
       <Row gutter={16} type="flex">
-        {props.canReadMatchMerge ? (
+        {props.canWriteMatchMerge ? (
           <Col>
             <Card
               size="small"

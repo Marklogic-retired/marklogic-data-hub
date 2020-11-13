@@ -5,6 +5,8 @@ import './multi-slider.scss';
 const MultiSlider = (props) => {
 
     const options = props.options;
+    const handleDelete = props.handleDelete
+    const handleEdit = props.handleEdit
     const [activeHandleIdOptions, setActiveHandleIdOptions] = useState<object>({});
 
 
@@ -17,8 +19,8 @@ const MultiSlider = (props) => {
                 {activeHandleIdOptions.hasOwnProperty('prop') && options[0].prop == activeHandleIdOptions['prop'] ? <div className="tooltip">
                     {options.map((opt, i) => (
                         <div className="activeTooltipText" data-testid={`${options[0].prop}-active-tooltip`} key={i}>
-                            <span>{opt.prop}</span>{opt.type.length ? <span> - { opt.type}</span> : ''}
-                            <div className="clearIcon">X</div>
+                            <span data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span> {opt.type.length ? `-  ${opt.type}` : ''}</span>
+                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type})}>X</div>
                         </div>)
                     )}
                 </div>
@@ -26,8 +28,8 @@ const MultiSlider = (props) => {
                     <div className="tooltip">
                     {options.map((opt, i) => (
                         <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
-                            <span>{opt.prop}</span>{opt.type.length ? <span> - { opt.type}</span> : ''}
-                            <div className="clearIcon">X</div>
+                            <span data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ''}</span>
+                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type})}>X</div>
                         </div>
                     ))}
                     </div>
@@ -51,14 +53,14 @@ const MultiSlider = (props) => {
     };
 
     const onChange = values => {
-      let result = options.map((opt, i) => {
-        // TODO handle multiple tooltips
-        return {
-          props: opt['props'][0],
-          value: values[i]
-        };
-      });
-      props.handleSlider(result);
+      // let result = options.map((opt, i) => {
+      //   // TODO handle multiple tooltips
+      //   return {
+      //     props: opt['props'][0],
+      //     value: values[i]
+      //   };
+      // });
+      //props.handleSlider(result);
     };
 
     const onSlideStart = (e, handleId ) => {
@@ -67,8 +69,20 @@ const MultiSlider = (props) => {
     };
 
     const onSlideEnd = values => {
+        let result = options.map((opt, i) => {
+          // TODO handle multiple tooltips
+          return {
+            props: opt['props'][0],
+            value: values[i]
+          };
+        });
+
+        let sliderOptions = {
+          ...activeHandleIdOptions,
+          sliderType: props.type
+        }
         setActiveHandleIdOptions({});
-      // console.log('onSlideEnd values', values);
+        props.handleSlider(result, sliderOptions);
     };
 
     return (

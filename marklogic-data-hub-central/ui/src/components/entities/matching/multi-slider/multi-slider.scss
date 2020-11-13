@@ -40,6 +40,7 @@
         top: 1px;
         right: 5px;
         left: auto;
+        cursor: pointer;
     }
 
     .handle {
@@ -84,6 +85,7 @@
                 z-index: 1;
                 white-space: nowrap;
                 text-overflow: ellipsis;
+                cursor: pointer;
             }
 
             .activeTooltipText {
@@ -99,6 +101,7 @@
                 overflow: visible;
                 width: 180px;
                 max-width: 180px;
+                cursor: pointer;
             }
 
             .tooltipText:hover {
@@ -136,7 +139,10 @@
                 margin-left: -5px;
                 border-color: #E9F7FE transparent transparent transparent;
             }
-
+            span {
+              background-color: inherit;
+              color: inherit;
+            }
         }
     }
 }
