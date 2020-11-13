@@ -775,7 +775,10 @@ describe('Verify Add Step function', () => {
         fireEvent.click(step);
 
         // Click to confirm the add in the dialog
-        expect(getByText(`Are you sure you want to add step "${data.steps.data['ingestionSteps'][0].name}" to flow "${data.flows.data[0].name}"?`)).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText((content, node) => {
+            return getSubElements(content, node,`Are you sure you want to add step ${data.steps.data['ingestionSteps'][0].name} to flow ${data.flows.data[0].name}?`);
+        })))).toBeInTheDocument();
+
         let confirm = getByLabelText('Yes');
         fireEvent.click(confirm);
         await wait(() => {
@@ -830,7 +833,10 @@ describe('Verify Add Step function', () => {
         fireEvent.click(step);
 
         // Click to confirm the add in the dialog
-        expect(getByText(`Are you sure you want to add step "${data.steps.data['ingestionSteps'][0].name}" to flow "${data.flows.data[0].name}"?`)).toBeInTheDocument();
+        expect(await(waitForElement(() => getByText((content, node) => {
+            return getSubElements(content, node,`Are you sure you want to add step ${data.steps.data['ingestionSteps'][0].name} to flow ${data.flows.data[0].name}?`);
+        })))).toBeInTheDocument();
+
         let confirm = getByLabelText('Yes');
         fireEvent.click(confirm);
         await wait(() => {

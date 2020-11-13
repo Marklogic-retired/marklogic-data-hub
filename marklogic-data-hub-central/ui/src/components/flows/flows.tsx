@@ -261,6 +261,14 @@ const Flows: React.FC<Props> = (props) => {
         setStepDialogVisible(false);
         setAddStepDialogVisible(false);
     };
+
+    const isStepInFlow = (stepName, flowName) => {
+        let result = false;
+        let flow;
+        if (props.flows) flow = props.flows.find(f => f.name === flowName);
+        if (flow) result = flow['steps'].findIndex(s => s.stepName === stepName) > -1;
+        return result;
+    };
     
     // Setup for file upload
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
@@ -294,13 +302,13 @@ const Flows: React.FC<Props> = (props) => {
             width={350}
             destroyOnClose={true}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
+            <div className={styles.confirmationText}>Are you sure you want to delete the <strong>{flowName}</strong> flow?</div>
         </Modal>
     );
 
     const deleteStepConfirmation = (
         <Modal
-            visible={stepDialogVisible}
+            visible={stepDialogVisible} 
             okText={<div aria-label="Yes">Yes</div>}
             okType='primary'
             cancelText={<div aria-label="No">No</div>}
@@ -309,7 +317,7 @@ const Flows: React.FC<Props> = (props) => {
             width={350}
             destroyOnClose={true}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
+            <div className={styles.confirmationText}>Are you sure you want to remove the <strong>{stepName}</strong> step from the <strong>{flowName}</strong> flow?</div>
         </Modal>
     );
 
@@ -323,7 +331,15 @@ const Flows: React.FC<Props> = (props) => {
             onCancel={() => onCancel()}
             width={350}
         >
-            <div style={{fontSize: '16px', padding: '10px'}}>Are you sure you want to add step "{stepName}" to flow "{flowName}"?</div>
+            <div className={styles.confirmationText}>
+                {
+                    isStepInFlow(stepName, flowName)
+                    ?
+                    <p>The step <b>{stepName}</b> is already in the flow <b>{flowName}</b>. Would you like to add another instance?</p>
+                    :
+                    <p>Are you sure you want to add step <b>{stepName}</b> to flow <b>{flowName}</b>?</p>
+                }
+            </div>
         </Modal>
     );
 
