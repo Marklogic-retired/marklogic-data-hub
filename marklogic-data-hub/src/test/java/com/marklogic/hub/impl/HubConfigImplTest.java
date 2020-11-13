@@ -1,5 +1,6 @@
 package com.marklogic.hub.impl;
 
+import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.ext.SecurityContextType;
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -127,6 +128,16 @@ public class HubConfigImplTest {
         assertEquals("somehost", config.getAppConfig().getHost());
         assertTrue(new File(config.getAppConfig().getSchemaPaths().get(0)).isAbsolute(),
             "LoadSchemasCommand requires that the schemas path be absolute; path: " + config.getAppConfig().getSchemaPaths());
+    }
+
+    @Test
+    void connectionTypeIsGatewayInProvisionedEnvironment(){
+        HubConfigImpl hubConfig = new HubConfigImpl("localhost", "admin", "admin");
+        assertNull(hubConfig.getAppConfig().getRestConnectionType());
+        hubConfig.setIsProvisionedEnvironment(true);
+        hubConfig.applyProperties(new Properties());
+        assertEquals(DatabaseClient.ConnectionType.GATEWAY, hubConfig.getAppConfig().getRestConnectionType());
+        assertEquals(DatabaseClient.ConnectionType.GATEWAY, hubConfig.getAppConfig().getAppServicesConnectionType());
     }
 
     private void verifyDefaultValues(HubConfigImpl config) {
