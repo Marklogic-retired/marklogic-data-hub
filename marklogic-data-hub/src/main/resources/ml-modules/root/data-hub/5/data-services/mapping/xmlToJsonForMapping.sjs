@@ -23,7 +23,7 @@ const outputAttrStartsWith = '@'; // in case this ever needs to vary from the in
 const nsPrefixDelim = ':';
 const nsAttrStartsWith = attrStartsWith + 'xmlns';
 const defaultNSAttrName = nsAttrStartsWith;
-const nonDefaultNSAttrStartsWith = nsAttrStartsWith + nsPrefixDelim
+const nonDefaultNSAttrStartsWith = nsAttrStartsWith + nsPrefixDelim;
 
 // Set up for parser
 const parser = require('/data-hub/third-party/fast-xml-parser/src/parser.js');
@@ -37,7 +37,7 @@ const parserOptions = {
   parseNodeValue: true,
   parseAttributeValue: true,
   trimValues: true,
-  cdataTagName: '__cdata', //default is 'false'
+  cdataTagName: '__cdata',
   cdataPositionChar: "\\c",
   localeRange: '', //To support non english character in tag/attribute values.
   parseTrueNumberOnly: false,
@@ -57,20 +57,20 @@ function _isObject(value) {
 }
 
 /**
- * Get information about the provided value.  Originally intended to help determine if a value is scalar, and if so,
+ * Get information about the provided value.  Originally intended to help determine if a value is atomic, and if so,
  * serve up additional information so as not to inspect the object multiple times.
  *
  * @param value
- * @returns {{defaultNS: object, isArray: boolean, isScalar: boolean, value: object}}
+ * @returns {{defaultNS: object, isArray: boolean, isAtomic: boolean, value: object}}
  * @private
  */
 function _getValueInfo(value) {
-  let isScalar = true;
+  let isAtomic = true;
   let defaultNS = null;
   if (_isObject(value)) {
     for (let key of Object.keys(value)) {
       if (!key.startsWith(textStartsWith) && !key.startsWith(nsAttrStartsWith)) {
-        isScalar = false;
+        isAtomic = false;
       }
       if (key === defaultNSAttrName) {
         defaultNS = {
@@ -80,12 +80,12 @@ function _getValueInfo(value) {
       }
     }
   }
-  if (isScalar && value.hasOwnProperty(textPropName)) {
+  if (isAtomic && value.hasOwnProperty(textPropName)) {
     value = value[textPropName];
   }
   return {
-    isArray: isScalar ? false : Array.isArray(value),
-    isScalar: isScalar,
+    isArray: isAtomic ? false : Array.isArray(value),
+    isAtomic: isAtomic,
     value: value,
     defaultNS: defaultNS
   }
@@ -133,9 +133,9 @@ function _transformObject(jsonOut, objName, value, defaultNS) {
   objName = _getQName(objName, false, defaultNS);
 
   const valueInfo = _getValueInfo(value);
-  if (valueInfo.isScalar === true) {
+  if (valueInfo.isAtomic) {
     jsonOut[objName] = valueInfo.value;
-  } else if (valueInfo.isArray === true) {
+  } else if (valueInfo.isArray) {
     // Allow this function to modify jsonObj as objName may need to change and output may not end up being an array.
     defaultNS = _transformArray(jsonOut, objName, value, defaultNS);
   } else {
@@ -148,7 +148,7 @@ function _transformArray(jsonOut, objName, value, defaultNS) {
   let arr = [], valueInfo;
   for (let i = 0; i < value.length; i++) {
     valueInfo = _getValueInfo(value[i]);
-    if (valueInfo.isScalar) {
+    if (valueInfo.isAtomic) {
       // When the namespace doesn't change, just add to the array.
       if (_isSameNS(defaultNS, valueInfo.defaultNS)) {
         arr.push(valueInfo.value);
@@ -309,3 +309,4 @@ function transform(xmlNode) {
   }
 }
 exports.transform = transform;
+exports.PROP_NAME_FOR_TEXT = textPropName;

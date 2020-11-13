@@ -3,7 +3,7 @@
 const test = require("/test/test-helper.xqy");
 const utils = require('/test/suites/data-hub/5/data-services/lib/mappingService.sjs').DocumentForTestingUtils;
 
-const assertions = [];
+let assertions = [];
 
 const result = utils.invokeService(utils.STEP_NAME, '/content/envelopedCustomerDoc.xml');
 const data = result.data;
@@ -12,7 +12,7 @@ const expectedNamespaces = {
   "OrderNS":"https://www.w3schools.com/OrderNS"
 }
 
-assertions.concat([
+assertions = assertions.concat([
   test.assertExists(data, "Top-level 'data' property does not exist"),
   test.assertExists(data['OrderNS:Order'], "The data's first property is expected to be 'OrderNS:Order' but was given '" + Object.keys(data).join("' and '") + "'"),
   test.assertExists(data['OrderNS:Order']['RequiredDate'], "Expected RequiredDate (no namespace) within OrderNS:Order but found '" + Object.keys(data['OrderNS:Order']).join("' and '") + "'"),
