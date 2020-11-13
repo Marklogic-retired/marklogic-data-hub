@@ -1381,6 +1381,10 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         if (getFinalAuthMethod() != null) {
             config.setRestSecurityContextType(SecurityContextType.valueOf(getFinalAuthMethod().toUpperCase()));
         }
+        if (Boolean.TRUE.equals(isProvisionedEnvironment)) {
+            config.setRestConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+            config.setAppServicesConnectionType(DatabaseClient.ConnectionType.GATEWAY);
+        }
         config.setRestPort(getFinalPort());
         config.setRestCertFile(getFinalCertFile());
         config.setRestCertPassword(getFinalCertPassword());
