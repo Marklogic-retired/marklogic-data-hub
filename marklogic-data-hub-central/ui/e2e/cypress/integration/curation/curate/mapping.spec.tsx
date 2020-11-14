@@ -71,7 +71,7 @@ describe('Mapping', () => {
     runPage.runStep(loadStep).click();
     cy.uploadFile('input/10259.json');
     cy.verifyStepRunResult('success','Ingestion', loadStep);
-    tiles.closeRunMessage().click();
+    tiles.closeRunMessage();
 
     // create mapping step
     toolbar.getCurateToolbarIcon().click();
@@ -164,7 +164,7 @@ describe('Mapping', () => {
     runPage.runStep(loadStep).click();
     cy.uploadFile('input/10260.json');
     cy.verifyStepRunResult('success','Ingestion', loadStep);
-    tiles.closeRunMessage().click();
+    tiles.closeRunMessage();
 
     // create mapping step
     toolbar.getCurateToolbarIcon().click();
@@ -218,7 +218,7 @@ describe('Mapping', () => {
     runPage.runStep(mapStep).click();
     cy.verifyStepRunResult('success','Mapping', mapStep);
 
-    tiles.closeRunMessage().click();
+    tiles.closeRunMessage();
     runPage.deleteStep(mapStep).click();
     loadPage.confirmationOptions('Yes').click();
 
@@ -232,7 +232,7 @@ describe('Mapping', () => {
     curatePage.confirmAddStepToFlow(mapStep, flowName);
     //Step should automatically run
     cy.verifyStepRunResult('success','Mapping', mapStep);
-    tiles.closeRunMessage().click();
+    tiles.closeRunMessage();
 
     //Delete the flow
     runPage.deleteFlow(flowName).click();
