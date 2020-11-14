@@ -33,7 +33,7 @@ class Tiles {
   }
 
   closeRunMessage() {
-      return cy.get('div.ant-modal-confirm-btns button');
+      return cy.get('div.ant-modal-confirm-btns button').click({force: true});
   }
 }
 

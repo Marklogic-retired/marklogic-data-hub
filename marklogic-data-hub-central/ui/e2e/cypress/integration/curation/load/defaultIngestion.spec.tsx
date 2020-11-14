@@ -117,7 +117,7 @@ describe('Default ingestion ', () => {
         //Upload file to start running, test with invalid input
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
 
         //Delete the flow
         runPage.deleteFlow(flowName).click();
@@ -137,7 +137,7 @@ describe('Default ingestion ', () => {
         //Upload file to start running
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
         runPage.deleteStep(stepName).click();
         loadPage.confirmationOptions('Yes').click();
 
@@ -254,13 +254,13 @@ describe('Default ingestion ', () => {
         cy.uploadFile('input/test-1');
         cy.verifyStepRunResult('failed','Ingestion', stepName)
         .should('contain.text', 'Document is not JSON');
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
 
         //Run the flow with JSON input
         runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
         runPage.deleteStep(stepName).click();
         loadPage.confirmationOptions('Yes').click();
         //Delete the flow
@@ -281,7 +281,7 @@ describe('Default ingestion ', () => {
         //Upload file to start running
         cy.uploadFile('input/test-1.json');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
         runPage.deleteStep(stepName).click();
         loadPage.confirmationOptions('Yes').click();
 
@@ -304,7 +304,7 @@ describe('Default ingestion ', () => {
         runPage.runLastStepInAFlow(stepName).last().click();
         cy.uploadFile('input/test-1.txt');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
 
         //Delete the flow
         runPage.deleteFlow(flowName).click();
@@ -345,7 +345,7 @@ describe('Default ingestion ', () => {
         runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.csv');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
     });
 
     it('Verify ingestion for zip filetype', () => {
@@ -371,7 +371,7 @@ describe('Default ingestion ', () => {
         runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.zip');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
     });
 
     it('Verify ingestion for xml filetype', () => {
@@ -397,7 +397,7 @@ describe('Default ingestion ', () => {
         runPage.runStep(stepName).click();
         cy.uploadFile('input/test-1.xml');
         cy.verifyStepRunResult('success','Ingestion', stepName);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
     });
 
 });

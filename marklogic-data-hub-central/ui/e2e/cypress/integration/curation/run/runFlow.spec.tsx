@@ -24,13 +24,13 @@ describe('Run Tile tests', () => {
         runPage.toggleFlowConfig('personXML');
         runPage.runStep('mapPersonXML').click();
         cy.verifyStepRunResult('success','Mapping', 'mapPersonXML');
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
         runPage.runStep('match-xml-person').click();
         cy.verifyStepRunResult('success','Matching', 'match-xml-person');
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
         runPage.runStep('merge-xml-person').click();
         cy.verifyStepRunResult('success','Merging', 'merge-xml-person');
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
 
         //Verify detail page renders with expected content
         toolbar.getExploreToolbarIcon().click();

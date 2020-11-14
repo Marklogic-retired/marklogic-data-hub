@@ -43,7 +43,7 @@ describe('Custom Ingestion', () => {
         cy.waitUntil(() => cy.get('span p'));
 
         cy.verifyStepRunResult('success','Ingestion', loadStep);
-        tiles.closeRunMessage().click();
+        tiles.closeRunMessage();
 
     });
 });
