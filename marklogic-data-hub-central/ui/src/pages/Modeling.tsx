@@ -169,29 +169,30 @@ const Modeling: React.FC = () => {
         <div className={styles.header}>
           <h1>Entity Types</h1>
           <div className={styles.buttonContainer}>
-            {entityTypes.length == 0 ?
-              <MLTooltip title={ModelingTooltips.addNewEntity}>
-                {addButton}
-              </MLTooltip>
-              :
-              canWriteEntityModel ?
-                addButton
+            {canWriteEntityModel ?
+                <MLTooltip title={ModelingTooltips.addNewEntity}>
+                  {addButton}
+                </MLTooltip>
                 :
-                <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
+                <MLTooltip title={ModelingTooltips.addNewEntity + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '175px'}}>
                   <span>{addButton}</span>
                 </MLTooltip>
             }
             {canWriteEntityModel ?
-              saveAllButton
+              <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: '175px'}}>
+                <span style={{marginLeft: '5px'}}>{saveAllButton}</span>
+              </MLTooltip>
               :
-              <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
+              <MLTooltip title={ModelingTooltips.saveAll + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '225px'}}>
                 <span style={{marginLeft: '5px'}}>{saveAllButton}</span>
               </MLTooltip>
             }
             {canWriteEntityModel ?
-              revertAllButton
+              <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: '175px'}}>
+                <span style={{marginLeft: '5px'}}>{revertAllButton}</span>
+              </MLTooltip>
               :
-              <MLTooltip title={ModelingTooltips.noWriteAccess} overlayStyle={{maxWidth: '175px'}}>
+              <MLTooltip title={ModelingTooltips.revertAll + ' ' + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: '250px'}}>
                 <span style={{marginLeft: '5px'}}>{revertAllButton}</span>
               </MLTooltip>
             }

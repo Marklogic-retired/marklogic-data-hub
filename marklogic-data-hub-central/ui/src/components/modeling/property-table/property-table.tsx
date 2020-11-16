@@ -257,10 +257,12 @@ const PropertyTable: React.FC<Props> = (props) => {
             />
           </MLTooltip>
         ) : (
-          <FontAwesomeIcon
-            data-testid={'add-struct-'+ structuredTypeName} className={styles.addIconReadOnly}
-            icon={faPlusSquare}
-          />
+          <MLTooltip title={ModelingTooltips.addStructuredProperty + ' ' + ModelingTooltips.noWriteAccess} placement="topRight" overlayStyle={{maxWidth: '175px'}}>
+            <FontAwesomeIcon
+              data-testid={'add-struct-'+ structuredTypeName} className={styles.addIconReadOnly}
+              icon={faPlusSquare}
+            />
+          </MLTooltip>
         );
 
         return text && addIcon;
@@ -766,20 +768,14 @@ const PropertyTable: React.FC<Props> = (props) => {
     <div>
       <div className={styles.addButtonContainer}>
         { props.canWriteEntityModel ?
-          Object.keys(props.definitions[props.entityName]['properties']).length === 0 ? (
-            <MLTooltip title={ModelingTooltips.addProperty}>
-              <span>{addPropertyButton}</span>
-            </MLTooltip>
-         ) :
-          addPropertyButton
-        :
-        (
-          <MLTooltip title={'Add Property: ' + ModelingTooltips.noWriteAccess}>
+          <MLTooltip title={ModelingTooltips.addProperty}>
             <span>{addPropertyButton}</span>
           </MLTooltip>
-        )
-      }
-
+          :
+          <MLTooltip title={ModelingTooltips.addProperty + ' ' + ModelingTooltips.noWriteAccess}>
+            <span>{addPropertyButton}</span>
+          </MLTooltip>
+        }
       </div>
       <PropertyModal
         entityName={props.entityName}

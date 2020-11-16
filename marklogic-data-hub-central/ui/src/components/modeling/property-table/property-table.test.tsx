@@ -89,7 +89,7 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByLabelText('property-modal-cancel')).toBeInTheDocument();
   });
 
-  test('Property Table renders with structured and external datatypes, no writer role', () => {
+  test('Property Table renders with structured and external datatypes, no writer role', async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
     const { getByText, getByTestId, getAllByText, getAllByTestId, getAllByRole, getByLabelText, queryByTestId } =  render(
@@ -124,6 +124,12 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getAllByText(/zip/i)).toHaveLength(2);
     expect(getAllByText('street')).toHaveLength(1);
     expect(getAllByText('state')).toHaveLength(1);
+
+    // add property and add struct property display correct tooltip when disabled
+    fireEvent.mouseOver((getByText('Add Property')));
+    await wait (() => expect(screen.getByText(ModelingTooltips.addProperty + ' ' + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    fireEvent.mouseOver((getByTestId('add-struct-Zip')));
+    await wait (() => expect(screen.getByText(ModelingTooltips.addStructuredProperty + ' ' + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
 
     // Table expansion for zip property -> Zip structure type
     const zipExpandIcon = getByTestId('mltable-expand-zip');
@@ -258,10 +264,10 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('conception-span')).toBeInTheDocument();
   });
 
-  test('can edit a property and change the type from basic to relationship', () => {
+  test('can edit a property and change the type from basic to relationship', async () => {
     let entityName = propertyTableEntities[2].entityName;
     let definitions = propertyTableEntities[2].model.definitions;
-    const { getByTestId, getAllByTestId } =  render(
+    const { getByTestId, getAllByTestId, getByText } =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyTable
           canReadEntityModel={true}
@@ -275,6 +281,12 @@ describe('Entity Modeling Property Table Component', () => {
     expect(getByTestId('identifier-customerId')).toBeInTheDocument();
     expect(getByTestId('multiple-orders')).toBeInTheDocument();
     expect(getAllByTestId('add-struct-Address')).toHaveLength(2);
+
+    // add property and add struct property display correct tooltip when enabled
+    fireEvent.mouseOver((getByText('Add Property')));
+    await wait (() => expect(screen.getByText(ModelingTooltips.addProperty)).toBeInTheDocument());
+    fireEvent.mouseOver((getAllByTestId('add-struct-Address')[0]));
+    await wait (() => expect(screen.getByText(ModelingTooltips.addStructuredProperty)).toBeInTheDocument());
 
     userEvent.click(getByTestId('nicknames-span'));
     userEvent.clear(screen.getByLabelText('input-name'));
@@ -345,7 +357,6 @@ describe('Entity Modeling Property Table Component', () => {
     expect(mockGetSystemInfo).toBeCalledTimes(1);
     expect(screen.queryByTestId('domain-span')).toBeNull()
   });
-
 
   test('can delete a property that is type structured from the table', async () => {
     mockEntityReferences.mockResolvedValueOnce({ status: 200, data: referencePayloadEmpty });

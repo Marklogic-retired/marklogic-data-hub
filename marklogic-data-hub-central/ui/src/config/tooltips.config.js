@@ -129,7 +129,7 @@ const AdvCustomOtherTooltips = {};
 
 const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
-  addNewEntity: 'Click here to add a new entity type.',
+  addNewEntity: 'Add a new entity type.',
   instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
   lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
   nameRegex: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
@@ -143,11 +143,13 @@ const ModelingTooltips = {
   sort: 'Enables display in ascending or descending order.',
   facet: 'Use when searching, for dividing values of properties into counts, aggregating, grouping, and more.',
   wildcard: 'Enables wildcard search.',
-  addStructuredProperty: 'Click to add properties within this structured property.',
+  addStructuredProperty: 'Add a property to this structured property.',
   entityEditedAlert: "You have pending changes for one or more entity types. To apply these changes to your Data Hub, either save the modified entity types or select 'Save All'.",
   noWriteAccess: 'Contact your security administrator for access.',
-  addProperty: 'Click to add properties to this entity type.',
-  saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.'
+  addProperty: 'Add properties to this entity type.',
+  saveEntityConfirm: 'You have unsaved changes. Saving changes to the entity model will impact features that depend on the entity model and may also cause some data to be reindexed. Features that depend on the data being reindexed may not work until the reindexing is complete.',
+  saveAll: 'Save all changes to all entity types.',
+  revertAll: 'Discard changes made to all entity types since their last Save operation.',
 }
 
 const MatchingStepDetailText = {
