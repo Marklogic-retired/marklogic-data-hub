@@ -10,7 +10,10 @@ through the process.
 
 
 ## Found an Issue?
-If you find a bug in the source code or a mistake in the documentation, you can help us by submitting an issue to our [GitHub Issue Tracker][issue tracker]. Even better, you can submit a Pull Request with a fix for the issue you filed.
+If you find a bug in the source code or a mistake in the documentation, you can help us by submitting an issue 
+to our [GitHub Issue Tracker][issue tracker]. If you'd like to submit a feature enhancement, please first create an 
+issue with your proposed idea so that we can start a discussion about the problem you want to solve and what the best
+solution would be.  
 
 
 ## Want a Feature?
