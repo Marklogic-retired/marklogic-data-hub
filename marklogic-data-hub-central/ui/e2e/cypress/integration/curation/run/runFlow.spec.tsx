@@ -43,6 +43,8 @@ describe('Run Tile tests', () => {
         browsePage.getFacetItemCheckbox('collection', 'sm-Person-merged').click();
         browsePage.getGreySelectedFacets('sm-Person-merged').should('exist');
         browsePage.getFacetApplyButton().click();
+        browsePage.waitForSpinnerToDisappear();
+        cy.waitForAsyncRequest();
         browsePage.getTotalDocuments().should('be', 2);
         browsePage.getSourceViewIcon().first().click();
         cy.waitForAsyncRequest();

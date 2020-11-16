@@ -25,7 +25,8 @@ interface Props {
 
 const Facet: React.FC<Props> = (props) => {
   const SHOW_MINIMUM = 3;
-  const SEARCH_MINIMUM = 20;
+  const SEARCH_MINIMUM = 20;   
+
   const {searchOptions, greyedOptions} = useContext(SearchContext);
   const [showFacets, setShowFacets] = useState(SHOW_MINIMUM);
   const [show, toggleShow] = useState(true);
@@ -156,7 +157,7 @@ const Facet: React.FC<Props> = (props) => {
           <MLTooltip
             title={props.tooltip} placement="topLeft">
             {props.tooltip ?
-              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /> : ''}
+              <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid={`info-tooltip-${props.name}`} /> : ''}
           </MLTooltip>
         </div>
         <div className={styles.summary}>

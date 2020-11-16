@@ -406,13 +406,27 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersJSON').should('be.checked');
     browsePage.getFacetItemCheckbox('flow', 'CurateCustomerJSON').should('be.visible');
     browsePage.getFacetItemCheckbox('flow', 'CurateCustomerJSON').should('be.checked');
+
+    browsePage.getFacetItemCheckbox('source-name', 'CustomerSourceName').click();
+    browsePage.getFacetItemCheckbox('source-name', 'CustomerSourceName').should('be.visible');
+    browsePage.getFacetItemCheckbox('source-name', 'CustomerSourceName').should('be.checked');
+
+    browsePage.getFacetItemCheckbox('source-type', 'CustomerSourceType').click();
+    browsePage.getFacetItemCheckbox('source-type', 'CustomerSourceType').should('be.visible');
+    browsePage.getFacetItemCheckbox('source-type', 'CustomerSourceType').should('be.checked');
+
     browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
     browsePage.getGreySelectedFacets('CurateCustomerJSON').should('exist');
+    browsePage.getGreySelectedFacets('CustomerSourceName').should('exist');
+    browsePage.getGreySelectedFacets('CustomerSourceType').should('exist');
+
     browsePage.clickClearFacetSearchSelection('Adams Cole');
     browsePage.getGreySelectedFacets('Adams Cole').should('not.exist');
     browsePage.getFacetItemCheckbox('name', 'Bowman Hale').click();
     browsePage.getGreySelectedFacets('mapCustomersJSON').should('exist');
     browsePage.getGreySelectedFacets('CurateCustomerJSON').should('exist');
+    browsePage.getGreySelectedFacets('CustomerSourceName').should('exist');
+    browsePage.getGreySelectedFacets('CustomerSourceType').should('exist');
     browsePage.getGreySelectedFacets('Bowman Hale').should('exist');
     browsePage.getFacetApplyButton().click();
     browsePage.getSelectedFacet('mapCustomersJSON').should('exist');
