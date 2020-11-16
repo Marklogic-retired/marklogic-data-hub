@@ -52,6 +52,14 @@ describe("Modeling Page", () => {
     expect(getByText('Last Processed')).toBeInTheDocument();
     expect(getByText(ModelingTooltips.entityEditedAlert)).toBeInTheDocument();
 
+    // test add, save, revert icons display correct tooltip when enabled
+    fireEvent.mouseOver(getByText('Add'));
+    await wait (() => expect(getByText(ModelingTooltips.addNewEntity)).toBeInTheDocument());
+    fireEvent.mouseOver(getByText('Save All'));
+    await wait (() => expect(getByText(ModelingTooltips.saveAll)).toBeInTheDocument());
+    fireEvent.mouseOver(getByText('Revert All'));
+    await wait (() => expect(getByText(ModelingTooltips.revertAll)).toBeInTheDocument());
+
     userEvent.click(screen.getByTestId('AnotherModel-span'));
     expect(screen.getByText("Edit Entity Type")).toBeInTheDocument();
 
@@ -89,11 +97,11 @@ describe("Modeling Page", () => {
 
     // test add, save, revert icons display correct tooltip when disabled
     fireEvent.mouseOver(getByText('Add'));
-    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await wait (() => expect(getByText(ModelingTooltips.addNewEntity + ' ' + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver(getByText('Save All'));
-    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await wait (() => expect(getByText(ModelingTooltips.saveAll + ' ' + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
     fireEvent.mouseOver(getByText('Revert All'));
-    await wait (() => expect(getByText(ModelingTooltips.noWriteAccess)).toBeInTheDocument());
+    await wait (() => expect(getByText(ModelingTooltips.revertAll + ' ' + ModelingTooltips.noWriteAccess)).toBeInTheDocument());
 
     expect(getByLabelText("save-all")).toBeDisabled();
     expect(queryByLabelText('entity-modified-alert')).toBeNull();
