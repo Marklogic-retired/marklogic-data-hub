@@ -1,7 +1,7 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, fireEvent, waitForElement } from '@testing-library/react';
 import Facet from './facet';
-import { facetProps } from '../../assets/mock-data/explore/facet-props';
+import { facetProps, sourceNameFacetProps, sourceTypeFacetProps } from '../../assets/mock-data/explore/facet-props';
 
 describe("Facet component", () => {
   it("Facet component renders with data properly" , () => {
@@ -70,6 +70,32 @@ describe("Facet component", () => {
 
     // Search link shown for facets >= LIMIT
     expect(getByLabelText('popover-search-label')).toBeInTheDocument();
+  });
+
+  it("SourceName facets renders properly" , async () => {
+    const { getByText, getByTestId } = render(<Facet {...sourceNameFacetProps} />);
+
+    expect(getByText(/SourceName/i)).toBeInTheDocument();
+    expect(getByText(/loadPersonJSON/i)).toBeInTheDocument();
+    expect(getByText(/14/i)).toBeInTheDocument();
+    expect(getByText(/ingest-orders/i)).toBeInTheDocument();
+    expect(getByText(/12/i)).toBeInTheDocument();
+
+    fireEvent.mouseOver(getByTestId("info-tooltip-SourceName"));
+    await(waitForElement(() => (getByText('The name of the source of the files.'))));
+  });
+
+  it("SourceType facets renders properly" , async () => {
+    const { getByText, getByTestId } = render(<Facet {...sourceTypeFacetProps} />);
+
+    expect(getByText(/SourceType/i)).toBeInTheDocument();
+    expect(getByText(/loadPerson/i)).toBeInTheDocument();
+    expect(getByText(/20/i)).toBeInTheDocument();
+    expect(getByText(/ingestOrders/i)).toBeInTheDocument();
+    expect(getByText(/5/i)).toBeInTheDocument();
+
+    fireEvent.mouseOver(getByTestId("info-tooltip-SourceType"));
+    await(waitForElement(() => (getByText('The type of source of the files.'))));
   });
 
 });

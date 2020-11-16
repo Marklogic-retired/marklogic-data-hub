@@ -20,6 +20,8 @@
   "description": "",
   "sourceFormat": "json",
   "targetFormat": "json",
+  "sourceName" : "CustomerSourceName",
+  "sourceType" : "CustomerSourceType",
   "inputFilePath": "input/json/customers",
   "outputURIReplacement": ".*input,''",
   "sourceDatabase": null,
