@@ -38,6 +38,7 @@ public class Options {
     private String view;
     private String schema;
     private String sqlCondition;
+    private String selectedColumns;
     private String serializedPlan;
 
     public Options() {
@@ -117,6 +118,10 @@ public class Options {
         if (serializedPlan != null) {
             params.put("serializedplan", serializedPlan);
         }
+        if (selectedColumns != null) {
+            params.put("selectedColumns", selectedColumns);
+        }
+
         return new DataSourceOptions(params);
     }
 
@@ -202,6 +207,11 @@ public class Options {
 
     public Options withSerializedPlan(String serializedPlan) {
         this.serializedPlan = serializedPlan;
+        return this;
+    }
+
+    public Options withSelectedColumns(String columns) {
+        this.selectedColumns = columns;
         return this;
     }
 }
