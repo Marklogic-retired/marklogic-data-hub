@@ -52,7 +52,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
 
     private void validateOptions() {
         if (options.containsKey("serializedplan")) {
-            Stream.of("view", "schema", "sqlcondition").forEach(key -> {
+            Stream.of("view", "schema", "sqlcondition", "selectedcolumns").forEach(key -> {
                 if (options.containsKey(key)) {
                     throw new IllegalArgumentException(format("The '%s' option may not be specified when 'serializedplan' is also specified", key));
                 }
@@ -67,10 +67,11 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
 
     private JsonNode initializeRead(PartitionCountProvider partitionCountProvider) {
         ObjectNode inputs = new ObjectMapper().createObjectNode();
-        inputs.put("view", options.get("view"));
-        inputs.put("schema", options.get("schema"));
-        inputs.put("sqlCondition", options.get("sqlcondition"));
-        inputs.put("partitionCount", partitionCountProvider.getPartitionCount());
+
+        // The same all-lowercase style is used here for consistency with Spark, even though it's not consistent with
+        // DHF code conventions
+        Stream.of("view", "schema", "sqlcondition", "selectedcolumns").forEach(key -> inputs.put(key, options.get(key)));
+        inputs.put("partitioncount", partitionCountProvider.getPartitionCount());
 
         if (options.containsKey("serializedplan")) {
             try {

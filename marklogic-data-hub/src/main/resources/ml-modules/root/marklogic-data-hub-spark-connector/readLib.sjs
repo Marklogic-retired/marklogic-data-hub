@@ -150,29 +150,34 @@ function makeRowIdComparator(tableId, comparator, paramPrefix) {
 /**
  * Queries the internal sys/sys_columns table to get information about each of the columns in the given view/schema.
  *
- * @param viewName required TDE view name
  * @param schemaName optional TDE schema name
+ * @param viewName required TDE view name
+ * @param selectedColumns optional array of selected columns (null array means all columns)
  * @returns a JSON object for each column in a format that Spark understands as mapping to a StructField
  */
-function buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName) {
+function buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName, selectedColumns) {
   let columnsSqlCondition = "table = '" + viewName + "'";
   if (schemaName) {
     columnsSqlCondition += " and schema = '" + schemaName + "'";
   }
 
-  return op.fromView("sys", "sys_columns")
+  const schemaFields = [];
+
+  op.fromView("sys", "sys_columns")
     .where(op.sqlCondition(columnsSqlCondition))
-    .result()
-    .toArray()
-    .map(column => {
-      const field = {
-        name: column["sys.sys_columns.name"],
+    .result().toArray().forEach(column => {
+    const columnName = column["sys.sys_columns.name"];
+    if (selectedColumns == null || selectedColumns.includes(columnName)) {
+      schemaFields.push({
+        name: columnName,
         type: column["sys.sys_columns.type"],
         nullable: column["sys.sys_columns.notnull"] == 0 ? true : false,
         metadata: {}
-      };
-      return field;
-    });
+      });
+    }
+  });
+
+  return schemaFields;
 }
 
 /**
@@ -199,11 +204,8 @@ function makePartitionsWithRows(parameterizedPlan, partitionCount) {
 
   // Determine which partitions contain rows
   const partitions = [];
-  partitionLib.makePartitions(inputs.partitionCount).forEach(partition => {
-    const rowCount = fn.head(groupByPlan.result(null, {
-      "MIN_ROW_ID": partition.min,
-      "MAX_ROW_ID": partition.max
-    })).rowCount;
+  partitionLib.makePartitions(partitionCount).forEach(partition => {
+    const rowCount = getRowCountForPartition(groupByPlan, partition);
     if (rowCount > 0) {
       partition.rowCount = rowCount;
       partitionLib.addBatchInfoToPartition(partition, batchSize);
@@ -212,6 +214,19 @@ function makePartitionsWithRows(parameterizedPlan, partitionCount) {
   });
 
   return partitions;
+}
+
+function getRowCountForPartition(groupByPlan, partition) {
+  try {
+    return fn.head(groupByPlan.result(null, {
+      "MIN_ROW_ID": partition.min,
+      "MAX_ROW_ID": partition.max
+    })).rowCount;
+  } catch (e) {
+    // Can't use ds-util, as we want to support DHF 5.2.x
+    fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400,
+      "Unable to get row count for partition, which may be due to invalid user input; cause: " + e.message]));
+  }
 }
 
 module.exports = {

@@ -6,12 +6,12 @@
             "name": "inputs",
             "datatype": "jsonDocument",
             "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
-            "desc": "JSON object defining the inputs for the export query; supports view, schema, sqlCondition, and partitionCount"
+            "desc": "JSON object defining the inputs for the rows to be read"
         }
     ],
     "return": {
         "datatype": "jsonDocument",
         "$javaClass": "com.fasterxml.jackson.databind.JsonNode",
-        "desc": "JSON object containing a 'schema' object and a 'partitions' "
+        "desc": "JSON object containing a 'schema' object, 'partitions' array, and a 'parameterizedPlan' object"
     }
 }
