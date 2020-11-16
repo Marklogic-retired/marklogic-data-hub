@@ -16,164 +16,163 @@
 'use strict';
 
 // Global constants
-const textStartsWith = '#';
-const textPropName = textStartsWith + 'text';
-const attrStartsWith = '@';
-const outputAttrStartsWith = '@'; // in case this ever needs to vary from the input.
-const nsPrefixDelim = ':';
-const nsAttrStartsWith = attrStartsWith + 'xmlns';
-const defaultNSAttrName = nsAttrStartsWith;
-const nonDefaultNSAttrStartsWith = nsAttrStartsWith + nsPrefixDelim
+const PROP_NAME_TEXT_STARTS_WITH = '#';
+const PROP_NAME_TEXT = PROP_NAME_TEXT_STARTS_WITH + 'text';
+const PROP_NAME_ATTR_STARTS_WITH = '@';
+const DELIM_NS_PREFIX = ':';
+const PROP_NAME_NS_ATTR_STARTS_WITH = PROP_NAME_ATTR_STARTS_WITH + 'xmlns';
+const ATTR_NAME_DEFAULT_NS = PROP_NAME_NS_ATTR_STARTS_WITH;
+const ATTR_NAME_NON_DEFAULT_NS_STARTS_WITH = PROP_NAME_NS_ATTR_STARTS_WITH + DELIM_NS_PREFIX;
 
 // Set up for parser
 const parser = require('/data-hub/third-party/fast-xml-parser/src/parser.js');
 const parserOptions = {
-  attributeNamePrefix: attrStartsWith,
+  attributeNamePrefix: PROP_NAME_ATTR_STARTS_WITH,
   attrNodeName: false, //default is 'false'
-  textNodeName: textPropName,
+  textNodeName: PROP_NAME_TEXT,
   ignoreAttributes: false,
   ignoreNameSpace: false,
   allowBooleanAttributes: false,
   parseNodeValue: true,
   parseAttributeValue: true,
   trimValues: true,
-  cdataTagName: '__cdata', //default is 'false'
+  cdataTagName: '__cdata',
   cdataPositionChar: "\\c",
   localeRange: '', //To support non english character in tag/attribute values.
   parseTrueNumberOnly: false,
   arrayMode: 'strint'
 };
 
-function _isAttr(name) {
-  return name.startsWith(attrStartsWith);
+function isAttr(name) {
+  return name.startsWith(PROP_NAME_ATTR_STARTS_WITH);
 }
 
-function _isNSAttr(name) {
-  return name.startsWith(nsAttrStartsWith);
+function isNSAttr(name) {
+  return name.startsWith(PROP_NAME_NS_ATTR_STARTS_WITH);
 }
 
-function _isObject(value) {
+function isObject(value) {
   return value !== null && typeof(value) === 'object';
 }
 
 /**
- * Get information about the provided value.  Originally intended to help determine if a value is scalar, and if so,
+ * Get information about the provided value.  Originally intended to help determine if a value is atomic, and if so,
  * serve up additional information so as not to inspect the object multiple times.
  *
  * @param value
- * @returns {{defaultNS: object, isArray: boolean, isScalar: boolean, value: object}}
+ * @returns {{defaultNS: object, isArray: boolean, isAtomic: boolean, value: object}}
  * @private
  */
-function _getValueInfo(value) {
-  let isScalar = true;
+function getValueInfo(value) {
+  let isAtomic = true;
   let defaultNS = null;
-  if (_isObject(value)) {
+  if (isObject(value)) {
     for (let key of Object.keys(value)) {
-      if (!key.startsWith(textStartsWith) && !key.startsWith(nsAttrStartsWith)) {
-        isScalar = false;
+      if (!key.startsWith(PROP_NAME_TEXT_STARTS_WITH) && !key.startsWith(PROP_NAME_NS_ATTR_STARTS_WITH)) {
+        isAtomic = false;
       }
-      if (key === defaultNSAttrName) {
+      if (key === ATTR_NAME_DEFAULT_NS) {
         defaultNS = {
-          prefix: _determineFinalNSPrefix(null, value[key]),
+          prefix: determineFinalNSPrefix(null, value[key]),
           uri: value[key]
         }
       }
     }
   }
-  if (isScalar && value.hasOwnProperty(textPropName)) {
-    value = value[textPropName];
+  if (isAtomic && value.hasOwnProperty(PROP_NAME_TEXT)) {
+    value = value[PROP_NAME_TEXT];
   }
   return {
-    isArray: isScalar ? false : Array.isArray(value),
-    isScalar: isScalar,
+    isArray: isAtomic ? false : Array.isArray(value),
+    isAtomic: isAtomic,
     value: value,
     defaultNS: defaultNS
   }
 }
 
 // An indirectly recursive function.
-function _transform(jsonIn, defaultNS, jsonOut) {
+function transformJson(jsonIn, defaultNS, jsonOut) {
   for (let key of Object.keys(jsonIn)) {
-    if (_isAttr(key)) {
-      _transformAttr(jsonOut, key, jsonIn[key], defaultNS);
+    if (isAttr(key)) {
+      transformAttr(jsonOut, key, jsonIn[key], defaultNS);
     } else {
-      _transformObject(jsonOut, key, jsonIn[key], defaultNS);
+      transformObject(jsonOut, key, jsonIn[key], defaultNS);
     }
   }
   return jsonOut;
 }
 
-function _transformAttr(jsonOut, attrName, value, defaultNS) {
-  if (_isNSAttr(attrName)) {
-    _conditionallyCollectNonDefaultNSs();
+function transformAttr(jsonOut, attrName, value, defaultNS) {
+  if (isNSAttr(attrName)) {
+    conditionallyCollectNonDefaultNSs();
   } else {
     // Strip input indicator that this is an attribute.
-    if (attrName.startsWith(attrStartsWith)) {
-      attrName = attrName.substr(attrStartsWith.length);
+    if (attrName.startsWith(PROP_NAME_ATTR_STARTS_WITH)) {
+      attrName = attrName.substr(PROP_NAME_ATTR_STARTS_WITH.length);
     }
 
     // Fully qualify the attribute name.
-    attrName = _getQName(attrName, true, defaultNS);
+    attrName = PROP_NAME_ATTR_STARTS_WITH + getQName(attrName, true, defaultNS);
 
-    jsonOut[outputAttrStartsWith + attrName] = value;
+    jsonOut[attrName] = value;
   }
 }
 
-function _transformObject(jsonOut, objName, value, defaultNS) {
+function transformObject(jsonOut, objName, value, defaultNS) {
   // Did the default namespace change?
-  if (value.hasOwnProperty(defaultNSAttrName)) {
-    _conditionallyCollectNonDefaultNSs();
+  if (value.hasOwnProperty(ATTR_NAME_DEFAULT_NS)) {
+    conditionallyCollectNonDefaultNSs();
     defaultNS = {
-      prefix: _determineFinalNSPrefix(null, value[defaultNSAttrName]),
-      uri: value[defaultNSAttrName]
+      prefix: determineFinalNSPrefix(null, value[ATTR_NAME_DEFAULT_NS]),
+      uri: value[ATTR_NAME_DEFAULT_NS]
     }
   }
 
   // Fully qualify the object name.
-  objName = _getQName(objName, false, defaultNS);
+  objName = getQName(objName, false, defaultNS);
 
-  const valueInfo = _getValueInfo(value);
-  if (valueInfo.isScalar === true) {
+  const valueInfo = getValueInfo(value);
+  if (valueInfo.isAtomic) {
     jsonOut[objName] = valueInfo.value;
-  } else if (valueInfo.isArray === true) {
+  } else if (valueInfo.isArray) {
     // Allow this function to modify jsonObj as objName may need to change and output may not end up being an array.
-    defaultNS = _transformArray(jsonOut, objName, value, defaultNS);
+    defaultNS = transformArray(jsonOut, objName, value, defaultNS);
   } else {
     jsonOut[objName] = {};
-    _transform(value, defaultNS, jsonOut[objName]);
+    transformJson(value, defaultNS, jsonOut[objName]);
   }
 }
 
-function _transformArray(jsonOut, objName, value, defaultNS) {
+function transformArray(jsonOut, objName, value, defaultNS) {
   let arr = [], valueInfo;
   for (let i = 0; i < value.length; i++) {
-    valueInfo = _getValueInfo(value[i]);
-    if (valueInfo.isScalar) {
+    valueInfo = getValueInfo(value[i]);
+    if (valueInfo.isAtomic) {
       // When the namespace doesn't change, just add to the array.
-      if (_isSameNS(defaultNS, valueInfo.defaultNS)) {
+      if (isSameNS(defaultNS, valueInfo.defaultNS)) {
         arr.push(valueInfo.value);
       } else {
         // Else, add array to jsonOut and set up for the next one.
-        _addArray(jsonOut, objName, arr);
+        addArray(jsonOut, objName, arr);
         arr = [valueInfo.value];
         defaultNS = valueInfo.defaultNS;
-        objName = _getQName(objName, false, defaultNS, true);
+        objName = getQName(objName, false, defaultNS, true);
       }
     } else {
-      arr.push(_transform(value[i], defaultNS, {}))
+      arr.push(transformJson(value[i], defaultNS, {}))
     }
   }
-  _addArray(jsonOut, objName, arr);
+  addArray(jsonOut, objName, arr);
   return defaultNS;
 }
 
-function _addArray(jsonOut, objName, arr) {
+function addArray(jsonOut, objName, arr) {
   if (arr.length > 0) {
     jsonOut[objName] = arr.length === 1 ? arr[0] : arr;
   }
 }
 
-function _isSameNS(ns1, ns2) {
+function isSameNS(ns1, ns2) {
   if (ns1 === null && ns2 === null) {
     return true;
   } else if ((ns1 !== null && ns2 === null) || (ns1 === null && ns2 !== null)) {
@@ -183,27 +182,27 @@ function _isSameNS(ns1, ns2) {
 }
 
 // Traverse doc to collect namespaces with prefixes.  Zero or once per request.
-function _conditionallyCollectNonDefaultNSs() {
+function conditionallyCollectNonDefaultNSs() {
   if (collectedNonDefaultNSs === false) {
-    _collectNonDefaultNSs(jsonIn);
+    collectNonDefaultNSs(jsonIn);
     collectedNonDefaultNSs = true;
   }
 }
 
 // Only expected caller is conditionallyCollectNonDefaultNSs()
-function _collectNonDefaultNSs(obj) {
+function collectNonDefaultNSs(obj) {
   for (let key of Object.keys(obj)) {
-    if (_isAttr(key)) {
-      if (key.startsWith(nonDefaultNSAttrStartsWith)) {
-        _determineFinalNSPrefix(key.substr(nonDefaultNSAttrStartsWith.length), obj[key]);
+    if (isAttr(key)) {
+      if (key.startsWith(ATTR_NAME_NON_DEFAULT_NS_STARTS_WITH)) {
+        determineFinalNSPrefix(key.substr(ATTR_NAME_NON_DEFAULT_NS_STARTS_WITH.length), obj[key]);
       }
-    } else if (_isObject(obj[key])) {
-      _collectNonDefaultNSs(obj[key]);
+    } else if (isObject(obj[key])) {
+      collectNonDefaultNSs(obj[key]);
     }
   }
 }
 
-function _determineFinalNSPrefix(currentPrefix, uri) {
+function determineFinalNSPrefix(currentPrefix, uri) {
   let finalPrefix = null;
 
   // Starting point is the current prefix, when given.
@@ -254,7 +253,7 @@ function _determineFinalNSPrefix(currentPrefix, uri) {
   return finalPrefix;
 }
 
-function _getFinalNSPrefix(currentPrefix, uri) {
+function getFinalNSPrefix(currentPrefix, uri) {
   // Non-default namespace (prefix defined)
   if (currentPrefix !== null) {
     if (prefixMap.hasOwnProperty(currentPrefix)) {
@@ -263,12 +262,12 @@ function _getFinalNSPrefix(currentPrefix, uri) {
     return currentPrefix;
   }
   // Default namespace (prefix not defined)
-  return _determineFinalNSPrefix(currentPrefix, uri);
+  return determineFinalNSPrefix(currentPrefix, uri);
 }
 
-function _getQName(name, isAttr, defaultNS, preferDefaultNS = false) {
+function getQName(name, isAttr, defaultNS, preferDefaultNS = false) {
   let finalPrefix = null;
-  const idx = name.indexOf(nsPrefixDelim);
+  const idx = name.indexOf(DELIM_NS_PREFIX);
   if (idx !== -1) {
     const currentPrefix = name.substr(0, idx);
     name = name.substr(idx + 1);
@@ -278,17 +277,18 @@ function _getQName(name, isAttr, defaultNS, preferDefaultNS = false) {
       finalPrefix = defaultNS.prefix;
     } else if (!(isAttr && defaultNS !== null && currentPrefix === defaultNS.prefix)) {
       // Add a prefix as this is not an attribute in the default namespace (no prefix desired in that case).
-      finalPrefix = _getFinalNSPrefix(currentPrefix, null);
+      finalPrefix = getFinalNSPrefix(currentPrefix, null);
     }
-  } else if (!isAttr && name !== textPropName && defaultNS !== null) {
+  } else if (!isAttr && name !== PROP_NAME_TEXT && defaultNS !== null) {
     finalPrefix = defaultNS.prefix;
   }
 
-  return (finalPrefix ? finalPrefix + nsPrefixDelim : '') + name;
+  return (finalPrefix ? finalPrefix + DELIM_NS_PREFIX : '') + name;
 }
 
 // These global variables pertain to collecting namespaces defined within the provided XML.
 // Only performed once upon encountering the first namespace attribute.
+// Not compatible with MSJ.
 let jsonIn;
 let collectedNonDefaultNSs = false;
 const namespaces = {};
@@ -300,12 +300,13 @@ const prefixMap = {};
  * @param xmlNode
  * @returns {{data: *, namespaces: {}}}
  */
-function transform(xmlNode) {
+function transformXml(xmlNode) {
   const serializeOptions = {indent: 'no'};
   jsonIn = parser.parse(xdmp.quote(xmlNode, serializeOptions), parserOptions);
   return {
-    data: _transform(jsonIn, null, {}),
+    data: transformJson(jsonIn, null, {}),
     namespaces: namespaces
   }
 }
-exports.transform = transform;
+exports.transform = transformXml;
+exports.PROP_NAME_TEXT = PROP_NAME_TEXT;

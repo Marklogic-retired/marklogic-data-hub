@@ -12,6 +12,15 @@
             "Jack",
             "Sparrow"
           ]
+        },
+        "invalidQNames": {
+          "$id": "123",
+          "$array-of-values": ["one", "two"],
+          "$array-of-objects": [{"test": "object"}]
+        },
+        "OddPropertyNames": {
+          "propName\uDB7F\uDFFFIncludesUnicode": true,
+          "invalidLocalName:asdf": true
         }
       }
     }

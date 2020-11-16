@@ -19,13 +19,15 @@ xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'ex
 
 const core = require('/data-hub/5/artifacts/core.sjs')
 const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const sourceProps = require('./testingSourceProperties.sjs');
 
 var stepName, uri;
 
 const rtn = {
   data: null,
   namespaces: {},
-  format: null
+  format: null,
+  sourceProperties: []
 }
 
 // Offer the mapping step to define the doc's database.
@@ -43,7 +45,8 @@ if (doc === null) {
 
 // Populate return object.
 rtn.format = doc.documentFormat;
-if (rtn.format.toUpperCase() === 'JSON') {
+const isJson = rtn.format.toUpperCase() === 'JSON';
+if (isJson) {
   rtn.data = (doc.root.hasOwnProperty('envelope') && doc.root.envelope.hasOwnProperty('instance')) ?
     doc.root.envelope.instance :
     doc.root;
@@ -56,5 +59,6 @@ if (rtn.format.toUpperCase() === 'JSON') {
   rtn.data = transformResult.data;
   rtn.namespaces = transformResult.namespaces;
 }
+rtn.sourceProperties = sourceProps.buildSourceProperties(rtn.data, isJson);
 
 rtn;
