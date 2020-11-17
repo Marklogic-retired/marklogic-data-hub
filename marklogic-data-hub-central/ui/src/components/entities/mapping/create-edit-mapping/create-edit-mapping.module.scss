@@ -13,6 +13,16 @@
     font-size :23px;
 }
 
+.disabledSaveButton{
+    pointer-events: none;
+    &:disabled{
+        &:hover{
+            background-color: #f5f5f5;
+            border-color: #d9d9d9;
+        }
+    }
+}
+
 .newMappingForm {
     margin-left: 10px;
 }
@@ -25,7 +35,9 @@
     color: #7F86B5;
     margin-bottom: 22px;
 }
-
+.disabledCursor{
+    cursor: not-allowed;
+}
 .questionCircleColl {
     font-size: 12px;
     color: #7F86B5;
@@ -57,7 +69,7 @@
 
 .submitButtons{
     text-align: right;
-    width: 162%;
+    width: 161%;
 }
 
 .ConfirmationMessage {

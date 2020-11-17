@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, fireEvent, wait, cleanup, screen} from '@testing-library/react';
+import {render, fireEvent, wait, cleanup, screen, getByLabelText} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import LoadCard from './load-card';
 import data from '../../assets/mock-data/curation/common.data';
@@ -221,7 +221,7 @@ describe('Load Card component', () => {
     //TODO- E2E test to check if the Run tile is loaded or not.
 
 
-    //Verify run step in a new flow 
+    //Verify run step in a new flow
 
     //Click play button 'Run' icon
     fireEvent.click(getByTestId('testLoadXML-run'));
@@ -272,7 +272,7 @@ describe('Load Card component', () => {
   test('Verify Load card does not allow a step to be added to flow and run in a flow with readFlow authority only', async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(['readIngestion','readFlow']);
-    const {getByText, queryByTestId, getByTestId, queryByText, getByRole} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
+    const {getByText, queryByTestId, getByTestId, queryByText, getByLabelText} = render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><LoadCard
       {...ingestionData.loadCardProps}
       data={data.loadData.data}
       flows={data.flows}/>
@@ -282,6 +282,10 @@ describe('Load Card component', () => {
 
     const loadStepName = data.loadData.data[0].name;
 
+    //Akshay: Test case need to be implemented
+    fireEvent.mouseOver(getByTestId('disabledAddNewCard'));
+    //await wait (() => expect(screen.getByText('Load: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + '-disabled-delete'));
     await wait (() => expect(screen.getByText('Delete: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
@@ -289,7 +293,7 @@ describe('Load Card component', () => {
     // test run icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(`${loadStepName}-disabled-run`));
     await wait (() => expect(getByText('Run: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
- 
+
     await fireEvent.click(getByTestId(`${loadStepName}-disabled-run`));
     expect(queryByTestId(`${loadStepName}-run-flowsList`)).not.toBeInTheDocument();
 

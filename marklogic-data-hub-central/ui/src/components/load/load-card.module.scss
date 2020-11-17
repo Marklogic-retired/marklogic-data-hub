@@ -42,10 +42,27 @@
     text-align: center;
     align-content: center;
 }
+.addNewCardDisabled {
+    width: 300px;
+    margin-top: 9px;
+    border: 1px solid #d7d6d6;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    cursor: not-allowed !important;
+}
 .plusIcon {
     font-size: 80px;
     margin-top: 16px;
     color: #67749c;
+    margin-bottom: 0px;
+    cursor: pointer;
+}
+.plusIconDisabled{
+    font-size: 80px;
+    margin-top: 16px;
+    color: #67749c;
+    opacity: 0.45;
     margin-bottom: 0px;
     cursor: pointer;
 }
@@ -55,7 +72,13 @@
     margin-bottom: 7px;
     margin-top: 0px;
 }
-
+.addNewContentDisabled {
+    font-size: 20px;
+    color: #67749c;
+    opacity: 0.5;
+    margin-bottom: 7px;
+    margin-top: 0px;
+}
 .newDataLoad {
     width: 700px;
     text-align: left;

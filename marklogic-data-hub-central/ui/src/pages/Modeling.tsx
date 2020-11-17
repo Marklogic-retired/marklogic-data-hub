@@ -65,7 +65,7 @@ const Modeling: React.FC = () => {
       const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
       if (response['status'] === 200) {
         await setEntityTypesFromServer();
-      } 
+      }
     } catch (error) {
       handleError(error);
     } finally {
@@ -114,7 +114,7 @@ const Modeling: React.FC = () => {
     toggleConfirmModal(false);
   };
 
-  const addButton = <MLButton 
+  const addButton = <MLButton
     type="primary"
     aria-label="add-entity"
     onClick={() => {
@@ -122,10 +122,11 @@ const Modeling: React.FC = () => {
       toggleShowEntityModal(true);
     }}
     disabled={!canWriteEntityModel}
-    className={!canWriteEntityModel && styles.disabledButton}
+    className={!canWriteEntityModel && styles.disabledPointerEvents}
   >Add</MLButton>;
 
   const saveAllButton = <MLButton
+    className={!modelingOptions.isModified?styles.disabledPointerEvents:''}
     disabled={!modelingOptions.isModified}
     aria-label="save-all"
     onClick={() => {
@@ -142,6 +143,7 @@ const Modeling: React.FC = () => {
   </MLButton>;
 
   const revertAllButton = <MLButton
+    className={!modelingOptions.isModified?styles.disabledPointerEvents:''}
     disabled={!modelingOptions.isModified}
     aria-label="revert-all"
     onClick={() => {
@@ -175,25 +177,25 @@ const Modeling: React.FC = () => {
                 </MLTooltip>
                 :
                 <MLTooltip title={ModelingTooltips.addNewEntity + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '175px'}}>
-                  <span>{addButton}</span>
+                  <span className={styles.disabledCursor}>{addButton}</span>
                 </MLTooltip>
             }
             {canWriteEntityModel ?
               <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: '175px'}}>
-                <span style={{marginLeft: '5px'}}>{saveAllButton}</span>
+                <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
               </MLTooltip>
               :
               <MLTooltip title={ModelingTooltips.saveAll + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '225px'}}>
-                <span style={{marginLeft: '5px'}}>{saveAllButton}</span>
+                <span className={styles.disabledCursor}>{saveAllButton}</span>
               </MLTooltip>
             }
             {canWriteEntityModel ?
               <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: '175px'}}>
-                <span style={{marginLeft: '5px'}}>{revertAllButton}</span>
+                <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
               </MLTooltip>
               :
               <MLTooltip title={ModelingTooltips.revertAll + ' ' + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: '250px'}}>
-                <span style={{marginLeft: '5px'}}>{revertAllButton}</span>
+                <span className={styles.disabledCursor}>{revertAllButton}</span>
               </MLTooltip>
             }
           </div>
@@ -201,7 +203,7 @@ const Modeling: React.FC = () => {
         <ConfirmationModal
           isVisible={showConfirmModal}
           type={confirmType}
-          boldTextArray={[]} 
+          boldTextArray={[]}
           arrayValues={[]}
           toggleModal={toggleConfirmModal}
           confirmAction={confirmAction}
@@ -214,7 +216,7 @@ const Modeling: React.FC = () => {
           name={name}
           description={description}
         />
-        <EntityTypeTable 
+        <EntityTypeTable
           canReadEntityModel={canReadEntityModel}
           canWriteEntityModel={canWriteEntityModel}
           allEntityTypesData={entityTypes}

@@ -37,6 +37,15 @@
   margin-right: 3px;
 }
 
-.disabledButton {
-  cursor: not-allowed;
+.disabledPointerEvents{
+    pointer-events: none;
+}
+
+.disabledCursor{
+    cursor: not-allowed;
+    margin-left: 5px;
+}
+
+.CursorButton{
+    margin-left: 5px;
 }

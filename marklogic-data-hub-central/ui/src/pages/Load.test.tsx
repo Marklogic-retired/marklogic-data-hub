@@ -40,8 +40,6 @@ describe('Load component', () => {
 
         // Check list view
         fireEvent.click(getByLabelText('switch-view-list'));
-        // test 'Add New' button
-        expect(queryByText('Add New')).not.toBeInTheDocument();
 
         // Open settings
         await act(async () => {
@@ -83,8 +81,6 @@ describe('Load component', () => {
         // Check card layout
         fireEvent.click(getByLabelText('switch-view-card'));
 
-        // test 'Add New' button
-        expect(queryByText('Add New')).not.toBeInTheDocument();
 
         // test delete
         expect(queryByTitle('delete')).not.toBeInTheDocument();

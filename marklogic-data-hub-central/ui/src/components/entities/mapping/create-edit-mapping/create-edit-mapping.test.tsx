@@ -4,6 +4,7 @@ import CreateEditMapping from './create-edit-mapping';
 import data from "../../../../assets/mock-data/curation/common.data";
 import axiosMock from 'axios';
 import {stringSearchResponse} from "../../../../assets/mock-data/explore/facet-props";
+import {NewMapTooltips} from "../../../../config/tooltips.config";
 
 jest.mock('axios');
 describe('Create/Edit Mapping Step artifact component', () => {
@@ -45,7 +46,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
       }
-    });    
+    });
     expect(collInput).toHaveValue('testCollection');
     expect(saveButton).toBeEnabled();
 
@@ -64,7 +65,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: ''} });
       }
-    });        
+    });
     expect(getByText('Collection or Query is required')).toBeInTheDocument();
     expect(saveButton).toBeEnabled();
 
@@ -72,7 +73,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
       }
-    });    
+    });
     expect(collInput).toHaveValue('testCollection');
     expect(saveButton).toBeEnabled();
 
@@ -81,7 +82,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: ''} });
       }
-    });        
+    });
     expect(saveButton).toBeEnabled();
     fireEvent.click(getByLabelText('Query'));  //updating the value of Query field now.
     const queryInput = getByPlaceholderText('Enter source query');
@@ -126,7 +127,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(axiosMock.post).toHaveBeenCalledWith(url, payload);
     expect(axiosMock.post).toHaveBeenCalledTimes(1);
     expect(getByText('Adams Cole')).toBeInTheDocument();
-      
+
     await wait(() => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
@@ -162,7 +163,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     fireEvent.click(getByText('Save'));
 
     // both messages should show when both boxes are empty
-    expect(getByText('Name is required')).toBeInTheDocument(); 
+    expect(getByText('Name is required')).toBeInTheDocument();
     expect(getByText('Collection or Query is required')).toBeInTheDocument();
 
     // enter name only
@@ -170,7 +171,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(nameInput).toHaveValue('testCreateMap');
 
     fireEvent.click(getByText('Save'));
-    
+
     // error message for name should not appear
     expect(getByText('Collection or Query is required')).toBeInTheDocument();
 
@@ -180,13 +181,13 @@ describe('Create/Edit Mapping Step artifact component', () => {
       if(collInput){
         fireEvent.change(collInput, { target: {value: 'testCollection'} });
       }
-    });    
+    });
     expect(collInput).toHaveValue('testCollection');
 
     fireEvent.click(getByText('Save'));
 
     // error message for empty collection should not appear
-    expect(getByText('Name is required')).toBeInTheDocument(); 
+    expect(getByText('Name is required')).toBeInTheDocument();
   });
 
   test('Verify New Mapping Step modal closes when Cancel is clicked', () => {
@@ -239,7 +240,7 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByText('Cancel')).toBeEnabled();
   });
 
-  test('Verify Edit Mapping Step dialog renders correctly for a read only user', () => {
+  test('Verify Edit Mapping Step dialog renders correctly for a read only user', async () => {
     const { getByText, getByPlaceholderText, getByLabelText } = render(
       <CreateEditMapping {...data.editMap} canReadOnly={true} canReadWrite={false}/>
     );
@@ -253,8 +254,11 @@ describe('Create/Edit Mapping Step artifact component', () => {
     expect(getByLabelText('Query')).toBeDisabled();
     const collInput = document.querySelector(('#collList .ant-input'))
     expect(collInput).toBeDisabled();
-
     expect(getByText('Save')).toBeDisabled();
+    fireEvent.mouseOver(getByText('Save'))
+      await wait(() => {
+          fireEvent.click(getByText(NewMapTooltips.missingPermission));
+      });
     expect(getByText('Cancel')).toBeEnabled();
   });
 
