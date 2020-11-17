@@ -24,6 +24,7 @@ class BrowsePage {
     cy.get(`[data-cy="entity-option-${entity}"]`).click({force:true});
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   getTotalDocuments() {
@@ -507,6 +508,7 @@ class BrowsePage {
     this.getSaveQueriesDropdown().click();
     cy.get(`[data-cy="query-option-${query}"]`).click();
     this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   getSelectedQueryDescription() {
@@ -552,6 +554,10 @@ class BrowsePage {
 
   getResetConfirmationYesClick() {
     return cy.get('#reset-confirmation-yes-button').click();
+  }
+
+  getResetConfirmationYes() {
+    return cy.get('#reset-confirmation-yes-button');
   }
 
   // Zero state Explorer
