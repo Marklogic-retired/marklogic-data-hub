@@ -10,6 +10,7 @@
             margin-bottom: 20px;
         }
         .createButtonDisabled {
+            pointer-events: none;
             border-color: #f5f5f5;
         }
         .createButtonDisabled:hover {
@@ -17,7 +18,9 @@
             border-color: #f5f5f5;
         }
     }
-
+    .disabledCursor{
+        cursor: not-allowed;
+    }
     .deleteFlow {
         color: #B32424;
         font-size: 14px;
@@ -62,7 +65,7 @@
                 display: inline-block;
                 padding-right: 10px;
                 color: #5B69AF;
-                border-color: #5B69AF;                
+                border-color: #5B69AF;
                 font-size: 20px;
                 cursor: pointer;
             }
@@ -168,7 +171,7 @@
         }
     }
 
-    
+
 }
 
 .confirmationText {

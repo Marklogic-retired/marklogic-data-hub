@@ -95,7 +95,7 @@ describe('New/edit load step configuration', () => {
   });
 
   test('Verify name is required for form submission and error messaging appears', async () => {
-    const { debug, baseElement, queryByText, getByText, getByPlaceholderText} = 
+    const { debug, baseElement, queryByText, getByText, getByPlaceholderText} =
     render(<BrowserRouter><CreateEditLoad {...loadProps} /></BrowserRouter>);
     const nameInput = getByPlaceholderText('Enter name');
 
@@ -112,8 +112,8 @@ describe('New/edit load step configuration', () => {
     fireEvent.change(nameInput, { target: {value: 'testLoadStep'} });
     await wait(() => {
         expect(nameInput).toHaveValue('testLoadStep');
-    }); 
-    
+    });
+
     expect(queryByText('Name is required')).toBeNull();
   });
 

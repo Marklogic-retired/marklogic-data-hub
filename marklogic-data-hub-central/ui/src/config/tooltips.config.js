@@ -16,7 +16,8 @@ const AdvancedSettingsTooltips = {
     'targetDatabase': 'The database where to store the processed data.',
     'options': 'Key-value pairs to pass as parameters to the custom module.',
     'customModuleURI': "The path to your custom step module.",
-    'batchSize' : "The maximum number of items to process in a batch."
+    'batchSize' : "The maximum number of items to process in a batch.",
+    'missingPermission': 'Contact your security administrator for access.',
 };
 
 const NewFlowTooltips = {
@@ -33,7 +34,8 @@ const NewLoadTooltips = {
     'sourceName': 'The name of the source of the files.',
     'sourceType': 'The type of source of the files.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
-    'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.'
+    'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.',
+    'missingPermission': 'Contact your security administrator for access.'
 };
 
 const AdvLoadTooltips = {
@@ -45,12 +47,14 @@ const NewMapTooltips = {
     'name':'The name of this mapping configuration.',
     'description':'The description of this mapping configuration.',
     'sourceQuery':'The collection or CTS query that selects the source data to process in this configuration.',
+    'missingPermission':'Contact your security administrator for access.',
 };
 
 const AdvMapTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
     'targetDatabase': 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.',
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+    'missingPermission': 'Contact your security administrator for access.',
  };
 
 const AdvCustomTooltips = {

@@ -5,7 +5,7 @@ import { NewMapTooltips } from '../../../../config/tooltips.config';
 import { UserContext } from '../../../../util/user-context';
 import { MLButton, MLTooltip } from '@marklogic/design-system';
 import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
-import axios from "axios"; 
+import axios from "axios";
 
 interface Props {
   tabKey: string;
@@ -90,7 +90,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     // Edit step
     if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.isEditing) {
       initStep();
-    } 
+    }
     // New step
     else {
       setMapName('');
@@ -229,7 +229,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       return;
     }
     // else: all required fields are set
-    
+
     if (event) event.preventDefault();
 
     setIsValid(true);
@@ -424,8 +424,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const isSourceQueryValid = () => {
-    if ((collections && selectedSource === 'collection') || 
-    (srcQuery && selectedSource !== 'collection') || 
+    if ((collections && selectedSource === 'collection') ||
+    (srcQuery && selectedSource !== 'collection') ||
     (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
       if (props.currentTab === props.tabKey) {
         props.setIsValid(true);
@@ -543,13 +543,20 @@ const CreateEditMapping: React.FC<Props> = (props) => {
           <div className={styles.submitButtons}>
             <MLButton data-testid="mapping-dialog-cancel"  onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton 
-              type="primary" 
-              htmlType="submit" 
-              disabled={!props.canReadWrite} 
-              data-testid="mapping-dialog-save" 
+              {!props.canReadWrite?<MLTooltip title={NewMapTooltips.missingPermission} placement={'bottomRight'}><span className={styles.disabledCursor}><MLButton
+              className={styles.disabledSaveButton}
+              type="primary"
+              htmlType="submit"
+              disabled={true}
+              data-testid="mapping-dialog-save"
               onClick={handleSubmit}
-            >Save</MLButton>
+              >Save</MLButton></span></MLTooltip>:<MLButton
+                  type="primary"
+                  htmlType="submit"
+                  disabled={false}
+                  data-testid="mapping-dialog-save"
+                  onClick={handleSubmit}
+                  >Save</MLButton>}
           </div>
         </Form.Item>
       </Form>

@@ -58,6 +58,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [addRun, setAddRun] = useState(false);
     const [openStepSettings, setOpenStepSettings] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const [tooltipVisible, setTooltipVisible] = useState(false);
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -150,6 +151,7 @@ const MappingCard: React.FC<Props> = (props) => {
       function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
           setSelectVisible(true);
+          setTooltipVisible(true);
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('mapping-card_cardContainer') ||
@@ -163,6 +165,7 @@ const MappingCard: React.FC<Props> = (props) => {
       function handleMouseLeave() {
         setShowLinks('');
         setSelectVisible(false);
+        setTooltipVisible(false);
     }
 
     const deleteConfirmation = <Modal
@@ -613,7 +616,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const onAddOk = async (lName, fName) => {
         await props.addStepToFlow(lName, fName, 'mapping');
         setAddDialogVisible(false);
-        
+
         if (addRun) {
             history.push({
                 pathname: '/tiles/run/add-run',
@@ -686,7 +689,7 @@ const MappingCard: React.FC<Props> = (props) => {
             <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
                 { isStepInFlow(mappingArtifactName, flowName) ?
                     !addRun ? <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
-                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p> 
+                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
                 }
             </div>
         </Modal>
@@ -714,7 +717,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                 actions={[
                                     <MLTooltip title={'Edit'} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+'-edit'} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
                                     <MLTooltip title={'Step Details'} placement="bottom"><i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name,index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
-                                    <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>    
+                                    <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>
                                     {props.canReadWrite ?<MLTooltip title={'Run'} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+'-run'}/></i></MLTooltip> : <MLTooltip title={'Run: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-run-mapping button" data-testid={elem.name+'-disabled-run'}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
                                     </Dropdown>,
                                     props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-delete-mapping button" data-testid={elem.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
@@ -739,7 +742,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                     }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
                                     <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                         Add step to an existing flow
-                                        {selectVisible ? <div className={styles.cardLinkSelect}>
+                                        {selectVisible ? <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}>
                                             <Select
                                                 style={{ width: '100%' }}
                                                 value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -754,7 +757,7 @@ const MappingCard: React.FC<Props> = (props) => {
                                                     <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                                                 )) : null}
                                             </Select>
-                                        </div> : null}
+                                        </div></MLTooltip> : null}
                                     </div>
                                 </div>
                             </Card>
