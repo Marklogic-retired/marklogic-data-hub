@@ -38,7 +38,7 @@ public class MlcpCopyTest  extends AbstractHubCoreTest {
         mlcpOptions.put("output_username", username);
         mlcpOptions.put("output_password", password);
         mlcpOptions.put("collection_filter", "testMlcpCopy");
-        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.hub.util.MlcpMain", hubConfig, mlcpOptions);
+        MlcpRunner mlcpRunner = new MlcpRunner("com.marklogic.contentpump.ContentPump", hubConfig, mlcpOptions);
         final List<String> exceptionStackTraces = new ArrayList<>();
         mlcpRunner.setUncaughtExceptionHandler((th, ex) ->{
             logger.info("MLCP exception caught! " + ExceptionUtils.getMessage(ex));

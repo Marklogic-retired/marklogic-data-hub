@@ -1,13 +1,23 @@
 plugins {
     id "java"
-    id "net.saliman.properties" version "1.5.1"
+    id "net.saliman.properties"
     id "net.foragerr.jmeter" version "1.1.0-4.0"
+
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 jmeter {
     // See https://github.com/jmeter-gradle-plugin/jmeter-gradle-plugin/wiki/Getting-Started
     jmTestFiles = [file("src/test/jmeter/jmeter_example.jmx")]
     enableExtendedReports = true
+}
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
 }
 
 repositories {

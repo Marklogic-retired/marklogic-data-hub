@@ -1,6 +1,8 @@
 plugins {
     id "java-library"
     id 'com.github.johnrengelman.shadow' version '5.2.0'
+
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 // Spark 2 requires Java 8
@@ -8,6 +10,14 @@ sourceCompatibility = "8"
 targetCompatibility = "8"
 
 group = 'com.marklogic'
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
 
 repositories {
     jcenter()

@@ -839,7 +839,7 @@ public class EndToEndFlowTests extends AbstractHubCoreTest {
 
         int existingStagingCount = getStagingDocCount();
 
-        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.hub.util.MlcpMain", runAsFlowOperator(), flow, databaseClient, mlcpOptions, null);
+        MlcpRunner mlcpRunner = new MlcpRunner(null, "com.marklogic.contentpump.ContentPump", runAsFlowOperator(), flow, databaseClient, mlcpOptions, null);
         if (databaseClient.getPort() == getHubConfig().getPort(DatabaseKind.STAGING)) {
             mlcpRunner.setDatabase(getHubConfig().getDbName(DatabaseKind.STAGING));
         } else {

@@ -26,13 +26,15 @@ buildscript {
 }
 
 plugins {
-    id 'net.saliman.properties' version '1.4.6'
+    id 'net.saliman.properties'
     id "groovy"
     id "java-gradle-plugin"
     id "maven-publish"
     id "com.jfrog.bintray" version "1.7.3"
     id 'org.springframework.boot' version '2.1.3.RELEASE'
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
+
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 apply plugin: "com.gradle.plugin-publish"
@@ -42,6 +44,14 @@ targetCompatibility = "9"
 
 bootJar.enabled = false
 jar.enabled = true
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
 
 repositories {
     jcenter()

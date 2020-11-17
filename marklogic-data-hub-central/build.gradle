@@ -11,9 +11,11 @@ buildscript {
 }
 
 plugins {
-    id "net.saliman.properties" version "1.5.1"
+    id "net.saliman.properties"
     id "java"
     id "nebula.ospackage" version "8.4.1"
+
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 apply plugin: "org.springframework.boot"
@@ -25,6 +27,14 @@ apply from: 'build-rpm.gradle'
 
 sourceCompatibility = "9"
 targetCompatibility = "9"
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
 
 ext {
     taskGroup = "Spring Boot UI"
