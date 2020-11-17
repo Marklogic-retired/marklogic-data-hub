@@ -1,3 +1,8 @@
+plugins {
+    // Declaring this at root level so it's available for every subproject without declaring a version
+    id "net.saliman.properties" version "1.5.1"
+}
+
 allprojects {
     task resolveAllDependencies {
         doLast {

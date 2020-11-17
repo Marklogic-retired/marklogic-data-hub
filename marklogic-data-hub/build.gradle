@@ -1,5 +1,5 @@
 plugins {
-    id 'net.saliman.properties' version '1.4.6'
+    id 'net.saliman.properties'
     id 'java'
     id 'java-test-fixtures'
     id 'maven-publish'
@@ -9,11 +9,23 @@ plugins {
     id 'org.springframework.boot' version '2.1.15.RELEASE'
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'com.marklogic.ml-development-tools' version '5.3.0'
+
+    // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
+    // not being able to resolve its "dataFiles" configuration
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
 }
 
 // Disabling javadoc warnings, as we have hundreds of them, and until we want to do something about them,
 // seeing them when running a Gradle task (like publishToMavenLocal) is just useless noise
 javadoc.options.addStringOption('Xdoclint:none', '-quiet')
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
 
 repositories {
     jcenter()
