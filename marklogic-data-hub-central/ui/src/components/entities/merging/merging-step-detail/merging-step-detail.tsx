@@ -15,7 +15,8 @@ import MultiSlider from "../../matching/multi-slider/multi-slider";
 import EditMergeStrategyDialog from "../edit-merge-strategy-dialog/edit-merge-strategy-dialog";
 import AddMergeRuleDialog from "../add-merge-rule/add-merge-rule-dialog";
 import { RightOutlined,DownOutlined } from "@ant-design/icons";
-import { Icon, Table } from "antd";
+import {Icon, Modal, Table} from "antd";
+import {updateMergingArtifact} from "../../../../api/merging";
 
 
 const DEFAULT_MERGING_STEP: MergingStep = {
@@ -49,6 +50,8 @@ const MergingStepDetail: React.FC = () => {
     const [showEditStrategyModal, toggleEditStrategyModal] = useState(false);
     const [openAddMergeRuleDialog, setOpenAddMergeRuleDialog] = useState(false);
     const [currentStrategyName, setCurrentStrategyName] = useState('');
+    const [currentMergeRule, setCurrentMergeRule] = useState<any>({});
+    const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const mergeStrategiesData = new Array();
     const mergeRulesData = new Array();
     let commonStrategyNames:any = [];
@@ -149,7 +152,7 @@ const MergingStepDetail: React.FC = () => {
             dataIndex: 'delete',
             key: 'delete',
             align: 'center' as 'center',
-            render: text => <a data-testid={'delete'}>{text}</a>,
+            render: text => <a data-testid={'delete'} >{text}</a>,
             width: 75
         }
     ];
@@ -185,7 +188,7 @@ const MergingStepDetail: React.FC = () => {
                 property: i['entityPropertyPath'],
                 mergeType: i['mergeType'],
                 strategy: i['mergeStrategyName'],
-                delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg' />
+                delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg'  data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDeleteMergeRule(i)}/>
             }
         );
     });
@@ -239,6 +242,50 @@ const MergingStepDetail: React.FC = () => {
                 </div>
             </>;
     };
+
+    const deleteModal = (
+        <Modal
+            width={500}
+            visible={deleteModalVisibility}
+            destroyOnClose={true}
+            closable={false}
+            className={styles.confirmModal}
+            maskClosable={false}
+            footer={null}
+        >
+            <p className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeRule.entityPropertyPath} - {currentMergeRule.mergeType}</b> merge rule ?</p>
+            <div className={styles.footer}>
+                <MLButton
+                    aria-label={`delete-merge-rule-confirm`}
+                    size="default"
+                    onClick={() => setDeleteModalVisibility(false)}
+                >No</MLButton>
+                <MLButton
+                    className={styles.saveButton}
+                    aria-label={`delete-merge-rule-confirm`}
+                    type="primary"
+                    size="default"
+                    onClick={() => deleteConfirm()}
+                >Yes</MLButton>
+            </div>
+        </Modal>
+    )
+
+    const onDeleteMergeRule = (currentMergeRule) => {
+      setDeleteModalVisibility(true);
+      setCurrentMergeRule(currentMergeRule);
+    }
+
+    const deleteConfirm = async() =>{
+        let stepArtifact = curationOptions.activeStep.stepArtifact;
+        let updateStepArtifactMergeRules = curationOptions.activeStep.stepArtifact.mergeRules;
+        let index = updateStepArtifactMergeRules.findIndex( mergeRule => (mergeRule.entityPropertyPath === currentMergeRule.entityPropertyPath) && (mergeRule.mergeType === currentMergeRule.mergeType));
+        updateStepArtifactMergeRules.splice(index, 1);
+        stepArtifact.mergeRules = updateStepArtifactMergeRules;
+        await updateMergingArtifact(stepArtifact);
+        updateActiveStepArtifact(stepArtifact);
+        setDeleteModalVisibility(false);
+    }
 
     return (
         <>
@@ -319,6 +366,7 @@ const MergingStepDetail: React.FC = () => {
                     openAddMergeRuleDialog={openAddMergeRuleDialog}
                     setOpenAddMergeRuleDialog={setOpenAddMergeRuleDialog}
                 />
+                {deleteModal}
             </div>
         </>
     )
