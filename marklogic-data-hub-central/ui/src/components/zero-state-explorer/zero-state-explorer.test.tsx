@@ -44,7 +44,7 @@ describe('zero state explorer component', () => {
     });
 
     test('Verify onClickExplore gets called', () => {
-        const { getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
+        const { getByText } = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
         const exploreButton = getByText('Explore');
         exploreButton.onclick = jest.fn();
         fireEvent.click(exploreButton);

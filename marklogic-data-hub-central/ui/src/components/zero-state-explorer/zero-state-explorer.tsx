@@ -21,12 +21,14 @@ const ZeroStateExplorer = (props) => {
   const dividerOption = <Divider className={styles.dividerOption} />;
   const dropdownOptions = ['All Data', dividerOption, 'All Entities', dividerOption, ...props.entities];
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
+  const [cardView, setCardView] = useState(false);
 
   const {
     applySaveQuery,
   } = useContext(SearchContext);
 
   const onClickExplore = () => {
+    props.setCardView(cardView);
     let options: QueryOptions = {
       searchText: searchQuery,
       entityTypeIds: dropDownValue === 'All Entities' || dropDownValue === 'All Data' ? [] : [dropDownValue],
@@ -45,10 +47,10 @@ const ZeroStateExplorer = (props) => {
     setDropdownValue(option);
     if (option === 'All Data') {
       setView('card');
-      props.setCardView(true);
+      setCardView(true);
     } else {
       setView('table');
-      props.setCardView(false);
+      setCardView(false);
       props.toggleTableView(true);
     }
   };

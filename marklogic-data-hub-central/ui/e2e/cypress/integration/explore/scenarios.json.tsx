@@ -69,7 +69,7 @@ describe('scenarios for All Data zero state and explore pages.', () => {
 
     //Verifying non-entity detail page for JSON document
     browsePage.clearSearchText();
-    
+
     cy.waitUntil(() => browsePage.getNavigationIconForDocument('/steps/custom/mapping-step.step.json')).click();
     browsePage.waitForSpinnerToDisappear();
 
@@ -85,6 +85,18 @@ describe('scenarios for All Data zero state and explore pages.', () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should('contain', 'All Data');
+
+    //verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations
+    toolbar.getLoadToolbarIcon().click();
+    toolbar.getModelToolbarIcon().click();
+    toolbar.getCurateToolbarIcon().click()
+    toolbar.getRunToolbarIcon().click()
+    toolbar.getExploreToolbarIcon().click()
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
+    browsePage.getExploreButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getSelectedEntity().should('contain', 'All Entities');
   });
 });
 
@@ -498,7 +510,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getSelectedFacet('CurateCustomerJSON').should('exist');
     browsePage.getSelectedFacet('Bowman Hale').should('exist');
   });
-  
+
   it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
     browsePage.selectEntity('Customer');
     browsePage.getShowMoreLink().first().click();
