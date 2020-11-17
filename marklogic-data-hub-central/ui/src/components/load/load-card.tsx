@@ -40,6 +40,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const [addRun, setAddRun] = useState(false);
     const [openStepSettings, setOpenStepSettings] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
+    const tooltipOverlayStyle={maxWidth: '300px',paddingLeft:'100px'};
 
     useEffect(() => {
         let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
@@ -184,7 +185,7 @@ const LoadCard: React.FC<Props> = (props) => {
                 }
             })
         }
-    }   
+    }
 
     const onCancel = () => {
         setDialogVisible(false);
@@ -257,7 +258,7 @@ const LoadCard: React.FC<Props> = (props) => {
             <div aria-label="add-step-confirmation" style={{fontSize: '16px', padding: '10px'}}>
                 { isStepInFlow(loadArtifactName, flowName) ?
                     !addRun ? <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
-                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p> 
+                    : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
                 }
             </div>
         </Modal>
@@ -274,7 +275,16 @@ const LoadCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col> : ''}{ sortedLoads && sortedLoads.length > 0 ? sortedLoads.map((elem,index) => (
+                </Col> : <Col>
+                <Card
+                        size="small"
+                        className={styles.addNewCardDisabled}>
+                    <MLTooltip title={'Load: '+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}>
+                        <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+                        <br />
+                        <p className={styles.addNewContentDisabled}>Add New</p></MLTooltip>
+                </Card>
+                </Col>}{ sortedLoads && sortedLoads.length > 0 ? sortedLoads.map((elem,index) => (
                 <Col key={index}>
                     <div
                         onMouseOver={(e) => handleMouseOver(e, elem.name)}
@@ -283,7 +293,7 @@ const LoadCard: React.FC<Props> = (props) => {
                         <Card
                             actions={[
                             <MLTooltip title={'Edit'} placement="bottom"><i key="edit"></i><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+'-edit'} onClick={() => OpenStepSettings(index)}/></MLTooltip>,
-                            <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>    
+                            <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={['click']} disabled = {!props.canWriteFlow}>
                             {props.canReadWrite ? <MLTooltip title={'Run'} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+'-run'}/></i></MLTooltip> : <MLTooltip title={'Run: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i role="disabled-run-load button" data-testid={elem.name+'-disabled-run'}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
                             </Dropdown>,
                             props.canReadWrite ? <MLTooltip title={'Delete'} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"  data-testid={elem.name+'-delete'} onClick={() => handleCardDelete(elem.name)}/></i></MLTooltip> : <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}><i data-testid={elem.name+'-disabled-delete'}><FontAwesomeIcon icon={faTrashAlt} onClick={(event) => event.preventDefault()} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
@@ -304,7 +314,8 @@ const LoadCard: React.FC<Props> = (props) => {
                                         stepDefinitionType : 'ingestion',
                                         viewMode: 'card',
                                         existingFlow: false
-                                    }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>: <div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
+                                    }}}>
+                                    <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>:<div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
                                     {selectVisible ? <div className={styles.cardLinkSelect}>

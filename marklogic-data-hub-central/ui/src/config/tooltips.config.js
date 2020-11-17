@@ -16,7 +16,8 @@ const AdvancedSettingsTooltips = {
     'targetDatabase': 'The database where to store the processed data.',
     'options': 'Key-value pairs to pass as parameters to the custom module.',
     'customModuleURI': "The path to your custom step module.",
-    'batchSize' : "The maximum number of items to process in a batch."
+    'batchSize' : "The maximum number of items to process in a batch.",
+    'missingPermission': 'Contact your security administrator for access.',
 };
 
 const NewFlowTooltips = {
@@ -51,6 +52,7 @@ const AdvMapTooltips = {
     'sourceDatabase': 'The database where the input data is read from. For mapping, the default is data-hub-STAGING.',
     'targetDatabase': 'The database where to store the processed data. For mapping, the default is data-hub-FINAL.',
     'provGranularity': 'The level of detail logged for provenance. Choose *coarse* for the default level or *off* for no provenance logging.',
+    'missingPermission': 'Contact your security administrator for access.',
  };
 
 const AdvCustomTooltips = {

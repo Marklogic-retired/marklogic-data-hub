@@ -79,10 +79,10 @@ const Flows: React.FC<Props> = (props) => {
     const [addFlowDirty, setAddFlowDirty] = useState({});
     const [addExternalFlowDirty, setExternalAddFlowDirty] = useState(true);
     const location = useLocation()
-    
-    // maintain a list of panel refs 
+
+    // maintain a list of panel refs
     const flowPanels : any = props.flows.reduce((p, n) => ({...p, ...{[n.name]: createRef()} }), {})
-        
+
     // If a step was just added scroll the flow step panel fully to the right
     useEffect(() => {
         const scrollToEnd = f => {
@@ -142,11 +142,11 @@ const Flows: React.FC<Props> = (props) => {
                         setRunningStep(props.flows[index].steps[0]);
                         setRunningFlow(addedFlowName);
                         openFilePicker();
-                        setAddedFlowName('');  
+                        setAddedFlowName('');
                         setStartRun(false);
                     } else {
                         props.runStep(addedFlowName, props.flows[index].steps[0]);
-                        setAddedFlowName('');  
+                        setAddedFlowName('');
                         setStartRun(false);
                     }
                 }
@@ -269,7 +269,7 @@ const Flows: React.FC<Props> = (props) => {
         if (flow) result = flow['steps'].findIndex(s => s.stepName === stepName) > -1;
         return result;
     };
-    
+
     // Setup for file upload
     const {getRootProps, getInputProps, open, acceptedFiles} = useDropzone({
         noClick: true,
@@ -308,7 +308,7 @@ const Flows: React.FC<Props> = (props) => {
 
     const deleteStepConfirmation = (
         <Modal
-            visible={stepDialogVisible} 
+            visible={stepDialogVisible}
             okText={<div aria-label="Yes">Yes</div>}
             okType='primary'
             cancelText={<div aria-label="No">No</div>}
@@ -395,7 +395,7 @@ const Flows: React.FC<Props> = (props) => {
                             className={styles.addStep}
                             size="default"
                             aria-label={'addStepDisabled-'+i}
-                            style={{ backgroundColor: '#f5f5f5', borderColor: '#f5f5f5'}}
+                            style={{ backgroundColor: '#f5f5f5', borderColor: '#f5f5f5', pointerEvents: 'none'}}
                             type="primary"
                             disabled={!props.canWriteFlow}
                           >Add Step <DownOutlined /></MLButton>
@@ -537,7 +537,7 @@ const Flows: React.FC<Props> = (props) => {
     };
 
     let panels;
-    
+
     if (props.flows) {
         panels = props.flows.map((flow, i) => {
             let flowName = flow.name;
