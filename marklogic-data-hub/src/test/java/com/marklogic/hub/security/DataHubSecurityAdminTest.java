@@ -132,7 +132,6 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
             "data-hub-job-internal",
             "data-hub-portal-security-admin",
             "data-hub-security-admin",
-            "data-hub-security-internal",
             "flow-developer-role"
         );
 
