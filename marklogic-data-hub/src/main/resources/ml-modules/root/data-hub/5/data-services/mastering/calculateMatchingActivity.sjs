@@ -19,7 +19,7 @@ const calculateMatchingActivityLib = require("/data-hub/5/data-services/masterin
 
 var stepName;
 
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
 
 const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);

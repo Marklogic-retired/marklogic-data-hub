@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.hub.central.controllers.BaseController;
 import com.marklogic.hub.central.schemas.StepSchema;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.MasteringService;
 import com.marklogic.hub.dataservices.StepService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -51,6 +52,14 @@ public class MatchingStepController extends BaseController {
     public ResponseEntity<Void> deleteStep(@PathVariable String stepName) {
         newService().deleteStep(STEP_DEFINITION_TYPE, stepName);
         return emptyOk();
+    }
+
+    @RequestMapping(value = "/{stepName}/calculateMatchingActivity", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Get information about matching step")
+    @Secured("ROLE_readMatching")
+    public ResponseEntity<JsonNode> calculateMatchingActivity(@PathVariable String stepName) {
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).calculateMatchingActivity(stepName));
     }
 
     private StepService newService() {
