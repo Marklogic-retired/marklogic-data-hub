@@ -144,6 +144,9 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
 
     protected void addExistingPathNamespaces(Fragment newProps, Fragment existingProps) {
         Element newNamespaces = newProps.getInternalDoc().getRootElement().getChild("path-namespaces", MANAGE_NS);
+        if(newNamespaces == null) {
+            return;
+        }
         List<String> newNamespacePrefixes = new ArrayList<>();
 
         newProps.getElements("/m:database-properties/m:path-namespaces/m:path-namespace").forEach(namespace ->
