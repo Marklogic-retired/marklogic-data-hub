@@ -68,7 +68,7 @@ declare function mlcpFlow:transform(
             else
               ()
       )
-      
+
       let $job-id := (map:get($params, "job-id"), sem:uuid-string())[1]
       let $entity-name := map:get($params, 'entity-name') ! xdmp:url-decode(.)
       let $flow-name := map:get($params, 'flow-name') ! xdmp:url-decode(.)
@@ -81,7 +81,7 @@ declare function mlcpFlow:transform(
       let $_ :=
         if ($flow) then ()
         else
-          fn:error((), "RESTAPI-SRVEXERR", "The specified flow " || map:get($params, "flow") || " is missing.")
+          fn:error((), "RESTAPI-SRVEXERR", (404, "Not found", "The specified flow " || map:get($params, "flow") || " is missing."))
 
       (: configure the options :)
       let $opts := map:new(

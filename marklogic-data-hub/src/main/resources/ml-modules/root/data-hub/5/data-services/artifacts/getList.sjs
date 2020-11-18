@@ -16,7 +16,7 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var artifactType, propertiesToReturn, groupByEntityType;
 
@@ -29,7 +29,7 @@ if ("ingestion" === artifactType) {
 } else if ("flow" === artifactType || "stepDefinition" === artifactType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 } else {
-  ds.throwBadRequest("Unsupported artifact type: " + artifactType);
+  httpUtils.throwBadRequest("Unsupported artifact type: " + artifactType);
 }
 
 Artifacts.getArtifacts(artifactType);

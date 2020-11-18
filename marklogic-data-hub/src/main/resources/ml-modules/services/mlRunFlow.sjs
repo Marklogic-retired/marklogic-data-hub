@@ -15,7 +15,7 @@
  */
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 /**
  * DO NOT USE THIS; it is deprecated as of DHF 5.3.0.
  *
@@ -30,7 +30,7 @@ function get(context, params) {
 function post(context, params, input) {
   let flowName = params["flow-name"];
   if (!fn.exists(flowName)) {
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify a flowName"]);
   } else {
     const stepNumber = params.step;
     const options = params["options"] ? JSON.parse(params["options"]) : {};

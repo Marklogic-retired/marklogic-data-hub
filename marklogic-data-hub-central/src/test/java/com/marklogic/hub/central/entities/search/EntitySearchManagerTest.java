@@ -96,7 +96,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
 
         SearchQuery searchQuery = new SearchQuery();
         searchQuery.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
-        assertThrows(MarkLogicServerException.class, () -> new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
+        assertNull(new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
     }
 
     @Test

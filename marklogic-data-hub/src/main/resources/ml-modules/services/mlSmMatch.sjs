@@ -16,6 +16,7 @@
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   return post(context, params, null);
@@ -30,23 +31,17 @@ function post(context, params, input) {
   let uri = params.uri;
   let inMemDocument = inputBody.document;
   if (!(uri || inMemDocument)) {
-    fn.error(null,'RESTAPI-SRVEXERR',
-      Sequence.from([400, 'Bad Request',
-        'A valid uri parameter or document in the POST body is required.']));
+    httpUtils.throwBadRequestWithArray(['Bad Request', 'A valid uri parameter or document in the POST body is required.']);
   }
   let refFlowName = params.flowName;
   if (!refFlowName) {
-    fn.error(null,'RESTAPI-SRVEXERR',
-      Sequence.from([400, 'Bad Request',
-        'A flow name must be provided.']));
+    httpUtils.throwBadRequestWithArray(['Bad Request', 'A flow name must be provided.']);
   }
   let refStepNumber = params.step || '1';
   let flow = datahub.flow.getFlow(refFlowName);
   let stepRef = flow.steps[refStepNumber];
   if (stepRef.stepDefinitionType.toLowerCase() !== 'mastering') {
-    fn.error(null,'RESTAPI-SRVEXERR',
-      Sequence.from([400, 'Bad Request',
-        'The step must be a mastering step.']));
+    httpUtils.throwBadRequestWithArray(['Bad Request', 'The step must be a mastering step.']);
   }
   let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
   // build combined options

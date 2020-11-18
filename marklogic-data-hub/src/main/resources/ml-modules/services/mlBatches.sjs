@@ -16,7 +16,7 @@
 'use strict';
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
-
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   let jobId = params["jobid"];
@@ -32,10 +32,10 @@ function get(context, params) {
     resp = datahub.jobs.getBatchDoc(jobId, batchId);
   }
   else{
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Incorrect options"]);
   }
   if(fn.empty(resp) || resp.length === 0){
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No batch document found"]));
+    httpUtils.throwNotFoundWithArray(["Not Found", "No batch document found"]);
   }
   return resp;
 };

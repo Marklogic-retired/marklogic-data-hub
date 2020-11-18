@@ -20,7 +20,7 @@ xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/export
 const op = require('/MarkLogic/optic');
 const search = require('/MarkLogic/appservices/search/search');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 const returnFlags = `<return-aggregates xmlns="http://marklogic.com/appservices/search">false</return-aggregates>
   <return-constraints xmlns="http://marklogic.com/appservices/search">false</return-constraints>
@@ -56,7 +56,7 @@ const replaceHyphenWithUnderscore = (str) => {
 const filterObjectAndArrayTypeProperties = (name) => {
   const entityType = entityLib.findEntityTypeByEntityName(name);
   if (!entityType) {
-    ds.throwServerError(`Could not find an Entity Model document with name: ${name}`);
+    httpUtils.throwNotFound(`Could not find an Entity Model document with name: ${name}`);
   }
   const filteredProperties = new Set();
   const properties = entityType.properties;

@@ -25,6 +25,10 @@ function throwBadRequest(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, message]));
 }
 
+function throwBadRequestWithArray(args){
+  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400].concat(args)));
+}
+
 function throwForbidden(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([403, message]));
 }
@@ -33,13 +37,14 @@ function throwNotFound(message) {
   fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([404, message]));
 }
 
-function throwServerError(message) {
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([500, message]));
+function throwNotFoundWithArray(args){
+  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([404].concat(args)));
 }
 
 module.exports = {
   throwBadRequest,
+  throwBadRequestWithArray,
   throwForbidden,
   throwNotFound,
-  throwServerError
+  throwNotFoundWithArray
 };

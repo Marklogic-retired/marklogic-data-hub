@@ -17,25 +17,25 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const lib = require('/data-hub/5/impl/hub-es.sjs');
 
 var facetValuesSearchQuery;
 if(facetValuesSearchQuery == null) {
-  ds.throwBadRequest("Request cannot be empty");
+  httpUtils.throwBadRequest("Request cannot be empty");
 }
 let queryObj = JSON.parse(facetValuesSearchQuery);
 
 if(queryObj.entityTypeId == null) {
-  ds.throwBadRequest("Could not get matching values, search query is missing entityTypeId property");
+  httpUtils.throwBadRequest("Could not get matching values, search query is missing entityTypeId property");
 }
 
 if(queryObj.propertyPath == null) {
-  ds.throwBadRequest("Could not get matching values, search query is missing propertyPath property");
+  httpUtils.throwBadRequest("Could not get matching values, search query is missing propertyPath property");
 }
 
 if(queryObj.referenceType == null) {
-  ds.throwBadRequest("Could not get matching values, search query is missing referenceType property");
+  httpUtils.throwBadRequest("Could not get matching values, search query is missing referenceType property");
 }
 
 if(queryObj.limit == null) {

@@ -37,7 +37,7 @@ public class DataServiceGenerator {
         "xdmp.securityAssert(\"http://marklogic.com/data-hub/privileges/changeme\", \"execute\");\n" +
         "\n" +
         "// TODO Commonly needed library that can be removed if not needed \n" +
-        "const ds = require(\"/data-hub/5/data-services/ds-utils.sjs\");\n" +
+        "const httpUtils = require(\"/data-hub/5/impl/http-utils.sjs\");\n" +
         "\n" +
         "// TODO Replace this with the parameters declared in your API file \n" +
         "var paramName;\n" +
@@ -69,7 +69,7 @@ public class DataServiceGenerator {
         if (endpointName.isEmpty()) {
             throw new IllegalArgumentException("Endpoint name cannot be blank");
         }
-        
+
         System.out.println("Generating Data services files for service '" + serviceName + "' and endpoint '" + endpointName + "'");
 
         File projectDir = new File("marklogic-data-hub");

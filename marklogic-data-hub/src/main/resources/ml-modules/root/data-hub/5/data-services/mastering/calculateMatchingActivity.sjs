@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const calculateMatchingActivityLib = require("/data-hub/5/data-services/mastering/calculateMatchingActivityLib.sjs");
 
 var stepName;

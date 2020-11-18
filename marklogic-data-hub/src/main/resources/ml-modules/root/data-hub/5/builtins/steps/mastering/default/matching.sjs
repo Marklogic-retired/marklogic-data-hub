@@ -20,6 +20,7 @@ const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/l
 const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -58,7 +59,7 @@ function main(content, options) {
     if (stepDoc) {
       options = stepDoc.toObject();
     } else {
-      fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, `Could not find step with stepId ${options.stepId}`]));
+      httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
   const collectionInfo = masteringStepLib.checkOptions(null, options, null, [[quickStartRequiredOptionProperty,hubCentralRequiredOptionProperty]]);

@@ -17,7 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var name;
 var type;
@@ -33,5 +33,5 @@ let result = fn.head(fn.subsequence(cts.search(query), 1, 1));
 if (result != undefined) {
   result
 } else {
-  ds.throwBadRequest(`Could not find a step definition with name '${name}' and type '${type}'`);
+  httpUtils.throwBadRequest(`Could not find a step definition with name '${name}' and type '${type}'`);
 }

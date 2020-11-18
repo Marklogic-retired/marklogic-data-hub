@@ -18,7 +18,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var flowName;
 var stepNumber;
@@ -27,7 +27,7 @@ const flow = Artifacts.getArtifact("flow", flowName);
 const steps = flow.steps;
 
 if (!flow.steps[stepNumber]) {
-  ds.throwBadRequest(`Cannot remove step; could not find in flow ${flowName} a step with number ${stepNumber}`);
+  httpUtils.throwBadRequest(`Cannot remove step; could not find in flow ${flowName} a step with number ${stepNumber}`);
 }
 
 const stepNumbers = Object.keys(steps).filter(key => key != stepNumber);

@@ -18,6 +18,7 @@ const parameters = require("/MarkLogic/rest-api/endpoints/parameters.xqy");
 const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 xdmp.securityAssert(['http://marklogic.com/xdmp/privileges/rest-reader'], 'execute');
 
@@ -44,17 +45,17 @@ let options = requestParams.options ? JSON.parse(requestParams.options) : {};
 
 let flowDoc= datahub.flow.getFlow(flowName);
 if (!fn.exists(flowDoc)) {
-  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
+  httpUtils.throwNotFoundWithArray(["Not Found", "The requested flow was not found"]);
 }
 
 let stepDoc = flowDoc.steps[step];
 if (!stepDoc) {
-  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `The step number "${step}" of the flow was not found`]));
+  httpUtils.throwNotFoundWithArray(["Not Found", `The step number "${step}" of the flow was not found`]);
 }
 
 let stepDefinition = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
 if (!stepDefinition) {
-  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]));
+  httpUtils.throwNotFoundWithArray(["Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]);
 }
 
 let combinedOptions = Object.assign({}, stepDefinition.options, flowDoc.options, stepDoc.options, options);
@@ -66,7 +67,7 @@ if(!combinedOptions.sourceQuery && flowDoc.sourceQuery) {
 let query = combinedOptions.sourceQuery;
 if (!query) {
   datahub.debug.log("The collector query was empty");
-  fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The collector query was empty"]));
+  httpUtils.throwNotFoundWithArray([404, "Not Found", "The collector query was empty"]);
 }
 
 const javascript = new CollectorLib(datahub).prepareSourceQuery(combinedOptions, stepDefinition);

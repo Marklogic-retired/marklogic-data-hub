@@ -240,7 +240,7 @@ function badEntityReference() {
     throw new Error("Should have failed because the shipping ref doesn't point to a valid entity type");
   } catch (e) {
     return [
-      test.assertEqual("500", e.data[0]),
+      test.assertEqual("404", e.data[0]),
       test.assertEqual("Could not build property metadata; could not find entity type with name: DoesntExist", e.data[1])
     ];
   }

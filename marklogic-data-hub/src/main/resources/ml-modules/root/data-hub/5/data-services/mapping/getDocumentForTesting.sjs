@@ -18,7 +18,7 @@
 xdmp.securityAssert('http://marklogic.com/data-hub/privileges/read-mapping', 'execute');
 
 const core = require('/data-hub/5/artifacts/core.sjs')
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var stepName, uri;
 
@@ -38,7 +38,7 @@ if (mappingStep.sourceDatabase) {
 }
 
 if (doc === null) {
-  ds.throwNotFound(`Could not find a document with URI: ${uri}`);
+  httpUtils.throwNotFound(`Could not find a document with URI: ${uri}`);
 }
 
 // Populate return object.

@@ -18,7 +18,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var name;
 var description;
@@ -30,7 +30,7 @@ try {
   // swallowing error, as we don't want there to be an existing flow with the given name.
 }
 if (existingFlow) {
-  ds.throwBadRequest(`This flow name already exists: ${name}`);
+  httpUtils.throwBadRequest(`This flow name already exists: ${name}`);
 }
 const flow = {
   name: name,

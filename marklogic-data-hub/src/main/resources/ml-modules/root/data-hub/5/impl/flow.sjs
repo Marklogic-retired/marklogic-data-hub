@@ -17,7 +17,7 @@
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const Step = require("/data-hub/5/impl/step.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 // define constants for caching expensive operations
 const cachedFlows = {};
@@ -125,12 +125,12 @@ class Flow {
 
     const flowStep = flow.steps[stepNumber];
     if (!flowStep) {
-      ds.throwServerError(`Could not find step '${stepNumber}' in flow '${flowName}'`);
+      httpUtils.throwBadRequest(`Could not find step '${stepNumber}' in flow '${flowName}'`);
     }
 
     const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
     if (!stepDefinition) {
-      ds.throwServerError(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
+      httpUtils.throwBadRequest(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
     }
 
     const combinedOptions = Object.assign({}, stepDefinition.options || {}, flow.options || {}, flowStep.options || {}, options);

@@ -17,6 +17,7 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   let jobId = params["jobid"];
@@ -28,7 +29,7 @@ function get(context, params) {
   let resp = null;
 
   if(fn.exists(jobId) && fn.exists(status)) {
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request"]);
   }
   else if(fn.exists(jobId)) {
     resp = datahub.jobs.getJobDocWithId(jobId);
@@ -54,7 +55,7 @@ function get(context, params) {
     resp = datahub.jobs.getJobDocsByFlow(flow);
   }
   else{
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Incorrect options"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Incorrect options"]);
   }
 
   return resp;
@@ -73,7 +74,7 @@ function post(context, params, input) {
     resp = jobsMod.updateJob(datahub, jobId, status, flow, step, lastCompleted, stepResponse);
   }
   catch (ex) {
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", ex.message]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", ex.message]);
   }
   return resp;
 };

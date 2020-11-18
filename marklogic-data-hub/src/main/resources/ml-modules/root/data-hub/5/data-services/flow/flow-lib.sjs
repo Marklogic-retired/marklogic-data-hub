@@ -15,7 +15,7 @@
  */
 'use strict';
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 const stepMap = {};
 
@@ -53,7 +53,7 @@ function getStepDetails(flow){
         if (Object.keys(stepMap).length > 0) {
           step = stepMap[stepId];
           if (!step) {
-            ds.throwServerError(`Unable to find referenced step with ID ${stepId} in flow ${flow.name}`);
+            httpUtils.throwBadRequest(`Unable to find referenced step with ID ${stepId} in flow ${flow.name}`);
           }
         }
       }
