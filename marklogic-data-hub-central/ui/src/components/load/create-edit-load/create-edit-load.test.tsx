@@ -9,7 +9,7 @@ describe('New/edit load step configuration', () => {
 
   const loadProps = {
     tabKey: '1',
-    isNewStep: false,
+    isEditing: true,
     openStepSettings: true,
     setOpenStepSettings: () => {},
     createLoadArtifact: () => {},

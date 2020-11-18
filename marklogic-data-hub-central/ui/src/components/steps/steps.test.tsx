@@ -26,7 +26,7 @@ describe("Steps settings component", () => {
     const stepCustom = {...data.stepLoad.data, stepDefinitionName:'custom-ingestion', name: 'CustomLoad'};
 
     const stepsProps = {
-        isNewStep: false,
+        isEditing: true,
         createStep: jest.fn(),
         updateStep: jest.fn(),
         stepData: {},
@@ -37,7 +37,8 @@ describe("Steps settings component", () => {
         openStepSettings: true,
         setOpenStepSettings: jest.fn(),
         activityType: '',
-        canWrite: true
+        canWrite: true,
+        openStepDetails: jest.fn()
     }
 
     test('Verify rendering of Load step, tab switching, save changes confirmation on tab change', async () => {
@@ -92,6 +93,12 @@ describe("Steps settings component", () => {
 
         expect(getByText('Mapping Step Settings')).toBeInTheDocument();
         expect(getByLabelText('Close')).toBeInTheDocument();
+
+        // Mapping step has link to Details
+        const detailsLink = getByLabelText('stepDetails');
+        detailsLink.onclick = jest.fn();
+        fireEvent.click(detailsLink);
+        expect(detailsLink.onclick).toHaveBeenCalledTimes(1);
 
         // Default Basic tab
         expect(getByText('Basic')).toHaveClass('ant-tabs-tab-active');

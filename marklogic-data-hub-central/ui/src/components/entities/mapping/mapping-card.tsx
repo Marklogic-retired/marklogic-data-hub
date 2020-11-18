@@ -57,7 +57,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [selectVisible, setSelectVisible] = useState(false);
     const [addRun, setAddRun] = useState(false);
     const [openStepSettings, setOpenStepSettings] = useState(false);
-    const [isNewStep, setIsNewStep] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -96,12 +96,12 @@ const MappingCard: React.FC<Props> = (props) => {
     },[props.data]);
 
     const OpenAddNew = () => {
-        setIsNewStep(true);
+        setIsEditing(false);
         setOpenStepSettings(true);
     }
 
     const OpenStepSettings = (index) => {
-        setIsNewStep(false);
+        setIsEditing(true);
         //setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setMapData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenStepSettings(true);
@@ -576,6 +576,10 @@ const MappingCard: React.FC<Props> = (props) => {
             setMappingVisible(true);
       };
 
+    const openStepDetails = (name) => {
+        // need step's name and array index to option mapping details
+        openSourceToEntityMapping(name, props.data.findIndex(el => el.name === name));
+    }
 
     function handleSelect(obj) {
         let selectedNew = {...selected};
@@ -785,11 +789,12 @@ const MappingCard: React.FC<Props> = (props) => {
                 namespaces={namespaces}
                 mapIndex={mapIndex}
                 tgtEntityReferences={tgtEntityReferences}
-                isLoading={isLoading}/>
+                isLoading={isLoading}
+                openStepSettings={OpenStepSettings}/>
             {addConfirmation}
             <Steps
                 // Basic Settings
-                isNewStep={isNewStep}
+                isEditing={isEditing}
                 createStep={createMappingArtifact}
                 stepData={mapData}
                 sourceDatabase={sourceDatabaseName}
@@ -803,6 +808,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 updateStep={updateMappingArtifact}
                 activityType={activityType}
                 targetEntityType={props.entityModel.entityTypeId}
+                openStepDetails={openStepDetails}
             />
         </div>
     );

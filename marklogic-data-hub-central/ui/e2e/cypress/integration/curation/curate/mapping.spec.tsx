@@ -96,7 +96,6 @@ describe('Mapping', () => {
     advancedSettingsDialog.setStepProcessor('curateTile/orderDateProcessor');
 
     // add customHook to mapping step
-    //curatePage.stepSettings(mapStep).click();
     advancedSettingsDialog.setCustomHook('curateTile/customUriHook');
 
     advancedSettingsDialog.saveSettings(mapStep).click();
@@ -116,6 +115,12 @@ describe('Mapping', () => {
     sourceToEntityMap.setXpathExpressionInput('discount', 'head(OrderDetails/Discount)');
     sourceToEntityMap.setXpathExpressionInput('shipRegion', 'ShipRegion');
     sourceToEntityMap.setXpathExpressionInput('shippedDate', 'ShippedDate');
+
+    // link to settings and back 
+    sourceToEntityMap.stepSettingsLink().click();
+    cy.waitUntil(() => createEditMappingDialog.stepDetailsLink().click());
+    cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should('be.visible'));
+
     // close modal
     cy.get('body').type('{esc}');
 

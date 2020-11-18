@@ -29,7 +29,7 @@ describe('RTL Source-to-entity map tests', () => {
     });
 
     test('RTL tests with source data',  () => {
-        const { getByTestId,  getByText, queryByText, rerender } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
+        const { getByTestId, getByText, getByLabelText, queryByText, rerender } = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true}/>);
         expect(getByText('Source Data')).toBeInTheDocument();
         expect(getByText('proteinId')).toBeInTheDocument();
         expect(getByText('emptyString')).toBeInTheDocument();
@@ -43,6 +43,12 @@ describe('RTL Source-to-entity map tests', () => {
         expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
         expect(getByText('Entity: Person')).toBeInTheDocument();
         expect(getByText('Test')).toBeEnabled();
+        
+        // Link to Settings
+        const settingsLink = getByLabelText('stepSettings');
+        settingsLink.onclick = jest.fn();
+        fireEvent.click(settingsLink);
+        expect(settingsLink.onclick).toHaveBeenCalledTimes(1);
 
         // Check datatype class names for source values
         expect(getByTestId("emptyString-srcValue").children[0].className.includes('datatype-string')).toBe(true);

@@ -55,6 +55,10 @@ class SourceToEntityMap {
     return cy.findByTestId('submitSearch-name');
   }
 
+  stepSettingsLink() {
+    return cy.findByLabelText(`stepSettings`);
+  }
+
   /**
    * Get property icon from dropdown list by Entity type property name
    * @param propertyName

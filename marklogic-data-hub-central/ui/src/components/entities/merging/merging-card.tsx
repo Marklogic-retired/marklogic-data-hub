@@ -41,7 +41,6 @@ const MergingCard: React.FC<Props> = (props) => {
   const [stepArtifact, setStepArtifact] = useState({});
 
   const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
-  const [isEditing, toggleIsEditing] = useState(false);
   const [editStepArtifact, setEditStepArtifact] = useState({});
 
   const [showStepSettings, toggleStepSettings] = useState(false);
@@ -57,33 +56,19 @@ const MergingCard: React.FC<Props> = (props) => {
   },[props.mergingStepsArray]);
 
   const [openStepSettings, setOpenStepSettings] = useState(false);
-  const [isNewStep, setIsNewStep] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const OpenAddNew = () => {
-    setIsNewStep(true);
+    setIsEditing(false);
     setOpenStepSettings(true);
   }
-
-  const openAddStepDialog = () => {
-    setEditStepArtifact({});
-    toggleIsEditing(false);
-    toggleCreateEditStepModal(true);
-  };
 
   const OpenStepSettings = (index) => {
-    setIsNewStep(false);
-    //setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+    setIsEditing(true);
     setEditStepArtifact(props.mergingStepsArray[index]);
     setOpenStepSettings(true);
-    toggleIsEditing(true);
     toggleCreateEditStepModal(true);
   }
-
-  const openEditStepDialog = (index) => {
-    setEditStepArtifact(props.mergingStepsArray[index])
-    toggleIsEditing(true);
-    toggleCreateEditStepModal(true);
-  };
 
   const stepSettingsClicked = (index) => {
     setStepArtifact(props.mergingStepsArray[index]);
@@ -281,7 +266,7 @@ const MergingCard: React.FC<Props> = (props) => {
       />
       <Steps
         // Basic Settings
-        isNewStep={isNewStep}
+        isEditing={isEditing}
         createStep={createMergingArtifact}
         stepData={editStepArtifact}
         canReadOnly={props.canReadMatchMerge}

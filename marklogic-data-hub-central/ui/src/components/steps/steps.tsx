@@ -9,11 +9,14 @@ import ConfirmYesNo from '../common/confirm-yes-no/confirm-yes-no';
 import styles from './steps.module.scss';
 import './steps.scss';
 import { StepType } from '../../types/curation-types';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons'
   
 const { TabPane } = Tabs;
 
 interface Props {
-    isNewStep: boolean;
+    isEditing: boolean;
     createStep?: any;
     updateStep?: any;
     stepData: any;
@@ -27,6 +30,7 @@ interface Props {
     canWrite?: any;
     targetEntityType?: any;
     toggleModal?: any;
+    openStepDetails?: any;
 }
 
 const DEFAULT_TAB = '1';
@@ -87,14 +91,14 @@ const Steps: React.FC<Props> = (props) => {
 
     const createEditLoad = (<CreateEditLoad
         {...createEditDefaults}
-        isNewStep={props.isNewStep}
+        isEditing={props.isEditing}
         createLoadArtifact={props.createStep}
         stepData={props.stepData}
     />);
 
     const createEditMapping = (<CreateEditMapping
         {...createEditDefaults}
-        isNewStep={props.isNewStep}
+        isEditing={props.isEditing}
         createMappingArtifact={props.createStep}
         stepData={props.stepData}
         targetEntityType={props.targetEntityType}
@@ -103,7 +107,7 @@ const Steps: React.FC<Props> = (props) => {
 
     const createEditMatching = (<CreateEditStep
         {...createEditDefaults}
-        isEditing={!props.isNewStep}
+        isEditing={props.isEditing}
         editStepArtifactObject={props.stepData}
         stepType={StepType.Matching}
         targetEntityType={props.targetEntityType}
@@ -112,7 +116,7 @@ const Steps: React.FC<Props> = (props) => {
 
     const createEditMerging = (<CreateEditStep
         {...createEditDefaults}
-        isEditing={!props.isNewStep}
+        isEditing={props.isEditing}
         editStepArtifactObject={props.stepData}
         stepType={StepType.Merging}
         targetEntityType={props.targetEntityType}
@@ -151,7 +155,12 @@ const Steps: React.FC<Props> = (props) => {
                 break;
             default: activity = 'Custom';
         }
-        return props.isNewStep ? 'New ' + activity + ' Step' : activity + ' Step Settings'; 
+        return !props.isEditing ? 'New ' + activity + ' Step' : activity + ' Step Settings'; 
+    }
+
+    const handleStepDetails = (name) => {
+        onCancel();
+        props.openStepDetails(name);
     }
 
     return <Modal
@@ -164,11 +173,11 @@ const Steps: React.FC<Props> = (props) => {
         maskClosable={false}
         destroyOnClose={true}
     >
-        <div className={styles.stepsContainer}>
+        <div aria-label="steps" className={styles.stepsContainer}>
             <header>
                 <div className={styles.title}>{getTitle()}</div>
             </header>
-            { props.isNewStep ? <div className={styles.noTabs}>
+            { !props.isEditing ? <div className={styles.noTabs}>
                 {getCreateEditStep(props.activityType)}
             </div> :
             <div className={styles.tabs}>
@@ -194,6 +203,12 @@ const Steps: React.FC<Props> = (props) => {
                     </TabPane>
                 </Tabs>
             </div> }
+            {/* Step Details link for Mapping steps */}
+            { (props.isEditing && props.activityType === StepType.Mapping) ? 
+            <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>
+                <FontAwesomeIcon icon={faSlidersH} aria-label={'stepDetails'}/> 
+                <span className={styles.stepDetailsLabel}>Step Details</span>
+            </div> : null }
             {discardChanges}
         </div>
     </Modal>;
