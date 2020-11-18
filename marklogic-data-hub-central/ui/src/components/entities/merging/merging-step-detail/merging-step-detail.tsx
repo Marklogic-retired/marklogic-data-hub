@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import Axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { MLPageHeader, MLButton } from '@marklogic/design-system';
 import styles from './merging-step-detail.module.scss';
@@ -52,6 +53,7 @@ const MergingStepDetail: React.FC = () => {
     const [currentStrategyName, setCurrentStrategyName] = useState('');
     const [currentMergeRule, setCurrentMergeRule] = useState<any>({});
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
+    const [sourceNames, setSourceNames] = useState<string[]>([]);
     const mergeStrategiesData = new Array();
     const mergeRulesData = new Array();
     let commonStrategyNames:any = [];
@@ -60,10 +62,25 @@ const MergingStepDetail: React.FC = () => {
         if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
             const mergingStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
             setMergingStep(mergingStepArtifact);
+            retrieveCalculatedMergingActivity(mergingStepArtifact);
         } else {
             history.push('/tiles/curate');
         }
     }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+    const retrieveCalculatedMergingActivity = async (mergingStepArtifact: MergingStep) => {
+        if (mergingStepArtifact && mergingStepArtifact.name) {
+            try {
+                const calculatedMergingActivityResp = await Axios.get(`/api/steps/merging/${mergingStepArtifact.name}/calculateMergingActivity`);
+                if (calculatedMergingActivityResp.status === 200) {
+                    setSourceNames(calculatedMergingActivityResp.data.sourceNames || []);
+                }
+            } catch (error) {
+                let message = error.response && error.response.data && error.response.data.message;
+                console.error('Error while retrieving information about merge step', message || error);
+            }
+        }
+    };
 
     const editMergeStrategy = (strategyName) => {
      toggleEditStrategyModal(true);
@@ -357,12 +374,14 @@ const MergingStepDetail: React.FC = () => {
                 </div>
                 <EditMergeStrategyDialog
                     data={mergingStep.mergeStrategies}
+                    sourceNames={sourceNames}
                     strategyName={currentStrategyName}
                     editMergeStrategyDialog={showEditStrategyModal}
                     setOpenEditMergeStrategyDialog={toggleEditStrategyModal}
                 />
                 <AddMergeRuleDialog
                     data={[]}
+                    sourceNames={sourceNames}
                     openAddMergeRuleDialog={openAddMergeRuleDialog}
                     setOpenAddMergeRuleDialog={setOpenAddMergeRuleDialog}
                 />

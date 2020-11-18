@@ -15,5 +15,12 @@
   "targetDatabase": "data-hub-STAGING",
   "permissions": "data-hub-common,read,data-hub-common,update",
   "provenanceGranularityLevel": "coarse",
+  "headers" : {
+    "sources" : [ {
+      "name" : "CustomerXML"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
   "lastUpdated": "2020-06-04T23:01:35.525384Z"
 }

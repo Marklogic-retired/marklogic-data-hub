@@ -11,6 +11,7 @@ import { DownOutlined } from '@ant-design/icons';
 
 type Props = {
     data: any;
+    sourceNames: string[];
     strategyName: string;
     editMergeStrategyDialog: boolean;
     setOpenEditMergeStrategyDialog: (editMergeStrategyDialog: boolean) => void;
@@ -84,7 +85,7 @@ const EditMergeStrategyDialog: React.FC<Props> = (props) => {
         if(props.data){
             parsedEditedFormDetails(props.data)
         }
-    }, [props.strategyName, props.data]);
+    }, [props.strategyName, props.data, props.sourceNames]);
 
     let priorityOrderStrategyOptions:any[] = [];
 

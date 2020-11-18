@@ -96,7 +96,13 @@ declare private function load-artifacts(
     xdmp:default-permissions(),
     map:get($TYPE-TO-PERMISSIONS-MAP, $artifact-type)
   )
-  let $collections := map:get($TYPE-TO-COLLECTION-MAP, $artifact-type)
+  let $collections := (
+      map:get($TYPE-TO-COLLECTION-MAP, $artifact-type),
+      (: Place entity instances in the correct collection for their instance :)
+      if ($artifact-type eq "content") then
+        $content/*:envelope/*:instance/*:info/*:title ! fn:string(.)
+      else ()
+    )
   (: TODO Should really use artifact library for this :)
   let $_ := invoke-in-staging-and-final(function() {
     xdmp:document-insert($artifact-uri, $content, $permissions, $collections)

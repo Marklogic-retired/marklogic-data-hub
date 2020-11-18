@@ -84,6 +84,11 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
             });
+        getJson(PATH + "/firstStep/calculateMergingActivity")
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
     }
 
     @Test

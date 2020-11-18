@@ -15,16 +15,15 @@
  */
 'use strict';
 
-const calculateMatchingActivityLib = require("/data-hub/5/data-services/mastering/calculateMatchingActivityLib.sjs");
+const calculateMergingActivityLib = require("/data-hub/5/data-services/mastering/calculateMergingActivityLib.sjs");
 
 var stepName;
 
-xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
+xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
+const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("merging", stepName);
 
-const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);
+let result = calculateMergingActivityLib.calculateMergingActivity(step);
 
-let result = calculateMatchingActivityLib.calculateMatchingActivity(step);
-
-result
+result;
 
