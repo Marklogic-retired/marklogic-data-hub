@@ -17,7 +17,7 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/run-step", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 
 var inputs;
@@ -25,7 +25,7 @@ inputs = fn.head(xdmp.fromJSON(inputs));
 
 const flowName = inputs.flowName;
 if (!fn.exists(flowName)) {
-  ds.throwBadRequest(`Invalid request - must specify a flowName`);
+  httpUtils.throwBadRequest(`Invalid request - must specify a flowName`);
 }
 
 const stepNumber = inputs.stepNumber;

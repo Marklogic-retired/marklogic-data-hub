@@ -19,26 +19,26 @@ declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/hub-central/privileges/save-entity-query", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var saveQuery;
 var userCollections = ["http://marklogic.com/data-hub/saved-query"];
 var queryDocument = JSON.parse(saveQuery);
 
 if (queryDocument == null || queryDocument.savedQuery == null) {
-    ds.throwBadRequest("The request is empty or malformed");
+    httpUtils.throwBadRequest("The request is empty or malformed");
 }
 
 if (queryDocument.savedQuery.name == null || !queryDocument.savedQuery.name) {
-    ds.throwBadRequest("Query name is required");
+    httpUtils.throwBadRequest("Query name is required");
 }
 
 if (queryDocument.savedQuery.query == null || Object.keys(queryDocument.savedQuery.query) == 0) {
-    ds.throwBadRequest("Query to be saved cannot be empty");
+    httpUtils.throwBadRequest("Query to be saved cannot be empty");
 }
 
 if (queryDocument.savedQuery.propertiesToDisplay == null || queryDocument.savedQuery.propertiesToDisplay.length == 0) {
-    ds.throwBadRequest("Entity type properties to be displayed cannot be empty");
+    httpUtils.throwBadRequest("Entity type properties to be displayed cannot be empty");
 }
 
 const id = queryDocument.savedQuery.id;
@@ -47,7 +47,7 @@ const positiveQuery = cts.andQuery([cts.collectionQuery("http://marklogic.com/da
 const negativeQuery = cts.documentQuery("/saved-queries/" + id + ".json");
 const queryNameExists = cts.exists(cts.andNotQuery(positiveQuery, negativeQuery));
 if(queryNameExists) {
-    ds.throwBadRequest(`You already have a saved query with a name of ${queryDocument.savedQuery.name}`);
+    httpUtils.throwBadRequest(`You already have a saved query with a name of ${queryDocument.savedQuery.name}`);
 }
 
 if (cts.doc("/saved-queries/" + id + ".json")) {

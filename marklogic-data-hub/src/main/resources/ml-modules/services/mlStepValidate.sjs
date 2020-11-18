@@ -15,6 +15,7 @@
  */
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   return post(context, params, null);
@@ -24,10 +25,10 @@ function post(context, params, input) {
   let flowName = params["flow-name"];
   let stepNumber = params["step"];
   if (!fn.exists(flowName)) {
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify a flowName"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify a flowName"]);
   }
   else if(!fn.exists(stepNumber)) {
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Bad Request", "Invalid request - must specify step number"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - must specify step number"]);
   }
   else {
     let options = params["options"] ? JSON.parse(params["options"]) : {};

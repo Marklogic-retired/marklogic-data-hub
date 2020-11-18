@@ -19,7 +19,7 @@ declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var name;
@@ -27,13 +27,13 @@ var description;
 
 const uri = entityLib.getModelUri(name);
 if (!fn.docAvailable(uri)) {
-  ds.throwBadRequest("Could not find model with name: " + name);
+  httpUtils.throwBadRequest("Could not find model with name: " + name);
 }
 
 const model = cts.doc(uri).toObject();
 
 if (!model.definitions[name]) {
-  ds.throwBadRequest("Could not find model with an entity type with name: " + name);
+  httpUtils.throwBadRequest("Could not find model with an entity type with name: " + name);
 }
 
 model.definitions[name].description = description;

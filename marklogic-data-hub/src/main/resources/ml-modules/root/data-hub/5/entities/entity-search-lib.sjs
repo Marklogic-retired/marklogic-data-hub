@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const es = require('/MarkLogic/entity-services/entity-services');
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
 
@@ -45,7 +45,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
       "entityModel": entityModel
     };
     if (!entityModel) {
-      ds.throwServerError(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
+      httpUtils.throwNotFound(`Could not add entity properties to search response; could not find an entity model for entity name: ${entityName}`);
     }
 
     const allMetadata = buildAllMetadata("", entityModel, entityName);
@@ -77,7 +77,7 @@ function addPropertiesToSearchResponse(entityName, searchResponse, propertiesToD
 function buildAllMetadata(parentPropertyName, entityModel, entityName) {
   const entityType = entityModel.definitions[entityName];
   if (!entityType) {
-    ds.throwServerError("Could not build property metadata; could not find entity type with name: " + entityName);
+    httpUtils.throwNotFound("Could not build property metadata; could not find entity type with name: " + entityName);
   }
 
   const allPropertiesMetadata = [];

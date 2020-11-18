@@ -18,7 +18,7 @@
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
 const Step = require("/data-hub/5/impl/step.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var stepDefinitionType;
@@ -38,7 +38,7 @@ if ("ingestion" === stepDefinitionType) {
 } else if ("matching" === stepDefinitionType || "merging" === stepDefinitionType || "mastering" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 } else {
-  ds.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
+  httpUtils.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
 }
 
 stepProperties = stepProperties.toObject();

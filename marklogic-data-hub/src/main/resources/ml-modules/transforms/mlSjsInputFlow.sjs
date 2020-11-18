@@ -16,6 +16,7 @@
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function transform(context, params, content) {
   let jobId = params["job-id"] ||sem.uuidString();
@@ -24,7 +25,7 @@ function transform(context, params, content) {
   let uri = context.uri;
   let flow = flowlib.getFlow(entityName, flowName, consts.INPUT_FLOW);
   if (!flow) {
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The specified flow " + entityName + ":" + flowName + " is missing."]));
+    httpUtils.throwNotFoundWithArray(["Not Found", "The specified flow " + entityName + ":" + flowName + " is missing."]);
   }
 
   // configure the options

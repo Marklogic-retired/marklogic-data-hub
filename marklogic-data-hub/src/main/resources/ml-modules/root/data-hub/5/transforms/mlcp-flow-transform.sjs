@@ -16,6 +16,7 @@
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const urisInBatch = [];
 for (let requestField of xdmp.getRequestFieldNames()) {
   let fieldValue = fn.head(xdmp.getRequestField(requestField));
@@ -62,7 +63,7 @@ function transform(content, context = {}) {
 
     if (!flow) {
       datahub.debug.log({message: params, type: 'error'});
-      fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-FLOWMISSING", "The specified flow " + flowName + " is missing.", content.uri]));
+      httpUtils.throwNotFoundWithArray(["DH-FLOWMISSING", "The specified flow " + flowName + " is missing.", content.uri]);
     }
     let options = {};
     if (optionsString) {
@@ -71,7 +72,7 @@ function transform(content, context = {}) {
         options = JSON.parse(splits[1]);
       } catch (e) {
         datahub.debug.log({message: params, type: 'error'});
-        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-INVALIDOPTIONS", "Invalid json, could not parse options.", optionsString, content.uri]));
+        httpUtils.throwBadRequestWithArray(["DH-INVALIDOPTIONS", "Invalid json, could not parse options.", optionsString, content.uri]);
       }
     }
     options.noWrite = true;
@@ -85,7 +86,7 @@ function transform(content, context = {}) {
           contentObjs.push(content);
         } else {
           datahub.debug.log({message: params, type: 'error'});
-          fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-NOCONTENT", "The content was null provided to the flow " + flowName + " for " + uri + ".", content.uri]));
+          httpUtils.throwNotFoundWithArray(["DH-NOCONTENT", "The content was null provided to the flow " + flowName + " for " + uri + ".", content.uri]);
         }
       }
     }
@@ -108,10 +109,10 @@ function transform(content, context = {}) {
       delete doc.context;
       if (doc.type && doc.type === 'error' && doc.message) {
         datahub.debug.log(doc);
-        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-FLOWERROR", doc.message, content.uri]));
+        httpUtils.throwBadRequestWithArray(["DH-FLOWERROR", doc.message, content.uri]);
       } else if (!doc.value) {
         datahub.debug.log({message: params, type: 'error'});
-        fn.error(null, "RESTAPI-SRVEXERR", Sequence.from(["DH-NOCONTENT","The content was null in the flow " + flowName + " for " + doc.uri + ".", content.uri]));
+        httpUtils.throwNotFoundWithArray(["DH-NOCONTENT","The content was null in the flow " + flowName + " for " + doc.uri + ".", content.uri]);
       }
     }
     return Sequence.from(documents);

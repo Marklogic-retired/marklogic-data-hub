@@ -18,7 +18,7 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-flow", "execute");
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var flowName;
 var stepName;
@@ -33,7 +33,7 @@ const stepExists = cts.exists(
 );
 
 if (!stepExists) {
-  ds.throwBadRequest(`Could not find step with name ${stepName} and type ${stepDefinitionType}`);
+  httpUtils.throwBadRequest(`Could not find step with name ${stepName} and type ${stepDefinitionType}`);
 }
 
 const flow = Artifacts.getArtifact("flow", flowName);

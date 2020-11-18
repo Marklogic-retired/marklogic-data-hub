@@ -16,6 +16,7 @@
 'use strict';
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   let flowName = params["flowName"];
@@ -24,7 +25,7 @@ function get(context, params) {
   let resp = null;
 
   if(fn.exists(flowName) && fn.exists(namesOnly)) {
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([400, "Bad Request", "Invalid request - specify flowName or namesOnly"]));
+    httpUtils.throwBadRequestWithArray(["Bad Request", "Invalid request - specify flowName or namesOnly"]);
   }
   else if(fn.exists(namesOnly)) {
     resp = datahub.flow.getFlowNames();
@@ -36,7 +37,7 @@ function get(context, params) {
     resp = datahub.flow.getFlows();
   }
   if(fn.empty(resp) || resp.length === 0){
-    fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "No flow found"]));
+    httpUtils.throwNotFoundWithArray(["Not Found", "No flow found"]);
   }
   return resp;
 };

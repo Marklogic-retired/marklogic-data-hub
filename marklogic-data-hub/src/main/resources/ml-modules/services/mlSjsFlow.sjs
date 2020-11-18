@@ -19,6 +19,7 @@ const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function get(context, params) {
   let entityName = params["entity-name"];
@@ -31,7 +32,7 @@ function get(context, params) {
       resp = flow;
     }
     else {
-      fn.error(null,"RESTAPI-SRVEXERR",  Sequence.from([404, "Not Found", "The requested flow was not found"]));
+      httpUtils.throwNotFoundWithArray(["Not Found", "The requested flow was not found"]);
     }
   } else {
     resp = flowlib.getFlows(entityName);
@@ -57,7 +58,7 @@ function post(context, params, input) {
   let flow = flowlib.getFlow(entityName, flowName, flowType);
 
   if (!flow) {
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The specified flow " + entityName + ":" + flowName + " is missing."]));
+    httpUtils.throwNotFoundWithArray(["Not Found", "The specified flow " + entityName + ":" + flowName + " is missing."]);
   }
 
   // add the default options from the flow
@@ -124,14 +125,14 @@ function post(context, params, input) {
       for (let i = 0; i < errors.length; i++) {
          if((errors[i].stack && errors[i].stack.includes("DATAHUB-PLUGIN-ERROR"))
          || (errors[i].name && errors[i].name.includes("DATAHUB-PLUGIN-ERROR"))) {
-           fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([400, "Plugin error", resp]));
+           httpUtils.throwBadRequestWithArray(["Plugin error", resp]);
          }
       }
     }
   }
   else {
     resp = 'error';
-    fn.error(null, "RESTAPI-SRVEXERR", Sequence.from([404, "Not Found", "The requested flow was not found"]));
+    httpUtils.throwNotFoundWithArray(["Not Found", "The requested flow was not found"]);
   }
 
   return resp;

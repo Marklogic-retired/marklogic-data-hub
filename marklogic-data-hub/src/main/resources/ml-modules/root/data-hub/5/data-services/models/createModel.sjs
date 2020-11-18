@@ -19,7 +19,7 @@ declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var input = fn.head(xdmp.fromJSON(input));
@@ -28,11 +28,11 @@ const name = input.name;
 const description = input.description;
 
 if (name == null) {
-  ds.throwBadRequest("The model must have an info object with a title property");
+  httpUtils.throwBadRequest("The model must have an info object with a title property");
 }
 
 if (fn.docAvailable(entityLib.getModelUri(name))) {
-  ds.throwBadRequest(`An entity type already exists with a name of ${name}`);
+  httpUtils.throwBadRequest(`An entity type already exists with a name of ${name}`);
 }
 
 const model = {

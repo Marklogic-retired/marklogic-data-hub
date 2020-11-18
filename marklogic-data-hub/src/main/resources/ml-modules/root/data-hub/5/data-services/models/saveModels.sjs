@@ -19,7 +19,7 @@ declareUpdate();
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/write-entity-model", "execute");
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 
 var models = fn.head(xdmp.fromJSON(models));
@@ -33,7 +33,7 @@ const databases = [xdmp.databaseName(xdmp.database())];
 models.forEach(model => {
   const name = model.info.title;
   if (name == null) {
-    ds.throwBadRequest("The model must have an info object with a title property");
+    httpUtils.throwBadRequest("The model must have an info object with a title property");
   }
   entityLib.writeModelToDatabases(name, model, databases);
 });

@@ -18,17 +18,17 @@
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-entity-model", "execute");
 
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 
 var entityName;
 if (!entityName) {
-  ds.throwBadRequest("Must specify a name in order to get model references");
+  httpUtils.throwBadRequest("Must specify a name in order to get model references");
 }
 
 const entityModel = entityLib.findModelByEntityName(entityName);
 if (!entityModel) {
-  ds.throwServerError(`Could not find entity model with name: ${entityName}`);
+  httpUtils.throwNotFound(`Could not find entity model with name: ${entityName}`);
 }
 
 const entityTypeId = entityLib.getEntityTypeId(entityModel, entityName);

@@ -19,6 +19,7 @@ const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/4/impl/consts.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 function transform(content, context) {
   let uri = content.uri;
@@ -35,7 +36,7 @@ function transform(content, context) {
     optionsString = match[1];
     parsedTransformParam = transformString.replace(optionsString, '');
   }
-  
+
   let splits = parsedTransformParam.split(',');
   for (let i in splits) {
     let pair = splits[i];
@@ -49,7 +50,7 @@ function transform(content, context) {
   let flow = flowlib.getFlow(entityName, flowName, consts.INPUT_FLOW);
 
   if (!flow) {
-    fn.error(null, "RESTAPI-SRVEXERR", "The specified flow " + params.flow + " is missing.");
+    httpUtils.throwNotFoundWithArray(["Not Found", "The specified flow " + params.flow + " is missing."]);
   }
   let options = {};
   if (optionsString) {

@@ -17,6 +17,7 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const mastering = require("/com.marklogic.smart-mastering/process-records.xqy");
 const masteringStepLib = require("/data-hub/5/builtins/steps/mastering/default/lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
@@ -34,7 +35,7 @@ function main(content, options) {
       options = stepDoc.toObject();
       isSeparateMergeStep = true;
     } else {
-      fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, `Could not find step with stepId ${options.stepId}`]));
+      httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
   const jobID = datahub.flow.globalContext.jobId;

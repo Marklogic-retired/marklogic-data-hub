@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 var stepDefinitionType;
 var stepName;
@@ -31,7 +31,7 @@ if ("ingestion" === stepDefinitionType) {
 } else if ("custom" === stepDefinitionType) {
   xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-custom", "execute");
 } else {
-  ds.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
+  httpUtils.throwBadRequest("Unsupported step definition type: " + stepDefinitionType);
 }
 
 require('/data-hub/5/artifacts/core.sjs').getArtifact(stepDefinitionType, stepName);

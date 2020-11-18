@@ -15,7 +15,7 @@
  */
 'use strict';
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entitySearchLib = require("/data-hub/5/entities/entity-search-lib.sjs");
 
 // Expects JSON content

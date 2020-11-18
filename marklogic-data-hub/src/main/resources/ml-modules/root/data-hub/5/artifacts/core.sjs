@@ -25,7 +25,7 @@ const Mastering = require('./mastering');
 const StepDef = require('./stepDefinition');
 const CustomStep = require('./customStep')
 
-const ds = require("/data-hub/5/data-services/ds-utils.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const dataHub = DataHubSingleton.instance();
 
@@ -248,7 +248,7 @@ function convertStepReferenceToInlineStep(stepId) {
     cts.jsonPropertyValueQuery("stepId", stepId, "case-insensitive")
   ])));
   if (!stepDoc) {
-    ds.throwServerError(`Could not find a step with ID ${stepId}, which was referenced in flow ${flowName}`);
+    httpUtils.throwBadRequest(`Could not find a step with ID ${stepId}, which was referenced in flow ${flowName}`);
   }
 
   const referencedStep = removeNullProperties(stepDoc.toObject());
