@@ -84,6 +84,12 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
             });
+
+        getJson(PATH + "/firstStep/calculateMatchingActivity")
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
     }
 
     @Test
