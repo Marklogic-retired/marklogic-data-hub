@@ -1,0 +1,14 @@
+{
+  "functionName": "calculateMergingActivity",
+  "desc": "Calculates tangential information about a merging step to provide configuration insights. Returns a list of source names that apply to the target Entity Type.",
+  "params": [
+    {
+      "name": "stepName",
+      "datatype": "string"
+    }
+  ],
+  "return": {
+    "datatype": "jsonDocument",
+    "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+  }
+}

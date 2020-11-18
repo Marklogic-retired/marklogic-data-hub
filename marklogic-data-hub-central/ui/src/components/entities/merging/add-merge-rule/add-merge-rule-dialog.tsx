@@ -21,6 +21,7 @@ import {updateMergingArtifact} from "../../../../api/merging";
 
 type Props = {
     data: any;
+    sourceNames: string[];
     openAddMergeRuleDialog: boolean;
     setOpenAddMergeRuleDialog: (openAddMergeRuleDialog: boolean) => void;
 };
@@ -69,7 +70,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
     const mergeTypes = ['Custom', 'Strategy', 'Property-specific'];
     const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
-    const dropdownTypes = ['Length', 'less favourite', 'more favourite'];
+    const dropdownTypes = ['Length'].concat(props.sourceNames);
     const dropdownTypeOptions = dropdownTypes.map(elem => <MLOption data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
 
     useEffect(() => {
@@ -82,7 +83,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             setFunctionValueTouched(false);
             setStrategyValueTouched(false);
         }
-    }, [props.openAddMergeRuleDialog]);
+    }, [props.openAddMergeRuleDialog, props.sourceNames]);
 
     const resetModal = () => {
         setProperty('');

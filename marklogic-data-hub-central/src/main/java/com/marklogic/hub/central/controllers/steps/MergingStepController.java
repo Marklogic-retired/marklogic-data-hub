@@ -63,6 +63,17 @@ public class MergingStepController extends BaseController {
             .getDefaultCollections(entityType);
     }
 
+    @RequestMapping(value = "/{stepName}/calculateMergingActivity", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Information about merge step", response = CalculatedMergingActivity.class)
+    @Secured("ROLE_readMerging")
+    public ResponseEntity<JsonNode> calculateMergingActivity(@PathVariable String stepName) {
+        return ResponseEntity.ok(
+                MasteringService.on(getHubClient().getFinalClient())
+                        .calculateMergingActivity(stepName)
+               );
+    }
+
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
     }
@@ -70,5 +81,8 @@ public class MergingStepController extends BaseController {
     public static class MergingSteps extends ArrayList<StepSchema> {
     }
 
+    public static class CalculatedMergingActivity {
+        public ArrayList<String> sourceNames;
+    }
 
 }

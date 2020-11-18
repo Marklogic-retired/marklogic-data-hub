@@ -1427,7 +1427,7 @@ declare function merge-impl:get-sources(
   order by $last-updated descending
   return
     object-node {
-      "name": fn:string($source/descendant-or-self::*:name),
+      "name": fn:string($source/descendant-or-self::*[fn:local-name(.) = ('name','datahubSourceName')]),
       "dateTime": fn:string($last-updated),
       "documentUri": xdmp:node-uri($doc)
     }

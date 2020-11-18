@@ -13,5 +13,12 @@
   "outputURIReplacement": ".*input/namespacedCustomers,'/NamespacedCustomer'",
   "targetDatabase": "data-hub-STAGING",
   "permissions": "data-hub-common,read,data-hub-common,update",
+  "headers" : {
+    "sources" : [ {
+      "name" : "CustomerNsXML"
+    } ],
+    "createdOn" : "currentDateTime",
+    "createdBy" : "currentUser"
+  },
   "provenanceGranularityLevel": "coarse"
 }
