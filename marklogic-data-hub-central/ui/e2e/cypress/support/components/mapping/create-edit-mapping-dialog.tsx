@@ -42,6 +42,10 @@ class CreateEditMappingDialog {
     cy.get('#srcQuery').type(str);
   }
 
+  stepDetailsLink() {
+    return cy.findByLabelText(`stepDetails`);
+  }
+
   saveButton() {
     return cy.findByTestId('mapping-dialog-save');
   }

@@ -10,7 +10,7 @@ interface Props {
   tabKey: string;
   openStepSettings: boolean;
   setOpenStepSettings: any;
-  isNewStep: boolean;
+  isEditing: boolean;
   canReadWrite: boolean;
   canReadOnly: boolean;
   createLoadArtifact
@@ -59,7 +59,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   useEffect(() => {
     // Edit step
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && !props.isNewStep) {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.isEditing) {
       initStep();
     } 
     // New step
@@ -91,7 +91,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       setTobeDisabled(false);
     });
 
-  }, [props.stepData, props.isNewStep]);
+  }, [props.stepData, props.isEditing]);
 
   const onCancel = () => {
     if (hasFormChanged()) {
@@ -117,7 +117,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     const step = props.stepData;
     // Edit
-    if (step && JSON.stringify(step) != JSON.stringify({}) && !props.isNewStep){
+    if (step && JSON.stringify(step) != JSON.stringify({}) && props.isEditing){
       // Any settings changed (excluding separator)?
       if (
         stepName === step.name && description === step.description && srcFormat === step.sourceFormat 

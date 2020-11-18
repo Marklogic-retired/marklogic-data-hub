@@ -15,3 +15,15 @@
         margin-top: 70px;
     }
 }
+
+.stepDetailsLink {
+    position: absolute;
+    bottom: 32px;
+    left: 35px;
+    color: #44499C;
+    cursor: pointer;
+    .stepDetailsLabel {
+        display: inline-block;
+        margin-left: 6px;
+    }
+}

@@ -1163,6 +1163,11 @@ const SourceToEntityMap = (props) => {
         }
     };
 
+    const handleStepSettings = () => {
+        onCancel();
+        props.openStepSettings(props.mapIndex);
+    }
+
     return (<Modal
             visible={props.mappingVisible}
             onCancel={() => onCancel()}
@@ -1173,6 +1178,12 @@ const SourceToEntityMap = (props) => {
             bodyStyle={{paddingBottom:0}}
             destroyOnClose={true}
         >
+
+            <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
+                <Icon type="edit" role="step-settings button" aria-label={'stepSettings'} />
+                <span className={styles.stepSettingsLabel}>Step Settings</span>
+            </div>
+
             <div className={styles.header}>
                 <span className={styles.headerTitle}>{props.mapName}</span>
                 {errorInSaving ? success() : <span className={styles.noMessage}></span>}

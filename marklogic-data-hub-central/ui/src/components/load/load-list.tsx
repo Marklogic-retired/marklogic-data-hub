@@ -41,7 +41,7 @@ const LoadList: React.FC<Props> = (props) => {
     const [loadArtifactName, setLoadArtifactName] = useState('');
     const [stepData,setStepData] = useState({});
     const [openStepSettings, setOpenStepSettings] = useState(false);
-    const [isNewStep, setIsNewStep] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
     const [addRun, setAddRun] = useState(false);
 
@@ -61,12 +61,12 @@ const LoadList: React.FC<Props> = (props) => {
     let history = useHistory();
 
     const OpenAddNew = () => {
-        setIsNewStep(true);
+        setIsEditing(false);
         setOpenStepSettings(true);
     }
 
     const OpenStepSettings = (record) => {
-        setIsNewStep(false);
+        setIsEditing(true);
         setStepData(prevState => ({ ...prevState, ...record}));
         setOpenStepSettings(true);
     }
@@ -371,7 +371,7 @@ const LoadList: React.FC<Props> = (props) => {
         {addConfirmation}
         <Steps
             // Basic Settings
-            isNewStep={isNewStep}
+            isEditing={isEditing}
             createStep={createLoadArtifact}
             stepData={stepData}
             canReadOnly={props.canReadOnly}

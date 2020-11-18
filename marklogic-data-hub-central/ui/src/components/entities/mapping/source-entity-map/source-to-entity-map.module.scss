@@ -482,3 +482,15 @@ hr {
   #browse-buttons{
     border: 1px solid rgba(0, 0, 0, 0.961);
   }
+
+  .stepSettingsLink {
+    position: absolute;
+    top: 18px;
+    right: 66px;
+    color: #44499C;
+    cursor: pointer;
+    .stepSettingsLabel {
+        display: inline-block;
+        margin-left: 6px;
+    }
+}

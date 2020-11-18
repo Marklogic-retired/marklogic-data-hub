@@ -12,7 +12,6 @@ import { AdvLoadTooltips, SecurityTooltips } from '../../config/tooltips.config'
 import { Link } from 'react-router-dom';
 import { MLTooltip } from '@marklogic/design-system';
 
-
 const { Option } = Select;
 
 interface Props {
@@ -38,10 +37,9 @@ const LoadCard: React.FC<Props> = (props) => {
     const [showLinks, setShowLinks] = useState('');
     const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
     const [selectVisible, setSelectVisible] = useState(false);
-    const [openLoadSettings, setOpenLoadSettings] = useState(false);
     const [addRun, setAddRun] = useState(false);
     const [openStepSettings, setOpenStepSettings] = useState(false);
-    const [isNewStep, setIsNewStep] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
@@ -52,12 +50,12 @@ const LoadCard: React.FC<Props> = (props) => {
     let history = useHistory();
 
     const OpenAddNew = () => {
-        setIsNewStep(true);
+        setIsEditing(false);
         setOpenStepSettings(true);
     }
 
     const OpenStepSettings = (index) => {
-        setIsNewStep(false);
+        setIsEditing(true);
         setStepData(prevState => ({ ...prevState, ...props.data[index]}));
         setOpenStepSettings(true);
     }
@@ -334,7 +332,7 @@ const LoadCard: React.FC<Props> = (props) => {
             {addConfirmation}
             <Steps
                 // Basic Settings
-                isNewStep={isNewStep}
+                isEditing={isEditing}
                 createStep={createLoadArtifact}
                 stepData={stepData}
                 canReadOnly={props.canReadOnly}

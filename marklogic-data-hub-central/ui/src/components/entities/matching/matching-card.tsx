@@ -40,50 +40,26 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [showLinks, setShowLinks] = useState('');
   const [stepArtifact, setStepArtifact] = useState({});
 
-  const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
-  const [isEditing, toggleIsEditing] = useState(false);
   const [editStepArtifact, setEditStepArtifact] = useState({});
   const [ matchingData, setMatchingData ] = useState({});
-
-  const [showStepSettings, toggleStepSettings] = useState(false);
 
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
 
   const [openStepSettings, setOpenStepSettings] = useState(false);
-  const [isNewStep, setIsNewStep] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   const OpenAddNew = () => {
-    setIsNewStep(true);
+    setIsEditing(false);
     setOpenStepSettings(true);
   }
-
-  const openAddStepDialog = () => {
-    setEditStepArtifact({});
-    toggleIsEditing(false);
-    toggleCreateEditStepModal(true);
-  };
 
   const OpenStepSettings = (index) => {
-    setIsNewStep(false);
-    //setStepData(prevState => ({ ...prevState, ...props.data[index]}));
+    setIsEditing(true);
     setEditStepArtifact(props.matchingStepsArray[index]);
     setOpenStepSettings(true);
-    toggleIsEditing(true);
-    toggleCreateEditStepModal(true);
   }
-
-  const openEditStepDialog = (index) => {
-    setEditStepArtifact(props.matchingStepsArray[index])
-    toggleIsEditing(true);
-    toggleCreateEditStepModal(true);
-  };
-
-  const stepSettingsClicked = (index) => {
-    setStepArtifact(props.matchingStepsArray[index]);
-    toggleStepSettings(true);
-  };
 
   const createMatchingArtifact = async (payload) => {
     // Update local form state, then save to db
@@ -280,8 +256,7 @@ const updateMatchingArtifact = (payload) => {
       />
       <Steps
           // Basic Settings
-          isNewStep={isNewStep}
-          //createStep={createMappingArtifact}
+          isEditing={isEditing}
           createStep={createMatchingArtifact}
           stepData={editStepArtifact}
           canReadOnly={props.canReadMatchMerge}

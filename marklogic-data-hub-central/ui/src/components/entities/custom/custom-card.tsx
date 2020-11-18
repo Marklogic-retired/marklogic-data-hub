@@ -51,7 +51,7 @@ const CustomCard: React.FC<Props> = (props) => {
             )) : <span></span> }</Row>
             <Steps
                 // Basic Settings
-                isNewStep={false}
+                isEditing={true}
                 stepData={stepData}
                 canReadWrite={props.canReadWrite}
                 canReadOnly={props.canReadOnly}

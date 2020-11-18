@@ -337,12 +337,13 @@ const mapProps = {
   docNotFound: false,
   entityTypeTitle: 'Person',
   extractCollectionFromSrcQuery: jest.fn(),
-  mapFunctions: mapFunctions
+  mapFunctions: mapFunctions,
+  openStepSettings: jest.fn()
 };
 
 const newMap = {
   tabKey: '1',
-  isNewStep: true,
+  isEditing: false,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   createMappingArtifact: jest.fn(),
@@ -359,7 +360,7 @@ const newMap = {
 
 const editMap = {
   tabKey: '1',
-  isNewStep: false,
+  isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   createLoadArtifact: jest.fn(),

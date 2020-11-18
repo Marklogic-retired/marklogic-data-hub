@@ -11,7 +11,7 @@ interface Props {
   tabKey: string;
   openStepSettings: boolean;
   setOpenStepSettings: any;
-  isNewStep: boolean;
+  isEditing: boolean;
   canReadWrite: boolean;
   canReadOnly: boolean;
   createMappingArtifact: any;
@@ -88,7 +88,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
 
   useEffect(() => {
     // Edit step
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && !props.isNewStep) {
+    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.isEditing) {
       initStep();
     } 
     // New step
@@ -323,7 +323,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             setDescriptionTouched(false);
           }
         }
-        if (props.isNewStep) {
+        if (!props.isEditing) {
           if (event.target.value === '') {
             setDescriptionTouched(false);
           }
