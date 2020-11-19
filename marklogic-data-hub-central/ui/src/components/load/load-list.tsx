@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useHistory } from "react-router-dom";
 import styles from './load-list.module.scss';
 import './load-list.scss';
@@ -11,6 +11,7 @@ import { convertDateFromISO } from '../../util/conversionFunctions';
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import { MLTooltip } from '@marklogic/design-system';
+import { LoadingContext } from '../../util/loading-context';
 
 const {Option} = Select;
 
@@ -24,16 +25,19 @@ interface Props {
     canReadOnly: any;
     addStepToFlow: any;
     addStepToNew: any;
-    page: any;
-    pageSize: any;
     sortOrderInfo: any;
   }
 
 const LoadList: React.FC<Props> = (props) => {
+
+  const {
+    loadingOptions,
+    setPage,
+    setPageSize
+  } = useContext(LoadingContext);
+
     const activityType = 'ingestion';
     const location = useLocation<any>();
-    const [page, setPage] = useState(props.page);
-    const [pageSize, setPageSize] = useState(props.pageSize);
     const [sortedInfo, setSortedInfo] = useState(props.sortOrderInfo);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [addDialogVisible, setAddDialogVisible] = useState(false);
@@ -50,11 +54,9 @@ const LoadList: React.FC<Props> = (props) => {
     useEffect(() => {
       if (location.state && location.state.stepToView) {
         const stepIndex = props.data.findIndex((step) => step.stepId === location.state.stepToView);
-        setPage(Math.floor(stepIndex / pageSize) + 1);
+        setPage(Math.floor(stepIndex / loadingOptions.pageSize) + 1);
       }else{
         setSortedInfo(props.sortOrderInfo);
-        setPage(props.page);
-        setPageSize(props.pageSize);
       }
     }, [location, props.data]);
 
@@ -188,8 +190,8 @@ const LoadList: React.FC<Props> = (props) => {
                                             stepToAdd : name,
                                             stepDefinitionType : 'ingestion',
                                             viewMode: 'list',
-                                            pageSize: pageSize,
-                                            page: page,
+                                            pageSize: loadingOptions.pageSize,
+                                            page: loadingOptions.pageNumber,
                                             sortOrderInfo: sortedInfo,
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
@@ -225,8 +227,8 @@ const LoadList: React.FC<Props> = (props) => {
                                             stepToAdd : name,
                                             stepDefinitionType : 'ingestion',
                                             viewMode: 'list',
-                                            pageSize: pageSize,
-                                            page: page,
+                                            pageSize: loadingOptions.pageSize,
+                                            page: loadingOptions.pageNumber,
                                             sortOrderInfo: sortedInfo,
                                             existingFlow : false
                                         }}}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
@@ -345,11 +347,11 @@ const LoadList: React.FC<Props> = (props) => {
 
     // need special handlePagination for direct links to load steps that can be on another page
     const handlePagination = (page) => {
-        setPage(page);
+      setPage(page);
     };
 
-    const handlePageSizeChange = (pageSize) => {
-        setPageSize(pageSize);
+    const handlePageSizeChange = (current, pageSize) => {
+        setPageSize(current, pageSize);
     }
 
     return (
@@ -359,8 +361,8 @@ const LoadList: React.FC<Props> = (props) => {
                 <MLButton aria-label="add-new-list" type="primary" size="default" className={styles.addNewButton} onClick={OpenAddNew}>Add New</MLButton>
             </div> : ''}
         </div>
-        <Table
-            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: page, current: page, pageSize: pageSize}}
+        <Table 
+            pagination={{showSizeChanger: true, pageSizeOptions:pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
             className={styles.loadTable}
             columns={columns}
             dataSource={props.data}

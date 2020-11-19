@@ -10,6 +10,7 @@ import {MemoryRouter} from "react-router-dom";
 import { AuthoritiesService, AuthoritiesContext } from '../../util/authorities';
 import { validateTableRow } from '../../util/test-utils';
 import { SecurityTooltips } from "../../config/tooltips.config";
+import { LoadingContext } from '../../util/loading-context';
 
 jest.mock('axios');
 
@@ -456,4 +457,65 @@ describe('Load data component', () => {
     expect(queryByTestId(`${loadStepName}-run-flowsList`)).not.toBeInTheDocument()
   })
 
+  test('Verify Load List pagination', async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(['readIngestion', 'writeIngestion', 'writeFlow']);
+    const { container, rerender } = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+        <LoadingContext.Provider value={{
+          loadingOptions: {
+            start: 1,
+            pageNumber: 1,
+            pageSize: 10
+          },
+          setPageSize: jest.fn(),
+        }}>
+          <LoadList
+            {...data.loadDataPagination}
+            flows={data.flowsAdd}
+            sortOrderInfo
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+            </LoadingContext.Provider >
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    )
+
+    expect(container.querySelector('.ant-pagination li[title="1"]')).toBeInTheDocument();
+    expect(container.querySelector('.ant-pagination li[title="2"]')).toBeInTheDocument();
+    expect(container.querySelector('.ant-pagination li[title="3"]')).not.toBeInTheDocument();
+    expect(container.querySelector('.ant-pagination .ant-select-selection-selected-value')).toHaveTextContent('10 / page')
+    expect(container.querySelectorAll('.ant-table-row')).toHaveLength(10);    
+
+    rerender(<MemoryRouter>
+      <AuthoritiesContext.Provider value={authorityService}>
+      <LoadingContext.Provider value={{
+        loadingOptions: {
+          start: 1,
+          pageNumber: 1,
+          pageSize: 20
+        },
+        setPageSize: jest.fn(),
+      }}>
+        <LoadList
+          {...data.loadDataPagination}
+          flows={data.flowsAdd}
+          sortOrderInfo
+          canWriteFlow={true}
+          addStepToFlow={jest.fn()}
+          addStepToNew={jest.fn()} />
+          </LoadingContext.Provider >
+      </AuthoritiesContext.Provider>
+    </MemoryRouter>)
+
+    expect(container.querySelector('.ant-pagination li[title="1"]')).toBeInTheDocument();
+    expect(container.querySelector('.ant-pagination li[title="2"]')).not.toBeInTheDocument();
+    expect(container.querySelector('.ant-pagination .ant-select-selection-selected-value')).toHaveTextContent('20 / page')
+    expect(container.querySelectorAll('.ant-table-row')).toHaveLength(12);
+  });
 });
+
+
+
