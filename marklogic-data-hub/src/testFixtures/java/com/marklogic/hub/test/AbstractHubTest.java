@@ -292,20 +292,22 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
 
     }
 
+    // Update app config's config and modules dirs when not already in the hub config's project dir.
     private void resolveAppConfigDirectories(HubConfig hubConfig) {
-        String baseDirStr = hubConfig.getProjectDir();
+        String baseDirNormalized = Paths.get(hubConfig.getProjectDir()).normalize().toString();
         AppConfig appConfig = hubConfig.getAppConfig();
         List<ConfigDir> configDirs = appConfig.getConfigDirs();
         for (ConfigDir configDir : configDirs) {
-            String configPath = configDir.getBaseDir().getPath();
-            if (!configPath.contains(baseDirStr)) {
-                configDir.setBaseDir(Paths.get(baseDirStr, configPath).toFile());
+            String configPathNormalized = configDir.getBaseDir().toPath().normalize().toString();
+            if (!configPathNormalized.contains(baseDirNormalized)) {
+                configDir.setBaseDir(Paths.get(baseDirNormalized, configPathNormalized).toFile());
             }
         }
         List<String> modulePaths = appConfig.getModulePaths();
         for (String modulePath : modulePaths) {
-            if (!modulePath.contains(baseDirStr)) {
-                modulePaths.set(modulePaths.indexOf(modulePath), Paths.get(baseDirStr, modulePath).toString());
+            String modulePathNormalized = Paths.get(modulePath).normalize().toString();
+            if (!modulePathNormalized.contains(baseDirNormalized)) {
+                modulePaths.set(modulePaths.indexOf(modulePathNormalized), Paths.get(baseDirNormalized, modulePathNormalized).toString());
             }
         }
     }

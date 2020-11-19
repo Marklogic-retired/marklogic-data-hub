@@ -11,13 +11,10 @@ try {
   utils.invokeService(utils.STEP_NAME, uri);
   assertions.push(test.fail('Exception not thrown when attempting to process a non-existent document.'));
 } catch (e) {
-  xdmp.log(JSON.stringify(e));
-  assertions.concat([
-    test.assertTrue(e.data && Array.isArray(e.data) && e.data.length === 2,
-      "Expected exception object's 'data' property to be an array of two items"),
-    test.assertEqual('404', e.data[0], 'Expected an exception code of 404'),
-    test.assertEqual(`Could not find a document with URI: ${uri}`, e.data[1])
-  ]);
+  assertions.push(test.assertTrue(e.data && Array.isArray(e.data) && e.data.length === 2,
+    "Expected exception object's 'data' property to be an array of two items"));
+  assertions.push(test.assertEqual('404', e.data[0], 'Expected an exception code of 404'));
+  assertions.push(test.assertEqual(`Could not find a document with URI: ${uri}`, e.data[1]));
 }
 
 assertions;
