@@ -20,7 +20,7 @@ describe('Entity Modeling: Reader Role', () => {
     cy.contains(Application.title);
     console.log(Cypress.env('mlHost'));
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
-    cy.waitUntil(() => toolbar.getModelToolbarIcon().should('have.css', 'cursor', 'pointer')).click();
+    cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });
 

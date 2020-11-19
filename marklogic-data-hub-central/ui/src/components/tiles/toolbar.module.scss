@@ -16,7 +16,6 @@
         align-items: center;
         flex-direction: row;
         font-size: 18px;
-        margin: 0 20px 40px 0;
         padding: 0;
         background-color: #FFF;
         border: 1px solid #7F86B5;
@@ -25,9 +24,17 @@
         height: 40px;
         min-height: 40px;
         text-align: center;
-        cursor: pointer;
+        outline: none;
     }
-    .tool[aria-label='tool-curate'] {
-        margin-bottom: 80px;
+    .tool:focus-within {
+        box-shadow: 0px 0px 1px 1px #7F86B5;
+        background-color: #7F86B5;
+        outline: none;
+    }
+    .toolWrapper {
+        height: 80px;
+    }
+    .toolTallWrapper {
+        height: 120px;
     }
 }
