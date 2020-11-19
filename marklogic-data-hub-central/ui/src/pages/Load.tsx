@@ -10,19 +10,24 @@ import axios from 'axios';
 import { createStep, getSteps, deleteStep } from '../api/steps';
 import { AuthoritiesContext } from "../util/authorities";
 import tiles from '../config/tiles.config';
+import { LoadingContext } from '../util/loading-context';
 
 export type ViewType =  'card' | 'list';
 
 const INITIAL_VIEW: ViewType = 'card';
 
 const Load: React.FC = () => {
+
+  const {
+    loadingOptions,
+    setPage,
+  } = useContext(LoadingContext);
+
   const location = useLocation<any>();
   let [view, setView] = useState(location.state?.viewMode ? location.state.viewMode : INITIAL_VIEW);
   const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
   const [sortedInfo, setSortedInfo] = useState({columnKey: '', order: ''});
   const { handleError } = useContext(UserContext);
 
@@ -39,7 +44,6 @@ const Load: React.FC = () => {
 
   useEffect(() => {
     setPage(location.state?.page);
-    setPageSize(location.state?.pageSize);
     setView(location.state?.viewMode ? location.state?.viewMode : view);
     setSortedInfo(location.state?.sortOrderInfo);
   }, [location]);
@@ -60,6 +64,7 @@ const Load: React.FC = () => {
       let response = await createStep(ingestionStep.name, 'ingestion', ingestionStep);
       if (response.status === 200) {
         setLoading(false);
+        setPage(loadingOptions.start);
       }
     } catch (error) {
       let message = error.response.data.message;
@@ -183,13 +188,10 @@ const Load: React.FC = () => {
         canWriteFlow={canWriteFlow}
         addStepToFlow={addStepToFlow}
         addStepToNew={addStepToNew}
-        page={page}
-        pageSize={pageSize}
         sortOrderInfo={sortedInfo}
       />
     </div>;
   }
-
 
   return (
     <div>

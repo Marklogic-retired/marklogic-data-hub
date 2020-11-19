@@ -450,6 +450,127 @@ const viewCustom = {
   setHasChanged: () => {}
 }
 
+
+const loadDataPagination = {
+  data: [
+    {
+      name: "testLoad1",
+      description: "description for JSON load",
+      sourceFormat: "json",
+      targetFormat: "json",
+      outputURIReplacement: "",
+      inputFilePath: "/json-test/data-sets/testLoad",
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+    },
+    {
+      name: "testLoad2",
+      description: "description for XML load",
+      sourceFormat: "json",
+      targetFormat: "xml",
+      outputURIReplacement: "",
+      inputFilePath: "/xml-test/data-sets/testLoad",
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+    },
+    {
+      name: "testLoad3",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    },
+    {
+      name: "testLoad4",
+      description: "description for JSON load",
+      sourceFormat: "json",
+      targetFormat: "json",
+      outputURIReplacement: "",
+      inputFilePath: "/json-test/data-sets/testLoad",
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+    },
+    {
+      name: "testLoad5",
+      description: "description for XML load",
+      sourceFormat: "json",
+      targetFormat: "xml",
+      outputURIReplacement: "",
+      inputFilePath: "/xml-test/data-sets/testLoad",
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+    },
+    {
+      name: "testLoad6",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    },
+    {
+      name: "testLoad7",
+      description: "description for JSON load",
+      sourceFormat: "json",
+      targetFormat: "json",
+      outputURIReplacement: "",
+      inputFilePath: "/json-test/data-sets/testLoad",
+      lastUpdated: "2000-01-01T12:00:00.000000-00:00"
+    },
+    {
+      name: "testLoad8",
+      description: "description for XML load",
+      sourceFormat: "json",
+      targetFormat: "xml",
+      outputURIReplacement: "",
+      inputFilePath: "/xml-test/data-sets/testLoad",
+      lastUpdated: "2020-04-15T14:22:54.057519-07:00"
+    },
+    {
+      name: "testLoad9",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    },
+    {
+      name: "testLoad10",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    },
+    {
+      name: "testLoad11",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    },
+    {
+      name: "testLoad12",
+      description: "description for CSV load",
+      sourceFormat: "csv",
+      targetFormat: "csv",
+      outputURIReplacement: "",
+      inputFilePath: "/csv-test/data-sets/testLoad",
+      lastUpdated: "2016-08-27T03:10:30.073426-05:00"
+    }
+  ],
+  deleteLoadArtifact: jest.fn(),
+  createLoadArtifact: jest.fn(),
+  canReadWrite: true,
+  canReadOnly: false,
+
+};
+
+
+
 const data = {
   data: {
     canRead: false,
@@ -476,7 +597,8 @@ const data = {
   customData: customData,
   viewCustom: viewCustom,
   namespacedXmlInstance: namespacedXmlInstance,
-  noNamespaceXmlInstance: noNamespaceXmlInstance
+  noNamespaceXmlInstance: noNamespaceXmlInstance,
+  loadDataPagination: loadDataPagination,
 };
 
 export default data;

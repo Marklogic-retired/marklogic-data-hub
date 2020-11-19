@@ -6,6 +6,7 @@ import { UserContext } from './util/user-context';
 import SearchProvider from './util/search-context';
 import ModelingProvider from './util/modeling-context';
 import CurationProvider from './util/curation-context';
+import LoadingProvider from './util/loading-context';
 
 import Header from './components/header/header';
 import Footer from './components/footer/footer';
@@ -95,6 +96,7 @@ const App: React.FC<Props> = ({history, location}) => {
       <SearchProvider>
         <ModelingProvider>
           <CurationProvider>
+          <LoadingProvider>
             <Header environment={getEnvironment()} />
             <ModalStatus/>
             <NavigationPrompt/>
@@ -141,6 +143,7 @@ const App: React.FC<Props> = ({history, location}) => {
               </div>
               <Footer pageTheme={pageTheme}/>
             </main>
+            </LoadingProvider>
           </CurationProvider>
         </ModelingProvider>
       </SearchProvider>
