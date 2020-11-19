@@ -12,15 +12,15 @@ class PropertyModal {
   }
 
   openPropertyDropdown() {
-    return cy.get('.ant-cascader-picker').click();
+    cy.get('.ant-cascader-picker').trigger('mouseover').click();
   }
 
   getTypeFromDropdown(type: string) {
-    return cy.get(`ul > li`).first().get(`[title="${type}"]`);
+    return cy.get(`ul > li`).first().get(`[title="${type}"]`).should('be.visible');
   }
 
   getCascadedTypeFromDropdown(type: string) {
-    return cy.get(`ul > li`).last().get(`[title="${type}"]`);
+    return cy.get(`ul > li`).last().get(`[title="${type}"]`).should('be.visible');
   }
 
   getYesRadio(radioValue: string) {
