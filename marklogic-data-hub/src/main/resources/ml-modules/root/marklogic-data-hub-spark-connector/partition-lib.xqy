@@ -10,17 +10,17 @@ module namespace partition = "org:example:partition";
 (:
 Returns an "initial" set of partitions that just defines a min and max for each partition.
 :)
-declare function make-partitions($partition-count as xs:integer) as json:array
+declare function make-partitions($num-partitions as xs:integer) as json:array
 {
   let $partitions := json:array()
 
   let $max-long as xs:unsignedLong := 18446744073709551615
-  let $partition-size := xs:unsignedLong($max-long div $partition-count)
+  let $partition-size := xs:unsignedLong($max-long div $num-partitions)
 
   let $_ :=
-    for $i in 1 to $partition-count
+    for $i in 1 to $num-partitions
     let $min := ($i - 1) * $partition-size
-    let $max := if ($i = $partition-count) then $max-long else ($i * $partition-size - 1)
+    let $max := if ($i = $num-partitions) then $max-long else ($i * $partition-size - 1)
     let $partition := json:object()
     let $_ := (
       map:put($partition, "min", $min),

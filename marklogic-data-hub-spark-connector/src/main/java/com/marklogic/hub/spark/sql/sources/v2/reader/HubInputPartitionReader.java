@@ -110,11 +110,6 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         ObjectNode endpointConstants = objectMapper.createObjectNode();
         endpointConstants.set("initializationResponse", initializationResponse);
         endpointConstants.put("partitionNumber", partitionNumber);
-        try {
-            endpointConstants.set("sparkSchema", objectMapper.readTree(schema.json()));
-        } catch (Exception ex) {
-            throw new RuntimeException("Unable to write StructType as JSON; cause: " + ex.getMessage(), ex);
-        }
         return endpointConstants;
     }
 

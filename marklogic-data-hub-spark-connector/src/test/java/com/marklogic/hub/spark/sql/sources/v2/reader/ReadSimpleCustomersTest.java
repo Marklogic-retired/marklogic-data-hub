@@ -54,9 +54,9 @@ public class ReadSimpleCustomersTest extends AbstractSparkReadTest {
         // Use different partition values to ensure they all return the same results.
         // We don't care how many partitions end up being used - that's random, based on the randomly-generated row ID
         // for each row. Just want to make sure we get the correct result regardless of the partition count.
-        Stream.of(1, 2, 10).forEach(partitionCount -> {
-            Options options = newOptions().withView("Customer").withSqlCondition(sqlCondition);
-            HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions(), () -> partitionCount);
+        Stream.of("1", "2", "10").forEach(partitionCount -> {
+            Options options = newOptions().withView("Customer").withSqlCondition(sqlCondition).withNumPartitions(partitionCount);
+            HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions());
 
             if (expectedRowCount > 0) {
                 verifySparkSchema(dataSourceReader);

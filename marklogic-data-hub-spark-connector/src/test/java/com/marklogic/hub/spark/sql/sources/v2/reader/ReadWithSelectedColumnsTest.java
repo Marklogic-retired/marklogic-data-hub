@@ -52,7 +52,7 @@ public class ReadWithSelectedColumnsTest extends AbstractSparkReadTest {
         Options options = newOptions().withView("Customer")
             .withSelectedColumns(selectedColumns)
             .withSqlCondition("customerId < 3");
-        HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions(), () -> 2);
+        HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions());
 
         List<InternalRow> rows = readRows(dataSourceReader);
         assertEquals(3, rows.size(), "Expecting 3 rows due to the SQL condition");
