@@ -43,9 +43,7 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeModal.newEntityDescription('An entity for buyers');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Buyer').trigger('mouseover');
-    cy.contains(`Add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton('Buyer').click();
+    propertyTable.getAddPropertyButton('Buyer').should('be.visible').click();
 
     propertyModal.newPropertyName('user');
     propertyModal.openPropertyDropdown();
@@ -182,7 +180,7 @@ describe('Entity Modeling: Writer Role', () => {
 
     propertyModal.newPropertyName('orderID');
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('string').click();
+    propertyModal.getTypeFromDropdown('string').should('be.visible').click();
     propertyModal.getNoRadio('identifier').click();
     propertyModal.getYesRadio('multiple').click();
     propertyModal.getYesRadio('pii').click();
@@ -317,9 +315,7 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeModal.newEntityName(entityName2);
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton(entityName2).trigger('mouseover');
-    cy.contains(`Add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton(entityName2).click();
+    propertyTable.getAddPropertyButton(entityName2).should('be.visible').click();
 
     // add relation type property for 'User2' and save
     propertyModal.newPropertyName('user');
@@ -402,9 +398,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyTable.getMultipleIcon('address').should('exist');
 
     // add basic property to structured type
-    propertyTable.getAddPropertyToStructureType('Address').should('exist').trigger('mouseover');
-    cy.contains(`Add a property to this structured property.`).should('be.visible');
-    propertyTable.getAddPropertyToStructureType('Address').click();
+    propertyTable.getAddPropertyToStructureType('Address').should('be.visible').click();
     propertyModal.getStructuredTypeName().should('have.text', 'Address');
     propertyModal.newPropertyName('street');
     propertyModal.openPropertyDropdown();
@@ -651,9 +645,7 @@ describe('Entity Modeling: Writer Role', () => {
     entityTypeModal.newEntityDescription('An entity for patients');
     entityTypeModal.getAddButton().click();
 
-    propertyTable.getAddPropertyButton('Patient').should('exist').trigger('mouseover');
-    cy.contains(`Add properties to this entity type.`).should('be.visible');
-    propertyTable.getAddPropertyButton('Patient').click();
+    propertyTable.getAddPropertyButton('Patient').should('be.visible').click();
     propertyModal.newPropertyName('patientID');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More number types').click();
