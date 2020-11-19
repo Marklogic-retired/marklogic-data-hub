@@ -66,7 +66,7 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
 
     protected List<InternalRow> readRows(Options options) {
         // Uses a single partition count for reliable ordering of results when an orderBy is used
-        HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.toDataSourceOptions(), () -> 1);
+        HubDataSourceReader dataSourceReader = new HubDataSourceReader(options.withNumPartitions("1").toDataSourceOptions());
         return readRows(dataSourceReader);
     }
 

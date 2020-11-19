@@ -37,20 +37,19 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
      * @param dataSourceOptions
      */
     public HubDataSourceReader(DataSourceOptions dataSourceOptions) {
-        this(dataSourceOptions, () -> SparkSession.active().sparkContext().defaultMinPartitions());
-    }
-
-    public HubDataSourceReader(DataSourceOptions dataSourceOptions, PartitionCountProvider partitionCountProvider) {
         logger.debug("Created: " + toString());
 
         this.options = dataSourceOptions.asMap();
-        validateOptions();
+        validateOptions(this.options);
 
-        this.initializationResponse = initializeRead(partitionCountProvider);
+        this.initializationResponse = initializeRead(this.options);
         this.schema = (StructType) StructType.fromJson(initializationResponse.get("schema").toString());
     }
 
-    private void validateOptions() {
+    /**
+     * @param options
+     */
+    private void validateOptions(Map<String, String> options) {
         if (options.containsKey("serializedplan")) {
             Stream.of("view", "schema", "sqlcondition", "selectedcolumns").forEach(key -> {
                 if (options.containsKey(key)) {
@@ -65,13 +64,35 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         }
     }
 
-    private JsonNode initializeRead(PartitionCountProvider partitionCountProvider) {
+    /**
+     * @param options
+     * @return
+     */
+    private JsonNode initializeRead(Map<String, String> options) {
+        ObjectNode inputs = buildInitializeReadInputs(options);
+        try {
+            return SparkService.on(
+                HubClient.withHubClientConfig(Util.buildHubClientConfig(options)).getFinalClient()
+            ).initializeRead(inputs);
+        } catch (FailedRequestException ex) {
+            throw new RuntimeException("Unable to initialize read, cause: " + ex.getMessage(), ex);
+        }
+
+    }
+
+    /**
+     * Protected so that it can be unit-tested.
+     *
+     * @param options
+     * @return
+     */
+    protected ObjectNode buildInitializeReadInputs(Map<String, String> options) {
         ObjectNode inputs = new ObjectMapper().createObjectNode();
 
         // The same all-lowercase style is used here for consistency with Spark, even though it's not consistent with
         // DHF code conventions
         Stream.of("view", "schema", "sqlcondition", "selectedcolumns").forEach(key -> inputs.put(key, options.get(key)));
-        inputs.put("partitioncount", partitionCountProvider.getPartitionCount());
+        inputs.put("numpartitions", determineNumPartitions(options));
 
         if (options.containsKey("serializedplan")) {
             try {
@@ -81,14 +102,28 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
             }
         }
 
-        try {
-            return SparkService.on(
-                HubClient.withHubClientConfig(Util.buildHubClientConfig(options)).getFinalClient()
-            ).initializeRead(inputs);
-        } catch (FailedRequestException ex) {
-            throw new RuntimeException("Unable to initialize read, cause: " + ex.getMessage(), ex);
-        }
+        return inputs;
+    }
 
+    /**
+     * @param options
+     * @return
+     */
+    private int determineNumPartitions(Map<String, String> options) {
+        int numPartitions;
+        if (options.containsKey("numpartitions")) {
+            try {
+                numPartitions = Integer.parseInt(options.get("numpartitions"));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("numpartitions must be an integer greater than or equal to 1");
+            }
+        } else {
+            numPartitions = SparkSession.active().sparkContext().defaultMinPartitions();
+        }
+        if (numPartitions < 1) {
+            throw new IllegalArgumentException("numpartitions must be an integer greater than or equal to 1");
+        }
+        return numPartitions;
     }
 
     @Override

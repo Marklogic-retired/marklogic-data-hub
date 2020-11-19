@@ -181,16 +181,16 @@ function buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName, selectedColumn
 }
 
 /**
- * For the given plan, first divide it up into partitions based on the partitionCount (this uses the XQuery library to
+ * For the given plan, first divide it up into partitions based on the numPartitions (this uses the XQuery library to
  * handle unsignedLong math). Then for each partition, use the parameterizedPlan to determine if there are any matching
  * rows within the row ID boundaries for the partition. If so, return it with the rowCount added to the partition. If
  * not, discard it.
  *
  * @param parameterizedPlan
- * @param partitionCount
+ * @param numPartitions
  * @returns {[]}
  */
-function makePartitionsWithRows(parameterizedPlan, partitionCount) {
+function makePartitionsWithRows(parameterizedPlan, numPartitions) {
   const groupByPlan = op.import(parameterizedPlan).groupBy(null, op.count("rowCount"));
 
   // Will make this configurable soon. Assuming 10k rows in a batch is reasonable for now, knowing that Optic
@@ -204,7 +204,7 @@ function makePartitionsWithRows(parameterizedPlan, partitionCount) {
 
   // Determine which partitions contain rows
   const partitions = [];
-  partitionLib.makePartitions(partitionCount).forEach(partition => {
+  partitionLib.makePartitions(numPartitions).forEach(partition => {
     const rowCount = getRowCountForPartition(groupByPlan, partition);
     if (rowCount > 0) {
       partition.rowCount = rowCount;

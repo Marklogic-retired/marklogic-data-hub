@@ -45,7 +45,7 @@ const parameterizedPlan = readLib.parameterizePlan(originalPlan.export());
 
 // Determine the partitions, only including the ones that have matching rows in them
 const partitions = parameterizedPlan != null ?
-  readLib.makePartitionsWithRows(parameterizedPlan, inputs.partitioncount) : [];
+  readLib.makePartitionsWithRows(parameterizedPlan, inputs.numpartitions) : [];
 
 // If there are no partitions, no reason to build schema fields
 let schemaFields = [];

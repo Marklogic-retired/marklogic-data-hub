@@ -41,6 +41,9 @@ public class Options {
     private String selectedColumns;
     private String serializedPlan;
 
+    // Has a default value so that tests don't depend on a Spark cluster running to determine minDefaultPartitions
+    private String numPartitions = "2";
+
     public Options() {
     }
 
@@ -102,7 +105,7 @@ public class Options {
         if (additionalExternalMetadata != null) {
             params.put("additionalexternalmetadata", additionalExternalMetadata.toString());
         }
-        if(additionalExternalMetadataAsString !=null) {
+        if (additionalExternalMetadataAsString != null) {
             params.put("additionalexternalmetadata", additionalExternalMetadataAsString);
         }
 
@@ -121,6 +124,8 @@ public class Options {
         if (selectedColumns != null) {
             params.put("selectedColumns", selectedColumns);
         }
+
+        params.put("numpartitions", numPartitions);
 
         return new DataSourceOptions(params);
     }
@@ -180,12 +185,12 @@ public class Options {
         return this;
     }
 
-    public Options withAdditionalExternalMetadata(JsonNode additionalExternalMetadata){
+    public Options withAdditionalExternalMetadata(JsonNode additionalExternalMetadata) {
         this.additionalExternalMetadata = additionalExternalMetadata;
         return this;
     }
 
-    public Options withAdditionalExternalMetadataAsString(String additionalExternalMetadataAsString){
+    public Options withAdditionalExternalMetadataAsString(String additionalExternalMetadataAsString) {
         this.additionalExternalMetadataAsString = additionalExternalMetadataAsString;
         return this;
     }
@@ -212,6 +217,11 @@ public class Options {
 
     public Options withSelectedColumns(String columns) {
         this.selectedColumns = columns;
+        return this;
+    }
+
+    public Options withNumPartitions(String numPartitions) {
+        this.numPartitions = numPartitions;
         return this;
     }
 }
