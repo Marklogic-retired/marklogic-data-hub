@@ -47,7 +47,8 @@ public class RunStandaloneStepTest extends AbstractHubCoreTest {
         FlowService.on(getHubClient().getStagingClient()).addStepToFlow("echoFlow", "myMapper", "mapping");
 
         // And run the flow
-        FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
+        // Per DHFPROD-6269, purposefully using the deprecated constructor so that we have code coverage on it
+        FlowRunner flowRunner = new FlowRunnerImpl(getHubConfig());
         RunFlowResponse response = flowRunner.runFlow(new FlowInputs("echoFlow", "2"));
         flowRunner.awaitCompletion();
 

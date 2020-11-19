@@ -148,7 +148,8 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
      *
      * @return
      */
-    @Deprecated
+    @Deprecated(since = "5.3.0-beta; must be retained because the 5.2 dh-5-example project used it in an example. " +
+        "Should use new HubConfigImpl() instead.")
     public static HubConfigImpl withDefaultProperties() {
         return new HubConfigImpl();
     }
