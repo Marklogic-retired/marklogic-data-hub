@@ -13,7 +13,6 @@
     font-family: MLCustomFont;
     font-size: 24px; 
     position: relative;
-    left: -2px;
     background-color: #FFF;
     border: 1px solid #7F86B5;
     border-radius: 4px;
@@ -21,8 +20,13 @@
     height: 40px;
     min-height: 40px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
+    outline: none;
+}
+
+.exploreIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
 }
 
 .loadIcon:before {
@@ -34,7 +38,6 @@
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
-    left: -2px;
     background-color: #FFF;
     border: 1px solid #7F86B5;
     border-radius: 4px;
@@ -42,8 +45,13 @@
     height: 40px;
     min-height: 40px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
+    outline: none;
+}
+
+.loadIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
 }
 
 
@@ -56,7 +64,6 @@
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
-    left: -2px;
     background-color: #FFF;
     border: 1px solid #7F86B5;
     border-radius: 4px;
@@ -64,8 +71,13 @@
     height: 40px;
     min-height: 40px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
+    outline: none;
+}
+
+.modelIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
 }
 
 .curateIcon:before {
@@ -77,7 +89,6 @@
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
-    left: -2px;
     background-color: #FFF;
     border: 1px solid #7F86B5;
     border-radius: 4px;
@@ -85,8 +96,13 @@
     height: 40px;
     min-height: 40px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 80px;
+    outline: none;
+}
+
+.curateIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
 }
 
 .runIcon:before {
@@ -98,7 +114,6 @@
     font-family: MLCustomFont;
     font-size: 24px;
     position: relative;
-    left: -2px;
     background-color: #FFF;
     border: 1px solid #7F86B5;
     border-radius: 4px;
@@ -106,6 +121,11 @@
     height: 40px;
     min-height: 40px;
     text-align: center;
-    cursor: pointer;
-    margin-bottom: 40px;
+    outline: none;
+}
+
+.runIcon:focus-within {
+    box-shadow: 0px 0px 1px 1px #7F86B5;
+    background-color: #7F86B5;
+    outline: none;
 }
