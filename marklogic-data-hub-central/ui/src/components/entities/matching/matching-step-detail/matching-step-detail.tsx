@@ -111,7 +111,15 @@ const MatchingStepDetail: React.FC = () => {
       await updateMatchingArtifact(stepArtifact);
       updateActiveStepArtifact(stepArtifact);
     } else if (options['sliderType'] === 'ruleSet') {
+      let stepArtifact = curationOptions.activeStep.stepArtifact;
+      let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+      let index = parseInt(options['index']);
 
+      stepArtifactRulesets[index]['weight'] = values[index]['value'].toFixed(1);
+      stepArtifact['matchRulesets'] = stepArtifactRulesets;
+
+      await updateMatchingArtifact(stepArtifact);
+      updateActiveStepArtifact(stepArtifact);
     }
   };
 
@@ -143,7 +151,16 @@ const MatchingStepDetail: React.FC = () => {
       updateActiveStepArtifact(stepArtifact);
       toggleShowDeleteModal(false);
     } else if (deleteOptions['sliderType'] === 'ruleSet') {
+      let stepArtifact = curationOptions.activeStep.stepArtifact;
+      let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+      let index = parseInt(deleteOptions['index']);
 
+      stepArtifactRulesets.splice(index, 1);
+      stepArtifact.matchRulesets = stepArtifactRulesets;
+
+      await updateMatchingArtifact(stepArtifact);
+      updateActiveStepArtifact(stepArtifact);
+      toggleShowDeleteModal(false);
     }
   }
 
@@ -157,16 +174,16 @@ const MatchingStepDetail: React.FC = () => {
       maskClosable={false}
       footer={null}
     >
-      <p className={styles.deleteMessage}>Are you sure you want to delete a threshold <b>{deleteOptions['prop']} - {deleteOptions['type']}</b>?</p>
+      <p aria-label="delete-slider-text" className={styles.deleteMessage}>Are you sure you want to delete a {deleteOptions['sliderType'] === 'threshold' ? 'threshold' : 'ruleset'} <b>{deleteOptions['prop']} - {deleteOptions['type']}</b>?</p>
       <div className={styles.footer}>
         <MLButton
-          aria-label={`delete-slider-confirm`}
+          aria-label={`delete-slider-no`}
           size="default"
           onClick={() => toggleShowDeleteModal(false)}
         >No</MLButton>
         <MLButton
           className={styles.saveButton}
-          aria-label={`delete-slider-confirm`}
+          aria-label={`delete-slider-yes`}
           type="primary"
           size="default"
           onClick={() => deleteConfirm()}
