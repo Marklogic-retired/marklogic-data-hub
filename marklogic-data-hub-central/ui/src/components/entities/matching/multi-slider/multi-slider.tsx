@@ -1,4 +1,5 @@
 import React,{ useState } from 'react';
+import { Icon } from 'antd';
 import { Slider, Handles } from '@marklogic/react-compound-slider';
 import './multi-slider.scss';
 
@@ -18,9 +19,9 @@ const MultiSlider = (props) => {
             <div className={'tooltipContainer'} style={{ left: `${percent}%` }}>
                 {activeHandleIdOptions.hasOwnProperty('prop') && options[0].prop == activeHandleIdOptions['prop'] && activeHandleIdOptions.hasOwnProperty('type') && options[0].type == activeHandleIdOptions['type']? <div className="tooltip">
                     {options.map((opt, i) => (
-                        <div className="activeTooltipText" data-testid={`${options[0].prop}-active-tooltip`} key={i}>
-                            <span data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span> {opt.type.length ? `-  ${opt.type}` : ''}</span>
-                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type})}>X</div>
+                        <div className={activeHandleIdOptions['index'] === id.split('-')[1] ? 'activeTooltipText': 'tooltipText'} data-testid={`${options[0].prop}-active-tooltip`} key={i}>
+                            <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span> {opt.type.length ? `-  ${opt.type}` : ''}</span>
+                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split('-')[1]})}>X</div>
                         </div>)
                     )}
                 </div>
@@ -28,8 +29,8 @@ const MultiSlider = (props) => {
                     <div className="tooltip">
                     {options.map((opt, i) => (
                         <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
-                            <span data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ''}</span>
-                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type})}>X</div>
+                            <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type})}><span>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ''}</span>
+                            <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split('-')[1]})}><Icon type="close" /></div>
                         </div>
                     ))}
                     </div>
@@ -65,7 +66,7 @@ const MultiSlider = (props) => {
 
     const onSlideStart = (e, handleId ) => {
       let parsedHandleId = handleId.activeHandleID.split('-')[1];
-      setActiveHandleIdOptions(options[parsedHandleId].props[0]);
+      setActiveHandleIdOptions({ ...options[parsedHandleId].props[0], index: parsedHandleId });
     };
 
     const onSlideEnd = values => {
@@ -73,13 +74,14 @@ const MultiSlider = (props) => {
           // TODO handle multiple tooltips
           return {
             props: opt['props'][0],
-            value: values[i]
+            value: values[i],
           };
         });
 
         let sliderOptions = {
           ...activeHandleIdOptions,
-          sliderType: props.type
+          sliderType: props.type,
+          index: activeHandleIdOptions['index']
         }
         setActiveHandleIdOptions({});
         props.handleSlider(result, sliderOptions);

@@ -254,7 +254,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => {
-    return <MLOption key={index} value={matchType.value}>{matchType.name}</MLOption>;
+    return <MLOption key={index} value={matchType.value} aria-label={`${matchType.name}-option`}>{matchType.name}</MLOption>;
   });
 
   const renderCustomOptions = (
@@ -332,12 +332,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
   const modalFooter = (
     <div className={styles.footer}>
       <MLButton
-        aria-label={`cancel-single-ruleset`}
+        aria-label={`cancel-threshold-modal`}
         onClick={closeModal}
       >Cancel</MLButton>
       <MLButton
         className={styles.saveButton}
-        aria-label={`confirm-single-ruleset`}
+        aria-label={`confirm-threshold-modal`}
         type="primary"
         onClick={(e) => onSubmit(e)}
       >Save</MLButton>

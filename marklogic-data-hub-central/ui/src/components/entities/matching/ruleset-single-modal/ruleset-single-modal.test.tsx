@@ -1,11 +1,16 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, wait } from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 
 import RulesetSingleModal from './ruleset-single-modal';
 
 import { CurationContext } from '../../../../util/curation-context';
+import { updateMatchingArtifact } from '../../../../api/matching';
 import { customerMatchingStep } from '../../../../assets/mock-data/curation/curation-context-mock';
+
+jest.mock('../../../../api/matching');
+
+const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
 
 describe('Matching Ruleset Single Modal component', () => {
   afterEach(() => {
@@ -13,6 +18,7 @@ describe('Matching Ruleset Single Modal component', () => {
   });
 
   it('can select an property to match and match type and click cancel', () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
     const toggleModalMock = jest.fn();
 
     const { queryByText, getByText, rerender } =  render(
@@ -44,10 +50,12 @@ describe('Matching Ruleset Single Modal component', () => {
 
     userEvent.click(getByText('Cancel'));
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
   });
 
-  it('can select an property to match and Zip match type and click save', () => {
+  it('can select an property to match and Zip match type and click save', async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
     const toggleModalMock = jest.fn();
 
     const { queryByText, getByText, rerender } =  render(
@@ -78,11 +86,17 @@ describe('Matching Ruleset Single Modal component', () => {
     userEvent.click(screen.getByText('Zip'));
 
     userEvent.click(getByText('Save'));
-    expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+
   });
 
-  it('can select Synonym ruleset type and click save', () => {
+  it('can select Synonym ruleset type and click save', async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
     const toggleModalMock = jest.fn();
 
     const { queryByText, getByText, getByLabelText } =  render(
@@ -105,11 +119,16 @@ describe('Matching Ruleset Single Modal component', () => {
 
 
     userEvent.click(getByText('Save'));
-    expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+
   });
 
-  it('can select Double Metaphone ruleset type and click save', () => {
+  it('can select Double Metaphone ruleset type and click save', async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
     const toggleModalMock = jest.fn();
 
     const { queryByText, getByText, getByLabelText } =  render(
@@ -133,11 +152,17 @@ describe('Matching Ruleset Single Modal component', () => {
 
 
     userEvent.click(getByText('Save'));
-    expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+    
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+    
   });
 
-  it('can select Custom ruleset type and click save', () => {
+  it('can select Custom ruleset type and click save', async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
     const toggleModalMock = jest.fn();
 
     const { queryByText, getByText, getByLabelText } =  render(
@@ -161,7 +186,46 @@ describe('Matching Ruleset Single Modal component', () => {
 
 
     userEvent.click(getByText('Save'));
-    expect(toggleModalMock).toHaveBeenCalledTimes(1);
-    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+  });
+  
+  it('can do input validation', () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
+    const toggleModalMock = jest.fn();
+
+    const { queryByText, getByText, rerender } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={false}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeNull();
+
+    rerender(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Add Match Ruleset for Single Property')).toBeInTheDocument();
+
+    userEvent.click(getByText('Save'));
+
+    expect(getByText('A property to match is required')).toBeInTheDocument();
+    expect(getByText('A match type is required')).toBeInTheDocument();
+
+    expect(toggleModalMock).toHaveBeenCalledTimes(0);
+    expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
+    expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
   });
 });

@@ -42,6 +42,10 @@ class CuratePage {
       cy.findByTestId(`${stepName}-flowsList`).click();
     }
 
+    openStepDetails(stepName: string) {
+      cy.findByTestId(`${stepName}-stepDetails`).click();
+    }
+
     /**
      * Depends on openExistingFlowDropdown() being called first
      * @param flowName 

@@ -25,7 +25,7 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
 const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
 
   const renderBasicPropertyTitle = (property: Property) => {
-    return property.multiple ? <span>{property.name} <img className={styles.arrayImage} src={arrayIcon}/></span> : <span>{property.name}</span>;
+    return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon}/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
   };
 
   const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string) => {

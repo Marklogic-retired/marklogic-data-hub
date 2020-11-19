@@ -12,6 +12,7 @@ import { CurationContext } from '../../../../util/curation-context';
 import { MatchingStep, MatchRule, MatchRuleset } from '../../../../types/curation-types';
 import { Definition } from '../../../../types/modeling-types';
 import { NewMatchTooltips } from '../../../../config/tooltips.config';
+import { updateMatchingArtifact } from '../../../../api/matching';
 
 type Props = {
   isVisible: boolean;
@@ -194,7 +195,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             // TODO save step to backend
             let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
             newStepArtifact.matchRulesets.push(matchRuleset);
-            updateActiveStepArtifact(newStepArtifact);
+            updateStepArtifact(newStepArtifact);
             props.toggleModal(false);
             resetModal();
           }
@@ -229,7 +230,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             // TODO save step to backend
             let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
             newStepArtifact.matchRulesets.push(matchRuleset);
-            updateActiveStepArtifact(newStepArtifact);
+            updateStepArtifact(newStepArtifact);
             props.toggleModal(false);
             resetModal();
           }
@@ -266,11 +267,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             matchRules: [doubleMetaphoneMatchRule]
           };
   
-          if (dictionaryUriErrorMessage === '' && distanceThresholdErrorMessage === '') {
+          if (propertyErrorMessage === '' && dictionaryUriErrorMessage === '' && distanceThresholdErrorMessage === '') {
             // TODO save step to backend
             let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
             newStepArtifact.matchRulesets.push(matchRuleset);
-            updateActiveStepArtifact(newStepArtifact);
+            updateStepArtifact(newStepArtifact);
             props.toggleModal(false);
             resetModal();
           }
@@ -308,11 +309,11 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
               matchRules: [customMatchRule]
             };
     
-            if (uriErrorMessage === '' && functionErrorMessage === '') {
+            if (propertyErrorMessage === '' && uriErrorMessage === '' && functionErrorMessage === '') {
               // TODO save step to backend
               let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
               newStepArtifact.matchRulesets.push(matchRuleset);
-              updateActiveStepArtifact(newStepArtifact);
+              updateStepArtifact(newStepArtifact);
               props.toggleModal(false);
               resetModal();
             }
@@ -338,8 +339,13 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setMatchType(value);  
   };
 
+  const updateStepArtifact = async (step: MatchingStep) => {
+    await updateMatchingArtifact(step);
+    updateActiveStepArtifact(step);
+  }
+
   const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
-    return <MLOption key={index} value={matchType.value}>{matchType.name}</MLOption>;
+    return <MLOption key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</MLOption>;
   });
 
   const renderSynonymOptions = (
@@ -606,6 +612,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           help={matchTypeErrorMessage}
         >
           <MLSelect 
+            aria-label="match-type-dropdown"
             className={styles.matchTypeSelect} 
             size="default" 
             placeholder="Select match type"
