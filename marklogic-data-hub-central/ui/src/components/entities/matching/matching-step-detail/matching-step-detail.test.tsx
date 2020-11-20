@@ -1,15 +1,17 @@
 import React from 'react';
-import {render, screen, fireEvent} from '@testing-library/react';
+import {render, screen, fireEvent, wait} from '@testing-library/react';
 import userEvent from "@testing-library/user-event";
 import MatchingStepDetail from './matching-step-detail';
 
 import { CurationContext } from '../../../../util/curation-context';
 import { customerMatchingStep, customerMatchingStepEmpty } from '../../../../assets/mock-data/curation/curation-context-mock';
-import { updateMatchingArtifact } from '../../../../api/matching';
+import { updateMatchingArtifact, calculateMatchingActivity } from '../../../../api/matching';
+import { matchingActivity } from '../../../../assets/mock-data/curation/matching';
 
 jest.mock('../../../../api/matching');
 
 const mockMatchingUpdate = updateMatchingArtifact as jest.Mock;
+const mockCalculateMatchingActivity = calculateMatchingActivity as jest.Mock;
 
 describe('Matching Step Detail view component', () => {
   afterEach(() => {
@@ -36,6 +38,9 @@ describe('Matching Step Detail view component', () => {
 
     userEvent.click(getByLabelText('ruleset-less'));
     expect(queryByLabelText('ruleset-more')).toBeInTheDocument();
+
+    expect(getByLabelText('matchCombinationsHeading')).toBeInTheDocument();
+    expect(getByLabelText('noMatchedCombinations')).toBeInTheDocument();
   });
 
   it('can render matching step with rulesets and thresholds and click add single ruleset', async() => {
@@ -126,5 +131,33 @@ describe('Matching Step Detail view component', () => {
     expect(screen.getByText('sameThreshold - merge')).toBeInTheDocument();
     userEvent.click(screen.getByText('Yes'));
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+  });
+
+  it('can render possible combinations of matched rulesets', async() => {
+    mockCalculateMatchingActivity.mockResolvedValue({ status: 200, data: matchingActivity });
+    const { getByLabelText, rerender } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <MatchingStepDetail/>
+      </CurationContext.Provider>
+    );
+    expect(mockCalculateMatchingActivity).toHaveBeenCalledTimes(1);
+
+    expect(getByLabelText('matchCombinationsHeading')).toBeInTheDocument();
+
+    wait(() => {
+      expect(getByLabelText('combinationLabel-sameThreshold')).toBeInTheDocument();
+      expect(getByLabelText('combinationLabel-similarThreshold')).toBeInTheDocument();
+    });
+
+    //Verify if no match combinations label is displayed properly for no matches.
+    rerender(
+      <CurationContext.Provider value={customerMatchingStepEmpty}>
+        <MatchingStepDetail/>
+      </CurationContext.Provider>
+    );
+
+    expect(getByLabelText('matchCombinationsHeading')).toBeInTheDocument();
+    expect(getByLabelText('noMatchedCombinations')).toBeInTheDocument();
+    expect(mockCalculateMatchingActivity).toHaveBeenCalledTimes(1);
   });
 });
