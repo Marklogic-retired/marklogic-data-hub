@@ -26,13 +26,8 @@ import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.hub.util.FileUtil;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -322,7 +317,8 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
         Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
         userDatabaseFieldsDir.toFile().mkdirs();
-        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), overwriteUserConfigFiles);
+        // DHFPROD-6271 Temporarily overwriting the file until a real fix is ready
+        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), true);
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
@@ -489,11 +485,17 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         }
 
         removeEmptyRangeElementIndexArrayFromFinalDatabaseFile();
-        addPathRangeIndexesToFinalDatabase();
+        upgradeFinalDatabaseXmlFile();
         updateStepDefinitionTypeForInlineMappingSteps(flowManager);
     }
 
-    private void addPathRangeIndexesToFinalDatabase() {
+    /**
+     * Because this file is under src/main/ml-config, we cannot overwrite it, as a user may have modifications to it,
+     * and we don't want to lose those (while we could copy the existing file to a separate directory, forcing the user
+     * to then have to restore all their additions is a lousy user experience). Thus, any time we may additions to
+     * final-database.xml, we must also apply them via this file. 
+     */
+    private void upgradeFinalDatabaseXmlFile() {
         File finalDbFile = getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
         try {
             FileInputStream fileInputStream = new FileInputStream(finalDbFile);
