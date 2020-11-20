@@ -1,10 +1,10 @@
 import React from 'react';
 import axiosMock from 'axios';
-import { fireEvent, render, wait, waitForElement, act, cleanup } from "@testing-library/react";
+import {fireEvent, render, wait, waitForElement, act, cleanup, getByTestId} from "@testing-library/react";
 import AdvancedSettings from './advanced-settings';
 import mocks from '../../api/__mocks__/mocks.data';
 import data from '../../assets/mock-data/curation/advanced-settings.data';
-import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
+import {AdvancedSettingsTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
 
 jest.mock('axios');
@@ -303,13 +303,14 @@ describe('Advanced step settings', () => {
   });
 
   test('Verify read only users cannot edit settings', async () => {
-    let getByText, getByPlaceholderText;
+    let getByText, getByPlaceholderText, getByTestId;
     await act(async () => {
       const renderResults = render(
         <AdvancedSettings {...data.advancedMapping} canWrite={false} />
       );
       getByText = renderResults.getByText;
       getByPlaceholderText = renderResults.getByPlaceholderText;
+      getByTestId = renderResults.getByTestId;
     });
 
     expect(document.querySelector('#sourceDatabase')).toHaveClass('ant-select-disabled');
@@ -327,6 +328,9 @@ describe('Advanced step settings', () => {
 
     fireEvent.click(getByText('Custom Hook'));
     expect(document.querySelector('#customHook')).toHaveClass('ant-input-disabled');
+
+    fireEvent.mouseOver(getByText('Save'));
+    await wait (() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
   });
 
   test('Verify post is called when Mapping settings are saved', async () => {
