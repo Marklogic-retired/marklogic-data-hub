@@ -26,7 +26,7 @@ const envelope = record.document.envelope;
   test.assertEqual(xdmp.getCurrentUser(), envelope.headers.createdBy),
   test.assertTrue(envelope.headers.createdOn != null),
   test.assertEqual(1, envelope.headers.sources.length),
-  test.assertEqual("bulkSourceName", envelope.headers.sources[0].name),
+  test.assertEqual("bulkSourceName", envelope.headers.sources[0].datahubSourceName),
   test.assertEqual("bulkSourceType", envelope.headers.sources[0].datahubSourceType),
   test.assertEqual("one", envelope.instance.testDoc, "The ingested data should have been wrapped in envelope/instance"),
 

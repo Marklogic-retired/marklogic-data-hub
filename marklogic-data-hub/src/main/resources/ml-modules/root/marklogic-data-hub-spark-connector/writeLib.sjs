@@ -32,7 +32,7 @@ function buildHeaders(endpointConstants) {
   if(endpointConstants.sourcename != null || endpointConstants.sourcetype != null){
     const sources = [];
     const source = {};
-    source.name = endpointConstants.sourcename
+    source.datahubSourceName = endpointConstants.sourcename
     source.datahubSourceType = endpointConstants.sourcetype
     sources[0] = source;
     headers.sources = sources
