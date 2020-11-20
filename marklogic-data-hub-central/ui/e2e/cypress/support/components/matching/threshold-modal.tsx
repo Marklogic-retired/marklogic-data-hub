@@ -10,7 +10,7 @@ class ThresholdModal {
 
   selectActionDropdown(action: string) {
     cy.findByLabelText('threshold-select').click();
-    cy.findByLabelText(`${action}-option`).click();
+    cy.findByLabelText(`${action}-option`).click({force: true});
   }
 
   setUriText(str: string) {

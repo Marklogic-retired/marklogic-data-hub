@@ -36,6 +36,18 @@ class MatchingStepDetail {
   confirmSliderOptionDeleteButton() {
     return cy.findByLabelText('delete-slider-yes');
   }
+
+  getPossibleMatchCombinationHeading(thresholdName: string) {
+    return cy.findByLabelText(`combinationLabel-${thresholdName}`);
+  }
+
+  getPossibleMatchCombinationRuleset(thresholdName: string, ruleset: string) {
+    return cy.findByLabelText(`rulesetName-${thresholdName}-${ruleset}`);
+  }
+
+  getDefaultTextNoMatchedCombinations() {
+    return cy.findByLabelText('noMatchedCombinations');
+  }
 }
 
 const matchingStepDetail = new MatchingStepDetail();

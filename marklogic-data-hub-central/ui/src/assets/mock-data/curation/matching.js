@@ -116,3 +116,120 @@ export const matchingStep = {
     }
   ]
 };
+
+export const matchingActivity = {
+  "scale": {
+    "min": 0,
+    "max": 12.0
+  },
+  "thresholdActions": [
+    {
+      "name": "sameThreshold",
+      "action": "merge",
+      "minimumMatchContributions": [
+        [
+          {
+            "rulesetName": "name",
+            "weight": "11",
+            "rules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "doubleMetaphone"
+              }
+            ]
+          },
+          {
+            "rulesetName": "lastName",
+            "weight": "11",
+            "rules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "custom"
+              }
+            ]
+          },
+          {
+            "rulesetName": "billingAddress",
+            "weight": "6.5",
+            "rules": [
+              {
+                "entityPropertyPath": "billing.street",
+                "matchAlgorithm": "zip"
+              }
+            ]
+          },
+          {
+            "rulesetName": "shippingAddress",
+            "weight": "2",
+            "rules": [
+              {
+                "entityPropertyPath": "shipping.street",
+                "matchAlgorithm": "exact"
+              }
+            ]
+          }
+        ]
+      ]
+    },
+    {
+      "name": "similarThreshold",
+      "action": "notify",
+      "minimumMatchContributions": [
+        [
+          {
+            "rulesetName": "name",
+            "weight": "11",
+            "rules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "doubleMetaphone"
+              }
+            ]
+          },
+          {
+            "rulesetName": "billingAddress",
+            "weight": "6.5",
+            "rules": [
+              {
+                "entityPropertyPath": "billing.street",
+                "matchAlgorithm": "exact"
+              }
+            ]
+          }
+        ],
+        [
+          {
+            "rulesetName": "name",
+            "weight": "3.5",
+            "rules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "doubleMetaphone"
+              }
+            ]
+          },
+          {
+            "rulesetName": "lastName",
+            "weight": "1.5",
+            "rules": [
+              {
+                "entityPropertyPath": "name",
+                "matchAlgorithm": "custom"
+              }
+            ]
+          },
+          {
+            "rulesetName": "shippingAddress",
+            "weight": "2",
+            "rules": [
+              {
+                "entityPropertyPath": "billing.street",
+                "matchAlgorithm": "exact"
+              }
+            ]
+          }
+        ]
+      ]
+    }
+  ]
+}
