@@ -34,7 +34,8 @@ const NewLoadTooltips = {
     'sourceName': 'The name of the source of the files.',
     'sourceType': 'The type of source of the files.',
     'fieldSeparator': 'The delimiter in source files. Required if *Source Format* is *Delimited Text*.',
-    'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.'
+    'outputURIPrefix': 'The prefix you want for the URIs of the loaded records. Example: If your prefix is /rawData/ and you load a file called customer1.json, the URI of the loaded record becomes /rawData/customer1.json.',
+    'missingPermission': 'Contact your security administrator for access.'
 };
 
 const AdvLoadTooltips = {

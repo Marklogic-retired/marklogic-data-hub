@@ -459,7 +459,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (event.target.id === 'targetPermissions') {
         setTargetPermissionsValid(isPermissionsValid());
     }
-    
+
     setChanged(true);
   };
 
@@ -855,7 +855,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <MLButton data-testid={`${props.stepData.name}-cancel-settings`} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-            {!canReadWrite || !isFormValid()? <MLTooltip title={tooltips.missingPermission}>
+            {!canReadWrite || !isFormValid()? <MLTooltip title={tooltips.missingPermission} placement={'bottomRight'}>
                 <span>
                 <MLButton id={'saveButton'} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
                 </span>
@@ -865,7 +865,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       </Form>
       {discardChanges}
       {saveChanges}
-    </div> 
+    </div>
   );
 
 }
