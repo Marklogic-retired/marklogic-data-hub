@@ -1,31 +1,10 @@
 import React from 'react';
-import {cleanup, getByTestId, queryByText, render, waitForElement} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import { CurationContext } from '../../../../util/curation-context';
 import { customerMergingStep, customerMergingStepEmpty } from '../../../../assets/mock-data/curation/curation-context-mock';
 import MergingStepDetail from "./merging-step-detail";
-import userEvent from "@testing-library/user-event";
-import { updateMergingArtifact } from '../../../../api/merging';
-
-
-jest.mock('../../../../api/merging');
-const mockMergingUpdate = updateMergingArtifact as jest.Mock;
-
-const getSubElements = (content, node, title) => {
-    const hasText = node => node.textContent === title;
-    const nodeHasText = hasText(node);
-    const childrenDontHaveText = Array.from(node.children).every(
-        child => !hasText(child)
-    );
-    return nodeHasText && childrenDontHaveText;
-};
 
 describe('Merging Step Detail view component', () => {
-
-    afterEach(() => {
-        jest.clearAllMocks();
-        cleanup();
-    });
-
     it('can render merging step with no strategies or merge rules', () => {
 
         const { getByText, getAllByText } =  render(
@@ -71,40 +50,5 @@ describe('Merging Step Detail view component', () => {
         expect(getByText('strategy')).toBeInTheDocument();
         expect(getByText('custom')).toBeInTheDocument();
         expect(getByText('property-specific')).toBeInTheDocument();
-    });
-
-    it('Verify clicking yes deletes the merge rule ', async() => {
-        mockMergingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
-        const { getByTestId, getByText } =  render(
-            <CurationContext.Provider value={customerMergingStep}>
-                <MergingStepDetail/>
-            </CurationContext.Provider>
-        );
-        expect(getByTestId('mergerule-address')).toBeInTheDocument();
-        userEvent.click(getByTestId('mergerule-address'));
-        expect(await(waitForElement(() => getByText((content, node) => {
-            return getSubElements(content, node,"Are you sure you want to delete address - custom merge rule ?");
-        })))).toBeInTheDocument();
-        expect(getByText('Yes')).toBeInTheDocument();
-        //Clicking on yes will delete the merge rule
-        userEvent.click(getByText('Yes'));
-        expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
-    });
-
-    it('Verify clicking no doesnot delete the merge rule', async() => {
-        mockMergingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
-        const { getByTestId, getByText } =  render(
-            <CurationContext.Provider value={customerMergingStep}>
-                <MergingStepDetail/>
-            </CurationContext.Provider>
-        );
-        expect(getByTestId('mergerule-phone')).toBeInTheDocument();
-        userEvent.click(getByTestId('mergerule-phone'));
-        expect(await(waitForElement(() => getByText((content, node) => {
-            return getSubElements(content, node,"Are you sure you want to delete phone - property-specific merge rule ?");
-        })))).toBeInTheDocument();
-        userEvent.click(getByText('No'));
-        expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
-        expect(getByText('phone')).toBeInTheDocument();
     });
 });
