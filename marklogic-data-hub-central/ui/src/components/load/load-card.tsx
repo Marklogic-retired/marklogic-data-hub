@@ -41,6 +41,7 @@ const LoadCard: React.FC<Props> = (props) => {
     const [openStepSettings, setOpenStepSettings] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const tooltipOverlayStyle={maxWidth: '300px',paddingLeft:'100px'};
+    const [tooltipVisible, setTooltipVisible] = useState(false);
 
     useEffect(() => {
         let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
@@ -114,6 +115,7 @@ const LoadCard: React.FC<Props> = (props) => {
     function handleMouseOver(e, name) {
         // Handle all possible events from mouseover of card body
         setSelectVisible(true);
+        setTooltipVisible(true);
         if (typeof e.target.className === 'string' &&
             (e.target.className === 'ant-card-body' ||
              e.target.className.startsWith('load-card_formatFileContainer') ||
@@ -126,6 +128,7 @@ const LoadCard: React.FC<Props> = (props) => {
         // Handle all possible events from mouseleave of card body
         setShowLinks('');
         setSelectVisible(false);
+        setTooltipVisible(false);
     }
 
     function handleSelect(obj) {
@@ -318,7 +321,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                     <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>:<div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                                    {selectVisible ? <div className={styles.cardLinkSelect}>
+                                    {selectVisible ? <MLTooltip title={'Load: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                                         <Select
                                             style={{ width: '100%' }}
                                             value={selected[elem.name] ? selected[elem.name] : undefined}
@@ -332,7 +335,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                                 <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                                             )) : null}
                                         </Select>
-                                    </div> : null}
+                                    </div></div></MLTooltip> : null}
                                 </div>
                             </div>
                         </Card>
