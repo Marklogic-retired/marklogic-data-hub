@@ -153,7 +153,6 @@ describe('json scenario for snippet on browse documents page', () => {
     detailPage.getDocumentTable().should('exist');
     detailPage.clickBackButton();
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getSelectedPaginationNumber().should('contain', '1');
     browsePage.getSearchText().should('have.value', '10256');
     browsePage.getFacetView().should('have.css', 'color', 'rgb(91, 105, 175)');
   });
@@ -206,7 +205,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getExpandableSnippetView();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     browsePage.getSelectedFacets().should('exist');
     browsePage.getGreySelectedFacets('Person').should('exist');
@@ -223,7 +222,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     browsePage.getGreySelectedFacets('Person').click();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
@@ -233,7 +232,7 @@ describe('json scenario for snippet on browse documents page', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getFacetItemCheckbox('collection', 'Person').click();
     browsePage.getFacetItemCheckbox('collection', 'Customer').click();
     browsePage.getGreySelectedFacets('Person').should('exist');
@@ -324,7 +323,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getExpandableTableView();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getColumnTitle(2).should('contain', 'Identifier');
-    browsePage.getColumnTitle(3).should('contain', 'Entity');
+    browsePage.getColumnTitle(3).should('contain', 'Entity Type');
     browsePage.getColumnTitle(4).should('contain', 'File Type');
     browsePage.getColumnTitle(5).should('contain', 'Created');
 
@@ -527,7 +526,7 @@ describe('json scenario for table on browse documents page', () => {
 
   it('apply multiple facets, select and discard new facet, verify original facets checked', () => {
     browsePage.selectEntity('Customer');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('name').click();
     browsePage.getFacetItemCheckbox('name', 'Jacqueline Knowles').click();
     browsePage.getFacetItemCheckbox('name', 'Lola Dunn').click();
     browsePage.getGreySelectedFacets('Jacqueline Knowles').should('exist');
@@ -545,10 +544,11 @@ describe('json scenario for table on browse documents page', () => {
 
   it('apply multiple facets, deselect them, apply changes, apply multiple, clear them, verify no facets checked', () => {
     browsePage.selectEntity('Customer');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('name').click();
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').click();
     browsePage.getGreySelectedFacets('Adams Cole').should('exist');
     browsePage.getFacetItemCheckbox('name', 'Adams Cole').should('be.checked');
+    browsePage.getFacetApplyButton().click();
     browsePage.selectDateRange();
     browsePage.getSelectedFacet('birthDate:').should('exist');
     browsePage.getFacetItemCheckbox('email', 'adamscole@nutralab.com').click();
@@ -577,7 +577,7 @@ describe('json scenario for table on browse documents page', () => {
 
   it('Verify facets can be selected, applied and cleared using clear text', () => {
     browsePage.selectEntity('Person');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('fname').click();
     browsePage.getFacetItemCheckbox('fname', 'Gary').click();
     browsePage.getGreySelectedFacets('Gary').should('exist');
     browsePage.getFacetApplyButton().click();
@@ -591,7 +591,7 @@ describe('json scenario for table on browse documents page', () => {
 
   it('Apply facets, unchecking them should not recheck original facets', () => {
     browsePage.selectEntity('Customer');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('name').click();
     browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
     browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
     browsePage.getGreySelectedFacets('Mcgee Burch').should('exist');
@@ -603,7 +603,7 @@ describe('json scenario for table on browse documents page', () => {
     browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getFacetItemCheckbox('name', 'Powers Bauer').click();
-    browsePage.getShowMoreLink().click({ multiple: true });
+    browsePage.getShowMoreLink('email').click();
     browsePage.getFacetItemCheckbox('email', 'mcgeeburch@nutralab.com').click();
     browsePage.getFacetItemCheckbox('name', 'Mcgee Burch').should('not.be.checked');
     browsePage.getFacetItemCheckbox('name', 'Powers Bauer').should('not.be.checked');

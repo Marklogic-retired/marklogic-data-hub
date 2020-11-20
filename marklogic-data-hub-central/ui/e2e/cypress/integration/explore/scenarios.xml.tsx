@@ -48,7 +48,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
   it('apply facet search and verify docs, hub/entity properties', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
     browsePage.getSelectedFacets().should('exist');
@@ -65,7 +65,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
   it('apply facet search and clear individual grey facet', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();
     browsePage.getGreySelectedFacets('mapCustomersXML').click();
@@ -75,7 +75,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
   it('apply facet search and clear all grey facets', () => {
     browsePage.selectEntity('All Entities');
     browsePage.getSelectedEntity().should('contain', 'All Entities');
-    browsePage.getShowMoreLink().first().click();
+    browsePage.getShowMoreLink('collection').click();
     browsePage.getTotalDocuments().should('be.greaterThan', 25);
     browsePage.getFacetItemCheckbox('collection', 'Customer').click();
     browsePage.getFacetItemCheckbox('collection', 'mapCustomersXML').click();

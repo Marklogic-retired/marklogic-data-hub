@@ -231,6 +231,7 @@ class BrowsePage {
     cy.get('.ant-input-search-button').click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
   }
 
   changeNumericSlider(val: string){
@@ -241,8 +242,8 @@ class BrowsePage {
      return cy.get('[data-cy=search-bar]');
   }
 
-  getShowMoreLink() {
-    return cy.get('div[data-cy="show-more"][style="display: block;"]');
+  getShowMoreLink(facet: string) {
+    return cy.findByTestId(`show-more-${facet}`)
   }
 
   clickMoreLink(facetType: string) {

@@ -401,7 +401,7 @@ const Browse: React.FC<Props> = ({ location }) => {
                 <div className={styles.spinViews}>
                   <div className={styles.switchViews}>
                     {isLoading && <MLSpin data-testid="spinner" className={collapse ? styles.sideBarExpanded : styles.sideBarCollapsed} />}
-                    {!cardView ? <div aria-label="switch-view" >
+                    {!cardView ? <div id="switch-view-explorer" aria-label="switch-view" >
                       <MLRadio.MLGroup
                         buttonStyle="outline"
                         name="radiogroup"
@@ -410,13 +410,13 @@ const Browse: React.FC<Props> = ({ location }) => {
                         onChange={e => handleViewChange(e.target.value)}
                       >
                         <MLRadio.MLButton aria-label="switch-view-table" value={'table'} >
-                          <i data-cy="table-view" id={'tableView'}><MLTooltip title={'Table View'}>{
-                            tableView ? <FontAwesomeIcon icon={faTable} /> : <FontAwesomeIcon icon={faTable} style={{ color: '#CCC' }} />}
+                          <i data-cy="table-view" id={'tableView'}><MLTooltip title={'Table View'}>
+                            {<FontAwesomeIcon icon={faTable} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
                         <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} >
                           <i data-cy="facet-view" id={'snippetView'}><MLTooltip title={'Snippet View'}>
-                            {!tableView ? <FontAwesomeIcon icon={faStream} /> : <FontAwesomeIcon icon={faStream} style={{ color: '#CCC' }} />}
+                            {<FontAwesomeIcon icon={faStream} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
                       </MLRadio.MLGroup>

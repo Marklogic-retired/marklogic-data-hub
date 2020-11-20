@@ -32,7 +32,7 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
         width: 150
     },
     {
-        title: 'Entity',
+        title: 'Entity Type',
         dataIndex: 'entityName',
         key: '0-1',
         visible: true,

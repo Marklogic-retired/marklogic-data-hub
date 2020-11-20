@@ -635,7 +635,7 @@ const Sidebar: React.FC<Props> = (props) => {
             <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" /></MLTooltip></div>
           <div>
             <Select
-              style={{ width: 150 }}
+              style={{ width: 150, paddingTop: '5px', paddingBottom: '5px' }}
               placeholder="Select time"
               id="date-select"
               value={dateRangeValue}

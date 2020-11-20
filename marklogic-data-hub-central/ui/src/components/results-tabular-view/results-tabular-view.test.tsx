@@ -110,7 +110,7 @@ describe("Results Table view component", () => {
 
         // Check table column headers are rendered
         expect(getByText('Identifier')).toBeInTheDocument();
-        expect(getByText('Entity')).toBeInTheDocument();
+        expect(getByText('Entity Type')).toBeInTheDocument();
         expect(getByText('File Type')).toBeInTheDocument();
         expect(getByText('Created')).toBeInTheDocument();
         expect(getByText('Detail View')).toBeInTheDocument();
