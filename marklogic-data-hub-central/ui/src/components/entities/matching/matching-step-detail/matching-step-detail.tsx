@@ -137,8 +137,10 @@ const MatchingStepDetail: React.FC = () => {
       let stepArtifact = curationOptions.activeStep.stepArtifact;
       let updateStepArtifactThresholds = curationOptions.activeStep.stepArtifact.thresholds;
       let index = updateStepArtifactThresholds.findIndex( threshold => threshold.thresholdName === deleteOptions['prop'] );
+
       updateStepArtifactThresholds.splice(index, 1);
       stepArtifact.thresholds = updateStepArtifactThresholds;
+
       await updateMatchingArtifact(stepArtifact);
       updateActiveStepArtifact(stepArtifact);
       toggleShowDeleteModal(false);
@@ -211,7 +213,7 @@ const MatchingStepDetail: React.FC = () => {
             </div>
 
             <div className={styles.addButtonContainer}>
-                <MLButton
+                <MLButton 
                   aria-label="add-threshold"
                   type="primary"
                   size="default"
