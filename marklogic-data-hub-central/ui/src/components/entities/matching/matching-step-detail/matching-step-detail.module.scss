@@ -71,6 +71,61 @@
     overflow: inherit;
     text-overflow: inherit;
   }
+
+  .matchCombinationsContainer {
+    padding: 10px;
+    margin-left: 2%;
+    margin-bottom: 35px;
+    border-radius: 5px;
+    background-color: #E5E7F0;
+    min-height: 20em;
+
+    .matchCombinationsHeading {
+      font-size: 16px;
+      font-weight: bold;
+      padding-bottom: 17px;
+    }
+
+    .matchCombinationsColsContainer {
+      display: flex;
+
+      .matchCombinationsCardStyle { 
+        width: 35em;
+        min-height: 6em;
+        text-align: left;
+        align-content: left;
+        background-color: #E5E7F0; 
+        border: 1px dashed #CCCCCC;
+
+        .colsWithoutDivider {
+          min-width: fit-content;
+          white-space: normal;
+          margin-top: -10px;
+          margin-left: -10px;
+  
+          .combinationlabel {
+            font-weight: 500;
+            padding-bottom: 15px;
+          }
+        }
+  
+        .colsWithSingleMatch {
+          min-width: fit-content;
+          white-space: normal;
+        }
+
+        .period {
+          height: 6px;
+          width: 6px;
+          margin-left: 2px;
+          margin-right: 2px;
+          background-color: #6A77B4;
+          border-radius: 50%;
+          display: inline-block;
+        }
+      }
+    }
+  }
 }
 
 .footer {

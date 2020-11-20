@@ -19,6 +19,10 @@ class MultiSlider {
       $option[0].click();
     });;
   }
+
+  getRulesetSliderRail() {
+    return cy.findByTestId('ruleSet-slider-rail');
+  }
 }
 
 const multiSlider = new MultiSlider();

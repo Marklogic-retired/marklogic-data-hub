@@ -14,3 +14,15 @@ export const updateMatchingArtifact = async (matching) => {
     return false;
   }
 };
+
+export const calculateMatchingActivity = async (matchStepName) => {
+  try {
+    let response = await axios.get(`/api/steps/matching/${matchStepName}/calculateMatchingActivity`);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    let message = error;
+    console.error('Error while fetching the match activity!', message);
+  }
+};

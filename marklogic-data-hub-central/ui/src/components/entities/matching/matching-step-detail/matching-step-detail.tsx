@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Modal } from 'antd';
+import { Modal, Divider, Row, Col, Card } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { DownOutlined } from '@ant-design/icons';
 import { MLPageHeader, MLButton, MLDropdown, MLMenu } from '@marklogic/design-system';
@@ -13,7 +13,7 @@ import ThresholdModal from '../threshold-modal/threshold-modal';
 import { CurationContext } from '../../../../util/curation-context';
 import { MatchingStep } from '../../../../types/curation-types';
 import { MatchingStepDetailText } from '../../../../config/tooltips.config';
-import { updateMatchingArtifact } from '../../../../api/matching';
+import { updateMatchingArtifact, calculateMatchingActivity } from '../../../../api/matching';
 
 const DEFAULT_MATCHING_STEP: MatchingStep = {
   name: '',
@@ -53,6 +53,8 @@ const MatchingStepDetail: React.FC = () => {
 
   const [showDeleteModal, toggleShowDeleteModal] = useState(false);
 
+  const [matchingActivity, setMatchingActivity] = useState<any>({scale: {}, thresholdActions: []});
+
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
       const matchingStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
@@ -69,10 +71,18 @@ const MatchingStepDetail: React.FC = () => {
       }
 
       setMatchingStep(matchingStepArtifact);
+
+      handleMatchingActivity(matchingStepArtifact.name);
+    
     } else {
       history.push('/tiles/curate');
     }
   }, [JSON.stringify(curationOptions.activeStep.stepArtifact)]);
+
+  const handleMatchingActivity = async (matchStepName) => {
+    let matchActivity = await calculateMatchingActivity(matchStepName);
+    setMatchingActivity(matchActivity);
+  }
 
   const matchRuleSetOptions = matchingStep.matchRulesets.map((i) => {
       const matchRuleOptionsObject = {
@@ -210,6 +220,16 @@ const MatchingStepDetail: React.FC = () => {
     </MLMenu>
   );
 
+  const getRulesetName = (rulesetComb) => {
+    let matchRules = rulesetComb.matchRules;
+    let rulesetName = rulesetComb.rulesetName;
+    if(Array.isArray(matchRules) && matchRules.length) {
+      rulesetName = matchRules[0].entityPropertyPath + ' - ' + matchRules[0].matchAlgorithm;
+    }
+
+    return rulesetName;
+  }
+
   return (
     <>
       <MLPageHeader
@@ -286,6 +306,38 @@ const MatchingStepDetail: React.FC = () => {
             </div>
           </div>
             <MultiSlider options={matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={'ruleSet'}/>
+        </div>
+
+        <div className={styles.matchCombinationsContainer}>
+          <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
+
+          {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
+            <Row gutter={[24, 24]} type="flex">
+              {matchingActivity?.thresholdActions.map((combinationsObject, i, combArr) => {
+                return <Col span={8} >
+                  <div className={styles.matchCombinationsColsContainer}>
+                    <Card bordered={false} className={styles.matchCombinationsCardStyle}>
+                      <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
+                        <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
+
+                        {combinationsObject.minimumMatchContributions.map(minMatchArray => {
+                          return <div>{minMatchArray.map((obj, index, arr) => {
+                            if (arr.length - 1 === index) {
+                              return <span aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>
+                            } else {
+                              return <span aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>
+                            }
+                          })}</div>
+
+                        })}
+                      </div>
+                    </Card>
+                  </div>
+                </Col>
+              })
+              }
+            </Row> : <p aria-label="noMatchedCombinations">Add thresholds and rulesets to above scales to see which combinations of qualifying rulesets would meet each threshold.</p>
+          }
         </div>
 
       </div>

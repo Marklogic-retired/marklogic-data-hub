@@ -91,12 +91,6 @@ describe('Matching', () => {
     thresholdModal.setThresholdName('testing');
     thresholdModal.saveButton().click();
     multiSlider.getHandleNameAndType('testing', 'notify').should('be.visible');
-  
-    // delete threshold
-    multiSlider.deleteOption('testing');
-    matchingStepDetail.getSliderDeleteText().should('be.visible');
-    matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandleName('testing').should('not.exist');
 
     //add ruleset
     matchingStepDetail.addNewRulesetSingle();
@@ -105,6 +99,44 @@ describe('Matching', () => {
     rulesetSingleModal.selectMatchTypeDropdown('exact');
     rulesetSingleModal.saveButton().click();
     multiSlider.getHandleNameAndType('customerId', 'exact').should('be.visible');
+    multiSlider.getHandleName('customerId').should('be.visible');
+    
+    //TODO - When we work on the spike story to update multi-slider componenens using cypress
+    // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-0');
+    // multiSlider.getHandleName('customerId').invoke('attr', 'style', 'left: 20%').then(attr => {
+    //   //Verify the possible match combinations
+    //   matchingStepDetail.getPossibleMatchCombinationHeading('testing').should('be.visible');
+    //   matchingStepDetail.getPossibleMatchCombinationRuleset('testing','customerId').should('be.visible');
+    // });
+
+    //add another ruleset
+    matchingStepDetail.addNewRulesetSingle();
+    cy.contains('Add Match Ruleset for Single Property');
+    rulesetSingleModal.selectPropertyToMatch('email');
+    rulesetSingleModal.selectMatchTypeDropdown('exact');
+    rulesetSingleModal.saveButton().click();
+    multiSlider.getHandleName('email').should('be.visible');
+
+    // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-1');
+    // multiSlider.getHandleName('email').invoke('attr', 'style', 'left: 30%').then(attr => {
+    //   //Verify the possible match combinations
+    //   matchingStepDetail.getPossibleMatchCombinationRuleset('testing','email').should('be.visible');
+    // });
+
+    // delele a ruleset
+    multiSlider.deleteOption('email');
+    matchingStepDetail.getSliderDeleteText().should('be.visible');
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    multiSlider.getHandleName('email').should('not.exist');
+
+    //the possible combination related to email ruleset should not exist anymore
+    matchingStepDetail.getPossibleMatchCombinationRuleset('testing','email').should('not.exist');
+
+    // delete threshold
+    multiSlider.deleteOption('testing');
+    matchingStepDetail.getSliderDeleteText().should('be.visible');
+    matchingStepDetail.confirmSliderOptionDeleteButton().click();
+    multiSlider.getHandleName('testing').should('not.exist');
 
     //edit ruleset
     multiSlider.editOption('customerId');
@@ -117,5 +149,7 @@ describe('Matching', () => {
     matchingStepDetail.getSliderDeleteText().should('be.visible');
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
     multiSlider.getHandleName('customerId').should('not.exist');
+
+    matchingStepDetail.getDefaultTextNoMatchedCombinations().should('be.visible');
   });
 });

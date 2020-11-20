@@ -9,7 +9,7 @@ class RulesetSingleModal {
 
   selectMatchTypeDropdown(matchType: string) {
     cy.findByLabelText('match-type-dropdown').should('be.visible').click();
-    cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should('be.visible')).click();
+    cy.waitUntil(() => cy.findByLabelText(`${matchType}-option`).should('be.visible')).click({force: true});
   }
 
   setUriText(str: string) {
