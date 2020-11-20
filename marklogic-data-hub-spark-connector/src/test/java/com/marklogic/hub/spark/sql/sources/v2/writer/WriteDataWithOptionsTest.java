@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
 
@@ -38,7 +37,11 @@ public class WriteDataWithOptionsTest extends AbstractSparkConnectorTest {
         writeRows(buildRow("pineapple", "green"));
 
         JsonNode doc = getHubClient().getStagingClient().newJSONDocumentManager().read(getFruitUris()[0], new JacksonHandle()).get();
-        assertEquals(sourceName, doc.get("envelope").get("headers").get("sources").get(0).get("name").asText());
+        JsonNode sources = doc.get("envelope").get("headers").get("sources");
+        assertEquals(1, sources.size(), "Expecting one source");
+        assertEquals(sourceName, sources.get(0).get("datahubSourceName").asText());
+        assertFalse(sources.get(0).has("name"), "Starting in 5.4.0 DHF, datahubSourceName is the right field for " +
+            "capturing a user-provided source name");
     }
 
     @Test

@@ -15,7 +15,7 @@ const envelope = record.document.envelope;
 
 [
   test.assertEqual(1, envelope.headers.sources.length),
-  test.assertEqual("bulkSourceName", envelope.headers.sources[0].name),
+  test.assertEqual("bulkSourceName", envelope.headers.sources[0].datahubSourceName),
   test.assertFalse(envelope.headers.sources[0].hasOwnProperty("datahubSourceType"),
     "datahubSourceType should not be set since sourcetype was not set")
 ];
