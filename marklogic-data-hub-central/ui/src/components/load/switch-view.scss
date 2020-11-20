@@ -2,8 +2,14 @@
     height: 40px;
     font-size: 24px;
     border-color: #999;
+    color: #999
 }
 
 #switch-view .ant-radio-group-large .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
     border-color: #5B69AF;
+    color: #5B69AF
 }
+
+#switch-view .ant-radio-group-large .ant-radio-button-wrapper:hover {
+    color: #7F86B5 ;
+  }

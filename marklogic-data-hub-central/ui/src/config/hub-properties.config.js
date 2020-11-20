@@ -2,6 +2,22 @@
 // Order of object properties determines order in sidebar.
 const hubPropertiesConfig = [ 
   {
+    facetName: "sourceName",
+    displayName: "Source Name",
+    tooltip: "The name of the source of the files.",
+    referenceType: 'field',
+    propertyPath: 'datahubSourceName',
+    entityTypeId: ' '
+  },
+  {
+    facetName: "sourceType",
+    displayName: "Source Type",
+    tooltip: "The type of source of the files.",
+    referenceType: 'field',
+    propertyPath: 'datahubSourceType',
+    entityTypeId: ' '
+  },
+  {
     facetName: "Collection",
     displayName: "Collection",
     tooltip: "A name defining a group of documents.",
@@ -29,23 +45,7 @@ const hubPropertiesConfig = [
     referenceType: 'field',
     propertyPath: 'createdByStep',
     entityTypeId: ' '
-  },
-  {
-    facetName: "sourceName",
-    displayName: "Source Name",
-    tooltip: "The name of the source of the files.",
-    referenceType: 'field',
-    propertyPath: 'datahubSourceName',
-    entityTypeId: ' '
-  },
-  {
-    facetName: "sourceType",
-    displayName: "Source Type",
-    tooltip: "The type of source of the files.",
-    referenceType: 'field',
-    propertyPath: 'datahubSourceType',
-    entityTypeId: ' '
-  },
+  }
 ];
 
 export default hubPropertiesConfig;

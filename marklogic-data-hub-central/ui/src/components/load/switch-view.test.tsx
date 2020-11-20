@@ -21,12 +21,13 @@ describe('Switch view component', () => {
 
     expect(getByLabelText('switch-view-card')).toHaveProperty('checked', true);
     expect(getByLabelText('switch-view-list')).toHaveProperty('checked', false);
-
+    fireEvent.mouseOver(getByLabelText('switch-view-list'));
+    expect(getByLabelText('switch-view-list')).toHaveStyle('color: rgb(127, 134, 181');
     fireEvent.click(getByLabelText('switch-view-list'));
-    
     expect(getByLabelText('switch-view-card')).toHaveProperty('checked', false);
     expect(getByLabelText('switch-view-list')).toHaveProperty('checked', true);
-
+    fireEvent.mouseOver(getByLabelText('switch-view-card'));
+    expect(getByLabelText('switch-view-card')).toHaveStyle('color: rgb(127, 134, 181');
   });
 
 });

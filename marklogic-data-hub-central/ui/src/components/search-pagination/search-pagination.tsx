@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SearchPagination: React.FC<Props> = (props) => {
-  const { setPage, setPageLength } = useContext(SearchContext);
+  const { setPage, setPageLength, searchOptions } = useContext(SearchContext);
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
@@ -40,7 +40,6 @@ const SearchPagination: React.FC<Props> = (props) => {
     setPage(pageNumber, props.total);
   };
 
-
   const onPageSizeChange = (current, pageSize) => {
     setPageLength(current, pageSize);
   };
@@ -56,6 +55,7 @@ const SearchPagination: React.FC<Props> = (props) => {
             current={props.pageNumber}
             pageSize={props.pageSize}
             pageSizeOptions={pageSizeOptions}
+            hideOnSinglePage={props.total <= 10}
           />
       </div>
   );

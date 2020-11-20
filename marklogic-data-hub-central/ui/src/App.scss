@@ -264,11 +264,32 @@ ul.ant-cascader-menu:nth-child(2) {
     }
 }
 
-
 .ant-modal-confirm-body{
     margin-top: 18px;
 }
 
 .ant-select-dropdown-menu-item{
   text-align: left;
+}
+
+.ml-radio-button:hover {
+  color: #7F86B5 ;
+}
+
+.ant-radio-button-wrapper-disabled:hover {
+    color: #cccccc ;
+  }
+
+#switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper {
+  border-color: #999;
+  color: #999
+}
+
+#switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper.ant-radio-button-wrapper-checked  {
+  border-color: #5B69AF;
+  color: #5B69AF
+}
+
+#switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper:hover {
+  color: #7F86B5 ;
 }

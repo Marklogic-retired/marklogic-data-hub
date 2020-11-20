@@ -25,13 +25,12 @@ const SwitchView: React.FC<Props> = (props) => {
                 name="radiogroup"
                 onChange={e => onChange(e.target.value)}
                 size="large"
-                style={{ color: '#999' }}
             >
                 <MLRadio.MLButton aria-label="switch-view-card" value={'card'}>
-                    <i>{view !== 'card' ? <FontAwesomeIcon icon={faThLarge} style={{ color: '#999' }} /> : <FontAwesomeIcon icon={faThLarge} />}</i>
+                    <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
                 </MLRadio.MLButton>
                 <MLRadio.MLButton aria-label="switch-view-list" value={'list'}>
-                    <i>{view !== 'list' ? <FontAwesomeIcon icon={faTable} style={{ color: '#999' }} /> : <FontAwesomeIcon icon={faTable} />}</i>
+                    <i>{<FontAwesomeIcon icon={faTable} />}</i>
                 </MLRadio.MLButton>
             </MLRadio.MLGroup>
         </div>
