@@ -321,7 +321,7 @@ const LoadCard: React.FC<Props> = (props) => {
                                     <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>Add step to a new flow</div></Link>:<div className={styles.cardDisabledLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div>}
                                 <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
                                     Add step to an existing flow
-                                    {selectVisible ? <MLTooltip title={'Load: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
+                                    {selectVisible ? <MLTooltip title={'Load: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}><div className={styles.cardLinkSelect}>
                                         <Select
                                             style={{ width: '100%' }}
                                             value={selected[elem.name] ? selected[elem.name] : undefined}
