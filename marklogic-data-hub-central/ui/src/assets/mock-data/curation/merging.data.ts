@@ -8,11 +8,11 @@ const mergingDataProps = {
 };
 
 const editMergingDataProps = {
-    data: [],
     sourceNames: ['less favorite', 'more favorite'],
     strategyName: '',
-    editMergeStrategyDialog: true,
-    setOpenEditMergeStrategyDialog: jest.fn()
+    createEditMergeStrategyDialog: true,
+    setOpenEditMergeStrategyDialog: jest.fn(),
+    isEditStrategy:true
 };
 
 

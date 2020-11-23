@@ -1,6 +1,6 @@
 import 'cypress-wait-until';
 import { Application } from "../../../support/application.config";
-import { 
+import {
   toolbar,
   confirmationModal,
   createEditStepDialog,
@@ -8,7 +8,6 @@ import {
   confirmYesNo
 } from '../../../support/components/common/index';
 import { matchingStepDetail, rulesetSingleModal, thresholdModal } from '../../../support/components/matching/index';
-import { ConfirmationType } from '../../../support/types/modeling-types';
 import curatePage from "../../../support/pages/curate";
 
 
