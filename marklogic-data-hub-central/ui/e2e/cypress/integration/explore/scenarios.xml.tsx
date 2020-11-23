@@ -106,7 +106,7 @@ describe('xml scenario for snippet view on browse documents page', () => {
     detailPage.getDocumentEntity().should('contain', 'Customer');
     detailPage.getDocumentID().should('contain', '0');
     detailPage.getDocumentTimestamp().should('exist');
-    detailPage.getDocumentSource().should('contain', 'loadCustomersXML');
+    detailPage.getDocumentSource().should('contain', 'CustomerSourceName');
     detailPage.getDocumentFileType().should('contain', 'xml');
     detailPage.getDocumentTable().should('exist');
   });
@@ -157,7 +157,7 @@ describe('xml scenario for table on browse documents page', () => {
     detailPage.getDocumentEntity().should('contain', 'Customer');
     detailPage.getDocumentID().should('contain', '203');
     detailPage.getDocumentTimestamp().should('exist');
-    detailPage.getDocumentSource().should('contain', 'loadCustomersXML');
+    detailPage.getDocumentSource().should('contain', 'CustomerSourceName');
     detailPage.getDocumentFileType().should('contain', 'xml');
     detailPage.getDocumentTable().should('exist');
   });

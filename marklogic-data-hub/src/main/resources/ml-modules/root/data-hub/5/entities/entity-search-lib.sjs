@@ -287,7 +287,7 @@ function getEntitySources(docUri) {
   if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.headers && doc.toObject().envelope.headers.sources) {
     sourcesArr = doc.toObject().envelope.headers.sources;
   }
-  return sourcesArr.length ? handleDuplicateSources("name",sourcesArr) : sourcesArr;
+  return sourcesArr.length ? handleDuplicateSources("datahubSourceName",sourcesArr) : sourcesArr;
 }
 
 function getPropertyValues(currentProperty, entityInstance) {

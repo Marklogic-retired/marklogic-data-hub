@@ -23,13 +23,9 @@ const DetailHeader: React.FC<Props> = (props) => {
   let sources: string = '';
 
   if (props.sources && props.sources.length) {
-    if (Array.isArray(props.sources)) {
-      sources = props.sources.map(src => {
-        return src.name;
-      }).join(', ');
-    } else {
-      sources = props.sources.name;
-    }
+    sources = props.sources.map(src => {
+        return src.datahubSourceName;
+    }).join(', ');
   }
   
   if (fileType === 'json') {

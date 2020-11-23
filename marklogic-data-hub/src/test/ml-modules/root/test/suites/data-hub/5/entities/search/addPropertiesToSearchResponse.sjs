@@ -967,10 +967,10 @@ function testEntitySourcesInSearchResponse() {
   };
   entitySearchLib.addPropertiesToSearchResponse(entityName, response);
   return [
-    test.assertEqual([{"name":"loadData"},{"name":"someOtherName"}], response.results[0].sources),
-    test.assertEqual([{"name":["loadCustomers","loadCustomersXml"]}], response.results[1].sources),
-    test.assertEqual([{"name":"loadCustomersJSON"}], response.results[2].sources),
-    test.assertEqual([{"name":"persons"}], response.results[3].sources),
+    test.assertEqual([{"datahubSourceName":"loadData"},{"datahubSourceName":"someOtherName"}], response.results[0].sources),
+    test.assertEqual([{"datahubSourceName":["loadCustomers","loadCustomersXml"]}], response.results[1].sources),
+    test.assertEqual([{"datahubSourceName":"loadCustomersJSON"}], response.results[2].sources),
+    test.assertEqual([{"datahubSourceName":"persons"}], response.results[3].sources),
     test.assertEqual([], response.results[4].sources)
   ];
 }

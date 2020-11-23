@@ -13,7 +13,7 @@
             <sm:value>504B030414000000080</sm:value>
         </sm:merge-options>
         <sources>
-            <name>persons</name>
+            <datahubSourceName>persons</datahubSourceName>
         </sources>
         <sources>
             <name>persons</name>

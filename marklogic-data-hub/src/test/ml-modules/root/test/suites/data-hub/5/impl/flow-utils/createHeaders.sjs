@@ -18,7 +18,7 @@ function verifySourceNameAndTypeWithEmptyHeaders() {
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(1, headers["sources"].length),
-    test.assertEqual("someDB", headers["sources"][0]["name"]),
+    test.assertEqual("someDB", headers["sources"][0]["datahubSourceName"]),
     test.assertEqual("customer", headers["sources"][0]["datahubSourceType"])
   );
   return assertions;
@@ -39,9 +39,10 @@ function verifySourceNameAndTypeWithEmptySources() {
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(1, headers["sources"].length),
-    test.assertEqual("someDB", headers["sources"][0]["name"]),
+    test.assertEqual("someDB", headers["sources"][0]["datahubSourceName"]),
     test.assertEqual("customer", headers["sources"][0]["datahubSourceType"])
   );
+  return assertions;
 }
 
 function verifySourceNameAndTypeWithSourcesObject() {
@@ -61,9 +62,10 @@ function verifySourceNameAndTypeWithSourcesObject() {
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(2, headers["sources"].length),
-    test.assertEqual("someDB", headers["sources"][1]["name"]),
+    test.assertEqual("someDB", headers["sources"][1]["datahubSourceName"]),
     test.assertEqual("customer", headers["sources"][1]["datahubSourceType"])
   );
+  return assertions;
 }
 
 function verifySourceNameAndTypeWithSourcesArray() {
@@ -82,38 +84,39 @@ function verifySourceNameAndTypeWithSourcesArray() {
   );
 
   // sourceName and sourceType exists
-  options = {"headers":{"sources":[{"name":"someDB"}, {"name":"someDB", "datahubSourceType":"order"}]},
+  options = {"headers":{"sources":[{"datahubSourceName":"someDB"}, {"datahubSourceName":"someDB", "datahubSourceType":"order"}]},
     "sourceName":"someNewDB", "sourceType":"employee"};
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(3, headers["sources"].length),
-    test.assertEqual("someDB", headers["sources"][0]["name"]),
+    test.assertEqual("someDB", headers["sources"][0]["datahubSourceName"]),
     test.assertEqual(null, headers["sources"][0]["datahubSourceType"]),
-    test.assertEqual("someDB", headers["sources"][1]["name"]),
+    test.assertEqual("someDB", headers["sources"][1]["datahubSourceName"]),
     test.assertEqual("order", headers["sources"][1]["datahubSourceType"]),
-    test.assertEqual("someNewDB", headers["sources"][2]["name"]),
+    test.assertEqual("someNewDB", headers["sources"][2]["datahubSourceName"]),
     test.assertEqual("employee", headers["sources"][2]["datahubSourceType"])
   );
 
   // SourceName exists and SourceType doesn't exist
-  options = {"headers":{"sources":[{"name":"someDB"}, {"name":"someDB", "datahubSourceType":"order"}]},
+  options = {"headers":{"sources":[{"datahubSourceName":"someDB"}, {"datahubSourceName":"someDB", "datahubSourceType":"order"}]},
     "sourceName":"someNewDB"};
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(3, headers["sources"].length),
-    test.assertEqual("someNewDB", headers["sources"][2]["name"]),
+    test.assertEqual("someNewDB", headers["sources"][2]["datahubSourceName"]),
     test.assertEqual(null, headers["sources"][2]["datahubSourceType"])
   );
 
   // SourceName doesn't exist and sourceType exists
-  options = {"headers":{"sources":[{"name":"someDB"}, {"name":"someDB", "datahubSourceType":"order"}]},
+  options = {"headers":{"sources":[{"datahubSourceName":"someDB"}, {"datahubSourceName":"someDB", "datahubSourceType":"order"}]},
     "sourceType":"employee"};
   headers = flowUtils.createHeaders(options);
   assertions.push(
     test.assertEqual(3, headers["sources"].length),
-    test.assertEqual(null, headers["sources"][2]["name"]),
+    test.assertEqual(null, headers["sources"][2]["datahubSourceName"]),
     test.assertEqual("employee", headers["sources"][2]["datahubSourceType"])
   );
+  return assertions;
 }
 
 

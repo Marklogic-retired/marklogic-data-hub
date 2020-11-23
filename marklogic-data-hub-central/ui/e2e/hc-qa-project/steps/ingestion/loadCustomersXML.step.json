@@ -20,6 +20,8 @@
   "description": "",
   "sourceFormat": "xml",
   "targetFormat": "xml",
+  "sourceName" : "CustomerSourceName",
+  "sourceType" : "CustomerSourceType",
   "inputFilePath": "input/xml/customers",
   "outputURIReplacement": ".*input,''",
   "sourceDatabase": null,

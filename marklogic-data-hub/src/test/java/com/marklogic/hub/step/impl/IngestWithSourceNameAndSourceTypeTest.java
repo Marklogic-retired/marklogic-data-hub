@@ -54,7 +54,10 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
         JsonNode sourceDoc = getStagingDoc("customer1.json");
         assertNotNull(sourceDoc);
         JsonNode sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(0);
-        assertEquals("sample-source", sourcesNode.get("name").asText());
+        assertEquals("sources-test", sourcesNode.get("name").asText());
+
+        sourcesNode = sourceDoc.get("envelope").get("headers").get("sources").get(1);
+        assertEquals("sample-source", sourcesNode.get("datahubSourceName").asText());
         assertEquals("employee", sourcesNode.get("datahubSourceType").asText());
     }
 
@@ -83,6 +86,8 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
         JsonNode sourceDoc = getStagingDoc("customer1.json");
         assertNotNull(sourceDoc);
-        assertNull(sourceDoc.get("envelope").get("headers").get("sources"));
+        JsonNode sourcesNode = sourceDoc.get("envelope").get("headers").get("sources");
+        assertEquals(1, sourcesNode.size(), "Only sources array with name as stepName exists");
+        assertEquals("sources-test", sourcesNode.get(0).get("name").asText());
     }
 }

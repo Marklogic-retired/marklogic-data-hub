@@ -2,8 +2,8 @@
 <envelope xmlns="http://marklogic.com/entity-services">
     <headers>
         <sources>
-            <name>loadCustomers</name>
-            <name>loadCustomersXml</name>
+            <datahubSourceName>loadCustomers</datahubSourceName>
+            <datahubSourceName>loadCustomersXml</datahubSourceName>
         </sources>
     </headers>
     <instance>

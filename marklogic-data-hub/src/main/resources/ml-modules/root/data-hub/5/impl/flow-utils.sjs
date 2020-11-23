@@ -559,7 +559,7 @@ class FlowUtils {
         headers["sources"] = [];
       }
       headers["sources"].push({
-        "name": sourceName === null ? undefined : sourceName,
+        "datahubSourceName": sourceName === null ? undefined : sourceName,
         "datahubSourceType": sourceType === null ? undefined : sourceType
       });
     }

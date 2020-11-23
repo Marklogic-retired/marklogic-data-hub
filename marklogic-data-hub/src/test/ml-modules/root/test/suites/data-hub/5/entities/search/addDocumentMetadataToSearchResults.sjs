@@ -30,7 +30,7 @@ function verifyMetadataForDocumentWithAllMetadata() {
     ]
   };
 
-  let expectedSources = [{"name":"loadData"}, {"name":"someOtherName"}];
+  let expectedSources = [{"datahubSourceName":"loadData"}, {"datahubSourceName":"someOtherName"}];
 
   xdmp.invokeFunction(function() {
     declareUpdate();

@@ -1,7 +1,7 @@
 <envelope xmlns="http://marklogic.com/entity-services">
     <headers>
         <sources xmlns="">
-            <name>matchingSourceXML</name>
+            <datahubSourceName>matchingSourceXML</datahubSourceName>
         </sources>
     </headers>
     <triples/>

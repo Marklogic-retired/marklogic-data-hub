@@ -17,6 +17,8 @@
   "description": "",
   "sourceFormat": "json",
   "targetFormat": "json",
+  "sourceName" : "PersonSourceName",
+  "sourceType" : "PersonSourceType",
   "inputFilePath": "input/json/persons",
   "outputURIPrefix": "/json/persons/",
   "stepDefinitionName": "default-ingestion",
