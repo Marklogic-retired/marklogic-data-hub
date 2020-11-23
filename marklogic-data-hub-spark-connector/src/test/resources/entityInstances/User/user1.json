@@ -1,0 +1,33 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "User",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "User": {
+        "id": 1,
+        "name": "John",
+        "salary": 30.5,
+        "debt": -10,
+        "userIRI": "/John/IRI",
+        "isActive": true,
+        "mottoBase64": "RHVtIHNwaXJvIHNwZXJv",
+        "mottoHex": "44756D20737069726F20737065726F",
+        "dob": "1987-01-10",
+        "dateTimeOfBirth": "1987-01-10T20:12:38.643728-08:00",
+        "timeOfBirth": "20:12:38",
+        "birthYearMonth": "1987-01",
+        "birthYear": "1987+02:00",
+        "birthMonth": "--01+02:00",
+        "birthMonthDay": "--01-10",
+        "birthDay": "---10",
+        "lastLogin": "P0Y1M",
+        "lastLoginDays": "P30DT1H",
+        "location": "37.389965,-122.07858",
+        "locationLongLat": "-122.07858 37.389965"
+      }
+    }
+  }
+}

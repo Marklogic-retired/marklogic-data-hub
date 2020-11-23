@@ -34,18 +34,22 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
     }
 
     // TODO Will soon have a nice convenience method for doing this
-    protected void loadSimpleCustomerTDE() {
+    protected void loadTDE(String name) {
         String template;
         try {
-            template = new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath("tde-views/Customer.tdex")));
+            template = new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath("tde-views/" + name + ".tdex")));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
         String query = "declareUpdate(); var tde = require('/MarkLogic/tde.xqy'); var template; " +
-            "tde.templateInsert('/tde/Customer-0.0.1.tdex', template, " +
+            "tde.templateInsert('/tde/" + name + "-0.0.1.tdex', template, " +
             "[xdmp.permission('data-hub-operator', 'read'), xdmp.permission('data-hub-operator', 'update')]);";
         getHubClient().getFinalClient().newServerEval()
             .javascript(query).addVariable("template", new StringHandle(template).withFormat(Format.XML)).evalAs(String.class);
+    }
+
+    protected void loadSimpleCustomerTDE(){
+        loadTDE("Customer");
     }
 
     protected void loadTenSimpleCustomers() {
