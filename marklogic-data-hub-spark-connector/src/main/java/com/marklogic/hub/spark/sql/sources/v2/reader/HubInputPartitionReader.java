@@ -14,7 +14,7 @@ import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.catalyst.encoders.RowEncoder;
 import org.apache.spark.sql.sources.v2.reader.InputPartitionReader;
-import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.DataType;
 import org.apache.spark.sql.types.StructType;
 
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         Object[] values = Arrays.stream(schema.fields()).map(field -> {
             String fieldName = field.name();
             if (currentRow.has(fieldName) && !"null".equals(currentRow.get(fieldName).asText())) {
-                return readValue(field);
+                return readValue(currentRow, fieldName, field.dataType());
             }
             return null;
         }).toArray();
@@ -138,24 +138,51 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
     /**
      * Just doing the bare minimum here for now, will have lots more to support soon.
      *
-     * @param field
-     * @return
+     * @param fieldNode
+     * @param fieldName
+     * @param dataType
+     * @return An Object of appropriate Spark datatype
      */
-    private Object readValue(StructField field) {
-        final String fieldName = field.name();
-        Object value;
-        switch (field.dataType().typeName()) {
+
+    private Object readValue(JsonNode fieldNode, String fieldName, DataType dataType) {
+        final String dataTypeName = dataType.typeName();
+        switch (dataTypeName) {
             case "integer":
-                value = currentRow.get(fieldName).asInt();
-                break;
+                return fieldNode.get(fieldName).asInt();
             case "date":
-                value = parseDate(fieldName, currentRow.get(fieldName).asText());
-                break;
+                return parseDate(fieldName, fieldNode.get(fieldName).textValue());
+            case "string":
+                return fieldNode.get(fieldName).asText();
+            case "byte":
+                return Byte.decode(fieldNode.get(fieldName).asText());
+            case "short":
+                return fieldNode.get(fieldName).shortValue();
+            case "long":
+                return fieldNode.get(fieldName).asLong();
+            case "float":
+                return fieldNode.get(fieldName).floatValue();
+            case "double":
+                return fieldNode.get(fieldName).asDouble();
+            case "timestamp":
+                return parseDateTime(fieldName, fieldNode.get(fieldName).textValue());
+            case "boolean":
+                return fieldNode.get(fieldName).asBoolean();
+            // default case is binary
             default:
-                value = currentRow.get(fieldName).asText();
-                break;
+                //If field has base64 strings , isBinary() returns true
+                if(fieldNode.get(fieldName).isBinary()){
+                    try {
+                        return fieldNode.get(fieldName).binaryValue();
+                    } catch (IOException e) {
+                        logger.error("Unable to read binary value for column '" + fieldName +"' : cause;" + e.getMessage());
+                        return  null;
+                    }
+                }
+                else{
+                    return fieldNode.get(fieldName).asText().getBytes();
+                }
+
         }
-        return value;
     }
 
     /**
@@ -173,6 +200,17 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         } catch (ParseException ex) {
             logger.warn(format("Unexpected date format for field '%s' and value '%s'; cause: %s",
                 fieldName, dateValue, ex.getMessage()));
+        }
+        return null;
+    }
+
+    private java.sql.Timestamp parseDateTime(String fieldName, String dateTimeValue) {
+        try {
+            Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(dateTimeValue);
+            return new java.sql.Timestamp(date.getTime());
+        } catch (ParseException ex) {
+            logger.warn(format("Unexpected dateTime format for field '%s' and value '%s'; cause: %s",
+                fieldName, dateTimeValue, ex.getMessage()));
         }
         return null;
     }

@@ -16,6 +16,43 @@
 'use strict';
 
 const partitionLib = require('partition-lib.xqy');
+const tdeToSparkDataTypeMap = new Map([
+  ["int", "integer"],
+  ["unsignedInt", "long"],
+  ["long", "long"],
+  ["unsignedLong", "long"],
+  ["float", "float"],
+  ["double", "double"],
+  ["decimal", "double"],
+  ["dateTime", "timestamp"],
+  ["time", "string"],
+  ["date", "date"],
+  ["gYearMonth", "string"],
+  ["gYear", "string"],
+  ["gMonth", "string"],
+  ["gDay", "string"],
+  ["yearMonthDuration", "string"],
+  ["dayTimeDuration", "string"],
+  ["string", "string"],
+  ["anyURI", "string"],
+  ["point", "string"],
+  ["longLatPoint", "string"],
+  ["boolean", "boolean"],
+  ["base64Binary", "binary"],
+  ["byte", "byte"],
+  ["duration", "string"],
+  ["gMonthDay", "string"],
+  ["hexBinary", "binary"],
+  ["integer", "integer"],
+  ["negativeInteger", "integer"],
+  ["nonNegativeInteger", "integer"],
+  ["nonPositiveInteger", "integer"],
+  ["positiveInteger", "integer"],
+  ["short", "short"],
+  ["unsignedByte", "short"],
+  ["unsignedShort", "short"],
+  ["IRI", "string"]
+]);
 
 /**
  * Parameterize the given plan with a where clause that constrains on a min and max rowID. If no rows are found that
@@ -170,7 +207,7 @@ function buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName, selectedColumn
     if (selectedColumns == null || selectedColumns.includes(columnName)) {
       schemaFields.push({
         name: columnName,
-        type: column["sys.sys_columns.type"],
+        type: tdeToSparkDataTypeMap.get(column["sys.sys_columns.type"]) ? tdeToSparkDataTypeMap.get(column["sys.sys_columns.type"]) : "string",
         nullable: column["sys.sys_columns.notnull"] == 0 ? true : false,
         metadata: {}
       });
