@@ -15,19 +15,19 @@ function verifyResults(content, results) {
 }
 
 function testMerge(content, stepId) {
-    const results = merge.main(content, { stepId}).filter((doc) => {
-        return doc.uri.includes(content.uri);
-    })[0].value;
+    const results = merge.main(content, {stepId}).filter((doc) => {
+            return doc.uri.includes('CustMerged');
+        })[0].value;
     return verifyResults(content, results);
 }
 
 function testJsonMerge() {
-    const content = { uri:'CustMerged' };
+    const content = { uri:'/content/customerMatchSummary.json' };
     return testMerge(content, 'mergeCustomers-merging');
 }
 
 function testNamespacedXmlMerge() {
-    const content = { uri:'NsCustMerged'};
+    const content = { uri:'/content/namespacedCustomerMatchSummary.json'};
     return testMerge(content, 'mergeNamespacedCustomers-merging');
 }
 

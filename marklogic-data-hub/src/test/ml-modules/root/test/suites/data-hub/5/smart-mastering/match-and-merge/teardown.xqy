@@ -10,4 +10,6 @@ xdmp:collection-delete($const:AUDITING-COLL),
 xdmp:collection-delete($const:MERGED-COLL),
 xdmp:collection-delete($const:NOTIFICATION-COLL),
 xdmp:collection-delete($const:CONTENT-COLL),
-xdmp:collection-delete($const:ARCHIVED-COLL)
+xdmp:collection-delete($const:ARCHIVED-COLL),
+xdmp:collection-delete("datahubMasteringMatchSummary")
+

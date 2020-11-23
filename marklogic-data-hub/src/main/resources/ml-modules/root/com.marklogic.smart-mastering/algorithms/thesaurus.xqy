@@ -34,7 +34,7 @@ declare function algorithms:thesaurus(
   where fn:exists($thesaurus)
   return
     for $value in $expand-values
-    let $entries := thsr:lookup($thesaurus, fn:lower-case($value))
+    let $entries := thsr:lookup($thesaurus, fn:lower-case(fn:string($value)))
     where fn:exists($entries)
     return
       let $weight := $expand/(@weight|weight)

@@ -32,11 +32,6 @@ class CollectorLib {
   prepareSourceQuery(combinedOptions, stepDefinition) {
     let sourceQuery = combinedOptions.sourceQuery;
 
-    const isMergingStep = stepDefinition.name === 'default-merging' && stepDefinition.type === 'merging';
-    if (isMergingStep) {
-      return fn.normalizeSpace(`cts.values(cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']), null, null, ${sourceQuery})`);
-    }
-
     if (combinedOptions.sourceQueryIsScript) {
       return fn.normalizeSpace(`${sourceQuery}`);
     }

@@ -28,15 +28,15 @@ return
   xdmp:document-insert(
     $uri,
     $doc,
-    xdmp:default-permissions(),
+    (xdmp:default-permissions(),xdmp:permission('data-hub-common','read'),xdmp:permission('data-hub-common','update')),
     $const:CONTENT-COLL
   ),
 for $match-summary-uri in ($lib:MATCH-SUMMARY-URI-1, $lib:MATCH-SUMMARY-URI-2)
 let $doc := test:get-test-file($match-summary-uri)
 return
   xdmp:document-insert(
-    "/" || $match-summary-uri,
+    $match-summary-uri,
     $doc,
-    xdmp:default-permissions(),
+    (xdmp:default-permissions(),xdmp:permission('data-hub-common','read'),xdmp:permission('data-hub-common','update')),
     "datahubMasteringMatchSummary"
   )

@@ -15,8 +15,8 @@ declare variable $TEST-DATA :=
     map:entry($URI4, "doc4.xml")
   ));
 
-declare variable $MATCH-SUMMARY-URI-1 := "match-summary-docs/match-summary-doc1.json";
-declare variable $MATCH-SUMMARY-URI-2 := "match-summary-docs/match-summary-doc2.json";
+declare variable $MATCH-SUMMARY-URI-1 := "/match-summary-docs/match-summary-doc1.json";
+declare variable $MATCH-SUMMARY-URI-2 := "/match-summary-docs/match-summary-doc2.json";
 
 declare variable $MERGE-URI-1 := "/com.marklogic.smart-mastering/merged/5a3c45efc09cf74d0b4289d33487b0c0.json";
 declare variable $MERGE-URI-2 := "/com.marklogic.smart-mastering/merged/76595a4e4815fce65fc8fee52dd843bc.json";

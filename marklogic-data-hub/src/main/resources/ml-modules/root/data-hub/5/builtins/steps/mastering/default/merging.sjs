@@ -21,7 +21,6 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
-const processedURIs = [];
 
 function main(content, options) {
   let isSeparateMergeStep = false;
@@ -38,86 +37,87 @@ function main(content, options) {
       httpUtils.throwBadRequestWithArray([`Could not find step with stepId ${options.stepId}`]);
     }
   }
-  const jobID = datahub.flow.globalContext.jobId;
-  const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']);
+  //const jobID = datahub.flow.globalContext.jobId;
+  const urisPathReference = cts.pathReference('/matchSummary/URIsToProcess', ['type=string', 'collation=http://marklogic.com/collation/']);
   const datahubCreatedOnRef = cts.fieldReference('datahubCreatedOn', ['type=dateTime']);
-  const uriToTakeActionOn = content.uri;
+  const thisMatchSummaryURI = content.uri;
   masteringStepLib.checkOptions(null, options, null, requiredOptionProperties);
-  const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntityType ? `-${options.targetEntityType}`:''}`;
+  const matchSummaryCollection = `datahubMasteringMatchSummary${options.targetEntityType ? `-${options.targetEntityType}` : ''}`;
   const collectionQuery = cts.collectionQuery(matchSummaryCollection);
-  const uriRangeQuery = cts.rangeQuery(urisPathReference, '=', uriToTakeActionOn);
-  let relatedMatchSummaries = cts.search(
-    cts.andQuery([
-      uriRangeQuery,
-      collectionQuery
-    ]),
-    ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
-  );
-  let mostRecentMatchSummary = fn.head(relatedMatchSummaries);
-  let matchSummaryJson = mostRecentMatchSummary.toObject();
-  let uriActionDetails = matchSummaryJson.matchSummary.actionDetails[uriToTakeActionOn];
-  // If the action is merge, ensure we create the merge with the most URIs
-  if (uriActionDetails && uriActionDetails.action === 'merge') {
-    const urisQuery = cts.pathRangeQuery('//actionDetails/*/uris', '=', uriActionDetails.uris)
-    const postiveQuery = [
-      cts.jsonPropertyValueQuery('action', 'merge'),
-      urisQuery,
-      collectionQuery
-    ];
-    const otherMergesForURI = cts.search(
-      cts.andNotQuery(
-        cts.andQuery(postiveQuery),
-        uriRangeQuery
-      ),
-      ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
-    ).toArray()
-        // get the actionNode for the URI
-        .map(
-          (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
-            .filter((actionNode) => cts.contains(actionNode, urisQuery))[0]
-        )
-        // filter out false positives that don't have merge actions for the given URI
-        .filter((actionNode) => !!actionNode)
-        // convert node to JSON object
-        .map((actionNode) => actionNode.toObject());
-    if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
-      return Sequence.from([]);
+
+  const urisToProcess = [];
+
+  let thisMatchSummary = content.value ? content.value : cts.doc(thisMatchSummaryURI);
+  if (!thisMatchSummary) {
+    xdmp.log(`matchSummary '${thisMatchSummaryURI}' not found`);
+    return [];
+  }
+  thisMatchSummary = thisMatchSummary.toObject();
+  let theseURIsToProcess = thisMatchSummary.matchSummary.URIsToProcess;
+
+  for (let uriToProcess of theseURIsToProcess) {
+
+    // don't process this "URIsToProcess" URI unless we are processing the last matchSummary document
+    // (in URI order) that contains it
+    let lastSummaryWithURI = cts.uris(null, ["descending", "limit=1"],
+      cts.pathRangeQuery("/matchSummary/URIsToProcess", "=" , uriToProcess));
+    if (lastSummaryWithURI != thisMatchSummaryURI) {
+      continue;
     }
-    otherMergesForURI.forEach((actionDetails) => actionDetails.uris.forEach(
-      (uri) => {
-        if (!uriActionDetails.uris.includes(uri)) {
-          uriActionDetails.uris.push(uri);
-        }
+
+    let uriActionDetails = thisMatchSummary.matchSummary.actionDetails[uriToProcess];
+    // If the action is merge, ensure we create the merge with the most URIs
+    if (uriActionDetails && uriActionDetails.action === 'merge') {
+      const urisQuery = cts.pathRangeQuery('//actionDetails/*/uris', '=', uriActionDetails.uris)
+      const positiveQuery =
+        cts.andQuery([
+          cts.jsonPropertyValueQuery('action', 'merge'),
+          urisQuery,
+          collectionQuery
+        ]);
+      const otherMergesForURI =
+        cts.search(
+          cts.andNotQuery(
+            positiveQuery,
+            cts.rangeQuery(urisPathReference, '=', uriToProcess)
+          ),
+          ['unfiltered',cts.indexOrder(datahubCreatedOnRef, 'descending')]
+        ).toArray()
+          // get the actionNode for the URI
+          .map(
+            (result) => result.xpath(`/matchSummary/actionDetails/*[action = 'merge']`).toArray()
+              .filter((actionNode) => cts.contains(actionNode, urisQuery))[0]
+          )
+          // filter out false positives that don't have merge actions for the given URI
+          .filter((actionNode) => !!actionNode)
+          // convert node to JSON object
+          .map((actionNode) => actionNode.toObject());
+      if (otherMergesForURI.some((otherMerge) => otherMerge.uris.length > uriActionDetails.uris.length)) {
+        continue;
       }
-    ));
-  }
-  let results = mastering.buildContentObjectsFromMatchSummary(
-    uriToTakeActionOn,
-    matchSummaryJson,
-    options,
-    datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
-  );
-  processedURIs.push(uriToTakeActionOn);
-  for (let matchSummary of relatedMatchSummaries) {
-    let matchSummaryObj = matchSummary.toObject().matchSummary;
-    let URIsToProcess = matchSummaryObj.URIsToProcess;
-    // use one cts.uris call per match summary to reduce list cache hits
-    let URIsProcessed =  cts.uris(null, null, cts.andQuery([
-      cts.documentQuery(URIsToProcess),
-      cts.fieldWordQuery('datahubCreatedByJob', jobID)
-    ])).toArray();
-    let processedInBatch = processedURIs.filter((uri) => URIsToProcess.includes(uri));
-    let allURIsProcessed = URIsProcessed.concat(processedInBatch).length === URIsToProcess.length;
-    if (allURIsProcessed) {
-      results.push({
-        uri: xdmp.nodeUri(matchSummary),
-        '$delete': true
-      });
+      otherMergesForURI.forEach((actionDetails) => actionDetails.uris.forEach(
+        (uri) => {
+          if (!uriActionDetails.uris.includes(uri)) {
+            uriActionDetails.uris.push(uri);
+          }
+        }
+      ));
     }
+    urisToProcess.push(uriToProcess);
+  }
+  let results = [];
+  if (urisToProcess.length) {
+    results = mastering.buildContentObjectsFromMatchSummary(
+        Sequence.from(urisToProcess),
+        thisMatchSummary,
+        options,
+        datahub.prov.granularityLevel() === datahub.prov.FINE_LEVEL
+    );
   }
 
+  content["$delete"] = true;
+  results.push(content);
   applyPermissionsFromOptions(results, options);
-
   return results;
 }
 
