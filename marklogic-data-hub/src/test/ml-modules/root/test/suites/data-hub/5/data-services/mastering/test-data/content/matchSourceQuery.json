@@ -2,7 +2,7 @@
   "envelope": {
     "headers": {
       "sources": [{
-        "name": "matchingSourceJSON"
+        "datahubSourceName": "matchingSourceJSON"
       }]
     },
     "instance": {

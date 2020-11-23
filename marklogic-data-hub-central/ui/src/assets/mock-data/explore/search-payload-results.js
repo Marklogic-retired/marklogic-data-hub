@@ -25,6 +25,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:36.479997-07:00",
@@ -56,6 +59,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -85,6 +91,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:37.037324-07:00",
@@ -115,6 +124,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -144,6 +156,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:35.318739-07:00",
@@ -175,6 +190,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -204,6 +222,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:37.863841-07:00",
@@ -236,6 +257,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -265,6 +289,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:38.303424-07:00",
@@ -297,6 +324,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -326,6 +356,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:35.976585-07:00",
@@ -357,6 +390,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -386,6 +422,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:37.865345-07:00",
@@ -418,6 +457,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -447,6 +489,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:36.488802-07:00",
@@ -478,6 +523,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -507,6 +555,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:35.320741-07:00",
@@ -538,6 +589,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   },
@@ -567,6 +621,9 @@ const searchPayloadResults = [
             "sources": [
               {
                 "name": "Ingest"
+              },
+              {
+                "datahubSourceName": "Ingest"
               }
             ],
             "createdOn": "2019-10-02T12:11:35.317848-07:00",
@@ -598,6 +655,9 @@ const searchPayloadResults = [
     "sources": [
       {
         "name": "Ingest"
+      },
+      {
+        "datahubSourceName": "Ingest"
       }
     ]
   }

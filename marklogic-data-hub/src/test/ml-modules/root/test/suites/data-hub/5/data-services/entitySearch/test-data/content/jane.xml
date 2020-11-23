@@ -2,7 +2,7 @@
 <envelope xmlns="http://marklogic.com/entity-services">
     <headers>
         <sources xmlns="">
-            <name>testSourceForCustomerXML</name>
+            <datahubSourceName>testSourceForCustomerXML</datahubSourceName>
             <datahubSourceType>testSourceTypeXML</datahubSourceType>
         </sources>
     </headers>

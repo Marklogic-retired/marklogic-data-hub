@@ -3,10 +3,10 @@
     "headers": {
       "sources": [
         {
-          "name": "loadData"
+          "datahubSourceName": "loadData"
         },
         {
-          "name": "someOtherName"
+          "datahubSourceName": "someOtherName"
         }
       ]
     },

@@ -84,7 +84,7 @@
     <field>
       <field-name>datahubSourceName</field-name>
       <field-path>
-        <path>/(es:envelope|envelope)/(es:headers|headers)/sources/name</path>
+        <path>/(es:envelope|envelope)/(es:headers|headers)/sources/datahubSourceName</path>
         <weight>1.0</weight>
       </field-path>
       <stemmed-searches>off</stemmed-searches>

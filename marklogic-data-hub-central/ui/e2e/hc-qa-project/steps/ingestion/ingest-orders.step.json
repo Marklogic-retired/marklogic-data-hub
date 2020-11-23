@@ -22,6 +22,8 @@
   "inputFilePath": "input/json/orders",
   "outputURIReplacement": ".*input,''",
   "sourceFormat": "json",
+  "sourceName" : "OrdersSourceName",
+  "sourceType" : "OrdersSourceType",
   "stepId": "ingest-orders-ingestion",
   "outputFormat": "json",
   "provenanceGranularityLevel": "coarse",

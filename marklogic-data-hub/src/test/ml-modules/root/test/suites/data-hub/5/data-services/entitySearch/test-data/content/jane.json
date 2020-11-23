@@ -2,7 +2,7 @@
   "envelope": {
     "headers": {
       "sources": [{
-        "name": "testSourceForCustomer",
+        "datahubSourceName": "testSourceForCustomer",
         "datahubSourceType": "testSourceType"
       }]
     },

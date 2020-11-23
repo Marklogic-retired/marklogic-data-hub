@@ -7,9 +7,8 @@ function datahubSourceNameAndTypeFacetsTest() {
   const searchResults = fn.head(search.search('', options));
 
   return[
-    test.assertEqual("SearchEntitiesFlow", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceName']/*:facet-value[1]/text()")))),
-    test.assertEqual("testSourceForCustomer", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceName']/*:facet-value[2]/text()")))),
-    test.assertEqual("testSourceForCustomerXML", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceName']/*:facet-value[3]/text()")))),
+    test.assertEqual("testSourceForCustomer", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceName']/*:facet-value[1]/text()")))),
+    test.assertEqual("testSourceForCustomerXML", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceName']/*:facet-value[2]/text()")))),
     test.assertEqual("testSourceType", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceType']/*:facet-value[1]/text()")))),
     test.assertEqual("testSourceTypeXML", xs.string(fn.head(searchResults.xpath("/*:facet[@name = 'sourceType']/*:facet-value[2]/text()"))))
   ];

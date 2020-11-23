@@ -5,6 +5,9 @@ const jsonDocPayload = {
         "sources": [
           {
             "name": "products"
+          },
+          {
+            "datahubSourceName": "products"
           }
         ],
         "createdOn": "2019-10-08T12:31:12.107279-07:00",

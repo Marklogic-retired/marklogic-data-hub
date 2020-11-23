@@ -51,7 +51,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
     if ((props.item.format === 'json' || props.item.format === 'xml') && props.item.hasOwnProperty('sources')) {
         sourcesVal = props.item.sources.map(src => {
-            return src.name;
+            return src.datahubSourceName;
         }).join(', ');
     }
 

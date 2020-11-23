@@ -115,6 +115,10 @@ class LoadPage {
         return cy.findByPlaceholderText('Enter description');
     }
 
+    stepSourceNameInput() {
+        return cy.findByPlaceholderText('Enter Source Name');
+    }
+
     selectSourceFormat(format: string) {
         cy.get('#sourceFormat').click();
         cy.findAllByText(`${format}`).last().click({force: true});

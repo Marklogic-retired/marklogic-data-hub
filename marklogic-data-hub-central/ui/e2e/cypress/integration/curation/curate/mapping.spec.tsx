@@ -151,6 +151,7 @@ describe('Mapping', () => {
     loadPage.addNewButton('card').click();
     loadPage.stepNameInput().type(loadStep);
     loadPage.stepDescriptionInput().type('load order with a custom header');
+    loadPage.stepSourceNameInput().type('backup-ABC123');
     loadPage.confirmationOptions('Save').click();
     cy.findByText(loadStep).should('be.visible');
 
