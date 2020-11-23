@@ -1,9 +1,11 @@
 import { Application } from "../../../support/application.config";
-import { toolbar } from "../../../support/components/common";
+import {multiSlider, toolbar} from "../../../support/components/common";
 import { createEditStepDialog, advancedSettings } from '../../../support/components/merging/index';
 import curatePage from "../../../support/pages/curate";
 import { confirmYesNo } from '../../../support/components/common/index';
 import 'cypress-wait-until';
+import mergingStepDetail from "../../../support/components/merging/merging-step-detail";
+import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
 
 describe('Merging', () => {
 
@@ -24,7 +26,7 @@ describe('Merging', () => {
     cy.deleteSteps('merging', 'mergeOrderTestStep');
   });
 
-  it('can create/edit a merge step within the merge tab of curate tile, ', () => {
+  it('can create/edit a merge step within the merge tab of curate tile,can create merge strategies/rules, can delete merge strategies/rules ', () => {
     const mergeStep = 'mergeOrderTestStep';
 
     //Navigating to merge tab
@@ -80,6 +82,33 @@ describe('Merging', () => {
     advancedSettings.saveSettingsButton(mergeStep).click();
     curatePage.editStep(mergeStep).click();
     curatePage.switchEditAdvanced().click();
-    cy.findAllByText('keptMerged').should('exist');
+    //cy.findAllByText('keptMerged').should('exist');
+    advancedSettings.cancelSettingsButton(mergeStep).click();
+
+    //open matching step details
+    curatePage.openStepDetails(mergeStep);
+    cy.contains('mergeOrderTestStep');
+
+    //add strategy
+    mergingStepDetail.addStrategyButton().click();
+    mergeStrategyModal.setStrategyName('myFavourite');
+    mergeStrategyModal.addSliderOptionsButton().click();
+    multiSlider.getHandle('Length').should('be.visible');
+    mergeStrategyModal.saveButton().click();
+    cy.findByText('myFavourite').should('exist');
+    cy.findByText('myFavourite').click();
+    //Edit strategy
+    mergeStrategyModal.setStrategyName('myFavouriteEdited');
+    mergeStrategyModal.saveButton().click();
+    cy.findByText('myFavouriteEdited').should('exist');
+
+   //delele strategy
+    mergingStepDetail.getDeleteMergeStrategyButton('myFavouriteEdited').click();
+    mergingStepDetail.getDeleteStrategyText().should('be.visible');
+    mergingStepDetail.cancelMergeDeleteModalButton().click();
+    cy.findByText('myFavouriteEdited').should('exist');
+    mergingStepDetail.getDeleteMergeStrategyButton('myFavouriteEdited').click();
+    mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.findByText('myFavouriteEdited').should('not.exist');
   });
 });

@@ -49,6 +49,13 @@ export const mergingStep = {
             "mergeModuleFunction": "customMergeFunction",
             "mergeModuleNamespace": "",
             "options":{}
+          },
+          {
+            "strategyName": "testMerge",
+            "mergeModulePath": "/custom/merge/strategy.sjs",
+            "mergeModuleFunction": "testMergeFunction",
+            "mergeModuleNamespace": "",
+            "options":{}
           }
         ],
         "mergeRules": [

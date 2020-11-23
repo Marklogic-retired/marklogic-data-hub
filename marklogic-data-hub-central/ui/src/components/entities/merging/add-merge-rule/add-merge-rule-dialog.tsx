@@ -14,10 +14,10 @@ import { CurationContext } from '../../../../util/curation-context';
 import arrayIcon from '../../../../assets/icon_array.png';
 import { MergeRuleTooltips } from '../../../../config/tooltips.config';
 import MultiSlider from "../../matching/multi-slider/multi-slider";
-import axios from "axios";
 import {UserContext} from "../../../../util/user-context";
-import {MatchingStep, MergingStep} from "../../../../types/curation-types";
+import { MergingStep } from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
+import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 
 type Props = {
     data: any;
@@ -209,27 +209,6 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         }
     };
 
-    const parseAddSave = (priorityOptions) => {
-        let priorityOrder:any = {};
-        priorityOrder.sources = [];
-        for(let key of priorityOptions){
-            if(key.hasOwnProperty('props')) {
-                if(key.props[0].prop == 'Length'){
-                    priorityOrder.lengthWeight = key.value;
-                } else {
-                    priorityOrder.sources.push(
-                        {
-                        "sourceName":key.props[0].type,
-                        "weight" : key.value
-                        }
-                    )
-                }
-            }
-        }
-        return priorityOrder;
-    }
-
-
     const handleSubmit =  (event) => {
         event.preventDefault();
         let propertyErrorMessage = '';
@@ -278,7 +257,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                     "mergeType": "property-specific",
                     "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : 'All',
                     "maxValues": maxValueRuleInput ? maxValueRuleInput : 'All',
-                    "priorityOrder": parseAddSave(priorityOrderOptions)
+                    "priorityOrder": parsePriorityOrder(priorityOrderOptions)
                 }
                 onSave(newMergeRules);
                 props.setOpenAddMergeRuleDialog(false);
@@ -292,23 +271,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     };
 
     const onAddOptions =  () => {
-     let priorityOrderDropdownOptions = [...priorityOrderOptions];
-        for(let key of priorityOrderDropdownOptions){
-            if(key.hasOwnProperty('props') && (key.props[0].type == dropdownOption || key.props[0].prop == dropdownOption)) {
-                return;
-            }
-        }
-        priorityOrderDropdownOptions.push(
-            {
-                props: [{
-                    prop: (dropdownOption == 'Length')? 'Length': 'Source',
-                    type: (dropdownOption == 'Length')? '': dropdownOption,
-                }],
-                value: 0
-
-            }
-        )
-        setPriorityOrderOptions(priorityOrderDropdownOptions)
+        setPriorityOrderOptions(addSliderOptions(priorityOrderOptions,dropdownOption));
     }
 
     const onSave = async (newMergeRules) => {
@@ -320,36 +283,14 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     }
 
     const handleSlider = (values, options) => {
-        for(let key of priorityOrderOptions){
-            if(key.hasOwnProperty('props')) {
-                if (key.props[0].prop == options.prop && options.type == key.props[0].type) {
-                    for (let val of values) {
-                        if(val.hasOwnProperty("props")){
-                            if(val.props.prop == key.props[0].prop && val.props.type == key.props[0].type){
-                                key.value = val.value;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        handleSliderOptions(values,options, priorityOrderOptions);
+        setPriorityOrderOptions(priorityOrderOptions);
     }
 
     const handleDelete = (options) => {
-        let priorityOrderDropdownOptions = [...priorityOrderOptions];
-        for(let index in priorityOrderDropdownOptions) {
-            let key = priorityOrderDropdownOptions[index]
-            if (key.hasOwnProperty('props')) {
-                if (key.props[0].prop == options.prop && options.type == key.props[0].type) {
-                    priorityOrderDropdownOptions.splice(parseInt(index), 1)
-                    break;
-                }
-            }
-        }
-        setPriorityOrderOptions(priorityOrderDropdownOptions);
+        setPriorityOrderOptions(handleDeleteSliderOptions(options, priorityOrderOptions));
         setDropdownOption('Length');
     }
-
 
     const handleEdit = () => {
 

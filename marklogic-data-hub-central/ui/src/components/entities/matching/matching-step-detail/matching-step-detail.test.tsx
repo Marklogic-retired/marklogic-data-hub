@@ -95,8 +95,6 @@ describe('Matching Step Detail view component', () => {
     expect(getByText('billingAddress')).toBeInTheDocument();
     expect(getByText('shippingAddress')).toBeInTheDocument();
 
-    
-
     //Verify handles are draggable
     fireEvent.dragStart(screen.getByTestId('sameThreshold-active'), { clientX: 0, clientY: 0 });
     fireEvent.drop(screen.getByTestId('sameThreshold-active'),{ clientX: 0, clientY: 1 });

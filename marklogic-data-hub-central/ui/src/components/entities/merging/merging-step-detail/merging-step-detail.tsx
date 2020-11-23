@@ -13,7 +13,7 @@ import {MergeStrategyTooltips, MergingStepDetailText} from '../../../../config/t
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
-import EditMergeStrategyDialog from "../edit-merge-strategy-dialog/edit-merge-strategy-dialog";
+import EditMergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
 import AddMergeRuleDialog from "../add-merge-rule/add-merge-rule-dialog";
 import { RightOutlined,DownOutlined } from "@ant-design/icons";
 import {Icon, Modal, Table} from "antd";
@@ -48,10 +48,11 @@ const MergingStepDetail: React.FC = () => {
     const history = useHistory<any>();
     const { curationOptions, updateActiveStepArtifact } = useContext(CurationContext);
     const [mergingStep, setMergingStep] = useState<MergingStep>(DEFAULT_MERGING_STEP);
-    const [showEditStrategyModal, toggleEditStrategyModal] = useState(false);
+    const [showCreateEditStrategyModal, toggleCreateEditStrategyModal] = useState(false);
+    const [isEditStrategy, toggleIsEditStrategy] = useState(false);
     const [openAddMergeRuleDialog, setOpenAddMergeRuleDialog] = useState(false);
     const [currentStrategyName, setCurrentStrategyName] = useState('');
-    const [currentMergeRule, setCurrentMergeRule] = useState<any>({});
+    const [currentMergeObj, setCurrentMergeObj] = useState<any>({});
     const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
     const [sourceNames, setSourceNames] = useState<string[]>([]);
     const mergeStrategiesData = new Array();
@@ -83,8 +84,9 @@ const MergingStepDetail: React.FC = () => {
     };
 
     const editMergeStrategy = (strategyName) => {
-     toggleEditStrategyModal(true);
-     setCurrentStrategyName(strategyName)
+     toggleCreateEditStrategyModal(true);
+     setCurrentStrategyName(strategyName);
+     toggleIsEditStrategy(true);
     }
 
     const mergeStrategyColumns : any = [
@@ -98,6 +100,7 @@ const MergingStepDetail: React.FC = () => {
             render: text => {
                 return (
                     <span className={styles.link}
+                          id={'strategy-name-link'}
                           onClick={ ()=> editMergeStrategy(text)}>
                             {text}</span>
                 );
@@ -128,7 +131,7 @@ const MergingStepDetail: React.FC = () => {
             dataIndex: 'delete',
             key: 'delete',
             align: 'center' as 'center',
-            render: text => <MLTooltip title={MergeStrategyTooltips.delete}><a data-testid={'delete'}>{text}</a></MLTooltip>,
+            render: text => <a data-testid={'delete'}>{text}</a>,
             width: 75
         }
     ];
@@ -190,10 +193,14 @@ const MergingStepDetail: React.FC = () => {
                 maxValues: i['maxValues'],
                 maxSources: i['maxSources'],
                 priorityOrder: i.hasOwnProperty('priorityOrder') ? true : false,
-                delete: <FontAwesomeIcon
+                delete: <MLTooltip title={commonStrategyNames.indexOf(i['strategyName']) !==-1 ? MergeStrategyTooltips.delete : ''}>
+                    <FontAwesomeIcon
                         icon={faTrashAlt}
                         size='lg'
-                        className={commonStrategyNames.indexOf(i['strategyName']) !==-1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}/>
+                        className={commonStrategyNames.indexOf(i['strategyName']) !==-1 ? styles.disabledDeleteIcon : styles.enabledDeleteIcon}
+                        data-testid={`mergestrategy-${i.strategyName}`}
+                        onClick={() => onDelete(i)}/>
+                </MLTooltip>
             }
         );
     });
@@ -205,57 +212,63 @@ const MergingStepDetail: React.FC = () => {
                 property: i['entityPropertyPath'],
                 mergeType: i['mergeType'],
                 strategy: i['mergeStrategyName'],
-                delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg'  data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDeleteMergeRule(i)}/>
+                delete: <FontAwesomeIcon icon={faTrashAlt} color='#B32424' size='lg'  data-testid={`mergerule-${i.entityPropertyPath}`} onClick={() => onDelete(i)}/>
             }
         );
     });
 
-    let priorityOrderOptions:any[] = [];
-
-    for(let strategy of mergingStep.mergeStrategies){
-        if(strategy.hasOwnProperty('priorityOrder')){
-            for(let key of strategy.priorityOrder.sources){
-                const priorityOrderSourceObject = {
-                    props: [{
-                        prop: 'Source',
-                        type: key.sourceName,
-                    }],
-                    value: key.weight,
-                };
-                priorityOrderOptions.push(priorityOrderSourceObject);
-            }
-            if(strategy.priorityOrder.hasOwnProperty('lengthWeight')){
-                const priorityOrderLengthObject = {
-                    props: [{
-                        prop: 'Length',
-                        type: '',
-                    }],
-                    value: strategy.priorityOrder.lengthWeight,
-                };
-                priorityOrderOptions.push(priorityOrderLengthObject);
-            }
-            let timeStampObject = {
-                props: [{
-                    prop: 'Timestamp',
-                    type: '',
-                }],
-                value: 0,
-            }
-            priorityOrderOptions.push(timeStampObject);
-        }
-    }
 
     const handleSlider = (values) => {
-        // TODO put match options to backend
-        //console.log('handleSlider', values);
+        return;
     };
 
-    const expandedRowRender = (strategy) => {
+    const handleDelete = (values) => {
+        return;
+    };
+
+    const handleEdit = (values) => {
+        return;
+    };
+
+    const expandedRowRender = (strategyObj) => {
+        let priorityOrderStrategyOptions:any[] = [];
+        for(let strategy of mergingStep.mergeStrategies){
+            if(strategy.hasOwnProperty('priorityOrder') && strategy.strategyName === strategyObj.strategyName){
+                for(let key of strategy.priorityOrder.sources){
+                        const priorityOrderSourceObject = {
+                            props: [{
+                                prop: 'Source',
+                                type: key.sourceName,
+                            }],
+                            value: key.weight,
+                        };
+                        priorityOrderStrategyOptions.push(priorityOrderSourceObject);
+                }
+                if(strategy.priorityOrder.hasOwnProperty('lengthWeight')){
+                    const priorityOrderLengthObject = {
+                        props: [{
+                            prop: 'Length',
+                            type: '',
+                        }],
+                        value: strategy.priorityOrder.lengthWeight,
+                    };
+                    priorityOrderStrategyOptions.push(priorityOrderLengthObject);
+                }
+                let timeStampObject = {
+                    props: [{
+                        prop: 'Timestamp',
+                        type: '',
+                    }],
+                    value: 0,
+                }
+                //priorityOrderStrategyOptions.push(timeStampObject);
+            }
+        }
             return <>
                 <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={''}>
                     <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
                 </MLTooltip></p>
-                    <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider}/>
+                    <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete}/>
                 </div>
             </>;
     };
@@ -270,16 +283,17 @@ const MergingStepDetail: React.FC = () => {
             maskClosable={false}
             footer={null}
         >
-            <p className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeRule.entityPropertyPath} - {currentMergeRule.mergeType}</b> merge rule ?</p>
+            {currentMergeObj.hasOwnProperty('entityPropertyPath') ? <p aria-label="delete-merge-rule-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.entityPropertyPath} - {currentMergeObj.mergeType}</b> merge rule ?</p> :
+                <p aria-label="delete-merge-strategy-text" className={styles.deleteMessage}>Are you sure you want to delete <b>{currentMergeObj.strategyName}</b> merge strategy ?</p>}
             <div className={styles.footer}>
                 <MLButton
-                    aria-label={`delete-merge-rule-confirm`}
+                    aria-label={`delete-merge-modal-discard`}
                     size="default"
                     onClick={() => setDeleteModalVisibility(false)}
                 >No</MLButton>
                 <MLButton
                     className={styles.saveButton}
-                    aria-label={`delete-merge-rule-confirm`}
+                    aria-label={`delete-merge-modal-confirm`}
                     type="primary"
                     size="default"
                     onClick={() => deleteConfirm()}
@@ -288,17 +302,26 @@ const MergingStepDetail: React.FC = () => {
         </Modal>
     )
 
-    const onDeleteMergeRule = (currentMergeRule) => {
+    const onDelete = (currentObj) => {
       setDeleteModalVisibility(true);
-      setCurrentMergeRule(currentMergeRule);
+      setCurrentMergeObj(currentObj);
     }
 
     const deleteConfirm = async() =>{
         let stepArtifact = curationOptions.activeStep.stepArtifact;
-        let updateStepArtifactMergeRules = curationOptions.activeStep.stepArtifact.mergeRules;
-        let index = updateStepArtifactMergeRules.findIndex( mergeRule => (mergeRule.entityPropertyPath === currentMergeRule.entityPropertyPath) && (mergeRule.mergeType === currentMergeRule.mergeType));
-        updateStepArtifactMergeRules.splice(index, 1);
-        stepArtifact.mergeRules = updateStepArtifactMergeRules;
+        if(currentMergeObj.hasOwnProperty('entityPropertyPath')){
+            let updateStepArtifactMergeRules = curationOptions.activeStep.stepArtifact.mergeRules;
+            let index = updateStepArtifactMergeRules.findIndex( mergeRule => (mergeRule.entityPropertyPath === currentMergeObj.entityPropertyPath)
+                && (mergeRule.mergeType === currentMergeObj.mergeType));
+            updateStepArtifactMergeRules.splice(index, 1);
+            stepArtifact.mergeRules = updateStepArtifactMergeRules;
+        }
+        else{
+            let updateStepArtifactMergeStartegies = curationOptions.activeStep.stepArtifact.mergeStrategies;
+            let index = updateStepArtifactMergeStartegies.findIndex( mergeStrategy => (mergeStrategy.strategyName === currentMergeObj.strategyName));
+            updateStepArtifactMergeStartegies.splice(index, 1);
+            stepArtifact.mergeStrategies = updateStepArtifactMergeStartegies;
+        }
         await updateMergingArtifact(stepArtifact);
         updateActiveStepArtifact(stepArtifact);
         setDeleteModalVisibility(false);
@@ -327,7 +350,11 @@ const MergingStepDetail: React.FC = () => {
                         </p>
                     </div>
                     <div className={styles.addButtonContainer}>
-                        <MLButton aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton}>Add</MLButton>
+                        <MLButton aria-label="add-merge-strategy" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+                            toggleCreateEditStrategyModal(true);
+                            toggleIsEditStrategy(false);
+                            setCurrentStrategyName('')}
+                        }>Add</MLButton>
                     </div>
                     <div>
                         <Table
@@ -373,11 +400,11 @@ const MergingStepDetail: React.FC = () => {
                     />
                 </div>
                 <EditMergeStrategyDialog
-                    data={mergingStep.mergeStrategies}
                     sourceNames={sourceNames}
                     strategyName={currentStrategyName}
-                    editMergeStrategyDialog={showEditStrategyModal}
-                    setOpenEditMergeStrategyDialog={toggleEditStrategyModal}
+                    createEditMergeStrategyDialog={showCreateEditStrategyModal}
+                    setOpenEditMergeStrategyDialog={toggleCreateEditStrategyModal}
+                    isEditStrategy={isEditStrategy}
                 />
                 <AddMergeRuleDialog
                     data={[]}
