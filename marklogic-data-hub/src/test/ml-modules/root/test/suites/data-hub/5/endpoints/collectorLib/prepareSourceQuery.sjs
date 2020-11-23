@@ -16,6 +16,8 @@ let sourceQuery = lib.prepareSourceQuery(
     type: "merging"
   }
 );
+
+/*
 assertions.push(
   test.assertEqual(
     "cts.values(cts.pathReference('/matchSummary/URIsToProcess', ['type=string','collation=http://marklogic.com/collation/']), null, null, cts.collectionQuery('test'))",
@@ -24,6 +26,7 @@ assertions.push(
     "default-merging step can process the values of URIsToProcess"
   )
 );
+*/
 
 // Query constrained to job
 sourceQuery = lib.prepareSourceQuery(

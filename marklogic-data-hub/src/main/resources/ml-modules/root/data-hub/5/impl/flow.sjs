@@ -159,15 +159,11 @@ class Flow {
       query = sourceQuery ? xdmp.eval(sourceQuery) : null;
     }
 
-    if (stepDefinition.name === 'default-merging' && stepDefinition.type === 'merging' && uris) {
-      return uris.map((uri) => { return { uri }; });
-    } else {
-      let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
-      if (filterQuery) {
-        query = cts.andQuery([query, filterQuery]);
-      }
-      return this.datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
+    let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
+    if (filterQuery) {
+      query = cts.andQuery([query, filterQuery]);
     }
+    return this.datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
   }
 
   /**
