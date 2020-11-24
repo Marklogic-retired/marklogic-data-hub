@@ -3,7 +3,7 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const config = require("/com.marklogic.hub/config.sjs");
 const Provenance = require("/data-hub/5/impl/prov.sjs");
-const myProv = new Provenance();
+const myProv = new Provenance.Provenance();
 
 function fineProvOnMapping() {
   datahub.flow.runFlow('myNewFlow', 'prov-test-job', [

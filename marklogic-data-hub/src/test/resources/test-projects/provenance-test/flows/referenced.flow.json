@@ -1,0 +1,11 @@
+{
+  "name": "referenced",
+  "steps": {
+    "1" : {
+      "stepId" : "ingest-customer-ingestion"
+    },
+    "2" : {
+      "stepId" : "map-customer-mapping"
+    }
+  }
+}

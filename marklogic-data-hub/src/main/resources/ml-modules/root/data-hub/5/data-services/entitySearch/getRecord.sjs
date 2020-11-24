@@ -30,6 +30,7 @@ if(doc) {
     record["isHubEntityInstance"] = entitySearchLib.isHubEntityInstance(docUri);
     record["recordType"] = getDocumentType(nodeKind);
     record["sources"] = entitySearchLib.getEntitySources(docUri);
+    record["history"] = entitySearchLib.getRecordHistory(docUri);
 }
 
 function getDocumentType(nodeKind) {

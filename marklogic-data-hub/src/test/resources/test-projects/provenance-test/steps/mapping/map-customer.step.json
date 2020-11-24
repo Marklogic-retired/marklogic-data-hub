@@ -1,0 +1,32 @@
+{
+  "name": "map-customer",
+  "stepDefinitionName": "entity-services-mapping",
+  "stepDefinitionType": "mapping",
+  "stepId": "mapCustomersJSON-mapping",
+  "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+  "description": "",
+  "selectedSource": "collection",
+  "sourceQuery": "cts.collectionQuery(['customer-history-test'])",
+  "collections": [
+    "Customer",
+    "mapCustomersJSON"
+  ],
+  "additionalCollections": [ ],
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL",
+  "targetFormat": "JSON",
+  "permissions": "data-hub-common,read,data-hub-operator,update",
+  "provenanceGranularityLevel": "coarse",
+  "properties": {
+    "customerId": {
+      "sourcedFrom": "CustomerID"
+    }
+  },
+  "lastUpdated": "2020-06-05T00:34:51.96953Z",
+  "customHook": {
+    "module": "",
+    "parameters": "{}",
+    "user": "",
+    "runBefore": false
+  }
+}

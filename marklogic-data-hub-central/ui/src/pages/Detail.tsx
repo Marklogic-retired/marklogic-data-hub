@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
+import moment from 'moment';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { UserContext } from '../util/user-context';
 import styles from './Detail.module.scss';
@@ -100,7 +101,7 @@ const Detail: React.FC<Props> = ({ history, location }) => {
           //Setting the data for sources metadata table
           setSources(result.data.sources);
           setSourcesTableData(generateSourcesData(result.data.sources));
-          setHistoryData(generateHistoryData([]));
+          setHistoryData(generateHistoryData(result.data.history));
 
           setIsLoading(false);
         }
@@ -192,21 +193,29 @@ const Detail: React.FC<Props> = ({ history, location }) => {
 
   const generateHistoryData = (historyData) => {
     let parsedData = new Array();
-    if(historyData.length) {
-        //TODO
-    } else {
-      let tableObj = {
+
+    if(historyData.length == 0) {
+      parsedData.push({
         key: 1,
-        timeStamp: 'none',
+        updatedTime: 'none',
         flow: 'none',
         step: 'none',
         user: 'none'
-      }
-      parsedData.push(tableObj);
+      });
+      return parsedData;
     }
-    
+
+    historyData.forEach((dataObject, index) => {
+      const tableObj = {};
+      tableObj["key"] = index;
+      tableObj["updatedTime"] = dataObject.updatedTime ? moment(dataObject.updatedTime).format("yyyy-MM-DD hh:mm") : 'none';
+      tableObj["flow"] = dataObject.flow ? dataObject.flow : 'none';
+      tableObj["step"] = dataObject.step ? dataObject.step : 'none';
+      tableObj["user"] = dataObject.user ? dataObject.user : 'none';
+      parsedData.push(tableObj);
+    });
     return parsedData;
-  }
+  };
 
   //Apply user preferences on each page render
   const handleUserPreferences = () => {

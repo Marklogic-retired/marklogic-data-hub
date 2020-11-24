@@ -9,9 +9,9 @@ const sourcesTableData = [
 ];
 
 const historyData = [
-    { key: 1, timeStamp: '2020-08-10 12:00', flow: 'loadCustomerFlow', step: 'mapCustomerStep', user: 'Ernie' },
-    { key: 2, timeStamp: '2020-07-10 08:45', flow: 'loadCustomerFlow', step: 'mergeCustomer', user: 'Ernie' },
-    { key: 3, timeStamp: '2020-07-01 13:12', flow: 'loadCustomerFlow', step: 'loadCustomer', user: 'Wai Lin' }
+    { key: 1, updatedTime: '2020-08-10 12:00', flow: 'loadCustomerFlow', step: 'mapCustomerStep', user: 'Ernie' },
+    { key: 2, updatedTime: '2020-07-10 08:45', flow: 'loadCustomerFlow', step: 'mergeCustomer', user: 'Ernie' },
+    { key: 3, updatedTime: '2020-07-01 13:12', flow: 'loadCustomerFlow', step: 'loadCustomer', user: 'Wai Lin' }
 ]
 
 const data = {
