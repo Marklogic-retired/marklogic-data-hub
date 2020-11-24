@@ -11,11 +11,7 @@ public class ReadViaSerializedPlanTest extends AbstractSparkReadTest {
 
     @Test
     void customerIdLessThanFive() {
-        runAsDataHubDeveloper();
-        loadSimpleCustomerTDE();
-
-        runAsDataHubOperator();
-        loadTenSimpleCustomers();
+        setupTenSimpleCustomers();
 
         List<InternalRow> rows = readRows(newOptions()
             .withSerializedPlan(getCustomerIdLessThanFivePlan()));
@@ -25,11 +21,7 @@ public class ReadViaSerializedPlanTest extends AbstractSparkReadTest {
 
     @Test
     void groupAndOrderByCustomerId() {
-        runAsDataHubDeveloper();
-        loadSimpleCustomerTDE();
-
-        runAsDataHubOperator();
-        loadTenSimpleCustomers();
+        setupTenSimpleCustomers();
 
         List<InternalRow> rows = readRows(newOptions()
             .withSerializedPlan(readStringFromClasspath("serialized-plans/GroupAndOrderByCustomerId.json")));

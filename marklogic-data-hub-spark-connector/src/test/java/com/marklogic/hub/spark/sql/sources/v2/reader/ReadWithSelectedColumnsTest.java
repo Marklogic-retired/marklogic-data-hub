@@ -15,11 +15,7 @@ public class ReadWithSelectedColumnsTest extends AbstractSparkReadTest {
      */
     @Test
     void test() {
-        runAsDataHubDeveloper();
-        loadSimpleCustomerTDE();
-
-        runAsDataHubOperator();
-        loadTenSimpleCustomers();
+        setupTenSimpleCustomers();
 
         verifyTwoColumnsSelected();
         verifyOneColumnSelected();

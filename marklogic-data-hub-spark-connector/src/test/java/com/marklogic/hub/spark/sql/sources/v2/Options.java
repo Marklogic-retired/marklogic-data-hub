@@ -40,6 +40,7 @@ public class Options {
     private String sqlCondition;
     private String selectedColumns;
     private String serializedPlan;
+    private String sparkSchema;
 
     // Has a default value so that tests don't depend on a Spark cluster running to determine minDefaultPartitions
     private String numPartitions = "2";
@@ -122,7 +123,10 @@ public class Options {
             params.put("serializedplan", serializedPlan);
         }
         if (selectedColumns != null) {
-            params.put("selectedColumns", selectedColumns);
+            params.put("selectedcolumns", selectedColumns);
+        }
+        if (sparkSchema != null) {
+            params.put("sparkschema", sparkSchema);
         }
 
         params.put("numpartitions", numPartitions);
@@ -222,6 +226,11 @@ public class Options {
 
     public Options withNumPartitions(String numPartitions) {
         this.numPartitions = numPartitions;
+        return this;
+    }
+
+    public Options withSparkSchema(String sparkSchema) {
+        this.sparkSchema = sparkSchema;
         return this;
     }
 }

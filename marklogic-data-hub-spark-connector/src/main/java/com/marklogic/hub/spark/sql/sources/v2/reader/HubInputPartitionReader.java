@@ -33,7 +33,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
     private final HubClient hubClient;
     private final ObjectMapper objectMapper;
     private final OutputCaller.BulkOutputCaller<InputStream> bulkOutputCaller;
-    private final StructType schema;
+    private final StructType sparkSchema;
 
     private InputStream[] rows;
     private int rowIndex;
@@ -47,7 +47,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
      */
     public HubInputPartitionReader(Map<String, String> options, JsonNode initializationResponse, int partitionNumber) {
         this.hubClient = HubClient.withHubClientConfig(Util.buildHubClientConfig(options));
-        this.schema = (StructType) StructType.fromJson(initializationResponse.get("schema").toString());
+        this.sparkSchema = (StructType) StructType.fromJson(initializationResponse.get("sparkSchema").toString());
         this.objectMapper = new ObjectMapper();
 
         ObjectNode endpointConstants = buildEndpointConstants(options, initializationResponse, partitionNumber);
@@ -89,7 +89,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
      */
     @Override
     public InternalRow get() {
-        Object[] values = Arrays.stream(schema.fields()).map(field -> {
+        Object[] values = Arrays.stream(sparkSchema.fields()).map(field -> {
             String fieldName = field.name();
             if (currentRow.has(fieldName) && !"null".equals(currentRow.get(fieldName).asText())) {
                 return readValue(field);
@@ -98,7 +98,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         }).toArray();
 
         Row row = RowFactory.create(values);
-        return RowEncoder.apply(this.schema).toRow(row);
+        return RowEncoder.apply(this.sparkSchema).toRow(row);
     }
 
     @Override
