@@ -32,5 +32,5 @@ function testNamespacedXmlMerge() {
 }
 
 assertions
-//    .concat(testJsonMerge())
+    .concat(testJsonMerge())
     .concat(testNamespacedXmlMerge());

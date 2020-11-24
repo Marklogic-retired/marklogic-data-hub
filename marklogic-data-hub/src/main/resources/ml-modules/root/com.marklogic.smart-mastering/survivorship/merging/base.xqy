@@ -1122,7 +1122,7 @@ declare function merge-impl:build-merge-models-by-final-properties-to-json(
 (:
  : Construct the Entity Services instance for the new merged document.
  : @param $final-properties  merged property values with source info
- : @param $wrapper-qnames  TODO
+ : @param $wrapper-qnames  xs:QName* these will wrap the results
  : @param $format  $const:FORMAT-JSON or $const:FORMAT-XML
  : @return instance elements or properties
  :)
@@ -1139,68 +1139,8 @@ declare function merge-impl:build-instance-body-by-final-properties(
   else (),
   if ($format eq $const:FORMAT-JSON) then (
     xdmp:to-json(
-      let $props-to-retain-array := map:map()
-      (: TODO - consider using XSLT. I'd be able to specify a path rather than tracking through recursive descent :)
-      let $merged-props-body :=
-        (: consolidate $final-properties into a single map of names (keys) and values :)
-        fn:fold-left(
-          function($map-a, $map-b) {
-            $map-a + $map-b
-          },
-          map:map(),
-          let $non-path-properties := $final-properties[fn:not(map:contains(., "path"))]
-          let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-            xdmp:trace($const:TRACE-MERGE-RESULTS, "Building instance with non-path properties: " || xdmp:to-json-string($non-path-properties))
-          else ()
-          for $prop at $pos in $non-path-properties
-          let $prop-name := fn:string($prop => map:get("name"))
-          let $prop-values := $prop => map:get("values")
-          let $retain-array := (($prop => map:get("retainArray"))[. castable as xs:boolean] ! xs:boolean(.)) = fn:true()
-          return (
-            if ($retain-array and fn:not(map:contains($props-to-retain-array, $prop-name))) then
-              map:put($props-to-retain-array, $prop-name, $retain-array)
-            else (),
-            map:entry(
-              $prop-name,
-              $prop-values
-            )))
-      let $_convert-to-arrays :=
-        for $prop-name in map:keys($props-to-retain-array)
-        let $values := map:get($merged-props-body, $prop-name)
-        where fn:count($values) le 1
-        return
-          map:put($merged-props-body, $prop-name, array-node{$values})
-      let $merged-props := fn:fold-left(
-        function($child-object, $parent-name) {
-          map:entry(fn:string($parent-name), $child-object)
-        },
-        $merged-props-body,
-        $wrapper-qnames
-      )
-      (: Convert from maps to json:object notation, needed for XSLT :)
-      let $xml-json := <root>{xdmp:from-json(xdmp:to-json($merged-props))}</root>
-      let $path-properties := $final-properties[map:contains(., "path")]
-      let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-        xdmp:trace($const:TRACE-MERGE-RESULTS, "Building instance with path properties: " || xdmp:to-json-string($path-properties))
-      else ()
-      let $path-templates := merge-impl:generate-path-templates($path-properties)
-      let $full-template :=
-        <xsl:stylesheet
-          xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0"
-          xmlns:json="http://marklogic.com/xdmp/json">
-
-          { $path-templates }
-
-          <xsl:template match="node()|@*">
-            <xsl:copy>
-              <xsl:apply-templates select="node()|@*"/>
-            </xsl:copy>
-          </xsl:template>
-
-        </xsl:stylesheet>
-      let $fully-merged := xdmp:xslt-eval($full-template, $xml-json)
-      return json:object($fully-merged/root/node())
-
+      let $merged-non-path-props := merge-impl:build-non-path-json($final-properties, $wrapper-qnames)
+      return merge-impl:build-path-json($merged-non-path-props, $final-properties)
     )/object-node()
   )
   else (
@@ -1279,17 +1219,143 @@ declare function merge-impl:build-instance-body-by-final-properties(
   )
 };
 
+(:
+ : Construct the non-path referenced portion of the Entity Services instance for the new merged document.
+ : @param $final-properties  merged property values with source info
+ : @param $wrapper-qnames xs:QName* these will wrap the results
+ : @return map:map that represents the merged instance for non-path targeted JSON
+ :)
+declare function merge-impl:build-non-path-json($final-properties as map:map*, $wrapper-qnames as xs:QName*) {
+  let $props-to-retain-array := map:map()
+  (: TODO - consider using XSLT. I'd be able to specify a path rather than tracking through recursive descent :)
+  let $merged-props-body :=
+    (: consolidate $final-properties into a single map of names (keys) and values :)
+    fn:fold-left(
+        function($map-a, $map-b) {
+          $map-a + $map-b
+        },
+        map:map(),
+        let $non-path-properties := $final-properties[fn:not(map:contains(., "path"))]
+        let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+          xdmp:trace($const:TRACE-MERGE-RESULTS, "Building instance with non-path properties: " || xdmp:to-json-string($non-path-properties))
+        else ()
+        for $prop at $pos in $non-path-properties
+        let $prop-name := fn:string($prop => map:get("name"))
+        let $prop-values := $prop => map:get("values")
+        let $retain-array := (($prop => map:get("retainArray"))[. castable as xs:boolean] ! xs:boolean(.)) = fn:true()
+        return (
+          if ($retain-array and fn:not(map:contains($props-to-retain-array, $prop-name))) then
+            map:put($props-to-retain-array, $prop-name, $retain-array)
+          else (),
+          map:entry(
+              $prop-name,
+              $prop-values
+          )))
+  let $_convert-to-arrays :=
+    for $prop-name in map:keys($props-to-retain-array)
+    let $values := map:get($merged-props-body, $prop-name)
+    where fn:count($values) le 1
+    return
+      map:put($merged-props-body, $prop-name, array-node{$values})
+  return fn:fold-left(
+      function($child-object, $parent-name) {
+        map:entry(fn:string($parent-name), $child-object)
+      },
+      $merged-props-body,
+      $wrapper-qnames
+  )
+};
+
+(:
+ : Add the path portions of the merged Entity Services instance.
+ : @param $base-json json:object|map:map with non-path reference properties already merged in
+ : @param $final-properties  merged property values with source info
+ : @return json:object that represents the merged instance with path targeted JSON
+ :)
+declare function merge-impl:build-path-json($base-json (: as json:object|map:map :), $final-properties as map:map*) {
+  let $path-properties := $final-properties[map:contains(., "path")]
+  let $_populate-lower-paths :=
+      for $prop in $path-properties
+      let $lower-path := merge-impl:strip-top-path(map:get($prop, "path"), (), (), fn:true())
+      let $path-parts := fn:tokenize($lower-path, "/")[. ne ""]
+      let $populate-base-json := merge-impl:build-out-json-path-for-xslt($base-json (: as json:object|map:map :), $path-parts)
+      return map:put($prop, "lowerPath", $lower-path)
+  (: Convert from maps to json:object notation, needed for XSLT :)
+  let $xml-json := <root>{xdmp:from-json(xdmp:to-json($base-json))}</root>
+  let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+    xdmp:trace($const:TRACE-MERGE-RESULTS, "Building instance with path properties: " || xdmp:to-json-string($path-properties))
+  else ()
+  let $path-templates := merge-impl:generate-path-templates($path-properties)
+  let $full-template :=
+    <xsl:stylesheet
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0"
+    xmlns:json="http://marklogic.com/xdmp/json">
+
+      { $path-templates }
+
+      <xsl:template match="node()|@*">
+        <xsl:copy>
+          <xsl:apply-templates select="node()|@*"/>
+        </xsl:copy>
+      </xsl:template>
+
+    </xsl:stylesheet>
+  let $fully-merged := xdmp:xslt-eval($full-template, $xml-json)
+  return json:object($fully-merged/root/node())
+};
+
+(:
+ : Ensures that the property path exists in the JSON for the XSLT transform
+ : @param $base-json json:object|map:map
+ : @param $path-parts xs:string* each step in JSON path be
+ :)
+declare function merge-impl:build-out-json-path-for-xslt($base-json (: as json:object|map:map :), $path-parts as xs:string*) {
+  fn:fold-left(function ($base-json (: as json:object|map:map :), $path-part) {
+    let $children-json := map:get($base-json, $path-part)
+    let $existing-object :=
+      fn:head(
+          (
+            for $child-json in $children-json
+            return
+              typeswitch($child-json)
+                case json:array return
+                  json:array-values($child-json)
+                case array-node() return
+                  json:array-values(xdmp:from-json($child-json))
+                case object-node() return
+                  xdmp:from-json($child-json)
+                default return
+                  $child-json
+          )[. instance of json:object or . instance of map:map]
+      )
+    return
+      if (fn:exists($existing-object)) then
+        $existing-object
+      else
+        let $json-object := json:object()
+        return (
+          map:put($base-json, $path-part, ($children-json,$json-object)),
+          $json-object
+        )
+  }, $base-json, $path-parts)
+};
+
 declare function merge-impl:multi-node-equals($nodes1 as node()*, $nodes2 as node()*)
 {
   (fn:count($nodes1) eq fn:count($nodes2)
-    and
-  (every $bool in fn:map-pairs(fn:deep-equal#2, $nodes1, $nodes2)
-  satisfies $bool))
+      and
+      (every $bool in fn:map-pairs(fn:deep-equal#2, $nodes1, $nodes2)
+      satisfies $bool))
 };
 
-declare function merge-impl:strip-top-path($path, $wrapper-qnames as xs:QName*, $namespaces as map:map?) as xs:string
+
+declare function merge-impl:strip-top-path($path, $wrapper-qnames as xs:QName*, $namespaces as map:map?, $is-json as xs:boolean) as xs:string
 {
-  let $instance-level := fn:replace($path, "^/(\w*:?envelope\|?){1,2}/(\w*:?instance\|?){1,2}/", "")
+  let $instance-level :=
+    if (fn:starts-with($path, "/(es:envelope|envelope)/(es:instance|instance)/")) then
+      fn:substring-after($path, "/(es:envelope|envelope)/(es:instance|instance)/")
+    else
+      fn:replace($path, "^/\w*:?envelope/\w*:?instance/", "")
   return
     if (fn:exists($wrapper-qnames)) then
       xdmp:with-namespaces(
@@ -1303,6 +1369,8 @@ declare function merge-impl:strip-top-path($path, $wrapper-qnames as xs:QName*, 
           "/"
         )
       )
+    else if ($is-json) then
+      $instance-level
     else
       fn:replace($instance-level, "^[^/]+/", "")
 };
@@ -1325,26 +1393,31 @@ declare function merge-impl:convert-path-to-json($path as xs:string)
 
 (:
  : For each of the $path-properties, generate an XSL template
- : TODO
+ : @param $final-properties  merged property values with source info
+ : @return element(xsl:template)* that will add the merged results
  :)
-declare function merge-impl:generate-path-templates($path-properties)
+declare function merge-impl:generate-path-templates($path-properties as map:map*)
 {
-  let $distinct-paths := fn:distinct-values($path-properties ! map:get(., 'path'))
-  for $path in $distinct-paths
-  let $lower-path := merge-impl:strip-top-path($path, (), ())
-  let $path-props := $path-properties[map:get(., 'path') = $path]
+  let $distinct-paths := fn:distinct-values($path-properties ! map:get(., 'lowerPath'))
+  for $lower-path in $distinct-paths
+  let $path-props := $path-properties[map:get(., 'lowerPath') = $lower-path]
   return
     <xsl:template>
       { attribute match { merge-impl:convert-path-to-json($lower-path) }}
       <xsl:copy>
         {
           let $values := $path-props ! map:get(., 'values')
-          let $is-array := fn:count($values) gt 1 or (some $path-prop in $path-props satisfies $path-prop => map:get("retainArray"))
-          let $values := if ($is-array) then array-node {$values} else $values
+          let $values-is-array := $values instance of json:array or $values instance of array-node()
+          let $wrap-in-array := fn:not($values-is-array) and (fn:count($values) gt 1 or (some $path-prop in $path-props satisfies $path-prop => map:get("retainArray")))
+          let $values := if ($wrap-in-array) then array-node {$values} else $values
           return
             typeswitch($values)
+            (: Convert JSON nodes to the serialized JSON elements :)
             case array-node()|object-node() return
               xdmp:from-json($values)
+            (: JSON specific leaf nodes can't be added directly added to XSLT :)
+            case null-node()|number-node()|boolean-node() return
+              $values ! fn:data(.)
             default return
               $values
         }
@@ -1369,7 +1442,7 @@ declare function merge-impl:find-updates($updates as map:map, $path-properties a
     (: $path is a rooted path, but we need to apply the path under the level of the top property. Strip off the
       : top part of the path. :)
     let $namespace-map := map:get($path-prop, "nsMap")
-    let $lower-path := merge-impl:strip-top-path($path, ($wrapper-qnames, fn:node-name($prop)), $namespace-map)
+    let $lower-path := merge-impl:strip-top-path($path, ($wrapper-qnames, fn:node-name($prop)), $namespace-map, fn:false())
     let $target := xdmp:unpath($lower-path, $namespace-map, $prop)
     return
         if (fn:exists($target)) then (
@@ -1709,7 +1782,7 @@ declare function merge-impl:get-instance-props-by-path(
 )
 {
   (: Remove /es:envelope/es:instance/{top property name}, because we'll evaluate against the instance property :)
-  let $inst-path := merge-impl:strip-top-path($path-prop/@path, (), ())
+  let $inst-path := merge-impl:strip-top-path($path-prop/@path, (), (), fn:false())
   let $parts := fn:tokenize($inst-path, "/")
   (: We'll grab the node above our target so that we determine whether it's an array :)
   let $middle-path := fn:string-join($parts[fn:position() != fn:last()], "/")
