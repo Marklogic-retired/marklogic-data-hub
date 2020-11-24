@@ -189,9 +189,7 @@ as node()*
       map:get($transaction-map, "copy")
     )
   else
-    validate lax {
-      map:get($transaction-map, "copy")
-    },
+    mem-op:safe-copy(map:get($transaction-map, "copy")),
   map:clear($transaction-map)
 };
 

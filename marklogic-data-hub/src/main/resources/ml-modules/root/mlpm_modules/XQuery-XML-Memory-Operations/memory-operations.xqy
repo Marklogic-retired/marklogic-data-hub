@@ -1044,14 +1044,15 @@ function mem-op:weighed-operations(
   $operations[. eq "transform"]
 };
 
-declare %private
-function mem-op:safe-copy(
+declare function mem-op:safe-copy(
   $node as node())
 as node()? {
+  (: Initially trying to use lax validation for quick copying. See more on xdmp:copy-on-validate :)
   try {
     validate lax {
       $node
     }
+  (: if that fails due to validation issues, we'll resort to the regular node constructor approach. :)
   } catch * {
     mem-op:reconstruct-node($node,$node/*,(),fn:true())
   }
