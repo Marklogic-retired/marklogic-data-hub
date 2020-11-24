@@ -34,11 +34,15 @@ let mergedDoc =
     }
   ));
 
-[].concat(
-  test.assertEqual("another string", mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty1.toString()),
-  test.assertEqual("some string", mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty2.toString()),
-  test.assertEqual(2, mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3.length, `Expected LowestProperty3 to have 2 values. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3)}`),
-  test.assertEqual('another string 1', mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3[0].toString()),
-  test.assertEqual('another string 2', mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3[1].toString()),
-  test.assertEqual(123, mergedDoc.envelope.instance.TopProperty.EntityReference.PropValue.valueOf())
-)
+try {
+    [].concat(
+        test.assertEqual("another string", mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty1.toString(), `Expected LowestProperty1 to have value 'another string'. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty1)}`),
+        test.assertEqual("some string", mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty2.toString(), `Expected LowestProperty2 to have value 'some string'. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty2)}`),
+        test.assertEqual(2, mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3.length, `Expected LowestProperty3 to have 2 values. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3)}`),
+        test.assertEqual('another string 1', mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3[0].toString(), `Expected LowestProperty3 to have 'another string 1' as first value. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3)}`),
+        test.assertEqual('another string 2', mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3[1].toString(), `Expected LowestProperty3 to have 'another string 2' as second value. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.LowerProperty1.EvenLowerProperty.LowestProperty3)}`),
+        test.assertEqual(123, mergedDoc.envelope.instance.TopProperty.EntityReference.PropValue.valueOf(), `Expected PropValue to have value 123. Returned: ${JSON.stringify(mergedDoc.envelope.instance.TopProperty.EntityReference)}`)
+    )
+} catch (e) {
+    test.fail(`Unexpected missing values in merged document. Returned: ${JSON.stringify(mergedDoc)}. Exception: ${e.message}`);
+}
