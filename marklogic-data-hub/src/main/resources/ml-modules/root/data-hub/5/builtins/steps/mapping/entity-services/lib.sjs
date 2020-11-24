@@ -216,8 +216,8 @@ function getTargetEntity(targetEntityType) {
       entityModel = entityModel.toObject();
     }
     if(!entityModel) {
-      datahub.debug.log({message: 'Could not find a target entity: ' + targetEntityType, type: 'error'});
-      throw Error('Could not find a target entity: ' + targetEntityType);
+      datahub.debug.log({message: 'Could not find target entity type: ' + targetEntityType, type: 'error'});
+      throw Error('Could not find target entity type: ' + targetEntityType);
     }
     entitiesByTargetType[targetEntityType] = entityModel;
   }
