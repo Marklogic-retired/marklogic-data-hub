@@ -27,10 +27,9 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
     @BeforeEach
     void verifyMarkLogicSupportsRowID() {
         MarkLogicVersion version = new MarkLogicVersion(getHubClient().getManageClient());
-        Assumptions.assumeTrue(version.isNightly() ||
-            version.getMajor() > 10 || (version.getMajor() == 10 && version.getMinor() >= 500),
+        Assumptions.assumeTrue(version.getMajor() >= 10 &&
+            (version.isNightly() || version.getMinor() >= 500),
             "The Read capability depends on rowID support in Optic, which was added to ML in 10.0-5; version: "
-                + version.getVersionString()
         );
     }
 
