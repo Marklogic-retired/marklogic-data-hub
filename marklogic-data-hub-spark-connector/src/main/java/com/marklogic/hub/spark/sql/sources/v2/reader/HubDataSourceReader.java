@@ -28,7 +28,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
 
     private final Map<String, String> options;
     private final JsonNode initializationResponse;
-    private final StructType schema;
+    private final StructType sparkSchema;
 
     /**
      * The current default for partition count is based on the active SparkSession. The PartitionCountProvider is used
@@ -43,7 +43,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         validateOptions(this.options);
 
         this.initializationResponse = initializeRead(this.options);
-        this.schema = (StructType) StructType.fromJson(initializationResponse.get("schema").toString());
+        this.sparkSchema = (StructType) StructType.fromJson(initializationResponse.get("sparkSchema").toString());
     }
 
     /**
@@ -91,7 +91,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
 
         // The same all-lowercase style is used here for consistency with Spark, even though it's not consistent with
         // DHF code conventions
-        Stream.of("view", "schema", "sqlcondition", "selectedcolumns").forEach(key -> inputs.put(key, options.get(key)));
+        Stream.of("view", "schema", "sqlcondition", "selectedcolumns", "sparkschema").forEach(key -> inputs.put(key, options.get(key)));
         inputs.put("numpartitions", determineNumPartitions(options));
 
         if (options.containsKey("serializedplan")) {
@@ -139,7 +139,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
 
     @Override
     public StructType readSchema() {
-        return schema;
+        return sparkSchema;
     }
 }
 

@@ -20,11 +20,7 @@ public class ReadSimpleCustomersTest extends AbstractSparkReadTest {
 
     @Test
     void differentSqlConditionsAndPartitionCounts() {
-        runAsDataHubDeveloper();
-        loadSimpleCustomerTDE();
-
-        runAsDataHubOperator();
-        loadTenSimpleCustomers();
+        setupTenSimpleCustomers();
 
         verifyRowCountForSqlCondition(null, 10);
         verifyRowCountForSqlCondition("customerId > 3 and customerId < 7", 3);

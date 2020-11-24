@@ -33,6 +33,14 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
         );
     }
 
+    protected void setupTenSimpleCustomers() {
+        runAsDataHubDeveloper();
+        loadSimpleCustomerTDE();
+
+        runAsDataHubOperator();
+        loadTenSimpleCustomers();
+    }
+
     // TODO Will soon have a nice convenience method for doing this
     protected void loadTDE(String name) {
         String template;

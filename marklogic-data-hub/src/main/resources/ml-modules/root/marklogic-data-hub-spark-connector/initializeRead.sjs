@@ -18,48 +18,101 @@
 const op = require('/MarkLogic/optic');
 const readLib = require("readLib.sjs");
 
-function buildOriginalPlan(inputs, selectedColumns) {
+/**
+ * Build an Optic plan based on the user's inputs.
+ * 
+ * @param inputs
+ * @returns {*|void|string}
+ */
+function buildPlanBasedOnUserInputs(inputs) {
   if (inputs.serializedPlan) {
     return op.import(inputs.serializedPlan);
   }
 
   // The qualifier of "" will only work for non-joins; it's intended to provide simple column names for Spark
-  let originalPlan = op.fromView(inputs.schema, inputs.view, "");
+  let thePlan = op.fromView(inputs.schema, inputs.view, "");
   if (inputs.sqlcondition) {
-    originalPlan = originalPlan.where(op.sqlCondition(inputs.sqlcondition));
+    thePlan = thePlan.where(op.sqlCondition(inputs.sqlcondition));
   }
+
+  const selectedColumns = getSelectedColumnsFromUserInputs(inputs);
   if (selectedColumns) {
-    originalPlan = originalPlan.select(selectedColumns);
+    thePlan = thePlan.select(selectedColumns);
   }
-  return originalPlan;
+
+  return thePlan;
+}
+
+function getSelectedColumnsFromUserInputs(inputs) {
+  return inputs.selectedcolumns ? inputs.selectedcolumns.split(",") : null;
+}
+
+/**
+ * If sparkschema is not provided by the user, then a schema is dynamically generated based on the parameterized
+ * plan and any columns selected by the user.
+ *
+ * @param inputs
+ * @param parameterizedPlan
+ * @param partitions
+ * @returns {{type: string, fields: (*|*[])}|undefined}
+ */
+function buildSparkSchema(inputs, parameterizedPlan, partitions) {
+  if (inputs.sparkschema) {
+    return readCustomSparkSchemaAsJson(inputs);
+  }
+  let fields = [];
+  const someMatchingRowsExist = partitions.length > 0;
+  if (someMatchingRowsExist) {
+    fields = buildSchemaFieldsFromParameterizedPlan(parameterizedPlan, getSelectedColumnsFromUserInputs(inputs));
+  }
+  return {"type": "struct", fields};
+}
+
+/**
+ * Builds the array of Spark schema fields based on the parameterized plan and the optional array of selected columns.
+ *
+ * @param parameterizedPlan
+ * @param selectedColumns
+ * @returns {*}
+ */
+function buildSchemaFieldsFromParameterizedPlan(parameterizedPlan, selectedColumns) {
+  const schemaName = readLib.getSchemaName(parameterizedPlan);
+  const viewName = readLib.getViewName(parameterizedPlan);
+  return readLib.buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName, selectedColumns);
+}
+
+/**
+ * If user provides a custom Spark schema as a string, throw a nice error if it's not valid JSON.
+ *
+ * @param inputs
+ * @returns {*|this|this}
+ */
+function readCustomSparkSchemaAsJson(inputs) {
+  try {
+    return fn.head(xdmp.fromJsonString(inputs.sparkschema));
+  } catch (e) {
+    // Can't use http-utils.sjs as we want to support 5.2.x
+    fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, "Unable to read 'sparkschema' input as JSON; cause: " + e.message]));
+  }
 }
 
 
 var inputs = fn.head(xdmp.fromJSON(inputs));
 
-const selectedColumns = inputs.selectedcolumns ? inputs.selectedcolumns.split(",") : null;
-const originalPlan = buildOriginalPlan(inputs, selectedColumns);
+// Based on the user inputs, build an Optic plan
+const originalPlan = buildPlanBasedOnUserInputs(inputs);
 
-// If there are no matching rows, null will be returned
+// Now parameterize the plan so it can be used to query for maching rows in partitions.
+// Null may be returned here, which means there are no matching rows.
 const parameterizedPlan = readLib.parameterizePlan(originalPlan.export());
 
 // Determine the partitions, only including the ones that have matching rows in them
-const partitions = parameterizedPlan != null ?
-  readLib.makePartitionsWithRows(parameterizedPlan, inputs.numpartitions) : [];
+const partitions = parameterizedPlan != null ? readLib.makePartitionsWithRows(parameterizedPlan, inputs.numpartitions) : [];
 
-// If there are no partitions, no reason to build schema fields
-let schemaFields = [];
-if (partitions.length > 0) {
-  const schemaName = readLib.getSchemaName(parameterizedPlan);
-  const viewName = readLib.getViewName(parameterizedPlan);
-  schemaFields = readLib.buildSchemaFieldsBasedOnTdeColumns(schemaName, viewName, selectedColumns);
-}
+const sparkSchema = buildSparkSchema(inputs, parameterizedPlan, partitions);
 
 const response = {
-  "schema": {
-    "type": "struct",
-    "fields": schemaFields
-  },
+  sparkSchema,
   partitions,
   parameterizedPlan
 };
