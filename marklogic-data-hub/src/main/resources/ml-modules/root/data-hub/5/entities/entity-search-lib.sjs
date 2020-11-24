@@ -16,8 +16,10 @@
 'use strict';
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const consts = require('/data-hub/5/impl/consts.sjs');
 const es = require('/MarkLogic/entity-services/entity-services');
 const esInstance = require('/MarkLogic/entity-services/entity-services-instance');
+const Provenance = require("/data-hub/5/impl/prov.sjs");
 
 // TODO Will move this to /data-hub/5/entities soon
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
@@ -535,11 +537,112 @@ function isHubEntityInstance(docUri) {
   return isHubEntityInstance;
 }
 
+function getRecordHistory(docUri) {
+  const history = [];
+  const relations = {'associatedWith': '?', 'attributedTo': '?'};
+  const provenanceRecords = Provenance.findProvenance(docUri, relations);
+
+  if(provenanceRecords.length) {
+    const flowsMap = findFlowsAsMap();
+    const stepNames = getArtifactNamesFromUris(consts.STEP_COLLECTION, '/steps', '.step.json');
+    const stepDefinitionNames = getArtifactNamesFromUris(consts.STEP_DEFINITION_COLLECTION, '/step-definitions/', '.step.json');
+    provenanceRecords.forEach((provenanceRecord) => {
+      const historyObject = {};
+      const flowAndStepNames = findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, stepDefinitionNames, flowsMap);
+      historyObject["updatedTime"] = provenanceRecord["dateTime"] ? provenanceRecord["dateTime"] : undefined;
+      historyObject["flow"] = flowAndStepNames["flowName"] ? flowAndStepNames["flowName"] : undefined;
+      historyObject["step"] = flowAndStepNames["stepName"] ? flowAndStepNames["stepName"] : undefined;
+      historyObject["user"] = provenanceRecord["attributedTo"] ? provenanceRecord["attributedTo"] : undefined;
+      history.push(historyObject);
+    });
+  } else {
+    const metadata = getRecordMetadata(docUri);
+    if(Object.keys(metadata).length) {
+      history.push(getRecordMetadata(docUri));
+    }
+  }
+  return history;
+}
+
+function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, stepDefinitionNames, flowsMap) {
+  const flowAndStepNames = {};
+  const associatedWith = provenanceRecord.associatedWith.toObject();
+  const commonFlowNames = associatedWith.filter(artifactName => Object.keys(flowsMap).includes(artifactName.toString()));
+
+  commonFlowNames.forEach(artifactName => {
+    if(provenanceRecord["provID"].toString().includes(artifactName)) {
+      flowAndStepNames["flowName"] = artifactName;
+    }
+  });
+
+  for (let currentIndex=0; currentIndex<associatedWith.length-1; currentIndex++) {
+    if(associatedWith[currentIndex] === flowAndStepNames["flowName"]) {
+      let artifactTobeRemoved =  associatedWith[currentIndex];
+      associatedWith[currentIndex] = associatedWith[associatedWith.length-1];
+      associatedWith[associatedWith.length-1] = artifactTobeRemoved;
+      break;
+    }
+    associatedWith.pop();
+  }
+
+  const flow = flowsMap[flowAndStepNames["flowName"]];
+  const flowStepNames = Object.keys(flow["steps"]).map(step => flow["steps"][step].name);
+  const commonFlowStepNames = associatedWith.filter(artifactName => flowStepNames.includes(artifactName));
+  flowAndStepNames["stepName"] = commonFlowStepNames.length ? commonFlowStepNames[0] : undefined;
+  if(flowAndStepNames["stepName"]) {
+    return flowAndStepNames;
+  }
+
+  const commonStepNames = associatedWith.filter(artifactName => stepNames.includes(artifactName));
+  flowAndStepNames["stepName"] = commonStepNames.length ? commonStepNames[0] : undefined;
+  if(commonStepNames.length == 0) {
+    const commonStepDefinitionNames = associatedWith.filter(artifactName => stepDefinitionNames.includes(artifactName));
+    flowAndStepNames["stepName"] = commonStepDefinitionNames.length ? commonStepDefinitionNames[0] : undefined;
+  }
+
+  return flowAndStepNames;
+}
+
+function getRecordMetadata(docUri) {
+  const metadata = xdmp.documentGetMetadata(docUri);
+  const currentObject = {};
+  if(metadata) {
+    // datahubCreatedOn field captures the document/record last updated timestamp. It is not the document/record creation timestamp
+    currentObject.updatedTime = metadata.datahubCreatedOn ? metadata.datahubCreatedOn : undefined;
+    currentObject.flow = metadata.datahubCreatedInFlow ? metadata.datahubCreatedInFlow : undefined;
+    currentObject.step = metadata.datahubCreatedByStep ? metadata.datahubCreatedByStep : undefined;
+    currentObject.user = metadata.datahubCreatedBy ? metadata.datahubCreatedBy : undefined;
+  }
+  return currentObject;
+}
+
+function getArtifactNamesFromUris(collection, expectedPrefix, expectedSuffix) {
+  const artifactNames = [];
+  cts.uris(null, null, cts.collectionQuery(collection)).toArray().map(uri => {
+    uri = uri.toString();
+    if (uri.startsWith(expectedPrefix) && uri.endsWith(expectedSuffix)) {
+      artifactNames.push(uri.replace(expectedPrefix,'').replace(new RegExp(expectedSuffix + '$'), '').split("/").pop());
+    }
+  });
+  return artifactNames;
+}
+
+function findFlowsAsMap() {
+  const flows = {};
+  fn.collection(consts.FLOW_COLLECTION).toArray().forEach((flow) => {
+    flow = flow.toObject();
+    const flowName = flow["name"];
+    flows[flowName] = flow;
+  });
+  return flows;
+}
+
 module.exports = {
   addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
   buildPropertyMetadata,
   getEntityInstance,
   getEntitySources,
+  getRecordHistory,
   isHubEntityInstance
 };

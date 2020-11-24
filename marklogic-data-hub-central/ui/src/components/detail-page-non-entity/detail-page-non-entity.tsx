@@ -55,33 +55,69 @@ const DetailPageNonEntity = (props) => {
     const historyColumns = [
         {
           title: 'Time Stamp',
-          dataIndex: 'timeStamp',
+          dataIndex: 'updatedTime',
           width: '25%',
-          sorter: (a: any, b: any) => a.timeStamp?.localeCompare(b.timeStamp),
+          sorter: (a: any, b: any) => a.updatedTime?.localeCompare(b.updatedTime),
           render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
         },
         {
           title: 'Flow',
           dataIndex: 'flow',
           width: '25%',
+          onCell: () => {
+              return {
+                  style: {
+                     whiteSpace: 'nowrap',
+                      maxWidth: 140,
+                  }
+              };
+          },
           sorter: (a: any, b: any) => a.flow?.localeCompare(b.flow),
-          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
+          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+              key={text}
+              title={text}>
+              <div style={{ color: '#44499C', textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
+          </MLTooltip>
         },
         {
           title: 'Step',
           dataIndex: 'step',
           width: '25%',
+          onCell: () => {
+              return {
+                  style: {
+                      whiteSpace: 'nowrap',
+                      maxWidth: 140,
+                  }
+              };
+          },
           sorter: (a: any, b: any) => a.step?.localeCompare(b.step),
-          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
+          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+              key={text}
+              title={text}>
+              <div style={{ color: '#44499C', textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
+          </MLTooltip>
         },
         {
           title: 'User',
           dataIndex: 'user',
           width: '25%',
+          onCell: () => {
+              return {
+                  style: {
+                      whiteSpace: 'nowrap',
+                      maxWidth: 140,
+                  }
+              };
+          },
           sorter: (a: any, b: any) => a.user?.localeCompare(b.user),
-          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <span>{text}</span>
+          render: text => text === 'none' ? <span className={styles.noneValue}>{text}</span> : <MLTooltip
+              key={text}
+              title={text}>
+              <div style={{ textOverflow: 'ellipsis', overflow: 'hidden' }}>{text}</div>
+          </MLTooltip>
         }
-      ]
+      ];
 
     const handleMenuSelect = (event) => {
         setSelected(event.key);

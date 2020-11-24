@@ -1,0 +1,19 @@
+{
+  "name": "ingest-customer",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "ingest-customer-ingestion",
+  "description": "",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "collections": [
+    "customer-history-test"
+  ],
+  "inputFilePath": "input/json",
+  "outputURIReplacement": ".*customers,'/history-test'",
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-FINAL",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse",
+  "lastUpdated": "2020-06-04T23:01:35.540012Z"
+}

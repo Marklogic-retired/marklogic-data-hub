@@ -867,4 +867,25 @@ class Provenance {
   }
 }
 
-module.exports = Provenance
+module.exports.findProvenance = module.amp(
+    function findProvenance(docUri, relations) {
+      return xdmp.invokeFunction(function () {
+        const match = {
+          attributes: {
+            location: docUri
+          }
+        };
+        const output = {
+          dateTime: '?',
+          relations: relations
+        };
+        const kvPattern = ps.opTriplePattern(match, output);
+        return op.fromTriples(kvPattern)
+            .select(['provID', 'dateTime', 'attributedTo', op.as('associatedWithDetail', op.jsonString(op.col('associatedWith')))])
+            .groupBy(['provID', 'dateTime', 'attributedTo'], op.arrayAggregate('associatedWith', 'associatedWithDetail'))
+            .orderBy(op.desc('dateTime')).result();
+      }, { 'database' : xdmp.database(defaultConfig.JOBDATABASE)}).toArray();
+    }
+);
+
+module.exports.Provenance = Provenance;

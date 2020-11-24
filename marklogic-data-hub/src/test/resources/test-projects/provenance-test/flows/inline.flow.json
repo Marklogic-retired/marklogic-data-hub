@@ -1,0 +1,42 @@
+{
+  "name": "inline",
+  "steps": {
+    "1": {
+      "name": "ingest",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "collections": [
+          "customer-input"
+        ],
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      },
+      "fileLocations": {
+        "inputFilePath": "data/customers",
+        "inputFileType": "json",
+        "outputURIPrefix": "/customers/"
+      }
+    },
+    "2": {
+      "name": "map",
+      "stepDefinitionName": "entity-services-mapping",
+      "stepDefinitionType": "MAPPING",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('customer-input')",
+        "mapping": {
+          "name": "SimpleCustomerMapping",
+          "version": 1
+        },
+        "sourceDatabase": "data-hub-FINAL",
+        "collections": [
+          "mastering-flow-mapping-json"
+        ],
+        "outputFormat": "json",
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      }
+    }
+  }
+}
