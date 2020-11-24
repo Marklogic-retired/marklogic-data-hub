@@ -3,6 +3,7 @@ package com.marklogic.hub.mapping;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.dataservices.OutputEndpoint;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
@@ -299,6 +300,20 @@ public class MappingTest extends AbstractHubCoreTest {
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.READ));
         Assertions.assertTrue(permissions.get("data-hub-developer").contains(DocumentMetadataHandle.Capability.EXECUTE));
         Assertions.assertTrue(permissions.get("data-hub-common").contains(DocumentMetadataHandle.Capability.EXECUTE));
+    }
+
+    @Test
+    void invalidEntityReference() throws Exception {
+        Mapping testMap = createMappingFromConfig("testXPathFunctions.json");
+        testMap.setTargetEntityType("http://doesnt-exist");
+        mappingManager.saveMapping(testMap, false);
+
+        FailedRequestException ex = assertThrows(FailedRequestException.class, () -> installUserArtifacts());
+        assertEquals(400, ex.getServerStatusCode(), "A 400 should be returned since the user input is invalid");
+        assertTrue(ex.getMessage().contains("Unable to generate mapping transform for mapping at URI: /mappings/OrderJSON-OrderJSONMapping/OrderJSON-OrderJSONMapping-0.mapping.json"),
+            "To help the user debug the problem, the mapping URI should be in the error message so that the user " +
+                "knows where to look; message: " + ex.getMessage());
+        assertTrue(ex.getMessage().contains("Could not find target entity type: http://doesnt-exist"));
     }
 
     private Mapping createMappingFromConfig(String mapping) throws IOException {
