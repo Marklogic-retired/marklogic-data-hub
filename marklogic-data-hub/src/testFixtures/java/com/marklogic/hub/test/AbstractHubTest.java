@@ -99,14 +99,9 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
      * Convenience method for updating the username/password on all configuration objects in HubConfig - specifically,
      * the ones in manageConfig, adminConfig, and the restAdmin* and appServices* ones in appConfig.
      *
-     * @param mlUsername
-     * @param mlPassword
+     * @param props containing some of the original gradle props overriden with user's mlUsername and mlPassword
      */
-    protected void applyMlUsernameAndMlPassword(String mlUsername, String mlPassword) {
-        Properties props = new Properties();
-        props.setProperty("mlUsername", mlUsername);
-        props.setProperty("mlPassword", mlPassword);
-
+    protected void applyMlUsernameAndMlPassword(Properties props) {
         // Need to include this so that when running tests in parallel, this doesn't default back to localhost
         props.setProperty("mlHost", getHubConfig().getHost());
 

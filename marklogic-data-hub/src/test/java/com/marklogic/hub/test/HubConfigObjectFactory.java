@@ -93,4 +93,8 @@ public class HubConfigObjectFactory extends BasePooledObjectFactory<HubConfigImp
     public String[] getHosts() {
         return hosts;
     }
+
+    public Properties getGradleProperties(){
+        return gradleProperties;
+    }
 }
