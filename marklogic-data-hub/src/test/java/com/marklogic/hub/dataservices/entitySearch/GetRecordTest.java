@@ -108,11 +108,11 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("inline", history.get(0).get("flow").asText());
         assertEquals("map", history.get(0).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(0).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
         assertNotNull(history.get(1).get("updatedTime"));
         assertEquals("inline", history.get(1).get("flow").asText());
         assertEquals("ingest", history.get(1).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(1).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
 
         inputs.setFlowName("referenced");
         inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
@@ -122,16 +122,15 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
         response = (ObjectNode) service.getRecord("/history-test/customer1.json");
         history = (ArrayNode) response.get("history");
-        System.out.println(history);
         assertEquals(2, history.size());
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("referenced", history.get(0).get("flow").asText());
         assertEquals("map-customer", history.get(0).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(0).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
         assertNotNull(history.get(1).get("updatedTime"));
         assertEquals("referenced", history.get(1).get("flow").asText());
         assertEquals("ingest-customer", history.get(1).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(1).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
     }
 
     @Test
@@ -151,7 +150,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("inline", history.get(0).get("flow").asText());
         assertEquals("ingest", history.get(0).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(0).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
 
         inputs.setFlowName("referenced");
         inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
@@ -165,7 +164,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("referenced", history.get(0).get("flow").asText());
         assertEquals("ingest-customer", history.get(0).get("step").asText());
-        assertEquals("test-data-hub-developer", history.get(0).get("user").asText());
+        assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
     }
 
     @Test
