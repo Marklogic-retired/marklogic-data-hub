@@ -59,6 +59,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -183,8 +184,15 @@ public class HubTestBase extends AbstractHubTest {
     @Override
     protected HubClient runAsUser(String mlUsername, String mlPassword) {
         hubClient = null;
+        Properties props = hubConfigInterceptor.getHubConfigObjectFactory().getGradleProperties();
+        Properties newProps = new Properties();
 
-        applyMlUsernameAndMlPassword(mlUsername, mlPassword);
+        newProps.setProperty("mlUsername", mlUsername);
+        newProps.setProperty("mlPassword", mlPassword);
+        newProps.setProperty("hubDhs", props.getProperty("hubDhs") == null ? "false" : props.getProperty("hubDhs"));
+        newProps.setProperty("hubSsl", props.getProperty("hubSsl") == null ? "false" : props.getProperty("hubSsl"));
+
+        applyMlUsernameAndMlPassword(newProps);
 
         // Re-initializes the Manage API connection
         getHubConfig().getManageClient().setManageConfig(hubConfig.getManageConfig());
