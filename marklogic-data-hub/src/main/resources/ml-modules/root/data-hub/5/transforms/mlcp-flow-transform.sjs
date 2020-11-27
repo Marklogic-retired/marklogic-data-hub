@@ -77,6 +77,8 @@ function transform(content, context = {}) {
     }
     options.noWrite = true;
     options.fullOutput = true;
+    options.sourceName = params["sourceName"];
+    options.sourceType = params["sourceType"];
     let contentObjs = [];
     for (let uri in urisToContent) {
       if (urisToContent.hasOwnProperty(uri)) {
