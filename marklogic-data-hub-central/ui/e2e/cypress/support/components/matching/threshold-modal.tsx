@@ -4,6 +4,10 @@ class ThresholdModal {
     cy.get('#name-input').focus().type(str);
   }
 
+  clearThresholdName() {
+    cy.get('#name-input').clear();
+  }
+
   selectActionDropdown(action: string) {
     cy.findByLabelText('threshold-select').click();
     cy.findByLabelText(`${action}-option`).click();

@@ -58,7 +58,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
         }
       }
     }
-  }, [JSON.stringify(props.editThreshold)]);
+  }, [props.isVisible]);
 
   const handleInputChange = (event) => {
     switch(event.target.id) {
@@ -161,8 +161,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
             };
 
             let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+            let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold['index']];
             let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-            if (duplicateNames.length > 0) {
+
+            if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== editedThreshold.thresholdName) {
               nameErrorMessage = 'A duplicate threshold name exists';
             } else {
               updateThreshold(editedThreshold)
@@ -219,8 +221,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
               };
               
               let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+              let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold['index']];
               let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-              if (duplicateNames.length > 0) {
+              
+              if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== customEditedThreshold.thresholdName) {
                 nameErrorMessage = 'A duplicate threshold name exists';
               } else {
                 updateThreshold(customEditedThreshold)

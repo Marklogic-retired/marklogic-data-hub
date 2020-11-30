@@ -29,7 +29,7 @@ const MultiSlider = (props) => {
                     <div className="tooltip">
                     {options.map((opt, i) => (
                         <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
-                            <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type, index: id.split('-')[1]})}><span>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ''}</span>
+                            <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={()=> handleEdit({...options[0], sliderType: props.type, index: id.split('-')[1]})}><span aria-label={opt.type.length ? `${opt.prop}-${opt.type}`: `${opt.prop}` }>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ''}</span>
                             <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split('-')[1]})}><Icon type="close" /></div>
                         </div>
                     ))}
