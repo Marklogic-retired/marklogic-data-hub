@@ -90,6 +90,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       onSelect={props.onValueSelected}
       value={props.value}
       treeNodeLabelProp={props.value}
+      dropdownStyle={{zIndex: '1000'}}
     >
       {renderPropertyOptions}
     </MLTreeSelect>

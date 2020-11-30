@@ -81,8 +81,8 @@ describe('Matching', () => {
     thresholdModal.saveButton().click();
     multiSlider.getHandle('test').should('be.visible');
 
-    // delele threshold
-    multiSlider.getDeleteOption('test').should('be.visible').click({force: true});
+    // delete threshold
+    multiSlider.deleteOption('test');
     matchingStepDetail.getSliderDeleteText().should('be.visible');
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
     multiSlider.getHandle('test').should('not.exist');
@@ -95,8 +95,14 @@ describe('Matching', () => {
     rulesetSingleModal.saveButton().click();
     multiSlider.getHandle('customerId').should('be.visible');
 
+    //edit ruleset
+    multiSlider.editOption('customerId');
+    cy.contains('Edit Match Ruleset for Single Property');
+    rulesetSingleModal.selectMatchTypeDropdown('reduce');
+    rulesetSingleModal.saveButton().click();
+
     // delele ruleset
-    multiSlider.getDeleteOption('customerId').should('be.visible').click({force: true});
+    multiSlider.deleteOption('customerId');
     matchingStepDetail.getSliderDeleteText().should('be.visible');
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
     multiSlider.getHandle('customerId').should('not.exist');

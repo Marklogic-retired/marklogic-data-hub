@@ -43,6 +43,7 @@ const MatchingStepDetail: React.FC = () => {
   const [matchingStep, setMatchingStep] = useState<MatchingStep>(DEFAULT_MATCHING_STEP);
   const [deleteOptions, setDeleteOptions] = useState({});
   const [editThreshold, setEditThreshold] = useState({});
+  const [editRuleset, setEditRuleset] = useState({});
 
   const [showThresholdModal, toggleShowThresholdModal] = useState(false);
   const [showRulesetSingleModal, toggleShowRulesetSingleModal] = useState(false);
@@ -115,7 +116,7 @@ const MatchingStepDetail: React.FC = () => {
       let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
       let index = parseInt(options['index']);
 
-      stepArtifactRulesets[index]['weight'] = values[index]['value'].toFixed(1);
+      stepArtifactRulesets[index]['weight'] = parseFloat(values[index]['value'].toFixed(1));
       stepArtifact['matchRulesets'] = stepArtifactRulesets;
 
       await updateMatchingArtifact(stepArtifact);
@@ -131,7 +132,12 @@ const MatchingStepDetail: React.FC = () => {
       setEditThreshold({...editThreshold, index });
       toggleShowThresholdModal(true);
     } else if (options['sliderType'] === 'ruleSet') {
+      let updateStepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
+      let index = parseInt(options['index']);
+      let editMatchRuleset = updateStepArtifactRulesets[index];
 
+      setEditRuleset({...editMatchRuleset, index });
+      toggleShowRulesetSingleModal(true);
     }
   };
 
@@ -164,6 +170,11 @@ const MatchingStepDetail: React.FC = () => {
     }
   }
 
+  const addNewSingleRuleset = () => {
+    setEditRuleset({});
+    toggleShowRulesetSingleModal(true);
+  }
+
   const deleteModal = (
     <Modal
       width={500}
@@ -194,7 +205,7 @@ const MatchingStepDetail: React.FC = () => {
 
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
-      <MLMenu.MLItem aria-label="single-ruleset-menu" onClick={() => toggleShowRulesetSingleModal(true)}>Add ruleset for a single property</MLMenu.MLItem>
+      <MLMenu.MLItem aria-label="single-ruleset-menu" onClick={() => addNewSingleRuleset()}>Add ruleset for a single property</MLMenu.MLItem>
       <MLMenu.MLItem aria-label="multiple-ruleset-menu"  >Add ruleset for multiple properties</MLMenu.MLItem>
     </MLMenu>
   );
@@ -280,6 +291,7 @@ const MatchingStepDetail: React.FC = () => {
       </div>
       <RulesetSingleModal
         isVisible={showRulesetSingleModal}
+        editRuleset={editRuleset}
         toggleModal={toggleShowRulesetSingleModal}
       />
       <ThresholdModal

@@ -1,15 +1,19 @@
 class MultiSlider {
 
   getHandle(name: string) {
-    return cy.findByTestId(`${name}-active`)
+    return cy.findByTestId(`${name}-active`);
   }
 
-  getEditOption(name: string) {
-    return cy.findByTestId(`edit-${name}`);
+  editOption(name: string) {
+    cy.findByTestId(`edit-${name}`).should('be.visible').then($option => {
+      $option[0].click();
+    });
   }
 
-  getDeleteOption(name: string) {
-    return cy.findByTestId(`delete-${name}`);
+  deleteOption(name: string) {
+    cy.findByTestId(`delete-${name}`).should('be.visible').then($option => {
+      $option[0].click();
+    });;
   }
 }
 

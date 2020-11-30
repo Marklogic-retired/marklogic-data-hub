@@ -15,6 +15,7 @@ import { NewMatchTooltips } from '../../../../config/tooltips.config';
 import { updateMatchingArtifact } from '../../../../api/matching';
 
 type Props = {
+  editRuleset: any;
   isVisible: boolean;
   toggleModal: (isVisible: boolean) => void;
 };
@@ -46,7 +47,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const [selectedProperty, setSelectedProperty] = useState<string | undefined>(undefined);
   const [propertyTypeErrorMessage, setPropertyTypeErrorMessage] = useState('');
-  const [matchType, setMatchType] = useState('');
+  const [matchType, setMatchType] = useState<string | undefined>(undefined);
   const [matchTypeErrorMessage, setMatchTypeErrorMessage] = useState('');
 
   const [thesaurusValue, setThesaurusValue] = useState('');
@@ -57,7 +58,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const [dictionaryErrorMessage, setDictionaryErrorMessage] = useState('');
   const [distanceThresholdValue, setDistanceThresholdValue] = useState('');
   const [distanceThresholdErrorMessage, setDistanceThresholdErrorMessage] = useState('');
-  const [collationValue, setCollationValue] = useState('');
 
   const [uriValue, setUriValue] = useState('');
   const [uriErrorMessage, setUriErrorMessage] = useState('');
@@ -69,6 +69,28 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find( entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
+    }
+
+    if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
+      let editRuleset = props.editRuleset;
+
+      setSelectedProperty(editRuleset.name);
+      setMatchType(editRuleset['matchRules'][0]['matchType']);
+
+      if (editRuleset['matchRules'][0]['matchType'] === 'custom') {
+        setUriValue(editRuleset['matchRules'][0]['algorithmModulePath']);
+        setFunctionValue(editRuleset['matchRules'][0]['algorithmModuleFunction']);
+        setNamespaceValue(editRuleset['matchRules'][0]['algorithmModuleNamespace']);
+
+      } else if (editRuleset['matchRules'][0]['matchType'] === 'doubleMetaphone') {
+        setDictionaryValue(editRuleset['matchRules'][0]['options']['dictionaryURI']);
+        setDistanceThresholdValue(editRuleset['matchRules'][0]['options']['distanceThreshold']);
+
+      } else if (editRuleset['matchRules'][0]['matchType'] === 'synonym') {
+        setThesaurusValue(editRuleset['matchRules'][0]['options']['thesaurusURI']);
+        setFilterValue(editRuleset['matchRules'][0]['options']['filter']);
+
+      }
     }
   }, [props.isVisible]);
 
@@ -105,10 +127,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         setDistanceThresholdValue(event.target.value);
         break;
 
-      case 'collation-input':
-        setCollationValue(event.target.value);
-        break;
-
       case 'uri-input':
         if (event.target.value === '') {
           setUriErrorMessage('A URI is required');
@@ -143,7 +161,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const resetModal = () => {
     setSelectedProperty(undefined);
-    setMatchType('');
+    setMatchType(undefined);
     setPropertyTypeErrorMessage('');
     setMatchTypeErrorMessage('');
     setThesaurusValue('');
@@ -153,7 +171,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setDictionaryErrorMessage('');
     setDistanceThresholdValue('');
     setDistanceThresholdErrorMessage('');
-    setCollationValue('');
     setUriValue('');
     setUriErrorMessage('');
     setFunctionValue('');
@@ -169,7 +186,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     if (selectedProperty === '' || selectedProperty === undefined) {
       propertyErrorMessage = 'A property to match is required';
     } 
-    if (matchType === '') {
+    if (matchType === '' || matchType === undefined) {
       matchErrorMessage = 'A match type is required';
     }
     switch(matchType) {
@@ -187,15 +204,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   
           let matchRuleset: MatchRuleset = {
             name: propertyName,
-            weight: 0,
+            weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset['weight'] : 0,
             matchRules: [matchRule]
           };
   
           if (propertyErrorMessage === '' && matchErrorMessage === '') {
-            // TODO save step to backend
-            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-            newStepArtifact.matchRulesets.push(matchRuleset);
-            updateStepArtifact(newStepArtifact);
+            updateStepArtifact(matchRuleset);
             props.toggleModal(false);
             resetModal();
           }
@@ -215,22 +229,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             entityPropertyPath: propertyName,
             matchType: matchType,
             options: {
-              thesaurusUri: thesaurusValue,
+              thesaurusURI: thesaurusValue,
               filter: filterValue
             }
           };
   
           let matchRuleset: MatchRuleset = {
             name: propertyName,
-            weight: 0,
+            weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset['weight'] : 0,
             matchRules: [synonymMatchRule]
           };
   
           if (thesaurusErrorMessage === '' && propertyErrorMessage === '') {
-            // TODO save step to backend
-            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-            newStepArtifact.matchRulesets.push(matchRuleset);
-            updateStepArtifact(newStepArtifact);
+            updateStepArtifact(matchRuleset);
             props.toggleModal(false);
             resetModal();
           }
@@ -256,22 +267,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             entityPropertyPath: propertyName,
             matchType: matchType,
             options: {
-              dictionaryUri: dictionaryValue,
+              dictionaryURI: dictionaryValue,
               distanceThreshold: distanceThresholdValue
             }
           };
 
           let matchRuleset: MatchRuleset = {
             name: propertyName,
-            weight: 0,
+            weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset['weight'] : 0,
             matchRules: [doubleMetaphoneMatchRule]
           };
   
           if (propertyErrorMessage === '' && dictionaryUriErrorMessage === '' && distanceThresholdErrorMessage === '') {
-            // TODO save step to backend
-            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-            newStepArtifact.matchRulesets.push(matchRuleset);
-            updateStepArtifact(newStepArtifact);
+            updateStepArtifact(matchRuleset);
             props.toggleModal(false);
             resetModal();
           }
@@ -305,15 +313,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   
             let matchRuleset: MatchRuleset = {
               name: propertyName,
-              weight: 0,
+              weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset['weight'] : 0,
               matchRules: [customMatchRule]
             };
     
             if (propertyErrorMessage === '' && uriErrorMessage === '' && functionErrorMessage === '') {
-              // TODO save step to backend
-              let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-              newStepArtifact.matchRulesets.push(matchRuleset);
-              updateStepArtifact(newStepArtifact);
+              updateStepArtifact(matchRuleset);
               props.toggleModal(false);
               resetModal();
             }
@@ -339,9 +344,19 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setMatchType(value);  
   };
 
-  const updateStepArtifact = async (step: MatchingStep) => {
-    await updateMatchingArtifact(step);
-    updateActiveStepArtifact(step);
+  const updateStepArtifact = async (matchRuleset: MatchRuleset) => {
+    let updateStep: MatchingStep = curationOptions.activeStep.stepArtifact;
+
+    if(Object.keys(props.editRuleset).length !== 0 ) {
+      // edit match step
+      updateStep.matchRulesets[props.editRuleset['index']] = matchRuleset;
+    } else {
+      // add match step
+      updateStep.matchRulesets.push(matchRuleset);
+    }
+
+    await updateMatchingArtifact(updateStep);
+    updateActiveStepArtifact(updateStep);
   }
 
   const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
@@ -446,25 +461,6 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
           <Icon type="question-circle" className={styles.icon} theme="filled" />
         </MLTooltip>
       </Form.Item>
-      <Form.Item
-          className={styles.formItem}
-          label={<span>Collation:</span>}
-          colon={false}
-          labelAlign="left"
-        >
-          <Input
-            id="collation-input"
-            aria-label="collation-input"
-            placeholder="Enter URI for a collation"
-            className={styles.input}
-            value={collationValue}
-            onChange={handleInputChange}
-            onBlur={handleInputChange}
-          />
-          <MLTooltip title={NewMatchTooltips.collation}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
-      </Form.Item>
     </>
   );
 
@@ -542,7 +538,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const modalTitle = (
     <div>
-      <div style={{ fontSize: '18px'}}>Add Match Ruleset for Single Property</div>
+      <div style={{ fontSize: '18px'}}>{Object.keys(props.editRuleset).length !== 0 ? 'Edit Match Ruleset for Single Property' : 'Add Match Ruleset for Single Property'}</div>
       <div className={styles.modalTitleLegend}>
         <div className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
         <div className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured Type</div>
@@ -617,6 +613,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
             size="default" 
             placeholder="Select match type"
             onSelect={onMatchTypeSelect}
+            value={matchType}
           >
             {renderMatchOptions}
           </MLSelect>
