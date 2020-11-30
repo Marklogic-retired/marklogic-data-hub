@@ -124,7 +124,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const createMappingArtifact = async (payload) => {
         // Update local form state, then save to db
         setMapData(prevState => ({ ...prevState, ...payload}));
-        props.createMappingArtifact(payload);
+        await props.createMappingArtifact(payload);
     }
 
     const updateMappingArtifact = (payload) => {
@@ -566,7 +566,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const openSourceToEntityMapping = async (name,index) => {
             mapIndexLocal = index;
             setMapIndex(index);
-            let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId,name);
+            let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId, name);
             setSourceURI('');
             setDocUris([]);
             setSourceData([]);
@@ -581,7 +581,8 @@ const MappingCard: React.FC<Props> = (props) => {
 
     const openStepDetails = (name) => {
         // need step's name and array index to option mapping details
-        openSourceToEntityMapping(name, props.data.findIndex(el => el.name === name));
+        let index = (props.data.findIndex(el => el.name === name) !== -1 ? props.data.findIndex(el => el.name === name) : 0);
+        openSourceToEntityMapping(name, index);
     }
 
     function handleSelect(obj) {

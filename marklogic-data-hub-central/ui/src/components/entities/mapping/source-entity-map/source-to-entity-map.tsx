@@ -1185,7 +1185,7 @@ const SourceToEntityMap = (props) => {
             </div>
 
             <div className={styles.header}>
-                <span className={styles.headerTitle}>{props.mapName}</span>
+                <span className={styles.headerTitle} aria-label={`${props.mapName}-details-header`}>{props.mapName}</span>
                 {errorInSaving ? success() : <span className={styles.noMessage}></span>}
             </div>
             <br/>
