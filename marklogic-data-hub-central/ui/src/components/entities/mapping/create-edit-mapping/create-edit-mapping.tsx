@@ -11,6 +11,7 @@ interface Props {
   tabKey: string;
   openStepSettings: boolean;
   setOpenStepSettings: any;
+  openStepDetails: any;
   isEditing: boolean;
   canReadWrite: boolean;
   canReadOnly: boolean;
@@ -233,10 +234,12 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     if (event) event.preventDefault();
 
     setIsValid(true);
-
-    props.createMappingArtifact(getPayload());
+    
     props.setOpenStepSettings(false);
     props.resetTabs();
+    await props.createMappingArtifact(getPayload())
+    props.openStepDetails(mapName);
+    
   }
 
    const handleSearch = async (value: any) => {

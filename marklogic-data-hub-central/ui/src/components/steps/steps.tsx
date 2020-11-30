@@ -101,6 +101,7 @@ const Steps: React.FC<Props> = (props) => {
         isEditing={props.isEditing}
         createMappingArtifact={props.createStep}
         stepData={props.stepData}
+        openStepDetails= {props.openStepDetails}
         targetEntityType={props.targetEntityType}
         sourceDatabase={props.sourceDatabase}
     />);

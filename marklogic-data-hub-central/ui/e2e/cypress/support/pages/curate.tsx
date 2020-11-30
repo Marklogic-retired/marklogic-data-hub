@@ -30,6 +30,7 @@ class CuratePage {
     openSourceToEntityMap(entityTypeId: string, stepName: string) {
       this.getEntityMappingStep(entityTypeId, stepName).trigger('mouseover');
       cy.waitUntil(() => cy.findByTestId(`${stepName}-stepDetails`)).click();
+      this.verifyStepDetailsOpen(stepName);
     }
 
     addToNewFlow(entityTypeId: string, stepName: string) {
@@ -122,6 +123,11 @@ class CuratePage {
         // cy.get('#name').should('be.visible');
         cy.findByLabelText(`${stepName}-step-label`).should('be.visible');
         cy.findByText(stepName).should('be.visible');
+    }
+
+    verifyStepDetailsOpen(stepName: string) {
+        // cy.get('#name').should('be.visible');
+        cy.findByLabelText(`${stepName}-details-header`).should('be.visible');
     }
 
     saveEdit() {

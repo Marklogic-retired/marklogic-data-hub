@@ -86,6 +86,12 @@ describe('Mapping', () => {
     createEditMappingDialog.setSourceRadio('Query');
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
     createEditMappingDialog.saveButton().click(); 
+
+    //verify that step details automatically opens after step creation
+    curatePage.verifyStepDetailsOpen(mapStep);
+    //close modal
+    cy.get('body').type('{esc}');
+
     curatePage.verifyStepNameIsVisible(mapStep);
 
     // Open step settings and switch to Advanced tab
@@ -189,6 +195,12 @@ describe('Mapping', () => {
     createEditMappingDialog.setSourceRadio('Query');
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
     createEditMappingDialog.saveButton().click({force:true}); 
+
+    //verify that step details automatically opens after step creation
+    curatePage.verifyStepDetailsOpen(mapStep);
+    //close modal
+    cy.get('body').type('{esc}');
+
     curatePage.verifyStepNameIsVisible(mapStep);
 
     // Open step settings and switch to Advanced tab
