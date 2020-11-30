@@ -27,6 +27,7 @@ import com.marklogic.gradle.task.command.HubUpdateIndexesCommand
 import com.marklogic.gradle.task.databases.UpdateIndexesTask
 import com.marklogic.gradle.task.deploy.DeployAsDeveloperTask
 import com.marklogic.gradle.task.deploy.DeployAsSecurityAdminTask
+import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
@@ -231,6 +232,13 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubDeploySecurity", type: HubDeploySecurityTask)
         project.tasks.hubPreInstallCheck.getDependsOn().add("hubDeploySecurity")
         project.tasks.mlDeploy.getDependsOn().add("hubPreInstallCheck")
+
+        if(userCalledTask(project, "mlcleardatabase")){
+            def database = project.hasProperty("database") ? project.property("database") : null
+            if(hubConfig.getDbName(DatabaseKind.FINAL).equals(database) || hubConfig.getDbName(DatabaseKind.STAGING).equals(database)){
+                project.tasks.mlClearDatabase.finalizedBy("hubDeployArtifacts")
+            }
+        }
 
         logger.info("Finished initializing ml-data-hub\n")
     }
