@@ -2,7 +2,7 @@ class RulesetSingleModal {
 
   selectPropertyToMatch(property: string) {
     cy.get('span.ml-tree-select').trigger('mouseover').click();
-    cy.findByLabelText(`${property}-option`).should('be.visible').then($option => {
+    cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     })
   }

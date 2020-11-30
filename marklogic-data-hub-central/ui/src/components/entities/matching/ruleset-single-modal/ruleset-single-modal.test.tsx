@@ -26,6 +26,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={false}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -37,6 +38,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -63,6 +65,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={false}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -74,6 +77,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -104,6 +108,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -136,6 +141,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -148,8 +154,6 @@ describe('Matching Ruleset Single Modal component', () => {
     userEvent.click(screen.getByText('Double Metaphone'));
     userEvent.type(getByLabelText('dictionary-uri-input'), '/Users/jsmith/Documents/sample-data/123ABC');
     userEvent.type(getByLabelText('distance-threshold-input'), '100');
-    userEvent.type(getByLabelText('collation-input'), 'http://marklogic.com/collation/codepoint');
-
 
     userEvent.click(getByText('Save'));
     
@@ -170,6 +174,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -202,6 +207,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={false}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -213,6 +219,7 @@ describe('Matching Ruleset Single Modal component', () => {
         <RulesetSingleModal
           isVisible={true}
           toggleModal={toggleModalMock}
+          editRuleset={{}}
         />
       </CurationContext.Provider>
     );
@@ -227,5 +234,40 @@ describe('Matching Ruleset Single Modal component', () => {
     expect(toggleModalMock).toHaveBeenCalledTimes(0);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
+  });
+
+  it('can edit a double metaphone ruleset and change to an exact ruleset', async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({ status: 200, data: {} });
+    const toggleModalMock = jest.fn();
+    let editSynonym = {
+      ...customerMatchingStep.curationOptions.activeStep.stepArtifact.matchRulesets[0],
+      index: 0
+    }
+
+    const { queryByText, getByText } =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={editSynonym}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText('Edit Match Ruleset for Single Property')).toBeInTheDocument();
+    expect(getByText('name')).toBeInTheDocument();
+    expect(getByText('Double Metaphone')).toBeInTheDocument();
+
+    userEvent.click(screen.getByText('name'));
+    userEvent.click(screen.getByText('orders'));
+    userEvent.click(screen.getByText('Double Metaphone'));
+    userEvent.click(screen.getByText('Exact'));
+    userEvent.click(screen.getByText('Save'));
+
+    await wait(() => {
+      expect(mockMatchingUpdate).toHaveBeenCalledTimes(1);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
   });
 });
