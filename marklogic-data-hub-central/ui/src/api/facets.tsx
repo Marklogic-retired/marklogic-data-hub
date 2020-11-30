@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const rangeFacet = async (props, database) => {
   return await axios({
-    method: 'POST',
+    method: "POST",
     url: `/api/entitySearch/facet-values/range?database=${database}`,
     data: {
       "referenceType": props.referenceType,
@@ -13,9 +13,9 @@ export const rangeFacet = async (props, database) => {
 };
 
 export const stringSearch = async (data) => {
-    return await axios({
-        method: 'POST',
-        url: `/api/entitySearch/facet-values`,
-        data: data
-    });
+  return await axios({
+    method: "POST",
+    url: `/api/entitySearch/facet-values`,
+    data: data
+  });
 };

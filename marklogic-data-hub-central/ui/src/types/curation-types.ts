@@ -1,9 +1,9 @@
-import { Definition } from './modeling-types';
+import {Definition} from "./modeling-types";
 
 export enum StepType {
-  Mapping = 'mapping',
-  Matching = 'matching',
-  Merging = 'merging'
+  Mapping = "mapping",
+  Matching = "matching",
+  Merging = "merging"
 }
 
 export interface CurationContextInterface {

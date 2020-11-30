@@ -1,43 +1,42 @@
-import React, { useContext, useState } from 'react';
-import { Form, Icon, Input, Alert } from 'antd';
-import axios from 'axios';
-import styles from './login-form.module.scss';
-import { UserContext } from '../../util/user-context';
+import React, {useContext, useState} from "react";
+import {Form, Icon, Input, Alert} from "antd";
+import axios from "axios";
+import styles from "./login-form.module.scss";
+import {UserContext} from "../../util/user-context";
 
-import { MLButton } from '@marklogic/design-system';
+import {MLButton} from "@marklogic/design-system";
 
 const LoginForm: React.FC = () => {
 
-  const { loginAuthenticated } = useContext(UserContext);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const {loginAuthenticated} = useContext(UserContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [, setIsLoading] = useState(false);
   const [isUsernameTouched, setUsernameTouched] = useState(false);
   const [isPasswordTouched, setPasswordTouched] = useState(false);
-  const [message, setMessage] = useState({show: false, text: ''});
+  const [message, setMessage] = useState({show: false, text: ""});
 
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
     try {
       setIsLoading(true);
-      let response = await axios.post('/api/login', {
+      let response = await axios.post("/api/login", {
         username,
         password
       });
       if (response.status === 200) {
-        setMessage({show: false, text: ''});
+        setMessage({show: false, text: ""});
         setIsLoading(false);
-        localStorage.setItem('loginResp',JSON.stringify(response.data));
+        localStorage.setItem("loginResp", JSON.stringify(response.data));
         loginAuthenticated(username, response.data);
       }
     } catch (error) {
-      let message = 'Internal Server Error'; // Default on error
+      let message = "Internal Server Error"; // Default on error
       if (error.response.status === 401) {
-        message = 'The username and password combination is not recognized by MarkLogic.';
-      }
-      else if (error.response.status === 403) {
-        message = 'User does not have the required permissions to run Data Hub.';
+        message = "The username and password combination is not recognized by MarkLogic.";
+      } else if (error.response.status === 403) {
+        message = "User does not have the required permissions to run Data Hub.";
       }
       setIsLoading(false);
       setMessage({show: true, text: message});
@@ -46,22 +45,20 @@ const LoginForm: React.FC = () => {
 
   const handleChange = (event: { target: { id: string; value: React.SetStateAction<string>; }; }) => {
     //if empty, set validator. otherwise, set username
-    if (event.target.id === 'username') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "username") {
+      if (event.target.value === " ") {
         setUsernameTouched(false);
-      }
-      else {
+      } else {
         setUsernameTouched(true);
         setUsername(event.target.value);
       }
     }
 
     //if empty, set validator. otherwise, set password
-    if (event.target.id === 'password') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "password") {
+      if (event.target.value === " ") {
         setPasswordTouched(false);
-      }
-      else {
+      } else {
         setPasswordTouched(true);
         setPassword(event.target.value);
       }
@@ -70,44 +67,44 @@ const LoginForm: React.FC = () => {
 
   return (
     <>
-    <div className={styles.unauthorized} style={message.show ? {display: 'block'} : {display: 'none'}}>
-      <Alert message={message.text} type='error' showIcon />
-    </div>
+      <div className={styles.unauthorized} style={message.show ? {display: "block"} : {display: "none"}}>
+        <Alert message={message.text} type="error" showIcon />
+      </div>
 
-    <div className={styles.loginForm}>
-      <Form onSubmit={handleSubmit} className={styles.loginForm}>
+      <div className={styles.loginForm}>
+        <Form onSubmit={handleSubmit} className={styles.loginForm}>
 
-        <Form.Item
-          className={styles.username}
-          hasFeedback
-          validateStatus={(username || !isUsernameTouched) ? '' : 'error'}
-          help={(username || !isUsernameTouched) ? '' : 'Username is required'}
-        >
-          <Input
-            id="username"
-            prefix={<Icon type="user" className={styles.usernameIcon} />}
-            placeholder="Enter username"
-            value={username}
-            onChange={handleChange}
-            onBlur={handleChange}
-          />
-        </Form.Item>
-        <Form.Item
-          className={styles.password}
-          hasFeedback
-          validateStatus={(password || !isPasswordTouched) ? '' : 'error'}
-          help={(password || !isPasswordTouched) ? '' : 'Password is required'}
-        >
-          <Input
-            id="password"
-            prefix={<Icon type="lock" className={styles.passwordIcon} />}
-            placeholder="Enter password"
-            type="password"
-            value={password}
-            onChange={handleChange}
-            onBlur={handleChange}
-          />
-        </Form.Item>
+          <Form.Item
+            className={styles.username}
+            hasFeedback
+            validateStatus={(username || !isUsernameTouched) ? "" : "error"}
+            help={(username || !isUsernameTouched) ? "" : "Username is required"}
+          >
+            <Input
+              id="username"
+              prefix={<Icon type="user" className={styles.usernameIcon} />}
+              placeholder="Enter username"
+              value={username}
+              onChange={handleChange}
+              onBlur={handleChange}
+            />
+          </Form.Item>
+          <Form.Item
+            className={styles.password}
+            hasFeedback
+            validateStatus={(password || !isPasswordTouched) ? "" : "error"}
+            help={(password || !isPasswordTouched) ? "" : "Password is required"}
+          >
+            <Input
+              id="password"
+              prefix={<Icon type="lock" className={styles.passwordIcon} />}
+              placeholder="Enter password"
+              type="password"
+              value={password}
+              onChange={handleChange}
+              onBlur={handleChange}
+            />
+          </Form.Item>
           { /* <div className={styles.help}>
             <span className={styles.remember}>
               <Checkbox className={styles.rememberCheck}>Remember me</Checkbox>
@@ -125,9 +122,9 @@ const LoginForm: React.FC = () => {
             >
               Log In
             </MLButton>
-        </Form.Item>
-      </Form>
-    </div>
+          </Form.Item>
+        </Form>
+      </div>
     </>
   );
 };

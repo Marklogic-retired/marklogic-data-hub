@@ -1,20 +1,20 @@
 class ProjectInfo {
 
-    getAboutProject(){
-        return cy.get('#service-name');
-    }
+  getAboutProject() {
+    return cy.get("#service-name");
+  }
 
-    getDownloadButton() {
-        return cy.findByLabelText('Download');
-    }
+  getDownloadButton() {
+    return cy.findByLabelText("Download");
+  }
 
-    getClearButton() {
-        return cy.findByLabelText('Clear');
-    }
+  getClearButton() {
+    return cy.findByLabelText("Clear");
+  }
 
-    waitForInfoPageToLoad() {
-        cy.waitUntil(() => cy.findByText('Download Configuration Files').should('be.visible'));
-    }
+  waitForInfoPageToLoad() {
+    cy.waitUntil(() => cy.findByText("Download Configuration Files").should("be.visible"));
+  }
 }
 
 const projectInfo = new ProjectInfo();

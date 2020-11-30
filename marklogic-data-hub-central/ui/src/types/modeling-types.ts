@@ -69,9 +69,9 @@ export interface PropertyOptions {
 }
 
 export enum PropertyType {
-  Basic = 'basic',
-  Structured = 'structured',
-  RelatedEntity = 'relatedEntity'
+  Basic = "basic",
+  Structured = "structured",
+  RelatedEntity = "relatedEntity"
 }
 
 export interface EntityModified {

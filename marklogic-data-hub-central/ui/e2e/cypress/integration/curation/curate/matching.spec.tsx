@@ -1,24 +1,23 @@
-import 'cypress-wait-until';
-import { Application } from "../../../support/application.config";
+import "cypress-wait-until";
+import {Application} from "../../../support/application.config";
 import {
   toolbar,
-  confirmationModal,
   createEditStepDialog,
   multiSlider,
   confirmYesNo
-} from '../../../support/components/common/index';
-import { matchingStepDetail, rulesetSingleModal, thresholdModal } from '../../../support/components/matching/index';
+} from "../../../support/components/common/index";
+import {matchingStepDetail, rulesetSingleModal, thresholdModal} from "../../../support/components/matching/index";
 import curatePage from "../../../support/pages/curate";
 
 
-describe('Matching', () => {
+describe("Matching", () => {
 
   beforeEach(() => {
-    cy.visit('/');
+    cy.visit("/");
     cy.contains(Application.title);
-    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer","hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel('Customer').should('be.visible'));
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
   });
 
   afterEach(() => {
@@ -27,80 +26,80 @@ describe('Matching', () => {
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
-    cy.deleteSteps('matching', 'matchCustomerTest');
+    cy.deleteSteps("matching", "matchCustomerTest");
   });
 
-  it('can create/edit a match step within the match tab of curate tile, can create match thresholds/rulesets, can delete match thresholds/rulesets', () => {
-    const matchStep = 'matchCustomerTest';
+  it("can create/edit a match step within the match tab of curate tile, can create match thresholds/rulesets, can delete match thresholds/rulesets", () => {
+    const matchStep = "matchCustomerTest";
 
     //Navigating to match tab
-    curatePage.toggleEntityTypeId('Customer');
-    curatePage.selectMatchTab('Customer');
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMatchTab("Customer");
 
     //Creating a new match step
     cy.waitUntil(() => curatePage.addNewStep()).click();
 
     createEditStepDialog.stepNameInput().type(matchStep);
-    createEditStepDialog.stepDescriptionInput().type('match customer step example');
-    createEditStepDialog.setSourceRadio('Query');
+    createEditStepDialog.stepDescriptionInput().type("match customer step example");
+    createEditStepDialog.setSourceRadio("Query");
     createEditStepDialog.setQueryInput(`cts.collectionQuery(['${matchStep}'])`);
-    createEditStepDialog.saveButton('matching').click();
+    createEditStepDialog.saveButton("matching").click();
     curatePage.verifyStepNameIsVisible(matchStep);
 
     //Editing the match step
     curatePage.editStep(matchStep).click();
 
-    createEditStepDialog.stepNameInput().should('be.disabled');
-    createEditStepDialog.stepDescriptionInput().should('have.value', 'match customer step example');
+    createEditStepDialog.stepNameInput().should("be.disabled");
+    createEditStepDialog.stepDescriptionInput().should("have.value", "match customer step example");
 
     //Editing the value to see if the confirmation dialogs are working fine.
-    createEditStepDialog.stepDescriptionInput().clear().type('UPDATED - match customer step example');
-    createEditStepDialog.cancelButton('matching').click();
+    createEditStepDialog.stepDescriptionInput().clear().type("UPDATED - match customer step example");
+    createEditStepDialog.cancelButton("matching").click();
 
-    confirmYesNo.getDiscardText().should('be.visible');
+    confirmYesNo.getDiscardText().should("be.visible");
     confirmYesNo.getYesButton().click();
 
     //Check if the changes are reverted back when discarded all changes.
     curatePage.editStep(matchStep).click();
-    createEditStepDialog.stepDescriptionInput().should('not.have.value', 'UPDATED - match customer step example');
-    createEditStepDialog.cancelButton('matching').click();
+    createEditStepDialog.stepDescriptionInput().should("not.have.value", "UPDATED - match customer step example");
+    createEditStepDialog.cancelButton("matching").click();
 
     //open matching step details
     curatePage.openStepDetails(matchStep);
-    cy.contains('The Match step defines criteria for determining whether the values from entiies match, and the action to take based on how close of a match they are.');
-    matchingStepDetail.showThresholdTextMore().should('not.be.visible');
-    matchingStepDetail.showThresholdTextLess().should('be.visible');
-    matchingStepDetail.showRulesetTextMore().should('not.be.visible');
-    matchingStepDetail.showRulesetTextLess().should('be.visible');
+    cy.contains("The Match step defines criteria for determining whether the values from entiies match, and the action to take based on how close of a match they are.");
+    matchingStepDetail.showThresholdTextMore().should("not.be.visible");
+    matchingStepDetail.showThresholdTextLess().should("be.visible");
+    matchingStepDetail.showRulesetTextMore().should("not.be.visible");
+    matchingStepDetail.showRulesetTextLess().should("be.visible");
 
     //add threshold
     matchingStepDetail.addThresholdButton().click();
-    thresholdModal.setThresholdName('test');
-    thresholdModal.selectActionDropdown('Merge');
+    thresholdModal.setThresholdName("test");
+    thresholdModal.selectActionDropdown("Merge");
     thresholdModal.saveButton().click();
-    multiSlider.getHandleNameAndType('test', 'merge').should('be.visible');
+    multiSlider.getHandleNameAndType("test", "merge").should("be.visible");
 
     //edit threshold
-    multiSlider.editOption('test');
-    thresholdModal.selectActionDropdown('Notify');
+    multiSlider.editOption("test");
+    thresholdModal.selectActionDropdown("Notify");
     thresholdModal.saveButton().click();
-    multiSlider.getHandleNameAndType('test', 'notify').should('be.visible');
+    multiSlider.getHandleNameAndType("test", "notify").should("be.visible");
 
-    multiSlider.editOption('test');
+    multiSlider.editOption("test");
     thresholdModal.clearThresholdName();
-    thresholdModal.setThresholdName('testing');
+    thresholdModal.setThresholdName("testing");
     thresholdModal.saveButton().click();
-    multiSlider.getHandleNameAndType('testing', 'notify').should('be.visible');
+    multiSlider.getHandleNameAndType("testing", "notify").should("be.visible");
 
     //add ruleset
     matchingStepDetail.addNewRulesetSingle();
-    cy.contains('Add Match Ruleset for Single Property');
-    rulesetSingleModal.selectPropertyToMatch('customerId');
-    rulesetSingleModal.selectMatchTypeDropdown('exact');
+    cy.contains("Add Match Ruleset for Single Property");
+    rulesetSingleModal.selectPropertyToMatch("customerId");
+    rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
-    multiSlider.getHandleNameAndType('customerId', 'exact').should('be.visible');
-    multiSlider.getHandleName('customerId').should('be.visible');
-    
+    multiSlider.getHandleNameAndType("customerId", "exact").should("be.visible");
+    multiSlider.getHandleName("customerId").should("be.visible");
+
     //TODO - When we work on the spike story to update multi-slider componenens using cypress
     // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-0');
     // multiSlider.getHandleName('customerId').invoke('attr', 'style', 'left: 20%').then(attr => {
@@ -111,11 +110,11 @@ describe('Matching', () => {
 
     //add another ruleset
     matchingStepDetail.addNewRulesetSingle();
-    cy.contains('Add Match Ruleset for Single Property');
-    rulesetSingleModal.selectPropertyToMatch('email');
-    rulesetSingleModal.selectMatchTypeDropdown('exact');
+    cy.contains("Add Match Ruleset for Single Property");
+    rulesetSingleModal.selectPropertyToMatch("email");
+    rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
-    multiSlider.getHandleName('email').should('be.visible');
+    multiSlider.getHandleName("email").should("be.visible");
 
     // multiSlider.getRulesetSliderRail().invoke('attr','activehandleid','$$-1');
     // multiSlider.getHandleName('email').invoke('attr', 'style', 'left: 30%').then(attr => {
@@ -124,32 +123,32 @@ describe('Matching', () => {
     // });
 
     // delele a ruleset
-    multiSlider.deleteOption('email');
-    matchingStepDetail.getSliderDeleteText().should('be.visible');
+    multiSlider.deleteOption("email");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandleName('email').should('not.exist');
+    multiSlider.getHandleName("email").should("not.exist");
 
     //the possible combination related to email ruleset should not exist anymore
-    matchingStepDetail.getPossibleMatchCombinationRuleset('testing','email').should('not.exist');
+    matchingStepDetail.getPossibleMatchCombinationRuleset("testing", "email").should("not.exist");
 
     // delete threshold
-    multiSlider.deleteOption('testing');
-    matchingStepDetail.getSliderDeleteText().should('be.visible');
+    multiSlider.deleteOption("testing");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandleName('testing').should('not.exist');
+    multiSlider.getHandleName("testing").should("not.exist");
 
     //edit ruleset
-    multiSlider.editOption('customerId');
-    cy.contains('Edit Match Ruleset for Single Property');
-    rulesetSingleModal.selectMatchTypeDropdown('reduce');
+    multiSlider.editOption("customerId");
+    cy.contains("Edit Match Ruleset for Single Property");
+    rulesetSingleModal.selectMatchTypeDropdown("reduce");
     rulesetSingleModal.saveButton().click();
 
     // delele ruleset
-    multiSlider.deleteOption('customerId');
-    matchingStepDetail.getSliderDeleteText().should('be.visible');
+    multiSlider.deleteOption("customerId");
+    matchingStepDetail.getSliderDeleteText().should("be.visible");
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandleName('customerId').should('not.exist');
+    multiSlider.getHandleName("customerId").should("not.exist");
 
-    matchingStepDetail.getDefaultTextNoMatchedCombinations().should('be.visible');
+    matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
   });
 });

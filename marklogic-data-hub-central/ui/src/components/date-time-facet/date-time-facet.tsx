@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { DatePicker } from 'antd';
-import { SearchContext } from '../../util/search-context';
-import moment from 'moment';
-import styles from './date-time-facet.module.scss';
+import React, {useState, useEffect, useContext} from "react";
+import {DatePicker} from "antd";
+import {SearchContext} from "../../util/search-context";
+import moment from "moment";
+import styles from "./date-time-facet.module.scss";
 
-const { RangePicker } = DatePicker;
+const {RangePicker} = DatePicker;
 
 interface Props {
   name: any
@@ -26,7 +26,7 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     let isNested = props.constraint === props.propertyPath ? false : true;
     if (e.length) {
       props.onChange(props.datatype, props.constraint, e, isNested);
-      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format('YYYY-MM-DDTHH:mm:ss')), moment(e[1].format('YYYY-MM-DDTHH:mm:ss'))]);
+      (e[0] && e[1]) && setDateTimePickerValue([moment(e[0].format("YYYY-MM-DDTHH:mm:ss")), moment(e[1].format("YYYY-MM-DDTHH:mm:ss"))]);
     } else {
       props.onChange(props.datatype, props.constraint, e, isNested);
     }
@@ -45,18 +45,17 @@ const DateTimeFacet: React.FC<Props> = (props) => {
           setDateTimePickerValue([moment(greyedOptions.selectedFacets[facet].rangeValues.lowerBound), moment(greyedOptions.selectedFacets[facet].rangeValues.upperBound)]);
         }
       }
-    }
-    else {
+    } else {
       setDateTimePickerValue([null, null]);
     }
   }, [searchOptions, greyedOptions]);
 
   const formatTitle = () => {
-    let objects = props.name.split('.');
+    let objects = props.name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return first + '. ... .' + last;
+      return first + ". ... ." + last;
     }
     return props.name;
   };
@@ -65,9 +64,9 @@ const DateTimeFacet: React.FC<Props> = (props) => {
     <div className={styles.name} data-testid="facet-date-time-picker">
       <p className={styles.facetName}>{formatTitle()}</p>
       <RangePicker
-        showTime={{ format: 'HH:mm:ss' }}
+        showTime={{format: "HH:mm:ss"}}
         format="YYYY-MM-DD HH:mm:ss"
-        placeholder={['Start Date Time', 'End Date Time']}
+        placeholder={["Start Date Time", "End Date Time"]}
         onChange={onChange}
         //onOk={onOk}
         value={dateTimePickerValue}

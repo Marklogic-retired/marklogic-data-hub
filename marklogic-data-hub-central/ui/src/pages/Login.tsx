@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './Login.module.scss';
-import LoginForm from '../components/login-form/login-form';
+import React from "react";
+import styles from "./Login.module.scss";
+import LoginForm from "../components/login-form/login-form";
 const Login: React.FC = () => {
 
   return (

@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './NoResponse.module.scss';
+import React from "react";
+import styles from "./NoResponse.module.scss";
 
 const NoResponse: React.FC = () => {
 

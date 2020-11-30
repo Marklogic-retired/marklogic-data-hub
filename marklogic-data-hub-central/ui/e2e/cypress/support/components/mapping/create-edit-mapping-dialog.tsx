@@ -1,18 +1,18 @@
 class CreateEditMappingDialog {
   getMappingNameInput() {
-    return cy.get('#name');
+    return cy.get("#name");
   }
 
   setMappingName(str: string) {
-    cy.get('#name').type(str);
+    cy.get("#name").type(str);
   }
 
   clearMappingName() {
-    cy.get('#name').focus().clear();
+    cy.get("#name").focus().clear();
   }
 
   setMappingDescription(str: string) {
-    cy.get('#description').type(str);
+    cy.get("#description").type(str);
   }
 
   /**
@@ -30,7 +30,7 @@ class CreateEditMappingDialog {
    * @example 'order-ingest'
    */
   setCollectionInput(str: string) {
-    cy.get('#collList').type(str);
+    cy.get("#collList").type(str);
   }
 
   /**
@@ -39,7 +39,7 @@ class CreateEditMappingDialog {
    * @example cts.collectionQuery('order-input')
    */
   setQueryInput(str: string) {
-    cy.get('#srcQuery').type(str);
+    cy.get("#srcQuery").type(str);
   }
 
   stepDetailsLink() {
@@ -47,11 +47,11 @@ class CreateEditMappingDialog {
   }
 
   saveButton() {
-    return cy.findByTestId('mapping-dialog-save');
+    return cy.findByTestId("mapping-dialog-save");
   }
 
   cancelButton() {
-    return cy.findByTestId('mapping-dialog-cancel');
+    return cy.findByTestId("mapping-dialog-cancel");
   }
 }
 

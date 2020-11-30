@@ -1,7 +1,7 @@
-import Curate from '../../../pages/Curate';
+import Curate from "../../../pages/Curate";
 import Load from "../../../pages/Load";
 import Run from "../../../pages/Run";
-import React from 'react';
+import React from "react";
 
 export const setViewLoadFunction = {
   searchOptions: {
@@ -11,15 +11,15 @@ export const setViewLoadFunction = {
 };
 
 export const setViewCurateFunction = {
-    searchOptions: {
-      view: <Curate/>
+  searchOptions: {
+    view: <Curate/>
   },
   setView: jest.fn()
 };
 
 export const setViewRunFunction = {
-    searchOptions: {
-      view: <Run/>
+  searchOptions: {
+    view: <Run/>
   },
   setView: jest.fn()
 };

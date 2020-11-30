@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { MLRadio } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faTable } from '@fortawesome/free-solid-svg-icons';
-import './switch-view.scss';
+import React, {useState} from "react";
+import {MLRadio} from "@marklogic/design-system";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faThLarge, faTable} from "@fortawesome/free-solid-svg-icons";
+import "./switch-view.scss";
 
 interface Props {
     handleSelection: any,
@@ -10,71 +10,68 @@ interface Props {
 }
 
 const SwitchView: React.FC<Props> = (props) => {
-    let [view, setView] = useState(props.defaultView);
+  let [view, setView] = useState(props.defaultView);
 
-    const onChange = (val) => {
-        setView(val);
-        props.handleSelection(val);
-    };
+  const onChange = (val) => {
+    setView(val);
+    props.handleSelection(val);
+  };
 
-    const radioKeyDownHandler = (event) => {
-        if (event.key === 'Enter') {
-            switch (view) {
-                case 'list':
-                    onChange('card');
-                    break;
-                case 'card':
-                    onChange('list');
-                    break;
-                default:
-                    // should not ever reach this code
-                    // do nothing
-                    break;
-            }
-        }
+  const radioKeyDownHandler = (event) => {
+    if (event.key === "Enter") {
+      switch (view) {
+      case "list":
+        onChange("card");
+        break;
+      case "card":
+        onChange("list");
+        break;
+      default:
+        // should not ever reach this code
+        // do nothing
+        break;
+      }
+    }
 
-        if (event.key == 'ArrowLeft') {
-            // stops default react radio button controls
-            event.preventDefault();
+    if (event.key === "ArrowLeft") {
+      // stops default react radio button controls
+      event.preventDefault();
 
-            if (view === 'list')
-                onChange('card');
-        }
+      if (view === "list") { onChange("card"); }
+    }
 
-        if (event.key == 'ArrowRight') {
-            event.preventDefault();
-            
-            if (view === 'card')
-                onChange('list');
-        }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
 
-        // disable up and down arrow default controls on radio buttons
-        if (event.key == 'ArrowUp' || event.key == 'ArrowDown')
-            event.preventDefault();
-    };
+      if (view === "card") { onChange("list"); }
+    }
 
-    return (
-        <div id="switch-view" aria-label="switch-view" onKeyDown={radioKeyDownHandler}>
-            <MLRadio.MLGroup
-                buttonStyle="outline"
-                className={'radioGroupView'}
-                defaultValue={view}
-                name="radiogroup"
-                onChange={e => onChange(e.target.value)}
-                size="large"
-                style={{ color: '#999' }}
-                tabIndex={0}
-            >
-                <MLRadio.MLButton aria-label="switch-view-card" value={'card'} checked={view === 'card'}>
-                    <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
-                </MLRadio.MLButton>
-                <MLRadio.MLButton aria-label="switch-view-list" value={'list'} checked={view === 'list'}>
-                    <i>{<FontAwesomeIcon icon={faTable} />}</i>
-                </MLRadio.MLButton>
-            </MLRadio.MLGroup>
-        </div>
+    // disable up and down arrow default controls on radio buttons
+    if (event.key === "ArrowUp" || event.key === "ArrowDown") { event.preventDefault(); }
+  };
 
-    );
+  return (
+    <div id="switch-view" aria-label="switch-view" onKeyDown={radioKeyDownHandler}>
+      <MLRadio.MLGroup
+        buttonStyle="outline"
+        className={"radioGroupView"}
+        defaultValue={view}
+        name="radiogroup"
+        onChange={e => onChange(e.target.value)}
+        size="large"
+        style={{color: "#999"}}
+        tabIndex={0}
+      >
+        <MLRadio.MLButton aria-label="switch-view-card" value={"card"} checked={view === "card"}>
+          <i>{<FontAwesomeIcon icon={faThLarge} />}</i>
+        </MLRadio.MLButton>
+        <MLRadio.MLButton aria-label="switch-view-list" value={"list"} checked={view === "list"}>
+          <i>{<FontAwesomeIcon icon={faTable} />}</i>
+        </MLRadio.MLButton>
+      </MLRadio.MLGroup>
+    </div>
+
+  );
 };
 
 export default SwitchView;

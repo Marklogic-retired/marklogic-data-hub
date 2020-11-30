@@ -1,15 +1,15 @@
-import { UserContextInterface, IUserContextInterface } from '../../types/user-types';
+import {UserContextInterface, IUserContextInterface} from "../../types/user-types";
 import {MAX_SESSION_TIME} from "../../config/application.config";
 
 const defaultUserData: UserContextInterface = {
-  name: '',
+  name: "",
   authenticated: false,
-  error : {
-    title: '',
-    message: '',
-    type: ''
+  error: {
+    title: "",
+    message: "",
+    type: ""
   },
-  pageRoute: '/',
+  pageRoute: "/",
   maxSessionTime: MAX_SESSION_TIME
 };
 
@@ -30,26 +30,26 @@ export const userNotAuthenticated: IUserContextInterface = defaultUserContext;
 
 export const userAuthenticated: IUserContextInterface = Object.assign(defaultUserContext, {
   user: {
-    name: '',
+    name: "",
     authenticated: true,
-    error : {
-      type: ''
+    error: {
+      type: ""
     },
-    pageRoute: '/tiles',
+    pageRoute: "/tiles",
     maxSessionTime: MAX_SESSION_TIME
   }
 });
 
 export const userSessionWarning: IUserContextInterface = {
   user: {
-    name: '',
+    name: "",
     authenticated: true,
-    error : {
-      title: '',
-      message: '',
-      type: ''
+    error: {
+      title: "",
+      message: "",
+      type: ""
     },
-    pageRoute: '/',
+    pageRoute: "/",
     maxSessionTime: MAX_SESSION_TIME
   },
   loginAuthenticated: jest.fn(),
@@ -65,14 +65,14 @@ export const userSessionWarning: IUserContextInterface = {
 
 export const userModalError: IUserContextInterface = {
   user: {
-    name: '',
+    name: "",
     authenticated: false,
-    error : {
-      title: '500 Internal Server Error',
-      message: 'java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011',
-      type: 'MODAL'
+    error: {
+      title: "500 Internal Server Error",
+      message: "java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011",
+      type: "MODAL"
     },
-    pageRoute: '/',
+    pageRoute: "/",
     maxSessionTime: MAX_SESSION_TIME
   },
   loginAuthenticated: jest.fn(),
@@ -88,14 +88,14 @@ export const userModalError: IUserContextInterface = {
 
 export const userNoErrorNoSessionWarning: IUserContextInterface = {
   user: {
-    name: '',
+    name: "",
     authenticated: false,
-    error : {
-      title: '',
-      message: '',
-      type: ''
+    error: {
+      title: "",
+      message: "",
+      type: ""
     },
-    pageRoute: '/',
+    pageRoute: "/",
     maxSessionTime: MAX_SESSION_TIME
   },
   loginAuthenticated: jest.fn(),
@@ -111,14 +111,14 @@ export const userNoErrorNoSessionWarning: IUserContextInterface = {
 
 export const userHasModalErrorHasSessionWarning: IUserContextInterface = {
   user: {
-    name: '',
+    name: "",
     authenticated: false,
-    error : {
-      title: '500 Internal Server Error',
-      message: 'java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011',
-      type: 'MODAL'
+    error: {
+      title: "500 Internal Server Error",
+      message: "java.net.ConnectException: Failed to connect to localhost/0:0:0:0:0:0:0:1:8011",
+      type: "MODAL"
     },
-    pageRoute: '/',
+    pageRoute: "/",
     maxSessionTime: MAX_SESSION_TIME
   },
   loginAuthenticated: jest.fn(),

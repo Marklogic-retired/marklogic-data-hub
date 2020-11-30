@@ -1,7 +1,7 @@
 class AdvancedSettingsDialog {
 
   getStepName(stepName: string) {
-    return cy.findByLabelText(`step-name-${stepName}`)
+    return cy.findByLabelText(`step-name-${stepName}`);
   }
 
   /**
@@ -26,7 +26,7 @@ class AdvancedSettingsDialog {
 
   addTargetCollection(collection: string) {
     cy.findByLabelText(`additionalColl-select`);
-    cy.get('#property-name').type(collection);
+    cy.get("#property-name").type(collection);
   }
 
   /**
@@ -52,15 +52,15 @@ class AdvancedSettingsDialog {
   /**
    * Set Entity Validation
    * @param index
-   * @example 0 = Do not validate, 1 = store errors in headers, 2 = skip docs w/ errors 
+   * @example 0 = Do not validate, 1 = store errors in headers, 2 = skip docs w/ errors
    */
   setEntityValidation(index: string) {
-    cy.get('#validateEntity');
+    cy.get("#validateEntity");
     cy.findByTestId(`entityValOpts-${index}`).click();
   }
 
   batchSize() {
-    return cy.get('#batchSize');
+    return cy.get("#batchSize");
   }
 
   /**
@@ -69,20 +69,20 @@ class AdvancedSettingsDialog {
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
   setHeaderContent(fixturePath: string) {
-    if(fixturePath === '')
-        return cy.get('#headers').clear();
-    else cy.fixture(fixturePath).then(content => {
-        cy.get('#headers').clear().type(JSON.stringify(content), { parseSpecialCharSequences: false });
-    });
+    if (fixturePath === "") { return cy.get("#headers").clear(); } else {
+      cy.fixture(fixturePath).then(content => {
+        cy.get("#headers").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
+      });
+    }
   }
 
 
   toggleProcessors() {
-    cy.findByLabelText('processors-expand').trigger('mouseover').click();
+    cy.findByLabelText("processors-expand").trigger("mouseover").click();
   }
 
   getProcessors() {
-    return cy.get('#processors');
+    return cy.get("#processors");
   }
 
   /**
@@ -91,7 +91,7 @@ class AdvancedSettingsDialog {
    * @example [] as valid JSON string
    */
   setProcessors(processor: string) {
-    cy.get('#processors').type(processor);
+    cy.get("#processors").type(processor);
   }
 
   /**
@@ -100,16 +100,16 @@ class AdvancedSettingsDialog {
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
   setStepProcessor(fixturePath: string) {
-    cy.findByLabelText('processors-expand').trigger('mouseover').click();
-    if(fixturePath === '')
-        return cy.get('#processors').clear();
-    else cy.fixture(fixturePath).then(content => {
-        cy.get('#processors').clear().type(JSON.stringify(content), { parseSpecialCharSequences: false });
-    });
+    cy.findByLabelText("processors-expand").trigger("mouseover").click();
+    if (fixturePath === "") { return cy.get("#processors").clear(); } else {
+      cy.fixture(fixturePath).then(content => {
+        cy.get("#processors").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
+      });
+    }
   }
 
   toggleCustomHook() {
-    cy.findByText('Custom Hook').click();
+    cy.findByText("Custom Hook").click();
   }
 
   /**
@@ -118,12 +118,12 @@ class AdvancedSettingsDialog {
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
   setCustomHook(fixturePath: string) {
-    cy.findByText('Custom Hook').click();
-    if (fixturePath === '')
-      return cy.get('#customHook').clear();
-    else cy.fixture(fixturePath).then(content => {
-      cy.get('#customHook').clear().type(JSON.stringify(content), { parseSpecialCharSequences: false });
-    });
+    cy.findByText("Custom Hook").click();
+    if (fixturePath === "") { return cy.get("#customHook").clear(); } else {
+      cy.fixture(fixturePath).then(content => {
+        cy.get("#customHook").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
+      });
+    }
   }
 
   cancelSettings(stepName: string) {

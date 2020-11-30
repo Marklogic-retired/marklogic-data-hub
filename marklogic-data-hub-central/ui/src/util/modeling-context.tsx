@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, {useState} from "react";
 import {
   ModelingOptionsInterface,
   ModelingContextInterface,
   EntityModified
-} from '../types/modeling-types';
+} from "../types/modeling-types";
 
 const DEFAULT_MODELING_OPTIONS = {
   entityTypeNamesArray: [],
@@ -22,16 +22,16 @@ export const ModelingContext = React.createContext<ModelingContextInterface>({
   setEntityPropertiesNamesArray: () => {}
 });
 
-const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
+const ModelingProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [modelingOptions, setModelingOptions] = useState<ModelingOptionsInterface>(DEFAULT_MODELING_OPTIONS);
 
   const setEntityTypeNamesArray = (entityTypeNamesArray: any[]) => {
-    setModelingOptions({ ...modelingOptions, entityTypeNamesArray });
+    setModelingOptions({...modelingOptions, entityTypeNamesArray});
   };
 
   const toggleIsModified = (isModified: boolean) => {
-    setModelingOptions({ ...modelingOptions, isModified });
+    setModelingOptions({...modelingOptions, isModified});
   };
 
   const updateEntityModified = (entityModified: EntityModified) => {
@@ -42,7 +42,7 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     } else {
       newModifiedEntitiesArray.push(entityModified);
     }
-    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: true });
+    setModelingOptions({...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: true});
   };
 
   const removeEntityModified = (entityModified: EntityModified) => {
@@ -50,25 +50,25 @@ const ModelingProvider: React.FC<{ children: any }> = ({ children }) => {
     if (newModifiedEntitiesArray.some(entity => entity.entityName === entityModified.entityName)) {
       let index = newModifiedEntitiesArray.map((entity) => { return entity.entityName; }).indexOf(entityModified.entityName);
       newModifiedEntitiesArray.splice(index, 1);
-      setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0 });
+      setModelingOptions({...modelingOptions, modifiedEntitiesArray: newModifiedEntitiesArray, isModified: newModifiedEntitiesArray.length > 0});
     }
   };
 
   const clearEntityModified = () => {
-    setModelingOptions({ ...modelingOptions, modifiedEntitiesArray: [], isModified: false });
+    setModelingOptions({...modelingOptions, modifiedEntitiesArray: [], isModified: false});
   };
 
   const setEntityPropertiesNamesArray = (entityDefinitionsArray: any[]) => {
     let entityPropertiesNamesArray: string[] = [];
 
-    entityDefinitionsArray.forEach( entity => {
+    entityDefinitionsArray.forEach(entity => {
       entityPropertiesNamesArray.push(entity.name);
-      entity.properties.forEach( property => {
+      entity.properties.forEach(property => {
         entityPropertiesNamesArray.push(property.name);
       });
     });
 
-    setModelingOptions({ ...modelingOptions, entityPropertiesNamesArray });
+    setModelingOptions({...modelingOptions, entityPropertiesNamesArray});
   };
 
   return (

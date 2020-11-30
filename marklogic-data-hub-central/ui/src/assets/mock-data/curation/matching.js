@@ -13,7 +13,7 @@ export const matchingStep = {
       "selectedSource": "collection",
       "sourceQuery": "cts.collectionQuery(['Customer'])",
       "collections": ["matchCustomers"],
-      "additionalCollections": [ ],
+      "additionalCollections": [],
       "sourceDatabase": "data-hub-FINAL",
       "targetDatabase": "data-hub-FINAL",
       "targetFormat": "JSON",
@@ -56,7 +56,7 @@ export const matchingStep = {
             },
             {
               "entityPropertyPath": "billing.zip.fiveDigit",
-              "matchType": "exact"         
+              "matchType": "exact"
             }
           ]
         },
@@ -70,7 +70,7 @@ export const matchingStep = {
             },
             {
               "entityPropertyPath": "shipping.zip.fiveDigit",
-              "matchType": "exact"         
+              "matchType": "exact"
             }
           ]
         }
@@ -105,7 +105,7 @@ export const matchingStep = {
       "selectedSource": "collection",
       "sourceQuery": "cts.collectionQuery(['Customer'])",
       "collections": ["matchCustomers"],
-      "additionalCollections": [ ],
+      "additionalCollections": [],
       "sourceDatabase": "data-hub-FINAL",
       "targetDatabase": "data-hub-FINAL",
       "targetFormat": "JSON",
@@ -232,4 +232,4 @@ export const matchingActivity = {
       ]
     }
   ]
-}
+};

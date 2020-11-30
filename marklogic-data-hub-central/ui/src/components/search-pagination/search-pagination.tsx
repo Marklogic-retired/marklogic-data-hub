@@ -1,7 +1,7 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { Pagination } from 'antd';
-import { SearchContext } from '../../util/search-context';
-import styles from './search-pagination.module.scss';
+import React, {useContext, useState, useEffect} from "react";
+import {Pagination} from "antd";
+import {SearchContext} from "../../util/search-context";
+import styles from "./search-pagination.module.scss";
 
 interface Props {
   total: number;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const SearchPagination: React.FC<Props> = (props) => {
-  const { setPage, setPageLength, searchOptions } = useContext(SearchContext);
+  const {setPage, setPageLength} = useContext(SearchContext);
 
   const [pageSizeOptions, setPageSizeOptions] = useState<string[]>([]);
 
@@ -32,7 +32,7 @@ const SearchPagination: React.FC<Props> = (props) => {
   };
 
 
-   useEffect(() => {
+  useEffect(() => {
     setPerPageSelector(props.maxRowsPerPage);
   }, [props.maxRowsPerPage]);
 
@@ -45,19 +45,19 @@ const SearchPagination: React.FC<Props> = (props) => {
   };
 
   return (
-      <div className={styles.searchPaginationContainer}>
-          <Pagination
-            size="small"
-            total={props.total}
-            showSizeChanger
-            onChange={onPageChange}
-            onShowSizeChange={onPageSizeChange}
-            current={props.pageNumber}
-            pageSize={props.pageSize}
-            pageSizeOptions={pageSizeOptions}
-            hideOnSinglePage={props.total <= 10}
-          />
-      </div>
+    <div className={styles.searchPaginationContainer}>
+      <Pagination
+        size="small"
+        total={props.total}
+        showSizeChanger
+        onChange={onPageChange}
+        onShowSizeChange={onPageSizeChange}
+        current={props.pageNumber}
+        pageSize={props.pageSize}
+        pageSizeOptions={pageSizeOptions}
+        hideOnSinglePage={props.total <= 10}
+      />
+    </div>
   );
 };
 

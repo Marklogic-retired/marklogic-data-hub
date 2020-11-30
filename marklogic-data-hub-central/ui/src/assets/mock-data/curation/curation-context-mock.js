@@ -1,12 +1,12 @@
-import { matchingStep } from './matching';
-import { customerEntityDef } from './entity-definitions-mock';
-import { definitionsParser } from '../../../util/data-conversion';
-import { mergingStep } from './merging';
+import {matchingStep} from "./matching";
+import {customerEntityDef} from "./entity-definitions-mock";
+import {definitionsParser} from "../../../util/data-conversion";
+import {mergingStep} from "./merging";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
 
 export const customerMatchingStep = {
-  curationOptions:   {
+  curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
       stepArtifact: matchingStep.artifacts[0],
@@ -19,7 +19,7 @@ export const customerMatchingStep = {
 };
 
 export const customerMatchingStepEmpty = {
-  curationOptions:   {
+  curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
       stepArtifact: matchingStep.artifacts[1],
@@ -32,7 +32,7 @@ export const customerMatchingStepEmpty = {
 };
 
 export const customerMergingStep = {
-  curationOptions:   {
+  curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
       stepArtifact: mergingStep.artifacts[0],
@@ -45,7 +45,7 @@ export const customerMergingStep = {
 };
 
 export const customerMergingStepEmpty = {
-  curationOptions:   {
+  curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
       stepArtifact: mergingStep.artifacts[1],
@@ -58,7 +58,7 @@ export const customerMergingStepEmpty = {
 };
 
 export const matchThresholdArtifact = {
-  curationOptions:   {
+  curationOptions: {
     entityDefinitionsArray: customerEntityDefsArray,
     activeStep: {
       stepArtifact: {
@@ -69,30 +69,30 @@ export const matchThresholdArtifact = {
         "targetEntity": "Change this to a valid entity type name; e.g. Customer",
         "sourceQuery": "cts.collectionQuery(['Customer'])",
         "collections": [
-            "matchCustomers"
+          "matchCustomers"
         ],
         "permissions": "data-hub-common,read,data-hub-common-writer,update",
         "targetFormat": "JSON",
         "matchRulesets": [],
         "thresholds": [
-            {
-                "thresholdName": "abc",
-                "action": "merge",
-                "score": 8
-            },
-            {
-                "thresholdName": "def",
-                "action": "notify",
-                "score": 12
-            },
-            {
-                "thresholdName": "customAction",
-                "action": "custom",
-                "score": 0,
-                "actionModulePath": "/uri",
-                "actionModuleFunction": "/function",
-                "actionModuleNamespace": ""
-            }
+          {
+            "thresholdName": "abc",
+            "action": "merge",
+            "score": 8
+          },
+          {
+            "thresholdName": "def",
+            "action": "notify",
+            "score": 12
+          },
+          {
+            "thresholdName": "customAction",
+            "action": "custom",
+            "score": 0,
+            "actionModulePath": "/uri",
+            "actionModuleFunction": "/function",
+            "actionModuleNamespace": ""
+          }
         ],
         "name": "matchCustomer",
         "description": "",
@@ -113,5 +113,5 @@ export const matchThresholdArtifact = {
   },
   setActiveStep: jest.fn(),
   updateActiveStepArtifact: jest.fn()
-}
+};
 

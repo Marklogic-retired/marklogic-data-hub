@@ -6,11 +6,11 @@ export const updateMatchingArtifact = async (matching) => {
     if (response.status === 200) {
       return true;
     } else {
-        return false;
+      return false;
     }
   } catch (error) {
     let message = error;
-    console.error('Error while updating the mapping!', message);
+    console.error("Error while updating the mapping!", message);
     return false;
   }
 };
@@ -23,6 +23,6 @@ export const calculateMatchingActivity = async (matchStepName) => {
     }
   } catch (error) {
     let message = error;
-    console.error('Error while fetching the match activity!', message);
+    console.error("Error while fetching the match activity!", message);
   }
 };

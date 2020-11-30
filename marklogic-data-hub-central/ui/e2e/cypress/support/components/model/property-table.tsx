@@ -1,7 +1,7 @@
 class PropertyTable {
 
   getAddPropertyButton(entityName: string) {
-    return cy.findByLabelText(`${entityName}-add-property`, { timeout: 15000 });
+    return cy.findByLabelText(`${entityName}-add-property`, {timeout: 15000});
   }
 
   getProperty(propertyName: string) {
@@ -9,8 +9,8 @@ class PropertyTable {
   }
 
   getEntityInstanceCount(entityName: string) {
-    return cy.findByTestId(`${entityName}-instance-count`).then(function(value){
-      return parseInt(value.text().replace(',',''));
+    return cy.findByTestId(`${entityName}-instance-count`).then(function(value) {
+      return parseInt(value.text().replace(",", ""));
     });
   }
 

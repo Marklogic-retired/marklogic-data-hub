@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface IAuthoritiesContextInterface {
     authorities: string[];
@@ -31,61 +31,61 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     public authorities: string[] = [];
 
     public setAuthorities: (authorities: string[]) => void = (authorities: string[]) => {
-        this.authorities = authorities;
+      this.authorities = authorities;
     };
 
     public canReadMapping:() => boolean = () => {
-        return this.authorities.includes('readMapping');
+      return this.authorities.includes("readMapping");
     };
     public canWriteMapping:() => boolean = () => {
-        return this.authorities.includes('writeMapping');
+      return this.authorities.includes("writeMapping");
     };
     public canReadMatchMerge:() => boolean = () => {
-        // As of the moment readMatching and readMerging are connected
-        return this.authorities.includes('readMatching') && this.authorities.includes('readMerging');
+      // As of the moment readMatching and readMerging are connected
+      return this.authorities.includes("readMatching") && this.authorities.includes("readMerging");
     };
     public canWriteMatchMerge:() => boolean = () => {
-        // As of the moment writeMatching and writeMerging are connected
-        return this.authorities.includes('writeMatching') && this.authorities.includes('writeMerging');
+      // As of the moment writeMatching and writeMerging are connected
+      return this.authorities.includes("writeMatching") && this.authorities.includes("writeMerging");
     };
     public canReadLoad:() => boolean = () => {
-        return this.authorities.includes('readIngestion');
+      return this.authorities.includes("readIngestion");
     };
     public canWriteLoad:() => boolean = () => {
-        return this.authorities.includes('writeIngestion');
+      return this.authorities.includes("writeIngestion");
     };
     public canReadEntityModel:() => boolean = () => {
-        return this.authorities.includes('readEntityModel');
+      return this.authorities.includes("readEntityModel");
     };
     public canWriteEntityModel:() => boolean = () => {
-        return this.authorities.includes('writeEntityModel');
+      return this.authorities.includes("writeEntityModel");
     };
     public canReadFlow:() => boolean = () => {
-        return this.authorities.includes('readFlow');
+      return this.authorities.includes("readFlow");
     };
     public canWriteFlow:() => boolean = () => {
-        return this.authorities.includes('writeFlow');
+      return this.authorities.includes("writeFlow");
     };
     public canReadCustom:() => boolean = () => {
-        return this.authorities.includes('readCustom');
+      return this.authorities.includes("readCustom");
     };
     public canWriteCustom:() => boolean = () => {
-        return this.authorities.includes('writeCustom');
+      return this.authorities.includes("writeCustom");
     };
     public canDownloadProjectFiles:() => boolean = () => {
-        return this.authorities.includes('downloadProjectFiles');
+      return this.authorities.includes("downloadProjectFiles");
     };
     public canExportEntityInstances:() => boolean = () => {
-        return this.authorities.includes('exportEntityInstances');
+      return this.authorities.includes("exportEntityInstances");
     };
     public canRunStep:() => boolean = () => {
-        return this.authorities.includes('runStep');
+      return this.authorities.includes("runStep");
     };
     public isSavedQueryUser:() => boolean = () => {
-        return this.authorities.includes('savedQueryUser');
+      return this.authorities.includes("savedQueryUser");
     };
     public canClearUserData:() => boolean = () => {
-        return this.authorities.includes('clearUserData');
+      return this.authorities.includes("clearUserData");
     };
 }
 

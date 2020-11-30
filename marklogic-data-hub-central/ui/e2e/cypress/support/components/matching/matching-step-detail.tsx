@@ -1,40 +1,40 @@
 class MatchingStepDetail {
 
   addThresholdButton() {
-    return cy.findByLabelText('add-threshold');
+    return cy.findByLabelText("add-threshold");
   }
 
   showThresholdTextMore() {
-    return cy.findByLabelText('threshold-more');
+    return cy.findByLabelText("threshold-more");
   }
 
   showThresholdTextLess() {
-    return cy.findByLabelText('threshold-less');
+    return cy.findByLabelText("threshold-less");
   }
 
   showRulesetTextMore() {
-    return cy.findByLabelText('ruleset-more');
+    return cy.findByLabelText("ruleset-more");
   }
 
   showRulesetTextLess() {
-    return cy.findByLabelText('ruleset-less');
+    return cy.findByLabelText("ruleset-less");
   }
 
   addNewRulesetSingle() {
-    cy.findByLabelText('add-ruleset').click();
-    cy.waitUntil(() => cy.findByLabelText('single-ruleset-menu').trigger('mouseover')).click();
+    cy.findByLabelText("add-ruleset").click();
+    cy.waitUntil(() => cy.findByLabelText("single-ruleset-menu").trigger("mouseover")).click();
   }
 
   getSliderDeleteText() {
-    return cy.findByLabelText('delete-slider-text');
+    return cy.findByLabelText("delete-slider-text");
   }
 
   cancelSliderOptionDeleteButton() {
-    return cy.findByLabelText('delete-slider-no');
+    return cy.findByLabelText("delete-slider-no");
   }
 
   confirmSliderOptionDeleteButton() {
-    return cy.findByLabelText('delete-slider-yes');
+    return cy.findByLabelText("delete-slider-yes");
   }
 
   getPossibleMatchCombinationHeading(thresholdName: string) {
@@ -46,7 +46,7 @@ class MatchingStepDetail {
   }
 
   getDefaultTextNoMatchedCombinations() {
-    return cy.findByLabelText('noMatchedCombinations');
+    return cy.findByLabelText("noMatchedCombinations");
   }
 }
 

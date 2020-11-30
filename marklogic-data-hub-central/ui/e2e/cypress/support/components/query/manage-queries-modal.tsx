@@ -1,7 +1,7 @@
 class ManageQuery {
 
   getManageQueryModal() {
-    return cy.get('[data-testid=manage-queries-modal]');
+    return cy.get("[data-testid=manage-queries-modal]");
   }
 
   getEditQuery() {
@@ -21,11 +21,11 @@ class ManageQuery {
   }
 
   getSubmitButton() {
-    return cy.get('button[type=submit]').first();
+    return cy.get("button[type=submit]").first();
   }
 
   getEditCancelButton() {
-    return cy.get('#edit-query-dialog-cancel');
+    return cy.get("#edit-query-dialog-cancel");
   }
 
   getQueryByName(query:string) {
@@ -33,15 +33,15 @@ class ManageQuery {
   }
 
   getDeleteQueryYesButton() {
-    return cy.get('.ant-btn-primary').contains('Yes');
+    return cy.get(".ant-btn-primary").contains("Yes");
   }
 
   getExportFileButton() {
-    return cy.get('[data-icon=file-export]');
+    return cy.get("[data-icon=file-export]");
   }
 
   getErrorMessage() {
-    return cy.get('.ant-form-explain');
+    return cy.get(".ant-form-explain");
   }
 }
 

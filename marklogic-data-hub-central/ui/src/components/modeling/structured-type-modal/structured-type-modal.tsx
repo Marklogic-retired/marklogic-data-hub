@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Form, Icon, Input, Modal } from 'antd';
-import { MLButton } from '@marklogic/design-system';
-import styles from './structured-type-modal.module.scss';
+import React, {useEffect, useState, useContext} from "react";
+import {Form, Icon, Input, Modal} from "antd";
+import {MLButton} from "@marklogic/design-system";
+import styles from "./structured-type-modal.module.scss";
 
-import { ModelingContext } from '../../../util/modeling-context';
-import { ModelingTooltips } from '../../../config/tooltips.config';
-import { MLTooltip } from '@marklogic/design-system';
+import {ModelingContext} from "../../../util/modeling-context";
+import {ModelingTooltips} from "../../../config/tooltips.config";
+import {MLTooltip} from "@marklogic/design-system";
 
 
 type Props = {
@@ -16,30 +16,30 @@ type Props = {
 };
 
 const StructuredTypeModal: React.FC<Props> = (props) => {
-  const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
+  const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
   const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18 },
+    labelCol: {span: 6},
+    wrapperCol: {span: 18},
   };
 
-  const { modelingOptions } = useContext(ModelingContext);
+  const {modelingOptions} = useContext(ModelingContext);
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [, toggleIsNameDisabled] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    setName('');
-    setErrorMessage('');
+    setName("");
+    setErrorMessage("");
   }, [props.isVisible]);
 
   const handleChange = (event) => {
-    if (event.target.id === 'structured-name') {
-      if (event.target.value === '') {
+    if (event.target.id === "structured-name") {
+      if (event.target.value === "") {
         toggleIsNameDisabled(true);
       } else {
         toggleIsNameDisabled(false);
-        setErrorMessage('');
+        setErrorMessage("");
       }
       setName(event.target.value);
     }
@@ -47,7 +47,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
 
   const onSubmit = (event) => {
     event.preventDefault();
-    let entityDefinitionNamesArray = props.entityDefinitionsArray.map( entity => { return entity.name; });
+    let entityDefinitionNamesArray = props.entityDefinitionsArray.map(entity => { return entity.name; });
 
     if (!NAME_REGEX.test(name)) {
       setErrorMessage(ModelingTooltips.nameRegex);
@@ -71,7 +71,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
       size="default"
       onClick={onCancel}
     >Cancel</MLButton>
-    <MLButton 
+    <MLButton
       aria-label="structured-type-modal-submit"
       form="pstructured-type-form"
       type="primary"
@@ -79,7 +79,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
       size="default"
       onClick={onSubmit}
     >Add</MLButton>
-</div>;
+  </div>;
 
   return (
     <Modal
@@ -93,7 +93,7 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
     >
       <Form
         {...layout}
-        id='structured-type-form'
+        id="structured-type-form"
         onSubmit={onSubmit}
       >
         <Form.Item
@@ -101,10 +101,10 @@ const StructuredTypeModal: React.FC<Props> = (props) => {
           label={<span>
             Name:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
-              </span>}
+          </span>}
           colon={false}
           labelAlign="left"
-          validateStatus={errorMessage ? 'error' : ''}
+          validateStatus={errorMessage ? "error" : ""}
           help={errorMessage}
         >
           <Input

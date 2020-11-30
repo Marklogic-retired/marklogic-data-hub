@@ -1,17 +1,17 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import React from "react";
+import {render} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import StructuredTypeModal from './structured-type-modal';
-import { ModelingTooltips } from '../../../config/tooltips.config';
-import { entityDefinitionsArray } from '../../../assets/mock-data/modeling/modeling';
-import { ModelingContext } from '../../../util/modeling-context';
-import { entityNamesArray } from '../../../assets/mock-data/modeling/modeling-context-mock';
+import StructuredTypeModal from "./structured-type-modal";
+import {ModelingTooltips} from "../../../config/tooltips.config";
+import {entityDefinitionsArray} from "../../../assets/mock-data/modeling/modeling";
+import {ModelingContext} from "../../../util/modeling-context";
+import {entityNamesArray} from "../../../assets/mock-data/modeling/modeling-context-mock";
 
-describe('Structured Type Modal Component', () => {
+describe("Structured Type Modal Component", () => {
 
-  test('Modal is not visible', () => {
-    const { queryByText } = render(
+  test("Modal is not visible", () => {
+    const {queryByText} = render(
       <StructuredTypeModal
         isVisible={false}
         entityDefinitionsArray={[]}
@@ -19,14 +19,14 @@ describe('Structured Type Modal Component', () => {
         updateStructuredTypesAndHideModal={jest.fn()}
       />);
 
-    expect(queryByText('Add New Structured Property Type')).toBeNull();
+    expect(queryByText("Add New Structured Property Type")).toBeNull();
   });
 
-  test('can create structured property with valid name', () => {
+  test("can create structured property with valid name", () => {
     const toggleModal = jest.fn();
     const updateStructuredTypesAndHideModal = jest.fn();
 
-    const { getByText, getByPlaceholderText } = render(
+    const {getByText, getByPlaceholderText} = render(
       <StructuredTypeModal
         isVisible={true}
         entityDefinitionsArray={entityDefinitionsArray}
@@ -34,19 +34,19 @@ describe('Structured Type Modal Component', () => {
         updateStructuredTypesAndHideModal={updateStructuredTypesAndHideModal}
       />);
 
-    expect(getByText('Add New Structured Property Type')).toBeInTheDocument();
-    userEvent.type(getByPlaceholderText('Enter name'), 'Product');
+    expect(getByText("Add New Structured Property Type")).toBeInTheDocument();
+    userEvent.type(getByPlaceholderText("Enter name"), "Product");
 
-    userEvent.click(getByText('Add'));
+    userEvent.click(getByText("Add"));
     expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(1);
     expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 
-  test('can do error handling for duplicate name and name regex validation ', () => {
+  test("can do error handling for duplicate name and name regex validation ", () => {
     const toggleModal = jest.fn();
     const updateStructuredTypesAndHideModal = jest.fn();
 
-    const { getByText, getByLabelText } = render(
+    const {getByText, getByLabelText} = render(
       <ModelingContext.Provider value={entityNamesArray}>
         <StructuredTypeModal
           isVisible={true}
@@ -57,25 +57,25 @@ describe('Structured Type Modal Component', () => {
       </ModelingContext.Provider>
     );
 
-    expect(getByText('Add New Structured Property Type')).toBeInTheDocument();
-    userEvent.type(getByLabelText('structured-input-name'), 'Address');
-    userEvent.click(getByText('Add'));
-    expect(getByText('A structured type already exists with a name of Address')).toBeInTheDocument();
+    expect(getByText("Add New Structured Property Type")).toBeInTheDocument();
+    userEvent.type(getByLabelText("structured-input-name"), "Address");
+    userEvent.click(getByText("Add"));
+    expect(getByText("A structured type already exists with a name of Address")).toBeInTheDocument();
 
-    userEvent.clear(getByLabelText('structured-input-name'));
-    userEvent.type(getByLabelText('structured-input-name'), '123-Name');
-    userEvent.click(getByText('Add'));
+    userEvent.clear(getByLabelText("structured-input-name"));
+    userEvent.type(getByLabelText("structured-input-name"), "123-Name");
+    userEvent.click(getByText("Add"));
     expect(getByText(ModelingTooltips.nameRegex)).toBeInTheDocument();
 
-    userEvent.clear(getByLabelText('structured-input-name'));
-    userEvent.type(getByLabelText('structured-input-name'), 'address');
-    userEvent.click(getByText('Add'));
-    expect(getByText('A property type already exists with a name of address')).toBeInTheDocument();
+    userEvent.clear(getByLabelText("structured-input-name"));
+    userEvent.type(getByLabelText("structured-input-name"), "address");
+    userEvent.click(getByText("Add"));
+    expect(getByText("A property type already exists with a name of address")).toBeInTheDocument();
 
     expect(updateStructuredTypesAndHideModal).toHaveBeenCalledTimes(0);
     expect(toggleModal).toHaveBeenCalledTimes(0);
 
-    userEvent.click(getByText('Cancel'));
+    userEvent.click(getByText("Cancel"));
     expect(toggleModal).toHaveBeenCalledTimes(1);
   });
 });

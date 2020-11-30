@@ -1,36 +1,34 @@
-import React, { useState, useEffect, useContext, useRef, useLayoutEffect } from 'react';
-import axios from 'axios';
-import { Layout } from 'antd';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { UserContext } from '../util/user-context';
-import { SearchContext } from '../util/search-context';
-import { useScrollPosition } from '../hooks/use-scroll-position';
-import AsyncLoader from '../components/async-loader/async-loader';
-import Sidebar from '../components/sidebar/sidebar';
-import SearchBar from '../components/search-bar/search-bar';
-import SearchPagination from '../components/search-pagination/search-pagination';
-import SearchSummary from '../components/search-summary/search-summary';
-import SearchResults from '../components/search-results/search-results';
-import { updateUserPreferences, createUserPreferences, getUserPreferences } from '../services/user-preferences';
-import { entityFromJSON, entityParser, getTableProperties } from '../util/data-conversion';
-import styles from './Browse.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft } from '@fortawesome/free-solid-svg-icons';
-import Query from '../components/queries/queries';
-import { AuthoritiesContext } from "../util/authorities";
-import ZeroStateExplorer from '../components/zero-state-explorer/zero-state-explorer';
+import React, {useState, useEffect, useContext, useRef, useLayoutEffect} from "react";
+import axios from "axios";
+import {Layout} from "antd";
+import {RouteComponentProps, withRouter} from "react-router-dom";
+import {UserContext} from "../util/user-context";
+import {SearchContext} from "../util/search-context";
+import AsyncLoader from "../components/async-loader/async-loader";
+import Sidebar from "../components/sidebar/sidebar";
+import SearchBar from "../components/search-bar/search-bar";
+import SearchPagination from "../components/search-pagination/search-pagination";
+import SearchSummary from "../components/search-summary/search-summary";
+import SearchResults from "../components/search-results/search-results";
+import {updateUserPreferences, createUserPreferences, getUserPreferences} from "../services/user-preferences";
+import {entityFromJSON, entityParser, getTableProperties} from "../util/data-conversion";
+import styles from "./Browse.module.scss";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStream, faTable, faAngleDoubleRight, faAngleDoubleLeft} from "@fortawesome/free-solid-svg-icons";
+import Query from "../components/queries/queries";
+import {AuthoritiesContext} from "../util/authorities";
+import ZeroStateExplorer from "../components/zero-state-explorer/zero-state-explorer";
 import ResultsTabularView from "../components/results-tabular-view/results-tabular-view";
-import { QueryOptions } from '../types/query-types';
-import { MLTooltip, MLSpin, MLRadio } from '@marklogic/design-system';
-import RecordCardView from '../components/record-view/record-view';
-import { PropertySafetyFilled } from '@ant-design/icons';
+import {QueryOptions} from "../types/query-types";
+import {MLTooltip, MLSpin, MLRadio} from "@marklogic/design-system";
+import RecordCardView from "../components/record-view/record-view";
 
 
 interface Props extends RouteComponentProps<any> {
 }
 
-const Browse: React.FC<Props> = ({ location }) => {
-  const { Content, Sider } = Layout;
+const Browse: React.FC<Props> = ({location}) => {
+  const {Content, Sider} = Layout;
   const componentIsMounted = useRef(true);
   const {
     user,
@@ -44,7 +42,6 @@ const Browse: React.FC<Props> = ({ location }) => {
     applySaveQuery,
     setPageWithEntity,
     setPageQueryOptions,
-    setEntity,
     setDatabase,
     setLatestDatabase,
   } = useContext(SearchContext);
@@ -62,14 +59,14 @@ const Browse: React.FC<Props> = ({ location }) => {
   const [selectedFacets, setSelectedFacets] = useState<any[]>([]);
   const [greyFacets, setGreyFacets] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
-  const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser());
+  const [isSavedQueryUser, setIsSavedQueryUser] = useState<boolean>(authorityService.isSavedQueryUser()); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [queries, setQueries] = useState<any>([]);
   const [entityPropertyDefinitions, setEntityPropertyDefinitions] = useState<any[]>([]);
   const [selectedPropertyDefinitions, setSelectedPropertyDefinitions] = useState<any[]>([]);
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
-  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
+  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [cardView, setCardView] = useState(location && location.state && location.state['isEntityInstance'] ? true : JSON.parse(getUserPreferences(user.name)).cardView);
+  const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView);
 
 
   const getEntityModel = async () => {
@@ -93,7 +90,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       handleUserPreferences();
       setIsLoading(true);
       const response = await axios({
-        method: 'POST',
+        method: "POST",
         url: `/api/entitySearch?database=${searchOptions.database}`,
         data: {
           query: {
@@ -109,10 +106,10 @@ const Browse: React.FC<Props> = ({ location }) => {
       });
       if (componentIsMounted.current && response.data) {
         setData(response.data.results);
-        if (response.data.hasOwnProperty('entityPropertyDefinitions')) {
+        if (response.data.hasOwnProperty("entityPropertyDefinitions")) {
           setEntityPropertyDefinitions(response.data.entityPropertyDefinitions);
         }
-        if (response.data.hasOwnProperty('selectedPropertyDefinitions')) {
+        if (response.data.hasOwnProperty("selectedPropertyDefinitions")) {
           setSelectedPropertyDefinitions(response.data.selectedPropertyDefinitions);
         }
 
@@ -120,7 +117,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         setTotalDocuments(response.data.total);
 
         if (response.data.selectedPropertyDefinitions && response.data.selectedPropertyDefinitions.length) {
-          if(!['All Data'].includes(searchOptions.nextEntityType)) {
+          if (!["All Data"].includes(searchOptions.nextEntityType)) {
             let properties = getTableProperties(response.data.selectedPropertyDefinitions);
             setColumns(properties);
           } else {
@@ -129,7 +126,7 @@ const Browse: React.FC<Props> = ({ location }) => {
         }
       }
     } catch (error) {
-      console.error('error', error);
+      console.error("error", error);
       handleError(error);
     } finally {
       setIsLoading(false);
@@ -146,58 +143,54 @@ const Browse: React.FC<Props> = ({ location }) => {
 
   useEffect(() => {
     if (entities.length && (!searchOptions.nextEntityType ||
-        (searchOptions.nextEntityType === 'All Entities' && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
-        (searchOptions.nextEntityType === 'All Data' && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView) ||
-        (!['All Entities', 'All Data'].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType)
-      )) {
-        getSearchResults(entities);
-      }
+        (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
+        (searchOptions.nextEntityType === "All Data" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView) ||
+        (!["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType)
+    )) {
+      getSearchResults(entities);
+    }
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
 
   useEffect(() => {
-    if (location.state && location.state.hasOwnProperty('zeroState') && !location.state['zeroState']) {
-      setPageWithEntity(location.state['entity'],
-        location.state['pageNumber'],
-        location.state['start'],
-        location.state['searchFacets'],
-        location.state['query'],
-        location.state['sortOrder'],
-        location.state['targetDatabase']);
-      location.state['tableView'] ? toggleTableView(true) : toggleTableView(false);
-    }
-    else if (location.state
-      && location.state.hasOwnProperty('entityName')
-      && location.state.hasOwnProperty('targetDatabase')
-      && location.state.hasOwnProperty('jobId')) {
-        setCardView(false);
-        setLatestJobFacet(location.state['jobId'], location.state['entityName'], location.state['targetDatabase']);
-    }
-    else if (location.state && location.state.hasOwnProperty('entityName') && location.state.hasOwnProperty('jobId')) {
+    if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
+      setPageWithEntity(location.state["entity"],
+        location.state["pageNumber"],
+        location.state["start"],
+        location.state["searchFacets"],
+        location.state["query"],
+        location.state["sortOrder"],
+        location.state["targetDatabase"]);
+      location.state["tableView"] ? toggleTableView(true) : toggleTableView(false);
+    } else if (location.state
+      && location.state.hasOwnProperty("entityName")
+      && location.state.hasOwnProperty("targetDatabase")
+      && location.state.hasOwnProperty("jobId")) {
       setCardView(false);
-      setLatestJobFacet(location.state['jobId'], location.state['entityName']);
-    }
-    else if (location.state && location.state.hasOwnProperty('entity')) {
+      setLatestJobFacet(location.state["jobId"], location.state["entityName"], location.state["targetDatabase"]);
+    } else if (location.state && location.state.hasOwnProperty("entityName") && location.state.hasOwnProperty("jobId")) {
       setCardView(false);
-      setEntityClearQuery(location.state['entity']);
-    }
-    else if (location.state && location.state.hasOwnProperty('targetDatabase') && location.state.hasOwnProperty('jobId')) {
+      setLatestJobFacet(location.state["jobId"], location.state["entityName"]);
+    } else if (location.state && location.state.hasOwnProperty("entity")) {
+      setCardView(false);
+      setEntityClearQuery(location.state["entity"]);
+    } else if (location.state && location.state.hasOwnProperty("targetDatabase") && location.state.hasOwnProperty("jobId")) {
       setCardView(true);
-      setLatestDatabase(location.state['targetDatabase'], location.state['jobId']);
+      setLatestDatabase(location.state["targetDatabase"], location.state["jobId"]);
     }
   }, [searchOptions.zeroState]);
 
   const setZeroStateQueryOptions = () => {
     let options: QueryOptions = {
-      searchText: '',
+      searchText: "",
       entityTypeIds: [],
       selectedFacets: {},
-      selectedQuery: 'select a query',
+      selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: true,
       manageQueryModal: false,
       sortOrder: [],
-      database: 'final',
+      database: "final",
     };
     applySaveQuery(options);
   };
@@ -207,7 +200,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     if (defaultPreferences !== null) {
       let parsedPreferences = JSON.parse(defaultPreferences);
       if (location.state) {
-        if (location.state['tileIconClicked']) {
+        if (location.state["tileIconClicked"]) {
           await setZeroStateQueryOptions();
           let preferencesObject = {
             ...parsedPreferences,
@@ -218,10 +211,10 @@ const Browse: React.FC<Props> = ({ location }) => {
       } else {
         if (!parsedPreferences.zeroState && searchOptions.zeroState) {
           let options: any = {
-            searchText: parsedPreferences.query.searchText || '',
+            searchText: parsedPreferences.query.searchText || "",
             entityTypeIds: parsedPreferences.query.entityTypeIds || [],
             selectedFacets: parsedPreferences.query.selectedFacets || {},
-            selectedQuery: searchOptions.selectedQuery || 'select a query',
+            selectedQuery: searchOptions.selectedQuery || "select a query",
             start: parsedPreferences.start || 1,
             pageNumber: parsedPreferences.pageNumber || 1,
             pageLength: parsedPreferences.pageLength,
@@ -232,7 +225,7 @@ const Browse: React.FC<Props> = ({ location }) => {
             database: parsedPreferences.database
           };
           await setPageQueryOptions(options);
-          if (parsedPreferences.hasOwnProperty('tableView') && parsedPreferences.hasOwnProperty('cardView')) {
+          if (parsedPreferences.hasOwnProperty("tableView") && parsedPreferences.hasOwnProperty("cardView")) {
             if (parsedPreferences.cardView) {
               setCardView(parsedPreferences.cardView);
             } else {
@@ -246,7 +239,7 @@ const Browse: React.FC<Props> = ({ location }) => {
     }
   };
 
-  const setUserPreferences = (view: string = '') => {
+  const setUserPreferences = (view: string = "") => {
     let preferencesObject = {
       query: {
         searchText: searchOptions.query,
@@ -256,7 +249,7 @@ const Browse: React.FC<Props> = ({ location }) => {
       pageLength: searchOptions.pageLength,
       pageNumber: searchOptions.pageNumber,
       start: searchOptions.start,
-      tableView: view ? (view === 'snippet' ? false : true) : tableView,
+      tableView: view ? (view === "snippet" ? false : true) : tableView,
       selectedQuery: searchOptions.selectedQuery,
       queries: queries,
       propertiesToDisplay: searchOptions.selectedTableProperties,
@@ -299,11 +292,11 @@ const Browse: React.FC<Props> = ({ location }) => {
   useLayoutEffect(() => {
     if (endScroll && data.length) {
       if (resultsRef.current) {
-        resultsRef.current['style']['boxShadow'] = '0px 4px 4px -4px #999, 0px -4px 4px -4px #999';
+        resultsRef.current["style"]["boxShadow"] = "0px 4px 4px -4px #999, 0px -4px 4px -4px #999";
       }
     } else if (!endScroll) {
       if (resultsRef.current) {
-        resultsRef.current['style']['boxShadow'] = 'none';
+        resultsRef.current["style"]["boxShadow"] = "none";
       }
     }
   }, [endScroll]);
@@ -328,18 +321,18 @@ const Browse: React.FC<Props> = ({ location }) => {
   };
 
   const handleViewChange = (view) => {
-    let tableView = '';
-    if (view === 'snippet') {
+    let tableView = "";
+    if (view === "snippet") {
       toggleTableView(false);
-      tableView = 'snippet';
+      tableView = "snippet";
     } else {
       toggleTableView(true);
-      tableView = 'table';
+      tableView = "table";
     }
     setUserPreferences(tableView);
 
     if (resultsRef && resultsRef.current) {
-      resultsRef.current['style']['boxShadow'] = 'none';
+      resultsRef.current["style"]["boxShadow"] = "none";
     }
   };
 
@@ -358,7 +351,7 @@ const Browse: React.FC<Props> = ({ location }) => {
           collapsedWidth={0}
           collapsible
           collapsed={collapse}
-          width={'20vw'}
+          width={"20vw"}
         >
           <Sidebar
             facets={facets}
@@ -371,12 +364,12 @@ const Browse: React.FC<Props> = ({ location }) => {
         </Sider>
         <Content className={styles.content}>
 
-          <div className={styles.collapseIcon} id='sidebar-collapse-icon'>
+          <div className={styles.collapseIcon} id="sidebar-collapse-icon">
             {collapse ?
-              <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} /> :
-              <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{ fontSize: '16px', color: '#000' }} />}
+              <FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleRight} onClick={onCollapse} size="lg" style={{fontSize: "16px", color: "#000"}} /> :
+              <FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleLeft} onClick={onCollapse} size="lg" style={{fontSize: "16px", color: "#000"}} />}
           </div>
-          {user.error.type === 'ALERT' ?
+          {user.error.type === "ALERT" ?
             <AsyncLoader />
             :
             <>
@@ -406,21 +399,21 @@ const Browse: React.FC<Props> = ({ location }) => {
                         buttonStyle="outline"
                         name="radiogroup"
                         size="large"
-                        defaultValue={tableView ? 'table' : 'snippet'}
+                        defaultValue={tableView ? "table" : "snippet"}
                         onChange={e => handleViewChange(e.target.value)}
                       >
-                        <MLRadio.MLButton aria-label="switch-view-table" value={'table'} >
-                          <i data-cy="table-view" id={'tableView'}><MLTooltip title={'Table View'}>
+                        <MLRadio.MLButton aria-label="switch-view-table" value={"table"} >
+                          <i data-cy="table-view" id={"tableView"}><MLTooltip title={"Table View"}>
                             {<FontAwesomeIcon icon={faTable} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} >
-                          <i data-cy="facet-view" id={'snippetView'}><MLTooltip title={'Snippet View'}>
+                        <MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} >
+                          <i data-cy="facet-view" id={"snippetView"}><MLTooltip title={"Snippet View"}>
                             {<FontAwesomeIcon icon={faStream} />}
                           </MLTooltip></i>
                         </MLRadio.MLButton>
                       </MLRadio.MLGroup>
-                    </div> : ''}
+                    </div> : ""}
                   </div>
                 </div>
                 <Query queries={queries}

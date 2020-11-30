@@ -1,27 +1,27 @@
-import 'cypress-wait-until';
+import "cypress-wait-until";
 
 class BrowsePage {
 
   getSelectedEntity() {
-    return cy.get('#entity-select').invoke('text');
+    return cy.get("#entity-select").invoke("text");
   }
 
   getSpinner() {
-      return cy.findByTestId('spinner');
+    return cy.findByTestId("spinner");
   }
 
   waitForSpinnerToDisappear() {
-      cy.waitUntil(() => this.getSpinner().should('not.be.visible'));
+    cy.waitUntil(() => this.getSpinner().should("not.be.visible"));
   }
 
   waitForTableToLoad() {
-      cy.waitUntil(() => this.getTableRows().should('have.length.gt',0));
+    cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
   }
 
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
-    cy.get('#entity-select').click();
-    cy.get(`[data-cy="entity-option-${entity}"]`).click({force:true});
+    cy.get("#entity-select").click();
+    cy.get(`[data-cy="entity-option-${entity}"]`).click({force: true});
     cy.waitForAsyncRequest();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -29,8 +29,8 @@ class BrowsePage {
 
   getTotalDocuments() {
     this.waitForSpinnerToDisappear();
-    return cy.get('[data-cy=total-documents]').then( value => {
-        return parseInt(value.first().text().replace(/,/, ""));
+    return cy.get("[data-cy=total-documents]").then(value => {
+      return parseInt(value.first().text().replace(/,/, ""));
     });
   }
 
@@ -38,20 +38,20 @@ class BrowsePage {
     return cy.get(`#top-search-pagination-bar .ant-pagination-item-${index}`).click();
   }
 
-  getSelectedPaginationNumber(){
-      return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke('text');
+  getSelectedPaginationNumber() {
+    return cy.get(`#top-search-pagination-bar .ant-pagination-item-active a`).invoke("text");
   }
 
   getInstanceViewIcon() {
-    return cy.get('[data-cy=instance]');
+    return cy.get("[data-cy=instance]");
   }
 
   getSourceViewIcon() {
-    return cy.get('[data-cy=source]');
+    return cy.get("[data-cy=source]");
   }
 
   getDocuments() {
-    return cy.get('#search-results li');
+    return cy.get("#search-results li");
   }
 
   getDocument(index: number) {
@@ -59,35 +59,35 @@ class BrowsePage {
   }
 
   getDocumentEntityName(index: number) {
-    return this.getDocument(index).find('[data-cy=entity-name]').invoke('text');
+    return this.getDocument(index).find("[data-cy=entity-name]").invoke("text");
   }
 
   getDocumentPKey(index: number) {
-      return this.getDocument(index).find('[data-cy=primary-key]').invoke('text');
+    return this.getDocument(index).find("[data-cy=primary-key]").invoke("text");
   }
 
   getDocumentPKeyValue(index: number) {
-    return this.getDocument(index).find('[data-cy=primary-key-value]').invoke('text');
+    return this.getDocument(index).find("[data-cy=primary-key-value]").invoke("text");
   }
 
   getDocumentSnippet(index: number) {
-    return this.getDocument(index).find('[data-cy=snippet]').invoke('text');
+    return this.getDocument(index).find("[data-cy=snippet]").invoke("text");
   }
 
   getDocumentCreatedOn(index: number) {
-    return this.getDocument(index).find('[data-cy=created-on]').invoke('text');
+    return this.getDocument(index).find("[data-cy=created-on]").invoke("text");
   }
 
   getDocumentSources(index: number) {
-    return this.getDocument(index).find('[data-cy=sources]').invoke('text');
+    return this.getDocument(index).find("[data-cy=sources]").invoke("text");
   }
 
   getDocumentFileType(index: number) {
-    return this.getDocument(index).find('[data-cy=file-type]').invoke('text');
+    return this.getDocument(index).find("[data-cy=file-type]").invoke("text");
   }
 
   getDocumentById(index: number) {
-    return this.getDocument(index).find('[data-cy=instance]');
+    return this.getDocument(index).find("[data-cy=instance]");
   }
 
   getTooltip(tooltip: string) {
@@ -100,15 +100,15 @@ class BrowsePage {
    */
 
   getFacetName(facet: string) {
-    return cy.get('.ml-tooltip-container').contains(facet);
+    return cy.get(".ml-tooltip-container").contains(facet);
   }
 
   getFacet(facet: string) {
-    return cy.get('[data-cy="' + facet + '-facet"]');
+    return cy.get("[data-cy=\"" + facet + "-facet\"]");
   }
 
   getFacetItems(facet: string) {
-    return cy.get('[data-cy="' + facet + '-facet-item"]');
+    return cy.get("[data-cy=\"" + facet + "-facet-item\"]");
   }
 
   getFacetItemCheckbox(facet: string, str: string) {
@@ -120,16 +120,16 @@ class BrowsePage {
   }
 
   getClearFacetSearchSelection(facet: string) {
-    return cy.get('[data-cy="clear-' + facet + '"]');
+    return cy.get("[data-cy=\"clear-" + facet + "\"]");
   }
 
-  clickClearFacetSearchSelection(facet: string){
-      cy.findByTestId(`clear-${facet}`).click();
-      this.waitForSpinnerToDisappear();
+  clickClearFacetSearchSelection(facet: string) {
+    cy.findByTestId(`clear-${facet}`).click();
+    this.waitForSpinnerToDisappear();
   }
 
   getFacetSearchSelectionCount(facet: string) {
-    return cy.get('[data-cy="' + facet + '-selected-count"]').invoke('text');
+    return cy.get("[data-cy=\"" + facet + "-selected-count\"]").invoke("text");
   }
 
   getClearFacetSelection(facet: string) {
@@ -142,112 +142,112 @@ class BrowsePage {
   */
 
   getSelectedFacets() {
-    return cy.get('[data-cy=selected-facet-block]');
+    return cy.get("[data-cy=selected-facet-block]");
   }
 
   computeStartDateOfTheWeek() {
-      //The date calculations below is to get the start date of the week(Sun - Sat) that
-      //shows up in the date picker and as applied facet
-      let curr = new Date;
-      let first = ("0" + (curr.getDate() - curr.getDay())).slice(-2);
-      let month = ("0" + (curr.getMonth() + 1)).slice(-2);
-      return `${curr.getFullYear()}-${month}-${first}`;
+    //The date calculations below is to get the start date of the week(Sun - Sat) that
+    //shows up in the date picker and as applied facet
+    let curr = new Date;
+    let first = ("0" + (curr.getDate() - curr.getDay())).slice(-2);
+    let month = ("0" + (curr.getMonth() + 1)).slice(-2);
+    return `${curr.getFullYear()}-${month}-${first}`;
   }
 
   getGreySelectedFacets(facet: string) {
-    return cy.get('#selected-facets [data-cy="clear-grey-' + facet + '"]');
+    return cy.get("#selected-facets [data-cy=\"clear-grey-" + facet + "\"]");
   }
 
   getAppliedFacets(facet: string) {
-    return cy.get('#selected-facets [data-cy="clear-' + facet + '"]');
+    return cy.get("#selected-facets [data-cy=\"clear-" + facet + "\"]");
   }
 
   getAppliedFacetName(facet: string) {
-    return cy.findByTestId(`clear-${facet}`).invoke('text');
+    return cy.findByTestId(`clear-${facet}`).invoke("text");
   }
 
   getClearGreyFacets() {
-    return cy.get('[data-cy=clear-all-grey-button]');
+    return cy.get("[data-cy=clear-all-grey-button]");
   }
 
   getDateFacetPicker() {
-    return cy.get('.ant-calendar-picker');
+    return cy.get(".ant-calendar-picker");
   }
-  
+
   getSelectedFacet(facet: string) {
-    return cy.get('#selected-facets > button').contains(facet);
+    return cy.get("#selected-facets > button").contains(facet);
   }
 
   selectDateRange() {
     this.getDateFacetPicker().click();
-    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:first-child')).click({force: true});
-    cy.waitUntil(() => cy.get('.ant-calendar-range-part:first-child .ant-calendar-current-week > td:last-child')).click({force: true});
+    cy.waitUntil(() => cy.get(".ant-calendar-range-part:first-child .ant-calendar-current-week > td:first-child")).click({force: true});
+    cy.waitUntil(() => cy.get(".ant-calendar-range-part:first-child .ant-calendar-current-week > td:last-child")).click({force: true});
   }
 
   getDateFacetClearIcon() {
-    return cy.get('.ant-calendar-picker .ant-calendar-picker-clear');
+    return cy.get(".ant-calendar-picker .ant-calendar-picker-clear");
   }
 
   getDateFacetPickerIcon() {
-    return cy.get('.ant-calendar-picker .ant-calendar-picker-icon');
+    return cy.get(".ant-calendar-picker .ant-calendar-picker-icon");
   }
 
   getFacetApplyButton() {
-    return cy.get('svg[data-icon="check-square"]');
+    return cy.get("svg[data-icon=\"check-square\"]");
   }
 
   getClearAllButton() {
-    return cy.get('[data-cy=clear-all-button]', { timeout: 10000 });
+    return cy.get("[data-cy=clear-all-button]", {timeout: 10000});
   }
 
-  getGreyRangeFacet(lowerBound: number){
-    return cy.get('#selected-facets [data-cy="clear-grey-'+ lowerBound +'"]');
+  getGreyRangeFacet(lowerBound: number) {
+    return cy.get("#selected-facets [data-cy=\"clear-grey-"+ lowerBound +"\"]");
   }
 
-  getRangeFacet(lowerBound: number){
-   return cy.get('#selected-facets [data-cy="clear-'+ lowerBound +'"]');
+  getRangeFacet(lowerBound: number) {
+    return cy.get("#selected-facets [data-cy=\"clear-"+ lowerBound +"\"]");
   }
 
-  clickPopoverSearch(facetName: string){
+  clickPopoverSearch(facetName: string) {
     cy.findByTestId(`${facetName}-search-input`).click();
   }
 
-  setInputField(facetName: string,str: string){
+  setInputField(facetName: string, str: string) {
     cy.findByTestId(`${facetName}-popover-input-field`).clear().type(str);
   }
 
-  getPopOverCheckbox(str: string){
-   return cy.findByTestId(`${str}-popover-checkbox`);
+  getPopOverCheckbox(str: string) {
+    return cy.findByTestId(`${str}-popover-checkbox`);
   }
 
 
   applyDatePickerSelection(facet: string) {
-    return cy.get('[data-cy=datepicker-facet-apply-button]').click();
+    return cy.get("[data-cy=datepicker-facet-apply-button]").click();
   }
 
   //search bar
   search(str: string) {
-    cy.get('[data-cy=search-bar]').clear().type(str);
-    cy.get('.ant-input-search-button').click();
+    cy.get("[data-cy=search-bar]").clear().type(str);
+    cy.get(".ant-input-search-button").click();
     // this.waitForTableToLoad();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
 
-  changeNumericSlider(val: string){
-   cy.get('#min-numeric-value .ant-input-number input').clear().type(val);
+  changeNumericSlider(val: string) {
+    cy.get("#min-numeric-value .ant-input-number input").clear().type(val);
   }
 
-  getSearchText(){
-     return cy.get('[data-cy=search-bar]');
+  getSearchText() {
+    return cy.get("[data-cy=search-bar]");
   }
 
   getShowMoreLink(facet: string) {
-    return cy.findByTestId(`show-more-${facet}`)
+    return cy.findByTestId(`show-more-${facet}`);
   }
 
   clickMoreLink(facetType: string) {
-      cy.findByTestId(`show-more-${facetType}`).click();
+    cy.findByTestId(`show-more-${facetType}`).click();
   }
 
   getHubPropertiesExpanded() {
@@ -256,7 +256,7 @@ class BrowsePage {
   }
 
   getExpandableSnippetView() {
-    return cy.get('.ant-list-items li:first-child [data-cy = expandable-icon]').click();
+    return cy.get(".ant-list-items li:first-child [data-cy = expandable-icon]").click();
   }
 
   clearFacetSelection(facet: string) {
@@ -264,34 +264,34 @@ class BrowsePage {
     this.waitForSpinnerToDisappear();
   }
 
-    //table, facet view
+  //table, facet view
   clickFacetView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
-    cy.get('[data-cy=facet-view]').click().trigger('mouseout', {force: true});
+    cy.get("[data-cy=facet-view]").click().trigger("mouseout", {force: true});
   }
 
-  getFacetView(){
-    return cy.get('[data-cy=facet-view]');
+  getFacetView() {
+    return cy.get("[data-cy=facet-view]");
   }
 
-  getTableView(){
-    return cy.get('[data-cy=table-view]');
+  getTableView() {
+    return cy.get("[data-cy=table-view]");
   }
 
   clickTableView() {
     this.waitForSpinnerToDisappear();
     this.waitForTableToLoad();
-    return cy.get('[data-cy=table-view]').click();
+    return cy.get("[data-cy=table-view]").click();
   }
 
   getSideBarCollapseIcon() {
-    return cy.get('#sidebar-collapse-icon');
+    return cy.get("#sidebar-collapse-icon");
   }
 
   //table
   getColumnTitle(index: number) {
-    return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke('text');
+    return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).invoke("text");
   }
 
   clickColumnTitle(index: number) {
@@ -299,44 +299,44 @@ class BrowsePage {
     return cy.get(`.ant-table-thead th:nth-child(${index}) .ant-table-column-title`).click();
   }
 
-  getSortIndicatorAsc(){
+  getSortIndicatorAsc() {
     return cy.get(`.ant-table-column-sorter-up.on`);
   }
 
-  getSortIndicatorDesc(){
+  getSortIndicatorDesc() {
     return cy.get(`.ant-table-column-sorter-down.on`);
   }
 
   getTableRows() {
-    return cy.get('.ant-table-row');
+    return cy.get(".ant-table-row");
   }
 
   getTableViewInstanceIcon() {
-    return cy.get('.ant-table-row:last-child [data-cy=instance]');
+    return cy.get(".ant-table-row:last-child [data-cy=instance]");
   }
 
   getTableViewSourceIcon() {
-    return cy.getAttached('.ant-table-row:last-child [data-cy=source]');
+    return cy.getAttached(".ant-table-row:last-child [data-cy=source]");
   }
 
   getExpandableTableView() {
-    return cy.get('.ant-table-row:nth-child(1) .ant-table-row-expand-icon-cell').click();
+    return cy.get(".ant-table-row:nth-child(1) .ant-table-row-expand-icon-cell").click();
   }
 
   getExpandable() {
-    return cy.get('.ant-table-row-expand-icon-cell');
+    return cy.get(".ant-table-row-expand-icon-cell");
   }
 
   getTableColumns() {
-    return cy.get('.ant-table-header-column');
+    return cy.get(".ant-table-header-column");
   }
 
   getTableCell(rowIndex: number, columnIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke('text');
+    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(${columnIndex}) div`).invoke("text");
   }
 
   getTableUriCell(rowIndex: number) {
-    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke('text');
+    return cy.get(`.ant-table-row:nth-child(${rowIndex}) td:nth-child(2) div span`).invoke("text");
   }
 
   getTableTitle(index: number) {
@@ -344,37 +344,37 @@ class BrowsePage {
   }
 
   getColumnSelectorIcon() {
-    return cy.get('[data-cy=column-selector] > div > svg');
+    return cy.get("[data-cy=column-selector] > div > svg");
   }
 
   getColumnSelectorSearch() {
-    return cy.get('input[placeholder=Search]');
+    return cy.get("input[placeholder=Search]");
   }
 
   selectColumnSelectorProperty(name:string) {
-    cy.waitUntil(() => cy.findByTestId('column-selector-popover'));
-    return cy.get('li[data-testid=node-' + name + '] .ant-tree-checkbox').click();
+    cy.waitUntil(() => cy.findByTestId("column-selector-popover"));
+    return cy.get("li[data-testid=node-" + name + "] .ant-tree-checkbox").click();
   }
 
   getDataExportIcon() {
-    return cy.get('[data-cy=query-export] > div > svg');
+    return cy.get("[data-cy=query-export] > div > svg");
   }
 
   getColumnSelectorApply() {
-    return cy.get('button span').contains('Apply');
-}
+    return cy.get("button span").contains("Apply");
+  }
 
   getColumnSelectorCancel() {
-      return cy.get('button span').contains('Cancel');
+    return cy.get("button span").contains("Cancel");
   }
 
   //popover
   getColumnSelector() {
-    return cy.get('.ant-popover-inner');
+    return cy.get(".ant-popover-inner");
   }
 
   getTreeItems() {
-    return cy.get('.ant-popover-inner ul > li');
+    return cy.get(".ant-popover-inner ul > li");
   }
 
   getTreeItem(index: number) {
@@ -385,124 +385,124 @@ class BrowsePage {
     return cy.get(`.ant-popover-inner ul > li:nth-child(${index}) span:last-child`);
   }
   getTreeItemChecked(index: number) {
-    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('not.have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
+    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should("not.have.class", "ant-tree-checkbox-checked") ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
   }
 
   getTreeItemUnchecked(index: number) {
-    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should('have.class', 'ant-tree-checkbox-checked') ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : '';
+    cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).should("have.class", "ant-tree-checkbox-checked") ? cy.get(`.ant-popover-inner ul > li:nth-child(${index}) .ant-tree-checkbox`).click() : "";
   }
 
   //Save queries
 
   getSaveModalIcon() {
-    return cy.get('svg[data-icon="save"]');
+    return cy.get("svg[data-icon=\"save\"]");
   }
 
   getSaveQueryName() {
-    return cy.get('#save-query-name');
+    return cy.get("#save-query-name");
   }
 
   getSaveQueryDescription() {
-    return cy.get('#save-query-description');
+    return cy.get("#save-query-description");
   }
 
   getSaveQueryButton() {
-    return cy.get('#save-query-button');
+    return cy.get("#save-query-button");
   }
 
   getSaveQueryCancelButton() {
-    return cy.get('#save-query-cancel-button');
+    return cy.get("#save-query-cancel-button");
   }
 
   getSaveQueriesDropdown() {
-    return cy.get('#dropdownList');
+    return cy.get("#dropdownList");
   }
 
   getEditQueryModalIcon() {
-    return cy.get('svg[data-icon="pencil-alt"]');
+    return cy.get("svg[data-icon=\"pencil-alt\"]");
   }
 
   getSaveACopyModalIcon() {
-    return cy.get('svg[data-icon="copy"]');
+    return cy.get("svg[data-icon=\"copy\"]");
   }
 
   getEditQueryDetailFormName() {
-    return cy.get('#edit-query-detail-name');
+    return cy.get("#edit-query-detail-name");
   }
 
   getEditQueryDetailDesc() {
-    return cy.get('#edit-query-detail-description');
+    return cy.get("#edit-query-detail-description");
   }
 
   getEditQueryDetailButton() {
-    return cy.get('#edit-query-detail-button');
+    return cy.get("#edit-query-detail-button");
   }
 
   getEditQueryDetailCancelButton() {
-    return cy.get('#edit-query-detail-cancel-button');
+    return cy.get("#edit-query-detail-cancel-button");
   }
 
   getRadioOptionSelected() {
-    return cy.get('.ant-modal [type="radio"]').first().check();
+    return cy.get(".ant-modal [type=\"radio\"]").first().check();
   }
 
   getEditSaveChangesButton() {
-    return cy.get('#edit-save-changes-button');
+    return cy.get("#edit-save-changes-button");
   }
 
   getEditSaveChangesCancelButton() {
-    return cy.get('#edit-save-changes-cancel-button');
+    return cy.get("#edit-save-changes-cancel-button");
   }
 
   getEditSaveChangesFormName() {
-    return cy.get('#save-changes-query-name');
+    return cy.get("#save-changes-query-name");
   }
 
   getDiscardChangesIcon() {
-    return cy.get('svg[data-icon="undo"]');
+    return cy.get("svg[data-icon=\"undo\"]");
   }
 
   getDiscardYesButton() {
-    return cy.get('#discard-yes-button');
+    return cy.get("#discard-yes-button");
   }
 
   getDiscardNoButton() {
-    return cy.get('#discard-no-button');
+    return cy.get("#discard-no-button");
   }
 
   getCloseIcon() {
-    return cy.get('svg[data-icon="close"]');
+    return cy.get("svg[data-icon=\"close\"]");
   }
 
   getManageQueryCloseIcon() {
-    return cy.get('.manage-modal-close-icon');
+    return cy.get(".manage-modal-close-icon");
   }
 
   getResetQueryButton() {
-    return cy.get('#reset-changes');
+    return cy.get("#reset-changes");
   }
 
   //temp query icon
   getManageQueriesIcon() {
-    return cy.get('[data-testid=manage-queries-modal-icon]');
+    return cy.get("[data-testid=manage-queries-modal-icon]");
   }
 
   getManageQueriesModalOpened() {
-    cy.get('#manage-queries-button').click();
+    cy.get("#manage-queries-button").click();
     this.waitForTableToLoad();
   }
 
   getManageQueriesButton() {
-    return cy.get('#manage-queries-button');
+    return cy.get("#manage-queries-button");
   }
 
   //saved query dropdown
   getSelectedQuery() {
-    return this.getSaveQueriesDropdown().invoke('text');
+    return this.getSaveQueriesDropdown().invoke("text");
   }
 
   getErrorMessage() {
-    return cy.get('.ant-form-explain');
+    return cy.get(".ant-form-explain");
   }
 
   selectQuery(query: string) {
@@ -513,61 +513,61 @@ class BrowsePage {
   }
 
   getSelectedQueryDescription() {
-    return cy.get('#selected-query-description').invoke('text');
+    return cy.get("#selected-query-description").invoke("text");
   }
 
   // Switching queries confirmation buttons
 
   getQueryConfirmationCancelClick() {
-    return cy.get('#query-confirmation-cancel-button');
+    return cy.get("#query-confirmation-cancel-button");
   }
 
   getQueryConfirmationNoClick() {
-    return cy.get('#query-confirmation-no-button');
+    return cy.get("#query-confirmation-no-button");
   }
 
   getQueryConfirmationYesClick() {
-    return cy.get('#query-confirmation-yes-button');
+    return cy.get("#query-confirmation-yes-button");
   }
 
   // Switching entities confirmation buttons
 
   getEntityConfirmationCancelClick() {
-    return cy.get('#entity-confirmation-cancel-button');
+    return cy.get("#entity-confirmation-cancel-button");
   }
 
   getEntityConfirmationNoClick() {
-    return cy.get('#entity-confirmation-no-button');
+    return cy.get("#entity-confirmation-no-button");
   }
 
   getEntityConfirmationYesClick() {
-    return cy.get('#entity-confirmation-yes-button');
+    return cy.get("#entity-confirmation-yes-button");
   }
 
   // Reset Query Confirmation buttons
   getResetConfirmationCancelClick() {
-    return cy.get('#reset-confirmation-cancel-button').click();
+    return cy.get("#reset-confirmation-cancel-button").click();
   }
 
   getResetConfirmationNoClick() {
-    return cy.get('#reset-confirmation-no-button').click();
+    return cy.get("#reset-confirmation-no-button").click();
   }
 
   getResetConfirmationYesClick() {
-    return cy.get('#reset-confirmation-yes-button').click();
+    return cy.get("#reset-confirmation-yes-button").click();
   }
 
   getResetConfirmationYes() {
-    return cy.get('#reset-confirmation-yes-button');
+    return cy.get("#reset-confirmation-yes-button");
   }
 
   // Zero state Explorer
   getExploreButton() {
-    return cy.get('[data-cy=explore]');
+    return cy.get("[data-cy=explore]");
   }
 
   getQuerySelector() {
-    return cy.get('#query-selector');
+    return cy.get("#query-selector");
   }
 
   getQueryByName(query:string) {
@@ -575,29 +575,29 @@ class BrowsePage {
   }
 
   getFinalDatabaseButton() {
-    return cy.findByText('Final');
+    return cy.findByText("Final");
   }
 
   getStagingDatabaseButton() {
-    return cy.findByText('Staging');
+    return cy.findByText("Staging");
   }
 
   getTableViewButton() {
-    return cy.findByText('Table');
+    return cy.findByText("Table");
   }
 
   getSnippetViewButton() {
-    return cy.findByText('Snippet');
+    return cy.findByText("Snippet");
   }
 
   //data export modal
   getStructuredDataWarning() {
-    return cy.findByTestId('export-warning');
+    return cy.findByTestId("export-warning");
   }
 
   //get snippet view result list
   getSnippetViewResult() {
-    return cy.get('#snippetViewResult');
+    return cy.get("#snippetViewResult");
   }
 
   // getSelectedFacet(facet: string) {
@@ -610,13 +610,13 @@ class BrowsePage {
   }
 
   getNavigationIconForDocument(docUri: string) {
-    return cy.findByTestId(`${docUri}-detailViewIcon`)
+    return cy.findByTestId(`${docUri}-detailViewIcon`);
   }
 
   clearSearchText() {
-    cy.get('.ant-input-clear-icon').click();
+    cy.get(".ant-input-clear-icon").click();
   }
-  
+
 }
 
 const browsePage = new BrowsePage();

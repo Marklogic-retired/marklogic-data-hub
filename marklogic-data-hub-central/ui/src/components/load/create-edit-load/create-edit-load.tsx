@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Icon, Select } from "antd";
-import styles from './create-edit-load.module.scss';
-import { srcOptions, tgtOptions, fieldSeparatorOptions } from '../../../config/formats.config';
-import { NewLoadTooltips } from '../../../config/tooltips.config';
-import ConfirmYesNo from '../../common/confirm-yes-no/confirm-yes-no';
-import { MLButton, MLTooltip } from '@marklogic/design-system';
+import React, {useState, useEffect} from "react";
+import {Form, Input, Icon, Select} from "antd";
+import styles from "./create-edit-load.module.scss";
+import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
+import {NewLoadTooltips} from "../../../config/tooltips.config";
+import ConfirmYesNo from "../../common/confirm-yes-no/confirm-yes-no";
+import {MLButton, MLTooltip} from "@marklogic/design-system";
 
 interface Props {
   tabKey: string;
@@ -22,18 +22,18 @@ interface Props {
 }
 
 const CreateEditLoad: React.FC<Props> = (props) => {
-  const [stepName, setStepName] = useState('');
-  const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
-  const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceFormat : 'json');
-  const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData != {} ? props.stepData.targetFormat : 'json');
-  const [sourceName, setSourceName] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceName : '');
-  const [sourceType, setSourceType] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceType : '');
-  const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData != {} ? props.stepData.outputURIPrefix : '');
-  const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData != {} ? props.stepData.fieldSeparator : ',');
-  const [otherSeparator, setOtherSeparator] = useState('');
+  const [stepName, setStepName] = useState("");
+  const [description, setDescription] = useState(props.stepData && props.stepData !== {} ? props.stepData.description : "");
+  const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceFormat : "json");
+  const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.targetFormat : "json");
+  const [sourceName, setSourceName] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceName : "");
+  const [sourceType, setSourceType] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceType : "");
+  const [outputUriPrefix, setOutputUriPrefix] = useState(props.stepData && props.stepData !== {} ? props.stepData.outputURIPrefix : "");
+  const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData !== {} ? props.stepData.fieldSeparator : ",");
+  const [otherSeparator, setOtherSeparator] = useState("");
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
-  const [isValid, setIsValid] = useState(false);
+  const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
   const [saveChangesVisible, setSaveChangesVisible] = useState(false);
@@ -43,11 +43,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setStepName(props.stepData.name);
     setDescription(props.stepData.description);
     setSrcFormat(props.stepData.sourceFormat);
-    if(props.stepData.separator){
-      if([',','\\t','|',';'].includes(props.stepData.separator)){
+    if (props.stepData.separator) {
+      if ([",", "\\t", "|", ";"].includes(props.stepData.separator)) {
         setFieldSeparator(props.stepData.separator);
       } else {
-        setFieldSeparator('Other');
+        setFieldSeparator("Other");
         setOtherSeparator(props.stepData.separator);
       }
     }
@@ -55,39 +55,37 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setOutputUriPrefix(props.stepData.outputURIPrefix);
     setIsValid(true);
     setTobeDisabled(true);
-  }
+  };
 
   useEffect(() => {
     // Edit step
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.isEditing) {
+    if (props.stepData && JSON.stringify(props.stepData) !== JSON.stringify({}) && props.isEditing) {
       initStep();
-    }
-    // New step
-    else {
-      setStepName('');
+    } else {    // New step
+      setStepName("");
       setStepNameTouched(false);
-      setDescription('');
-      setSrcFormat('json');
-      setFieldSeparator(',');
-      setOtherSeparator('');
-      setTgtFormat('json');
-      setSourceName('');
-      setSourceType('');
-      setOutputUriPrefix('');
+      setDescription("");
+      setSrcFormat("json");
+      setFieldSeparator(",");
+      setOtherSeparator("");
+      setTgtFormat("json");
+      setSourceName("");
+      setSourceType("");
+      setOutputUriPrefix("");
       setIsValid(false);
     }
     // Reset
     return (() => {
-      setStepName('');
+      setStepName("");
       setStepNameTouched(false);
-      setDescription('');
-      setSrcFormat('json');
-      setFieldSeparator(',');
-      setOtherSeparator('');
-      setTgtFormat('json');
-      setSourceName('');
-      setSourceType('');
-      setOutputUriPrefix('');
+      setDescription("");
+      setSrcFormat("json");
+      setFieldSeparator(",");
+      setOtherSeparator("");
+      setTgtFormat("json");
+      setSourceName("");
+      setSourceType("");
+      setOutputUriPrefix("");
       setTobeDisabled(false);
     });
 
@@ -106,18 +104,18 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     if (props.currentTab !== props.tabKey && hasFormChanged()) {
       setSaveChangesVisible(true);
     }
-  }, [props.currentTab])
+  }, [props.currentTab]);
 
   // On change of any form field, update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     setChanged(false);
-  }, [changed])
+  }, [changed]);
 
   const hasFormChanged = () => {
     const step = props.stepData;
     // Edit
-    if (step && JSON.stringify(step) != JSON.stringify({}) && props.isEditing){
+    if (step && JSON.stringify(step) !== JSON.stringify({}) && props.isEditing) {
       // Any settings changed (excluding separator)?
       if (
         stepName === step.name && description === step.description && srcFormat === step.sourceFormat
@@ -125,71 +123,65 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         && outputUriPrefix === step.outputURIPrefix
       ) {
         // Separator?
-        if((step.separator && fieldSeparator === 'Other' && otherSeparator === step.separator) ||
-          (step.separator && fieldSeparator !== 'Other' && fieldSeparator === step.separator) ||
-          (!step.separator && (fieldSeparator === ',' || !fieldSeparator) && otherSeparator === '')) {
+        if ((step.separator && fieldSeparator === "Other" && otherSeparator === step.separator) ||
+          (step.separator && fieldSeparator !== "Other" && fieldSeparator === step.separator) ||
+          (!step.separator && (fieldSeparator === "," || !fieldSeparator) && otherSeparator === "")) {
           return false;
-        }
-        else return true;
-      }
-      else return true;
-    }
-    // New
-    else {
+        } else return true;
+      } else return true;
+    } else {     // New
       // Any settings changed (excluding separator)?
-      if(stepName === '' && description === '' && srcFormat === 'json' && tgtFormat === 'json'
-        && sourceName === '' && sourceType === '' && outputUriPrefix === '') {
+      if (stepName === "" && description === "" && srcFormat === "json" && tgtFormat === "json"
+        && sourceName === "" && sourceType === "" && outputUriPrefix === "") {
         // Separator?
-        if(fieldSeparator === ',' && otherSeparator === '') {
+        if (fieldSeparator === "," && otherSeparator === "") {
           return false;
-        }
-        else return true;
-      }
-      else return true;
+        } else return true;
+      } else return true;
     }
   };
 
   const discardOk = () => {
     props.setOpenStepSettings(false);
-    setDiscardChangesVisible(false)
-  }
+    setDiscardChangesVisible(false);
+  };
 
   const discardCancel = () => {
-    setDiscardChangesVisible(false)
-  }
+    setDiscardChangesVisible(false);
+  };
 
   const discardChanges = <ConfirmYesNo
     visible={discardChangesVisible}
-    type='discardChanges'
+    type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
   />;
 
   const saveOk = () => {
     props.createLoadArtifact(getPayload());
-    setSaveChangesVisible(false)
-  }
+    setSaveChangesVisible(false);
+  };
 
   const saveCancel = () => {
     setSaveChangesVisible(false);
     initStep();
-  }
+  };
 
   const saveChanges = <ConfirmYesNo
     visible={saveChangesVisible}
-    type='saveChanges'
+    type="saveChanges"
     onYes={saveOk}
     onNo={saveCancel}
   />;
 
   const getPayload = () => {
     let result;
-    if(srcFormat === 'csv'){
+    if (srcFormat === "csv") {
       result = {
         name: stepName,
         description: description,
         sourceFormat: srcFormat,
-        separator: fieldSeparator === 'Other'? otherSeparator : fieldSeparator,
+        separator: fieldSeparator === "Other"? otherSeparator : fieldSeparator,
         targetFormat: tgtFormat,
         sourceName: sourceName,
         sourceType: sourceType,
@@ -204,13 +196,13 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         sourceName: sourceName,
         sourceType: sourceType,
         outputURIPrefix: outputUriPrefix
-      }
+      };
       if (props.stepData.separator) {
         result.separator = null;
       }
     }
     return result;
-  }
+  };
 
   const handleSubmit = (event: { preventDefault: () => void; }) => {
     if (!stepName) {
@@ -229,18 +221,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     props.createLoadArtifact(getPayload());
     props.setOpenStepSettings(false);
     props.resetTabs();
-  }
+  };
 
   const handleChange = (event) => {
-    if (event.target.id === 'name') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "name") {
+      if (event.target.value === " ") {
         setStepNameTouched(false);
-      }
-      else {
+      } else {
         setStepNameTouched(true);
         setStepName(event.target.value);
 
-        if (event.target.value.length == 0) {
+        if (event.target.value.length === 0) {
           setIsValid(false);
           props.setIsValid(false);
         } else if (srcFormat && tgtFormat) {
@@ -249,60 +240,60 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         }
       }
     }
-    if (event.target.id === 'description') {
+    if (event.target.id === "description") {
       setDescription(event.target.value);
     }
 
-    if (event.target.id === 'sourceName') {
+    if (event.target.id === "sourceName") {
       setSourceName(event.target.value);
     }
 
-    if (event.target.id === 'sourceType') {
+    if (event.target.id === "sourceType") {
       setSourceType(event.target.value);
     }
     setChanged(true);
   };
 
   const handleOutputUriPrefix = (event) => {
-    if (event.target.id === 'outputUriPrefix') {
+    if (event.target.id === "outputUriPrefix") {
       setOutputUriPrefix(event.target.value);
     }
     setChanged(true);
   };
 
   const handleSrcFormat = (value) => {
-    if (value !== ' ') {
+    if (value !== " ") {
       setSrcFormat(value);
-      if(value === 'csv'){
-        setFieldSeparator(',');
+      if (value === "csv") {
+        setFieldSeparator(",");
       }
     }
     setChanged(true);
   };
 
   const handleFieldSeparator = (value) => {
-    if (value !== ' ') {
+    if (value !== " ") {
       setFieldSeparator(value);
-      if(value === 'Other'){
-        setOtherSeparator('');
+      if (value === "Other") {
+        setOtherSeparator("");
       }
     }
     setChanged(true);
   };
 
   const handleOtherSeparator = (event) => {
-    if (event.target.id === 'otherSeparator') {
+    if (event.target.id === "otherSeparator") {
       setOtherSeparator(event.target.value);
     }
     setChanged(true);
   };
 
   const handleTgtFormat = (value) => {
-    if (value !== ' ') {
+    if (value !== " ") {
       setTgtFormat(value);
-      if(value !== 'json' && value !== 'xml') {
-        setSourceName('');
-        setSourceType('');
+      if (value !== "json" && value !== "xml") {
+        setSourceName("");
+        setSourceType("");
       }
     }
     setChanged(true);
@@ -310,12 +301,12 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   const formItemLayout = {
     labelCol: {
-      xs: { span: 24 },
-      sm: { span: 7 },
+      xs: {span: 24},
+      sm: {span: 7},
     },
     wrapperCol: {
-      xs: { span: 28 },
-      sm: { span: 15 },
+      xs: {span: 28},
+      sm: {span: 15},
     },
   };
 
@@ -325,16 +316,16 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   return (
     <div className={styles.newDataLoadForm}>
-        <div className={styles.newLoadCardTitle} aria-label={'newLoadCardTitle'}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
+      <div className={styles.newLoadCardTitle} aria-label={"newLoadCardTitle"}>Configure the new Loading step. Then, add the new step to a flow and run it to load your data.</div>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
 
           &nbsp;
-            </span>} labelAlign="left"
-          validateStatus={(stepName || !isStepNameTouched) ? '' : 'error'}
-          help={(stepName || !isStepNameTouched) ? '' : 'Name is required'}
-          >
+        </span>} labelAlign="left"
+        validateStatus={(stepName || !isStepNameTouched) ? "" : "error"}
+        help={(stepName || !isStepNameTouched) ? "" : "Name is required"}
+        >
           <Input
             id="name"
             placeholder="Enter name"
@@ -342,13 +333,13 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={'right'}>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
             id="description"
             placeholder="Enter description"
@@ -356,13 +347,13 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description} placement={'right'}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Source Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Select
             id="sourceFormat"
             showSearch
@@ -371,17 +362,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             value={srcFormat}
             onChange={handleSrcFormat}
             disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: '95%'}}
+            style={{width: "95%"}}
           >
             {soptions}
           </Select>
-          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat} placement={'right'}>
+          &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceFormat} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
-         {srcFormat === 'csv' ? <Form.Item label={<span>
+        {srcFormat === "csv" ? <Form.Item label={<span>
           Field Separator:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <span><Select
             id="fieldSeparator"
             showSearch
@@ -395,65 +386,65 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             {fsoptions}
           </Select></span>
           &nbsp;&nbsp;
-          <span>{fieldSeparator === 'Other' ? <span><Input
+          <span>{fieldSeparator === "Other" ? <span><Input
             id="otherSeparator"
             value={otherSeparator}
             onChange={handleOtherSeparator}
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator} placement={'right'}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip></span>}</span>
-        </Form.Item> : ''}
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip></span>}</span>
+        </Form.Item> : ""}
         <Form.Item label={<span>
           Target Format:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Select
             id="targetFormat"
             placeholder="Enter target format"
             value={tgtFormat}
             onChange={handleTgtFormat}
             disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: '95%'}}>
+            style={{width: "95%"}}>
             {toptions}
           </Select>&nbsp;&nbsp;
-              <MLTooltip title={NewLoadTooltips.targetFormat} placement={'right'}>
+          <MLTooltip title={NewLoadTooltips.targetFormat} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
-        {(tgtFormat === 'json' || tgtFormat === 'xml') && <Form.Item label={<span>
+        {(tgtFormat === "json" || tgtFormat === "xml") && <Form.Item label={<span>
           Source Name:&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
-              id="sourceName"
-              placeholder="Enter Source Name"
-              value={sourceName}
-              onChange={handleChange}
-              disabled={props.canReadOnly && !props.canReadWrite}
-              className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName} placement={'right'}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+            id="sourceName"
+            placeholder="Enter Source Name"
+            value={sourceName}
+            onChange={handleChange}
+            disabled={props.canReadOnly && !props.canReadWrite}
+            className={styles.input}
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>}
-        {(tgtFormat === 'json' || tgtFormat === 'xml') && <Form.Item label={<span>
+        {(tgtFormat === "json" || tgtFormat === "xml") && <Form.Item label={<span>
           Source Type:&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
-              id="sourceType"
-              placeholder="Enter Source Type"
-              value={sourceType}
-              onChange={handleChange}
-              disabled={props.canReadOnly && !props.canReadWrite}
-              className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType} placement={'right'}>
-          <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-        </MLTooltip>
+            id="sourceType"
+            placeholder="Enter Source Type"
+            value={sourceType}
+            onChange={handleChange}
+            disabled={props.canReadOnly && !props.canReadWrite}
+            className={styles.input}
+          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>}
         <Form.Item label={<span>
           Target URI Prefix:&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
             id="outputUriPrefix"
             placeholder="Enter URI Prefix"
@@ -462,30 +453,30 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewLoadTooltips.outputURIPrefix} placement={'right'}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </MLTooltip>
+          <MLTooltip title={NewLoadTooltips.outputURIPrefix} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-              {!props.canReadWrite?<MLTooltip title={NewLoadTooltips.missingPermission} placement={'bottomRight'}><span className={styles.disabledCursor}><MLButton
+            {!props.canReadWrite?<MLTooltip title={NewLoadTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}><MLButton
               className={styles.disabledSaveButton}
               aria-label="Save"
               type="primary"
               htmlType="submit"
               disabled={true}
               onClick={handleSubmit}
-                  >Save</MLButton></span></MLTooltip>:
-                  <MLButton
-                      aria-label="Save"
-                      type="primary"
-                      htmlType="submit"
-                      disabled={false}
-                      onClick={handleSubmit}
-                  >Save</MLButton>}
+            >Save</MLButton></span></MLTooltip>:
+              <MLButton
+                aria-label="Save"
+                type="primary"
+                htmlType="submit"
+                disabled={false}
+                onClick={handleSubmit}
+              >Save</MLButton>}
           </div>
         </Form.Item>
       </Form>
@@ -493,6 +484,6 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       {saveChanges}
     </div>
   );
-}
+};
 
 export default CreateEditLoad;

@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Modal, Form, Input, Icon } from 'antd';
-import { MLButton, MLTooltip, MLSelect } from '@marklogic/design-system';
-import styles from './threshold-modal.module.scss';
+import React, {useState, useEffect, useContext} from "react";
+import {Modal, Form, Input, Icon} from "antd";
+import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
+import styles from "./threshold-modal.module.scss";
 
-import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
+import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 
-import { CurationContext } from '../../../../util/curation-context';
-import { MatchingStep, Threshold } from '../../../../types/curation-types';
-import { Definition } from '../../../../types/modeling-types';
-import { NewMatchTooltips } from '../../../../config/tooltips.config';
-import { updateMatchingArtifact } from '../../../../api/matching';
+import {CurationContext} from "../../../../util/curation-context";
+import {MatchingStep, Threshold} from "../../../../types/curation-types";
+import {NewMatchTooltips} from "../../../../config/tooltips.config";
+import {updateMatchingArtifact} from "../../../../api/matching";
 
 type Props = {
   isVisible: boolean;
@@ -18,36 +17,36 @@ type Props = {
 };
 
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: {span: 8},
+  wrapperCol: {span: 16},
 };
 
 const THRESHOLD_TYPE_OPTIONS = [
-  { name: 'Merge', value: 'merge' },
-  { name: 'Notify', value: 'notify' },
-  { name: 'Custom', value: 'custom' },
+  {name: "Merge", value: "merge"},
+  {name: "Notify", value: "notify"},
+  {name: "Custom", value: "custom"},
 ];
 
-const { MLOption } = MLSelect;
- 
-const ThresholdModal: React.FC<Props> = (props) => {
-  const { curationOptions, updateActiveStepArtifact } = useContext(CurationContext);
+const {MLOption} = MLSelect;
 
-  const [nameValue, setNameValue] = useState('');
-  const [nameErrorMessage, setNameErrorMessage] = useState('');
+const ThresholdModal: React.FC<Props> = (props) => {
+  const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
+
+  const [nameValue, setNameValue] = useState("");
+  const [nameErrorMessage, setNameErrorMessage] = useState("");
   const [isNameTouched, setIsNameTouched] = useState(false);
 
   const [actionType, setActionType] = useState<string | undefined>(undefined);
-  const [actionTypeErrorMessage, setActionTypeErrorMessage] = useState('');
+  const [actionTypeErrorMessage, setActionTypeErrorMessage] = useState("");
   const [isActionTypeTouched, setIsActionTypeTouched] = useState(false);
 
-  const [uriValue, setUriValue] = useState('');
-  const [uriErrorMessage, setUriErrorMessage] = useState('');
+  const [uriValue, setUriValue] = useState("");
+  const [uriErrorMessage, setUriErrorMessage] = useState("");
   const [isUriTouched, setIsUriTouched] = useState(false);
-  const [functionValue, setFunctionValue] = useState('');
-  const [functionErrorMessage, setFunctionErrorMessage] = useState('');
+  const [functionValue, setFunctionValue] = useState("");
+  const [functionErrorMessage, setFunctionErrorMessage] = useState("");
   const [isFunctionTouched, setIsFunctionTouched] = useState(false);
-  const [namespaceValue, setNamespaceValue] = useState('');
+  const [namespaceValue, setNamespaceValue] = useState("");
   const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
 
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
@@ -55,62 +54,62 @@ const ThresholdModal: React.FC<Props> = (props) => {
   useEffect(() => {
     if (Object.keys(props.editThreshold).length !== 0 && props.isVisible) {
       let editThreshold = props.editThreshold;
-      setNameValue(editThreshold['thresholdName']);
-      setActionType(editThreshold['action']);
-      if (editThreshold['action'] === 'custom') {
-        setUriValue(editThreshold['actionModulePath'])
-        if (editThreshold.hasOwnProperty('actionModuleNamespace')) {
-          setNamespaceValue(editThreshold['actionModuleNamespace'])
+      setNameValue(editThreshold["thresholdName"]);
+      setActionType(editThreshold["action"]);
+      if (editThreshold["action"] === "custom") {
+        setUriValue(editThreshold["actionModulePath"]);
+        if (editThreshold.hasOwnProperty("actionModuleNamespace")) {
+          setNamespaceValue(editThreshold["actionModuleNamespace"]);
         }
-        if (editThreshold.hasOwnProperty('actionModuleFunction')) {
-          setFunctionValue(editThreshold['actionModuleFunction'])
+        if (editThreshold.hasOwnProperty("actionModuleFunction")) {
+          setFunctionValue(editThreshold["actionModuleFunction"]);
         }
       }
     }
   }, [props.isVisible]);
 
   const handleInputChange = (event) => {
-    switch(event.target.id) {
-      case 'name-input':
-        if (event.target.value === '') {
-          setIsNameTouched(false);
-          setNameErrorMessage('A threshold name is required');
-        } else {
-          setNameErrorMessage('');
-        }
-        setIsNameTouched(true);
-        setNameValue(event.target.value);
-        break;
+    switch (event.target.id) {
+    case "name-input":
+      if (event.target.value === "") {
+        setIsNameTouched(false);
+        setNameErrorMessage("A threshold name is required");
+      } else {
+        setNameErrorMessage("");
+      }
+      setIsNameTouched(true);
+      setNameValue(event.target.value);
+      break;
 
-      case 'uri-input':
-        if (event.target.value === '') {
-          setIsUriTouched(false);
-          setUriErrorMessage('A URI is required');
-        } else {
-          setUriErrorMessage('');
-        }
-        setIsUriTouched(true);
-        setUriValue(event.target.value);
-        break;
+    case "uri-input":
+      if (event.target.value === "") {
+        setIsUriTouched(false);
+        setUriErrorMessage("A URI is required");
+      } else {
+        setUriErrorMessage("");
+      }
+      setIsUriTouched(true);
+      setUriValue(event.target.value);
+      break;
 
-      case 'function-input':
-        if (event.target.value === '') {
-          setIsFunctionTouched(false);
-          setFunctionErrorMessage('A function is required');
-        } else {
-          setFunctionErrorMessage('');
-        }
-        setIsFunctionTouched(true);
-        setFunctionValue(event.target.value);
-        break;
+    case "function-input":
+      if (event.target.value === "") {
+        setIsFunctionTouched(false);
+        setFunctionErrorMessage("A function is required");
+      } else {
+        setFunctionErrorMessage("");
+      }
+      setIsFunctionTouched(true);
+      setFunctionValue(event.target.value);
+      break;
 
-      case 'namespace-input':
-        setIsNamespaceTouched(true);
-        setNamespaceValue(event.target.value);
-        break;
+    case "namespace-input":
+      setIsNamespaceTouched(true);
+      setNamespaceValue(event.target.value);
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   };
 
@@ -124,15 +123,15 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const resetModal = () => {
-    setNameValue('');
-    setNameErrorMessage('');
+    setNameValue("");
+    setNameErrorMessage("");
     setActionType(undefined);
-    setActionTypeErrorMessage('');
-    setUriValue('');
-    setUriErrorMessage('');
-    setFunctionValue('');
-    setFunctionErrorMessage('');
-    setNamespaceValue('');
+    setActionTypeErrorMessage("");
+    setUriValue("");
+    setUriErrorMessage("");
+    setFunctionValue("");
+    setFunctionErrorMessage("");
+    setNamespaceValue("");
     resetTouched();
   };
 
@@ -143,130 +142,130 @@ const ThresholdModal: React.FC<Props> = (props) => {
     setIsUriTouched(false);
     setIsFunctionTouched(false);
     setIsNamespaceTouched(false);
-  }
+  };
 
   const onSubmit = async (event) => {
     event.preventDefault();
-    let nameErrorMessage = '';
-    let actionErrorMessage = '';
-    let thresholdName = nameValue || '';
-    if (thresholdName === '') {
-      nameErrorMessage = 'A threshold name is required';
+    let nameErrorMessage = "";
+    let actionErrorMessage = "";
+    let thresholdName = nameValue || "";
+    if (thresholdName === "") {
+      nameErrorMessage = "A threshold name is required";
     }
 
-    if (actionType === '' || actionType === undefined) {
-      actionErrorMessage = 'An action is required';
+    if (actionType === "" || actionType === undefined) {
+      actionErrorMessage = "An action is required";
     }
-    switch(actionType) {
-      case 'merge':
-      case 'notify':
-        {
+    switch (actionType) {
+    case "merge":
+    case "notify":
+    {
 
-          if (actionErrorMessage === '' && nameErrorMessage === '' && Object.keys(props.editThreshold).length === 0) {
-            let newThreshold: Threshold = {
-              thresholdName,
-              action: actionType,
-              score: 0
-            };
+      if (actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length === 0) {
+        let newThreshold: Threshold = {
+          thresholdName,
+          action: actionType,
+          score: 0
+        };
 
-            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-            let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-            if (duplicateNames.length > 0) {
-              nameErrorMessage = 'A duplicate threshold name exists';
-            } else {
-              newStepArtifact.thresholds.push(newThreshold);
-              await updateMatchingArtifact(newStepArtifact);
-              updateActiveStepArtifact(newStepArtifact);
-              props.toggleModal(false);
-              resetModal();
-            }
-
-          }
-
-          if (actionErrorMessage === '' && nameErrorMessage === '' && Object.keys(props.editThreshold).length !== 0) {
-            let editedThreshold: Threshold = {
-              thresholdName,
-              action: actionType,
-              score: props.editThreshold['score']
-            };
-
-            let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-            let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold['index']];
-            let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-
-            if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== editedThreshold.thresholdName) {
-              nameErrorMessage = 'A duplicate threshold name exists';
-            } else {
-              updateThreshold(editedThreshold)
-            }
-          }
-          break;
+        let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        if (duplicateNames.length > 0) {
+          nameErrorMessage = "A duplicate threshold name exists";
+        } else {
+          newStepArtifact.thresholds.push(newThreshold);
+          await updateMatchingArtifact(newStepArtifact);
+          updateActiveStepArtifact(newStepArtifact);
+          props.toggleModal(false);
+          resetModal();
         }
 
-        case 'custom':
-          {
-            let uriErrorMessage = '';
-            if (uriValue === '') {
-              uriErrorMessage = 'A URI is required';
-            }
-  
-            let functionErrorMessage = '';
-            if (functionValue === '') {
-              functionErrorMessage = 'A function is required';
-            }
-    
-            let thresholdName = nameValue || '';
-    
-            let customThreshold: Threshold = {
-              thresholdName,
-              action: actionType,
-              score: 0,
-              actionModulePath: uriValue,
-              actionModuleFunction: functionValue,
-              actionModuleNamespace: namespaceValue
-            };
-  
-            if (uriErrorMessage === '' && functionErrorMessage === '' && nameErrorMessage === '' && actionErrorMessage === '' && Object.keys(props.editThreshold).length === 0) {
-              let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-              let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-              if (duplicateNames.length > 0) {
-                nameErrorMessage = 'A duplicate threshold name exists';
-              } else {
-                newStepArtifact.thresholds.push(customThreshold);
-                await updateMatchingArtifact(newStepArtifact);
-                updateActiveStepArtifact(newStepArtifact);
-                props.toggleModal(false);
-                resetModal();
-              }
-            }
+      }
 
-            if (uriErrorMessage === '' && functionErrorMessage === '' && actionErrorMessage === '' && nameErrorMessage === '' && Object.keys(props.editThreshold).length !== 0) {
-              let customEditedThreshold: Threshold = {
-                thresholdName,
-                action: actionType,
-                score: props.editThreshold['score'],
-                actionModulePath: uriValue,
-                actionModuleFunction: functionValue,
-                actionModuleNamespace: namespaceValue
-              };
-              
-              let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-              let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold['index']];
-              let duplicateNames = newStepArtifact.thresholds.filter( threshold => threshold.thresholdName === thresholdName);
-              
-              if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== customEditedThreshold.thresholdName) {
-                nameErrorMessage = 'A duplicate threshold name exists';
-              } else {
-                updateThreshold(customEditedThreshold)
-              }
-            }
+      if (actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length !== 0) {
+        let editedThreshold: Threshold = {
+          thresholdName,
+          action: actionType,
+          score: props.editThreshold["score"]
+        };
 
-            setUriErrorMessage(uriErrorMessage);
-            setFunctionErrorMessage(functionErrorMessage);
-            break;
-          }
-      default:
-        break;
+        let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+        let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold["index"]];
+        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+
+        if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== editedThreshold.thresholdName) {
+          nameErrorMessage = "A duplicate threshold name exists";
+        } else {
+          updateThreshold(editedThreshold);
+        }
+      }
+      break;
+    }
+
+    case "custom":
+    {
+      let uriErrorMessage = "";
+      if (uriValue === "") {
+        uriErrorMessage = "A URI is required";
+      }
+
+      let functionErrorMessage = "";
+      if (functionValue === "") {
+        functionErrorMessage = "A function is required";
+      }
+
+      let thresholdName = nameValue || "";
+
+      let customThreshold: Threshold = {
+        thresholdName,
+        action: actionType,
+        score: 0,
+        actionModulePath: uriValue,
+        actionModuleFunction: functionValue,
+        actionModuleNamespace: namespaceValue
+      };
+
+      if (uriErrorMessage === "" && functionErrorMessage === "" && nameErrorMessage === "" && actionErrorMessage === "" && Object.keys(props.editThreshold).length === 0) {
+        let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+        if (duplicateNames.length > 0) {
+          nameErrorMessage = "A duplicate threshold name exists";
+        } else {
+          newStepArtifact.thresholds.push(customThreshold);
+          await updateMatchingArtifact(newStepArtifact);
+          updateActiveStepArtifact(newStepArtifact);
+          props.toggleModal(false);
+          resetModal();
+        }
+      }
+
+      if (uriErrorMessage === "" && functionErrorMessage === "" && actionErrorMessage === "" && nameErrorMessage === "" && Object.keys(props.editThreshold).length !== 0) {
+        let customEditedThreshold: Threshold = {
+          thresholdName,
+          action: actionType,
+          score: props.editThreshold["score"],
+          actionModulePath: uriValue,
+          actionModuleFunction: functionValue,
+          actionModuleNamespace: namespaceValue
+        };
+
+        let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
+        let stepArtifactThreshold: Threshold = newStepArtifact.thresholds[props.editThreshold["index"]];
+        let duplicateNames = newStepArtifact.thresholds.filter(threshold => threshold.thresholdName === thresholdName);
+
+        if (duplicateNames.length > 0 && stepArtifactThreshold.thresholdName !== customEditedThreshold.thresholdName) {
+          nameErrorMessage = "A duplicate threshold name exists";
+        } else {
+          updateThreshold(customEditedThreshold);
+        }
+      }
+
+      setUriErrorMessage(uriErrorMessage);
+      setFunctionErrorMessage(functionErrorMessage);
+      break;
+    }
+    default:
+      break;
     }
     setNameErrorMessage(nameErrorMessage);
     setActionTypeErrorMessage(actionErrorMessage);
@@ -275,21 +274,21 @@ const ThresholdModal: React.FC<Props> = (props) => {
   const updateThreshold = async (threshold) => {
     let newStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
 
-    newStepArtifact.thresholds[props.editThreshold['index']] = threshold;
+    newStepArtifact.thresholds[props.editThreshold["index"]] = threshold;
     await updateMatchingArtifact(newStepArtifact);
     updateActiveStepArtifact(newStepArtifact);
     props.toggleModal(false);
     resetModal();
-  }
+  };
 
   const onMatchTypeSelect = (value: string) => {
-    setActionTypeErrorMessage('');
+    setActionTypeErrorMessage("");
     setIsActionTypeTouched(true);
-    setActionType(value);  
+    setActionType(value);
   };
 
   const hasFormChanged = () => {
-    if (actionType ===  'custom') {
+    if (actionType ===  "custom") {
       let checkCustomValues = hasCustomFormValuesChanged();
       if (!isNameTouched
         && !isActionTypeTouched
@@ -309,15 +308,15 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const hasCustomFormValuesChanged = () => {
-    if ( !isUriTouched
+    if (!isUriTouched
       && !isFunctionTouched
       && !isNamespaceTouched
     ) {
       return false;
     } else {
-      return true
+      return true;
     }
-  }
+  };
 
   const discardOk = () => {
     resetModal();
@@ -330,7 +329,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const discardChanges = <ConfirmYesNo
     visible={discardChangesVisible}
-    type='discardChanges'
+    type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
   />;
@@ -346,10 +345,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
         label={<span>
           URI:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
-            </span>}
+        </span>}
         colon={false}
         labelAlign="left"
-        validateStatus={uriErrorMessage ? 'error' : ''}
+        validateStatus={uriErrorMessage ? "error" : ""}
         help={uriErrorMessage}
       >
         <Input
@@ -370,10 +369,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
         label={<span>
           Function:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
-            </span>}
+        </span>}
         colon={false}
         labelAlign="left"
-        validateStatus={functionErrorMessage ? 'error' : ''}
+        validateStatus={functionErrorMessage ? "error" : ""}
         help={functionErrorMessage}
       >
         <Input
@@ -390,23 +389,23 @@ const ThresholdModal: React.FC<Props> = (props) => {
         </MLTooltip>
       </Form.Item>
       <Form.Item
-          className={styles.formItem}
-          label={<span>Namespace:</span>}
-          colon={false}
-          labelAlign="left"
-        >
-          <Input
-            id="namespace-input"
-            aria-label="namespace-input"
-            placeholder="Enter a namespace"
-            className={styles.input}
-            value={namespaceValue}
-            onChange={handleInputChange}
-            onBlur={handleInputChange}
-          />
-          <MLTooltip title={NewMatchTooltips.namespace}>
-            <Icon type="question-circle" className={styles.icon} theme="filled" />
-          </MLTooltip>
+        className={styles.formItem}
+        label={<span>Namespace:</span>}
+        colon={false}
+        labelAlign="left"
+      >
+        <Input
+          id="namespace-input"
+          aria-label="namespace-input"
+          placeholder="Enter a namespace"
+          className={styles.input}
+          value={namespaceValue}
+          onChange={handleInputChange}
+          onBlur={handleInputChange}
+        />
+        <MLTooltip title={NewMatchTooltips.namespace}>
+          <Icon type="question-circle" className={styles.icon} theme="filled" />
+        </MLTooltip>
       </Form.Item>
     </>
   );
@@ -432,7 +431,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
       destroyOnClose={true}
       closable={true}
       maskClosable={false}
-      title={Object.keys(props.editThreshold).length === 0 ? 'Add Match Threshold' : 'Edit Match Threshold'}
+      title={Object.keys(props.editThreshold).length === 0 ? "Add Match Threshold" : "Edit Match Threshold"}
       footer={null}
       width={700}
       onCancel={closeModal}
@@ -448,10 +447,10 @@ const ThresholdModal: React.FC<Props> = (props) => {
           label={<span>
             Name:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
-              </span>}
+          </span>}
           colon={false}
           labelAlign="left"
-          validateStatus={nameErrorMessage ? 'error' : ''}
+          validateStatus={nameErrorMessage ? "error" : ""}
           help={nameErrorMessage}
         >
           <Input
@@ -470,16 +469,16 @@ const ThresholdModal: React.FC<Props> = (props) => {
           label={<span>
             Action:&nbsp;<span className={styles.asterisk}>*</span>
             &nbsp;
-              </span>}
+          </span>}
           colon={false}
           labelAlign="left"
-          validateStatus={actionTypeErrorMessage ? 'error' : ''}
+          validateStatus={actionTypeErrorMessage ? "error" : ""}
           help={actionTypeErrorMessage}
         >
-          <MLSelect 
+          <MLSelect
             aria-label={"threshold-select"}
-            className={styles.matchTypeSelect} 
-            size="default" 
+            className={styles.matchTypeSelect}
+            size="default"
             placeholder="Select action"
             defaultValue="''"
             onSelect={onMatchTypeSelect}
@@ -489,7 +488,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
           </MLSelect>
         </Form.Item>
 
-        {actionType === 'custom' && renderCustomOptions}
+        {actionType === "custom" && renderCustomOptions}
         {modalFooter}
       </Form>
       {discardChanges}

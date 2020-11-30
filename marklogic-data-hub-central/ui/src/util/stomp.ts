@@ -1,9 +1,9 @@
 // derived from https://github.com/sjmf/ng2-stompjs-demo
-import React from 'react';
-import SockJS from 'sockjs-client';
-import { Subject ,  BehaviorSubject } from 'rxjs';
-import { Client, Message, Stomp } from 'stompjs/lib/stomp.min';
-import axios from 'axios';
+import React from "react";
+import SockJS from "sockjs-client";
+import {Subject,  BehaviorSubject} from "rxjs";
+import {Client, Message, Stomp} from "stompjs/lib/stomp.min";
+import axios from "axios";
 
 /** possible states for the STOMP service */
 export enum STOMPState {
@@ -16,11 +16,11 @@ export enum STOMPState {
 
 /** look up states for the STOMP service */
 export const STATELOOKUP: string[] = [
-  'CLOSED',
-  'TRYING',
-  'CONNECTED',
-  'SUBSCRIBED',
-  'DISCONNECTING'
+  "CLOSED",
+  "TRYING",
+  "CONNECTED",
+  "SUBSCRIBED",
+  "DISCONNECTING"
 ];
 
 export interface IStompContextInterface {
@@ -63,7 +63,7 @@ export class STOMPService {
   // STOMP Client from stomp.js
   private client: Client;
 
-  private endpoint: string = '';
+  private endpoint: string = "";
 
   private _isActive: boolean = false;
 
@@ -85,12 +85,12 @@ export class STOMPService {
 
   /** Set up configuration */
   public configure(endpoint: string): void {
-    console.debug('configuring STOMP client...');
+    console.debug("configuring STOMP client...");
     this.endpoint = endpoint;
 
     // Check for errors:
     if (this.state.getValue() !== STOMPState.CLOSED) {
-      throw Error('Already running!');
+      throw Error("Already running!");
     }
 
     const sockJsClient = new SockJS(endpoint);
@@ -105,7 +105,7 @@ export class STOMPService {
     // Set function to debug print messages
     this.client.debug = true;
     this._isConfigured = true;
-    console.debug('STOMP client configured!');
+    console.debug("STOMP client configured!");
   }
 
   public isConfigured(): boolean {
@@ -113,15 +113,15 @@ export class STOMPService {
   }
 
   public isClosed(): boolean {
-    return this.state.getValue() == STOMPState.CLOSED;
+    return this.state.getValue() === STOMPState.CLOSED;
   }
 
   public isActive(): boolean {
-    return this.state.getValue() == STOMPState.CONNECTED || this.state.getValue() == STOMPState.SUBSCRIBED;
+    return this.state.getValue() === STOMPState.CONNECTED || this.state.getValue() === STOMPState.SUBSCRIBED;
   }
 
   public isTrying(): boolean {
-    return this.state.getValue() == STOMPState.TRYING;
+    return this.state.getValue() === STOMPState.TRYING;
   }
   /**
    * Perform connection to STOMP broker, returning a Promise
@@ -130,10 +130,10 @@ export class STOMPService {
   public tryConnect(): Promise<{}> {
 
     if (this.state.getValue() !== STOMPState.CLOSED) {
-      throw Error('Can\'t tryConnect if not CLOSED!');
+      throw Error("Can't tryConnect if not CLOSED!");
     }
     if (this.client === null) {
-      throw Error('Client not configured!');
+      throw Error("Client not configured!");
     }
     // Attempt connection, passing in a callback
     this.client.connect(
@@ -187,11 +187,12 @@ export class STOMPService {
    * if we need to use this.x inside the function
    */
   public debug(...args: any[]): void {
-
+    /* eslint-disable no-console */
     // Push arguments to this function into console.log
     if (window.console && console.log && console.log.apply) {
       console.log.apply([console].concat(args));
     }
+    /* eslint-enable no-console */
   }
 
 
@@ -199,7 +200,7 @@ export class STOMPService {
   public onConnect = () => {
 
     // Indicate our connected state to observers
-    this.state.next( STOMPState.CONNECTED );
+    this.state.next(STOMPState.CONNECTED);
 
     this._isActive = true;
 
@@ -219,33 +220,33 @@ export class STOMPService {
 
   // Handle errors from stomp.js
   public onError = async (error: string, ...other: any[]) => {
-    console.log('STOMP error:', error, other);
+    console.log("STOMP error:", error, other); // eslint-disable-line no-console
     // Check for dropped connection and try reconnecting
-    if (this._isActive && error.indexOf('Lost connection') !== -1) {
+    if (this._isActive && error.indexOf("Lost connection") !== -1) {
       this.client = null;
       // Reset state indicator
-      this.state.next( STOMPState.CLOSED );
+      this.state.next(STOMPState.CLOSED);
 
       // check to see if it failed due to being logged out
-      axios('/api/environment/systemInfo')
-          .then(() => {
-            // Attempt reconnection
-            console.debug('Reconnecting in 5 seconds...');
-            setTimeout(() => {
-              // ensure the
-              if (this.isClosed()) {
-                this.configure(this.endpoint);
-                this.tryConnect();
-              }
-            }, 5000);
-          })
-          .catch(err => {
-              if (err.response.status === 401) {
-                localStorage.setItem('dataHubUser', '');
-                localStorage.setItem('loginResp', '');
-                window.location.reload();
-              }
-            });
+      axios("/api/environment/systemInfo")
+        .then(() => {
+          // Attempt reconnection
+          console.debug("Reconnecting in 5 seconds...");
+          setTimeout(() => {
+            // ensure the
+            if (this.isClosed()) {
+              this.configure(this.endpoint);
+              this.tryConnect();
+            }
+          }, 5000);
+        })
+        .catch(err => {
+          if (err.response.status === 401) {
+            localStorage.setItem("dataHubUser", "");
+            localStorage.setItem("loginResp", "");
+            window.location.reload();
+          }
+        });
     }
   }
 
@@ -255,7 +256,7 @@ export class STOMPService {
     if (message.body) {
       this.messages.next(message);
     } else {
-      console.error('Empty message received!');
+      console.error("Empty message received!");
     }
   }
 
@@ -267,7 +268,7 @@ export class STOMPService {
   }
 
   /** Subscribe to server message queues */
-  subscribeInternal(endpoint: string, resolveFunc: (...args: any[]) => void ): void {
+  subscribeInternal(endpoint: string, resolveFunc: (...args: any[]) => void): void {
 
     if (this.state.getValue() === STOMPState.TRYING) {
       this._subscribeQueue.push({
@@ -276,7 +277,7 @@ export class STOMPService {
       });
     } else {
       const resp = this.client.subscribe(
-        endpoint, this.onMessage, { ack: 'auto' });
+        endpoint, this.onMessage, {ack: "auto"});
       resolveFunc(resp.id); // this.resolveSubQueue(resp.id);
     }
   }

@@ -1,20 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { Card, Icon, Row, Col, Select } from 'antd';
-import { MLTooltip } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSlidersH } from '@fortawesome/free-solid-svg-icons';
-import { faTrashAlt } from '@fortawesome/free-regular-svg-icons';
-import styles from './merging-card.module.scss';
+import React, {useState, useContext, useEffect} from "react";
+import {Link, useHistory} from "react-router-dom";
+import {Card, Icon, Row, Col, Select} from "antd";
+import {MLTooltip} from "@marklogic/design-system";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faSlidersH} from "@fortawesome/free-solid-svg-icons";
+import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
+import styles from "./merging-card.module.scss";
 
-import AddMergeRuleDialog from './add-merge-rule/add-merge-rule-dialog';
-import ConfirmationModal from '../../confirmation-modal/confirmation-modal';
+import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 
-import { CurationContext } from '../../../util/curation-context';
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from '../../../util/conversionFunctions';
-import { AdvMapTooltips, SecurityTooltips } from '../../../config/tooltips.config';
-import { ConfirmationType } from '../../../types/common-types';
-import { MergingStep, StepType} from '../../../types/curation-types';
+import {CurationContext} from "../../../util/curation-context";
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from "../../../util/conversionFunctions";
+import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
+import {ConfirmationType} from "../../../types/common-types";
+import {MergingStep, StepType} from "../../../types/curation-types";
 import Steps from "../../steps/steps";
 
 interface Props {
@@ -30,21 +29,16 @@ interface Props {
   addStepToNew: any;
 }
 
-const { Option } = Select;
+const {Option} = Select;
 
 const MergingCard: React.FC<Props> = (props) => {
   const history = useHistory<any>();
-  const { setActiveStep } = useContext(CurationContext);
+  const {setActiveStep} = useContext(CurationContext);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
   const [selectVisible, setSelectVisible] = useState(false);
-  const [showLinks, setShowLinks] = useState('');
-  const [stepArtifact, setStepArtifact] = useState({});
-
-  const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false);
+  const [showLinks, setShowLinks] = useState("");
+  const [showCreateEditStepModal, toggleCreateEditStepModal] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [editStepArtifact, setEditStepArtifact] = useState({});
-
-  const [showStepSettings, toggleStepSettings] = useState(false);
-
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
@@ -53,7 +47,7 @@ const MergingCard: React.FC<Props> = (props) => {
   useEffect(() => {
     let sortedArray = props.mergingStepsArray.length > 1 ? sortStepsByUpdated(props.mergingStepsArray) : props.mergingStepsArray;
     setSortedMergingSteps(sortedArray);
-  },[props.mergingStepsArray]);
+  }, [props.mergingStepsArray]);
 
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -61,57 +55,52 @@ const MergingCard: React.FC<Props> = (props) => {
   const OpenAddNew = () => {
     setIsEditing(false);
     setOpenStepSettings(true);
-  }
+  };
 
   const OpenStepSettings = (index) => {
     setIsEditing(true);
     setEditStepArtifact(props.mergingStepsArray[index]);
     setOpenStepSettings(true);
     toggleCreateEditStepModal(true);
-  }
-
-  const stepSettingsClicked = (index) => {
-    setStepArtifact(props.mergingStepsArray[index]);
-    toggleStepSettings(true);
-  }
+  };
 
   const openStepDetails = (mergingStep: MergingStep) => {
-    setActiveStep(mergingStep, props.entityModel['model']['definitions'], props.entityName);
-    history.push({ pathname: '/tiles/curate/merge'});
-   };
+    setActiveStep(mergingStep, props.entityModel["model"]["definitions"], props.entityName);
+    history.push({pathname: "/tiles/curate/merge"});
+  };
 
-   const createMergingArtifact = async (payload) => {
+  const createMergingArtifact = async (payload) => {
     // Update local form state, then save to db
     setEditStepArtifact(payload);
     props.createMergingArtifact(payload);
-  }
+  };
 
   const updateMergingArtifact = (payload) => {
-      // Update local form state
-      setEditStepArtifact(payload);
-  }
+    // Update local form state
+    setEditStepArtifact(payload);
+  };
 
   const deleteStepClicked = (name) => {
     toggleConfirmModal(true);
-    setConfirmType(ConfirmationType.DeleteStep)
+    setConfirmType(ConfirmationType.DeleteStep);
     setConfirmBoldTextArray([name]);
   };
 
   function handleMouseOver(e, name) {
     // Handle all possible events from mouseover of card body
     setSelectVisible(true);
-    if (typeof e.target.className === 'string' &&
-      (e.target.className === 'ant-card-body' ||
-        e.target.className.startsWith('merging-card_cardContainer') ||
-        e.target.className.startsWith('merging-card_formatFileContainer') ||
-        e.target.className.startsWith('merging-card_sourceQuery') ||
-        e.target.className.startsWith('merging-card_lastUpdatedStyle'))
+    if (typeof e.target.className === "string" &&
+      (e.target.className === "ant-card-body" ||
+        e.target.className.startsWith("merging-card_cardContainer") ||
+        e.target.className.startsWith("merging-card_formatFileContainer") ||
+        e.target.className.startsWith("merging-card_sourceQuery") ||
+        e.target.className.startsWith("merging-card_lastUpdatedStyle"))
     ) {
       setShowLinks(name);
     }
   }
   function handleMouseLeave() {
-    setShowLinks('');
+    setShowLinks("");
     setSelectVisible(false);
   }
 
@@ -127,26 +116,26 @@ const MergingCard: React.FC<Props> = (props) => {
     if (confirmType === ConfirmationType.AddStepToFlow) {
       // TODO add step to new flow
     } else if (confirmType === ConfirmationType.DeleteStep) {
-        props.deleteMergingArtifact(confirmBoldTextArray[0]);
-        toggleConfirmModal(false);
+      props.deleteMergingArtifact(confirmBoldTextArray[0]);
+      toggleConfirmModal(false);
     }
   };
 
   const renderCardActions = (step, index) => {
     return [
-      <MLTooltip title={'Edit'} placement="bottom">
+      <MLTooltip title={"Edit"} placement="bottom">
         <Icon
           className={styles.editIcon}
           type="edit"
           key ="last"
           role="edit-merging button"
-          data-testid={step.name+'-edit'}
+          data-testid={step.name+"-edit"}
           onClick={() => OpenStepSettings(index)}
         />
       </MLTooltip>,
 
-      <MLTooltip title={'Step Details'} placement="bottom">
-        <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}>
+      <MLTooltip title={"Step Details"} placement="bottom">
+        <i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}>
           <FontAwesomeIcon icon={faSlidersH} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
       </MLTooltip>,
@@ -162,20 +151,20 @@ const MergingCard: React.FC<Props> = (props) => {
       // </MLTooltip>,
 
       props.canWriteMatchMerge ? (
-      <MLTooltip title={'Delete'} placement="bottom">
-        <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
-        </i>
-      </MLTooltip>
+        <MLTooltip title={"Delete"} placement="bottom">
+          <i key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
+            <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
+          </i>
+        </MLTooltip>
       ) : (
-      <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}>
-        <i role="disabled-delete-merging button" data-testid={step.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}>
-          <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
-        </i>
-      </MLTooltip>
+        <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+          <i role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
+            <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
+          </i>
+        </MLTooltip>
       ),
-    ]
-  }
+    ];
+  };
 
   return (
     <div className={styles.mergeContainer}>
@@ -205,50 +194,50 @@ const MergingCard: React.FC<Props> = (props) => {
                   size="small"
                 >
                   <div className={styles.formatFileContainer}>
-                    <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 27, '...')}</span>
+                    <span aria-label={`${step.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(step.name, 27, "...")}</span>
                   </div>
                   <br />
-                  {step.selectedSource === 'collection' ? (
+                  {step.selectedSource === "collection" ? (
                     <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(step.sourceQuery)}</div>
                   ): (
-                    <div className={styles.sourceQuery}>Source Query: {getInitialChars(step.sourceQuery,32,'...')}</div>
+                    <div className={styles.sourceQuery}>Source Query: {getInitialChars(step.sourceQuery, 32, "...")}</div>
                   )}
                   <br /><br />
                   <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(step.lastUpdated)}</p>
-                  <div className={styles.cardLinks} style={{display: showLinks === step.name ? 'block' : 'none'}}>
-                  {props.canWriteMatchMerge ? (
-                    <Link
-                      id="tiles-run-add"
-                      to={{
-                        pathname: '/tiles/run/add',
-                        state: {
-                          stepToAdd : step.name,
-                          stepDefinitionType : 'merging'
-                      }}}
-                    >
-                      <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
-                    </Link>
-                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div>
-                  }
-                  <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
+                  <div className={styles.cardLinks} style={{display: showLinks === step.name ? "block" : "none"}}>
+                    {props.canWriteMatchMerge ? (
+                      <Link
+                        id="tiles-run-add"
+                        to={{
+                          pathname: "/tiles/run/add",
+                          state: {
+                            stepToAdd: step.name,
+                            stepDefinitionType: "merging"
+                          }}}
+                      >
+                        <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
+                      </Link>
+                    ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div>
+                    }
+                    <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
-                    {selectVisible ? (
-                      <div className={styles.cardLinkSelect}>
-                        <Select
-                          style={{ width: '100%' }}
-                          value={selected[step.name] ? selected[step.name] : undefined}
-                          onChange={(flowName) => handleSelect({flowName: flowName, mappingName: step.name})}
-                          placeholder="Select Flow"
-                          defaultActiveFirstOption={false}
-                          disabled={!props.canWriteMatchMerge}
-                          data-testid={`${step.name}-flowsList`}
-                        >
-                          {props.flows && props.flows.length > 0 ? props.flows.map((f,i) => (
-                            <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
-                          )) : null}
-                        </Select>
-                      </div>
-                    ): null}
+                      {selectVisible ? (
+                        <div className={styles.cardLinkSelect}>
+                          <Select
+                            style={{width: "100%"}}
+                            value={selected[step.name] ? selected[step.name] : undefined}
+                            onChange={(flowName) => handleSelect({flowName: flowName, mappingName: step.name})}
+                            placeholder="Select Flow"
+                            defaultActiveFirstOption={false}
+                            disabled={!props.canWriteMatchMerge}
+                            data-testid={`${step.name}-flowsList`}
+                          >
+                            {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+                              <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
+                            )) : null}
+                          </Select>
+                        </div>
+                      ): null}
                     </div>
                   </div>
                 </Card>
@@ -282,7 +271,7 @@ const MergingCard: React.FC<Props> = (props) => {
       />
 
     </div>
-  )
+  );
 };
 
 export default MergingCard;

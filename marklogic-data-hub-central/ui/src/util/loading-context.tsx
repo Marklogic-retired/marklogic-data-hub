@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from "react";
 
 type LoadingContextInterface = {
   start: number,
@@ -24,7 +24,7 @@ export const LoadingContext = React.createContext<ILoadingContextInterface>({
   setPageSize: () => { },
 });
 
-const LoadingProvider: React.FC<{ children: any }> = ({ children }) => {
+const LoadingProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [loadingOptions, setLoadingOptions] = useState<LoadingContextInterface>(defaultLoadingOptions);
 
@@ -42,16 +42,16 @@ const LoadingProvider: React.FC<{ children: any }> = ({ children }) => {
       start: 1,
       pageSize: pageSize,
     });
-  }
+  };
 
   return (
-      <LoadingContext.Provider value={{
-        loadingOptions,
-        setPage,
-        setPageSize,
-      }}>
-        {children}
-      </LoadingContext.Provider>
+    <LoadingContext.Provider value={{
+      loadingOptions,
+      setPage,
+      setPageSize,
+    }}>
+      {children}
+    </LoadingContext.Provider>
   );
 };
 

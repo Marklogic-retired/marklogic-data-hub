@@ -1,20 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
-import {Modal} from 'antd';
-import styles from './Load.module.scss';
-import { useLocation } from "react-router-dom";
-import SwitchView from '../components/load/switch-view';
-import LoadList from '../components/load/load-list';
-import LoadCard from '../components/load/load-card';
-import { UserContext } from '../util/user-context';
-import axios from 'axios';
-import { createStep, getSteps, deleteStep } from '../api/steps';
-import { AuthoritiesContext } from "../util/authorities";
-import tiles from '../config/tiles.config';
-import { LoadingContext } from '../util/loading-context';
+import React, {useState, useEffect, useContext} from "react";
+import {Modal} from "antd";
+import styles from "./Load.module.scss";
+import {useLocation} from "react-router-dom";
+import SwitchView from "../components/load/switch-view";
+import LoadList from "../components/load/load-list";
+import LoadCard from "../components/load/load-card";
+import {UserContext} from "../util/user-context";
+import axios from "axios";
+import {createStep, getSteps, deleteStep} from "../api/steps";
+import {AuthoritiesContext} from "../util/authorities";
+import tiles from "../config/tiles.config";
+import {LoadingContext} from "../util/loading-context";
 
-export type ViewType =  'card' | 'list';
+export type ViewType =  "card" | "list";
 
-const INITIAL_VIEW: ViewType = 'card';
+const INITIAL_VIEW: ViewType = "card";
 
 const Load: React.FC = () => {
 
@@ -28,8 +28,8 @@ const Load: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [loadArtifacts, setLoadArtifacts] = useState<any[]>([]);
   const [flows, setFlows] = useState<any[]>([]);
-  const [sortedInfo, setSortedInfo] = useState({columnKey: '', order: ''});
-  const { handleError } = useContext(UserContext);
+  const [sortedInfo, setSortedInfo] = useState({columnKey: "", order: ""});
+  const {handleError} = useContext(UserContext);
 
   //For role based privileges
   const authorityService = useContext(AuthoritiesContext);
@@ -49,26 +49,26 @@ const Load: React.FC = () => {
   }, [location]);
 
   useEffect(() => {
-      getLoadArtifacts();
-      getFlows();
-      return (() => {
-        setLoadArtifacts([]);
-        setFlows([]);
-      })
+    getLoadArtifacts();
+    getFlows();
+    return (() => {
+      setLoadArtifacts([]);
+      setFlows([]);
+    });
   }, [loading]);
 
   // CREATE/POST load step
   const createLoadArtifact = async (ingestionStep) => {
     try {
       setLoading(true);
-      let response = await createStep(ingestionStep.name, 'ingestion', ingestionStep);
+      let response = await createStep(ingestionStep.name, "ingestion", ingestionStep);
       if (response.status === 200) {
         setLoading(false);
         setPage(loadingOptions.start);
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error('Error creating load step', message)
+      console.error("Error creating load step", message);
       setLoading(false);
       handleError(error);
     }
@@ -78,14 +78,14 @@ const Load: React.FC = () => {
   // GET all load steps
   const getLoadArtifacts = async () => {
     try {
-      let response = await getSteps('ingestion');
+      let response = await getSteps("ingestion");
       if (response.status === 200) {
         setLoadArtifacts([...response.data]);
       }
     } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error getting load steps', message);
-        handleError(error);
+      let message = error.response.data.message;
+      console.error("Error getting load steps", message);
+      handleError(error);
     }
   };
 
@@ -93,30 +93,30 @@ const Load: React.FC = () => {
   const deleteLoadArtifact = async (loadName) => {
     try {
       setLoading(true);
-      let response = await deleteStep(loadName, 'ingestion');
+      let response = await deleteStep(loadName, "ingestion");
       if (response.status === 200) {
         setLoading(false);
       }
     } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error deleting load step', message);
-        setLoading(false);
-        handleError(error);
+      let message = error.response.data.message;
+      console.error("Error deleting load step", message);
+      setLoading(false);
+      handleError(error);
     }
   };
 
   // GET all the flow artifacts
   const getFlows = async () => {
     try {
-        let response = await axios.get('/api/flows');
-        if (response.status === 200) {
-            setFlows(response.data);
-        }
+      let response = await axios.get("/api/flows");
+      if (response.status === 200) {
+        setFlows(response.data);
+      }
     } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error getting flows', message);
+      let message = error.response.data.message;
+      console.error("Error getting flows", message);
     }
-};
+  };
 
   // POST load data step to new flow
   const addStepToNew = async () => {
@@ -124,14 +124,13 @@ const Load: React.FC = () => {
       setLoading(true);
 
       //if (response.status === 200) {
-        console.log('POST addStepToNew');
-        setLoading(false);
+      setLoading(false);
       //}
     } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error while adding load data step to new flow.', message);
-        setLoading(false);
-        handleError(error);
+      let message = error.response.data.message;
+      console.error("Error while adding load data step to new flow.", message);
+      setLoading(false);
+      handleError(error);
     }
   };
 
@@ -143,27 +142,27 @@ const Load: React.FC = () => {
     };
     try {
       setLoading(true);
-      let url = '/api/flows/' + flowName + '/steps';
+      let url = "/api/flows/" + flowName + "/steps";
       let body = stepToAdd;
       let response = await axios.post(url, body);
       if (response.status === 200) {
         setLoading(false);
       }
     } catch (error) {
-        let message = error.response.data.message;
-        console.error('Error while adding load data step to flow.', message);
-        setLoading(false);
-        Modal.error({
-          content: 'Error adding step "' + loadArtifactName + '" to flow "' + flowName + '."',
-        });
-        handleError(error);
+      let message = error.response.data.message;
+      console.error("Error while adding load data step to flow.", message);
+      setLoading(false);
+      Modal.error({
+        content: "Error adding step \"" + loadArtifactName + "\" to flow \"" + flowName + ".\"",
+      });
+      handleError(error);
     }
   };
 
   //Setting the value of switch view output
   let output;
 
-  if (view === 'card') {
+  if (view === "card") {
     output = <LoadCard
       data={loadArtifacts}
       flows={flows}
@@ -175,8 +174,7 @@ const Load: React.FC = () => {
       addStepToFlow={addStepToFlow}
       addStepToNew={addStepToNew}
     />;
-  }
-  else {
+  } else {
     output = <div className={styles.cardView}>
       <LoadList
         data={loadArtifacts}
@@ -196,16 +194,16 @@ const Load: React.FC = () => {
   return (
     <div>
       {canReadWrite || canReadOnly ?
-      <div className={styles.loadContainer}>
-        <div className={styles.intro}>
-          <p>{tiles.load.intro}</p>
-          <div className={styles.switchViewContainer}>
-            <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
+        <div className={styles.loadContainer}>
+          <div className={styles.intro}>
+            <p>{tiles.load.intro}</p>
+            <div className={styles.switchViewContainer}>
+              <SwitchView handleSelection={handleViewSelection} defaultView={view}/>
+            </div>
           </div>
-        </div>
-        {output}
-      </div> : ''
-    }
+          {output}
+        </div> : ""
+      }
     </div>
   );
 };

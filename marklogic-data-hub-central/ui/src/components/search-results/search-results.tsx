@@ -1,7 +1,7 @@
-import React, {useContext, useEffect} from 'react';
-import { List } from 'antd';
-import SearchResult from '../search-result/search-result';
-import styles from './search-results.module.scss';
+import React, {useContext, useEffect} from "react";
+import {List} from "antd";
+import SearchResult from "../search-result/search-result";
+import styles from "./search-results.module.scss";
 import {SearchContext} from "../../util/search-context";
 
 
@@ -15,16 +15,16 @@ type Props = {
 
 const SearchResults:React.FC<Props> = (props) => {
 
-    const {
-        searchOptions,
-        setSelectedTableProperties,
-    } = useContext(SearchContext);
+  const {
+    searchOptions,
+    setSelectedTableProperties,
+  } = useContext(SearchContext);
 
-    useEffect(() => {
-        if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
-            setSelectedTableProperties(props.columns);
-        }
-    }, [props.columns]);
+  useEffect(() => {
+    if (props.columns && props.columns.length > 0 && searchOptions.selectedTableProperties.length === 0) {
+      setSelectedTableProperties(props.columns);
+    }
+  }, [props.columns]);
 
   return (
     <div id="search-results" className={styles.searchResultsContainer}>

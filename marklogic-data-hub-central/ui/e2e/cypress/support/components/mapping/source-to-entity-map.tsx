@@ -1,58 +1,58 @@
 class SourceToEntityMap {
   clearMap() {
-    return cy.findByTestId('Clear-btn');
+    return cy.findByTestId("Clear-btn");
   }
 
   testMap() {
-    return cy.findByTestId('Test-btn');
+    return cy.findByTestId("Test-btn");
   }
 
   navigateUrisRight() {
-    return cy.findByTestId('navigate-uris-right');
+    return cy.findByTestId("navigate-uris-right");
   }
 
   navigateUrisLeft() {
-    return cy.findByTestId('navigate-uris-left');
+    return cy.findByTestId("navigate-uris-left");
   }
-  
+
   expandCollapseSource() {
-    return cy.findByTestId('expandCollapseBtn-source');
+    return cy.findByTestId("expandCollapseBtn-source");
   }
 
   toggleSourceFilterMenu() {
-    cy.findByTestId('filterIcon-key').click();
+    cy.findByTestId("filterIcon-key").click();
   }
 
   setSourceSearch(propertyName: string) {
-    cy.get('#searchInput-key').focus().type(propertyName);
+    cy.get("#searchInput-key").focus().type(propertyName);
   }
 
   resetSourceSearch() {
-    return cy.findByTestId('ResetSearch-key');
+    return cy.findByTestId("ResetSearch-key");
   }
 
   submitSourceSearch() {
-    return cy.findByTestId('submitSearch-key');
-  }  
+    return cy.findByTestId("submitSearch-key");
+  }
 
   expandCollapseEntity() {
-    return cy.findByTestId('expandCollapseBtn-entity');
+    return cy.findByTestId("expandCollapseBtn-entity");
   }
 
   toggleEntityFilterMenu () {
-    cy.findByTestId('filterIcon-name').click();
+    cy.findByTestId("filterIcon-name").click();
   }
 
   setEntitySearch(propertyName: string) {
-    cy.get('#searchInput-name').focus().type(propertyName);
+    cy.get("#searchInput-name").focus().type(propertyName);
   }
 
   resetEntitySearch() {
-    return cy.findByTestId('ResetSearch-name');
+    return cy.findByTestId("ResetSearch-name");
   }
 
   submitEntitySearch() {
-    return cy.findByTestId('submitSearch-name');
+    return cy.findByTestId("submitSearch-name");
   }
 
   stepSettingsLink() {
@@ -101,7 +101,7 @@ class SourceToEntityMap {
    * @example cleanPrefix, memoryLookup, OrderId, address
    */
   setDropdownSearchList(searchString: string) {
-    cy.get('#dropdownList').focus().type(searchString);
+    cy.get("#dropdownList").focus().type(searchString);
   }
 
   /**
