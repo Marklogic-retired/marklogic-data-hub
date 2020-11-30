@@ -1,26 +1,26 @@
-import React, { useState, useContext } from 'react';
-import { Row, Col, Card, Select, Input, Divider } from 'antd';
-import styles from './zero-state-explorer.module.scss';
-import { SearchContext } from '../../util/search-context';
-import graphic from './explore_visual_big.png';
-import { QueryOptions } from '../../types/query-types';
-import { MLButton, MLRadio, MLTooltip } from '@marklogic/design-system';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStream, faTable, faThLarge } from '@fortawesome/free-solid-svg-icons';
-import tiles from '../../config/tiles.config';
+import React, {useState, useContext} from "react";
+import {Row, Col, Card, Select, Input, Divider} from "antd";
+import styles from "./zero-state-explorer.module.scss";
+import {SearchContext} from "../../util/search-context";
+import graphic from "./explore_visual_big.png";
+import {QueryOptions} from "../../types/query-types";
+import {MLButton, MLRadio, MLTooltip} from "@marklogic/design-system";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStream, faTable, faThLarge} from "@fortawesome/free-solid-svg-icons";
+import tiles from "../../config/tiles.config";
 
 const ZeroStateExplorer = (props) => {
   const {
     searchOptions,
-} = useContext(SearchContext);
+  } = useContext(SearchContext);
 
-  const [dropDownValue, setDropdownValue] = useState<string>('All Entities');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [view, setView] = useState(props.tableView ? 'table' : 'snippet');
-  const { Option } = Select;
+  const [dropDownValue, setDropdownValue] = useState<string>("All Entities");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [view, setView] = useState(props.tableView ? "table" : "snippet");
+  const {Option} = Select;
   const dividerOption = <Divider className={styles.dividerOption} />;
-  const dropdownOptions = ['All Data', dividerOption, 'All Entities', dividerOption, ...props.entities];
-  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState('final');
+  const dropdownOptions = ["All Data", dividerOption, "All Entities", dividerOption, ...props.entities];
+  const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const [cardView, setCardView] = useState(false);
 
   const {
@@ -31,9 +31,9 @@ const ZeroStateExplorer = (props) => {
     props.setCardView(cardView);
     let options: QueryOptions = {
       searchText: searchQuery,
-      entityTypeIds: dropDownValue === 'All Entities' || dropDownValue === 'All Data' ? [] : [dropDownValue],
+      entityTypeIds: dropDownValue === "All Entities" || dropDownValue === "All Data" ? [] : [dropDownValue],
       selectedFacets: {},
-      selectedQuery: 'select a query',
+      selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: false,
       manageQueryModal: false,
@@ -45,11 +45,11 @@ const ZeroStateExplorer = (props) => {
 
   const handleOptionSelect = (option: any) => {
     setDropdownValue(option);
-    if (option === 'All Data') {
-      setView('card');
+    if (option === "All Data") {
+      setView("card");
       setCardView(true);
     } else {
-      setView('table');
+      setView("table");
       setCardView(false);
       props.toggleTableView(true);
     }
@@ -60,17 +60,17 @@ const ZeroStateExplorer = (props) => {
   };
 
   const options = dropdownOptions.map((entity, index) => {
-    return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{ cursor: 'default' }}>
+    return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: "default"}}>
       {entity}
     </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
-        {entity}
-      </Option>;
+      {entity}
+    </Option>;
   });
 
   const entityMenu = (
     <Select
-      defaultValue='All Entities'
-      style={{ width: 250 }}
+      defaultValue="All Entities"
+      style={{width: 250}}
       id="entity-select"
       data-testid="entity-select"
       value={dropDownValue}
@@ -82,12 +82,12 @@ const ZeroStateExplorer = (props) => {
 
   const onItemSelect = (e) => {
     props.queries.forEach(query => {
-      if (e === query['savedQuery']['name']) {
+      if (e === query["savedQuery"]["name"]) {
         let options: QueryOptions = {
-          searchText: query['savedQuery']['query']['searchText'],
-          entityTypeIds: query['savedQuery']['query']['entityTypeIds'],
-          selectedFacets: query['savedQuery']['query']['selectedFacets'],
-          selectedQuery: query['savedQuery']['name'],
+          searchText: query["savedQuery"]["query"]["searchText"],
+          entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
+          selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
+          selectedQuery: query["savedQuery"]["name"],
           propertiesToDisplay: query.savedQuery.propertiesToDisplay,
           zeroState: false,
           manageQueryModal: false,
@@ -101,7 +101,7 @@ const ZeroStateExplorer = (props) => {
 
   const onViewChange = (val) => {
     setView(val);
-    val === 'table' ? props.toggleTableView(true) : props.toggleTableView(false);
+    val === "table" ? props.toggleTableView(true) : props.toggleTableView(false);
   };
 
   const onDatabaseChange = (val) => {
@@ -134,7 +134,7 @@ const ZeroStateExplorer = (props) => {
                   <Col span={24}>
                     <div className={styles.input}>
                       <Input
-                        style={{ width: 700 }}
+                        style={{width: 700}}
                         placeholder="Enter text to search for"
                         addonBefore={entityMenu}
                         onChange={onChange}
@@ -159,12 +159,12 @@ const ZeroStateExplorer = (props) => {
                         size="medium"
                         id="database-switch"
                       >
-                        <MLRadio.MLButton aria-label="switch-database-final" value={'final'} className={styles.button}>
+                        <MLRadio.MLButton aria-label="switch-database-final" value={"final"} className={styles.button}>
                           Final
-                      </MLRadio.MLButton>
-                        <MLRadio.MLButton aria-label="switch-database-staging" value={'staging'} className={styles.button}>
+                        </MLRadio.MLButton>
+                        <MLRadio.MLButton aria-label="switch-database-staging" value={"staging"} className={styles.button}>
                           Staging
-                      </MLRadio.MLButton>
+                        </MLRadio.MLButton>
                       </MLRadio.MLGroup>
                     </div>
                   </Col>
@@ -182,23 +182,23 @@ const ZeroStateExplorer = (props) => {
                         <MLTooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-table" value={'table'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                        ><MLRadio.MLButton aria-label="switch-view-table" value={"table"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faTable} /></i>Table
-                      </MLRadio.MLButton>
+                          </MLRadio.MLButton>
                         </MLTooltip>
                         <MLTooltip
                           title={dropDownValue === "All Data" ? "View is not available for exploring all data." : ""}
                           placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-snippet" value={'snippet'} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
+                        ><MLRadio.MLButton aria-label="switch-view-snippet" value={"snippet"} className={styles.switchViewButton} disabled={dropDownValue === "All Data"}>
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faStream} /></i>Snippet
-                      </MLRadio.MLButton>
+                          </MLRadio.MLButton>
                         </MLTooltip>
                         <MLTooltip
                           title={dropDownValue !== "All Data" ? "View is not available for exploring entities." : ""}
                           placement="bottom"
-                        ><MLRadio.MLButton aria-label="switch-view-card" value={'card'} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
+                        ><MLRadio.MLButton aria-label="switch-view-card" value={"card"} className={styles.switchViewButton} disabled={dropDownValue !== "All Data"}>
                             <i className={styles.switchViewIcon}><FontAwesomeIcon icon={faThLarge} /></i>Card
-                      </MLRadio.MLButton>
+                          </MLRadio.MLButton>
                         </MLTooltip>
                       </MLRadio.MLGroup>
                     </div>
@@ -208,7 +208,7 @@ const ZeroStateExplorer = (props) => {
                   <br />
                   <Col span={24}>
                     <div className={styles.exploreButton}>
-                      <MLButton type="primary" data-cy='explore' className={styles.button} onClick={onClickExplore} >Explore</MLButton>
+                      <MLButton type="primary" data-cy="explore" className={styles.button} onClick={onClickExplore} >Explore</MLButton>
                     </div>
                   </Col>
                 </Row>
@@ -227,9 +227,9 @@ const ZeroStateExplorer = (props) => {
               <Card className={styles.smallCard} bordered={false}>
                 <Row>
                   <Col span={24} >
-                    <div id='query-selector' className={styles.query} >
+                    <div id="query-selector" className={styles.query} >
                       <Select
-                        style={{ width: 300 }}
+                        style={{width: 300}}
                         placeholder="Select a saved query"
                         onChange={onItemSelect}
                         data-testid="query-select"

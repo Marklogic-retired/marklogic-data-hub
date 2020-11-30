@@ -59,7 +59,7 @@
     "test:dev": "react-app-rewired test --watchAll=false",
     "test": "react-app-rewired test --coverage --watchAll=false",
     "client": "react-app-rewired start",
-    "lint": "eslint . --ext .js,.ts,.tsx",
+    "lint": "eslint --ext .js,.ts,.tsx",
     "eject": "react-scripts eject"
   },
   "jest": {

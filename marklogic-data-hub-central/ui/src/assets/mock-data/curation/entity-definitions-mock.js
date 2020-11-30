@@ -63,11 +63,11 @@ export const customerEntityDef = {
       }
     },
     "Address": {
-      "required": [ ],
-      "pii": [ ],
-      "elementRangeIndex": [ ],
-      "rangeIndex": [ ],
-      "wordLexicon": [ ],
+      "required": [],
+      "pii": [],
+      "elementRangeIndex": [],
+      "rangeIndex": [],
+      "wordLexicon": [],
       "properties": {
         "street": {
           "datatype": "array",
@@ -90,7 +90,7 @@ export const customerEntityDef = {
       }
     },
     "Zip": {
-      "required": [ ],
+      "required": [],
       "properties": {
         "fiveDigit": {
           "datatype": "string",

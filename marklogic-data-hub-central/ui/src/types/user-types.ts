@@ -5,7 +5,7 @@ export interface UserContextInterface {
     pageRoute: string;
     maxSessionTime: number;
 }
-  
+
 export interface IUserContextInterface {
     user: UserContextInterface;
     loginAuthenticated: (username: string, authResponse: any) => void;

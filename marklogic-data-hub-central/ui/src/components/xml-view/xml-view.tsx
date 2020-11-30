@@ -1,5 +1,5 @@
-import React from 'react';
-import XMLViewer from 'react-xml-viewer';
+import React from "react";
+import XMLViewer from "react-xml-viewer";
 
 interface Props {
   document: any;
@@ -7,11 +7,11 @@ interface Props {
 
 const XmlView: React.FC<Props> = (props) => {
 
-    return (
-      <div data-cy='xml-document' data-testid='xml-document'>
-        <XMLViewer xml={props.document} />
-      </div>
-    );
+  return (
+    <div data-cy="xml-document" data-testid="xml-document">
+      <XMLViewer xml={props.document} />
+    </div>
+  );
 };
 
 export default XmlView;

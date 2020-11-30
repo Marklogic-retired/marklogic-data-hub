@@ -1,15 +1,15 @@
-import { Modal, Form, Input, Icon } from "antd";
-import React, { useState, useEffect } from "react";
-import styles from './new-flow-dialog.module.scss';
-import {NewFlowTooltips} from '../../../config/tooltips.config';
-import { MLButton, MLTooltip } from '@marklogic/design-system';
-import { Link, useHistory } from 'react-router-dom';
+import {Modal, Form, Input, Icon} from "antd";
+import React, {useState, useEffect} from "react";
+import styles from "./new-flow-dialog.module.scss";
+import {NewFlowTooltips} from "../../../config/tooltips.config";
+import {MLButton, MLTooltip} from "@marklogic/design-system";
+import {useHistory} from "react-router-dom";
 
 
 const NewFlowDialog = (props) => {
 
-  const [flowName, setFlowName] = useState('');
-  const [description, setDescription] = useState(props.flowData && props.flowData != {} ? props.flowData.description : '');
+  const [flowName, setFlowName] = useState("");
+  const [description, setDescription] = useState(props.flowData && props.flowData !== {} ? props.flowData.description : "");
 
   const [isFlowNameTouched, setFlowNameTouched] = useState(false);
 
@@ -18,21 +18,21 @@ const NewFlowDialog = (props) => {
 
   let history = useHistory();
   useEffect(() => {
-    if (props.flowData && JSON.stringify(props.flowData) != JSON.stringify({}) && props.title === 'Edit Flow') {
+    if (props.flowData && JSON.stringify(props.flowData) !== JSON.stringify({}) && props.title === "Edit Flow") {
       setFlowName(props.flowData.name);
       setDescription(props.flowData.description);
       setIsLoading(true);
       setTobeDisabled(true);
     } else {
-      setFlowName('');
+      setFlowName("");
       setFlowNameTouched(false);
-      setDescription('');
+      setDescription("");
     }
 
     return (() => {
-      setFlowName('');
+      setFlowName("");
       setFlowNameTouched(false);
-      setDescription('');
+      setDescription("");
       setTobeDisabled(false);
     });
 
@@ -40,27 +40,27 @@ const NewFlowDialog = (props) => {
 
   const onCancel = () => {
     props.setNewFlow(false);
-    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
+    if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
       props.setOpenNewFlow(false);
     }
 
     //add information about mapping step, load card, load list, pagination.
-    if(props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow){
-      history.push({pathname: `/tiles/${props.newStepToFlowOptions.stepDefinitionType === 'ingestion' ? 'load': 'curate'}`,
-      state: {
-          stepDefinitionType : props.newStepToFlowOptions.stepDefinitionType,
+    if (props.newStepToFlowOptions && !props.newStepToFlowOptions.existingFlow) {
+      history.push({pathname: `/tiles/${props.newStepToFlowOptions.stepDefinitionType === "ingestion" ? "load": "curate"}`,
+        state: {
+          stepDefinitionType: props.newStepToFlowOptions.stepDefinitionType,
           targetEntityType: props.newStepToFlowOptions.targetEntityType,
           viewMode: props.newStepToFlowOptions.viewMode,
           pageSize: props.newStepToFlowOptions.pageSize,
           sortOrderInfo: props.newStepToFlowOptions.sortOrderInfo,
           page: props.newStepToFlowOptions.page
-      }});
+        }});
     }
   };
 
   const onOk = () => {
     props.setNewFlow(false);
-    if(props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
+    if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
       props.setOpenNewFlow(false);
     }
   };
@@ -75,15 +75,15 @@ const NewFlowDialog = (props) => {
 
     if (event) event.preventDefault();
     let dataPayload = {
-        name: flowName,
-        description: description
-      };
+      name: flowName,
+      description: description
+    };
     setIsLoading(true);
-    if (props.title === 'Edit Flow') {
+    if (props.title === "Edit Flow") {
       await props.updateFlow(dataPayload, flowName);
     } else {
       await props.createFlow(dataPayload);
-      if(props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
+      if (props.createAdd && props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow) {
         await props.addStepToFlow(props.newStepToFlowOptions.newStepName, flowName, props.newStepToFlowOptions.stepDefinitionType);
         props.setOpenNewFlow(false);
         props.setAddedFlowName(flowName);
@@ -93,32 +93,31 @@ const NewFlowDialog = (props) => {
   };
 
   const handleChange = (event) => {
-    if (event.target.id === 'name') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "name") {
+      if (event.target.value === " ") {
         setFlowNameTouched(false);
-      }
-      else {
+      } else {
         setFlowNameTouched(true);
         setFlowName(event.target.value);
       }
     }
-    if (event.target.id === 'name' && event.target.value.length == 0) {
+    if (event.target.id === "name" && event.target.value.length === 0) {
       setIsLoading(false);
     }
 
-    if (event.target.id === 'description') {
+    if (event.target.id === "description") {
       setDescription(event.target.value);
     }
   };
 
   const formItemLayout = {
     labelCol: {
-      xs: { span: 24 },
-      sm: { span: 7 },
+      xs: {span: 24},
+      sm: {span: 7},
     },
     wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 15 },
+      xs: {span: 24},
+      sm: {span: 15},
     },
   };
 
@@ -131,15 +130,15 @@ const NewFlowDialog = (props) => {
     className={styles.modal}
     footer={null}>
 
-    <p className={styles.title}>{props.title || 'New Flow'}</p>
+    <p className={styles.title}>{props.title || "New Flow"}</p>
     <br />
     <div className={styles.newFlowForm}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
-            </span>} labelAlign="left"
-          validateStatus={(flowName || !isFlowNameTouched) ? '' : 'error'}
-          help={(flowName || !isFlowNameTouched) ? '' : 'Name is required'}>
+        </span>} labelAlign="left"
+        validateStatus={(flowName || !isFlowNameTouched) ? "" : "error"}
+        help={(flowName || !isFlowNameTouched) ? "" : "Name is required"}>
           <Input
             id="name"
             placeholder="Enter name"
@@ -154,7 +153,7 @@ const NewFlowDialog = (props) => {
         </Form.Item>
         <Form.Item label={<span>
           Description:&nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
             id="description"
             placeholder="Enter description"
@@ -172,15 +171,15 @@ const NewFlowDialog = (props) => {
           <div className={styles.submitButtons}>
             <><MLButton aria-label="Cancel" onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-            <MLButton
-              aria-label="Save"
-              type="primary"
-              htmlType="submit"
-              disabled={!props.canWriteFlow}
-              onClick={handleSubmit}
-            >
+              <MLButton
+                aria-label="Save"
+                type="primary"
+                htmlType="submit"
+                disabled={!props.canWriteFlow}
+                onClick={handleSubmit}
+              >
               Save
-            </MLButton></>
+              </MLButton></>
           </div>
         </Form.Item>
       </Form>

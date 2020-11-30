@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useContext } from 'react';
-import { ModelingContext } from '../../util/modeling-context';
+import React, {useEffect, useRef, useContext} from "react";
+import {ModelingContext} from "../../util/modeling-context";
 
 const NavigationPrompt: React.FC = () => {
   const hasUnsavedChanges = useRef(false);
-  const { modelingOptions } = useContext(ModelingContext);
+  const {modelingOptions} = useContext(ModelingContext);
 
   useEffect(() => {
     window.addEventListener("beforeunload", onUnload);
@@ -18,7 +18,7 @@ const NavigationPrompt: React.FC = () => {
   const onUnload = (e) => {
     e.preventDefault();
     if (hasUnsavedChanges.current) {
-      return e.returnValue = 'message';
+      return e.returnValue = "message";
     }
   };
 

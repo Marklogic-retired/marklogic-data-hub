@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { InputNumber, Tooltip } from 'antd';
-import { SearchContext } from '../../util/search-context';
-import { UserContext } from '../../util/user-context';
-import styles from './numeric-facet.module.scss';
-import { rangeFacet } from '../../api/facets';
-import { MLSlider, MLTooltip } from '@marklogic/design-system';
+import React, {useState, useEffect, useContext} from "react";
+import {InputNumber} from "antd";
+import {SearchContext} from "../../util/search-context";
+import {UserContext} from "../../util/user-context";
+import styles from "./numeric-facet.module.scss";
+import {rangeFacet} from "../../api/facets";
+import {MLSlider, MLTooltip} from "@marklogic/design-system";
 
 interface Props {
   name: any;
@@ -18,23 +18,23 @@ interface Props {
 }
 
 const NumericFacet: React.FC<Props> = (props) => {
-  const { searchOptions } = useContext(SearchContext);
-  const { handleError } = useContext(UserContext);
+  const {searchOptions} = useContext(SearchContext);
+  const {handleError} = useContext(UserContext);
 
   const [range, setRange] = useState<number[]>([]);
   const [rangeLimit, setRangeLimit] = useState<number[]>([]);
-  let numbers = ['int', 'integer', 'short', 'long', 'decimal', 'double', 'float'];
+  let numbers = ["int", "integer", "short", "long", "decimal", "double", "float"];
 
   const getFacetRange = async () => {
     try {
       const response = await rangeFacet(props, searchOptions.database);
-      if (response['data']) {
+      if (response["data"]) {
         let range = [...[response.data.min, response.data.max].map(Number)];
         setRangeLimit(range);
         setRange(range);
 
         if (Object.entries(searchOptions.selectedFacets).length !== 0) {
-          let facetName: string = '';
+          let facetName: string = "";
           if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
             facetName = props.constraint;
           } else if (searchOptions.selectedFacets.hasOwnProperty(props.propertyPath) && props.constraint !== props.propertyPath) {
@@ -43,9 +43,9 @@ const NumericFacet: React.FC<Props> = (props) => {
           if (facetName) {
             for (let facet in searchOptions.selectedFacets) {
               if (facet === facetName) {
-                let valueType = '';
+                let valueType = "";
                 if (numbers.includes(searchOptions.selectedFacets[facet].dataType)) {
-                  valueType = 'rangeValues';
+                  valueType = "rangeValues";
                 }
                 if (searchOptions.selectedFacets[facet][valueType]) {
                   const rangeArray = Object.values(searchOptions.selectedFacets[facet][valueType]).map(Number);
@@ -73,7 +73,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   };
 
   const onChangeMinInput = (e) => {
-    if (e && typeof e === 'number') {
+    if (e && typeof e === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
       modifiedRange[0] = e;
@@ -83,7 +83,7 @@ const NumericFacet: React.FC<Props> = (props) => {
   };
 
   const onChangeMaxInput = (e) => {
-    if (e && typeof e === 'number') {
+    if (e && typeof e === "number") {
       let isNested = props.name === props.propertyPath ? false : true;
       let modifiedRange = [...range];
       modifiedRange[1] = e;
@@ -101,7 +101,7 @@ const NumericFacet: React.FC<Props> = (props) => {
 
     if (Object.entries(searchOptions.selectedFacets).length !== 0) {
 
-      let facetName: string = '';
+      let facetName: string = "";
       if (searchOptions.selectedFacets.hasOwnProperty(props.constraint)) {
         facetName = props.constraint;
       } else if (searchOptions.selectedFacets.hasOwnProperty(props.propertyPath)) {
@@ -111,9 +111,9 @@ const NumericFacet: React.FC<Props> = (props) => {
       if (facetName) {
         for (let facet in searchOptions.selectedFacets) {
           if (facet === facetName) {
-            let valueType = '';
+            let valueType = "";
             if (numbers.includes(searchOptions.selectedFacets[facet].dataType)) {
-              valueType = 'rangeValues';
+              valueType = "rangeValues";
             }
             if (searchOptions.selectedFacets[facet][valueType]) {
               const rangeArray = Object.values(searchOptions.selectedFacets[facet][valueType]).map(Number);
@@ -130,11 +130,11 @@ const NumericFacet: React.FC<Props> = (props) => {
   }, [searchOptions]);
 
   const formatTitle = () => {
-    let objects = props.name.split('.');
+    let objects = props.name.split(".");
     if (objects.length > 2) {
       let first = objects[0];
       let last = objects.slice(-1);
-      return first + '. ... .' + last;
+      return first + ". ... ." + last;
     }
     return props.name;
   };
@@ -142,10 +142,10 @@ const NumericFacet: React.FC<Props> = (props) => {
   return (
     <div className={styles.facetName} >
       <p className={styles.name}>{<MLTooltip title={props.name}>{formatTitle()}</MLTooltip>}</p>
-      <div className={styles.numericFacet} data-testid='numeric-slider'>
+      <div className={styles.numericFacet} data-testid="numeric-slider">
         <MLSlider className={styles.slider} range={true} value={[range[0], range[1]]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={(e) => onChange(e)} />
-        <div id={"min-numeric-value"}><InputNumber data-testid='numeric-slider-min' className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
-        <div id={"max-numeric-value"}><InputNumber data-testid='numeric-slider-max' className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
+        <div id={"min-numeric-value"}><InputNumber data-testid="numeric-slider-min" className={styles.inputNumber} value={range[0]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMinInput} /></div>
+        <div id={"max-numeric-value"}><InputNumber data-testid="numeric-slider-max" className={styles.inputNumber} value={range[1]} min={rangeLimit[0]} max={rangeLimit[1]} step={props.step} onChange={onChangeMaxInput} /></div>
       </div>
     </div>
   );

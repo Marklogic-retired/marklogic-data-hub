@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Form, Input, Icon, Radio, AutoComplete } from "antd";
-import styles from './create-edit-mapping.module.scss';
-import { NewMapTooltips } from '../../../../config/tooltips.config';
-import { UserContext } from '../../../../util/user-context';
-import { MLButton, MLTooltip } from '@marklogic/design-system';
-import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
+import React, {useState, useEffect, useContext} from "react";
+import {Form, Input, Icon, Radio, AutoComplete} from "antd";
+import styles from "./create-edit-mapping.module.scss";
+import {NewMapTooltips} from "../../../../config/tooltips.config";
+import {UserContext} from "../../../../util/user-context";
+import {MLButton, MLTooltip} from "@marklogic/design-system";
+import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import axios from "axios";
 
 interface Props {
@@ -27,14 +27,14 @@ interface Props {
 
 const CreateEditMapping: React.FC<Props> = (props) => {
 
-  const { handleError } = useContext(UserContext)
-  const [mapName, setMapName] = useState('');
-  const [description, setDescription] = useState(props.stepData && props.stepData != {} ? props.stepData.description : '');
+  const {handleError} = useContext(UserContext);
+  const [mapName, setMapName] = useState("");
+  const [description, setDescription] = useState(props.stepData && props.stepData !== {} ? props.stepData.description : "");
   //const [collections, setCollections] = useState<any[]>([]);
-  const [collections, setCollections] = useState('');
-  const [collectionOptions, setCollectionOptions] = useState(['a','b']);
-  const [selectedSource, setSelectedSource] = useState(props.stepData && props.stepData.selectedSource ? props.stepData.selectedSource : 'collection')
-  const [srcQuery, setSrcQuery] = useState(props.stepData && props.stepData != {} ? props.stepData.sourceQuery : '');
+  const [collections, setCollections] = useState("");
+  const [collectionOptions, setCollectionOptions] = useState(["a", "b"]);
+  const [selectedSource, setSelectedSource] = useState(props.stepData && props.stepData.selectedSource ? props.stepData.selectedSource : "collection");
+  const [srcQuery, setSrcQuery] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceQuery : "");
   const [isQuerySelected, setIsQuerySelected] = useState(false);
 
   //To check submit validity
@@ -44,9 +44,9 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   const [isSrcQueryTouched, setSrcQueryTouched] = useState(false);
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
 
-  const [isValid, setIsValid] = useState(false);
-  const [isNameDuplicate,setIsNameDuplicate] = useState(false);
-  const [errorMessage,setErrorMessage] = useState('');
+  const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
+  const [isNameDuplicate, setIsNameDuplicate] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
@@ -58,25 +58,23 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     setDescription(props.stepData.description);
     setSrcQuery(props.stepData.sourceQuery);
     setSelectedSource(props.stepData.selectedSource);
-    if(isQuerySelected == true) setCollections("");
-    if(props.stepData.selectedSource === 'collection'){
-    if(props.stepData.sourceQuery.includes('[') && props.stepData.sourceQuery.includes(']')) {
+    if (isQuerySelected === true) setCollections("");
+    if (props.stepData.selectedSource === "collection") {
+      if (props.stepData.sourceQuery.includes("[") && props.stepData.sourceQuery.includes("]")) {
         let srcCollection = props.stepData.sourceQuery.substring(
-            props.stepData.sourceQuery.lastIndexOf("[") + 2,
-            props.stepData.sourceQuery.lastIndexOf("]") - 1
+          props.stepData.sourceQuery.lastIndexOf("[") + 2,
+          props.stepData.sourceQuery.lastIndexOf("]") - 1
         );
         setCollections(srcCollection);
-    }
-    else if((props.stepData.sourceQuery.includes('(') && props.stepData.sourceQuery.includes(')'))){
+      } else if ((props.stepData.sourceQuery.includes("(") && props.stepData.sourceQuery.includes(")"))) {
         let srcCollection = props.stepData.sourceQuery.substring(
           props.stepData.sourceQuery.lastIndexOf("(") + 2,
           props.stepData.sourceQuery.lastIndexOf(")") - 1
         );
         setCollections(srcCollection);
-    }
-    else{
+      } else {
         setCollections(props.stepData.sourceQuery);
-    }
+      }
     }
     setIsValid(true);
     setTobeDisabled(true);
@@ -85,29 +83,27 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     setCollectionsTouched(false);
     setSrcQueryTouched(false);
     setSelectedSourceTouched(false);
-  }
+  };
 
   useEffect(() => {
     // Edit step
-    if (props.stepData && JSON.stringify(props.stepData) != JSON.stringify({}) && props.isEditing) {
+    if (props.stepData && JSON.stringify(props.stepData) !== JSON.stringify({}) && props.isEditing) {
       initStep();
-    }
-    // New step
-    else {
-      setMapName('');
+    } else {     // New step
+      setMapName("");
       setMapNameTouched(false);
-      setCollections('');
-      setDescription('');
-      setSrcQuery('');
+      setCollections("");
+      setDescription("");
+      setSrcQuery("");
       setIsNameDuplicate(false);
     }
     // Reset
     return (() => {
-      setMapName('');
+      setMapName("");
       setMapNameTouched(false);
-      setDescription('');
+      setDescription("");
       setDescriptionTouched(false);
-      setSelectedSource('collection');
+      setSelectedSource("collection");
       setSelectedSourceTouched(false);
       setCollectionsTouched(false);
       setTobeDisabled(false);
@@ -129,13 +125,13 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     if (props.currentTab !== props.tabKey && hasFormChanged()) {
       setSaveChangesVisible(true);
     }
-  }, [props.currentTab])
+  }, [props.currentTab]);
 
   // On change of any form field, update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     setChanged(false);
-  }, [changed])
+  }, [changed]);
 
   const hasFormChanged = () => {
     if (!isMapNameTouched
@@ -165,31 +161,31 @@ const CreateEditMapping: React.FC<Props> = (props) => {
 
   const discardChanges = <ConfirmYesNo
     visible={discardChangesVisible}
-    type='discardChanges'
+    type="discardChanges"
     onYes={discardOk}
     onNo={discardCancel}
   />;
 
   const saveOk = () => {
     props.createMappingArtifact(getPayload());
-    setSaveChangesVisible(false)
-  }
+    setSaveChangesVisible(false);
+  };
 
   const saveCancel = () => {
     setSaveChangesVisible(false);
     initStep();
-  }
+  };
 
   const saveChanges = <ConfirmYesNo
     visible={saveChangesVisible}
-    type='saveChanges'
+    type="saveChanges"
     onYes={saveOk}
     onNo={saveCancel}
   />;
 
   const getPayload = () => {
     let result;
-    if(selectedSource === 'collection') {
+    if (selectedSource === "collection") {
       let sQuery = `cts.collectionQuery(['${collections}'])`;
       result = {
         name: mapName,
@@ -199,8 +195,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         sourceQuery: sQuery
       };
     } else {
-        setIsQuerySelected(true); //to reset collection name
-        result = {
+      setIsQuerySelected(true); //to reset collection name
+      result = {
         name: mapName,
         targetEntityType: props.targetEntityType,
         description: description,
@@ -209,22 +205,22 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       };
     }
     return result;
-  }
+  };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (!mapName) {
       // missing name
       setMapNameTouched(true);
     }
-    if (!collections && selectedSource === 'collection') {
+    if (!collections && selectedSource === "collection") {
       // missing collections
       setCollectionsTouched(true);
     }
-    if (!srcQuery && selectedSource !== 'collection') {
+    if (!srcQuery && selectedSource !== "collection") {
       // missing query
       setSrcQueryTouched(true);
     }
-    if (!mapName || (!collections && selectedSource === 'collection') || (!srcQuery && selectedSource !== 'collection')) {
+    if (!mapName || (!collections && selectedSource === "collection") || (!srcQuery && selectedSource !== "collection")) {
       // if missing flags are set, do not submit handle
       event.preventDefault();
       return;
@@ -234,50 +230,49 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     if (event) event.preventDefault();
 
     setIsValid(true);
-    
+
     props.setOpenStepSettings(false);
     props.resetTabs();
-    await props.createMappingArtifact(getPayload())
+    await props.createMappingArtifact(getPayload());
     props.openStepDetails(mapName);
-    
-  }
 
-   const handleSearch = async (value: any) => {
-    let databaseName = 'staging';
-    if(props.sourceDatabase){
-      databaseName = props.sourceDatabase.split('-')[2].toLowerCase();
+  };
+
+  const handleSearch = async (value: any) => {
+    let databaseName = "staging";
+    if (props.sourceDatabase) {
+      databaseName = props.sourceDatabase.split("-")[2].toLowerCase();
     }
-    if(value && value.length > 2){
+    if (value && value.length > 2) {
       try {
         let data = {
-            "referenceType": "collection",
-            "entityTypeId": " ",
-            "propertyPath": " ",
-            "limit": 10,
-            "dataType": "string",
-            "pattern": value,
-        }
-        const response = await axios.post(`/api/entitySearch/facet-values?database=${databaseName}`, data)
+          "referenceType": "collection",
+          "entityTypeId": " ",
+          "propertyPath": " ",
+          "limit": 10,
+          "dataType": "string",
+          "pattern": value,
+        };
+        const response = await axios.post(`/api/entitySearch/facet-values?database=${databaseName}`, data);
         setCollectionOptions(response.data);
       } catch (error) {
-        console.log(error)
+        console.error(error);
         handleError(error);
-    }
+      }
 
-    }else{
+    } else {
       setCollectionOptions([]);
     }
-  }
+  };
 
   const handleFocus = () => {
-      setCollectionOptions([]);
-  }
+    setCollectionOptions([]);
+  };
 
   const handleTypeaheadChange = (data: any) => {
-    if (data === ' ') {
-        setCollectionsTouched(false);
-    }
-    else {
+    if (data === " ") {
+      setCollectionsTouched(false);
+    } else {
       setCollectionsTouched(true);
       setCollections(data);
       if (props.stepData && props.stepData.collection) {
@@ -287,26 +282,25 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       }
       if (data.length > 0) {
         if (mapName) {
-         setIsValid(true);
+          setIsValid(true);
         }
       } else {
         setIsValid(false);
       }
     }
-  }
+  };
 
   const handleChange = (event) => {
-    if (event.target.id === 'name') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "name") {
+      if (event.target.value === " ") {
         setMapNameTouched(false);
-      }
-      else {
+      } else {
         setMapNameTouched(true);
         setMapName(event.target.value);
         if (event.target.value.length > 0) {
           if (collections|| srcQuery) {
-              setIsValid(true);
-              setIsNameDuplicate(false);
+            setIsValid(true);
+            setIsNameDuplicate(false);
           }
         } else {
           setIsValid(false);
@@ -314,11 +308,10 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       }
     }
 
-    if (event.target.id === 'description') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "description") {
+      if (event.target.value === " ") {
         setDescriptionTouched(false);
-      }
-      else {
+      } else {
         setDescriptionTouched(true);
         setDescription(event.target.value);
         if (props.stepData && props.stepData.description) {
@@ -327,18 +320,17 @@ const CreateEditMapping: React.FC<Props> = (props) => {
           }
         }
         if (!props.isEditing) {
-          if (event.target.value === '') {
+          if (event.target.value === "") {
             setDescriptionTouched(false);
           }
         }
       }
     }
 
-    if (event.target.id === 'srcQuery') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "srcQuery") {
+      if (event.target.value === " ") {
         setSrcQueryTouched(false);
-      }
-      else {
+      } else {
         setSrcQueryTouched(true);
         setSrcQuery(event.target.value);
         if (event.target.value.length > 0) {
@@ -350,11 +342,10 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         }
       }
     }
-    if (event.target.id === 'collList') {
-      if (event.target.value === ' ') {
+    if (event.target.id === "collList") {
+      if (event.target.value === " ") {
         setCollectionsTouched(false);
-      }
-      else {
+      } else {
         setCollectionsTouched(true);
         setCollections(event.target.value);
         if (props.stepData && props.stepData.collection) {
@@ -374,7 +365,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     }
     setChanged(true);
   };
-/* // Handling multiple collections in a select tags list - Deprecated
+  /* // Handling multiple collections in a select tags list - Deprecated
   const handleCollList = (value) => {
     if (value === ' ') {
       setCollectionsTouched(false);
@@ -399,17 +390,16 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   */
 
   const handleSelectedSource = (event) => {
-    if (event.target.value === ' ') {
+    if (event.target.value === " ") {
       setSelectedSourceTouched(false);
-    }
-    else {
+    } else {
       setSelectedSourceTouched(true);
       setSelectedSource(event.target.value);
 
       if (props.stepData && event.target.value === props.stepData.selectedSource) {
         setSelectedSourceTouched(false);
       }
-      if (event.target.value === 'collection') {
+      if (event.target.value === "collection") {
         if (mapName && collections) {
           setIsValid(true);
         } else {
@@ -427,8 +417,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const isSourceQueryValid = () => {
-    if ((collections && selectedSource === 'collection') ||
-    (srcQuery && selectedSource !== 'collection') ||
+    if ((collections && selectedSource === "collection") ||
+    (srcQuery && selectedSource !== "collection") ||
     (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
       if (props.currentTab === props.tabKey) {
         props.setIsValid(true);
@@ -440,24 +430,24 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       }
       return false;
     }
-  }
+  };
 
   const formItemLayout = {
     labelCol: {
-      xs: { span: 24 },
-      sm: { span: 7 },
+      xs: {span: 24},
+      sm: {span: 7},
     },
     wrapperCol: {
-      xs: { span: 24 },
-      sm: { span: 15 },
+      xs: {span: 24},
+      sm: {span: 15},
     },
   };
 
   const srcTypeOptions = [
-    { label: 'Collection', value: 'collection' },
-    { label: 'Query', value: 'query' }
+    {label: "Collection", value: "collection"},
+    {label: "Query", value: "query"}
   ];
-  const { TextArea } = Input;
+  const {TextArea} = Input;
 
   return (
     <div className={styles.newMappingForm}>
@@ -465,9 +455,9 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
-            </span>} labelAlign="left"
-          validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? '' : 'error') : 'error'}
-          help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :'') : 'Name is required'}
+        </span>} labelAlign="left"
+        validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? "" : "error") : "error"}
+        help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :"") : "Name is required"}
         >
           <Input
             id="name"
@@ -477,14 +467,14 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewMapTooltips.name} placement={'right'}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </MLTooltip>
+          <MLTooltip title={NewMapTooltips.name} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>
         <Form.Item label={<span>
           Description:
           &nbsp;
-            </span>} labelAlign="left">
+        </span>} labelAlign="left">
           <Input
             id="description"
             placeholder="Enter description"
@@ -493,18 +483,18 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewMapTooltips.description} placement={'right'}>
-        <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-      </MLTooltip>
+          <MLTooltip title={NewMapTooltips.description} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>
         </Form.Item>
 
         <Form.Item label={<span>
           Source Query:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
-            </span>} labelAlign="left"
-            validateStatus={isSourceQueryValid() ? '' : 'error'}
-            help={isSourceQueryValid() ? '' : 'Collection or Query is required'}
-            >
+        </span>} labelAlign="left"
+        validateStatus={isSourceQueryValid() ? "" : "error"}
+        help={isSourceQueryValid() ? "" : "Collection or Query is required"}
+        >
           <Radio.Group
             id="srcType"
             options={srcTypeOptions}
@@ -513,7 +503,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
-          {selectedSource === 'collection' ? <div ><span className={styles.srcCollectionInput}><AutoComplete
+          {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             //mode="tags"
             className={styles.input}
@@ -527,8 +517,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleTypeaheadChange}
           >
             {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ''}
-          <MLTooltip title={NewMapTooltips.sourceQuery} placement={'right'}>
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}
+          <MLTooltip title={NewMapTooltips.sourceQuery} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
@@ -537,29 +527,29 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMapTooltips.sourceQuery} placement={'right'}>
-          <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
-        </MLTooltip></span>}
+          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMapTooltips.sourceQuery} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
+          </MLTooltip></span>}
         </Form.Item>
 
         <Form.Item className={styles.submitButtonsForm}>
           <div className={styles.submitButtons}>
             <MLButton data-testid="mapping-dialog-cancel"  onClick={() => onCancel()}>Cancel</MLButton>
             &nbsp;&nbsp;
-              {!props.canReadWrite?<MLTooltip title={NewMapTooltips.missingPermission} placement={'bottomRight'}><span className={styles.disabledCursor}><MLButton
+            {!props.canReadWrite?<MLTooltip title={NewMapTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}><MLButton
               className={styles.disabledSaveButton}
               type="primary"
               htmlType="submit"
               disabled={true}
               data-testid="mapping-dialog-save"
               onClick={handleSubmit}
-              >Save</MLButton></span></MLTooltip>:<MLButton
-                  type="primary"
-                  htmlType="submit"
-                  disabled={false}
-                  data-testid="mapping-dialog-save"
-                  onClick={handleSubmit}
-                  >Save</MLButton>}
+            >Save</MLButton></span></MLTooltip>:<MLButton
+              type="primary"
+              htmlType="submit"
+              disabled={false}
+              data-testid="mapping-dialog-save"
+              onClick={handleSubmit}
+            >Save</MLButton>}
           </div>
         </Form.Item>
       </Form>

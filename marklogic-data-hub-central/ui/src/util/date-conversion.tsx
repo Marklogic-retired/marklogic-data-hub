@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from "moment";
 
 export const dateConverter = (date:string) => {
   return moment(date).format("YYYY-MM-DD HH:mm");
@@ -14,4 +14,4 @@ export const queryDateConverter = (date:string) => {
 
 export const CardViewDateConverter = (date:string) => {
   return moment(date).format("YYYY-MMMM-DD");
-}; 
+};

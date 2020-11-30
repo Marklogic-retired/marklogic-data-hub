@@ -1,4 +1,4 @@
-export const numericRange = { "data": { "min": 11, "max": 110 } };
+export const numericRange = {"data": {"min": 11, "max": 110}};
 
 export const stringSearchResponse = ["Adams Cole"];
 
@@ -76,15 +76,15 @@ export const facetProps = {
       "value": "CustomerType"
     }
   ],
-  database: 'final'
+  database: "final"
 };
 
 export const sourceNameFacetProps = {
-  name : "SourceName",
-  constraint : "sourceName",
+  name: "SourceName",
+  constraint: "sourceName",
   updateSelectedFacets: jest.fn(),
   addFacetValues: jest.fn(),
-  facetValues : [
+  facetValues: [
     {
       "name": "loadPersonJSON",
       "count": 14, "value": "loadPersonJSON"
@@ -103,18 +103,18 @@ export const sourceNameFacetProps = {
       "count": 5, "value": "loadCustomersXML"
     }
   ],
-  tooltip : "The name of the source of the files.",
-  facetType : "xs:string", "facetCategory": "hub",
-  referenceType : "field", "entityTypeId": " ",
-  propertyPath : "datahubSourceName"
-}
+  tooltip: "The name of the source of the files.",
+  facetType: "xs:string", "facetCategory": "hub",
+  referenceType: "field", "entityTypeId": " ",
+  propertyPath: "datahubSourceName"
+};
 
 export const sourceTypeFacetProps = {
-  name : "SourceType",
-  constraint : "sourceType",
+  name: "SourceType",
+  constraint: "sourceType",
   updateSelectedFacets: jest.fn(),
   addFacetValues: jest.fn(),
-  facetValues : [
+  facetValues: [
     {
       "name": "loadPerson",
       "count": 20, "value": "loadPerson"
@@ -129,10 +129,10 @@ export const sourceTypeFacetProps = {
       "count": 7, "value": "loadCustomerJSON"
     }
   ],
-  tooltip : "The type of source of the files.",
-  facetType : "xs:string",
-  facetCategory : "hub",
-  referenceType : "field",
-  entityTypeId : " ",
-  propertyPath : "datahubSourceType"
-}
+  tooltip: "The type of source of the files.",
+  facetType: "xs:string",
+  facetCategory: "hub",
+  referenceType: "field",
+  entityTypeId: " ",
+  propertyPath: "datahubSourceType"
+};

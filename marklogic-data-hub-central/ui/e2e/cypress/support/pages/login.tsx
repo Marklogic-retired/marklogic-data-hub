@@ -1,16 +1,16 @@
 class LoginPage {
 
-    getUsername() {
-        return cy.get('#username');
-    }
+  getUsername() {
+    return cy.get("#username");
+  }
 
-    getPassword() {
-        return cy.get('#password');
-    }
+  getPassword() {
+    return cy.get("#password");
+  }
 
-    getLoginButton() {
-        return cy.get('#submit');
-    }
+  getLoginButton() {
+    return cy.get("#submit");
+  }
 }
 
 const loginPage = new LoginPage();

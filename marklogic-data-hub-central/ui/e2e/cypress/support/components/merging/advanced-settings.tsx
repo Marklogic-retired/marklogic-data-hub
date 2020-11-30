@@ -1,29 +1,29 @@
 class AdvancedSettings {
 
-    setTargetCollection(event: string, value: string) {
-        cy.findByTestId(`${event}-edit`).click();
-        cy.findByLabelText(`additionalColl-select-${event}`)
-            .find('input')
-            .first()
-            .type(value)
-            .type('{enter}');
-    }
+  setTargetCollection(event: string, value: string) {
+    cy.findByTestId(`${event}-edit`).click();
+    cy.findByLabelText(`additionalColl-select-${event}`)
+      .find("input")
+      .first()
+      .type(value)
+      .type("{enter}");
+  }
 
-    keepTargetCollection(event: string) {
-        cy.findByTestId(`${event}-keep`).click();
-    }
+  keepTargetCollection(event: string) {
+    cy.findByTestId(`${event}-keep`).click();
+  }
 
-    discardTargetCollection(event: string) {
-        cy.findByTestId(`${event}-discard`).click();
-    }
+  discardTargetCollection(event: string) {
+    cy.findByTestId(`${event}-discard`).click();
+  }
 
-    cancelSettingsButton(stepName: string) {
-        return cy.findByTestId(`${stepName}-cancel-settings`);
-    }
+  cancelSettingsButton(stepName: string) {
+    return cy.findByTestId(`${stepName}-cancel-settings`);
+  }
 
-    saveSettingsButton(stepName: string) {
-        return cy.findByTestId(`${stepName}-save-settings`);
-    }
+  saveSettingsButton(stepName: string) {
+    return cy.findByTestId(`${stepName}-save-settings`);
+  }
 }
 
 const advancedSettings = new AdvancedSettings();

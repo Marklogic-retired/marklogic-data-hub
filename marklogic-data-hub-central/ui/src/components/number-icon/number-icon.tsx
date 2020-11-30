@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './number-icon.module.scss';
+import React from "react";
+import styles from "./number-icon.module.scss";
 
 type Props = {
   value: number

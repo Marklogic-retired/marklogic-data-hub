@@ -1,12 +1,12 @@
 class ConfirmationYesNo {
   getNoButton() {
-    return cy.findByLabelText('No');
+    return cy.findByLabelText("No");
   }
   getYesButton() {
-    return cy.findByLabelText('Yes');
+    return cy.findByLabelText("Yes");
   }
   getDiscardText() {
-    return cy.findByLabelText('confirm-body');
+    return cy.findByLabelText("confirm-body");
   }
 }
 

@@ -1,21 +1,21 @@
-import React from 'react';
-import { mount } from 'enzyme';
-import JsonView from './json-view';
-import MockDocument from '../../assets/mock-data/explore/json-document-payload';
+import React from "react";
+import {mount} from "enzyme";
+import JsonView from "./json-view";
+import MockDocument from "../../assets/mock-data/explore/json-document-payload";
 
 
 describe("Json view component", () => {
-    let wrapper;
+  let wrapper;
 
-    beforeAll(() => {
-        wrapper = mount(<JsonView document={MockDocument}/>);
-      });
+  beforeAll(() => {
+    wrapper = mount(<JsonView document={MockDocument}/>);
+  });
 
-    test("renders", () => {
-        expect(wrapper.exists()).toBe(true);
-    });
+  test("renders", () => {
+    expect(wrapper.exists()).toBe(true);
+  });
 
-    test("json-view renders", () => {
-        expect(wrapper.find('.react-json-view')).toHaveLength(1);
-    });
+  test("json-view renders", () => {
+    expect(wrapper.find(".react-json-view")).toHaveLength(1);
+  });
 });

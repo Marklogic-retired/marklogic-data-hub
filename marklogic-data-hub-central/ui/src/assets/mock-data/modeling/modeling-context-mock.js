@@ -2,7 +2,7 @@
 export const isModified = {
   modelingOptions: {
     isModified: true,
-    entityTypeNamesArray: [ "Order" ],
+    entityTypeNamesArray: ["Order"],
     modifiedEntitiesArray: [
       {
         "entityName": "Order",
@@ -57,21 +57,21 @@ export const entityNamesArray = {
   modelingOptions: {
     entityTypeNamesArray: [
       {
-        name: 'Concept',
-        entityTypeId: 'http://marklogic.com/example/Concept-0.0.1/Concept'
+        name: "Concept",
+        entityTypeId: "http://marklogic.com/example/Concept-0.0.1/Concept"
       },
       {
-        name: 'Order',
-        entityTypeId: 'http://marklogic.com/example/Order-0.0.1/Order'
+        name: "Order",
+        entityTypeId: "http://marklogic.com/example/Order-0.0.1/Order"
       },
       {
-        name: 'Customer',
-        entityTypeId: 'http://marklogic.com/example/Customer-0.0.1/Customer'
+        name: "Customer",
+        entityTypeId: "http://marklogic.com/example/Customer-0.0.1/Customer"
       }
     ],
     isModified: false,
     modifiedEntitiesArray: [],
-    entityPropertiesNamesArray: ['Order', 'Address', 'address', 'city', 'state', 'zip', 'OrderDetails']
+    entityPropertiesNamesArray: ["Order", "Address", "address", "city", "state", "zip", "OrderDetails"]
   },
   updateEntityModified: jest.fn(),
   setEntityPropertiesNamesArray: jest.fn()
@@ -81,11 +81,11 @@ export const customerEntityNamesArray = {
   modelingOptions: {
     entityTypeNamesArray: [
       {
-        name: 'Customer',
-        entityTypeId: 'http://marklogic.com/example/Customer-0.0.1/Customer'
+        name: "Customer",
+        entityTypeId: "http://marklogic.com/example/Customer-0.0.1/Customer"
       }
     ],
-    entityPropertiesNamesArray: ['Customer', 'Billing', 'address', 'city', 'state', 'zip', 'Address', 'Zip', 'Shipping']
+    entityPropertiesNamesArray: ["Customer", "Billing", "address", "city", "state", "zip", "Address", "Zip", "Shipping"]
   },
   setEntityPropertiesNamesArray: jest.fn()
 };

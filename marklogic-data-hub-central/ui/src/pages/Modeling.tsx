@@ -1,32 +1,32 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, {useState, useEffect, useContext} from "react";
 import {faSave, faUndo} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { MLButton, MLTooltip, MLAlert } from '@marklogic/design-system';
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {MLButton, MLTooltip, MLAlert} from "@marklogic/design-system";
 
-import ConfirmationModal from '../components/confirmation-modal/confirmation-modal';
-import EntityTypeModal from '../components/modeling/entity-type-modal/entity-type-modal';
-import EntityTypeTable from '../components/modeling/entity-type-table/entity-type-table';
-import styles from './Modeling.module.scss';
+import ConfirmationModal from "../components/confirmation-modal/confirmation-modal";
+import EntityTypeModal from "../components/modeling/entity-type-modal/entity-type-modal";
+import EntityTypeTable from "../components/modeling/entity-type-table/entity-type-table";
+import styles from "./Modeling.module.scss";
 
-import { primaryEntityTypes, updateEntityModels } from '../api/modeling';
-import { UserContext } from '../util/user-context';
-import { ModelingContext } from '../util/modeling-context';
-import { ModelingTooltips } from '../config/tooltips.config';
-import { AuthoritiesContext } from '../util/authorities';
-import { EntityModified } from '../types/modeling-types';
-import { ConfirmationType } from '../types/common-types';
-import tiles from '../config/tiles.config';
+import {primaryEntityTypes, updateEntityModels} from "../api/modeling";
+import {UserContext} from "../util/user-context";
+import {ModelingContext} from "../util/modeling-context";
+import {ModelingTooltips} from "../config/tooltips.config";
+import {AuthoritiesContext} from "../util/authorities";
+import {EntityModified} from "../types/modeling-types";
+import {ConfirmationType} from "../types/common-types";
+import tiles from "../config/tiles.config";
 
 const Modeling: React.FC = () => {
-  const { handleError } = useContext(UserContext);
-  const { modelingOptions, setEntityTypeNamesArray, clearEntityModified } = useContext(ModelingContext);
+  const {handleError} = useContext(UserContext);
+  const {modelingOptions, setEntityTypeNamesArray, clearEntityModified} = useContext(ModelingContext);
 
   const [entityTypes, setEntityTypes] = useState<any[]>([]);
   const [showEntityModal, toggleShowEntityModal] = useState(false);
   const [isEditModal, toggleIsEditModal] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [autoExpand, setAutoExpand] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [autoExpand, setAutoExpand] = useState("");
   const [revertAllEntity, toggleRevertAllEntity] = useState(false);
 
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -48,9 +48,9 @@ const Modeling: React.FC = () => {
       const response = await primaryEntityTypes();
 
       if (response) {
-        setEntityTypes(response['data']);
-        if (response['data'].length > 0) {
-          setEntityTypeNamesArray(response['data'].map(entity => {
+        setEntityTypes(response["data"]);
+        if (response["data"].length > 0) {
+          setEntityTypeNamesArray(response["data"].map(entity => {
             return {name: entity.entityName, entityTypeId: entity.entityTypeId};
           }));
         }
@@ -63,7 +63,7 @@ const Modeling: React.FC = () => {
   const saveAllEntitiesToServer = async () => {
     try {
       const response = await updateEntityModels(modelingOptions.modifiedEntitiesArray);
-      if (response['status'] === 200) {
+      if (response["status"] === 200) {
         await setEntityTypesFromServer();
       }
     } catch (error) {
@@ -78,13 +78,13 @@ const Modeling: React.FC = () => {
     let updatedEntityTypes = [...entityTypes];
     let updateEntityIndex = updatedEntityTypes.findIndex((entityType) => entityType.entityName === entity.entityName);
 
-    updatedEntityTypes[updateEntityIndex]['model']['definitions'] = entity.modelDefinition;
+    updatedEntityTypes[updateEntityIndex]["model"]["definitions"] = entity.modelDefinition;
     setEntityTypes(updatedEntityTypes);
   };
 
   const updateEntityTypesAndHideModal = async (entityName: string, description: string) => {
     if (!isEditModal) {
-      setAutoExpand(entityName + ',' + description);
+      setAutoExpand(entityName + "," + description);
     }
     toggleShowEntityModal(false);
     await setEntityTypesFromServer();
@@ -126,7 +126,7 @@ const Modeling: React.FC = () => {
   >Add</MLButton>;
 
   const saveAllButton = <MLButton
-    className={!modelingOptions.isModified?styles.disabledPointerEvents:''}
+    className={!modelingOptions.isModified?styles.disabledPointerEvents:""}
     disabled={!modelingOptions.isModified}
     aria-label="save-all"
     onClick={() => {
@@ -137,13 +137,13 @@ const Modeling: React.FC = () => {
     <FontAwesomeIcon
       icon={faSave}
       className={styles.publishIcon}
-      size='sm'
+      size="sm"
     />
     Save All
   </MLButton>;
 
   const revertAllButton = <MLButton
-    className={!modelingOptions.isModified?styles.disabledPointerEvents:''}
+    className={!modelingOptions.isModified?styles.disabledPointerEvents:""}
     disabled={!modelingOptions.isModified}
     aria-label="revert-all"
     onClick={() => {
@@ -172,29 +172,29 @@ const Modeling: React.FC = () => {
           <h1>Entity Types</h1>
           <div className={styles.buttonContainer}>
             {canWriteEntityModel ?
-                <MLTooltip title={ModelingTooltips.addNewEntity}>
-                  {addButton}
-                </MLTooltip>
-                :
-                <MLTooltip title={ModelingTooltips.addNewEntity + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '175px'}}>
-                  <span className={styles.disabledCursor}>{addButton}</span>
-                </MLTooltip>
+              <MLTooltip title={ModelingTooltips.addNewEntity}>
+                {addButton}
+              </MLTooltip>
+              :
+              <MLTooltip title={ModelingTooltips.addNewEntity + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "175px"}}>
+                <span className={styles.disabledCursor}>{addButton}</span>
+              </MLTooltip>
             }
             {canWriteEntityModel ?
-              <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: '175px'}}>
+              <MLTooltip title={ModelingTooltips.saveAll} overlayStyle={{maxWidth: "175px"}}>
                 <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{saveAllButton}</span>
               </MLTooltip>
               :
-              <MLTooltip title={ModelingTooltips.saveAll + ' ' + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: '225px'}}>
+              <MLTooltip title={ModelingTooltips.saveAll + " " + ModelingTooltips.noWriteAccess} placement="top" overlayStyle={{maxWidth: "225px"}}>
                 <span className={styles.disabledCursor}>{saveAllButton}</span>
               </MLTooltip>
             }
             {canWriteEntityModel ?
-              <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: '175px'}}>
+              <MLTooltip title={ModelingTooltips.revertAll} overlayStyle={{maxWidth: "175px"}}>
                 <span className={modelingOptions.isModified?styles.CursorButton:styles.disabledCursor}>{revertAllButton}</span>
               </MLTooltip>
               :
-              <MLTooltip title={ModelingTooltips.revertAll + ' ' + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: '250px'}}>
+              <MLTooltip title={ModelingTooltips.revertAll + " " + ModelingTooltips.noWriteAccess} placement="left" overlayStyle={{maxWidth: "250px"}}>
                 <span className={styles.disabledCursor}>{revertAllButton}</span>
               </MLTooltip>
             }

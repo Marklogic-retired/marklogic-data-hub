@@ -1,9 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import {Link} from "react-router-dom";
 // import styles from './entity-table.module.scss';
-import { Table } from 'antd';
-import { relativeTimeConverter } from '../../util/date-conversion';
-import { numberConverter } from '../../util/number-conversion';
+import {Table} from "antd";
+import {relativeTimeConverter} from "../../util/date-conversion";
+import {numberConverter} from "../../util/number-conversion";
 
 type Props = {
   entities: any[];
@@ -15,38 +15,38 @@ const EntityTable: React.FC<Props> = (props) => {
 
   const expandedRowRender = (entity) => {
     const columns = [
-      { title: 'Property', dataIndex: 'property', width: 200 },
-      { title: 'Data Type', dataIndex: 'datatype', width: 200 },
-      { title: 'Index Settings', dataIndex: 'indexSettings' }
+      {title: "Property", dataIndex: "property", width: 200},
+      {title: "Data Type", dataIndex: "datatype", width: 200},
+      {title: "Index Settings", dataIndex: "indexSettings"}
     ];
 
     let properties = entity.definition.properties.map(property => {
       let indexes: string[] = [];
-      if (entity.definition.hasOwnProperty('primaryKey') && entity.definition.primaryKey.includes(property.name)) {
-        indexes.push('Primary Key');
+      if (entity.definition.hasOwnProperty("primaryKey") && entity.definition.primaryKey.includes(property.name)) {
+        indexes.push("Primary Key");
       }
       if (entity.definition.elementRangeIndex.includes(property.name)) {
-        indexes.push('Element Range Index');
+        indexes.push("Element Range Index");
       }
       if (entity.definition.pii.includes(property.name)) {
-        indexes.push('pii');
+        indexes.push("pii");
       }
       if (entity.definition.rangeIndex.includes(property.name)) {
-        indexes.push('Range Index');
+        indexes.push("Range Index");
       }
       if (entity.definition.required.includes(property.name)) {
-        indexes.push('Required');
+        indexes.push("Required");
       }
       if (entity.definition.wordLexicon.includes(property.name)) {
-        indexes.push('Word Lexicon');
+        indexes.push("Word Lexicon");
       }
       if (indexes.length === 0) {
-        indexes.push('None');
+        indexes.push("None");
       }
       let data = {
         property: property.name,
         datatype: property.datatype,
-        indexSettings: indexes.join(', ')
+        indexSettings: indexes.join(", ")
       };
       return data;
     });
@@ -55,7 +55,7 @@ const EntityTable: React.FC<Props> = (props) => {
       rowKey="property"
       className="property-table"
       data-cy="property-table"
-      data-testid='property-table'
+      data-testid="property-table"
       columns={columns}
       dataSource={properties}
       pagination={false}
@@ -65,17 +65,17 @@ const EntityTable: React.FC<Props> = (props) => {
 
   const columns = [
     {
-      title: 'Entity Name',
-      dataIndex: 'name',
+      title: "Entity Name",
+      dataIndex: "name",
       width: 200,
       render: text => {
         return (
           <Link to={{
             pathname: "/browse",
-            state: { entity: text }
+            state: {entity: text}
           }}
-            data-cy={text}
-            data-testid={text}
+          data-cy={text}
+          data-testid={text}
           >
             {text}
           </Link>
@@ -84,28 +84,28 @@ const EntityTable: React.FC<Props> = (props) => {
       sorter: (a, b) => { return a.name.localeCompare(b.name); }
     },
     {
-      title: 'Documents',
-      dataIndex: 'documents',
+      title: "Documents",
+      dataIndex: "documents",
       width: 200,
       sorter: (a, b) => {
         return parseInt(a.documents.replace(/,/g, "")) - parseInt(b.documents.replace(/,/g, ""));
       }
     },
     {
-      title: 'Last Harmonized',
-      dataIndex: 'created',
+      title: "Last Harmonized",
+      dataIndex: "created",
       render: text => {
-        let parseText = text.split(',');
-        if (parseText[0] === 'Invalid date') {
-          return 'Never been run';
+        let parseText = text.split(",");
+        if (parseText[0] === "Invalid date") {
+          return "Never been run";
         }
         return (
           <Link to={{
             pathname: "/browse",
-            state: { jobId: parseText[1], entityName: parseText[2] }
+            state: {jobId: parseText[1], entityName: parseText[2]}
           }}
-            data-cy= 'last-harmonized'
-            data-testid={`last-harmonized-${parseText[2]}`}
+          data-cy= "last-harmonized"
+          data-testid={`last-harmonized-${parseText[2]}`}
           >
             {parseText[0]}
           </Link>
@@ -117,23 +117,25 @@ const EntityTable: React.FC<Props> = (props) => {
 
   const archColumns =  [
     {
-      title: 'Entity Name',
-      dataIndex: 'name',
+      title: "Entity Name",
+      dataIndex: "name",
       width: 200,
-      render: text => { return (
+      render: text => {
+        return (
           <Link to={{
             pathname: "/browse",
-            state: { entity: text} }}
-                data-cy={text}>
+            state: {entity: text}}}
+          data-cy={text}>
             {text}
           </Link>
-      );},
+        );
+      },
       sorter: (a, b) => { return a.name.localeCompare(b.name); }
     },
     {
-      title: 'Documents',
-      dataIndex: 'documents',
-      width: 200 ,
+      title: "Documents",
+      dataIndex: "documents",
+      width: 200,
       sorter: (a, b) => { return a.documents - b.documents; }
     }
   ];
@@ -166,23 +168,23 @@ const EntityTable: React.FC<Props> = (props) => {
     let parsedEntity = {
       name: entity.info.title,
       documents: numberConverter(documentCount),
-      created: relativeTimeConverter(latestJobDate) + ',' + latestJobId + ',' + entityName,
+      created: relativeTimeConverter(latestJobDate) + "," + latestJobId + "," + entityName,
       definition: entityDefinition
     };
     return parsedEntity;
   });
 
-    return (
-        <Table
-            rowKey="name"
-            className="entity-table"
-            data-cy="entity-table"
-            columns={props.lastHarmonized.length > 0 ? columns : archColumns}
-            expandedRowRender={expandedRowRender}
-            dataSource={realData}
-            pagination={{defaultPageSize: 20, size: 'small'}}
-        />
-    );
+  return (
+    <Table
+      rowKey="name"
+      className="entity-table"
+      data-cy="entity-table"
+      columns={props.lastHarmonized.length > 0 ? columns : archColumns}
+      expandedRowRender={expandedRowRender}
+      dataSource={realData}
+      pagination={{defaultPageSize: 20, size: "small"}}
+    />
+  );
 };
 
 export default EntityTable;

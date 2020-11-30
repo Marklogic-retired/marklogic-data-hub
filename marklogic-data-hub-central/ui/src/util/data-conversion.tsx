@@ -1,4 +1,4 @@
-import { Definition, Property } from '../types/modeling-types';
+import {Definition, Property} from "../types/modeling-types";
 
 export const entityFromJSON = (data: any) => {
   interface EntityModel {
@@ -18,17 +18,17 @@ export const entityFromJSON = (data: any) => {
   let entityArray: EntityModel[] = data.map(item => {
     // TODO check uri and baseUri diff with server
     let entityModel: EntityModel = {
-      uri: item['uri'],
-      info: item['info'],
+      uri: item["uri"],
+      info: item["info"],
       definitions: []
     };
 
-    let definitions = item['definitions'];
+    let definitions = item["definitions"];
 
     for (let definition in definitions) {
 
       let entityDefinition: Definitions = {
-        name: '',
+        name: "",
         pii: [],
         required: [],
         wordLexicon: [],
@@ -39,42 +39,42 @@ export const entityFromJSON = (data: any) => {
 
       entityDefinition.name = definition;
 
-      for (let entityKeys in item['definitions'][definition]) {
-        if (entityKeys === 'properties') {
-          for (let properties in item['definitions'][definition][entityKeys]) {
+      for (let entityKeys in item["definitions"][definition]) {
+        if (entityKeys === "properties") {
+          for (let properties in item["definitions"][definition][entityKeys]) {
             let property = {
-              name: '',
-              datatype: '',
-              ref: '',
-              collation: ''
+              name: "",
+              datatype: "",
+              ref: "",
+              collation: ""
             };
             property.name = properties;
-            property.collation = item['definitions'][definition][entityKeys][properties]['collation'];
-            if (item['definitions'][definition][entityKeys][properties]['datatype']) {
-              property.datatype = item['definitions'][definition][entityKeys][properties]['datatype'];
+            property.collation = item["definitions"][definition][entityKeys][properties]["collation"];
+            if (item["definitions"][definition][entityKeys][properties]["datatype"]) {
+              property.datatype = item["definitions"][definition][entityKeys][properties]["datatype"];
 
-              if (item['definitions'][definition][entityKeys][properties]['datatype'] === 'array') {
-                if (item['definitions'][definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
-                  property.ref = item['definitions'][definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+              if (item["definitions"][definition][entityKeys][properties]["datatype"] === "array") {
+                if (item["definitions"][definition][entityKeys][properties]["items"].hasOwnProperty("$ref")) {
+                  property.ref = item["definitions"][definition][entityKeys][properties]["items"]["$ref"].split("/").pop();
                 } else {
-                  property.ref = '';
+                  property.ref = "";
                 }
               }
 
-            } else if (item['definitions'][definition][entityKeys][properties]['$ref']) {
-              property.ref = item['definitions'][definition][entityKeys][properties]['$ref'].split('/').pop();
-              property.datatype = 'entity';
+            } else if (item["definitions"][definition][entityKeys][properties]["$ref"]) {
+              property.ref = item["definitions"][definition][entityKeys][properties]["$ref"].split("/").pop();
+              property.datatype = "entity";
             }
-            if(item['definitions'][definition][entityKeys][properties]['sortable']){
-              property['sortable'] = item['definitions'][definition][entityKeys][properties]['sortable'];
+            if (item["definitions"][definition][entityKeys][properties]["sortable"]) {
+              property["sortable"] = item["definitions"][definition][entityKeys][properties]["sortable"];
             }
-            if(item['definitions'][definition][entityKeys][properties]['facetable']){
-              property['facetable'] = item['definitions'][definition][entityKeys][properties]['facetable'];
+            if (item["definitions"][definition][entityKeys][properties]["facetable"]) {
+              property["facetable"] = item["definitions"][definition][entityKeys][properties]["facetable"];
             }
             entityProperties.push(property);
           }
         } else {
-          entityDefinition[entityKeys] = item['definitions'][definition][entityKeys];
+          entityDefinition[entityKeys] = item["definitions"][definition][entityKeys];
         }
         entityDefinition.properties = entityProperties;
       }
@@ -91,16 +91,16 @@ export const entityParser = (data: any) => {
     let properties = [];
     let entityDefinition = entity.definitions.find(definition => definition.name === entity.info.title);
 
-    for (var prop in entity.definitions) {
-      if (entity.definitions[prop]['name'] === entity.info['title']) {
-        properties = entity.definitions[prop]['properties'];
+    for (let prop in entity.definitions) {
+      if (entity.definitions[prop]["name"] === entity.info["title"]) {
+        properties = entity.definitions[prop]["properties"];
       }
     }
 
     parsedEntity = {
-      name: entityDefinition['name'],
+      name: entityDefinition["name"],
       info: entity.info,
-      primaryKey: entityDefinition.hasOwnProperty('primaryKey') ? entityDefinition['primaryKey'] : '',
+      primaryKey: entityDefinition.hasOwnProperty("primaryKey") ? entityDefinition["primaryKey"] : "",
       properties: properties,
     };
     return parsedEntity;
@@ -123,10 +123,10 @@ export const getKeys = function (obj: Object) {
   let keys = new Array();
   const parser = (obj: Object) => {
     for (let i in obj) {
-      if (obj[i].hasOwnProperty('key')) {
+      if (obj[i].hasOwnProperty("key")) {
         keys.push(obj[i].key);
       }
-      if (obj[i].hasOwnProperty('children')) {
+      if (obj[i].hasOwnProperty("children")) {
         parser(obj[i].children);
       }
     }
@@ -139,7 +139,7 @@ export const getChildKeys = function (obj: Object) {
   let keys = new Array();
   const parser = (obj: Object) => {
     for (let i in obj) {
-      if (obj[i].hasOwnProperty('children')) {
+      if (obj[i].hasOwnProperty("children")) {
         parser(obj[i].children);
       } else {
         keys.push(obj[i].key);
@@ -166,14 +166,12 @@ export const getParentKey = (key, tree) => {
 };
 
 export function getObject(object, k) {
-  if (object.hasOwnProperty('key') && object["key"] == k)
-    return object;
+  if (object.hasOwnProperty("key") && object["key"] === k) { return object; }
 
-  for (var i = 0; i < Object.keys(object).length; i++) {
-    if (typeof object[Object.keys(object)[i]] == "object") {
-      var o = getObject(object[Object.keys(object)[i]], k);
-      if (o != null)
-        return o;
+  for (let i = 0; i < Object.keys(object).length; i++) {
+    if (typeof object[Object.keys(object)[i]] === "object") {
+      let o = getObject(object[Object.keys(object)[i]], k);
+      if (o !== null) { return o; }
     }
   }
   return null;
@@ -183,7 +181,7 @@ export const toStringArray = (obj) => {
   let arr = new Array();
   const toArray = (obj) => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
         arr.indexOf(obj[i].key) === -1 && arr.push(obj[i].key);
         toArray(obj[i].children);
       } else {
@@ -200,7 +198,7 @@ export const reconstructHeader = (obj1, keys) => {
   let obj = deepCopy(obj1);
   const reconstruct = (obj, keys) => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
         let k = obj[i].key;
         if (!keys.includes(k)) {
           let hasParent = getParentKey(k, obj);
@@ -252,11 +250,11 @@ export const updateHeader = (tree, keys) => {
   keys.forEach((key, index) => {
     let headerObj = newtree.find(obj => obj.key === key);
     if (headerObj) {
-      if (headerObj.hasOwnProperty('children')) {
+      if (headerObj.hasOwnProperty("children")) {
         if (Array.isArray(headerObj.children)) {
           // remove children and add children back if key is found
           headerObj.children = [];
-        } else if (typeof headerObj.children === 'object') {
+        } else if (typeof headerObj.children === "object") {
           headerObj.children = {};
         }
       }
@@ -267,19 +265,19 @@ export const updateHeader = (tree, keys) => {
     } else {
       // could not find column. must be child key
       // TODO: keep parsing key until a parentObj is found?
-      let parseKey = key.split('-');
+      let parseKey = key.split("-");
       parseKey.pop();
-      let parentKey = parseKey.join('-');
+      let parentKey = parseKey.join("-");
 
       let parentObj = updatedHeader.find(obj => obj.key === parentKey);
       let updateParentIndex = updatedHeader.findIndex(obj => obj.key === parentKey);
-      if (parentObj !== undefined && parentObj.hasOwnProperty('children')) {
+      if (parentObj !== undefined && parentObj.hasOwnProperty("children")) {
         // update parentObj's children by pushing new child obj
         // check if childobj is already in parent obj
 
         // adding child obj to update header
         let index = tree.findIndex(obj => obj.key === parentKey);
-        let childObj = tree[index].hasOwnProperty('children') && tree[index].children.find(childObj => childObj.key === key);
+        let childObj = tree[index].hasOwnProperty("children") && tree[index].children.find(childObj => childObj.key === key);
         if (childObj) {
           if (!parentObj.children.find(child => child.key === childObj.key)) {
             parentObj.children.push(childObj);
@@ -290,7 +288,7 @@ export const updateHeader = (tree, keys) => {
         // no parent object in updated header
         // add parent object and child to updatedHeader
         parentObj = newtree.find(obj => obj.key === parentKey);
-        if (parentObj && parentObj.hasOwnProperty('children')) {
+        if (parentObj && parentObj.hasOwnProperty("children")) {
           let childObj = parentObj.children.find(childObj => childObj.key === key);
           if (childObj) {
             //console.log('find child', parentObj.children.find( child => child.key === childObj.key))
@@ -308,7 +306,7 @@ export const setTreeVisibility = (ob, str) => {
   const filter = (ob) => {
     let v;
     for (let i = 0; i < ob.length; i++) {
-      if (ob[i] !== null && (ob[i]).hasOwnProperty('children')) {
+      if (ob[i] !== null && (ob[i]).hasOwnProperty("children")) {
         let n = filter(ob[i].children);
         if (n.v === false || n.v === undefined) {
           ob[i].visible = false;
@@ -328,7 +326,7 @@ export const setTreeVisibility = (ob, str) => {
         }
       }
     }
-    return { ob, v };
+    return {ob, v};
   };
   return filter(ob);
 };
@@ -339,7 +337,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
 
   for (let definition in definitions) {
     let entityDefinition: Definition = {
-      name: '',
+      name: "",
       properties: []
     };
 
@@ -348,55 +346,55 @@ export const definitionsParser = (definitions: any): Definition[] => {
     entityDefinition.name = definition;
 
     for (let entityKeys in definitions[definition]) {
-      if (entityKeys === 'properties') {
+      if (entityKeys === "properties") {
         for (let properties in definitions[definition][entityKeys]) {
           let property: Property = {
-            name: '',
-            datatype: '',
-            description: '',
-            ref: '',
-            collation: '',
+            name: "",
+            datatype: "",
+            description: "",
+            ref: "",
+            collation: "",
             multiple: false,
             facetable: false,
             sortable: false
           };
           property.name = properties;
-          property.description = definitions[definition][entityKeys][properties]['description'] || '';
-          property.collation = definitions[definition][entityKeys][properties]['collation'] || '';
-          property.facetable = definitions[definition][entityKeys][properties]['facetable'] || '';
-          property.sortable = definitions[definition][entityKeys][properties]['sortable'] || '';
+          property.description = definitions[definition][entityKeys][properties]["description"] || "";
+          property.collation = definitions[definition][entityKeys][properties]["collation"] || "";
+          property.facetable = definitions[definition][entityKeys][properties]["facetable"] || "";
+          property.sortable = definitions[definition][entityKeys][properties]["sortable"] || "";
 
-          if (definitions[definition][entityKeys][properties]['datatype']) {
-            property.datatype = definitions[definition][entityKeys][properties]['datatype'];
+          if (definitions[definition][entityKeys][properties]["datatype"]) {
+            property.datatype = definitions[definition][entityKeys][properties]["datatype"];
 
-            if (definitions[definition][entityKeys][properties]['datatype'] === 'array') {
+            if (definitions[definition][entityKeys][properties]["datatype"] === "array") {
               property.multiple = true;
 
-              if (definitions[definition][entityKeys][properties]['items'].hasOwnProperty('$ref')) {
+              if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("$ref")) {
                 // Array of Structured/Entity type
-                if (definitions[definition][entityKeys][properties]['items']['$ref'].split('/')[1] === 'definitions') {
-                  property.datatype = 'structured';
+                if (definitions[definition][entityKeys][properties]["items"]["$ref"].split("/")[1] === "definitions") {
+                  property.datatype = "structured";
                 } else {
-                  property.datatype = definitions[definition][entityKeys][properties]['items']['$ref'].split('/').pop();
+                  property.datatype = definitions[definition][entityKeys][properties]["items"]["$ref"].split("/").pop();
                 }
-                property.ref = definitions[definition][entityKeys][properties]['items']['$ref'];
-              } else if (definitions[definition][entityKeys][properties]['items'].hasOwnProperty('datatype')) {
+                property.ref = definitions[definition][entityKeys][properties]["items"]["$ref"];
+              } else if (definitions[definition][entityKeys][properties]["items"].hasOwnProperty("datatype")) {
                 // Array of datatype
-                property.datatype = definitions[definition][entityKeys][properties]['items']['datatype'];
-                property.collation = definitions[definition][entityKeys][properties]['items']['collation'];
+                property.datatype = definitions[definition][entityKeys][properties]["items"]["datatype"];
+                property.collation = definitions[definition][entityKeys][properties]["items"]["collation"];
               }
             }
-          } else if (definitions[definition][entityKeys][properties]['$ref']) {
-            let refSplit = definitions[definition][entityKeys][properties]['$ref'].split('/');
-            if (refSplit[1] === 'definitions') {
+          } else if (definitions[definition][entityKeys][properties]["$ref"]) {
+            let refSplit = definitions[definition][entityKeys][properties]["$ref"].split("/");
+            if (refSplit[1] === "definitions") {
               // Structured type
-              property.datatype = 'structured';
+              property.datatype = "structured";
             } else {
               // External Entity type
               property.datatype = refSplit[refSplit.length - 1];
             }
 
-            property.ref = definitions[definition][entityKeys][properties]['$ref'];
+            property.ref = definitions[definition][entityKeys][properties]["$ref"];
           }
           entityProperties.push(property);
         }
@@ -414,10 +412,10 @@ export const getTableProperties = (object: Array<Object>) => {
   let labels = new Array();
   const getProperties = (obj) => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty('properties')) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty("properties")) {
         getProperties(obj[i].properties);
       } else {
-          labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath);
+        labels.indexOf(obj[i].propertyPath) === -1 && labels.push(obj[i].propertyPath);
       }
     }
     return labels;
@@ -429,7 +427,7 @@ export const getSelectedTableProperties = (object: Array<Object>, keys: Array<St
   let labels = new Array();
   const getProperties = (obj) => {
     for (let i = 0; i < obj.length; i++) {
-      if (obj[i] !== null && (obj[i]).hasOwnProperty('children')) {
+      if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
         getProperties(obj[i].children);
       } else {
         labels.indexOf(obj[i].propertyPath) === -1 && keys.includes(obj[i].key) && labels.push(obj[i].propertyPath);
@@ -448,13 +446,13 @@ export const treeConverter = function (obj: Object) {
   const parser = (obj: Object, counter) => {
     let parsedTitle = new Array();
     for (let i in obj) {
-      if (obj[i].hasOwnProperty('properties')) {
+      if (obj[i].hasOwnProperty("properties")) {
         deep = counter;
         keys.push(deep);
         deep = 0;
         parsedTitle.push({
           title: obj[i].propertyLabel,
-          key: keys.join('-'),
+          key: keys.join("-"),
           propertyPath: obj[i].propertyPath,
           children: parser(obj[i].properties, deep)
         });
@@ -463,7 +461,7 @@ export const treeConverter = function (obj: Object) {
       } else {
         parsedTitle.push({
           title: obj[i].propertyLabel,
-          key: keys.join('-') + '-' + counter,
+          key: keys.join("-") + "-" + counter,
           propertyPath: obj[i].propertyPath,
         });
         counter++;
@@ -478,7 +476,7 @@ export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropert
   let keys = new Array();
   const parser = (selectedPropertyDefinitions: any[]) => {
     selectedPropertyDefinitions.filter(item => {
-      if (item.hasOwnProperty('properties')) {
+      if (item.hasOwnProperty("properties")) {
         parser(item.properties);
       } else {
         let key = findKey(entityPropertyDefinitions, item.propertyPath);
@@ -497,7 +495,7 @@ const findKey = (entityPropertyDefinitions: any[], propertyPath: string) => {
     entityPropertyDefinitions.filter(item => {
       if (item.propertyPath === propertyPath) {
         key = item.key;
-      } else if (item.hasOwnProperty('children')) {
+      } else if (item.hasOwnProperty("children")) {
         parser(item.children, propertyPath);
       }
     });

@@ -8,8 +8,8 @@ class EntityTypeTable {
   }
 
   getEntityInstanceCountValue(entityName: string) {
-    return cy.findByTestId(`${entityName}-instance-count`).then(function(value){
-      return parseInt(value.text().replace(',',''));
+    return cy.findByTestId(`${entityName}-instance-count`).then(function(value) {
+      return parseInt(value.text().replace(",", ""));
     });
   }
 
@@ -22,15 +22,15 @@ class EntityTypeTable {
   }
 
   sortByEntityName() {
-    return cy.get('th').eq(0).click();
+    return cy.get("th").eq(0).click();
   }
 
   sortByInstanceCount() {
-    return cy.get('th').eq(1).click();
+    return cy.get("th").eq(1).click();
   }
 
   sortByLastProcessed() {
-    return cy.get('th').eq(2).click();
+    return cy.get("th").eq(2).click();
   }
 
   getDeleteEntityIcon(entityName: string) {
@@ -46,7 +46,7 @@ class EntityTypeTable {
   }
 
   waitForTableToLoad() {
-      cy.waitUntil(() => cy.get('.ant-table-row').should('have.length.gt',0));
+    cy.waitUntil(() => cy.get(".ant-table-row").should("have.length.gt", 0));
   }
 }
 

@@ -9,19 +9,19 @@ class MultiSlider {
   }
 
   editOption(name: string) {
-    cy.findByTestId(`edit-${name}`).should('be.visible').then($option => {
+    cy.findByTestId(`edit-${name}`).should("be.visible").then($option => {
       $option[0].click();
     });
   }
 
   deleteOption(name: string) {
-    cy.findByTestId(`delete-${name}`).should('be.visible').then($option => {
+    cy.findByTestId(`delete-${name}`).should("be.visible").then($option => {
       $option[0].click();
-    });;
+    });
   }
 
   getRulesetSliderRail() {
-    return cy.findByTestId('ruleSet-slider-rail');
+    return cy.findByTestId("ruleSet-slider-rail");
   }
 }
 

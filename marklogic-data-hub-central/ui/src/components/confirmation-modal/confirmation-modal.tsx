@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Modal } from 'antd';
-import { MLAlert, MLButton } from '@marklogic/design-system';
-import styles from './confirmation-modal.module.scss';
-import { ModelingTooltips } from '../../config/tooltips.config';
-import { ConfirmationType } from '../../types/common-types';
+import React, {useState, useEffect} from "react";
+import {Modal} from "antd";
+import {MLAlert, MLButton} from "@marklogic/design-system";
+import styles from "./confirmation-modal.module.scss";
+import {ModelingTooltips} from "../../config/tooltips.config";
+import {ConfirmationType} from "../../types/common-types";
 
 type Props = {
   isVisible: boolean;
@@ -45,14 +45,14 @@ const ConfirmationModal: React.FC<Props> = (props) => {
       size="default"
       loading={loading}
       onClick={() => {
-        switch(props.type) {
-          // non async confirm types
-          case ConfirmationType.NavigationWarn:
-          case ConfirmationType.DiscardChanges:
-            break;
-          default: 
-            toggleLoading(true);
-            break;
+        switch (props.type) {
+        // non async confirm types
+        case ConfirmationType.NavigationWarn:
+        case ConfirmationType.DiscardChanges:
+          break;
+        default:
+          toggleLoading(true);
+          break;
         }
         props.confirmAction();
       }}
@@ -158,7 +158,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               aria-label="toggle-steps"
               className={styles.toggleSteps}
               onClick={() => toggleSteps(!showSteps)}
-            >{showSteps ? 'Hide Steps...' : 'Show Steps...'}</p>
+            >{showSteps ? "Hide Steps..." : "Show Steps..."}</p>
 
             {showSteps && (
               <ul className={styles.stepList}>
@@ -188,7 +188,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
               aria-label="toggle-steps"
               className={styles.toggleSteps}
               onClick={() => toggleSteps(!showSteps)}
-            >{showSteps ? 'Hide Steps...' : 'Show Steps...'}</p>
+            >{showSteps ? "Hide Steps..." : "Show Steps..."}</p>
 
             {showSteps && (
               <ul className={styles.stepList}>
@@ -262,7 +262,7 @@ const ConfirmationModal: React.FC<Props> = (props) => {
         **/}
         {props.type === ConfirmationType.AddStepToFlow &&
           <p aria-label="add-step-to-flow-text"
-            >Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
+          >Are you sure you want to add <b>{props.boldTextArray[0]}</b> to flow <b>{props.boldTextArray[1]}</b>?
           </p>
         }
 

@@ -1,23 +1,23 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {Subscription} from 'rxjs';
-import axios from 'axios';
-import {createUserPreferences, getUserPreferences, updateUserPreferences} from '../services/user-preferences';
-import {IUserContextInterface, UserContextInterface} from '../types/user-types';
-import {AuthoritiesContext} from './authorities';
-import {StompContext, STOMPState} from './stomp';
-import {resetEnvironment, setEnvironment} from '../util/environment';
-import {useInterval} from '../hooks/use-interval';
+import React, {useContext, useEffect, useRef, useState} from "react";
+import {Subscription} from "rxjs";
+import axios from "axios";
+import {createUserPreferences, getUserPreferences, updateUserPreferences} from "../services/user-preferences";
+import {IUserContextInterface, UserContextInterface} from "../types/user-types";
+import {AuthoritiesContext} from "./authorities";
+import {StompContext, STOMPState} from "./stomp";
+import {resetEnvironment, setEnvironment} from "../util/environment";
+import {useInterval} from "../hooks/use-interval";
 import {MAX_SESSION_TIME} from "../config/application.config";
 
 const defaultUserData = {
-  name: '',
+  name: "",
   authenticated: false,
-  error : {
-    title: '',
-    message: '',
-    type: ''
+  error: {
+    title: "",
+    message: "",
+    type: ""
   },
-  pageRoute: '/tiles',
+  pageRoute: "/tiles",
   maxSessionTime: MAX_SESSION_TIME
 };
 
@@ -31,7 +31,7 @@ export const UserContext = React.createContext<IUserContextInterface>({
   setPageRoute: () => {},
   setAlertMessage: () => {},
   resetSessionTime: () => {},
-  getSessionTime: () => { return defaultUserData.maxSessionTime;}
+  getSessionTime: () => { return defaultUserData.maxSessionTime; }
 });
 
 const UserProvider: React.FC<{ children: any }> = ({children}) => {
@@ -39,7 +39,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   const [user, setUser] = useState<UserContextInterface>(defaultUserData);
   const [stompMessageSubscription, setStompMessageSubscription] = useState<Subscription|null>(null);
   const [unsubscribeId, setUnsubscribeId] = useState<string|null>(null);
-  const sessionUser = localStorage.getItem('dataHubUser');
+  const sessionUser = localStorage.getItem("dataHubUser");
   const authoritiesService = useContext(AuthoritiesContext);
   const stompService = useContext(StompContext);
   const sessionCount = useRef<number>(MAX_SESSION_TIME);
@@ -76,7 +76,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const subscribeToMonitorSession = () => {
-    const hubCentralSessionToken = localStorage.getItem('hubCentralSessionToken');
+    const hubCentralSessionToken = localStorage.getItem("hubCentralSessionToken");
     if (hubCentralSessionToken) {
       if (!stompMessageSubscription) {
         setStompMessageSubscription(stompService.messages.subscribe((message) => {
@@ -92,19 +92,19 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
   const monitorSession = () => {
     if (stompService.isClosed()) {
-      stompService.configure(window.location.origin + '/websocket');
+      stompService.configure(window.location.origin + "/websocket");
       stompService.tryConnect().then(subscribeToMonitorSession);
     }
   };
 
   const loginAuthenticated = async (username: string, authResponse: any) => {
     setEnvironment();
-    let session = await axios('/api/environment/systemInfo');
-    setSessionTime(parseInt(session.data['sessionTimeout']));
+    let session = await axios("/api/environment/systemInfo");
+    setSessionTime(parseInt(session.data["sessionTimeout"]));
 
-    localStorage.setItem('dataHubUser', username);
-    localStorage.setItem('serviceName', session.data.serviceName);
-    localStorage.setItem('hubCentralSessionToken', session.data.sessionToken);
+    localStorage.setItem("dataHubUser", username);
+    localStorage.setItem("serviceName", session.data.serviceName);
+    localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
     monitorSession();
 
     const authorities: string[] =  authResponse.authorities || [];
@@ -134,7 +134,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
 
   const sessionAuthenticated = (username: string) => {
     monitorSession();
-    localStorage.setItem('dataHubUser', username);
+    localStorage.setItem("dataHubUser", username);
     let userPreferences = getUserPreferences(username);
     if (userPreferences) {
       setUser({
@@ -146,111 +146,111 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       });
     } else {
       createUserPreferences(username);
-      setUser({ ...user,name: username, authenticated: true});
+      setUser({...user, name: username, authenticated: true});
     }
   };
 
   const userNotAuthenticated = () => {
-    setUser({...user, name: '', authenticated: false});
+    setUser({...user, name: "", authenticated: false});
     resetSessionMonitor().then(() => {
-      localStorage.setItem('dataHubUser', '');
-      localStorage.setItem('serviceName', '');
-      localStorage.setItem('loginResp', '');
-      localStorage.setItem('hubCentralSessionToken', '');
+      localStorage.setItem("dataHubUser", "");
+      localStorage.setItem("serviceName", "");
+      localStorage.setItem("loginResp", "");
+      localStorage.setItem("hubCentralSessionToken", "");
       authoritiesService.setAuthorities([]);
       resetEnvironment();
     });
   };
 
   const handleError = (error) => {
-    const DEFAULT_MESSAGE = 'Internal Server Error';
+    const DEFAULT_MESSAGE = "Internal Server Error";
     switch (error.response.status) {
-      case 401: {
-        localStorage.setItem('dataHubUser', '');
-        localStorage.setItem('loginResp', '');
-        setUser({ ...user, name: '', authenticated: false });
-        break;
-      }
-      case 400:
-      case 403:
-      case 405:
-      case 408:
-      case 414: {
-        console.log('HTTP ERROR', error.response);
-        let title = error.response.status + ' ' + error.response.statusText;
-        let message = DEFAULT_MESSAGE;
-
-        if (error.response.data.hasOwnProperty('message')) {
-          message = error.response.data.message;
-        }
-        setUser({
-          ...user,
-          error: {
-            title: title,
-            message: message,
-            type: 'ALERT'
-          }
-        });
-        break;
-      }
-      case 404: {
-        setUser({
-          ...user,
-          // redirect: true,
-          error: {
-            title: error.response.data.error,
-            message: error.response.data.message || DEFAULT_MESSAGE,
-            type: 'ALERT'
-          }
-        });
+    case 401: {
+      localStorage.setItem("dataHubUser", "");
+      localStorage.setItem("loginResp", "");
+      setUser({...user, name: "", authenticated: false});
       break;
-      }
-      case 500:
-      case 501:
-      case 502:
-      case 503:
-      case 504:
-      case 505:
-      case 511: {
-        console.log('HTTP ERROR ', error.response);
-        let title = error.response.status + ' ' + error.response.statusText;
-        let message = DEFAULT_MESSAGE;
+    }
+    case 400:
+    case 403:
+    case 405:
+    case 408:
+    case 414: {
+      console.error("HTTP ERROR", error.response);
+      let title = error.response.status + " " + error.response.statusText;
+      let message = DEFAULT_MESSAGE;
 
-        if (error.response.data.hasOwnProperty('message')) {
-          message = error.response.data.message;
+      if (error.response.data.hasOwnProperty("message")) {
+        message = error.response.data.message;
+      }
+      setUser({
+        ...user,
+        error: {
+          title: title,
+          message: message,
+          type: "ALERT"
         }
-        setUser({
-          ...user,
-          error: {
-            title,
-            message,
-            type: 'MODAL'
-          }
-        });
-        break;
-      }
-      default: {
-        console.log('HTTP ERROR ', error.response);
+      });
+      break;
+    }
+    case 404: {
+      setUser({
+        ...user,
+        // redirect: true,
+        error: {
+          title: error.response.data.error,
+          message: error.response.data.message || DEFAULT_MESSAGE,
+          type: "ALERT"
+        }
+      });
+      break;
+    }
+    case 500:
+    case 501:
+    case 502:
+    case 503:
+    case 504:
+    case 505:
+    case 511: {
+      console.error("HTTP ERROR ", error.response);
+      let title = error.response.status + " " + error.response.statusText;
+      let message = DEFAULT_MESSAGE;
 
-        setUser({
-          ...user,
-          error: {
-            title: DEFAULT_MESSAGE,
-            message: 'Please check the console for more information',
-            type: 'MODAL'
-          }
-        });
-        break;
+      if (error.response.data.hasOwnProperty("message")) {
+        message = error.response.data.message;
       }
+      setUser({
+        ...user,
+        error: {
+          title,
+          message,
+          type: "MODAL"
+        }
+      });
+      break;
+    }
+    default: {
+      console.error("HTTP ERROR ", error.response);
+
+      setUser({
+        ...user,
+        error: {
+          title: DEFAULT_MESSAGE,
+          message: "Please check the console for more information",
+          type: "MODAL"
+        }
+      });
+      break;
+    }
     }
   };
 
   const clearErrorMessage = () => {
-    setUser({ ...user, error : { title:'', message: '', type: '' }});
+    setUser({...user, error: {title: "", message: "", type: ""}});
   };
 
   const setPageRoute = (route: string) => {
-    updateUserPreferences(user.name, { pageRoute: route });
+    updateUserPreferences(user.name, {pageRoute: route});
   };
 
   const setAlertMessage = (title: string, message: string) => {
@@ -259,7 +259,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
       error: {
         title,
         message,
-        type: 'ALERT'
+        type: "ALERT"
       }
     });
   };
@@ -268,16 +268,16 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     setSessionTime(user.maxSessionTime);
   };
 
-  const getSessionTime = () =>{
-      return sessionCount.current;
+  const getSessionTime = () => {
+    return sessionCount.current;
   };
 
   useEffect(() => {
     if (sessionUser) {
       sessionAuthenticated(sessionUser);
-      let loginResponse = JSON.parse(localStorage.getItem('loginResp') || '{}');
-      if(JSON.stringify(loginResponse) !== JSON.stringify({})){
-        loginAuthenticated(sessionUser,loginResponse);
+      let loginResponse = JSON.parse(localStorage.getItem("loginResp") || "{}");
+      if (JSON.stringify(loginResponse) !== JSON.stringify({})) {
+        loginAuthenticated(sessionUser, loginResponse);
       }
     }
   }, []);

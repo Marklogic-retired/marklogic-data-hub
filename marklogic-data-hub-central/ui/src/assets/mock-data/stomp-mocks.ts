@@ -1,6 +1,6 @@
-import {IStompContextInterface, STOMPState} from '../../util/stomp';
+import {IStompContextInterface, STOMPState} from "../../util/stomp";
 import {BehaviorSubject, Subject} from "rxjs";
-import {  Message } from 'stompjs/lib/stomp.min';
+import {Message} from "stompjs/lib/stomp.min";
 
 export const defaultStompContext: IStompContextInterface = {
   state: new BehaviorSubject<STOMPState>(STOMPState.CLOSED),

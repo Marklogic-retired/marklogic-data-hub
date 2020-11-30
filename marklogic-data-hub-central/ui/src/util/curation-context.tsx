@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, {useState} from "react";
 import {
   CurationOptionsInterface,
   CurationContextInterface
-} from '../types/curation-types';
-import { definitionsParser } from './data-conversion';
+} from "../types/curation-types";
+import {definitionsParser} from "./data-conversion";
 
 const DEFAULT_CURATION_OPTIONS = {
   entityDefinitionsArray: [],
   activeStep: {
     stepArtifact: {},
-    entityName: '',
+    entityName: "",
     isModified: false
   }
 };
@@ -20,12 +20,12 @@ export const CurationContext = React.createContext<CurationContextInterface>({
   updateActiveStepArtifact: () => {}
 });
 
-const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
+const CurationProvider: React.FC<{ children: any }> = ({children}) => {
 
   const [curationOptions, setCurationOptions] = useState<CurationOptionsInterface>(DEFAULT_CURATION_OPTIONS);
 
   /**
-    * Sets the current active step in the curate tile 
+    * Sets the current active step in the curate tile
     * Transforms definitions object payload into array of objects with static key values
     * @param stepArtifact = Step definition object from payload
     * @example 'step.artifacts[0]'
@@ -36,16 +36,16 @@ const CurationProvider: React.FC<{ children: any }> = ({ children }) => {
   **/
   const setActiveStep = (stepArtifact: any, modelDefinition: any, entityName: string) => {
     let entityDefArray = definitionsParser(modelDefinition);
-    setCurationOptions({ 
+    setCurationOptions({
       ...curationOptions,
-      activeStep: { ...curationOptions.activeStep, stepArtifact, entityName },
+      activeStep: {...curationOptions.activeStep, stepArtifact, entityName},
       entityDefinitionsArray: entityDefArray
     });
   };
 
   const updateActiveStepArtifact = (stepArtifact: any) => {
-    let updatedStep = { ...curationOptions.activeStep, stepArtifact };
-    setCurationOptions({ 
+    let updatedStep = {...curationOptions.activeStep, stepArtifact};
+    setCurationOptions({
       ...curationOptions,
       activeStep: updatedStep,
     });

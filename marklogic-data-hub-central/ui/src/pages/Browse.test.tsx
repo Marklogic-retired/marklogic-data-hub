@@ -1,26 +1,26 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom/extend-expect';
-import { MemoryRouter } from "react-router-dom";
+import React from "react";
+import {render, fireEvent} from "@testing-library/react";
+import "@testing-library/jest-dom/extend-expect";
+import {MemoryRouter} from "react-router-dom";
 import Browse from "./Browse";
-import { SearchContext } from "../util/search-context";
+import {SearchContext} from "../util/search-context";
 
-jest.mock('axios');
+jest.mock("axios");
 jest.setTimeout(30000);
 
 
-describe('Explorer Browse page tests ', () => {
+describe("Explorer Browse page tests ", () => {
   const defaultSearchOptions = {
-    query: '',
+    query: "",
     entityTypeIds: [],
-    nextEntityType: '',
+    nextEntityType: "",
     start: 1,
     pageNumber: 1,
     pageLength: 20,
     pageSize: 20,
     selectedFacets: {},
     maxRowsPerPage: 100,
-    selectedQuery: 'select a query',
+    selectedQuery: "select a query",
     zeroState: false,
     manageQueryModal: false,
     selectedTableProperties: [],
@@ -32,8 +32,8 @@ describe('Explorer Browse page tests ', () => {
     jest.clearAllMocks();
   });
 
-  test('Verify collapsible side bar', async () => {
-    const { getByLabelText } = render(<MemoryRouter>
+  test("Verify collapsible side bar", async () => {
+    const {getByLabelText} = render(<MemoryRouter>
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
@@ -43,15 +43,15 @@ describe('Explorer Browse page tests ', () => {
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument();
-    await fireEvent.click(getByLabelText('expanded'));
-    expect(document.querySelector('[data-icon="angle-double-right"]')).toBeInTheDocument();
-    await fireEvent.click(getByLabelText('collapsed'));
-    expect(document.querySelector('[data-icon="angle-double-left"]')).toBeInTheDocument();
+    expect(document.querySelector("[data-icon=\"angle-double-left\"]")).toBeInTheDocument();
+    await fireEvent.click(getByLabelText("expanded"));
+    expect(document.querySelector("[data-icon=\"angle-double-right\"]")).toBeInTheDocument();
+    await fireEvent.click(getByLabelText("collapsed"));
+    expect(document.querySelector("[data-icon=\"angle-double-left\"]")).toBeInTheDocument();
   });
 
-  test('Verify snippet/table view on hover css', async () => {
-    const { getByLabelText } = render(<MemoryRouter>
+  test("Verify snippet/table view on hover css", async () => {
+    const {getByLabelText} = render(<MemoryRouter>
       <SearchContext.Provider value={{
         searchOptions: defaultSearchOptions,
         greyedOptions: defaultSearchOptions,
@@ -61,15 +61,15 @@ describe('Explorer Browse page tests ', () => {
         <Browse />
       </SearchContext.Provider></MemoryRouter>);
 
-    fireEvent.click(getByLabelText('switch-view-table'));
-    expect(getByLabelText('switch-view-table')).toHaveProperty('checked', true);
-    expect(getByLabelText('switch-view-snippet')).toHaveProperty('checked', false);
-    fireEvent.mouseOver(getByLabelText('switch-view-snippet'));
-    expect(getByLabelText('switch-view-snippet')).toHaveStyle('color: rgb(127, 134, 181');
-    fireEvent.click(getByLabelText('switch-view-snippet'));
-    expect(getByLabelText('switch-view-table')).toHaveProperty('checked', false);
-    expect(getByLabelText('switch-view-snippet')).toHaveProperty('checked', true);
-    fireEvent.mouseOver(getByLabelText('switch-view-table'));
-    expect(getByLabelText('switch-view-table')).toHaveStyle('color: rgb(127, 134, 181');
+    fireEvent.click(getByLabelText("switch-view-table"));
+    expect(getByLabelText("switch-view-table")).toHaveProperty("checked", true);
+    expect(getByLabelText("switch-view-snippet")).toHaveProperty("checked", false);
+    fireEvent.mouseOver(getByLabelText("switch-view-snippet"));
+    expect(getByLabelText("switch-view-snippet")).toHaveStyle("color: rgb(127, 134, 181");
+    fireEvent.click(getByLabelText("switch-view-snippet"));
+    expect(getByLabelText("switch-view-table")).toHaveProperty("checked", false);
+    expect(getByLabelText("switch-view-snippet")).toHaveProperty("checked", true);
+    fireEvent.mouseOver(getByLabelText("switch-view-table"));
+    expect(getByLabelText("switch-view-table")).toHaveStyle("color: rgb(127, 134, 181");
   });
 });

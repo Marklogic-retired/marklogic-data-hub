@@ -1,11 +1,11 @@
-import React from 'react';
-import { render, fireEvent, waitForElement } from '@testing-library/react';
-import Facet from './facet';
-import { facetProps, sourceNameFacetProps, sourceTypeFacetProps } from '../../assets/mock-data/explore/facet-props';
+import React from "react";
+import {render, fireEvent, waitForElement} from "@testing-library/react";
+import Facet from "./facet";
+import {facetProps, sourceNameFacetProps, sourceTypeFacetProps} from "../../assets/mock-data/explore/facet-props";
 
 describe("Facet component", () => {
-  it("Facet component renders with data properly" , () => {
-    const { getByTestId, getByText, queryByLabelText } = render(<Facet {...facetProps} />);
+  it("Facet component renders with data properly", () => {
+    const {getByTestId, getByText, queryByLabelText} = render(<Facet {...facetProps} />);
 
     expect(getByText(/sales_region/i)).toBeInTheDocument();
 
@@ -23,11 +23,11 @@ describe("Facet component", () => {
     expect(getByText(/CustomerType/i)).toBeInTheDocument();
     expect(getByText(/999/i)).toBeInTheDocument();
     // Search link not shown for facets < 20
-    expect(queryByLabelText('popover-search-label')).not.toBeInTheDocument();
+    expect(queryByLabelText("popover-search-label")).not.toBeInTheDocument();
   });
 
-  it("Facet component renders with nested data properly" , () => {
-    const { getByTestId, getByText } = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
+  it("Facet component renders with nested data properly", () => {
+    const {getByTestId, getByText} = render(<Facet {...facetProps} name="Sales.sales_region" constraint="Sales.sales_region" />);
     expect(getByText(/Sales.sales_region/i)).toBeInTheDocument();
 
     expect(getByText(/Customer/i)).toBeInTheDocument();
@@ -45,35 +45,35 @@ describe("Facet component", () => {
     expect(getByText(/999/i)).toBeInTheDocument();
   });
 
-  it("Collapse/Expand carets render properly for facet properties" , () => {
-    const { getByTestId } = render(<Facet {...facetProps} />);
+  it("Collapse/Expand carets render properly for facet properties", () => {
+    const {getByTestId} = render(<Facet {...facetProps} />);
 
-    expect(getByTestId('sales_region-toggle')).toBeInTheDocument();
-    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toBeInTheDocument();
-    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).not.toHaveStyle('transform: rotate(-90deg);');
-    fireEvent.click(getByTestId('sales_region-toggle'));
-    expect(document.querySelector('[data-testid=sales_region-toggle] i svg')).toHaveStyle('transform: rotate(-90deg);');
+    expect(getByTestId("sales_region-toggle")).toBeInTheDocument();
+    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).toBeInTheDocument();
+    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).not.toHaveStyle("transform: rotate(-90deg);");
+    fireEvent.click(getByTestId("sales_region-toggle"));
+    expect(document.querySelector("[data-testid=sales_region-toggle] i svg")).toHaveStyle("transform: rotate(-90deg);");
   });
 
-  it("Search link shown only when facet number greater than limit" , () => {
+  it("Search link shown only when facet number greater than limit", () => {
     const LIMIT =  20,
-          facetValsNew: any = [];
+      facetValsNew: any = [];
     for (let i = 0; i < LIMIT; i++) {
       facetValsNew.push({"name": "fName", "count": 1, "value": "fVal"});
     }
-    const { getByLabelText, queryByLabelText, rerender } = render(<Facet {...facetProps} />);
+    const {getByLabelText, queryByLabelText, rerender} = render(<Facet {...facetProps} />);
 
     // Search link NOT shown for facets < LIMIT
-    expect(queryByLabelText('popover-search-label')).not.toBeInTheDocument();
+    expect(queryByLabelText("popover-search-label")).not.toBeInTheDocument();
 
     rerender(<Facet {...facetProps} facetValues={facetValsNew}/>);
 
     // Search link shown for facets >= LIMIT
-    expect(getByLabelText('popover-search-label')).toBeInTheDocument();
+    expect(getByLabelText("popover-search-label")).toBeInTheDocument();
   });
 
-  it("SourceName facets renders properly" , async () => {
-    const { getByText, getByTestId } = render(<Facet {...sourceNameFacetProps} />);
+  it("SourceName facets renders properly", async () => {
+    const {getByText, getByTestId} = render(<Facet {...sourceNameFacetProps} />);
 
     expect(getByText(/SourceName/i)).toBeInTheDocument();
     expect(getByText(/loadPersonJSON/i)).toBeInTheDocument();
@@ -82,11 +82,11 @@ describe("Facet component", () => {
     expect(getByText(/12/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceName"));
-    await(waitForElement(() => (getByText('The name of the source of the files.'))));
+    await(waitForElement(() => (getByText("The name of the source of the files."))));
   });
 
-  it("SourceType facets renders properly" , async () => {
-    const { getByText, getByTestId } = render(<Facet {...sourceTypeFacetProps} />);
+  it("SourceType facets renders properly", async () => {
+    const {getByText, getByTestId} = render(<Facet {...sourceTypeFacetProps} />);
 
     expect(getByText(/SourceType/i)).toBeInTheDocument();
     expect(getByText(/loadPerson/i)).toBeInTheDocument();
@@ -95,7 +95,7 @@ describe("Facet component", () => {
     expect(getByText(/5/i)).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("info-tooltip-SourceType"));
-    await(waitForElement(() => (getByText('The type of source of the files.'))));
+    await(waitForElement(() => (getByText("The type of source of the files."))));
   });
 
 });

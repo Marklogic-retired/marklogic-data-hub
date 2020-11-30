@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import { Form, Icon, Input, Modal } from 'antd';
-import styles from './entity-type-modal.module.scss';
+import React, {useContext, useEffect, useState} from "react";
+import axios from "axios";
+import {Form, Icon, Input, Modal} from "antd";
+import styles from "./entity-type-modal.module.scss";
 
-import { UserContext } from '../../../util/user-context';
-import { ModelingTooltips } from '../../../config/tooltips.config';
-import { updateModelInfo } from "../../../api/modeling";
-import { MLTooltip } from '@marklogic/design-system';
+import {UserContext} from "../../../util/user-context";
+import {ModelingTooltips} from "../../../config/tooltips.config";
+import {updateModelInfo} from "../../../api/modeling";
+import {MLTooltip} from "@marklogic/design-system";
 
 
 type Props = {
@@ -19,17 +19,17 @@ type Props = {
 };
 
 const EntityTypeModal: React.FC<Props> = (props) => {
-  const { handleError } = useContext(UserContext);
-  const NAME_REGEX = new RegExp('^[A-Za-z][A-Za-z0-9_-]*$');
+  const {handleError} = useContext(UserContext);
+  const NAME_REGEX = new RegExp("^[A-Za-z][A-Za-z0-9_-]*$");
   const layout = {
-    labelCol: { span: 6 },
-    wrapperCol: { span: 18 },
+    labelCol: {span: 6},
+    wrapperCol: {span: 18},
   };
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [, toggleIsNameDisabled] = useState(true);
-  const [description, setDescription] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [description, setDescription] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, toggleLoading] = useState(false);
 
   useEffect(() => {
@@ -39,26 +39,26 @@ const EntityTypeModal: React.FC<Props> = (props) => {
         setDescription(props.description);
       } else {
         // Add Modal
-        setName('');
-        setDescription('');
+        setName("");
+        setDescription("");
       }
-      setErrorMessage('');
+      setErrorMessage("");
       toggleIsNameDisabled(true);
       toggleLoading(false);
     }
   }, [props.isVisible]);
 
   const handleChange = (event) => {
-    if (event.target.id === 'entity-name') {
-      if (event.target.value === '') {
+    if (event.target.id === "entity-name") {
+      if (event.target.value === "") {
         toggleIsNameDisabled(true);
       } else {
         toggleIsNameDisabled(false);
-        setErrorMessage('');
+        setErrorMessage("");
       }
       setName(event.target.value);
     }
-    if (event.target.id === 'description') {
+    if (event.target.id === "description") {
       setDescription(event.target.value);
     }
   };
@@ -66,13 +66,13 @@ const EntityTypeModal: React.FC<Props> = (props) => {
   const updateEntityDescription = async (name: string, description: string) => {
     try {
       const response = await updateModelInfo(name, description);
-      if (response['status'] === 200) {
+      if (response["status"] === 200) {
         props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty('message')) {
-          setErrorMessage(error['response']['data']['message']);
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorMessage(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -82,14 +82,14 @@ const EntityTypeModal: React.FC<Props> = (props) => {
 
   const createEntityType = async (name: string, description: string) => {
     try {
-      const response = await axios.post('/api/models', { name, description });
-      if (response['status'] === 201) {
+      const response = await axios.post("/api/models", {name, description});
+      if (response["status"] === 201) {
         props.updateEntityTypesAndHideModal(name, description);
       }
     } catch (error) {
       if (error.response.status === 400) {
-        if (error.response.data.hasOwnProperty('message')) {
-          setErrorMessage(error['response']['data']['message']);
+        if (error.response.data.hasOwnProperty("message")) {
+          setErrorMessage(error["response"]["data"]["message"]);
         }
       } else {
         handleError(error);
@@ -124,16 +124,16 @@ const EntityTypeModal: React.FC<Props> = (props) => {
       confirmLoading={props.isEditModal ? false : loading}
       title={props.isEditModal ? "Edit Entity Type" : "Add Entity Type"}
       cancelText="Cancel"
-      cancelButtonProps={{ id: 'entity-modal-cancel' }}
-      onCancel={() => onCancel()} 
+      cancelButtonProps={{id: "entity-modal-cancel"}}
+      onCancel={() => onCancel()}
       okText={props.isEditModal ? "OK" : "Add"}
       onOk={onOk}
-      okButtonProps={{ id: 'entity-modal-add', form:'entity-type-form', htmlType: 'submit' }}
+      okButtonProps={{id: "entity-modal-add", form: "entity-type-form", htmlType: "submit"}}
       maskClosable={false}
     >
       <Form
         {...layout}
-        id='entity-type-form'
+        id="entity-type-form"
         onSubmit={onOk}
       >
         <Form.Item
@@ -141,10 +141,10 @@ const EntityTypeModal: React.FC<Props> = (props) => {
           label={<span>
             Name:&nbsp;{props.isEditModal ? null : <span className={styles.asterisk}>*</span>}
             &nbsp;
-              </span>}
+          </span>}
           colon={false}
           labelAlign="left"
-          validateStatus={errorMessage ? 'error' : ''}
+          validateStatus={errorMessage ? "error" : ""}
           help={errorMessage}
         >
           {props.isEditModal ? <span>{name}</span> : <Input

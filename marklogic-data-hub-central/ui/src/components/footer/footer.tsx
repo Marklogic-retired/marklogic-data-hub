@@ -1,11 +1,11 @@
-import React from 'react';
-import { Layout } from 'antd';
-import styles from './footer.module.scss';
+import React from "react";
+import {Layout} from "antd";
+import styles from "./footer.module.scss";
 
 const Footer = (props) => {
 
-  const footerStyle = (props.pageTheme && props.pageTheme['footer']) ? props.pageTheme['footer'] : null;
-  const linkStyle = (props.pageTheme && props.pageTheme['footerLink']) ? props.pageTheme['footerLink'] : null;
+  const footerStyle = (props.pageTheme && props.pageTheme["footer"]) ? props.pageTheme["footer"] : null;
+  const linkStyle = (props.pageTheme && props.pageTheme["footerLink"]) ? props.pageTheme["footerLink"] : null;
   const currentYear = (new Date()).getFullYear();
 
   return (

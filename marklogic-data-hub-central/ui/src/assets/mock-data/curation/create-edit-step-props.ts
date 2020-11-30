@@ -1,8 +1,8 @@
-import { mergingStep } from './merging';
-import { StepType } from '../../../types/curation-types';
+import {mergingStep} from "./merging";
+import {StepType} from "../../../types/curation-types";
 
 const newMerging = {
-  tabKey: '1',
+  tabKey: "1",
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   isEditing: false,
@@ -14,14 +14,14 @@ const newMerging = {
   canReadOnly: true,
   toggleModal: jest.fn(),
   createStepArtifact: jest.fn(),
-  currentTab: '1',
+  currentTab: "1",
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
-}
+};
 
 const editMerging = {
-  tabKey: '1',
+  tabKey: "1",
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   isEditing: true,
@@ -33,15 +33,15 @@ const editMerging = {
   canReadOnly: true,
   toggleModal: jest.fn(),
   createStepArtifact: jest.fn(),
-  currentTab: '1',
+  currentTab: "1",
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
-}
+};
 
 const data = {
   newMerging,
   editMerging
-}
+};
 
 export default data;

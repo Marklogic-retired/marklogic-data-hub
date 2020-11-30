@@ -1,12 +1,12 @@
 import axios from "axios";
-import { EntityModified } from '../types/modeling-types';
+import {EntityModified} from "../types/modeling-types";
 
 export const primaryEntityTypes = async () => {
   return await axios.get(`/api/models/primaryEntityTypes`);
 };
 
 export const updateModelInfo = async (name: string, description: string) => {
-  return await axios.put(`/api/models/${name}/info`, { description });
+  return await axios.put(`/api/models/${name}/info`, {description});
 };
 
 export const entityReferences = async (entityName: string) => {
