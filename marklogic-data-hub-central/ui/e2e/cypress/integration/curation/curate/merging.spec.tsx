@@ -93,7 +93,7 @@ describe('Merging', () => {
     mergingStepDetail.addStrategyButton().click();
     mergeStrategyModal.setStrategyName('myFavourite');
     mergeStrategyModal.addSliderOptionsButton().click();
-    multiSlider.getHandle('Length').should('be.visible');
+    multiSlider.getHandleName('Length').should('be.visible');
     mergeStrategyModal.saveButton().click();
     cy.findByText('myFavourite').should('exist');
     cy.findByText('myFavourite').click();

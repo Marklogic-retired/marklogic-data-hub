@@ -1,7 +1,11 @@
 class MultiSlider {
 
-  getHandle(name: string) {
+  getHandleName(name: string) {
     return cy.findByTestId(`${name}-active`);
+  }
+
+  getHandleNameAndType(name: string, type: string) {
+    return cy.findByLabelText(`${name}-${type}`);
   }
 
   editOption(name: string) {

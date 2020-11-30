@@ -105,7 +105,7 @@ const MatchingStepDetail: React.FC = () => {
       let updateThreshold = stepArtifactThresholds.find( threshold => threshold.thresholdName === options['prop'])
       let changedSlider = values.find( item => item['props']['prop'] === options['prop'])
 
-      updateThreshold['score'] = parseInt(changedSlider['value'].toFixed(1));
+      updateThreshold['score'] = parseFloat(changedSlider['value'].toFixed(1));
       stepArtifactThresholds[index] = updateThreshold;
       stepArtifact['thresholds'] = stepArtifactThresholds;
 

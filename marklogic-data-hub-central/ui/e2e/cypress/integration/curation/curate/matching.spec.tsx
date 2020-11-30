@@ -78,13 +78,25 @@ describe('Matching', () => {
     thresholdModal.setThresholdName('test');
     thresholdModal.selectActionDropdown('Merge');
     thresholdModal.saveButton().click();
-    multiSlider.getHandle('test').should('be.visible');
+    multiSlider.getHandleNameAndType('test', 'merge').should('be.visible');
 
+    //edit threshold
+    multiSlider.editOption('test');
+    thresholdModal.selectActionDropdown('Notify');
+    thresholdModal.saveButton().click();
+    multiSlider.getHandleNameAndType('test', 'notify').should('be.visible');
+
+    multiSlider.editOption('test');
+    thresholdModal.clearThresholdName();
+    thresholdModal.setThresholdName('testing');
+    thresholdModal.saveButton().click();
+    multiSlider.getHandleNameAndType('testing', 'notify').should('be.visible');
+  
     // delete threshold
-    multiSlider.deleteOption('test');
+    multiSlider.deleteOption('testing');
     matchingStepDetail.getSliderDeleteText().should('be.visible');
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandle('test').should('not.exist');
+    multiSlider.getHandleName('testing').should('not.exist');
 
     //add ruleset
     matchingStepDetail.addNewRulesetSingle();
@@ -92,7 +104,7 @@ describe('Matching', () => {
     rulesetSingleModal.selectPropertyToMatch('customerId');
     rulesetSingleModal.selectMatchTypeDropdown('exact');
     rulesetSingleModal.saveButton().click();
-    multiSlider.getHandle('customerId').should('be.visible');
+    multiSlider.getHandleNameAndType('customerId', 'exact').should('be.visible');
 
     //edit ruleset
     multiSlider.editOption('customerId');
@@ -104,6 +116,6 @@ describe('Matching', () => {
     multiSlider.deleteOption('customerId');
     matchingStepDetail.getSliderDeleteText().should('be.visible');
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
-    multiSlider.getHandle('customerId').should('not.exist');
+    multiSlider.getHandleName('customerId').should('not.exist');
   });
 });
