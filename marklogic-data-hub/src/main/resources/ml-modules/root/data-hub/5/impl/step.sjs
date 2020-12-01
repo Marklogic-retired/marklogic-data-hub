@@ -15,6 +15,8 @@
 */
 'use strict';
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+
 class Step {
 
   constructor(config = null, datahub = null) {
@@ -114,8 +116,7 @@ class Step {
     try {
       stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
     } catch (e) {
-      fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, "MODULE-NOT-FOUND",
-        `Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read permission to this module.`]));
+      httpUtils.throwBadRequest(`Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read permission to this module.`);
     }
     if (this.performance.performanceMetricsOn())  {
       return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);

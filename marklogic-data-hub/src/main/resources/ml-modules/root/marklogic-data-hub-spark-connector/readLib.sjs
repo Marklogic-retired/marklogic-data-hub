@@ -260,7 +260,7 @@ function getRowCountForPartition(groupByPlan, partition) {
       "MAX_ROW_ID": partition.max
     })).rowCount;
   } catch (e) {
-    // Can't use ds-util, as we want to support DHF 5.2.x
+    // Can't use http-utils.sjs, as we want to support DHF 5.2.x
     fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400,
       "Unable to get row count for partition, which may be due to invalid user input; cause: " + e.message]));
   }

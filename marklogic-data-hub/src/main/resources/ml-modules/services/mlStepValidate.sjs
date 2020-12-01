@@ -45,7 +45,7 @@ function post(context, params, input) {
         if (fn.docAvailable(modPath)){
           return xdmp.documentGetPermissions(modPath);
         }
-        return fn.error(xs.QName("ERROR"), "Module " + modPath + " not found");
+        return httpUtils.throwBadRequest("Module " + modPath + " not found");
       },datahub.config.MODULESDATABASE));
     }
     catch (ex) {

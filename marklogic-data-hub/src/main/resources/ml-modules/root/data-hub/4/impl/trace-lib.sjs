@@ -20,6 +20,7 @@ if (!this.rfc) {
   this.rfc = require("/data-hub/4/impl/run-flow-context.sjs");
 }
 const tracelib = require('/data-hub/4/impl/trace-lib.xqy');
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 let internalContexts = {
   currentTraceSettings: {}
@@ -93,7 +94,7 @@ function addCompletedItem(item) {
 function getCurrentTrace(currentTrace) {
   let ct = currentTrace || rfc.getTrace(rfc.getItemContext());
   if (!ct) {
-    fn.error(xs.QName("MISSING_CURRENT_TRACE"));
+    httpUtils.throwBadRequest("Missing current trace");
   }
   return ct;
 }

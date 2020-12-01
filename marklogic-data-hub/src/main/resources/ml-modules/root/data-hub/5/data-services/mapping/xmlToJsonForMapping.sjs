@@ -15,6 +15,8 @@
  */
 'use strict';
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+
 // Global constants
 const PROP_NAME_TEXT_STARTS_WITH = '#';
 const PROP_NAME_TEXT = PROP_NAME_TEXT_STARTS_WITH + 'text';
@@ -231,7 +233,7 @@ function determineFinalNSPrefix(currentPrefix, uri) {
     }
     if (key === finalPrefix) {
       if (attemptsCurrent >= attemptsMax) {
-        fn.error(xs.QName('ERROR'), `Unable to determine a unique namespace prefix for the ${value} URI after ${attemptsMax} attempts.`);
+        httpUtils.throwBadRequest(`Unable to determine a unique namespace prefix for the ${value} URI after ${attemptsMax} attempts.`);
       }
       // Set up to try again.
       if (finalPrefix.endsWith(attemptsCurrent)) {

@@ -15,6 +15,8 @@
  */
 'use strict';
 
+const ERROR_CODE = "RESTAPI-SRVEXERR";
+
 /**
  * Because DH app servers are still using the REST API error handler, errors should be communicated using the
  * "RESTAPI-SRVEXERR" status code. This ensures that the provided error message can be easily communicated to a client.
@@ -22,29 +24,34 @@
  * @param message
  */
 function throwBadRequest(message) {
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400, message]));
+  fn.error(null, ERROR_CODE, Sequence.from([400, message]));
 }
 
 function throwBadRequestWithArray(args){
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([400].concat(args)));
+  fn.error(null, ERROR_CODE, Sequence.from([400].concat(args)));
 }
 
 function throwForbidden(message) {
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([403, message]));
+  fn.error(null, ERROR_CODE, Sequence.from([403, message]));
 }
 
 function throwNotFound(message) {
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([404, message]));
+  fn.error(null, ERROR_CODE, Sequence.from([404, message]));
 }
 
 function throwNotFoundWithArray(args){
-  fn.error(null, 'RESTAPI-SRVEXERR', Sequence.from([404].concat(args)));
+  fn.error(null, ERROR_CODE, Sequence.from([404].concat(args)));
+}
+
+function throwMethodNotSupported(message) {
+  fn.error(null, ERROR_CODE, Sequence.from([405, message]));
 }
 
 module.exports = {
   throwBadRequest,
   throwBadRequestWithArray,
   throwForbidden,
+  throwMethodNotSupported,
   throwNotFound,
   throwNotFoundWithArray
 };

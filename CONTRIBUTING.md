@@ -65,6 +65,15 @@ marklogic-unit-test tests is a better way to do a quick sanity check on your dep
 After running that, you can also access the marklogic-unit-test GUI test runner at http://localhost:8011/test/default.xqy . This 
 GUI allows you to run individual tests or sets of tests, which "testUnit" does not yet support. 
 
+If you'd instead like to run the JUnit tests, you can use the Gradle "--tests" feature to run a subset of tests - e.g. 
+
+    ./gradlew test --tests FlowRunnerTest
+
+Or, if you've loaded this project into an IDE such as Intellij, you can simply use the IDE's capabilities for running 
+one or more tests at once. 
+
+#### Testing changes to Data Hub modules
+
 If you are looking to change Data Hub code that runs in MarkLogic - i.e. the files under 
 ./marklogic-data-hub/src/main/resources/ml-modules - consider running the following Gradle task that will 
 automatically load files into MarkLogic as you change them:
@@ -72,13 +81,6 @@ automatically load files into MarkLogic as you change them:
     ./gradlew -i -PignoreDirty=true mlWatch
 
 The "ignoreDirty" parameters tells the mlWatch task to only load files that are modified once mlWatch starts running. 
-
-If you'd instead like to run the JUnit tests, you can use the Gradle "--tests" feature to run a subset of tests - e.g. 
-
-    ./gradlew test --tests FlowRunnerTest
-
-Or, if you've loaded this project into an IDE such as Intellij, you can simply use the IDE's capabilities for running 
-one or more tests at once. 
 
 #### Testing the Data Hub library in another project 
 
@@ -150,6 +152,12 @@ Gradle plugin:
   ```
 
 Your Data Hub project will now be using the Data Hub plugin that you published. 
+
+Note that while you're testing the Data Hub plugin in another project, you can also use the technique mentioned above 
+for loading modules via the Gradle "mlWatch" task. That is - while you test the plugin, you can make changes to the 
+Data Hub modules under ./marklogic-data-hub/src/main/resources/ml-modules as see the impact within the project 
+application that you're testing.
+
 
 #### Running tests on the Data Hub plugin
 

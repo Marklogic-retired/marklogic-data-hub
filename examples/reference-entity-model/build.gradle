@@ -19,6 +19,10 @@ plugins {
 }
 apply plugin: "com.marklogic.ml-data-hub"
 
+configurations {
+    mlcp
+}
+
 ["CurateCustomerJSON", "CurateCustomerXML", "CurateNamespacedCustomers"].each {theFlowName ->
     task "run${theFlowName}" (type: com.marklogic.gradle.task.RunFlowTask, group: "Run flow") {
         description = "Run the ingestion and mapping steps for flow ${theFlowName}"
@@ -40,3 +44,25 @@ task mergeJsonCustomers(type: com.marklogic.gradle.task.RunFlowTask) {
 
 mlDeploy.finalizedBy runFlows, mergeJsonCustomers
 mergeJsonCustomers.mustRunAfter runFlows
+
+
+// The following config is used for manual ad hoc testing of loading data via MLCP and the DHF MLCP transform
+repositories {
+    jcenter()
+    maven { url "http://developer.marklogic.com/maven2/" }
+}
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.5"
+    mlcp files("lib")
+}
+task loadCustomersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Example of using the MLCP DHF transform to load documents via MLCP"
+    classpath = configurations.mlcp
+    command = "IMPORT"
+    port = 8010
+    output_collections = "MlcpCustomer"
+    input_file_path = "input/json"
+    output_permissions = "data-hub-common,read,data-hub-common,update"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_param = "flow-name=CurateCustomerJSON,step=1"
+}

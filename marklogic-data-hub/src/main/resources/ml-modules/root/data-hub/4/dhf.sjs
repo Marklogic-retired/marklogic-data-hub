@@ -15,6 +15,7 @@
 */
 
 const flowlib = require("/data-hub/4/impl/flow-lib.sjs");
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 
 const _requireCache = {};
@@ -35,7 +36,7 @@ function run(context, func)
   if (label) {
     tracelib.setPluginLabel(label);
   } else {
-    fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
+    httpUtils.throwBadRequest("Your context object is missing a label");
   }
 
   tracelib.resetPluginInput();
@@ -181,7 +182,7 @@ function logTrace(context) {
   if (label) {
     tracelib.setPluginLabel(label);
   } else{
-    fn.error(null, "DATAHUB-CONTEXT-MISSING-LABEL", "Your context object is missing a label");
+    httpUtils.throwBadRequest("Your context object is missing a label");
   }
 
   tracelib.resetPluginInput();
