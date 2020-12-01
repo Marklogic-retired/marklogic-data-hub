@@ -98,7 +98,7 @@ try {
 } catch (e) {
   assertions.push(
     test.assertEqual("404", e.data[0]),
-    test.assertEqual("NOT FOUND", e.data[1])
+    test.assertEqual("flow with name 'testFlow' not found", e.data[1])
   );
 }
 

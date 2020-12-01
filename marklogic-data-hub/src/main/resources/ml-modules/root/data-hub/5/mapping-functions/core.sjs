@@ -13,11 +13,14 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
 /*
  * Consolidation of core function extensions for declarative mapping. One core library reduces the number of XSLT imports and helps performance.
  */
+
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
 // BEGIN value lookup functions
 // cache string dictionaries to avoid parsing JSON repeatedly
@@ -105,7 +108,7 @@ function parseDate(value, pattern) {
       response = xs.date(standardizedDate);
     }
     catch (ex) {
-      fn.error(null, errorMsg);
+      httpUtils.throwBadRequest(errorMsg);
     }
   }
   else if (nonStandardFormats.includes(pattern.trim())) {
@@ -131,7 +134,7 @@ function parseDate(value, pattern) {
       let day = date.getDate();
       let month = date.getMonth() + 1;
       if(isNaN(date) || isNaN(day) || isNaN(month)) {
-        fn.error(null, errorMsg);
+        httpUtils.throwBadRequest(errorMsg);
       }
       else {
         let year = date.getFullYear();
@@ -145,7 +148,7 @@ function parseDate(value, pattern) {
     try {
       response = xs.date(xdmp.parseYymmdd(originalPattern, value));
     } catch(e) {
-      fn.error(null, errorMsg);
+      httpUtils.throwBadRequest(errorMsg);
     }
   }
   return response;
@@ -167,14 +170,14 @@ function parseDateTime(value, pattern) {
       response = xdmp.parseYymmdd(pattern.replace("YYYY","yyyy").replace("DD","dd"), value);
     }
     catch(ex){
-      fn.error(null, errorMsg);
+      httpUtils.throwBadRequest(errorMsg);
     }
   }
   else{
     try {
       response = xdmp.parseYymmdd(pattern, value);
     } catch(e) {
-      fn.error(null, errorMsg);
+      httpUtils.throwBadRequest(errorMsg);
     }
   }
   return response;

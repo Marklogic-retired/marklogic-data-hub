@@ -15,6 +15,8 @@
  */
 'use strict';
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+
 const arrayKeys = new Set(['input-types', 'acceptTypes']);
 
 function getExtName(extName, modPath) {
@@ -97,13 +99,11 @@ function getExtension(extName, modPath, funcName) {
   try {
     mod = require(modPath);
   } catch(e) {
-    fn.error(null, 'RESTAPI-INVALIDREQ',
-      `cannot read module ${modPath} for extension ${getExtName(extName, modPath)}`);
+    httpUtils.throwBadRequest(`cannot read module ${modPath} for extension ${getExtName(extName, modPath)}`);
   }
   const func = mod[funcName];
   if (func === void 0) {
-    fn.error(null, 'RESTAPI-INVALIDREQ',
-      `cannot read function ${funcName} from module ${modPath} for extension ${getExtName(extName, modPath)}`);
+    httpUtils.throwBadRequest(`cannot read function ${funcName} from module ${modPath} for extension ${getExtName(extName, modPath)}`);
   }
   return func;
 }

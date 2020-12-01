@@ -24,6 +24,8 @@ if (!this.rfc) {
 const tracelib = require("/data-hub/4/impl/trace-lib.sjs");
 const flowlib = require("/data-hub/4/impl/flow-lib.xqy");
 
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+
 const ns = {hub: "http://marklogic.com/data-hub"};
 
 const MAIN_CACHE_KEY_PREFIX = "main-cache-";
@@ -109,7 +111,7 @@ function cleanData(resp, destination, dataFormat)
 {
   if (resp instanceof Document) {
     if (fn.count(resp.xpath('node()')) > 1) {
-      fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
+      httpUtils.throwBadRequest("Too Many Nodes!. Return just 1 node");
     } else {
       resp = resp.xpath('node()');
     }
@@ -309,7 +311,7 @@ function makeEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
+  httpUtils.throwBadRequest("Invalid data format: " + dataFormat + ".  Must be JSON or XML");
 };
 
 function makeLegacyEnvelope(content, headers, triples, dataFormat) {
@@ -372,7 +374,7 @@ function makeLegacyEnvelope(content, headers, triples, dataFormat) {
     return nb.toNode();
   }
 
-  fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
+  httpUtils.throwBadRequest("Invalid data format: " + dataFormat + ".  Must be JSON or XML");
 };
 
 function instanceToCanonicalJson(entityInstance) {
@@ -498,7 +500,7 @@ function getMainFunc(main) {
   // sanity check on required info
   let moduleUri = main.module;
   if (!main.module || !main.codeFormat) {
-    fn.error(null, "DATAHUB-INVALID-PLUGIN", Sequence.from(["The plugin definition is invalid."]));
+    httpUtils.throwBadRequest("The plugin definition is invalid.");
   }
   rfc.withModuleUri(moduleUri);
   rfc.withCodeFormat(main.codeFormat);
@@ -645,7 +647,7 @@ function safeRun(func) {
   }
   catch(ex) {
     tracelib.errorTrace(rfc.getItemContext(), {'message' : ex.message, 'stack' : ex.stack, 'stackFrames': ex.stackFrames}, xdmp.elapsedTime().subtract(before));
-    fn.error(null, "DATAHUB-PLUGIN-ERROR",  JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
+    httpUtils.throwBadRequest(JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
   }
 };
 

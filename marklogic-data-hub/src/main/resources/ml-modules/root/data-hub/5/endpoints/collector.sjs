@@ -14,28 +14,26 @@
  * limitations under the License.
  */
 'use strict';
-const parameters = require("/MarkLogic/rest-api/endpoints/parameters.xqy");
+
 const CollectorLib = require("/data-hub/5/endpoints/collectorLib.sjs");
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const parameters = require("/MarkLogic/rest-api/endpoints/parameters.xqy");
 
 xdmp.securityAssert(['http://marklogic.com/xdmp/privileges/rest-reader'], 'execute');
 
-
 const method = xdmp.getRequestMethod();
+if (method !== 'GET') {
+  httpUtils.throwMethodNotSupported("Unsupported method: " + method);
+}
 
 const requestParams = new Map();
-
 parameters.queryParameter(requestParams, "flow-name",fn.true(),fn.false())
 parameters.queryParameter(requestParams, "options",fn.false(),fn.false())
 parameters.queryParameter(requestParams, "step",fn.false(),fn.false())
 parameters.queryParameter(requestParams, "database",fn.true(),fn.false())
 
-// Refactored to not set xdmp.eval results to variable for efficiency reasons
-if (method !== 'GET') {
-  fn.error(null, 'RESTAPI-INVALIDREQ', 'unsupported method: '+method);
-}
 const flowName = requestParams["flow-name"];
 let step = requestParams.step;
 if (!step) {
@@ -83,5 +81,5 @@ try {
   xdmp.eval(javascript, {options: options}, {database: xdmp.database(database)});
 } catch (err) {
   datahub.debug.log(err);
-  fn.error(null, 'RESTAPI-INVALIDREQ', err);
+  httpUtils.throwBadRequest(`Unable to collect items to process; sourceQuery script: ${javascript}; error: ${err.data}`);
 }

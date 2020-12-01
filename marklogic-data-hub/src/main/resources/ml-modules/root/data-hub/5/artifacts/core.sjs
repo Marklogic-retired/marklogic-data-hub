@@ -176,21 +176,21 @@ function setArtifact(artifactType, artifactName, artifact) {
 }
 
 function validateArtifact(artifactType, artifactName, artifact) {
-    const artifactLibrary =  getArtifactTypeLibrary(artifactType);
-    const validatedArtifact = artifactLibrary.validateArtifact(artifact, artifactName);
-    if (validatedArtifact instanceof Error) {
-        returnErrToClient(400, 'BAD REQUEST', validatedArtifact.message);
-    }
+  const artifactLibrary = getArtifactTypeLibrary(artifactType);
+  const validatedArtifact = artifactLibrary.validateArtifact(artifact, artifactName);
+  if (validatedArtifact instanceof Error) {
+    httpUtils.throwBadRequest(validatedArtifact.message);
+  }
     return validatedArtifact;
 }
 
 function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
-    const artifactLibrary = getArtifactTypeLibrary(artifactType);
-    const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
-    if (fn.empty(node)) {
-        returnErrToClient(404, 'NOT FOUND', `${artifactType} with name '${artifactName}' not found.`);
-    }
-    return node;
+  const artifactLibrary = getArtifactTypeLibrary(artifactType);
+  const node = artifactLibrary.getArtifactNode(artifactName, artifactVersion);
+  if (fn.empty(node)) {
+    httpUtils.throwNotFound(`${artifactType} with name '${artifactName}' not found`);
+  }
+  return node;
 }
 
 function getArtifactDirectory(artifactType, artifactName, artifact) {
@@ -204,20 +204,15 @@ function getArtifactFileExtension(artifactType) {
 }
 
 function getArtifactTypeLibrary(artifactType) {
-    const artifactLibrary = registeredArtifactTypes[artifactType];
-    if (!artifactLibrary) {
-        returnErrToClient(400, 'BAD REQUEST', `Invalid artifact type: ${artifactType}. Valid types: ${JSON.stringify(Object.keys(registeredArtifactTypes))}`)
-    }
-    return artifactLibrary;
+  const artifactLibrary = registeredArtifactTypes[artifactType];
+  if (!artifactLibrary) {
+    httpUtils.throwNotFound(`Invalid artifact type: ${artifactType}. Valid types: ${JSON.stringify(Object.keys(registeredArtifactTypes))}`);
+  }
+  return artifactLibrary;
 }
 
 function generateArtifactKey(artifactType, artifactName, artifactVersion = 'latest') {
     return `${artifactType}:${artifactName}:${artifactVersion}`;
-}
-
-function returnErrToClient(statusCode, statusMsg, body) {
-    fn.error(null, 'RESTAPI-SRVEXERR',
-        Sequence.from([statusCode, statusMsg, body]));
 }
 
 function getFullFlow(flowName, artifactVersion = 'latest') {

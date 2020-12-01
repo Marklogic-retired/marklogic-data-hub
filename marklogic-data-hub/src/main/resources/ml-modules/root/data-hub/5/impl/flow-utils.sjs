@@ -14,8 +14,10 @@
  limitations under the License.
  */
 'use strict';
+
 const consts = require("/data-hub/5/impl/consts.sjs");
 const json = require('/MarkLogic/json/json.xqy');
+const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
 
 class FlowUtils {
@@ -219,14 +221,14 @@ class FlowUtils {
       return nb.toNode();
     }
 
-    fn.error(null, "RESTAPI-INVALIDCONTENT", Sequence.from(["Invalid data format: " + dataFormat + ".  Must be JSON or XML"]))
+    httpUtils.throwBadRequest("Invalid data format: " + dataFormat + ".  Must be JSON or XML");
   };
 
   cleanData(resp, destination, dataFormat)
   {
     if (resp instanceof Document) {
       if (fn.count(resp.xpath('node()')) > 1) {
-        fn.error(null, "DATAHUB-TOO-MANY-NODES", Sequence.from([400, "Too Many Nodes!. Return just 1 node"]));
+        httpUtils.throwBadRequest("Too Many Nodes!. Return just 1 node");
       } else {
         resp = resp.xpath('node()');
       }

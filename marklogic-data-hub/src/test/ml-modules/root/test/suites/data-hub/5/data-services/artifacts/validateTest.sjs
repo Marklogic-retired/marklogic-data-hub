@@ -19,14 +19,8 @@ function invalidArtifact() {
     const result = invokeService('ingestion', "invalidArtifact", { name: 'invalidArtifact'});
     return [test.assertTrue(false, 'Should have thrown a validation error')];
   } catch (e) {
-    let msg = e.data[2];
-    return [
-      test.assertEqual(3, e.data.length, `Error doesn't have the expected validate information: "${JSON.stringify(e)}"`),
-      test.assertTrue(fn.contains(msg, 'required'), `Message: "${msg}" doesn't have "required"`),
-      test.assertTrue(fn.contains(msg, 'targetFormat'), `Message: "${msg}" doesn't have "targetFormat"`),
-      test.assertTrue(fn.contains(msg, 'sourceFormat'), `Message: "${msg}" doesn't have "sourceFormat"`),
-      test.assertFalse(fn.contains(msg, 'name'), `Message: "${msg}" has "name" when it shouldn't`)
-    ];
+    let msg = e.data[1];
+    return test.assertEqual('Missing the following required properties: ["sourceFormat","targetFormat"]', msg);
   }
 }
 

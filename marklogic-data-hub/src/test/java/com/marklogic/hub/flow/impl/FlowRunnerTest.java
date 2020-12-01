@@ -88,6 +88,18 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
     }
 
     @Test
+    void invalidSourceQuery() {
+        Map<String, Object> options = new HashMap<>();
+        options.put("sourceQuery", "cts.collectionQuery('oops");
+        RunFlowResponse resp = runFlow("testValuesFlow", "1", null, options, null);
+        flowRunner.awaitCompletion();
+        assertEquals(JobStatus.FAILED.toString(), resp.getJobStatus(), "The job should have failed due to the invalid sourceQuery");
+        String errorMessage = resp.getStepResponses().get("1").getStepOutput().get(0);
+        assertTrue(errorMessage.contains("Unable to collect items to process; sourceQuery script: cts.collectionQuery('oops"),
+            "The error message should include the invalid source query script for easier debugging; message: " + errorMessage);
+    }
+
+    @Test
     void customStepReferencesModulePathThatDoesntExist() {
         // Delete the module that the value-step step-definition points to
         runAsDataHubDeveloper();

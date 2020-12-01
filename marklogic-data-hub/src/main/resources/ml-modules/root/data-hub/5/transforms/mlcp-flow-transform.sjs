@@ -100,7 +100,7 @@ function transform(content, context = {}) {
     // if an error is returned, throw it to MLCP
     if (flowResponse.errors && flowResponse.errors.length) {
       datahub.debug.log(flowResponse.errors[0]);
-      fn.error(null, flowResponse.errors[0].message, flowResponse.errors[0].stack);
+      httpUtils.throwBadRequest(flowResponse.errors[0].stack);
     }
 
     let documents = flowResponse.documents;
