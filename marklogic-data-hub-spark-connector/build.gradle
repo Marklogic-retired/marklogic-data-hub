@@ -29,9 +29,16 @@ ext {
 }
 
 dependencies {
-    // The client project depends on Java 8 and JavaClient 5.3 and can thus safely be used by this connector,
+
+    // marklogic-data-hub-api depends on Java 8 and JavaClient 5.3 and can thus safely be used by this connector,
     // as Spark runs on Java 8
     api(project(":marklogic-data-hub-api"))
+
+    // Makes it possible to use lambdas in Java 8 to implement Spark's Function1 and Function2 interfaces
+    // See https://github.com/scala/scala-java8-compat for more information
+    api ("org.scala-lang.modules:scala-java8-compat_2.11:0.9.1") {
+        exclude module: "scala-library"
+    }
 
     // We need to compile against the Spark jars, but we don't want to include them in the shadowJar
     compileOnly "org.apache.spark:spark-sql_2.11:${sparkVersion}"
@@ -78,7 +85,12 @@ shadowJar {
     classifier "all"
     // Relocate packages of classes that the ML Java Client needs; it can't use the versions provided by Spark
     relocate('okio', 'marklogic.okio')
-    relocate('com.fasterxml', 'marklogic.com.fasterxml')
+
+    // Relocating this package from Jackson. Relocating all of com.fasterxml.jackson results in the Scala
+    // JacksonParser class not working, as it receives the wrong version of JsonFactory via our JsonRowParser class.
+    // Fortunately, only relocating this package avoids that error and still results in the correct Jackson classes
+    // being used by the ML Java Client and by Spark itself.
+    relocate('com.fasterxml.jackson.databind', 'marklogic.com.fasterxml.jackson.databind')
 }
 build.dependsOn shadowJar
 

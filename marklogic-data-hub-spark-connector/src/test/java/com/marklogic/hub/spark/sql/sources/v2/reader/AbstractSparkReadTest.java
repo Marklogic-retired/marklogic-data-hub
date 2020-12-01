@@ -61,6 +61,10 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
     }
 
     protected void loadTenSimpleCustomers() {
+        loadSimpleCustomers(10);
+    }
+
+    protected void loadSimpleCustomers(int count) {
         ReferenceModelProject project = new ReferenceModelProject(getHubClient());
 
         // Gotta use data-hub-operator so that these tests can pass on 5.2.x
@@ -68,7 +72,7 @@ abstract class AbstractSparkReadTest extends AbstractSparkConnectorTest {
             .withCollections(ReferenceModelProject.CUSTOMER_ENTITY_TYPE)
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE));
 
-        for (int i = 0; i <= 9; i++) {
+        for (int i = 0; i < count; i++) {
             Customer c = new Customer(i, "Customer" + i);
             c.setCustomerSince("2020-01-1" + i);
             project.createCustomerInstance(c);
