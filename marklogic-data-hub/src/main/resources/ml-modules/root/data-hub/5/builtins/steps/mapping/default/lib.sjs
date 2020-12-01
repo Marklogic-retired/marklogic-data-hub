@@ -15,13 +15,13 @@ function getModel(targetEntity, version = '0.0.1') {
 }
 
 function getMapping(mappingName) {
-  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
+  return fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed', 'case-insensitive'])]), ["unfiltered", cts.indexOrder(cts.uriReference(), "descending")]));
 }
 
 function getMappingWithVersion(mappingName, version) {
   let cacheKey = `${mappingName}:${version}`;
   if (!cachedMappingByNameAndVersion[cacheKey]) {
-    cachedMappingByNameAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['case-insensitive']), cts.jsonPropertyValueQuery('version', version)])));
+    cachedMappingByNameAndVersion[cacheKey] = fn.head(cts.search(cts.andQuery([cts.collectionQuery('http://marklogic.com/data-hub/mappings'), cts.jsonPropertyValueQuery('name', mappingName, ['unstemmed','case-insensitive']), cts.jsonPropertyValueQuery('version', version, ['unstemmed'])])));
   }
   return cachedMappingByNameAndVersion[cacheKey];
 }

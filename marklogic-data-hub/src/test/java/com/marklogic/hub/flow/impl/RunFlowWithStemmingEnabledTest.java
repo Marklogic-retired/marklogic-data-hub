@@ -33,7 +33,7 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
             installProjectInFolder("flow-runner-test");
 
             RunFlowResponse resp = runFlow(new FlowInputs("testFlow"));
-            assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus().toLowerCase());
+            assertEquals(JobStatus.FINISHED.toString(), resp.getJobStatus().toLowerCase());
 
             reindexDatabase();
 

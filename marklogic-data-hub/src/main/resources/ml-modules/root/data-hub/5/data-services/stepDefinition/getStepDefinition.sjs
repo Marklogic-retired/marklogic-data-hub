@@ -25,7 +25,7 @@ var type;
 let query = cts.andQuery([
   cts.collectionQuery("http://marklogic.com/data-hub/step-definition"),
   cts.directoryQuery("/step-definitions/" + type.toLowerCase() + "/", "infinity"),
-  cts.jsonPropertyValueQuery("name", name)
+  cts.jsonPropertyValueQuery("name", name, ("unstemmed"))
 ]);
 
 let result = fn.head(fn.subsequence(cts.search(query), 1, 1));

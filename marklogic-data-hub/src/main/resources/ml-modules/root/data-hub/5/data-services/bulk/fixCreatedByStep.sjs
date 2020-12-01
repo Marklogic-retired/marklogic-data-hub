@@ -61,7 +61,7 @@ if (uris.length == 0) {
 
     const stepDef = fn.head(cts.search(cts.andQuery([
       cts.collectionQuery("http://marklogic.com/data-hub/step-definition"),
-      cts.jsonPropertyValueQuery("name", metadata.datahubCreatedByStep)
+      cts.jsonPropertyValueQuery("name", metadata.datahubCreatedByStep, ["unstemmed"])
     ])));
 
     // Rare, but the stepDef may no longer exist, e.g. if it was a custom one
