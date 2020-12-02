@@ -537,10 +537,12 @@ function isHubEntityInstance(docUri) {
   return isHubEntityInstance;
 }
 
+// Adding console logs to debug the issue DHFPROD-6311. Console logs will be removed after the issue is resolved
 function getRecordHistory(docUri) {
   const history = [];
   const relations = {'associatedWith': '?', 'attributedTo': '?'};
   const provenanceRecords = Provenance.findProvenance(docUri, relations);
+  console.log("provenanceRecords: " + provenanceRecords);
 
   if(provenanceRecords.length) {
     const flowsMap = findFlowsAsMap();
@@ -564,6 +566,7 @@ function getRecordHistory(docUri) {
   return history;
 }
 
+// Adding console logs to debug the issue DHFPROD-6311. Console logs will be removed after the issue is resolved
 function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, stepDefinitionNames, flowsMap) {
   const flowAndStepNames = {};
   const associatedWith = provenanceRecord.associatedWith.toObject();
@@ -574,6 +577,7 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
       flowAndStepNames["flowName"] = artifactName;
     }
   });
+  console.log("flowName: " + flowAndStepNames["flowName"]);
 
   for (let currentIndex=0; currentIndex<associatedWith.length-1; currentIndex++) {
     if(associatedWith[currentIndex] === flowAndStepNames["flowName"]) {
@@ -584,11 +588,18 @@ function findFlowAndStepNameFromProvenanceRecords(provenanceRecord, stepNames, s
     }
     associatedWith.pop();
   }
+  console.log("associatedWith array after finding flowName: " + associatedWith);
 
   const flow = flowsMap[flowAndStepNames["flowName"]];
   const flowStepNames = Object.keys(flow["steps"]).map(step => flow["steps"][step].name);
+  console.log("flowStepNames: " + flowStepNames);
+
   const commonFlowStepNames = associatedWith.filter(artifactName => flowStepNames.includes(artifactName));
+  console.log("commonFlowStepNames: " + commonFlowStepNames);
+
   flowAndStepNames["stepName"] = commonFlowStepNames.length ? commonFlowStepNames[0] : undefined;
+  console.log("flowAndStepNames object after finding step name from Flow: " + flowAndStepNames);
+
   if(flowAndStepNames["stepName"]) {
     return flowAndStepNames;
   }

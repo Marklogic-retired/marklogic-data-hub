@@ -14,13 +14,15 @@ import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-//This test is done at the Java layer as multiple scenarios cannot be tested in ml-unit-tests due to the optic calls occurring in the same request.
-// There appears to be a bug with Optic caching values in the same request that is being investigated.
+//Forcing the test to run on single thread to verify if the multi threaded environment is causing the DHFPROD-6311 issue.
+@Execution(ExecutionMode.SAME_THREAD)
 public class GetRecordTest extends AbstractHubCoreTest {
 
     private EntitySearchService service;
@@ -104,6 +106,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
         ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
         ArrayNode history = (ArrayNode) response.get("history");
+        logger.info("History after running the inline flow" + history.asText());
         assertEquals(2, history.size());
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("inline", history.get(0).get("flow").asText());
@@ -122,6 +125,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
         response = (ObjectNode) service.getRecord("/history-test/customer1.json");
         history = (ArrayNode) response.get("history");
+        logger.info("History after running the referenced flow" + history.asText());
         assertEquals(2, history.size());
         assertNotNull(history.get(0).get("updatedTime"));
         assertEquals("referenced", history.get(0).get("flow").asText());
