@@ -185,4 +185,32 @@ describe('Flows component', () => {
 
     });
 
+    it('create flow button can be focused and pressed by keyboard', async () => {
+        const {getByText, getByLabelText} = render(
+            <Router history={history}><Flows
+                {...flowsProps}
+                canReadFlow={true}
+                canWriteFlow={true}
+                hasOperatorRole={true}
+            /></Router>
+        );
+
+        let flowButton = getByLabelText('create-flow');
+        expect(flowButton).toBeInTheDocument();
+        flowButton.focus();
+        expect(flowButton).toHaveFocus();
+
+        // button should be focusable
+        // verified by tabbing away and tabbing back
+        userEvent.tab();
+        expect(flowButton).not.toHaveFocus();
+        userEvent.tab({shift: true});
+        expect(flowButton).toHaveFocus();
+
+        // pressing enter on button should bring up New Flow dialogue box
+        fireEvent.keyDown(flowButton, { key: 'Enter', code: 'Enter' });
+        expect(getByText("New Flow")).toBeInTheDocument();
+
+    });
+
 });

@@ -665,29 +665,38 @@ const Flows: React.FC<Props> = (props) => {
         setActiveKeys([...key]);
     };
 
+    const createFlowKeyDownHandler = (event) => {        
+        if (event.key == 'Enter') {
+            OpenAddNewDialog();
+            event.preventDefault();
+        }
+    }
+
    return (
     <div id="flows-container" className={styles.flowsContainer}>
         {props.canReadFlow || props.canWriteFlow ?
             <>
                 <div className={styles.createContainer}>
-                    {props.canWriteFlow ?
-                     <span> <MLButton
-                        className={!props.canWriteFlow ? styles.createButtonDisabled : styles.createButton} size="default"
-                        type="primary" onClick={OpenAddNewDialog}
-                        disabled={!props.canWriteFlow}
-                        aria-label={'create-flow' + (!props.canWriteFlow ? '-disabled' : '')}
-                      >Create Flow</MLButton></span>
-                      :
-                      <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '175px'}}>
-                          <span className={styles.disabledCursor}>
-                              <MLButton
-                                className={!props.canWriteFlow ? styles.createButtonDisabled : styles.createButton} size="default"
-                                type="primary" onClick={OpenAddNewDialog}
-                                disabled={!props.canWriteFlow}
-                                aria-label={'create-flow' + (!props.canWriteFlow ? '-disabled' : '')}
-                              >Create Flow</MLButton>
-                          </span>
-                      </MLTooltip>
+                    {
+                    props.canWriteFlow ?
+                    <span> <MLButton
+                        className={styles.createButton} size="default"
+                        type="primary" onClick={OpenAddNewDialog} onKeyDown={createFlowKeyDownHandler}
+                        aria-label={'create-flow'}
+                        tabIndex={0}
+                    >Create Flow</MLButton></span>
+                    :
+                    <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '175px'}}>
+                        <span className={styles.disabledCursor}>
+                            <MLButton
+                            className={styles.createButtonDisabled} size="default"
+                            type="primary"
+                            disabled={true}
+                            aria-label={'create-flow-disabled'}
+                            tabIndex={-1}
+                            >Create Flow</MLButton>
+                        </span>
+                    </MLTooltip>
                     }
                 </div>
                 <Collapse
