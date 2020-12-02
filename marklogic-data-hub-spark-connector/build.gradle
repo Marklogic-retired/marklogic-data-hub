@@ -62,7 +62,7 @@ tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-task copyConnectorModulesFromCoreProject(type: Copy) {
+task copyModulesForConnectorFromCoreProject(type: Copy) {
     description = "Copy modules that the connector may need to install from the core project to the resources " +
         "directory so that they are included when the shadowJar is created"
     from "../marklogic-data-hub/src/main/resources/ml-modules/root"
@@ -72,7 +72,7 @@ task copyConnectorModulesFromCoreProject(type: Copy) {
 
 // Gradle's processResources task provides a chance for including additional files in the jar
 // See https://docs.gradle.org/current/userguide/building_java_projects.html#sec:java_source_sets for more information
-processResources.dependsOn copyConnectorModulesFromCoreProject
+processResources.dependsOn copyModulesForConnectorFromCoreProject
 
 shadowJar {
     classifier "all"
