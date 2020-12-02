@@ -24,24 +24,23 @@ dependencies {
     implementation "org.apache.spark:spark-core_2.11:${sparkVersion}"
 }
 
-task ingestDatabook(type: JavaExec) {
-    description = "Run the test program to ingest the databook.csv contents via our Spark connector"
+task writeCustomersToStaging(type: JavaExec) {
+    description = "Write customer data from customers.csv to the staging database"
     classpath = sourceSets.main.runtimeClasspath
-    main = "test.SparkTest"
-    args = [
-        host,
-        username,
-        password
-    ]
+    main = "org.example.WriteCustomersToStaging"
+    args = [host, username, password]
 }
 
-task ingestDatabookViaStreamTest(type: JavaExec) {
-    description = "Run the test program to ingest the databook.csv contents via our Stream connector"
+task streamingWriteCustomersToStaging(type: JavaExec) {
+    description = "Write customer data via Spark streaming from customers.csv to the staging database"
     classpath = sourceSets.main.runtimeClasspath
-    main = "test.StreamTest"
-    args = [
-        host,
-        username,
-        password
-    ]
+    main = "org.example.StreamingWriteCustomersToStaging"
+    args = [host, username, password]
+}
+
+task readCustomersFromFinal(type: JavaExec) {
+    description = "Read Customer entity instances as rows from the final database"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.example.ReadCustomersFromFinal"
+    args = [host, username, password]
 }
