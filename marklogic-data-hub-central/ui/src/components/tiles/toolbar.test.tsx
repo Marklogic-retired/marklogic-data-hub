@@ -46,8 +46,8 @@ describe('Toolbar component', () => {
         });
     });
 
-    it('verify tabbing of tile icons', () => {
-        var i: int;
+    it('verify tile icon selection using tab', () => {
+        var i: number;
         let enabledTiles = ['load', 'model', 'curate', 'run', 'explore'];
         const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
         expect(getByLabelText("toolbar")).toBeInTheDocument();
@@ -70,8 +70,8 @@ describe('Toolbar component', () => {
     });
 
 
-    it('verify tabbing of tile icons', () => {
-        var i: int;
+    it('verify tile icon selection using arrow keys', () => {
+        var i: number;
         let enabledTiles = ['load', 'model', 'curate', 'run', 'explore'];
         const {getByLabelText} = render(<Router history={history}><Toolbar tiles={tiles} enabled={enabledTiles}/></Router>);
         expect(getByLabelText("toolbar")).toBeInTheDocument();
@@ -81,22 +81,22 @@ describe('Toolbar component', () => {
         expect(getByLabelText("tool-load-link")).toHaveFocus();
 
         // pressing up arrow while on load does nothing (cannot go further up)
-        fireEvent.keyDown(getByLabelText("tool-load-link"), { key: 'ArrowUp', code: 'ArrowUp' })
+        fireEvent.keyDown(getByLabelText("tool-load-link"), { key: 'ArrowUp', code: 'ArrowUp' });
         expect(getByLabelText("tool-load-link")).toHaveFocus();
 
         // pressing down arrow sequentially moves focus down
         for(i = 1; i < 5; ++i) {
-            fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i-1] + "-link"), { key: 'ArrowDown', code: 'ArrowDown' })
+            fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i-1] + "-link"), { key: 'ArrowDown', code: 'ArrowDown' });
             expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();    
         }
 
         // pressing down arrow while on explore does nothing (cannot go further down)
-        fireEvent.keyDown(getByLabelText("tool-explore-link"), { key: 'ArrowDown', code: 'ArrowDown' })
+        fireEvent.keyDown(getByLabelText("tool-explore-link"), { key: 'ArrowDown', code: 'ArrowDown' });
         expect(getByLabelText("tool-explore-link")).toHaveFocus();
 
         // pressing up arrow sequentially moves focus up
         for(i = 3; i >= 0; --i) {
-            fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i+1] + "-link"), { key: 'ArrowUp', code: 'ArrowUp' })
+            fireEvent.keyDown(getByLabelText("tool-" + enabledTiles[i+1] + "-link"), { key: 'ArrowUp', code: 'ArrowUp' });
             expect(getByLabelText("tool-" + enabledTiles[i] + "-link")).toHaveFocus();    
         }
     });

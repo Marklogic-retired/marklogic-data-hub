@@ -293,3 +293,11 @@ ul.ant-cascader-menu:nth-child(2) {
 #switch-view-explorer .ant-radio-group-large .ant-radio-button-wrapper:hover {
   color: #7F86B5 ;
 }
+
+/* styling for MLButton focus */
+
+.ml-btn.ant-btn-primary:focus {
+  outline: 2px solid #7f86b5;
+  outline-offset: 1px;
+  background-color: #5b69af;
+}
