@@ -1,5 +1,5 @@
 {
-  "name": "simpleCustomerMapping",
+  "name": "noExcludeCustomerMapping",
   "stepDefinitionName": "entity-services-mapping",
   "stepDefinitionType": "MAPPING",
   "sourceQuery": "cts.collectionQuery('customer-input')",
@@ -7,7 +7,7 @@
   "targetDatabase": "data-hub-FINAL",
   "collections": [
     "Customer",
-    "simple-customer-mapping"
+    "noExclude-customer-mapping"
   ],
   "permissions": "data-hub-common,read,data-hub-common,update",
   "targetFormat": "json",
@@ -20,6 +20,5 @@
   "provenanceGranularityLevel": "off",
   "namespaces": {},
   "selectedSource": "query",
-  "stepId": "simpleCustomerMapping-mapping",
-  "enableExcludeAlreadyProcessed": true
+  "stepId": "noExcludeCustomerMapping-mapping"
 }

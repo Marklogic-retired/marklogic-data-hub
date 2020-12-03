@@ -20,5 +20,6 @@
   "provenanceGranularityLevel": "off",
   "namespaces": {},
   "selectedSource": "query",
-  "stepId": "otherCustomerMapping-mapping"
+  "stepId": "otherCustomerMapping-mapping",
+  "enableExcludeAlreadyProcessed": "true"
 }

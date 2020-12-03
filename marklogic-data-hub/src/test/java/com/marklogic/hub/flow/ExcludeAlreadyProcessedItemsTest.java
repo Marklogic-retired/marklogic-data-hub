@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
 
@@ -69,6 +70,17 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
                 "excluded if already processed");
     }
 
+    @Test
+    void stepDoesntHaveEnableExcludeAlreadyProcessed() {
+        installProjectInFolder("test-projects/simple-customer-flow");
+
+        ReferenceModelProject project = new ReferenceModelProject(getHubClient());
+        project.createRawCustomer(1, "Jane");
+
+        verifyItemIsProcessedAgain("simpleCustomerFlow", "3", "job333");
+        verifyItemIsProcessedAgain("simpleCustomerFlow", "4", "job444");
+    }
+
     private void setBatchStatusToFailed() {
         String script = "declareUpdate(); " +
             "const batchDoc = fn.head(fn.collection('Batch')); " +
@@ -120,9 +132,7 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
     }
 
     private void verifyFirstBatchDocument(String flowName, String stepId) {
-        String data = getHubClient().getJobsClient().newServerEval().xquery("collection('Batch')[/batch/jobId = 'job111']").evalAs(String.class);
-        JsonNode batch = readJsonObject(data).get("batch");
-
+        JsonNode batch = findFirstBatchDocument("job111").get("batch");
         assertEquals(flowName, batch.get("flowName").asText());
         assertEquals(stepId, batch.get("stepId").asText());
         assertEquals("finished", batch.get("batchStatus").asText());
@@ -133,9 +143,7 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
     }
 
     private void verifySecondBatchDocument(String flowName, String stepId) {
-        String data = getHubClient().getJobsClient().newServerEval().xquery("collection('Batch')[/batch/jobId = 'job222']").evalAs(String.class);
-        JsonNode batch = readJsonObject(data).get("batch");
-
+        JsonNode batch = findFirstBatchDocument("job222").get("batch");
         assertEquals(flowName, batch.get("flowName").asText());
         assertEquals(stepId, batch.get("stepId").asText());
         assertEquals("finished", batch.get("batchStatus").asText());
@@ -154,5 +162,23 @@ public class ExcludeAlreadyProcessedItemsTest extends AbstractHubCoreTest {
 
     private Map<String, Object> buildExcludeOptions() {
         return Collections.singletonMap("excludeAlreadyProcessed", true);
+    }
+
+    private void verifyItemIsProcessedAgain(String flowName, String stepNumber, String jobId) {
+        RunFlowResponse response = runFlow(new FlowInputs(flowName, stepNumber).withJobId(jobId));
+        assertEquals(1, response.getStepResponses().get(stepNumber).getSuccessfulEvents(),
+            "The single customer record should have been processed");
+
+        JsonNode batch = findFirstBatchDocument(jobId).get("batch");
+        assertFalse(batch.has("processedItemHashes"), "Per DHFPROD-6264, a step will not capture processedItemHashes " +
+            "in a Batch document unless enableExcludeAlreadyProcessed exists in the step options with a value of 'true' or true. " +
+            "This is done to avoid storing and indexing a large amount of data when a user does not need it.");
+        assertEquals(1, batch.get("uris").size(), "The Batch document should still capture the items that were processed");
+
+        // Run the step again, and try to exclude already processed items
+        response = runFlow(new FlowInputs(flowName, stepNumber).withOptions(buildExcludeOptions()));
+        assertEquals(1, response.getStepResponses().get(stepNumber).getSuccessfulEvents(),
+            "The customer record should have been processed again since processedItemHashes doesn't exist on the Batch documents, " +
+                "and thus including excludeAlreadyProcessed:true won't have any impact");
     }
 }
