@@ -9,17 +9,24 @@ function verifyResults(content, results) {
     let resultsNode = xdmp.toJSON(results);
     let mergeAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "merge"]');
     let customAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "customActions"]');
+    let notifyAction = resultsNode.xpath('matchSummary/actionDetails/*[action = "notify"]');
     let assertions = [
         test.assertEqual(1, fn.count(results), `A matchSummary should be returned. Results: ${results}`),
         test.assertEqual(1, fn.count(mergeAction), `A merge action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
-        test.assertEqual(1, fn.count(customAction), `A custom action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`)
+        test.assertEqual(1, fn.count(customAction), `A custom action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`),
+        test.assertEqual(1, fn.count(notifyAction), `A notify action should be in the matchSummary. Results: ${xdmp.toJsonString(results)}`)
     ];
+    let mergeURI = fn.string(fn.nodeName(mergeAction));
     let mergeActionObject = fn.head(mergeAction).toObject();
     let customActionObject = fn.head(customAction).toObject();
+    let notifyActionObject = fn.head(notifyAction).toObject();
     return assertions.concat([
         test.assertEqual(2, mergeActionObject.uris.length, `merge action should be only on 2 URIs. Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertTrue(mergeActionObject.uris.some((uri) => /CustMatchMerge1\./.test(uri)), `merge action should have URI matching "CustMatchMerge1.". Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertTrue(mergeActionObject.uris.some((uri) => /CustMatchMerge2\./.test(uri)), `merge action should have URI matching "CustMatchMerge2.". Results: ${JSON.stringify(mergeActionObject)}`),
+        test.assertEqual(2, notifyActionObject.uris.length, `notify action should be only on 2 URIs. Results: ${JSON.stringify(notifyActionObject)}`),
+        test.assertTrue(notifyActionObject.uris.some((uri) => uri === mergeURI), `notify action should have the merge URI . Results: ${JSON.stringify(notifyActionObject)}`),
+        test.assertTrue(notifyActionObject.uris.some((uri) => /CustMatchNotify\./.test(uri)), `notify action should have URI matching "CustMatchNotify.". Results: ${JSON.stringify(notifyActionObject)}`),
         test.assertEqual(1, customActionObject.actions[0].matchResults.length, `custom action should be only on 1 match result for household. Results: ${JSON.stringify(customActionObject)}`),
         test.assertTrue(/CustMatchHousehold\./.test(customActionObject.actions[0].matchResults[0].uri), `custom action should have URI matching "CustMatchHousehold.". Results: ${JSON.stringify(customActionObject)}`)
     ]);
