@@ -5,12 +5,10 @@ import {RouteComponentProps, withRouter} from "react-router-dom";
 import {UserContext} from "../util/user-context";
 import styles from "./Detail.module.scss";
 import TableView from "../components/table-view/table-view";
-import JsonView from "../components/json-view/json-view";
 import DetailHeader from "../components/detail-header/detail-header";
 import AsyncLoader from "../components/async-loader/async-loader";
 import {Layout, Menu, PageHeader} from "antd";
-import XmlView from "../components/xml-view/xml-view";
-import {xmlParser, xmlDecoder} from "../util/xml-parser";
+import {xmlParser, xmlDecoder, xmlFormatter, jsonFormatter} from "../util/record-parser";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
 import {MLTooltip} from "@marklogic/design-system";
@@ -51,7 +49,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [sourcesTableData, setSourcesTableData] = useState<any[]>([]);
   const [historyData, setHistoryData] = useState<any[]>([]);
 
-
   const componentIsMounted = useRef(true);
 
   useEffect(() => {
@@ -85,7 +82,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
             let decodedXml = xmlDecoder(result.data.data);
             let document = xmlParser(decodedXml);
             setData(document);
-            setXml(xmlDecoder(decodedXml));
+            setXml(result.data.data);
             setEntityInstanceFlag(document);
             if (result.data.isHubEntityInstance) {
               initializeEntityInstance(document);
@@ -310,15 +307,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
     }
   };
 
-  // Test data for History table - Keeping only until we work on its dedicated story. Should be removed in future
-  // const historyData = [
-  //   { key: 1, timeStamp: '2020-08-10 12:00', flow: 'loadCustomerFlow', step: 'mapCustomerStep', user: 'Ernie'},
-  //   { key: 2, timeStamp: '2020-07-10 08:45', flow: 'loadCustomerFlow', step: 'mergeCustomer', user: 'Ernie'},
-  //   { key: 3, timeStamp: '2020-07-01 13:12', flow: 'loadCustomerFlow', step: 'loadCustomer', user: 'Wai Lin'}
-  // ]
-
   return (
-    entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
+    entityInstanceDocument == undefined ? <div style={{marginTop: "40px"}}>
       <AsyncLoader />
     </div> :
 
@@ -327,7 +317,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
           <Content className={styles.detailContent}>
             <div id="back-button" style={{marginLeft: "-23px"}}  onClick={() => history.push(selectedSearchOptions)}>
               <PageHeader
-                title={<span className={styles.title}>Back</span>}
+                title={<span className={styles.title}>Back to results</span>}
                 data-cy="back-button"
                 onBack={() => history.push(selectedSearchOptions)}
               />
@@ -357,7 +347,6 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 </Menu>
               </div>
             </div>
-
             <div>
               {
                 isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}>
@@ -365,14 +354,13 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 </div>
                   :
                   contentType === "json" ?
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (data && <JsonView document={data} />)
+                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
                     :
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (data  && <XmlView document={xml} />)
+                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
               }
             </div>
           </Content>
         </Layout> :
-
         <DetailPageNonEntity
           uri={uri}
           sourcesTableData={sourcesTableData}

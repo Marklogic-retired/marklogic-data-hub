@@ -187,9 +187,8 @@ describe("xml scenario for All Data option and non-entity detail page", () => {
   it("verify record view of the XML document in non-entity detail page", () => {
     cy.waitUntil(() => browsePage.getNavigationIconForDocument("/dictionary/first-names.xml")).click();
     browsePage.waitForSpinnerToDisappear();
-    detailPageNonEntity.getInstanceView().should("exist");
-    detailPageNonEntity.getRecordView().click();
-    detailPageNonEntity.getDocumentXML().should("exist");
+    detailPageNonEntity.getRecordView().should("exist");
+    detailPage.getDocumentXML().should("exist");
     detailPageNonEntity.getDocumentUri().should("contain", "/dictionary/first-names.xml");
     detailPageNonEntity.getSourceTable().should("exist");
     detailPageNonEntity.getHistoryTable().should("exist");

@@ -24,14 +24,6 @@ class DetailPageNonEntity {
     return cy.get("[data-cy=document-table]");
   }
 
-  getDocumentJSON() {
-    return cy.get(".pretty-json-container");
-  }
-
-  getDocumentXML() {
-    return cy.get("[data-cy=xml-document]");
-  }
-
   clickBackButton() {
     return cy.get("#back-button").click({force: true});
   }
