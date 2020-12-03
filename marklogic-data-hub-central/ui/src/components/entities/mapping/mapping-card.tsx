@@ -59,6 +59,7 @@ const MappingCard: React.FC<Props> = (props) => {
     const [openStepSettings, setOpenStepSettings] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [tooltipVisible, setTooltipVisible] = useState(false);
+    const tooltipOverlayStyle={maxWidth: '200'};
 
     //For Entity table
     const [entityTypeProperties, setEntityTypeProperties] = useState<any[]>([]);
@@ -699,7 +700,7 @@ const MappingCard: React.FC<Props> = (props) => {
     return (
         <div className={styles.loadContainer}>
             <Row gutter={16} type="flex" >
-                {props.canReadWrite ? <Col >
+                {props.canReadWrite ? <Col>
                     <Card
                         size="small"
                         className={styles.addNewCard}>
@@ -707,7 +708,15 @@ const MappingCard: React.FC<Props> = (props) => {
                         <br />
                         <p className={styles.addNewContent}>Add New</p>
                     </Card>
-                </Col> : ''}{sortedMapping && sortedMapping.length > 0 ? sortedMapping.map((elem,index) => (
+                </Col> : <Col>
+                    <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
+                        size="small"
+                        className={styles.addNewCardDisabled}>
+                        <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+                        <br/>
+                        <p className={styles.addNewContent}>Add New</p>
+                    </Card></MLTooltip>
+                </Col>}{sortedMapping && sortedMapping.length > 0 ? sortedMapping.map((elem,index) => (
                     <Col key={index}>
                         <div
                             data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
