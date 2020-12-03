@@ -390,7 +390,7 @@ const Flows: React.FC<Props> = (props) => {
                   >Add Step <DownOutlined /></MLButton>
                   :
                   <MLTooltip title={SecurityTooltips.missingPermission} overlayStyle={{maxWidth: '175px'}} placement="bottom">
-                      <span>
+                      <span className={styles.disabledCursor}>
                           <MLButton
                             className={styles.addStep}
                             size="default"

@@ -60,7 +60,7 @@ describe("Mapping Card component", () => {
 
   test('Mapping card does not allow edit without writeMapping authority', async () => {
     const deleteMappingArtifact = jest.fn(() => {});
-    let queryAllByText, getByText, getByRole, queryAllByRole, getByTestId;
+    let queryAllByText, getByText, getByRole, queryAllByRole, getByTestId, getByLabelText;
     await act(async () => {
       const renderResults = render(
         <Router><MappingCard
@@ -74,7 +74,11 @@ describe("Mapping Card component", () => {
       queryAllByText = renderResults.queryAllByText;
       queryAllByRole = renderResults.queryAllByRole;
       getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
     });
+
+    fireEvent.mouseOver(getByLabelText('add-new-card-disabled'));
+    await wait (() => expect(getByText('Curate: '+SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     fireEvent.mouseOver(getByRole('edit-mapping'));
     await wait (() => expect(getByText('Edit')).toBeInTheDocument());

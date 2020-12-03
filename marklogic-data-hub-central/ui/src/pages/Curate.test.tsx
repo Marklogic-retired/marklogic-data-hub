@@ -41,9 +41,6 @@ describe('Curate component', () => {
 
         expect(getByText('Mapping2')).toBeInTheDocument();
 
-        // test 'Add New' button
-        expect(queryByText('Add New')).not.toBeInTheDocument();
-
         // test edit
         fireEvent.click(getByTestId('Mapping2-edit'));
         expect(await(waitForElement(() => getByText('Mapping Step Settings')))).toBeInTheDocument();
