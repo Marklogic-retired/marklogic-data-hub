@@ -6,6 +6,12 @@
     },
     "2": {
       "stepId": "otherCustomerMapping-mapping"
+    },
+    "3": {
+      "stepId": "noExcludeCustomerMapping-mapping"
+    },
+    "4": {
+      "stepId": "excludeFalseCustomerMapping-mapping"
     }
   }
 }

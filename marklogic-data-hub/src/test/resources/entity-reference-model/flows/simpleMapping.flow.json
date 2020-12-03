@@ -6,6 +6,7 @@
       "stepDefinitionName": "entity-services-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
+        "enableExcludeAlreadyProcessed" : true,
         "sourceQuery": "cts.collectionQuery('customer-input')",
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",

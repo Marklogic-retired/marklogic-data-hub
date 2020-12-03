@@ -140,7 +140,7 @@ class Flow {
     if (options.uris) {
       uris = this.datahub.hubUtils.normalizeToArray(options.uris);
 
-      if (options.excludeAlreadyProcessed && xs.boolean(options.excludeAlreadyProcessed)) {
+      if (options.excludeAlreadyProcessed === true || options.excludeAlreadyProcessed === "true") {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
@@ -500,18 +500,15 @@ class Flow {
    * @param writeTransactionInfo
    */
   updateBatchDocument(combinedOptions = {}, items, writeTransactionInfo) {
-    if (!combinedOptions.noBatchWrite) {
+    if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
       let batchStatus = "finished";
       if (this.globalContext.failedItems.length) {
-        if (this.globalContext.completedItems.length) {
-          batchStatus = "finished_with_errors";
-        } else {
-          batchStatus = "failed";
-        }
+        batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
       }
-      if (!combinedOptions.disableJobOutput) {
-        jobsMod.updateBatch(this.datahub,this.globalContext.jobId, this.globalContext.batchId, batchStatus, items, writeTransactionInfo, this.globalContext.batchErrors[0]);
-      }
+      jobsMod.updateBatch(
+        this.datahub, this.globalContext.jobId, this.globalContext.batchId, batchStatus, items,
+        writeTransactionInfo, this.globalContext.batchErrors[0], combinedOptions
+      );
     }
   }
 

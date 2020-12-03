@@ -11,20 +11,6 @@
  limitations under the License.
  */
 'use strict';
-// Batch documents can be cached because they should never be altered across transactions
-const cachedBatchDocuments = {};
-const cachedFlowSteps = {};
-
-const getFlowStep = (datahub, flowName, step) => {
-  if (!cachedFlowSteps[`${flowName}:${step}`]) {
-    cachedFlowSteps[`${flowName}:${step}`] = fn.head(datahub.hubUtils.queryLatest(function () {
-          return datahub.flow.getFlow(flowName).steps[step];
-        },
-        datahub.config.FINALDATABASE
-    ));
-  }
-  return cachedFlowSteps[`${flowName}:${step}`];
-};
 
 class Jobs {
 
@@ -310,18 +296,16 @@ class Jobs {
   }
 
   getBatchDoc(jobId, batchId) {
-    let cacheId = jobId + "-" + batchId;
-    if (!cachedBatchDocuments[cacheId]) {
-      let query = [cts.directoryQuery("/jobs/batches/"), cts.jsonPropertyValueQuery("jobId", jobId)
-        , cts.jsonPropertyValueQuery("batchId", batchId)];
-      cachedBatchDocuments[cacheId] = fn.head(this.hubutils.queryLatest(function () {
-        let uri = cts.uris("", null, cts.andQuery(query));
-        if (!fn.empty(uri)) {
-          return cts.doc(uri).toObject();
-        }
-      }, this.config.JOBDATABASE));
-    }
-    return cachedBatchDocuments[cacheId];
+    return fn.head(this.hubutils.queryLatest(function () {
+      const batchDoc = fn.head(cts.search(
+        cts.andQuery([
+          cts.directoryQuery("/jobs/batches/"),
+          cts.jsonPropertyValueQuery("jobId", jobId),
+          cts.jsonPropertyValueQuery("batchId", batchId)
+        ]), "unfiltered"
+      ));
+      return batchDoc ? batchDoc.toObject() : null;
+    }, this.config.JOBDATABASE));
   }
 }
 module.exports.updateJob = module.amp(
@@ -374,7 +358,10 @@ module.exports.updateJob = module.amp(
           // a better error will be thrown later when the step is run and the module cannot be found.
         }
         if (jobsReportFun) {
-          let flowStep = getFlowStep(datahub, stepResp.flowName, step);
+          let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
+              return datahub.flow.getFlow(stepResp.flowName).steps[step];
+            }, datahub.config.FINALDATABASE
+          ));
           let options = Object.assign({}, stepDef.options, flowStep.options);
           let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
               return jobsReportFun(jobId, stepResp, options);
@@ -394,14 +381,19 @@ module.exports.updateJob = module.amp(
   });
 
 module.exports.updateBatch = module.amp(
-  function updateBatch(datahub, jobId, batchId, batchStatus, items, writeTransactionInfo, error) {
+  function updateBatch(datahub, jobId, batchId, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
     let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
     }
+
     docObj.batch.batchStatus = batchStatus;
     docObj.batch.uris = items;
-    docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(item));
+
+    // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
+    if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
+      docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(item));
+    }
 
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
       docObj.batch.timeEnded = fn.currentDateTime();
@@ -423,8 +415,6 @@ module.exports.updateBatch = module.amp(
     }
     docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
-    let cacheId = jobId + "-" + batchId;
-    cachedBatchDocuments[cacheId] = docObj;
     datahub.hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
 
   });

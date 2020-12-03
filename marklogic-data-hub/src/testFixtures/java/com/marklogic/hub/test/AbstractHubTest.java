@@ -468,8 +468,14 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             }
         }
     }
+
     protected int getDocumentCount(DatabaseClient client) {
         String query = "cts.estimate(cts.trueQuery())";
         return Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
+    }
+
+    protected JsonNode findFirstBatchDocument(String jobId) {
+        String query = format("collection('Batch')[/batch/jobId = '%s']", jobId);
+        return getHubClient().getJobsClient().newServerEval().xquery(query).eval(new JacksonHandle()).get();
     }
 }
