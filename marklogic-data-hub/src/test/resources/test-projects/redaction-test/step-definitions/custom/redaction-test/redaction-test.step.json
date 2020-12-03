@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "redaction-test",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/custom-modules/custom/redaction-step/main.sjs"
+}

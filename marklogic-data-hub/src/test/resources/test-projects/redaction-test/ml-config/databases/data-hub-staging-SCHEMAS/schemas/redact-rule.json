@@ -1,0 +1,9 @@
+{
+  "rule": {
+    "description": "Redact phone number",
+    "path": "//phone",
+    "method": {
+      "function": "redact-us-phone"
+    }
+  }
+}
