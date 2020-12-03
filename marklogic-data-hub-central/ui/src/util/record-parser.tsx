@@ -45,3 +45,18 @@ export const xmlDecoder = (xml) => {
   return he.decode(xml);
 };
 
+export const xmlFormatter = (xml) => {
+  let format = require("xml-formatter");
+  return format(xml, {
+    indentation: "  ",
+    filter: (node) => node.type !== "Comment",
+    collapseContent: true,
+    lineSeparator: "\n"
+  });
+};
+
+export const jsonFormatter = (json) => {
+  return JSON.stringify(json, undefined, 2);
+};
+
+

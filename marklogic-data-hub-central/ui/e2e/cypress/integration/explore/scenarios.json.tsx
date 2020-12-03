@@ -71,12 +71,9 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     cy.waitUntil(() => browsePage.getNavigationIconForDocument("/steps/custom/mapping-step.step.json")).click();
     browsePage.waitForSpinnerToDisappear();
 
-    detailPageNonEntity.getInstanceView().should("exist");
     detailPageNonEntity.getDocumentUri().should("contain", "/steps/custom/mapping-step.step.json");
     detailPageNonEntity.getSourceTable().should("exist");
     detailPageNonEntity.getHistoryTable().should("exist");
-    detailPageNonEntity.getDocumentTable().should("exist");
-    detailPageNonEntity.getRecordView().click();
     detailPage.getDocumentJSON().should("exist");
     detailPageNonEntity.clickBackButton();
 

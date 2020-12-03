@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, PageHeader, Menu, Icon} from "antd";
+import {Layout, PageHeader, Menu} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {MLTooltip, MLTable} from "@marklogic/design-system";
@@ -7,10 +7,8 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faAngleDoubleRight, faAngleDoubleLeft, faCode} from "@fortawesome/free-solid-svg-icons";
 import {UserContext} from "../../util/user-context";
 import AsyncLoader from "../async-loader/async-loader";
-import TableView from "../table-view/table-view";
-import JsonView from "../json-view/json-view";
-import XmlView from "../xml-view/xml-view";
 import {updateUserPreferences} from "../../services/user-preferences";
+import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -21,7 +19,6 @@ const DetailPageNonEntity = (props) => {
   const [metadataCollapse, setMetadataCollapse] = useState(false);
 
   useEffect(() => {
-
     if (!props.isEntityInstance) {
       if (location.state && JSON.stringify(location.state) !== JSON.stringify({})) {
         location.state.hasOwnProperty("selectedValue") && location.state["selectedValue"] === "instance" ?
@@ -134,24 +131,20 @@ const DetailPageNonEntity = (props) => {
     setMetadataCollapse(!metadataCollapse);
   };
 
-  const contentElements = props.isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}>
-    <AsyncLoader />
-  </div>
-    :
-    props.contentType && props.contentType === "json" ?
-      selected === "instance" ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <JsonView document={props.data} />)
-      : props.contentType === "xml" ?
-        selected === "instance" ? (<TableView document={props.isEntityInstance ? props.entityInstance : props.data} contentType={props.contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={props.isEntityInstance} />) : (props.data && <XmlView document={props.xml} />)
-        : <pre data-testid="text-container" className={styles.textContainer}>{props.data}</pre>;
+  const displayRecord = (contentType: string) => {
+    if (contentType === "json") {
+      return (props.data && <pre data-testid="json-container">{jsonFormatter(props.data)}</pre>);
+    } else if (contentType === "xml") {
+      return (props.xml && <pre data-testid="xml-container">{xmlFormatter(props.xml)}</pre>);
+    } else if (contentType === "text") {
+      return (props.data && <pre data-testid="text-container" className={styles.textContainer}>{props.data}</pre>);
+    }
+  };
+
+  const contentElements = props.isLoading || user.error.type === "ALERT" ? <div style={{marginTop: "40px"}}><AsyncLoader /></div> : displayRecord(props.contentType);
 
   const viewSelector = <div id="menu" className={styles.menu}>
-    <Menu id="subMenu" onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={[selected]}>
-      <Menu.Item key="instance" id="instance" data-testid="instance-view">
-        <MLTooltip title={"Show the processed data"}>
-          <Icon type="file-search" className={styles.fileSearchIcon} />
-          <span className={styles.subMenu}>Instance</span>
-        </MLTooltip>
-      </Menu.Item>
+    <Menu id="subMenu" onClick={(event) => handleMenuSelect(event)} mode="horizontal" selectedKeys={["record"]}>
       <Menu.Item key="record" id="record" data-testid="record-view">
         <MLTooltip title={"Show the complete record"} >
           <FontAwesomeIcon icon={faCode} size="lg" />
@@ -179,7 +172,6 @@ const DetailPageNonEntity = (props) => {
       return textViewSelector;
     }
   };
-
 
   return (
     <div id="detailPageNonEntityContainer" className={styles.container}>

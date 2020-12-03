@@ -37,11 +37,11 @@ class DetailPage {
   }
 
   getDocumentJSON() {
-    return cy.get(".pretty-json-container");
+    return cy.findByTestId("json-container");
   }
 
   getDocumentXML() {
-    return cy.get("[data-cy=xml-document]");
+    return cy.findByTestId("xml-container");
   }
 
   clickBackButton() {

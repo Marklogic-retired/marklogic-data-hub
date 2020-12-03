@@ -32,28 +32,8 @@ describe("Detail page for non-entity view component", () => {
     expect(getByText("loadCustomer")).toBeInTheDocument();
 
     //Check document record data
-    expect(getByText("customerId")).toBeInTheDocument();
-    expect(getByText("1001")).toBeInTheDocument();
-    expect(getByText("firstName")).toBeInTheDocument();
-    expect(getByText("Gabriel")).toBeInTheDocument();
-    expect(getByText("lastName")).toBeInTheDocument();
-    expect(getByText("Stane")).toBeInTheDocument();
-    expect(getByText("Street")).toBeInTheDocument();
-    expect(getByText("324 Wilkinson blvd")).toBeInTheDocument();
-
-    userEvent.click(getByTestId("record-view"));
-
-    /* eslint-disable no-useless-escape */
-    expect(getByText("customerId")).toBeInTheDocument();
-    expect(getByText("\"1001\"")).toBeInTheDocument();
-    expect(getByText("firstName")).toBeInTheDocument();
-    expect(getByText("\"Gabriel\"")).toBeInTheDocument();
-    expect(getByText("lastName")).toBeInTheDocument();
-    expect(getByText("\"Stane\"")).toBeInTheDocument();
-    expect(getByText("Street")).toBeInTheDocument();
-    expect(getByText("\"324 Wilkinson blvd\"")).toBeInTheDocument();
-    /* eslint-disable no-useless-escape */
-
+    expect(getByTestId("record-view")).toBeInTheDocument();
+    expect(getByTestId("json-container")).toHaveTextContent(/(?=.*customerId)(?=.*1001)(?=.*firstName)(?=.*Gabriel)(?=.*lastName)(?=.*324 Wilkinson blvd)/i);
 
     //Check siderExpandCollapse Icons
     expect(getByTestId("metadataIcon-expanded")).toBeInTheDocument();
@@ -94,22 +74,8 @@ describe("Detail page for non-entity view component", () => {
     expect(getByText("loadCustomer")).toBeInTheDocument();
 
     //Check XML document record data
-    userEvent.click(getByLabelText("Expand row")); // Clicking the expand icon to get items inside dictionary
-
-    expect(getByText("word")).toBeInTheDocument();
-    userEvent.click(getByLabelText("Expand row")); // Clicking the expand icon next to "word"
-    expect(getByText("Alexandra")).toBeInTheDocument();
-    expect(getByText("Alice")).toBeInTheDocument();
-    expect(getByText("Barbara")).toBeInTheDocument();
-    expect(getByText("Bob")).toBeInTheDocument();
-
-    userEvent.click(getByTestId("record-view"));
-
-    expect(getByText("\"http://marklogic.com/xdmp/spell\"")).toBeInTheDocument();
-    expect(getByText("Alexandra")).toBeInTheDocument();
-    expect(getByText("Alice")).toBeInTheDocument();
-    expect(getByText("Barbara")).toBeInTheDocument();
-    expect(getByText("Gary")).toBeInTheDocument();
+    expect(getByTestId("record-view")).toBeInTheDocument();
+    expect(getByTestId("xml-container")).toHaveTextContent(/(?=.*word)(?=.*Alexandra)(?=.*Alice)(?=.*Barbara)(?=.*Bob)/i);
 
     //Check siderExpandCollapse Icons
     expect(getByTestId("metadataIcon-expanded")).toBeInTheDocument();
