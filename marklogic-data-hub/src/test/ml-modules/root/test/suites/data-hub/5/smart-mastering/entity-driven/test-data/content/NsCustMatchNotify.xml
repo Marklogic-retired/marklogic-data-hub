@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>source 2</name>
+        </sources>
+        <createdOn xmlns="">2020-08-20T05:27:43.360675Z</createdOn>
+        <createdBy xmlns="">admin</createdBy>
+    </headers>
+    <triples/>
+    <instance>
+        <info>
+            <title>NamespacedCustomer</title>
+            <version/>
+        </info>
+        <exCustomer:NamespacedCustomer xmlns:exCustomer="http://example.org/customer">
+            <exCustomer:customerId>105</exCustomer:customerId>
+            <exCustomer:name>Overlapping customerId</exCustomer:name>
+        </exCustomer:NamespacedCustomer>
+    </instance>
+    <attachments/>
+</envelope>

@@ -436,23 +436,23 @@ declare function proc-impl:build-match-summary(
       $provenance-map
     )
   )
-  let $merged-uris := map:keys($consolidated-merges)
+  let $merged-hashes := map:keys($consolidated-merges)
   let $merged-into := map:map()
   let $merge-details :=
     (: Process merges :)
     let $start-elapsed := xdmp:elapsed-time()
     let $merges :=
       map:new((
-        for $new-uri in $merged-uris
-        where fn:not(map:contains($merges-in-transaction, $new-uri))
+        for $merge-hash in $merged-hashes
+        where fn:not(map:contains($merges-in-transaction, $merge-hash))
         return (
-          map:put($merges-in-transaction, $new-uri, fn:true()),
-          let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $new-uri))
+          map:put($merges-in-transaction, $merge-hash, fn:true()),
+          let $distinct-uris := fn:distinct-values(map:get($consolidated-merges, $merge-hash))
           let $first-merge-item := fn:head($distinct-uris)
           let $threshold := fn:distinct-values(map:get($all-matches, $first-merge-item)/result[@action = $const:MERGE-ACTION]/@threshold)
           let $merge-doc := fn:doc($first-merge-item)
           let $merge-uri :=  merge-impl:build-merge-uri(
-            $new-uri,
+            $merge-hash,
             if ($merge-doc instance of element() or
               $merge-doc instance of document-node(element())) then
               $const:FORMAT-XML
@@ -480,7 +480,7 @@ declare function proc-impl:build-match-summary(
             )
           ) else ()
           return (
-            $distinct-uris ! map:put($merged-into, ., $new-uri),
+            $distinct-uris ! map:put($merged-into, ., $merge-uri),
             map:entry(
               $merge-uri,
               map:new((

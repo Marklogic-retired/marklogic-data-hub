@@ -119,7 +119,7 @@
     {
       "thresholdName": "similarThreshold",
       "action": "notify",
-      "score": 6.5
+      "score": 4.5
     }
   ]
 }
