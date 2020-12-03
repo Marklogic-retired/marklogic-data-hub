@@ -1,0 +1,11 @@
+{
+  "name": "redact-phone",
+  "stepId": "redact-phone-custom",
+  "stepDefinitionName": "redaction-test",
+  "stepDefinitionType": "CUSTOM",
+  "stepUpdate": true,
+  "sourceQuery": "cts.collectionQuery('testRedaction')",
+  "targetDatabase": "data-hub-STAGING",
+  "sourceDatabase": "data-hub-STAGING",
+  "collections": ["redacted"]
+}

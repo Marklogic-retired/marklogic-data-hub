@@ -1,0 +1,8 @@
+{
+  "name": "redaction-test",
+  "steps": {
+    "1": {
+      "stepId": "redact-phone-custom"
+    }
+  }
+}

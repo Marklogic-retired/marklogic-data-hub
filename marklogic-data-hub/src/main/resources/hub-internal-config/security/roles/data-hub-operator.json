@@ -16,7 +16,8 @@
     "data-hub-match-merge-reader",
     "data-hub-custom-reader",
     "tde-view",
-    "data-hub-saved-query-user"
+    "data-hub-saved-query-user",
+    "redaction-user"
   ],
   "privilege": [
     {
