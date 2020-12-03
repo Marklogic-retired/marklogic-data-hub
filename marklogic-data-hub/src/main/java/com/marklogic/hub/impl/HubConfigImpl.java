@@ -1940,7 +1940,9 @@ public class HubConfigImpl implements HubConfig
 
         initializeModulePaths(config);
 
-        config.setSchemasPath(getUserSchemasDir().toString());
+        List<String> schemaPaths = new ArrayList<>();
+        schemaPaths.add(getUserSchemasDir().toString());
+        config.setSchemaPaths(schemaPaths);
 
         addDhfPropertiesToCustomTokens(config);
 
