@@ -87,7 +87,7 @@ describe('Add Merge Rule Dialog component', () => {
         expect(getByLabelText('formItem-Property')).toBeInTheDocument();
 
         fireEvent.click(getByText('Select property'));
-        fireEvent.click(getByText('name'));
+        fireEvent.click(getByText('nicknames'));
 
         //Confirming that max values, max sources and add button are not available now, because property-specific merge type is not selected yet.
         expect(queryByLabelText('Enter max values')).not.toBeInTheDocument();
@@ -112,7 +112,7 @@ describe('Add Merge Rule Dialog component', () => {
     });
 
     it('Verify Add Merge Rule dialog with strategy mergeType renders correctly', () => {
-        const {getByText, getByTestId, getByLabelText, queryByLabelText} = render(
+        const {getByText, getByTestId, getByLabelText, queryByText} = render(
             <CurationContext.Provider value={customerMergingStep}>
                 <AddMergeRuleDialog
                     {...data.mergingDataProps}
@@ -127,15 +127,20 @@ describe('Add Merge Rule Dialog component', () => {
         expect(getByLabelText('formItem-Property')).toBeInTheDocument();
 
         fireEvent.click(getByText('Select property'));
-        fireEvent.click(getByText('name'));
-        //Checking if strategy name input field is available now, because strategy merge type is not selected yet.
-        expect(queryByLabelText('Enter strategy name')).not.toBeInTheDocument();
+        fireEvent.click(getByText('status'));
+        //Checking if strategy name select is available now, because strategy merge type is not selected yet.
+        expect(queryByText('Select strategy name')).not.toBeInTheDocument();
 
         //Selecting the merge type to strategy
         fireEvent.click(getByLabelText('mergeType-select'));
         fireEvent.click(getByTestId('mergeTypeOptions-Strategy'));
 
-        let strategyName = getByLabelText('strategy-name-input');
+        expect(queryByText('Select strategy name')).toBeInTheDocument();
+
+        //verify if the below error message is not displayed yet
+        expect(queryByText('Strategy Name is required')).not.toBeInTheDocument();
+
+        let strategyName = getByLabelText('strategy-name-select');
         let saveButton = getByText('Save');
 
         //Checking if strategy name is available now, since merge type is strategy.
@@ -146,11 +151,39 @@ describe('Add Merge Rule Dialog component', () => {
         expect(getByText('Strategy Name is required')).toBeInTheDocument();
 
         //Enter the values for strategy name to see save button gets enabled.
-        fireEvent.change(strategyName, {target: {value: 'customerMerge'}});
+        fireEvent.click(strategyName);
+        fireEvent.click(getByTestId('strategyNameOptions-customMergeStrategy'));
 
         fireEvent.click(saveButton); //Modal will close now
         expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
         expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it('Verify Add Merge Rule dialog with existing rule for property fails validation', () => {
+        const {getByText, getByTestId, getByLabelText } = render(
+            <CurationContext.Provider value={customerMergingStep}>
+                <AddMergeRuleDialog
+                    {...data.mergingDataProps}
+                />
+            </CurationContext.Provider>
+        );
+
+        fireEvent.click(getByText('Select property'));
+        fireEvent.click(getByText('name'));
+
+        //Selecting the merge type to Property-Specific
+        fireEvent.click(getByLabelText('mergeType-select'));
+        fireEvent.click(getByTestId('mergeTypeOptions-Property-specific'));
+
+        let saveButton = getByText('Save');
+
+        fireEvent.click(saveButton); //Will throw an error because name already has a merge rule.
+
+        //verify if the below error message is displayed properly
+        expect(getByText('Property cannot be referenced in multiple merge rules')).toBeInTheDocument();
+
+        expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(0);
+        expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
     });
 
     it('Verify if add merge rule dialog can be saved without property and mergetype values', () => {

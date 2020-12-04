@@ -41,6 +41,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         handleError
     } = useContext(UserContext);
     const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
+    const [mergeStrategyNames, setMergeStrategyNames] = useState<string[]>([]);
     const [property, setProperty] = useState<string | undefined>(undefined);
     const [propertyTouched, setPropertyTouched] = useState(false);
     const [propertyErrorMessage, setPropertyErrorMessage] = useState('');
@@ -53,8 +54,9 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     const [uriTouched, setUriTouched] = useState(false);
     const [functionValue, setFunctionValue] = useState('');
     const [functionValueTouched, setFunctionValueTouched] = useState(false);
-    const [strategyValue, setStrategyValue] = useState('');
+    const [strategyValue, setStrategyValue] = useState<string|undefined>(undefined);
     const [strategyValueTouched, setStrategyValueTouched] = useState(false);
+    const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState('');
     const [namespace, setNamespace] = useState('');
     const [namespaceTouched, setNamespaceTouched] = useState(false);
     const [maxValueRuleInput, setMaxValueRuleInput] = useState();
@@ -79,6 +81,9 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         if (props.openAddMergeRuleDialog && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
             let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
             setEntityTypeDefinition(entityTypeDefinition);
+            let mergeStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
+            let mergeStrategies: any[] = mergeStepArtifact.mergeStrategies || [];
+            setMergeStrategyNames(mergeStrategies.map((mergeStrategy) => mergeStrategy.strategyName));
             setProperty(undefined);
             setMergeType(undefined);
             setUriTouched(false);
@@ -93,7 +98,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         setMergeTypeErrorMessage('');
         setMergeType(undefined);
         setUri('');
-        setStrategyValue('');
+        setStrategyValue(undefined);
         setNamespace('');
         setFunctionValue('');
         setPriorityOrderOptions([]);
@@ -228,6 +233,16 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         }
     }
 
+    const handleStrategyNameOptions = (value) => {
+        if (!value || value === ' ') {
+            setStrategyValueTouched(false);
+        }
+        else {
+            setStrategyValueTouched(true);
+            setStrategyValue(value);
+        }
+    }
+
     const handleChange = (event) => {
         if (event.target.id === 'uri') {
             if (event.target.value === ' ') {
@@ -291,63 +306,72 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
     const handleSubmit =  (event) => {
         event.preventDefault();
+        let newStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
         let propertyErrorMessage = '';
         let mergeTypeErrorMessage = '';
+        let strategyNameErrorMessage = '';
         if (property === '' || property === undefined) {
             propertyErrorMessage = 'Property is required';
+        } else if (newStepArtifact.mergeRules.some((rule) => rule.entityPropertyPath === property)) {
+            propertyErrorMessage = 'Property cannot be referenced in multiple merge rules';
         }
         if (mergeType === '' || mergeType === undefined) {
             mergeTypeErrorMessage = 'Merge type is required';
         }
-        let newMergeRules = {};
-        if(mergeType === 'Custom') {
-            if(uri && functionValue && property && mergeType) {
-                props.setOpenAddMergeRuleDialog(false);
-                newMergeRules =
-                    {
-                        "entityPropertyPath":property,
-                        "mergeType": "custom",
-                        "mergeModulePath": uri,
-                        "mergeModuleNamespace": namespace,
-                        "mergeModuleFunction": functionValue,
-                        "options":{}
-                    }
-                onSave(newMergeRules);
-            } else {
-                setUriTouched(true);
-                setFunctionValueTouched(true);
-            }
-        } else if(mergeType === 'Strategy'){
-            if(strategyValue && property && mergeType) {
-                newMergeRules = {
-                    "entityPropertyPath": property,
-                    "mergeType": "strategy",
-                    "mergeStrategyName": strategyValue
-                }
-                onSave(newMergeRules);
-                props.setOpenAddMergeRuleDialog(false);
-            } else {
-                setStrategyValueTouched(true);
-            }
+        if (mergeType === 'Strategy' && strategyValue === undefined) {
+            strategyNameErrorMessage = 'Strategy Name is required';
         }
-        else{
-            if(radioOptionClicked && property && mergeType) {
-                newMergeRules = {
-                    "entityPropertyPath": property,
-                    "mergeType": "property-specific",
-                    "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : 'All',
-                    "maxValues": maxValueRuleInput ? maxValueRuleInput : 'All',
-                    "priorityOrder": parsePriorityOrder(priorityOrderOptions)
+        if (!(propertyErrorMessage || mergeTypeErrorMessage)) {
+            let newMergeRules = {};
+            if (mergeType === 'Custom') {
+                if (uri && functionValue && property && mergeType) {
+                    props.setOpenAddMergeRuleDialog(false);
+                    newMergeRules =
+                        {
+                            "entityPropertyPath": property,
+                            "mergeType": "custom",
+                            "mergeModulePath": uri,
+                            "mergeModuleNamespace": namespace,
+                            "mergeModuleFunction": functionValue,
+                            "options": {}
+                        }
+                    onSave(newMergeRules);
+                } else {
+                    setUriTouched(true);
+                    setFunctionValueTouched(true);
                 }
-                onSave(newMergeRules);
-                props.setOpenAddMergeRuleDialog(false);
+            } else if (mergeType === 'Strategy') {
+                if (strategyValue && property && mergeType) {
+                    newMergeRules = {
+                        "entityPropertyPath": property,
+                        "mergeType": "strategy",
+                        "mergeStrategyName": strategyValue
+                    }
+                    onSave(newMergeRules);
+                    props.setOpenAddMergeRuleDialog(false);
+                } else {
+                    setStrategyValueTouched(true);
+                }
             } else {
-                setMaxSourcesRuleInputTouched(true);
-                setMaxValueRuleInputTouched(true);
+                if (radioOptionClicked && property && mergeType) {
+                    newMergeRules = {
+                        "entityPropertyPath": property,
+                        "mergeType": "property-specific",
+                        "maxSources": maxSourcesRuleInput ? maxSourcesRuleInput : 'All',
+                        "maxValues": maxValueRuleInput ? maxValueRuleInput : 'All',
+                        "priorityOrder": parsePriorityOrder(priorityOrderOptions)
+                    }
+                    onSave(newMergeRules);
+                    props.setOpenAddMergeRuleDialog(false);
+                } else {
+                    setMaxSourcesRuleInputTouched(true);
+                    setMaxValueRuleInputTouched(true);
+                }
             }
         }
         setPropertyErrorMessage(propertyErrorMessage);
         setMergeTypeErrorMessage(mergeTypeErrorMessage);
+        setStrategyNameErrorMessage(strategyNameErrorMessage);
     };
 
     const onAddOptions =  () => {
@@ -512,19 +536,20 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                         <Form.Item
                                 label={<span aria-label='formItem-strategyName'>Strategy Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
                                 labelAlign="left"
-                                validateStatus={(strategyValue || !strategyValueTouched) ? '' : 'error'}
-                                help={(strategyValue || !strategyValueTouched) ? '' : 'Strategy Name is required'}
+                                validateStatus={strategyNameErrorMessage ? 'error' : ''}
+                                help={strategyNameErrorMessage ? strategyNameErrorMessage : ''}
                             >
-                                <MLInput
+                                <MLSelect
                                     id="strategyName"
-                                    placeholder="Enter strategy name"
+                                    placeholder="Select strategy name"
                                     size="default"
                                     value={strategyValue}
-                                    onChange={handleChange}
-                                    //disabled={props.canReadMatchMerge && !props.canWriteMatchMerge}
-                                    className={styles.input}
-                                    aria-label="strategy-name-input"
-                                />
+                                    onChange={handleStrategyNameOptions}
+                                    className={styles.mergeTypeSelect}
+                                    aria-label="strategy-name-select"
+                                >
+                                    {mergeStrategyNames.map((strategyName) => <MLOption data-testid={`strategyNameOptions-${strategyName}`} key={strategyName}>{strategyName}</MLOption>)}
+                                </MLSelect>
                             </Form.Item>
                         : ''
                     }
