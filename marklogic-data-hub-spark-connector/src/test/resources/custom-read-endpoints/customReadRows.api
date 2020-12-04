@@ -1,0 +1,23 @@
+{
+    "endpoint": "/custom-read-endpoints/customReadRows.sjs",
+    "functionName": "readRows",
+    "params": [
+        {
+            "name": "endpointState",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        },
+        {
+            "name": "endpointConstants",
+            "datatype": "jsonDocument",
+            "multiple": false,
+            "nullable": true
+        }
+    ],
+    "return": {
+        "datatype": "jsonDocument",
+        "multiple": true,
+        "nullable": true
+    }
+}

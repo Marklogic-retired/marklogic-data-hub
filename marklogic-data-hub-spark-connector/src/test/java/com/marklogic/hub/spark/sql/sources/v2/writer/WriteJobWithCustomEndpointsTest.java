@@ -1,14 +1,8 @@
 package com.marklogic.hub.spark.sql.sources.v2.writer;
 
-import com.marklogic.client.document.GenericDocumentManager;
-import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
-import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.spark.sql.sources.v2.AbstractSparkConnectorTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,17 +10,8 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
 
     @BeforeEach
     void installCustomJobEndpoints() {
-        GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle()
-            .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
-
-        final String path = "/custom-job-endpoints/";
-        Stream.of("initializeWrite", "finalizeWrite").forEach(moduleName -> {
-            String apiPath = path + moduleName + ".api";
-            String scriptPath = path + moduleName + ".sjs";
-            mgr.write(apiPath, metadata, new InputStreamHandle(readInputStreamFromClasspath(apiPath)).withFormat(Format.JSON));
-            mgr.write(scriptPath, metadata, new InputStreamHandle(readInputStreamFromClasspath(scriptPath)).withFormat(Format.TEXT));
-        });
+        installCustomEndpoint("custom-job-endpoints/initializeWrite.api", "custom-job-endpoints/initializeWrite.sjs");
+        installCustomEndpoint("custom-job-endpoints/finalizeWrite.api", "custom-job-endpoints/finalizeWrite.sjs");
     }
 
     @Test
@@ -85,15 +70,14 @@ public class WriteJobWithCustomEndpointsTest extends AbstractSparkConnectorTest 
     }
 
     private void verifyCustomFinalizeEndpointIsUsed() {
-        if(canUpdateJobDoc()){
+        if (canUpdateJobDoc()) {
             verifyStatusIsStopOnError();
-        }
-        else{
+        } else {
             verifyJobDocumentWasNotUpdated(getJobDocumentStatus());
         }
     }
 
-    private void verifyStatusIsStopOnError(){
+    private void verifyStatusIsStopOnError() {
         assertEquals("stop-on-error", getJobDocumentStatus(),
             "The custom finalizeWrite endpoint is expected to always set 'stop-on-error' as the status. This is done " +
                 "so that the jobs.sjs module doesn't see some unrecognized status and then try to update the job " +
