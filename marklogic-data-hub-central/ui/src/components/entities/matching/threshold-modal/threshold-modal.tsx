@@ -3,6 +3,8 @@ import { Modal, Form, Input, Icon } from 'antd';
 import { MLButton, MLTooltip, MLSelect } from '@marklogic/design-system';
 import styles from './threshold-modal.module.scss';
 
+import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
+
 import { CurationContext } from '../../../../util/curation-context';
 import { MatchingStep, Threshold } from '../../../../types/curation-types';
 import { Definition } from '../../../../types/modeling-types';
@@ -33,15 +35,22 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const [nameValue, setNameValue] = useState('');
   const [nameErrorMessage, setNameErrorMessage] = useState('');
+  const [isNameTouched, setIsNameTouched] = useState(false);
 
   const [actionType, setActionType] = useState<string | undefined>(undefined);
   const [actionTypeErrorMessage, setActionTypeErrorMessage] = useState('');
+  const [isActionTypeTouched, setIsActionTypeTouched] = useState(false);
 
   const [uriValue, setUriValue] = useState('');
   const [uriErrorMessage, setUriErrorMessage] = useState('');
+  const [isUriTouched, setIsUriTouched] = useState(false);
   const [functionValue, setFunctionValue] = useState('');
   const [functionErrorMessage, setFunctionErrorMessage] = useState('');
+  const [isFunctionTouched, setIsFunctionTouched] = useState(false);
   const [namespaceValue, setNamespaceValue] = useState('');
+  const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
+
+  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
   useEffect(() => {
     if (Object.keys(props.editThreshold).length !== 0 && props.isVisible) {
@@ -64,32 +73,39 @@ const ThresholdModal: React.FC<Props> = (props) => {
     switch(event.target.id) {
       case 'name-input':
         if (event.target.value === '') {
+          setIsNameTouched(false);
           setNameErrorMessage('A threshold name is required');
         } else {
           setNameErrorMessage('');
         }
+        setIsNameTouched(true);
         setNameValue(event.target.value);
         break;
 
       case 'uri-input':
         if (event.target.value === '') {
+          setIsUriTouched(false);
           setUriErrorMessage('A URI is required');
         } else {
           setUriErrorMessage('');
         }
+        setIsUriTouched(true);
         setUriValue(event.target.value);
         break;
 
       case 'function-input':
         if (event.target.value === '') {
+          setIsFunctionTouched(false);
           setFunctionErrorMessage('A function is required');
         } else {
           setFunctionErrorMessage('');
         }
+        setIsFunctionTouched(true);
         setFunctionValue(event.target.value);
         break;
 
       case 'namespace-input':
+        setIsNamespaceTouched(true);
         setNamespaceValue(event.target.value);
         break;
 
@@ -99,8 +115,12 @@ const ThresholdModal: React.FC<Props> = (props) => {
   };
 
   const closeModal = () => {
-    resetModal();
-    props.toggleModal(false);
+    if (hasFormChanged()) {
+      setDiscardChangesVisible(true);
+    } else {
+      resetModal();
+      props.toggleModal(false);
+    }
   };
 
   const resetModal = () => {
@@ -113,7 +133,17 @@ const ThresholdModal: React.FC<Props> = (props) => {
     setFunctionValue('');
     setFunctionErrorMessage('');
     setNamespaceValue('');
+    resetTouched();
   };
+
+  const resetTouched = () => {
+    setDiscardChangesVisible(false);
+    setIsNameTouched(false);
+    setIsActionTypeTouched(false);
+    setIsUriTouched(false);
+    setIsFunctionTouched(false);
+    setIsNamespaceTouched(false);
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -254,8 +284,56 @@ const ThresholdModal: React.FC<Props> = (props) => {
 
   const onMatchTypeSelect = (value: string) => {
     setActionTypeErrorMessage('');
+    setIsActionTypeTouched(true);
     setActionType(value);  
   };
+
+  const hasFormChanged = () => {
+    if (actionType ===  'custom') {
+      let checkCustomValues = hasCustomFormValuesChanged();
+      if (!isNameTouched
+        && !isActionTypeTouched
+        && !checkCustomValues
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      if (!isNameTouched && !isActionTypeTouched) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  };
+
+  const hasCustomFormValuesChanged = () => {
+    if ( !isUriTouched
+      && !isFunctionTouched
+      && !isNamespaceTouched
+    ) {
+      return false;
+    } else {
+      return true
+    }
+  }
+
+  const discardOk = () => {
+    resetModal();
+    props.toggleModal(false);
+  };
+
+  const discardCancel = () => {
+    resetTouched();
+  };
+
+  const discardChanges = <ConfirmYesNo
+    visible={discardChangesVisible}
+    type='discardChanges'
+    onYes={discardOk}
+    onNo={discardCancel}
+  />;
 
   const renderThresholdOptions = THRESHOLD_TYPE_OPTIONS.map((matchType, index) => {
     return <MLOption key={index} value={matchType.value} aria-label={`${matchType.name}-option`}>{matchType.name}</MLOption>;
@@ -414,6 +492,7 @@ const ThresholdModal: React.FC<Props> = (props) => {
         {actionType === 'custom' && renderCustomOptions}
         {modalFooter}
       </Form>
+      {discardChanges}
     </Modal>
   );
 };

@@ -7,6 +7,7 @@ import styles from './ruleset-single-modal.module.scss';
 import arrayIcon from '../../../../assets/icon_array.png';
 
 import EntityPropertyTreeSelect from '../../../entity-property-tree-select/entity-property-tree-select';
+import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
 
 import { CurationContext } from '../../../../util/curation-context';
 import { MatchingStep, MatchRule, MatchRuleset } from '../../../../types/curation-types';
@@ -47,23 +48,39 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const [selectedProperty, setSelectedProperty] = useState<string | undefined>(undefined);
   const [propertyTypeErrorMessage, setPropertyTypeErrorMessage] = useState('');
+  const [isPropertyTypeTouched, setIsPropertyTypeTouched] = useState(false);
+
   const [matchType, setMatchType] = useState<string | undefined>(undefined);
   const [matchTypeErrorMessage, setMatchTypeErrorMessage] = useState('');
+  const [isMatchTypeTouched, setIsMatchTypeTouched] = useState(false);
 
   const [thesaurusValue, setThesaurusValue] = useState('');
   const [thesaurusErrorMessage, setThesaurusErrorMessage] = useState('');
+  const [isThesaurusTouched, setIsThesaurusTouched] = useState(false);
+
   const [filterValue, setFilterValue] = useState('');
+  const [isFilterTouched, setIsFilterTouched] = useState(false);
 
   const [dictionaryValue, setDictionaryValue] = useState('');
   const [dictionaryErrorMessage, setDictionaryErrorMessage] = useState('');
+  const [isDictionaryTouched, setIsDictionaryTouched] = useState(false);
+
   const [distanceThresholdValue, setDistanceThresholdValue] = useState('');
   const [distanceThresholdErrorMessage, setDistanceThresholdErrorMessage] = useState('');
+  const [isDistanceTouched, setIsDistanceTouched] = useState(false);
 
   const [uriValue, setUriValue] = useState('');
   const [uriErrorMessage, setUriErrorMessage] = useState('');
+  const [isUriTouched, setIsUriTouched] = useState(false);
+
   const [functionValue, setFunctionValue] = useState('');
   const [functionErrorMessage, setFunctionErrorMessage] = useState('');
+  const [isFunctionTouched, setIsFunctionTouched] = useState(false);
+
   const [namespaceValue, setNamespaceValue] = useState('');
+  const [isNamespaceTouched, setIsNamespaceTouched] = useState(false);
+
+  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== '') {
@@ -98,54 +115,66 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     switch(event.target.id) {
       case 'thesaurus-uri-input':
         if (event.target.value === '') {
+          setIsThesaurusTouched(false);
           setThesaurusErrorMessage('A thesaurus URI is required');
         } else {
           setThesaurusErrorMessage('');
         }
+        setIsThesaurusTouched(true);
         setThesaurusValue(event.target.value);
         break;
 
       case 'filter-input':
+        setIsFilterTouched(true);
         setFilterValue(event.target.value);
         break;
 
       case 'dictionary-uri-input':
         if (event.target.value === '') {
+          setIsDictionaryTouched(false);
           setDictionaryErrorMessage('A dictionary URI is required');
         } else {
           setDictionaryErrorMessage('');
         }
+        setIsDictionaryTouched(true);
         setDictionaryValue(event.target.value);
         break;
 
       case 'distance-threshold-input':
         if (event.target.value === '') {
+          setIsDistanceTouched(false);
           setDistanceThresholdErrorMessage('A distance threshold is required');
         } else {
           setDistanceThresholdErrorMessage('');
         }
+        setIsDistanceTouched(true);
         setDistanceThresholdValue(event.target.value);
         break;
 
       case 'uri-input':
         if (event.target.value === '') {
+          setIsUriTouched(false);
           setUriErrorMessage('A URI is required');
         } else {
           setUriErrorMessage('');
         }
+        setIsUriTouched(true);
         setUriValue(event.target.value);
         break;
 
       case 'function-input':
         if (event.target.value === '') {
+          setIsFunctionTouched(false);
           setFunctionErrorMessage('A function is required');
         } else {
           setFunctionErrorMessage('');
         }
+        setIsFunctionTouched(true);
         setFunctionValue(event.target.value);
         break;
 
       case 'namespace-input':
+        setIsNamespaceTouched(true);
         setNamespaceValue(event.target.value);
         break;
 
@@ -155,8 +184,12 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   const closeModal = () => {
-    resetModal();
-    props.toggleModal(false);
+    if (hasFormChanged()) {
+      setDiscardChangesVisible(true);
+    } else {
+      resetModal();
+      props.toggleModal(false);
+    }
   };
 
   const resetModal = () => {
@@ -176,7 +209,21 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setFunctionValue('');
     setFunctionErrorMessage('');
     setNamespaceValue('');
+    resetTouched();
   };
+
+  const resetTouched = () => {
+    setDiscardChangesVisible(false);
+    setIsPropertyTypeTouched(false);
+    setIsMatchTypeTouched(false);
+    setIsThesaurusTouched(false);
+    setIsFilterTouched(false);
+    setIsDictionaryTouched(false);
+    setIsDistanceTouched(false);
+    setIsUriTouched(false);
+    setIsFunctionTouched(false);
+    setIsNamespaceTouched(false);
+  }
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -336,11 +383,13 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const onPropertySelect = (value: string) => {
     setPropertyTypeErrorMessage('');
+    setIsPropertyTypeTouched(true);
     setSelectedProperty(value);
   };
 
   const onMatchTypeSelect = (value: string) => {
     setMatchTypeErrorMessage('');
+    setIsMatchTypeTouched(true);
     setMatchType(value);  
   };
 
@@ -358,6 +407,93 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     await updateMatchingArtifact(updateStep);
     updateActiveStepArtifact(updateStep);
   }
+
+  const hasFormChanged = () => {
+    if (matchType ===  'custom') {
+      let checkCustomValues = hasCustomFormValuesChanged();
+      if (!isPropertyTypeTouched
+        && !isMatchTypeTouched
+        && !checkCustomValues
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (matchType === 'synonym') {
+      let checkSynonymValues = hasSynonymFormValuesChanged();
+      if (!isPropertyTypeTouched
+        && !isMatchTypeTouched
+        && !checkSynonymValues
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else if (matchType === 'doubleMetaphone') {
+      let checkDoubleMetaphoneValues = hasDoubleMetaphoneFormValuesChanged();
+      if (!isPropertyTypeTouched
+        && !isMatchTypeTouched
+        && !checkDoubleMetaphoneValues
+      ) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      if (!isPropertyTypeTouched && !isMatchTypeTouched) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  };
+
+  const hasCustomFormValuesChanged = () => {
+    if ( !isUriTouched
+      && !isFunctionTouched
+      && !isNamespaceTouched
+    ) {
+      return false;
+    } else {
+      return true
+    }
+  }
+
+  const hasSynonymFormValuesChanged = () => {
+    if ( !isThesaurusTouched
+      && !isFilterTouched
+    ) {
+      return false;
+    } else {
+      return true
+    }
+  }
+
+  const hasDoubleMetaphoneFormValuesChanged = () => {
+    if ( !isDictionaryTouched
+      && !isDistanceTouched
+    ) {
+      return false;
+    } else {
+      return true
+    }
+  }
+
+  const discardOk = () => {
+    resetModal();
+    props.toggleModal(false);
+  };
+
+  const discardCancel = () => {
+    resetTouched();
+  };
+
+  const discardChanges = <ConfirmYesNo
+    visible={discardChangesVisible}
+    type='discardChanges'
+    onYes={discardOk}
+    onNo={discardCancel}
+  />;
 
   const renderMatchOptions = MATCH_TYPE_OPTIONS.map((matchType, index) => {
     return <MLOption key={index} value={matchType.value} aria-label={`${matchType.value}-option`}>{matchType.name}</MLOption>;
@@ -624,6 +760,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         {matchType === 'custom' && renderCustomOptions}
         {modalFooter}
       </Form>
+      {discardChanges}
     </Modal>
   );
 };
