@@ -18,6 +18,7 @@ import {UserContext} from "../../../../util/user-context";
 import { MergingStep } from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
+import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
 
 type Props = {
     data: any;
@@ -62,6 +63,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     const [maxSourcesRuleInputTouched, setMaxSourcesRuleInputTouched] = useState(false);
     const [radioOptionClicked, setRadioOptionClicked] = useState(1);
     const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([]);
+    const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
     const titleLegend = <div className={styles.titleLegend}>
         <div data-testid='multipleIconLegend' className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
@@ -96,12 +98,90 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         setFunctionValue('');
         setPriorityOrderOptions([]);
         setDropdownOption('Length');
+        resetTouched();
     };
 
+    const resetTouched = () => {
+      setDiscardChangesVisible(false);
+      setPropertyTouched(false);
+      setMergeTypeTouched(false);
+      setDropdownOptionTouched(false);
+      setFunctionValueTouched(false);
+      setStrategyValueTouched(false);
+      setNamespaceTouched(false);
+      setMaxValueRuleInputTouched(false);
+      setMaxSourcesRuleInputTouched(false);
+    }
+
     const onCancel = () => {
+      if (hasFormChanged()) {
+        setDiscardChangesVisible(true);
+      } else {
         resetModal();
         props.setOpenAddMergeRuleDialog(false);
+      }
     };
+
+    const hasFormChanged = () => {
+      if (mergeType ===  'Custom') {
+        let checkCustomValues = hasCustomFormValuesChanged();
+        if (!propertyTouched && !mergeTypeTouched && !checkCustomValues) {
+          return false;
+        } else {
+          return true;
+        }
+      } else if (mergeType === 'Strategy') {
+        let checkStrategyValues = hasStratgyFormValuesChanged();
+        if (!propertyTouched && !mergeTypeTouched && !checkStrategyValues) {
+          return false;
+        } else {
+          return true;
+        }
+      } else if (mergeType === 'Property-specific'){
+        let checkPropertySpecificValues = hasPropertySpecificFormValuesChanged();
+        if (!propertyTouched && !mergeTypeTouched && checkPropertySpecificValues) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        if (!propertyTouched && !mergeTypeTouched) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    };
+
+    const hasCustomFormValuesChanged = () => {
+      if ( !uriTouched
+        && !functionValueTouched
+        && !namespaceTouched
+      ) {
+        return false;
+      } else {
+        return true
+      }
+    }
+
+    const hasStratgyFormValuesChanged = () => {
+      if (!strategyValueTouched) {
+        return false;
+      } else {
+        return true
+      }
+    }
+
+    const hasPropertySpecificFormValuesChanged = () => {
+      if ( !dropdownOptionTouched
+        && !maxSourcesRuleInputTouched
+        && !maxValueRuleInputTouched
+      ) {
+        return false;
+      } else {
+        return true
+      }
+    }
 
     const onOk = () => {
         props.setOpenAddMergeRuleDialog(false);
@@ -295,6 +375,23 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     const handleEdit = () => {
 
     }
+
+    const discardOk = () => {
+      resetModal();
+      props.setOpenAddMergeRuleDialog(false);
+    };
+  
+    const discardCancel = () => {
+      resetTouched();
+    };
+  
+    const discardChanges = <ConfirmYesNo
+      visible={discardChangesVisible}
+      type='discardChanges'
+      onYes={discardOk}
+      onNo={discardCancel}
+    />;
+
     return (
         <Modal
             visible={props.openAddMergeRuleDialog}
@@ -491,6 +588,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                         </div>
                     </Form.Item>
                 </Form>
+                {discardChanges}
             </div>
         </Modal>
     );

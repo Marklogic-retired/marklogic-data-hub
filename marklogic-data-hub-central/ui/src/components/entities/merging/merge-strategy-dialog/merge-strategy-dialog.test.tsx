@@ -57,6 +57,7 @@ describe('Edit Merge Strategy Dialog component', () => {
         );
         let cancelButton = getByText('Cancel');
         fireEvent.click(cancelButton);
+        expect(screen.queryByLabelText('confirm-body')).toBeNull();
         expect(data.editMergingDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
         expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
     });

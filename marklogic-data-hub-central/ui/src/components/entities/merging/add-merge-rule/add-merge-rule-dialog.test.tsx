@@ -1,5 +1,5 @@
 import React from 'react';
-import {render, cleanup, fireEvent} from '@testing-library/react';
+import {render, cleanup, fireEvent, screen} from '@testing-library/react';
 import AddMergeRuleDialog from './add-merge-rule-dialog';
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from '../../../../util/curation-context';
@@ -179,6 +179,7 @@ describe('Add Merge Rule Dialog component', () => {
         );
         let cancelButton = getByText('Cancel');
         fireEvent.click(cancelButton);
+        expect(screen.queryByLabelText('confirm-body')).toBeNull();
         expect(data.mergingDataProps.setOpenAddMergeRuleDialog).toHaveBeenCalledTimes(1);
         expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
     });

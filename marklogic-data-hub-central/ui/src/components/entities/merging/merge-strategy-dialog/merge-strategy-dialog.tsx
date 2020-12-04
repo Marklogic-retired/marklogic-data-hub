@@ -12,6 +12,7 @@ import {MergeRuleTooltips} from "../../../../config/tooltips.config";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import {MergingStep} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
+import ConfirmYesNo from '../../../common/confirm-yes-no/confirm-yes-no';
 
 type Props = {
     sourceNames: string[];
@@ -31,11 +32,15 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     const [radioSourcesOptionClicked, setRadioSourcesOptionClicked] = useState(1);
     const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
     const [maxValues, setMaxValues] = useState<any>('');
+    const [maxValuesTouched, setMaxValuesTouched] = useState(false);
     const [maxSources, setMaxSources] = useState<any>('');
+    const [maxSourcesTouched, setMaxSourcesTouched] = useState(false);
     const [isCustomStrategy, setIsCustomStrategy] = useState(false);
     const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([]);
     const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState('');
     const [dropdownOption, setDropdownOption] = useState('Length');
+    const [dropdownOptionTouched, setDropdownOptionTouched] = useState(false);
+    const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
     const dropdownTypes = ['Length'].concat(props.sourceNames);
     const dropdownTypeOptions = dropdownTypes.map(elem => <MLOption data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
@@ -57,9 +62,11 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         }
         if(event.target.id === 'maxSourcesStrategyInput'){
             setMaxSources(event.target.value);
+            setMaxSourcesTouched(true);
         }
         if(event.target.id === 'maxValuesStrategyInput'){
             setMaxValues(event.target.value);
+            setMaxValuesTouched(true);
         }
         if(event.target.name === 'maxSources'){
             setRadioSourcesOptionClicked(event.target.value);
@@ -77,6 +84,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
     const handleDropDownOptions = (value) => {
         setDropdownOption(value);
+        setDropdownOptionTouched(true);
     }
 
     const handleSubmit = (event) => {
@@ -128,10 +136,25 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
 
     const onCancel = () => {
+      if (hasFormChanged()) {
+        setDiscardChangesVisible(true);
+      } else {
         props.setOpenEditMergeStrategyDialog(false);
-        !props.isEditStrategy ? resetModal() : onCancelEditModal();
-        //resetModal()
+        resetModal();
+      }
     };
+
+    const hasFormChanged = () => {
+      if ( !dropdownOptionTouched
+        && !strategyNameTouched
+        && !maxValuesTouched
+        && !maxSourcesTouched
+      ) {
+        return false;
+      } else {
+        return true
+      }
+    }
 
     const onCancelEditModal = () => {
 
@@ -163,8 +186,32 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         setRadioSourcesOptionClicked(1);
         setMaxValues('');
         setMaxSources('');
+        resetTouched();
     };
 
+    const resetTouched = () => {
+      setDiscardChangesVisible(false);
+      setStrategyNameTouched(false);
+      setMaxValuesTouched(false);
+      setMaxSourcesTouched(false);
+      setDropdownOptionTouched(false);
+    }
+
+    const discardOk = () => {
+      props.setOpenEditMergeStrategyDialog(false);
+      resetModal();
+    };
+  
+    const discardCancel = () => {
+      resetTouched();
+    };
+  
+    const discardChanges = <ConfirmYesNo
+      visible={discardChangesVisible}
+      type='discardChanges'
+      onYes={discardOk}
+      onNo={discardCancel}
+    />;
 
     useEffect(() => {
         if(props.strategyName.length === 0){
@@ -332,6 +379,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
                     </div>
                 </Form.Item>
             </Form>
+            {discardChanges}
         </Modal>
     );
 };

@@ -51,6 +51,9 @@ describe('Matching Ruleset Single Modal component', () => {
     userEvent.click(screen.getByText('Exact'));
 
     userEvent.click(getByText('Cancel'));
+    expect(screen.getByLabelText('confirm-body')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Yes'));
+
     expect(toggleModalMock).toHaveBeenCalledTimes(1);
     expect(mockMatchingUpdate).toHaveBeenCalledTimes(0);
     expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(0);
