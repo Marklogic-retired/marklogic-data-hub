@@ -674,6 +674,25 @@ describe("scenarios for final/staging databases for zero state and explore pages
     browsePage.getSearchText().should("have.value", "Adams");
     browsePage.getTotalDocuments().should("be.equal", 2);
 
+    //Verify if the pagination gets reset upon cliking on database buttons 
+    browsePage.clearSearchText();
+    browsePage.selectEntity('All Entities');
+    browsePage.getPaginationPageSizeOptions().then(attr => {
+      attr[0].click();
+    })
+
+    browsePage.getPageSizeOption('10 / page').click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.clickPaginationItem(4);
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    cy.contains('Showing 1-20 of 36 results', { timeout: 5000 })
+    browsePage.getTotalDocuments().should('be.equal', 36);
+
     //switch to staging database and verify the number of documents for the search string is 0
     browsePage.getStagingDatabaseButton().click();
     browsePage.waitForSpinnerToDisappear();

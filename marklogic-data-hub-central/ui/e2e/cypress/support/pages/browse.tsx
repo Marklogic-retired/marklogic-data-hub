@@ -617,6 +617,14 @@ class BrowsePage {
     cy.get(".ant-input-clear-icon").click();
   }
 
+  getPaginationPageSizeOptions() {
+    return cy.get('.ant-pagination-options .ant-select-selection-selected-value');
+  }
+
+  getPageSizeOption(pageSizeOption: string) {
+    return cy.findByText(pageSizeOption);
+  }
+  
 }
 
 const browsePage = new BrowsePage();
