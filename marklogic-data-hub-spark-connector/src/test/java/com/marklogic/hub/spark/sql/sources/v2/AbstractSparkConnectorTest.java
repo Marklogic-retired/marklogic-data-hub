@@ -208,15 +208,17 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
      * Tests that need a custom ingestion endpoint can make use of this.
      */
     protected void installCustomIngestionEndpoint() {
+        installCustomEndpoint("custom-ingestion-endpoint/endpoint.api", "custom-ingestion-endpoint/endpoint.sjs");
+    }
+
+    protected void installCustomEndpoint(String apiPath, String sjsPath) {
         GenericDocumentManager mgr = getHubClient().getModulesClient().newDocumentManager();
         DocumentMetadataHandle metadata = new DocumentMetadataHandle()
             .withPermission("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE, DocumentMetadataHandle.Capability.EXECUTE);
 
         try {
-            mgr.write(CUSTOM_INGESTION_API_PATH, metadata,
-                new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.api").getFile()).withFormat(Format.JSON));
-            mgr.write(CUSTOM_INGESTION_ENDPOINT_PATH, metadata,
-                new FileHandle(new ClassPathResource("custom-ingestion-endpoint/endpoint.sjs").getFile()).withFormat(Format.TEXT));
+            mgr.write("/" + apiPath, metadata, new FileHandle(new ClassPathResource(apiPath).getFile()).withFormat(Format.JSON));
+            mgr.write("/" + sjsPath, metadata, new FileHandle(new ClassPathResource(sjsPath).getFile()).withFormat(Format.TEXT));
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }

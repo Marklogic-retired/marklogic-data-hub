@@ -37,17 +37,14 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
      * @param initializationResponse
      * @param partitionNumber
      */
-    public HubInputPartitionReader(Map<String, String> options, JsonNode initializationResponse, int partitionNumber) {
+    public HubInputPartitionReader(Map<String, String> options, JsonNode initializationResponse, int partitionNumber, JsonNode endpointParams) {
         this.hubClient = HubClient.withHubClientConfig(Util.buildHubClientConfig(options));
         this.objectMapper = new ObjectMapper();
 
         StructType sparkSchema = (StructType) StructType.fromJson(initializationResponse.get("sparkSchema").toString());
         this.jsonRowParser = new JsonRowParser(sparkSchema);
-
         ObjectNode endpointConstants = buildEndpointConstants(initializationResponse, partitionNumber);
-        ObjectNode endpointState = objectMapper.createObjectNode();
-        endpointState.put("batchNumber", 1);
-        this.bulkOutputCaller = buildOutputCaller(endpointConstants, endpointState);
+        this.bulkOutputCaller = buildOutputCaller(endpointConstants, endpointParams);
     }
 
     /**
@@ -98,15 +95,16 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         return endpointConstants;
     }
 
-    private OutputCaller.BulkOutputCaller<InputStream> buildOutputCaller(ObjectNode endpointConstants, ObjectNode endpointState) {
+    private OutputCaller.BulkOutputCaller<InputStream> buildOutputCaller(ObjectNode endpointConstants, JsonNode endpointParams) {
         InputStreamHandle defaultApi = hubClient.getModulesClient().newJSONDocumentManager()
-            .read("/marklogic-data-hub-spark-connector/readRows.api", new InputStreamHandle());
-
+            .read(endpointParams.get("apiPath").asText(), new InputStreamHandle());
+        ObjectNode readEndpointState = (endpointParams.hasNonNull("endpointState"))?
+            (ObjectNode) endpointParams.get("endpointState") :objectMapper.createObjectNode().put("batchNumber", 1);
         OutputCaller<InputStream> outputCaller = OutputCaller.on(hubClient.getFinalClient(), defaultApi, new InputStreamHandle());
 
         return outputCaller.bulkCaller(outputCaller.newCallContext()
             .withEndpointConstants(new JacksonHandle(endpointConstants))
-            .withEndpointState(new JacksonHandle(endpointState)));
+            .withEndpointState(new JacksonHandle(readEndpointState)));
     }
 
     private void readNextBatchOfRows() {

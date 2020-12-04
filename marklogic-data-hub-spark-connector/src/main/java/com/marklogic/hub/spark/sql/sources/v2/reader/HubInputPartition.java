@@ -16,15 +16,17 @@ public class HubInputPartition implements InputPartition<InternalRow> {
     private Map<String, String> options;
     private JsonNode initializeResponse;
     private int partitionNumber;
+    private JsonNode endpointParams;
 
-    public HubInputPartition(Map<String, String> options, JsonNode initializeResponse, int partitionNumber) {
+    public HubInputPartition(Map<String, String> options, JsonNode initializeResponse, int partitionNumber, JsonNode endpointParams) {
         this.options = options;
         this.initializeResponse = initializeResponse;
         this.partitionNumber = partitionNumber;
+        this.endpointParams = endpointParams;
     }
 
     @Override
     public InputPartitionReader<InternalRow> createPartitionReader() {
-        return new HubInputPartitionReader(options, initializeResponse, partitionNumber);
+        return new HubInputPartitionReader(options, initializeResponse, partitionNumber, endpointParams);
     }
 }

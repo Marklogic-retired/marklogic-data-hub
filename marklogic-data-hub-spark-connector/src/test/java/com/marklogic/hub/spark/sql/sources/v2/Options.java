@@ -17,16 +17,17 @@ public class Options {
     // All connector-specific options
     private String uriTemplate;
     private String uriPrefix;
-    private String writeRecordsApiPath;
     private String collections;
     private String permissions;
     private String sourceName;
     private String sourceType;
+    private String writeRecordsApiPath;
     private JsonNode writeRecordsEndpointConstants;
     private JsonNode writeRecordsEndpointState;
     private String initializeWriteApiPath;
     private String finalizeWriteApiPath;
     private JsonNode additionalExternalMetadata;
+    private String initializeReadApiPath;
 
     // Can contain any DHF properties - e.g. mlHost, mlUsername, etc
     private Map<String, String> hubProperties;
@@ -41,6 +42,9 @@ public class Options {
     private String selectedColumns;
     private String serializedPlan;
     private String sparkSchema;
+    private String readRowsApiPath;
+    private JsonNode readRowsEndpointState;
+    private ObjectNode readrowsendpointparams;
 
     // Has a default value so that tests don't depend on a Spark cluster running to determine minDefaultPartitions
     private String numPartitions = "2";
@@ -127,6 +131,25 @@ public class Options {
         }
         if (sparkSchema != null) {
             params.put("sparkschema", sparkSchema);
+        }
+        if(initializeReadApiPath != null) {
+            params.put("initializereadapipath", initializeReadApiPath);
+        }
+
+        if(readrowsendpointparams !=null) {
+            params.put("readrowsendpointparams", readrowsendpointparams.toString());
+        }
+
+        else if (readRowsApiPath != null || readRowsEndpointState != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode node = mapper.createObjectNode();
+            if (readRowsApiPath != null) {
+                node.put("apiPath", readRowsApiPath);
+            }
+            if (readRowsEndpointState != null) {
+                node.set("endpointState", readRowsEndpointState);
+            }
+            params.put("readrowsendpointparams", node.toString());
         }
 
         params.put("numpartitions", numPartitions);
@@ -231,6 +254,26 @@ public class Options {
 
     public Options withSparkSchema(String sparkSchema) {
         this.sparkSchema = sparkSchema;
+        return this;
+    }
+
+    public Options withInitializeReadApiPath(String initializeReadApiPath) {
+        this.initializeReadApiPath = initializeReadApiPath;
+        return this;
+    }
+
+    public Options withReadRowsApiPath(String readRowsApiPath) {
+        this.readRowsApiPath = readRowsApiPath;
+        return this;
+    }
+
+    public Options withReadRowsEndpointState(JsonNode readRowsEndpointState) {
+        this.readRowsEndpointState = readRowsEndpointState;
+        return this;
+    }
+
+    public Options withReadRowsEndpointparams(ObjectNode readrowsendpointparams) {
+        this.readrowsendpointparams = readrowsendpointparams;
         return this;
     }
 }
