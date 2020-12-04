@@ -15,6 +15,10 @@ class PropertyModal {
     cy.get('.ant-cascader-picker').trigger('mouseover').click();
   }
 
+  clearPropertyDropdown() {
+    cy.findByLabelText('icon: close-circle').click();
+  }
+
   getTypeFromDropdown(type: string) {
     return cy.get(`ul > li`).first().get(`[title="${type}"]`).should('be.visible');
   }

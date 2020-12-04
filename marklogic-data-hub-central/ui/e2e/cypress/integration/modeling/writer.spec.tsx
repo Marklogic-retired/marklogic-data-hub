@@ -91,6 +91,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.getToggleStepsButton().should('not.exist');
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName('user-id');
+    propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Related Entity').click();
     propertyModal.getCascadedTypeFromDropdown('Customer').click();
@@ -415,7 +416,7 @@ describe('Entity Modeling: Writer Role', () => {
     //propertyTable.getWildcardIcon('street').should('exist');
 
     // add structured property to structured type
-    propertyTable.getAddPropertyToStructureType('Address').click({force: true});
+    propertyTable.getAddPropertyToStructureType('Address').click();
     propertyModal.newPropertyName('zip');
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('Structured').click();
@@ -487,6 +488,7 @@ describe('Entity Modeling: Writer Role', () => {
     propertyModal.clearPropertyName();
 
     propertyModal.newPropertyName('streetAlt');
+    propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
     propertyModal.getTypeFromDropdown('More number types').click();
     propertyModal.getCascadedTypeFromDropdown('unsignedByte').click();
@@ -524,8 +526,9 @@ describe('Entity Modeling: Writer Role', () => {
     // change relationship property to structured
     propertyTable.editProperty('alt_address');
     propertyModal.getToggleStepsButton().should('not.exist');
+    propertyModal.clearPropertyDropdown();
     propertyModal.openPropertyDropdown();
-    propertyModal.getTypeFromDropdown('Structured').click({force: true});
+    propertyModal.getTypeFromDropdown('Structured').click();
     propertyModal.getCascadedTypeFromDropdown('Address').click();
     propertyModal.getSubmitButton().click();
     propertyTable.expandStructuredTypeIcon('alt_address').click();
