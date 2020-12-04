@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, wait, cleanup } from '@testing-library/react';
+import {render, wait, cleanup, fireEvent} from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import userEvent from "@testing-library/user-event";
 
@@ -16,7 +16,7 @@ describe('Merging cards view component', () => {
   afterEach(() => {
     cleanup();
   });
-  
+
   it('can render/edit merging steps with writeMatchMerge authority', () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const { getByText, getByLabelText, getByTestId, queryAllByRole } =  render(
@@ -56,7 +56,7 @@ describe('Merging cards view component', () => {
 
   it('cannot edit/delete merging step without writeMatchMerge authority', () => {
     const deleteMergingArtifact = jest.fn(() => {});
-    const { getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText } =  render(
+    const { getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
       <Router>
         <MergingCard
           mergingStepsArray={mergingStepsArray}
@@ -73,8 +73,11 @@ describe('Merging cards view component', () => {
       </Router>
     );
 
-    expect(queryByLabelText('icon: plus-circle')).not.toBeInTheDocument();
-    expect(getByText('mergeCustomers')).toBeInTheDocument();
+    fireEvent.mouseOver(getByLabelText('add-new-card-disabled'));
+    wait (() => expect(getByText('Curate: '+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    expect(queryByLabelText('icon: plus-circle')).toBeInTheDocument();
+    fireEvent.mouseOver(getByText('mergeCustomers'));
+    wait (() => expect(getByText('Curate: '+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText('mergeCustomersEmpty')).toBeInTheDocument();
 
     //Verify if the card renders fine

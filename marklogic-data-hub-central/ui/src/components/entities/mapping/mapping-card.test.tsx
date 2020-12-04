@@ -79,7 +79,8 @@ describe("Mapping Card component", () => {
 
     fireEvent.mouseOver(getByLabelText('add-new-card-disabled'));
     await wait (() => expect(getByText('Curate: '+SecurityTooltips.missingPermission)).toBeInTheDocument());
-
+    fireEvent.mouseOver(getByText('Mapping1'));
+    wait (() => expect(getByText('Curate: '+SecurityTooltips.missingPermission)).toBeInTheDocument());
     fireEvent.mouseOver(getByRole('edit-mapping'));
     await wait (() => expect(getByText('Edit')).toBeInTheDocument());
     fireEvent.mouseOver(getByTestId('Mapping1-stepDetails'));
@@ -93,7 +94,6 @@ describe("Mapping Card component", () => {
     await fireEvent.click(getByRole('disabled-delete-mapping'));
     expect(queryAllByText('Yes')).toHaveLength(0);
     expect(deleteMappingArtifact).not.toBeCalled();
-
   });
 
   test('Mapping card does allow edit with writeMapping authority', async () => {

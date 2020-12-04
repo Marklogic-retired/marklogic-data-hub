@@ -7,6 +7,7 @@ import axiosMock from 'axios';
 import { stringSearchResponse } from "../../../assets/mock-data/explore/facet-props";
 import { ConfirmationType } from '../../../types/common-types';
 import { debug } from 'console';
+import {SecurityTooltips} from "../../../config/tooltips.config";
 
 jest.mock('axios');
 describe('Create Edit Step Dialog component', () => {
@@ -39,6 +40,8 @@ describe('Create Edit Step Dialog component', () => {
     expect(timestamp).toBeDisabled();
 
     expect(getByText('Save')).toBeDisabled();
+    fireEvent.mouseOver(getByText('Save'));
+    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText('Cancel')).toBeEnabled();
   });
 

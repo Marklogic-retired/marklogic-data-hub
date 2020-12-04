@@ -234,12 +234,12 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     if (event) event.preventDefault();
 
     setIsValid(true);
-    
+
     props.setOpenStepSettings(false);
     props.resetTabs();
     await props.createMappingArtifact(getPayload())
     props.openStepDetails(mapName);
-    
+
   }
 
    const handleSearch = async (value: any) => {

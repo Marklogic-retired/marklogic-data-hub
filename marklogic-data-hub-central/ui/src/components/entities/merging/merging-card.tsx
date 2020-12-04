@@ -50,6 +50,9 @@ const MergingCard: React.FC<Props> = (props) => {
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
   const [sortedMergingSteps, setSortedMergingSteps] = useState(props.mergingStepsArray);
 
+  const tooltipOverlayStyle={maxWidth: '200'};
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   useEffect(() => {
     let sortedArray = props.mergingStepsArray.length > 1 ? sortStepsByUpdated(props.mergingStepsArray) : props.mergingStepsArray;
     setSortedMergingSteps(sortedArray);
@@ -100,6 +103,7 @@ const MergingCard: React.FC<Props> = (props) => {
   function handleMouseOver(e, name) {
     // Handle all possible events from mouseover of card body
     setSelectVisible(true);
+    setTooltipVisible(true);
     if (typeof e.target.className === 'string' &&
       (e.target.className === 'ant-card-body' ||
         e.target.className.startsWith('merging-card_cardContainer') ||
@@ -113,6 +117,7 @@ const MergingCard: React.FC<Props> = (props) => {
   function handleMouseLeave() {
     setShowLinks('');
     setSelectVisible(false);
+    setTooltipVisible(false);
   }
 
   function handleSelect(obj) {
@@ -190,7 +195,15 @@ const MergingCard: React.FC<Props> = (props) => {
               <p className={styles.addNewContent}>Add New</p>
             </Card>
           </Col>
-        ) : null}
+        ) : <Col>
+            <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
+                size="small"
+                className={styles.addNewCardDisabled}>
+                <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+                <br />
+                <p className={styles.addNewContent}>Add New</p>
+            </Card></MLTooltip>
+        </Col>}
         {sortedMergingSteps && sortedMergingSteps.length > 0 ? (
           sortedMergingSteps.map((step, index) => (
             <Col key={index}>
@@ -233,7 +246,7 @@ const MergingCard: React.FC<Props> = (props) => {
                   <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
                     {selectVisible ? (
-                      <div className={styles.cardLinkSelect}>
+                        <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                         <Select
                           style={{ width: '100%' }}
                           value={selected[step.name] ? selected[step.name] : undefined}
@@ -247,7 +260,7 @@ const MergingCard: React.FC<Props> = (props) => {
                             <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                           )) : null}
                         </Select>
-                      </div>
+                        </div></MLTooltip>
                     ): null}
                     </div>
                   </div>

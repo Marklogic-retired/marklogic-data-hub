@@ -3,8 +3,8 @@ import { Form, Input, Icon, Radio, AutoComplete } from "antd";
 import axios from "axios";
 import styles from './create-edit-step.module.scss';
 import { UserContext } from '../../../util/user-context';
-import { NewMatchTooltips, NewMergeTooltips } from '../../../config/tooltips.config';
-import { MLButton, MLTooltip } from '@marklogic/design-system'; 
+import {NewMatchTooltips, NewMergeTooltips} from '../../../config/tooltips.config';
+import { MLButton, MLTooltip } from '@marklogic/design-system';
 import { StepType } from '../../../types/curation-types';
 import ConfirmYesNo from '../../common/confirm-yes-no/confirm-yes-no';
 
@@ -96,7 +96,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       // Edit Step Artifact
       if (props.isEditing) {
         initStep()
-      } 
+      }
       // New Step Artifact
       else {
         reset();
@@ -522,7 +522,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             <div className={styles.submitButtons}>
               <MLButton data-testid={`${props.stepType}-dialog-cancel`} onClick={() => onCancel()}>Cancel</MLButton>
               &nbsp;&nbsp;
-              <MLButton type="primary" htmlType="submit" disabled={!props.canReadWrite} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton>
+                {!props.canReadWrite?<MLTooltip title={NewMergeTooltips.missingPermission} placement={'bottomRight'}><span className={styles.disabledCursor}>
+                    <MLButton className={styles.disabledSaveButton} type="primary" htmlType="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton></span></MLTooltip>
+                :<MLButton type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton>}
             </div>
           </Form.Item>
         </Form>

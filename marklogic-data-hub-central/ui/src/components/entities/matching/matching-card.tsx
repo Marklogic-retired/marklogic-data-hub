@@ -50,6 +50,9 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const tooltipOverlayStyle={maxWidth: '200'};
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const OpenAddNew = () => {
     setIsEditing(false);
     setOpenStepSettings(true);
@@ -81,6 +84,7 @@ const updateMatchingArtifact = (payload) => {
   function handleMouseOver(e, name) {
     // Handle all possible events from mouseover of card body
     setSelectVisible(true);
+    setTooltipVisible(true);
     if (typeof e.target.className === 'string' &&
       (e.target.className === 'ant-card-body' ||
         e.target.className.startsWith('merging-card_cardContainer') ||
@@ -94,6 +98,7 @@ const updateMatchingArtifact = (payload) => {
   function handleMouseLeave() {
     setShowLinks('');
     setSelectVisible(false);
+    setTooltipVisible(false);
   }
 
   function handleSelect(obj) {
@@ -121,7 +126,7 @@ const updateMatchingArtifact = (payload) => {
   const renderCardActions = (step, index) => {
     return [
       <MLTooltip title={'Edit'} placement="bottom">
-        <Icon 
+        <Icon
           className={styles.editIcon}
           type="edit"
           key ="last"
@@ -133,16 +138,16 @@ const updateMatchingArtifact = (payload) => {
 
       <MLTooltip title={'Step Details'} placement="bottom">
         <i style={{ fontSize: '16px', marginLeft: '-5px', marginRight: '5px'}}>
-          <FontAwesomeIcon 
-            icon={faSlidersH} 
-            data-testid={`${step.name}-stepDetails`} 
+          <FontAwesomeIcon
+            icon={faSlidersH}
+            data-testid={`${step.name}-stepDetails`}
             onClick={() => openStepDetails(step)}
           />
         </i>
       </MLTooltip>,
 
       // <MLTooltip title={'Settings'} placement="bottom">
-      //   <Icon 
+      //   <Icon
       //     type="setting"
       //     key="setting"
       //     role="settings-merging button"
@@ -156,17 +161,17 @@ const updateMatchingArtifact = (payload) => {
         <i key ="last" role="delete-merging button" data-testid={step.name+'-delete'} onClick={() => deleteStepClicked(step.name)}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
         </i>
-      </MLTooltip> 
+      </MLTooltip>
       ) : (
       <MLTooltip title={'Delete: ' + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: '200px'}}>
         <i role="disabled-delete-merging button" data-testid={step.name+'-disabled-delete'} onClick={(event) => event.preventDefault()}>
           <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
         </i>
-      </MLTooltip> 
+      </MLTooltip>
       ),
     ]
   }
-  
+
   return (
     <div className={styles.matchContainer}>
       <Row gutter={16} type="flex">
@@ -180,8 +185,16 @@ const updateMatchingArtifact = (payload) => {
               <p className={styles.addNewContent}>Add New</p>
             </Card>
           </Col>
-        ) : null}
-        {props.matchingStepsArray.length > 0 ? ( 
+        ) : <Col>
+            <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
+                size="small"
+                className={styles.addNewCardDisabled}>
+                <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+                <br/>
+                <p className={styles.addNewContent}>Add New</p>
+            </Card></MLTooltip>
+        </Col>}
+        {props.matchingStepsArray.length > 0 ? (
           props.matchingStepsArray.map((step, index) => (
             <Col key={index}>
               <div
@@ -207,8 +220,8 @@ const updateMatchingArtifact = (payload) => {
                   <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(step.lastUpdated)}</p>
                   <div className={styles.cardLinks} style={{display: showLinks === step.name ? 'block' : 'none'}}>
                   {props.canWriteMatchMerge ? (
-                    <Link 
-                      id="tiles-run-add" 
+                    <Link
+                      id="tiles-run-add"
                       to={{
                         pathname: '/tiles/run/add',
                         state: {
@@ -217,13 +230,13 @@ const updateMatchingArtifact = (payload) => {
                       }}}
                     >
                       <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
-                    </Link> 
-                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div> 
+                    </Link>
+                  ) : <div className={styles.cardDisabledLink} data-testid={`${step.name}-disabledToNewFlow`}> Add step to a new flow</div>
                   }
                   <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
                     {selectVisible ? (
-                      <div className={styles.cardLinkSelect}>
+                        <MLTooltip title={'Curate: '+SecurityTooltips.missingPermission} placement={'bottom'} visible={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                         <Select
                           style={{ width: '100%' }}
                           value={selected[step.name] ? selected[step.name] : undefined}
@@ -237,7 +250,7 @@ const updateMatchingArtifact = (payload) => {
                             <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                           )) : null}
                         </Select>
-                      </div> 
+                        </div></MLTooltip>
                     ) : null}
                     </div>
                   </div>
