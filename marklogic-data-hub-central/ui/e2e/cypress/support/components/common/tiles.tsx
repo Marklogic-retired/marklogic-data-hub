@@ -33,8 +33,8 @@ class Tiles {
   }
 
   closeRunMessage() {
-      return cy.get('div.ant-modal-confirm-btns button').click({multiple: true});
-  }
+    cy.wait(500);
+    return cy.get('body').type('{esc}');  }
 }
 
 const tiles = new Tiles();
