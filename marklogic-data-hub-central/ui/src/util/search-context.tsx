@@ -581,6 +581,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       start: 1,
       query: "",
       pageNumber: 1,
+      pageLength: 20,
+      pageSize: 20,
       selectedFacets: {},
       selectedQuery: "select a query",
       database: option
