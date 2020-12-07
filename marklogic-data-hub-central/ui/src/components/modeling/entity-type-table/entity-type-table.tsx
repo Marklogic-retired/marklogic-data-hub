@@ -432,7 +432,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
         onExpand={onExpand}
         expandedRowKeys={expandedRows}
         dataSource={renderTableData}
-        pagination={{defaultPageSize: 20, size: "small"}}
+        pagination={{defaultPageSize: 20, size: "small", hideOnSinglePage: renderTableData.length <= 20}}
         size="middle"
       />
     </>

@@ -390,5 +390,26 @@ describe("EntityTypeModal Component", () => {
     userEvent.click(screen.getByLabelText(`confirm-${ConfirmationType.DeleteEntityRelationshipOutstandingEditWarn}-yes`));
     expect(mockUpdateEntityModels).toBeCalledTimes(1);
   });
+
+  test("Verify pagination hiding", async () => {
+    const {container} =  render(
+      <Router>
+        <EntityTypeTable
+          allEntityTypesData={getEntityTypes}
+          canReadEntityModel={true}
+          canWriteEntityModel={false}
+          autoExpand=""
+          editEntityTypeDescription={jest.fn()}
+          updateEntities={jest.fn()}
+          revertAllEntity={false}
+          toggleRevertAllEntity={jest.fn()}
+          updateSavedEntity={jest.fn()}
+        />
+      </Router>);
+
+    expect(container.querySelector(".ant-pagination")).toBeNull();
+  });
+
+
 });
 

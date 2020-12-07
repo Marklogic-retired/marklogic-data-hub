@@ -384,6 +384,7 @@ const MergingStepDetail: React.FC = () => {
                   );
                 } else { return (false); }
               }}
+              pagination={{hideOnSinglePage: mergeStrategiesData.length <= 10}}
             />
           </div>
         </div>

@@ -501,6 +501,7 @@ describe("Load data component", () => {
           setPageSize: jest.fn(),
         }}>
           <LoadList
+
             {...data.loadDataPagination}
             flows={data.flowsAdd}
             sortOrderInfo
@@ -515,6 +516,36 @@ describe("Load data component", () => {
     expect(container.querySelector(".ant-pagination li[title=\"2\"]")).not.toBeInTheDocument();
     expect(container.querySelector(".ant-pagination .ant-select-selection-selected-value")).toHaveTextContent("20 / page");
     expect(container.querySelectorAll(".ant-table-row")).toHaveLength(12);
+  });
+
+  test("Verify Load List pagination hiding", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readIngestion", "writeIngestion", "writeFlow"]);
+    const {container} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadingContext.Provider value={{
+            loadingOptions: {
+              start: 1,
+              pageNumber: 1,
+              pageSize: 10
+            },
+            setPageSize: jest.fn(),
+          }}>
+            <LoadList
+
+              {...data.loadData}
+              flows={data.flowsAdd}
+              sortOrderInfo
+              canWriteFlow={true}
+              addStepToFlow={jest.fn()}
+              addStepToNew={jest.fn()} />
+          </LoadingContext.Provider >
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
+
+    expect(container.querySelector(".ant-pagination")).toBeNull();
   });
 });
 

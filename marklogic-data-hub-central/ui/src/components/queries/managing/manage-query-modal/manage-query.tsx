@@ -297,7 +297,7 @@ const QueryModal = (props) => {
         closeIcon={<FontAwesomeIcon icon={faTimes} className={"manage-modal-close-icon"} />}
       >
         <p className={styles.title} data-testid="manage-queries-modal">{"Manage Queries"}</p>
-        <Table columns={columns} dataSource={data}
+        <Table columns={columns} dataSource={data} pagination={{hideOnSinglePage: data.length <= 10}}
           onRow={(record) => {
             return {
               onClick: () => {
