@@ -8,15 +8,23 @@ const Footer = (props) => {
   const linkStyle = (props.pageTheme && props.pageTheme["footerLink"]) ? props.pageTheme["footerLink"] : null;
   const currentYear = (new Date()).getFullYear();
 
+  let linkRef = React.createRef<HTMLAnchorElement>();
+  const linkWrapperKeyDown = (event) => {
+    if (event.key === "Enter") {
+      linkRef.current!.click();
+    }
+  };
+
   return (
     <Layout.Footer>
       <div className={styles.content} style={footerStyle}>
         <span>© {currentYear} MarkLogic Corporation</span>
         |
-        <span className={styles.link}><a href="https://www.marklogic.com/privacy/" style={linkStyle}>Privacy</a></span>
+        <span tabIndex={0} onKeyDown={linkWrapperKeyDown} className={styles.link}>
+          <a tabIndex={-1} ref={linkRef} href="https://www.marklogic.com/privacy/" style={linkStyle}>Privacy</a>
+        </span>
       </div>
     </Layout.Footer>
-
   );
 };
 
