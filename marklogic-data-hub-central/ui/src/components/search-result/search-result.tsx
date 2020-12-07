@@ -109,7 +109,13 @@ const SearchResult: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} id={"source"} data-cy="source" >
-            <MLTooltip title={"Show the complete " + fileTypeVal.toUpperCase()} placement="topRight"><FontAwesomeIcon  icon={faCode} size="sm" data-testid="source-icon"/></MLTooltip>
+            <MLTooltip title={"Show the complete " + fileTypeVal.toUpperCase()} placement="topRight">
+              {fileTypeVal.toUpperCase() === "XML" ?
+                <FontAwesomeIcon  icon={faCode} size="sm" data-testid="source-icon"/>
+                :
+                <span className={styles.jsonIcon} data-testid="source-icon"></span>
+              }
+            </MLTooltip>
           </Link>
         </div>
         <span className={styles.entityName} data-cy="entity-name" data-testid={"entity-name"}>{itemEntityName}</span>

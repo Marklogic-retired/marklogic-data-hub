@@ -1,3 +1,9 @@
+@font-face {
+	font-family: 'MLCustomFont';
+	src: url('../../fonts/ML_IconFont_explore.ttf') format('truetype');
+	src: url('../../fonts/icomoon_load-model-curate-run.ttf') format('truetype');
+}
+
 .title {
 	padding-top: 5px;
 	font-size: 16px;
@@ -57,4 +63,14 @@
 .redirectIcons a {
 	padding: 8px;
 	color: #666;
+}
+
+.jsonIcon:before {
+	content: "\e94c";
+	font-family: MLCustomFont;
+	font-size: 18px;
+	position: relative;
+	font-weight: 200;
+	top: 3px;
+	display: inline-block;
 }
