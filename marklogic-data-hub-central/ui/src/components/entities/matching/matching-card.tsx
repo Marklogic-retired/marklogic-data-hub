@@ -48,6 +48,9 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const tooltipOverlayStyle={maxWidth: "200"};
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const OpenAddNew = () => {
     setIsEditing(false);
     setOpenStepSettings(true);
@@ -79,6 +82,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   function handleMouseOver(e, name) {
     // Handle all possible events from mouseover of card body
     setSelectVisible(true);
+    setTooltipVisible(true);
     if (typeof e.target.className === "string" &&
       (e.target.className === "ant-card-body" ||
         e.target.className.startsWith("merging-card_cardContainer") ||
@@ -92,6 +96,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   function handleMouseLeave() {
     setShowLinks("");
     setSelectVisible(false);
+    setTooltipVisible(false);
   }
 
   function handleSelect(obj) {
@@ -174,11 +179,19 @@ const MatchingCard: React.FC<Props> = (props) => {
               size="small"
               className={styles.addNewCard}>
               <div><Icon type="plus-circle" className={styles.plusIcon} theme="filled" onClick={OpenAddNew}/></div>
-              <br />
+              <br/>
               <p className={styles.addNewContent}>Add New</p>
             </Card>
           </Col>
-        ) : null}
+        ) : <Col>
+          <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
+            size="small"
+            className={styles.addNewCardDisabled}>
+            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+            <br/>
+            <p className={styles.addNewContent}>Add New</p>
+          </Card></MLTooltip>
+        </Col>}
         {props.matchingStepsArray.length > 0 ? (
           props.matchingStepsArray.map((step, index) => (
             <Col key={index}>
@@ -221,7 +234,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                     <div className={styles.cardNonLink} data-testid={`${step.name}-toExistingFlow`}>
                     Add step to an existing flow
                       {selectVisible ? (
-                        <div className={styles.cardLinkSelect}>
+                        <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteMatchMerge}><div className={styles.cardLinkSelect}>
                           <Select
                             style={{width: "100%"}}
                             value={selected[step.name] ? selected[step.name] : undefined}
@@ -235,7 +248,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                               <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
                             )) : null}
                           </Select>
-                        </div>
+                        </div></MLTooltip>
                       ) : null}
                     </div>
                   </div>

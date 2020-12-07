@@ -40,7 +40,7 @@ const LoadCard: React.FC<Props> = (props) => {
   const [addRun, setAddRun] = useState(false);
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const tooltipOverlayStyle={maxWidth: "300px", paddingLeft: "100px"};
+  const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   useEffect(() => {
@@ -279,15 +279,14 @@ const LoadCard: React.FC<Props> = (props) => {
             <p className={styles.addNewContent}>Add New</p>
           </Card>
         </Col> : <Col>
-          <Card
+          <MLTooltip title={"Load: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
             size="small"
             className={styles.addNewCardDisabled}
             data-testid="disabledAddNewCard">
-            <MLTooltip title={"Load: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}>
-              <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
-              <br />
-              <p className={styles.addNewContentDisabled}>Add New</p></MLTooltip>
-          </Card>
+            <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>
+            <br />
+            <p className={styles.addNewContentDisabled}>Add New</p>
+          </Card></MLTooltip>
         </Col>}{ sortedLoads && sortedLoads.length > 0 ? sortedLoads.map((elem, index) => (
           <Col key={index}>
             <div

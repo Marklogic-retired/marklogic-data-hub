@@ -685,7 +685,7 @@ const MappingCard: React.FC<Props> = (props) => {
             <p className={styles.addNewContent}>Add New</p>
           </Card>
         </Col> : <Col>
-          <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement="bottom" overlayStyle={tooltipOverlayStyle}><Card
+          <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} overlayStyle={tooltipOverlayStyle}><Card
             size="small"
             className={styles.addNewCardDisabled}>
             <div aria-label="add-new-card-disabled"><Icon type="plus-circle" className={styles.plusIconDisabled} theme="filled"/></div>

@@ -282,9 +282,13 @@ describe("Load Card component", () => {
 
     const loadStepName = data.loadData.data[0].name;
 
-    //Akshay: Test case need to be implemented
+    //test tooltip over disabled add new card
     fireEvent.mouseOver(getByTestId("disabledAddNewCard"));
-    //await wait (() => expect(screen.getByText('Load: ' + SecurityTooltips.missingPermission)).toBeInTheDocument());
+    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
+
+    //test tooltip over disabled card
+    fireEvent.mouseOver(getByText(loadStepName));
+    wait(() => expect(screen.getByText("Load: " + SecurityTooltips.missingPermission)).toBeInTheDocument());
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByTestId(loadStepName + "-disabled-delete"));

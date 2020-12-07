@@ -1,5 +1,5 @@
 import React from "react";
-import {render, wait} from "@testing-library/react";
+import {fireEvent, render, wait} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
@@ -76,7 +76,7 @@ describe("Matching cards view component", () => {
 
   it("cannot edit/delete match step without writeMatchMerge authority", () => {
     const deleteMatchingArtifact = jest.fn();
-    const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText} =  render(
+    const {getByText, getByTestId, queryAllByText, queryAllByRole, queryByLabelText, getByLabelText} =  render(
       <Router>
         <MatchingCard
           matchingStepsArray={matchingStepsArray}
@@ -94,8 +94,13 @@ describe("Matching cards view component", () => {
       </Router>
     );
 
-    expect(queryByLabelText("icon: plus-circle")).not.toBeInTheDocument();
+    expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
     expect(getByText("matchCustomers")).toBeInTheDocument();
+    fireEvent.mouseOver(getByLabelText("add-new-card-disabled"));
+    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
+    expect(queryByLabelText("icon: plus-circle")).toBeInTheDocument();
+    fireEvent.mouseOver(getByText("matchCustomers"));
+    wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText("matchCustomersEmpty")).toBeInTheDocument();
 
     //Verify if the card renders fine
