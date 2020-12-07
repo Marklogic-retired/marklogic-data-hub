@@ -62,7 +62,7 @@
         },
         {
           "entityPropertyPath": "billing.zip.fiveDigit",
-          "matchType": "exact"
+          "matchType": "zip"
         }
       ]
     },
@@ -76,7 +76,7 @@
         },
         {
           "entityPropertyPath": "shipping.zip.fiveDigit",
-          "matchType": "exact"
+          "matchType": "zip"
         }
       ]
     },
@@ -98,7 +98,7 @@
         },
         {
           "entityPropertyPath": "shipping.zip.fiveDigit",
-          "matchType": "exact"
+          "matchType": "zip"
         }
       ]
     }
