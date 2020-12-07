@@ -1250,7 +1250,7 @@ const SourceToEntityMap = (props) => {
           data-testid="entityContainer"
           className={styles.entityContainer}>
           <div className={styles.entityDetails}>
-            <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity: {props.entityTypeTitle}</p></span>
+            <span className={styles.entityTypeTitle}><p ><i><FontAwesomeIcon icon={faObjectUngroup} size="sm" className={styles.entityIcon} /></i> Entity Type: {props.entityTypeTitle}</p></span>
           </div>
           <div ref={dummyNode}></div>
           <div className={styles.columnOptionsSelectorContainer}>

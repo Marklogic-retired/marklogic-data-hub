@@ -24,7 +24,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("srcContainer")).toBeInTheDocument();
     expect(getByText("Unable to find source records using the specified collection or query.")).toBeInTheDocument;
     expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
-    expect(getByText("Entity: Person")).toBeInTheDocument();
+    expect(getByText("Entity Type: Person")).toBeInTheDocument();
     expect(getByRole("presentation").className).toEqual("Resizer vertical ");
   });
 
@@ -41,7 +41,7 @@ describe("RTL Source-to-entity map tests", () => {
     expect(getByTestId("entityContainer")).toBeInTheDocument();
     expect(getByTestId("srcContainer")).toBeInTheDocument();
     expect(getByTestId("srcContainer")).toHaveClass("sourceContainer");
-    expect(getByText("Entity: Person")).toBeInTheDocument();
+    expect(getByText("Entity Type: Person")).toBeInTheDocument();
     expect(getByText("Test")).toBeEnabled();
 
     // Link to Settings
@@ -999,7 +999,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
     const {getByText, getAllByText, getByTestId, getAllByRole} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
     expect(getByText("Source Data")).toBeInTheDocument();
-    expect(getByText("Entity: Person")).toBeInTheDocument();
+    expect(getByText("Entity Type: Person")).toBeInTheDocument();
     expect(getByText("Test")).toBeEnabled();
 
     let sourceSelector = getByTestId("itemTypes-listIcon");
