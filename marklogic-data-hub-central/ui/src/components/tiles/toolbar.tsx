@@ -99,7 +99,7 @@ const Toolbar: React.FC<Props> = (props) => {
                         tileIconClicked: true
                       }}}
                   aria-label={"tool-" + id + "-link"}
-                  tabIndex={1}
+                  tabIndex={0}
                   ref={tileRefs[i]}
                   onClick={(e) => linkOnClickHandler(e, id)}
                   onKeyDown={(e) => linkKeyDownHandler(e, id, i)}
@@ -121,7 +121,7 @@ const Toolbar: React.FC<Props> = (props) => {
                 >
                   <Link to={"/tiles/" + id}
                     aria-label={"tool-" + id + "-link"}
-                    tabIndex={1}
+                    tabIndex={0}
                     ref={tileRefs[i]}
                     onClick={(e) => linkOnClickHandler(e, id)}
                     onKeyDown={(e) => linkKeyDownHandler(e, id, i)}

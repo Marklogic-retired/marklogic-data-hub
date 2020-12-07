@@ -59,6 +59,15 @@
                 cursor: pointer;
             }
 
+            .cardLoad.enabled:focus,
+            .cardModel.enabled:focus,
+            .cardCurate.enabled:focus,
+            .cardExplore.enabled:focus,
+            .cardRun.enabled:focus {
+                border: 2px solid #7f86b5;
+                outline: none;
+            }
+
             // Disabled cards: no hover border, default cursor, light-gray background
             .cardLoad.disabled:hover,
             .cardModel.disabled:hover,
@@ -77,6 +86,15 @@
             .cardExplore.disabled,
             .cardRun.disabled {
                 background-color: #FAFBFC;
+            }
+
+            .cardLoad.disabled:focus,
+            .cardModel.disabled:focus,
+            .cardCurate.disabled:focus,
+            .cardExplore.disabled:focus,
+            .cardRun.disabled:focus {
+                border: 2px solid #7f86b5;
+                outline: none;
             }
 
             // Disabled cards have permissions text
@@ -163,7 +181,9 @@
             }
 
             .cardExplore {
-                grid-row: span 2;
+                grid-row-start: 1;
+                grid-row-end: 3;
+                grid-column: 4;
                 background-color: #ECFAF7;
                 background-image: url("../assets/explore-overview.svg");
                 background-repeat:no-repeat;
@@ -186,7 +206,9 @@
 
             .cardRun {
                 position: relative;
-                grid-column: span 3;
+                grid-row: 2;
+                grid-column-start: 1;
+                grid-column-end: 4;
                 background-color: #FAF2FC;
                 background-image: url("../assets/run-overview.svg");
                 background-repeat:no-repeat;

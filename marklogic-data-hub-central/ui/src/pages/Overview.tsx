@@ -36,6 +36,81 @@ const Overview: React.FC<Props> = (props) => {
     }
   };
 
+  const cardRefMap = {
+    "load": React.createRef<HTMLDivElement>(),
+    "model": React.createRef<HTMLDivElement>(),
+    "curate": React.createRef<HTMLDivElement>(),
+    "explore": React.createRef<HTMLDivElement>(),
+    "run": React.createRef<HTMLDivElement>()
+  };
+
+  const focusCard = (id) => {
+    if (cardRefMap[id].current !== null) { cardRefMap[id].current.focus(); }
+  };
+
+  const cardKeyDownHandler = (event, id) => {
+    if (event.key === "Enter" && props.enabled && props.enabled.includes(id)) { goToTile(id); }
+
+    if (event.key === "ArrowUp") {
+      switch (id) {
+      case "run":
+        focusCard("load");
+        break;
+      default:
+        event.preventDefault();
+        break;
+      }
+    }
+
+    if (event.key === "ArrowDown") {
+      switch (id) {
+      case "load":
+      case "model":
+      case "curate":
+        focusCard("run");
+        break;
+      default:
+        event.preventDefault();
+        break;
+      }
+    }
+
+    if (event.key === "ArrowRight") {
+      switch (id) {
+      case "load":
+        focusCard("model");
+        break;
+      case "model":
+        focusCard("curate");
+        break;
+      case "curate":
+      case "run":
+        focusCard("explore");
+        break;
+      default:
+        event.preventDefault();
+        break;
+      }
+    }
+
+    if (event.key === "ArrowLeft") {
+      switch (id) {
+      case "model":
+        focusCard("load");
+        break;
+      case "curate":
+        focusCard("model");
+        break;
+      case "explore":
+        focusCard("curate");
+        break;
+      default:
+        event.preventDefault();
+        break;
+      }
+    }
+  };
+
   return (
     <div className={styles.overviewContainer} aria-label="overview">
       <div className={styles.title}>Welcome to MarkLogic Data Hub Central</div>
@@ -45,7 +120,11 @@ const Overview: React.FC<Props> = (props) => {
       </div>
       <div className={styles.cardsContainer}>
         <div className={styles.cards}>
-          <div className={getClassNames("load")} onClick={() => { goToTile("load"); }} aria-label={"load-card"}>
+          <div
+            className={getClassNames("load")} aria-label={"load-card"}
+            ref={cardRefMap["load"]} tabIndex={0}
+            onClick={() => { goToTile("load"); }} onKeyDown={(e) => cardKeyDownHandler(e, "load")}
+          >
             <div className={styles.head}></div>
             <div className={styles.subtitle}>
               <span className={styles.icon} aria-label="load-icon"></span>Load
@@ -56,7 +135,11 @@ const Overview: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className={getClassNames("model")} onClick={() => { goToTile("model"); }} aria-label={"model-card"}>
+          <div
+            className={getClassNames("model")} aria-label={"model-card"}
+            ref={cardRefMap["model"]} tabIndex={0}
+            onClick={() => { goToTile("model"); }} onKeyDown={(e) => cardKeyDownHandler(e, "model")}
+          >
             <div className={styles.head}></div>
             <div className={styles.subtitle}>
               <span className={styles.icon} aria-label="model-icon"></span>Model
@@ -67,7 +150,11 @@ const Overview: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className={getClassNames("curate")} onClick={() => { goToTile("curate"); }} aria-label={"curate-card"}>
+          <div
+            className={getClassNames("curate")} aria-label={"curate-card"}
+            ref={cardRefMap["curate"]} tabIndex={0}
+            onClick={() => { goToTile("curate"); }} onKeyDown={(e) => cardKeyDownHandler(e, "curate")}
+          >
             <div className={styles.head}></div>
             <div className={styles.subtitle}>
               <span className={styles.icon} aria-label="curate-icon"></span>Curate
@@ -78,18 +165,11 @@ const Overview: React.FC<Props> = (props) => {
             </div>
           </div>
 
-          <div className={getClassNames("explore")} onClick={() => { goToTile("explore"); }} aria-label={"explore-card"}>
-            <div className={styles.head}>
-              <span className={styles.icon} aria-label="explore-icon"></span>
-              <div className={styles.subtitle}>Explore</div>
-              <div className={styles.body}>Search, filter, and export your curated data.
-                { props.enabled && !props.enabled.includes("explore") &&
-                                <div className={styles.permissionsExplore}>*additional permissions required</div> }
-              </div>
-            </div>
-          </div>
-
-          <div className={getClassNames("run")} onClick={() => { goToTile("run"); }} aria-label={"run-card"}>
+          <div
+            className={getClassNames("run")} aria-label={"run-card"}
+            ref={cardRefMap["run"]} tabIndex={0}
+            onClick={() => { goToTile("run"); }} onKeyDown={(e) => cardKeyDownHandler(e, "run")}
+          >
             <div className={styles.head}>
               <div className={styles.subtitle}>
                 <span className={styles.icon} aria-label="run-icon"></span>Run
@@ -97,6 +177,21 @@ const Overview: React.FC<Props> = (props) => {
               <div className={styles.body}>Add your step to a flow and run it.
                 { props.enabled && !props.enabled.includes("run") &&
                                 <div className={styles.permissionsRun}>*additional permissions required</div> }
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={getClassNames("explore")} aria-label={"explore-card"}
+            ref={cardRefMap["explore"]} tabIndex={0}
+            onClick={() => { goToTile("explore"); }} onKeyDown={(e) => cardKeyDownHandler(e, "explore")}
+          >
+            <div className={styles.head}>
+              <span className={styles.icon} aria-label="explore-icon"></span>
+              <div className={styles.subtitle}>Explore</div>
+              <div className={styles.body}>Search, filter, and export your curated data.
+                { props.enabled && !props.enabled.includes("explore") &&
+                                <div className={styles.permissionsExplore}>*additional permissions required</div> }
               </div>
             </div>
           </div>

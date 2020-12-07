@@ -8,4 +8,8 @@ div.content {
 	.link {
 		cursor: pointer;
 	}
+	.link:focus {
+		outline: 2px solid #7F86B5;
+		outline-offset: -1px;
+	}
 }
