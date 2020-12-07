@@ -37,9 +37,9 @@ declare function algorithms:zip-match(
   for $value in $expand-values
   return
     if (fn:string-length($value) = 5) then
-      helper-impl:property-name-to-query($options, $property-name)($value || $sep || "*", $origin-5-weight)
+      helper-impl:property-name-to-query($options, $property-name)(($value, $value || $sep || "*"), $origin-5-weight)
     else
-      helper-impl:property-name-to-query($options, $property-name)(fn:substring($value, 1, 5), $origin-9-weight)
+      helper-impl:property-name-to-query($options, $property-name)((fn:substring($value, 1, 5), $value), $origin-9-weight)
 };
 
 (: Allows zip to be used instead of zip-match in the options :)

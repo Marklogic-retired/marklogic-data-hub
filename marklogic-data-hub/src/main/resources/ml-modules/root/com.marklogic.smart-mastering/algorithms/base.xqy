@@ -12,6 +12,7 @@ module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms";
 import module namespace algorithms = "http://marklogic.com/smart-mastering/algorithms"
   at  "double-metaphone.xqy",
       "standard-reduction.xqy",
+      "zip.xqy",
       "thesaurus.xqy";
 
 import module namespace fun-ext = "http://marklogic.com/smart-mastering/function-extension"
