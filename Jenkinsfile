@@ -7,6 +7,7 @@ commitMessage="";
 def prResponse="";
 def prNumber;
 def props;
+def high_vulnerabilities;
 githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 def loadProperties() {
     node {
@@ -21,17 +22,18 @@ def dhflinuxTests(String mlVersion,String type){
     		props = readProperties file:'data-hub/pipeline.properties';
     		copyRPM type,mlVersion
     		def dockerhost=setupMLDockerCluster 3
-    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s; ./gradlew marklogic-data-hub:testBootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;"'
+    		sh 'docker exec -u builder -i '+dockerhost+' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;set +e;./gradlew marklogic-data-hub:bootstrapAndTest -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew ml-data-hub:testFullCycle -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;"'
     		junit '**/TEST-*.xml'
             def output=readFile 'data-hub/console.log'
-		    def result=false;
+                    def result=false;
             if(output.contains("npm ERR!")){
                 result=true;
             }
             if(result){
                 currentBuild.result='UNSTABLE'
             }
-    		}
+                }
+
 }
 def dhfCypressE2ETests(String mlVersion, String type){
     script{
@@ -229,6 +231,154 @@ def runCypressE2e(){
         junit '**/e2e/**/*.xml'
     }
 }
+
+void postFailureFlexcodeScanAndReport(def vulnerabilities){
+    def email=''
+    if(env.CHANGE_AUTHOR){
+        def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+        email=getEmailFromGITUser author
+    }
+    else { email=Email }
+
+    email = email + ',Kavitha.Sivagnanam@marklogic.com'
+
+    def body=''
+    vulnerabilities.each { msg -> body=body+msg + '<p>' }
+    body = body + '<p>scan report is attached.'
+
+    sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>  High vulneribilities: <p> $body",false," pipeline FAILED in ${STAGE_NAME} ", 'inventoriesRprt.report.json'
+}
+
+def flexcodeScanAndReport(){
+
+    def palamida_url="http://palamida-2.marklogic.com:8888"
+    def inventoriesRprt=''
+
+    withCredentials([string(credentialsId: 'palamida_jwt', variable: 'jwt')]) {
+
+        StartScan(baseUrl: palamida_url, projectName: 'ml-dhf', token: jwt)
+
+        inventoriesRprt = sh(returnStdout: true, script: '''curl -X GET ''' + palamida_url + '''/codeinsight/api/project/inventory/21 -H "Authorization: Bearer $jwt" ''')
+    }
+
+    writeFile(file: 'inventoriesRprt.report.json', text: inventoriesRprt)
+
+    def slurper = new JsonSlurperClassic().parseText(inventoriesRprt.toString().trim())
+
+    def vulnerabilities = []
+    slurper.inventoryItems.each { key, value ->
+        key.vulnerabilities.each { key1, value1 ->
+            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL' || key1.vulnerabilityCvssV3Severity == 'HIGH'){
+                def msg = "    inventory name: $key.name; volnarability name: $key1.vulnerabilityName; with Severity V2: $key1.vulnerabilityCvssV2Severity; with Severity V3: $key1.vulnerabilityCvssV3Severity; "
+                vulnerabilities.add(msg)
+            }
+        }}
+
+    archiveArtifacts artifacts: 'inventoriesRprt.report.json'
+
+    return vulnerabilities
+
+}
+
+void UnitTest(){
+    script{
+        props = readProperties file:'data-hub/pipeline.properties';
+        copyRPM 'Release','10.0-5'
+        setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
+        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
+        junit '**/TEST-*.xml'
+        cobertura coberturaReportFile: '**/cobertura-coverage.xml'
+        jacoco()
+        def output=readFile 'data-hub/console.log'
+        def result=false;
+        if(output.contains("npm ERR!")){
+            result=true;
+        }
+        if(result){
+            currentBuild.result='UNSTABLE'
+        }
+        if(env.CHANGE_TITLE){
+            JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+            jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        }
+        if(!env.CHANGE_URL){
+            env.CHANGE_URL=" "
+        }
+    }
+}
+
+void PreBuildCheck() {
+ if(env.CHANGE_ID){
+   if(PRDraftCheck()){ sh 'exit 1' }
+   def reviewState=getReviewState()
+   if((!env.CHANGE_TITLE.startsWith("DHFPROD-")) && (!env.CHANGE_TITLE.startsWith("DEVO-"))){
+     sh 'exit 1'
+   }
+   println(reviewState)
+   if((reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){ sh 'exit 1' }
+ }
+ def obj=new abortPrevBuilds();
+ obj.abortPrevBuilds();
+}
+
+void Tests(){
+    script{
+        props = readProperties file:'data-hub/pipeline.properties';
+        copyRPM 'Release','10.0-5'
+        mlHubHosts=setupMLDockerNodes 3
+        env.mlHubHosts=mlHubHosts
+        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost=${mlHubHosts};'
+        junit '**/TEST-*.xml'
+        jacoco()
+        if(env.CHANGE_TITLE){
+            JIRA_ID=env.CHANGE_TITLE.split(':')[0]
+            jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
+        }
+        if(!env.CHANGE_URL){
+            env.CHANGE_URL=" "
+        }
+    }
+}
+
+void BuildDatahub(){
+    script{
+        props = readProperties file:'data-hub/pipeline.properties';
+        if(env.CHANGE_TITLE){
+            JIRA_ID=env.CHANGE_TITLE.split(':')[0];
+            def transitionInput =[transition: [id: '41']]
+            //jiraTransitionIssue idOrKey: JIRA_ID, input: transitionInput, site: 'JIRA'
+        }
+    }
+    println(BRANCH_NAME)
+    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew build -x test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;'
+    archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/web/build/libs/* , data-hub/marklogic-data-hub-central/build/libs/* , data-hub/marklogic-data-hub-central/build/**/*.rpm , data-hub/marklogic-data-hub-spark-connector/build/libs/*', onlyIfSuccessful: true
+
+}
+
+void dh5Example() {
+    sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+    copyRPM 'Release','10.0-5'
+    script{
+        props = readProperties file:'data-hub/pipeline.properties';
+        def dockerhost=setupMLDockerCluster 3
+        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/dh-5-example; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true;
+                            "
+                        '''
+    }
+}
+
 pipeline{
 	agent none;
 	options {
@@ -246,31 +396,12 @@ pipeline{
     DMC_PASSWORD= credentials('MLBUILD_PASSWORD')
 	}
 	parameters{
-	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,mwooldri@marklogic.com,rvudutal@marklogic.com,asonvane@marklogic.com,ban@marklogic.com,hliu@marklogic.com,tisangul@marklogic.com,Vasu.Gourabathina@marklogic.com,Sanjeevani.Vishaka@marklogic.com,Inder.Sabharwal@marklogic.com,btang@marklogic.com,abajaj@marklogic.com,fsnow@marklogic.com,srahman@marklogic.com' ,description: 'Who should I say send the email to?')
+	string(name: 'Email', defaultValue: 'stadikon@marklogic.com,kkanthet@marklogic.com,sbalasub@marklogic.com,nshrivas@marklogic.com,ssambasu@marklogic.com,rrudin@marklogic.com,rdew@marklogic.com,mwooldri@marklogic.com,rvudutal@marklogic.com,asonvane@marklogic.com,ban@marklogic.com,hliu@marklogic.com,tisangul@marklogic.com,Vasu.Gourabathina@marklogic.com,Sanjeevani.Vishaka@marklogic.com,Inder.Sabharwal@marklogic.com,btang@marklogic.com,abajaj@marklogic.com,fsnow@marklogic.com,srahman@marklogic.com,yakov.feldman@marklogic.com' ,description: 'Who should I say send the email to?')
 	}
 	stages{
 	    stage('Pre-Build-Check'){
 	    agent { label 'dhfLinuxAgent'}
-	    steps{
-	    script{
-	        if(env.CHANGE_ID){
-	        if(PRDraftCheck()){
-	             sh 'exit 1'
-	        }
-	        def reviewState=getReviewState()
-	        if((!env.CHANGE_TITLE.startsWith("DHFPROD-"))){
-	            sh 'exit 1'
-
-	        }
-	        println(reviewState)
-	        if((reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){
-	            sh 'exit 1'
-	        }
-	        }
-            def obj=new abortPrevBuilds();
-            obj.abortPrevBuilds();
-            }
-	    }
+	    steps{ PreBuildCheck() }
 	    post{
 	        failure{
 	            script{
@@ -288,18 +419,7 @@ pipeline{
 	    }
 		stage('Build-datahub'){
 		agent { label 'dhfLinuxAgent'}
-			steps{
-				script{
-        props = readProperties file:'data-hub/pipeline.properties';
-				if(env.CHANGE_TITLE){
-				JIRA_ID=env.CHANGE_TITLE.split(':')[0];
-				def transitionInput =[transition: [id: '41']]
-				//jiraTransitionIssue idOrKey: JIRA_ID, input: transitionInput, site: 'JIRA'
-				}
-				}
-				println(BRANCH_NAME)
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;./gradlew build -x test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;'
-				archiveArtifacts artifacts: 'data-hub/marklogic-data-hub/build/libs/* , data-hub/ml-data-hub-plugin/build/libs/* , data-hub/web/build/libs/* , data-hub/marklogic-data-hub-central/build/libs/* , data-hub/marklogic-data-hub-central/build/**/*.rpm , data-hub/marklogic-data-hub-spark-connector/build/libs/*', onlyIfSuccessful: true			}
+			steps{BuildDatahub()}
 				post{
                    failure {
                       println("Datahub Build FAILED")
@@ -320,24 +440,7 @@ pipeline{
 		parallel{
 		stage('Core-Unit-Tests'){
 		agent { label 'dhfLinuxAgent'}
-			steps{
-			script{
-			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-5'
-				 mlHubHosts=setupMLDockerNodes 3
-				 env.mlHubHosts=mlHubHosts
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost=${mlHubHosts};'
-				junit '**/TEST-*.xml'
-				jacoco()
-				if(env.CHANGE_TITLE){
-				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-				jiraAddComment comment: 'Jenkins Core Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
-				if(!env.CHANGE_URL){
-				    env.CHANGE_URL=" "
-				}
-				}
-			}
+			steps{Tests()}
 			post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -374,32 +477,7 @@ pipeline{
 		}
         stage('Unit-Tests'){
 		agent { label 'dhfLinuxAgent'}
-			steps{
-			script{
-			 props = readProperties file:'data-hub/pipeline.properties';
-				 copyRPM 'Release','10.0-5'
-				setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
-				sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
-				junit '**/TEST-*.xml'
-				cobertura coberturaReportFile: '**/cobertura-coverage.xml'
-				jacoco()
-				def output=readFile 'data-hub/console.log'
-				def result=false;
-                if(output.contains("npm ERR!")){
-                   result=true;
-                }
-                if(result){
-                   currentBuild.result='UNSTABLE'
-                }
-				if(env.CHANGE_TITLE){
-				JIRA_ID=env.CHANGE_TITLE.split(':')[0]
-				jiraAddComment comment: 'Jenkins Unit Test Results For PR Available', idOrKey: JIRA_ID, site: 'JIRA'
-				}
-				if(!env.CHANGE_URL){
-				    env.CHANGE_URL=" "
-				}
-				}
-			}
+			steps{UnitTest()}
 			post{
 				  always{
 				  	sh 'rm -rf $WORKSPACE/xdmp'
@@ -636,23 +714,43 @@ pipeline{
                   }
                   }
 		}
-            stage('publishAnddhs'){
-        		when {
-                	            expression{
-                	            node('dhmaster'){
-                	                props = readProperties file:'data-hub/pipeline.properties';
-                                    println(props['ExecutionBranch'])
-                	            return (env.BRANCH_NAME==props['ExecutionBranch'])
-                	            }
-                	            }
+
+        stage('publishing'){
+
+            when {
+                expression {
+                    node('dhmaster') {
+                        props = readProperties file: 'data-hub/pipeline.properties';
+                        println(props['ExecutionBranch'])
+                        return (env.BRANCH_NAME == props['ExecutionBranch'])
+                    }
                 }
-                agent {label 'dhfLinuxAgent'}
-                steps{
+            }
+
+            parallel {
+
+            stage('publishAnddhs') {
+                agent { label 'dhfLinuxAgent' }
+                steps {
                     sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
                     build job: 'DHF-Publish-RPM', propagate: false, wait: false
                     build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
                 }
-        	}
+            }
+
+            stage('FlexCodeScan'){
+                agent {label 'dhfLinuxAgent'}
+                steps{
+                    script{
+                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {sh 'exit 123'}
+                    }
+                }
+                post{
+                    failure { postFailureFlexcodeScanAndReport(high_vulnerabilities) }
+                }
+            }
+        }}
+
 		stage('rh7-singlenode'){
 		when {
 	            expression{
@@ -836,29 +934,7 @@ pipeline{
             parallel{
             stage('dh5-example'){
                  agent { label 'dhfLinuxAgent'}
-                steps{
-                     sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-5'
-                     script{
-                        props = readProperties file:'data-hub/pipeline.properties';
-                        def dockerhost=setupMLDockerCluster 3
-                        sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
-                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
-                            export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
-                            cd $WORKSPACE/data-hub/examples/dh-5-example; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            ./gradlew -i hubInit -Ptesting=true; \
-                            cp ../../marklogic-data-hub/gradle.properties .; \
-                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_only-flow -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_mapping-flow -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=ingestion_mapping_mastering-flow -Ptesting=true;
-                            "
-                        '''
-                        }
-                 }
+                steps{dh5Example()}
                  post{
                  always{
                     sh 'rm -rf $WORKSPACE/xdmp';
