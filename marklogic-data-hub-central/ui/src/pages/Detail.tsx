@@ -346,7 +346,11 @@ const Detail: React.FC<Props> = ({history, location}) => {
                   </Menu.Item>
                   <Menu.Item key="full" id="full" data-cy="source-view">
                     <MLTooltip title={"Show the complete " + contentType.toUpperCase()} >
-                      <FontAwesomeIcon  icon={faCode} size="lg" />
+                      {contentType.toUpperCase() === "XML" ?
+                        <FontAwesomeIcon  icon={faCode} size="lg" />
+                        :
+                        <span className={styles.jsonIcon}></span>
+                      }
                       <span className={styles.subMenu}>{contentType.toUpperCase()}</span>
                     </MLTooltip>
                   </Menu.Item>

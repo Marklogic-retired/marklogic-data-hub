@@ -48,7 +48,7 @@ describe("Merging Step Detail view component", () => {
 
   it("can render merging step with merge strategies and rulesets", async () => {
 
-    const {getByText, getAllByText, getAllByLabelText} = render(
+    const {getByText, getAllByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
       </CurationContext.Provider>

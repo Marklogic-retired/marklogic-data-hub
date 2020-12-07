@@ -14,7 +14,6 @@ import {CurationContext} from "../../../../util/curation-context";
 import arrayIcon from "../../../../assets/icon_array.png";
 import {MergeRuleTooltips} from "../../../../config/tooltips.config";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
-import {UserContext} from "../../../../util/user-context";
 import {MergingStep} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";

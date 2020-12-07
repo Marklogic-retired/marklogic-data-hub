@@ -1,8 +1,15 @@
+@font-face {
+  font-family: 'MLCustomFont';
+  src: url('../../fonts/ML_IconFont_explore.ttf') format('truetype');
+  src: url('../../fonts/icomoon_load-model-curate-run.ttf') format('truetype');
+}
+
 .queryExport {
   margin-right: 5px;
   margin-top: 8px;
   height: 10px;
 }
+
 .tabular {
     margin-top: 20px;
     overflow: auto;
@@ -30,4 +37,14 @@
 .redirectIcons a {
   padding: 8px;
   color: #44499C;
+}
+
+.jsonIcon:before {
+  content: "\e94c";
+  font-family: MLCustomFont;
+  font-size: 18px;
+  position: relative;
+  font-weight: 200;
+  top: 3px;
+  display: inline-block;
 }

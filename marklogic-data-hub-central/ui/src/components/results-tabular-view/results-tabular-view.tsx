@@ -251,7 +251,13 @@ const ResultsTabularView = (props) => {
                 }
               }} id={"source"}
               data-cy="source">
-                <Tooltip title={"Show the complete " + item.format.toUpperCase()} placement="topRight"><FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} /></Tooltip>
+                <Tooltip title={"Show the complete " + item.format.toUpperCase()} placement="topRight">
+                  {item.format.toUpperCase() === "XML" ?
+                    <FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
+                    :
+                    <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
+                  }
+                </Tooltip>
               </Link>
             </div>;
     if (props.selectedEntities?.length === 0) {
