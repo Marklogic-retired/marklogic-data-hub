@@ -10,13 +10,32 @@
   border: 1px solid #d7d6d6;
   margin-bottom: 10px;
 }
-.cardStyle:hover {
+.cardStyle:hover{
   border: 1px solid #67749c;
 }
 
 .mapNameStyle{
   font-size: 20px;
   padding-bottom: 2px;
+}
+
+.addNewCardDisabled{
+  width: 300px;
+  margin-top: 9px;
+  border: 1px solid #d7d6d6;
+  align-items: center;
+  text-align: center;
+  align-content: center;
+  cursor: not-allowed !important;
+}
+
+.plusIconDisabled{
+  font-size: 80px;
+  margin-top: 16px;
+  color: #67749c;
+  opacity: 0.45;
+  margin-bottom: 0px;
+  cursor: not-allowed;
 }
 
 .lastUpdatedStyle{

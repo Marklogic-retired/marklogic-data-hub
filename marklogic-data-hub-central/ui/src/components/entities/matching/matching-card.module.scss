@@ -1,5 +1,5 @@
 .matchContainer{
-  margin-top: 3vh;
+margin-top: 3vh;
 }
 .cardStyle{
 width: 330px;
@@ -13,7 +13,24 @@ margin-bottom: 10px;
 .cardStyle:hover {
 border: 1px solid #67749c;
 }
+.addNewCardDisabled{
+width: 300px;
+margin-top: 9px;
+border: 1px solid #d7d6d6;
+align-items: center;
+text-align: center;
+align-content: center;
+cursor: not-allowed !important;
+}
 
+.plusIconDisabled{
+font-size: 80px;
+margin-top: 16px;
+color: #67749c;
+opacity: 0.45;
+margin-bottom: 0px;
+cursor: not-allowed;
+}
 .mapNameStyle{
 font-size: 20px;
 padding-bottom: 2px;

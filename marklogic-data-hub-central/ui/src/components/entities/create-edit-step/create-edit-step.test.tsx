@@ -5,7 +5,7 @@ import CreateEditStep from "./create-edit-step";
 import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
-
+import {SecurityTooltips} from "../../../config/tooltips.config";
 
 jest.mock("axios");
 describe("Create Edit Step Dialog component", () => {
@@ -37,6 +37,8 @@ describe("Create Edit Step Dialog component", () => {
     expect(timestamp).toHaveValue("/envelope/headers/createdOn");
     expect(timestamp).toBeDisabled();
 
+    fireEvent.mouseOver(getByText("Save"));
+    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
     expect(getByText("Save")).toBeDisabled();
     expect(getByText("Cancel")).toBeEnabled();
   });

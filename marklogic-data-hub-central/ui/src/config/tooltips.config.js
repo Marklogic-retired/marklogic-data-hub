@@ -94,7 +94,8 @@ const NewCustomTooltips = {
 
 const NewMergeTooltips = {
     'description':'The description of this merge configuration.',
-    'timestampPath': 'The path to a timestamp field within the record. This field is used to determine which values to include in the merged property, based on their recency.'
+    'timestampPath': 'The path to a timestamp field within the record. This field is used to determine which values to include in the merged property, based on their recency.',
+    'missingPermission': 'Contact your security administrator for access.',
 };
 
 const AdvMergeTooltips = {
