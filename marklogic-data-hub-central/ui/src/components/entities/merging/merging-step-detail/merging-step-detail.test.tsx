@@ -33,9 +33,9 @@ describe("Merging Step Detail view component", () => {
 
   it("can render merging step with no strategies or merge rules", () => {
 
-    const {getByText, getAllByText} =  render(
+    const {getByText, getAllByText, container} = render(
       <CurationContext.Provider value={customerMergingStepEmpty}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
 
     );
@@ -43,13 +43,14 @@ describe("Merging Step Detail view component", () => {
     expect(getByText("Define merge strategies")).toBeInTheDocument();
     expect(getByText("Add merge rules")).toBeInTheDocument();
     expect(getAllByText(/No Data/i)).toHaveLength(2);
+    expect(container.querySelector(".ant-pagination")).toBeNull();
   });
 
-  it("can render merging step with merge strategies and rulesets", async() => {
+  it("can render merging step with merge strategies and rulesets", async () => {
 
-    const {getByText, getAllByText} =  render(
+    const {getByText, getAllByText, getAllByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByText("mergeCustomers")).toBeInTheDocument();
@@ -78,10 +79,10 @@ describe("Merging Step Detail view component", () => {
     expect(getByText("property-specific")).toBeInTheDocument();
   });
 
-  it("Verify common merge strategy names are greyed out", async() => {
-    const {getByTestId, getByText} =  render(
+  it("Verify common merge strategy names are greyed out", async () => {
+    const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByTestId("mergestrategy-myFavoriteSource")).toBeInTheDocument();
@@ -89,16 +90,16 @@ describe("Merging Step Detail view component", () => {
     await wait(() => expect(getByText(MergeStrategyTooltips.delete)).toBeInTheDocument());
   });
 
-  it("Verify clicking yes deletes the merge rule ", async() => {
+  it("Verify clicking yes deletes the merge rule ", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByTestId, getByText} =  render(
+    const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByTestId("mergerule-address")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-address"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete address - custom merge rule ?");
     })))).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
@@ -107,16 +108,16 @@ describe("Merging Step Detail view component", () => {
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it("Verify clicking no doesnot delete the merge rule", async() => {
+  it("Verify clicking no doesnot delete the merge rule", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByTestId, getByText} =  render(
+    const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByTestId("mergerule-phone")).toBeInTheDocument();
     userEvent.click(getByTestId("mergerule-phone"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete phone - property-specific merge rule ?");
     })))).toBeInTheDocument();
     userEvent.click(getByText("No"));
@@ -124,16 +125,16 @@ describe("Merging Step Detail view component", () => {
     expect(getByText("phone")).toBeInTheDocument();
   });
 
-  it("Verify clicking yes deletes the merge strategy ", async() => {
+  it("Verify clicking yes deletes the merge strategy ", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByTestId, getByText} =  render(
+    const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByTestId("mergestrategy-customMergeStrategy")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategy-customMergeStrategy"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete customMergeStrategy merge strategy ?");
     })))).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
@@ -142,16 +143,16 @@ describe("Merging Step Detail view component", () => {
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it("Verify clicking no doesnot delete the merge strategy", async() => {
+  it("Verify clicking no doesnot delete the merge strategy", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByTestId, getByText} =  render(
+    const {getByTestId, getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
-        <MergingStepDetail/>
+        <MergingStepDetail />
       </CurationContext.Provider>
     );
     expect(getByTestId("mergestrategy-testMerge")).toBeInTheDocument();
     userEvent.click(getByTestId("mergestrategy-testMerge"));
-    expect(await(waitForElement(() => getByText((content, node) => {
+    expect(await (waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Are you sure you want to delete testMerge merge strategy ?");
     })))).toBeInTheDocument();
     userEvent.click(getByText("No"));

@@ -59,4 +59,10 @@ describe("Query Modal Component", () => {
       return getSubElements(content, node, "Are you sure you would like to delete the Lee query? This action cannot be undone.");
     })))).toBeInTheDocument();
   });
+
+  test("Verify pagination hiding", () => {
+    const {container} = render(<ManageQuery />);
+    expect(container.querySelector(".ant-pagination")).toBeNull();
+  });
+
 });

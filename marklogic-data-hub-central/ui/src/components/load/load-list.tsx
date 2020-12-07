@@ -6,7 +6,7 @@ import {Table, Icon, Modal, Menu, Select, Dropdown} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {MLButton} from "@marklogic/design-system";
-import  moment  from "moment";
+import moment from "moment";
 import {convertDateFromISO} from "../../util/conversionFunctions";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
@@ -16,17 +16,17 @@ import {LoadingContext} from "../../util/loading-context";
 const {Option} = Select;
 
 interface Props {
-    data: any;
-    flows: any;
-    canWriteFlow: any;
-    deleteLoadArtifact: any;
-    createLoadArtifact: any;
-    canReadWrite: any;
-    canReadOnly: any;
-    addStepToFlow: any;
-    addStepToNew: any;
-    sortOrderInfo: any;
-  }
+  data: any;
+  flows: any;
+  canWriteFlow: any;
+  deleteLoadArtifact: any;
+  createLoadArtifact: any;
+  canReadWrite: any;
+  canReadOnly: any;
+  addStepToFlow: any;
+  addStepToNew: any;
+  sortOrderInfo: any;
+}
 
 const LoadList: React.FC<Props> = (props) => {
 
@@ -173,7 +173,7 @@ const LoadList: React.FC<Props> = (props) => {
       maskClosable={false}
     >
       <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
-        { isStepInFlow(loadArtifactName, flowName) ?
+        {isStepInFlow(loadArtifactName, flowName) ?
           !addRun ? <p aria-label="step-in-flow">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{loadArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
           : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{loadArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
         }
@@ -184,8 +184,9 @@ const LoadList: React.FC<Props> = (props) => {
   const runMenu = (name) => (
     <Menu className={styles.dropdownMenu}>
       <Menu.Item key="0">
-        { <Link data-testid="link" id="tiles-run-add" to={
-          {pathname: "/tiles/run/add-run",
+        {<Link data-testid="link" id="tiles-run-add" to={
+          {
+            pathname: "/tiles/run/add-run",
             state: {
               stepToAdd: name,
               stepDefinitionType: "ingestion",
@@ -194,7 +195,8 @@ const LoadList: React.FC<Props> = (props) => {
               page: loadingOptions.pageNumber,
               sortOrderInfo: sortedInfo,
               existingFlow: false
-            }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+            }
+          }}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
       </Menu.Item>
       <Menu.Item key="1">
         <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
@@ -208,7 +210,7 @@ const LoadList: React.FC<Props> = (props) => {
               disabled={!props.canWriteFlow}
               data-testid={`${name}-run-flowsList`}
             >
-              { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+              {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
                 <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
               )) : null}
             </Select>
@@ -221,8 +223,9 @@ const LoadList: React.FC<Props> = (props) => {
   const menu = (name) => (
     <Menu className={styles.dropdownMenu}>
       <Menu.Item key="0">
-        { <Link data-testid="link" id="tiles-run-add" to={
-          {pathname: "/tiles/run/add",
+        {<Link data-testid="link" id="tiles-run-add" to={
+          {
+            pathname: "/tiles/run/add",
             state: {
               stepToAdd: name,
               stepDefinitionType: "ingestion",
@@ -231,7 +234,8 @@ const LoadList: React.FC<Props> = (props) => {
               page: loadingOptions.pageNumber,
               sortOrderInfo: sortedInfo,
               existingFlow: false
-            }}}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
+            }
+          }}><div className={styles.stepLink} data-testid={`${name}-toNewFlow`}>Add step to a new flow</div></Link>}
       </Menu.Item>
       <Menu.Item key="1">
         <div className={styles.stepLinkExisting} data-testid={`${name}-toExistingFlow`}>Add step to an existing flow
@@ -245,7 +249,7 @@ const LoadList: React.FC<Props> = (props) => {
               disabled={!props.canWriteFlow}
               data-testid={`${name}-flowsList`}
             >
-              { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+              {props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
                 <Option aria-label={f.name} value={f.name} key={i}>{f.name}</Option>
               )) : null}
             </Select>
@@ -278,7 +282,7 @@ const LoadList: React.FC<Props> = (props) => {
         <span><span onClick={() => OpenStepSettings(record)} className={styles.editLoadConfig}>{text}</span> </span>
       ),
       sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a:any, b:any) => a.name.localeCompare(b.name),
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
       sortOrder: (sortedInfo && sortedInfo.columnKey === "name") ? sortedInfo.order : "",
     },
     {
@@ -286,7 +290,7 @@ const LoadList: React.FC<Props> = (props) => {
       dataIndex: "description",
       key: "description",
       sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a:any, b:any) => a.description?.localeCompare(b.description),
+      sorter: (a: any, b: any) => a.description?.localeCompare(b.description),
       sortOrder: (sortedInfo && sortedInfo.columnKey === "description") ? sortedInfo.order : "",
     },
     {
@@ -300,7 +304,7 @@ const LoadList: React.FC<Props> = (props) => {
         </div>
       ),
       sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a:any, b:any) => a.sourceFormat.localeCompare(b.sourceFormat),
+      sorter: (a: any, b: any) => a.sourceFormat.localeCompare(b.sourceFormat),
       sortOrder: (sortedInfo && sortedInfo.columnKey === "sourceFormat") ? sortedInfo.order : "",
     },
     {
@@ -308,7 +312,7 @@ const LoadList: React.FC<Props> = (props) => {
       dataIndex: "targetFormat",
       key: "targetFormat",
       sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a:any, b:any) => a.targetFormat.localeCompare(b.targetFormate),
+      sorter: (a: any, b: any) => a.targetFormat.localeCompare(b.targetFormate),
       sortOrder: (sortedInfo && sortedInfo.columnKey === "targetFormat") ? sortedInfo.order : "",
     },
     {
@@ -319,7 +323,7 @@ const LoadList: React.FC<Props> = (props) => {
         <div>{convertDateFromISO(text)}</div>
       ),
       sortDirections: ["ascend", "descend", "ascend"],
-      sorter: (a:any, b:any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
+      sorter: (a: any, b: any) => moment(a.lastUpdated).unix() - moment(b.lastUpdated).unix(),
       defaultSortOrder: "descend",
       sortOrder: (sortedInfo && sortedInfo.columnKey === "lastUpdated") ? sortedInfo.order : "descend",
     },
@@ -329,16 +333,16 @@ const LoadList: React.FC<Props> = (props) => {
       key: "actions",
       render: (text, row) => (
         <span>
-          <Dropdown data-testid={`${row.name}-run-dropdown`} overlay={runMenu(row.name)} trigger={["click"]} disabled = {!props.canWriteFlow} placement="bottomCenter">
-            {props.canReadWrite ?<MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name+"-run"}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={row.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i></MLTooltip>}
+          <Dropdown data-testid={`${row.name}-run-dropdown`} overlay={runMenu(row.name)} trigger={["click"]} disabled={!props.canWriteFlow} placement="bottomCenter">
+            {props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={row.name + "-run"} /></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={row.name + "-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon} /></i></MLTooltip>}
           </Dropdown>
-          <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={["click"]} disabled = {!props.canWriteFlow} placement="bottomCenter">
-            {props.canWriteFlow ? <MLTooltip title={"Add to Flow"} placement="bottom"><span className={"AddToFlowIcon"} aria-label = {row.name+"-add-icon"}></span></MLTooltip> : <MLTooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}><span aria-label = {row.name+"-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span></MLTooltip>}
+          <Dropdown data-testid={`${row.name}-dropdown`} overlay={menu(row.name)} trigger={["click"]} disabled={!props.canWriteFlow} placement="bottomCenter">
+            {props.canWriteFlow ? <MLTooltip title={"Add to Flow"} placement="bottom"><span className={"AddToFlowIcon"} aria-label={row.name + "-add-icon"}></span></MLTooltip> : <MLTooltip title={"Add to Flow: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "225px"}}><span aria-label={row.name + "-disabled-add-icon"} className={"disabledAddToFlowIcon"}></span></MLTooltip>}
           </Dropdown>
           {/* <MLTooltip title={'Settings'} placement="bottom"><Icon type="setting" data-testid={row.name+'-settings'} onClick={() => OpenLoadSettingsDialog(row)} className={styles.settingsIcon} /></MLTooltip> */}
                     &nbsp;
-          {props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+"-delete"} onClick={() => { showDeleteConfirm(row.name); }} className={styles.deleteIcon} size="lg"/></i></MLTooltip> :
-            <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name+"-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg"/></i></MLTooltip> }
+          {props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-delete"} onClick={() => { showDeleteConfirm(row.name); }} className={styles.deleteIcon} size="lg" /></i></MLTooltip> :
+            <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i aria-label="icon: delete"><FontAwesomeIcon icon={faTrashAlt} data-testid={row.name + "-disabled-delete"} onClick={(event) => event.preventDefault()} className={styles.disabledDeleteIcon} size="lg" /></i></MLTooltip>}
         </span>
       ),
 
@@ -362,7 +366,7 @@ const LoadList: React.FC<Props> = (props) => {
         </div> : ""}
       </div>
       <Table
-        pagination={{showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
+        pagination={{hideOnSinglePage: props.data.length <= 10, showSizeChanger: true, pageSizeOptions: pageSizeOptions, onChange: handlePagination, onShowSizeChange: handlePageSizeChange, defaultCurrent: loadingOptions.start, current: loadingOptions.pageNumber, pageSize: loadingOptions.pageSize}}
         className={styles.loadTable}
         columns={columns}
         dataSource={props.data}
