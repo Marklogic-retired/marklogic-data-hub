@@ -68,7 +68,7 @@ function main(content, options) {
     let uriActionDetails = thisMatchSummary.matchSummary.actionDetails[uriToProcess];
     // If the action is merge, ensure we create the merge with the most URIs
     if (uriActionDetails && uriActionDetails.action === 'merge') {
-      const urisQuery = cts.pathRangeQuery('//actionDetails/*/uris', '=', uriActionDetails.uris)
+      const urisQuery = cts.pathRangeQuery('/matchSummary/actionDetails/*/uris', '=', uriActionDetails.uris)
       const positiveQuery =
         cts.andQuery([
           cts.jsonPropertyValueQuery('action', 'merge'),
