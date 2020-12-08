@@ -119,32 +119,30 @@ public class FlowConverterUnitTest {
 
     @Test
     void targetEntityExistsInsteadOfTargetEntityType() {
-        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
-        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "something");
+        StepDefinition.StepDefinitionType[] stepDefinitionTypes = new StepDefinition.StepDefinitionType[]{StepDefinition.StepDefinitionType.MAPPING, StepDefinition.StepDefinitionType.MATCHING, StepDefinition.StepDefinitionType.MERGING, StepDefinition.StepDefinitionType.CUSTOM };
+        for (StepDefinition.StepDefinitionType stepDefinitionType: stepDefinitionTypes) {
+            String stepDefinitionTypeStr = stepDefinitionType.toString();
+            inlineStep.put("stepDefinitionType", stepDefinitionTypeStr);
+            ((ObjectNode) inlineStep.get("options")).put("targetEntity", "something");
 
-        ObjectNode step = buildStepArtifact();
-        assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
-        assertEquals("something", step.get("targetEntityType").asText());
+            ObjectNode step = buildStepArtifact();
+            assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for " + stepDefinitionTypeStr);
+            assertEquals("something", step.get("targetEntityType").asText());
+        }
     }
 
     @Test
     void emptyTargetEntityExistsInsteadOfTargetEntityType() {
-        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.MAPPING.toString());
-        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "");
+        StepDefinition.StepDefinitionType[] stepDefinitionTypes = new StepDefinition.StepDefinitionType[]{StepDefinition.StepDefinitionType.MAPPING, StepDefinition.StepDefinitionType.MATCHING, StepDefinition.StepDefinitionType.MERGING, StepDefinition.StepDefinitionType.CUSTOM };
+        for (StepDefinition.StepDefinitionType stepDefinitionType: stepDefinitionTypes) {
+            String stepDefinitionTypeStr = stepDefinitionType.toString();
+            inlineStep.put("stepDefinitionType", stepDefinitionTypeStr);
+            ((ObjectNode) inlineStep.get("options")).put("targetEntity", "");
 
-        ObjectNode step = buildStepArtifact();
-        assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for mappings");
-        assertEquals("", step.get("targetEntityType").asText());
-    }
-
-    @Test
-    void emptyTargetEntityExistsInACustomStep() {
-        inlineStep.put("stepDefinitionType", StepDefinition.StepDefinitionType.CUSTOM.toString());
-        ((ObjectNode)inlineStep.get("options")).put("targetEntity", "");
-
-        ObjectNode step = buildStepArtifact();
-        assertTrue(step.has("targetEntityType"), "targetEntity should have been converted to targetEntityType since custom steps are being converted");
-        assertEquals("", step.get("targetEntityType").asText());
+            ObjectNode step = buildStepArtifact();
+            assertFalse(step.has("targetEntity"), "targetEntity should have been converted to targetEntityType for " + stepDefinitionTypeStr);
+            assertEquals("", step.get("targetEntityType").asText());
+        }
     }
 
     @Test

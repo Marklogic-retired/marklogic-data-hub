@@ -416,6 +416,8 @@ public class FlowConverter extends LoggingObject {
 
         // Convert and/or get rid of targetEntity for a mapping step
         if ((stepDefTypeEqual(StepDefinitionType.MAPPING, inlineStep.get("stepDefinitionType")) ||
+            stepDefTypeEqual(StepDefinitionType.MATCHING, inlineStep.get("stepDefinitionType")) ||
+            stepDefTypeEqual(StepDefinitionType.MERGING, inlineStep.get("stepDefinitionType")) ||
             stepDefTypeEqual(StepDefinitionType.CUSTOM, inlineStep.get("stepDefinitionType"))) &&
             stepArtifact.has("targetEntity"))
         {
@@ -514,6 +516,10 @@ public class FlowConverter extends LoggingObject {
         }
 
         JsonNode afterNode = MasteringService.on(hubConfig.newHubClient().getStagingClient()).updateMatchOptions(beforeNode);
+        if (stepNode.has("targetEntity")) {
+            stepNode.set("targetEntityType", stepNode.get("targetType"));
+            stepNode.remove("targetType");
+        }
         stepNode.remove("matchOptions");
 
         // copy new keys into step (matchRulesets, thresholds, etc.)
@@ -533,6 +539,10 @@ public class FlowConverter extends LoggingObject {
         }
 
         JsonNode afterNode = MasteringService.on(hubConfig.newHubClient().getStagingClient()).updateMergeOptions(beforeNode);
+        if (stepNode.has("targetEntity")) {
+            stepNode.set("targetEntityType", stepNode.get("targetType"));
+            stepNode.remove("targetType");
+        }
         stepNode.remove("mergeOptions");
 
         // copy new keys into step (mergeStrategies, mergeRulesets, etc.)
