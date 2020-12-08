@@ -133,7 +133,7 @@ describe("login", () => {
     toolbar.getCurateToolbarIcon().click();
     curatePage.toggleEntityTypeId(entityTypeId);
     curatePage.verifyTabs(entityTypeId, "be.visible", "not.exist");
-    curatePage.addNewStep().should("not.be.visible");
+    curatePage.addNewStepDisabled().should("be.visible");
     curatePage.editStep(mapStepName).click();
     curatePage.verifyStepNameIsVisible(mapStepName);
     curatePage.saveEdit().should("be.disabled");

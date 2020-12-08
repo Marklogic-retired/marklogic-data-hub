@@ -78,6 +78,10 @@ class CuratePage {
     return cy.findByLabelText("icon: plus-circle");
   }
 
+  addNewStepDisabled() {
+    return cy.findByLabelText("add-new-card-disabled");
+  }
+
   stepSettings(stepName: string) {
     return cy.findByTestId(`${stepName}-settings`);
   }
