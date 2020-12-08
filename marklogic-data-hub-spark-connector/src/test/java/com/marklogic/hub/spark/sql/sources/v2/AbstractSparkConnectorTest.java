@@ -74,7 +74,7 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
     }
 
     @Override
-    protected HubClient runAsUser(String username, String password) {
+    protected HubClient doRunAsUser(String username, String password) {
         testProperties = new Properties();
         String mlHost = "localhost";
         String hubDhs = "false";

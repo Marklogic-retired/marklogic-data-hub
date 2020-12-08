@@ -31,6 +31,9 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void overrideUriViaIngestionStep() {
+        makeInputFilePathsAbsoluteInFlow("stepProcessors");
+
+        runAsDataHubOperator();
         RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "4"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 

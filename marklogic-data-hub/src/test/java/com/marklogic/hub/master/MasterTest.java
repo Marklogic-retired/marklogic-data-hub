@@ -54,12 +54,13 @@ public class MasterTest extends AbstractHubCoreTest {
         metadata.getPermissions().add("data-hub-module-writer", DocumentMetadataHandle.Capability.UPDATE);
         getHubConfig().newModulesDbClient().newDocumentManager().write("/custom-modules/no-op.sjs",
             metadata, new BytesHandle(customModuleText.getBytes()).withFormat(Format.TEXT));
-
-        runAsDataHubOperator();
     }
 
     @Test
     public void testMatchEndpoint() {
+        makeInputFilePathsAbsoluteInFlow("myNewFlow");
+
+        runAsDataHubOperator();
         runFlow(new FlowInputs("myNewFlow", "1", "2"));
         JsonNode matchResp = masteringManager.match("/person-1.json", "myNewFlow", "3", Boolean.TRUE, new ObjectMapper().createObjectNode()).get("results");
         assertEquals(7, matchResp.get("total").asInt(), "There should 7 match results");
@@ -68,6 +69,9 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testMasterStep() {
+        makeInputFilePathsAbsoluteInFlow("myNewFlow");
+
+        runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "1", "2", "3"));
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
         assertTrue(masterJob.isSuccess(), "Mastering job failed!");
@@ -97,6 +101,9 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testMatchMergeSteps() {
+        makeInputFilePathsAbsoluteInFlow("myMatchMergeFlow");
+
+        runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow(new FlowInputs("myMatchMergeFlow", "1", "2", "3"));
         RunStepResponse matchJob = flowResponse.getStepResponses().get("3");
         assertTrue(matchJob.isSuccess(), "Matching job failed!");
@@ -131,6 +138,9 @@ public class MasterTest extends AbstractHubCoreTest {
 
     @Test
     public void testManualMerge() {
+        makeInputFilePathsAbsoluteInFlow("myNewFlow");
+
+        runAsDataHubOperator();
         runFlow(new FlowInputs("myNewFlow", "1", "2"));
         List<String> docsToMerge = Arrays.asList("/person-1.json", "/person-1-1.json", "/person-1-2.json", "/person-1-3.json");
         JsonNode mergeResults = masteringManager.merge(docsToMerge, "myNewFlow", "3", Boolean.FALSE, new ObjectMapper().createObjectNode());
