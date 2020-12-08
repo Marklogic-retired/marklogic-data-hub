@@ -34,6 +34,8 @@ import module namespace opt-impl = "http://marklogic.com/smart-mastering/options
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace sm = "http://marklogic.com/smart-mastering";
 
@@ -215,7 +217,7 @@ declare function matcher:get-option-names($format as xs:string)
   else if ($format = $const:FORMAT-JSON) then
     opt-impl:get-option-names-as-json()
   else
-    fn:error(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option-names called with invalid format " || $format)
+    httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option-names called with invalid format " || $format)
 };
 
 (:
@@ -232,7 +234,7 @@ declare function matcher:get-options($options-name as xs:string, $format as xs:s
   else if ($format = $const:FORMAT-JSON) then
     opt-impl:get-options-as-json($options-name)
   else
-    fn:error(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option called with invalid format " || $format)
+    httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option called with invalid format " || $format)
 };
 
 (:
@@ -362,7 +364,7 @@ declare function matcher:get-notifications(
   else if ($format eq $const:FORMAT-XML) then
     notify-impl:get-notifications-as-xml($start, $end, $extractions)
   else
-    fn:error(xs:QName("SM-INVALID-FORMAT"), "matcher:get-notifications called with invalid format " || $format)
+    httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "matcher:get-notifications called with invalid format " || $format)
 };
 
 (:

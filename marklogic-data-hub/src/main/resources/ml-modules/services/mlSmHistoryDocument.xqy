@@ -5,6 +5,9 @@ module namespace resource = "http://marklogic.com/rest-api/resource/mlSmHistoryD
 import module namespace history = "http://marklogic.com/smart-mastering/auditing/history"
   at "/com.marklogic.smart-mastering/auditing/history.xqy";
 
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
+
 declare function get(
   $context as map:map,
   $params  as map:map
@@ -17,7 +20,5 @@ declare function get(
         history:document-history($uri)
       }
     else
-      fn:error((),"RESTAPI-SRVEXERR",
-        (400, "Bad Request",
-        "uri parameter is required"))
+      httputils:throw-bad-request((),  "uri parameter is required")
 };

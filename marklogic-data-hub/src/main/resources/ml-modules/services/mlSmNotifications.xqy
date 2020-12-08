@@ -5,6 +5,9 @@ module namespace ext = "http://marklogic.com/rest-api/resource/mlSmNotifications
 import module namespace matcher = "http://marklogic.com/smart-mastering/matcher"
   at "/com.marklogic.smart-mastering/matcher.xqy";
 
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
+
 declare option xdmp:mapping "false";
 
 (:
@@ -94,22 +97,16 @@ declare function put(
   let $status as xs:string? := $input/node()/status
   return
     if (fn:empty($status)) then
-      fn:error((),"RESTAPI-SRVEXERR",
-        (400, "Bad Request",
-        "status parameter is required"))
+      httputils:throw-bad-request((), "status parameter is required")
     else if (fn:empty($uris)) then
-      fn:error((),"RESTAPI-SRVEXERR",
-        (400, "Bad Request",
-        "uris parameter is required"))
+      httputils:throw-bad-request((), "uris parameter is required")
     else (
       for $uri in $uris
       return
         if (fn:doc-available($uri)) then
           matcher:update-notification-status($uri, $status)
         else
-          fn:error((),"RESTAPI-SRVEXERR",
-            (404, "Not Found",
-            "No notification available at URI " || $uri)),
+          httputils:throw-not-found((), "No notification available at URI " || $uri),
       xdmp:to-json(json:object() => map:with("success", fn:true()))
     )
 };
@@ -125,12 +122,8 @@ declare function delete(
       if (fn:doc-available($uri)) then
         matcher:delete-notification($uri)
       else
-        fn:error((),"RESTAPI-SRVEXERR",
-          (404, "Not Found",
-          "No notification available at URI " || $uri)),
+        httputils:throw-not-found((), "No notification available at URI " || $uri),
     xdmp:to-json(json:object() => map:with("success", fn:true()))
   ) else
-    fn:error((),"RESTAPI-SRVEXERR",
-      (400, "Bad Request",
-      "uri parameter is required"))
+    httputils:throw-bad-request((), "uri parameter is required")
 };

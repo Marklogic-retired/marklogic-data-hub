@@ -55,6 +55,8 @@ import module namespace mem = "http://maxdewpoint.blogspot.com/memory-operations
   at "/mlpm_modules/XQuery-XML-Memory-Operations/memory-operations-functional.xqy";
 import module namespace helper = "http://marklogic.com/smart-mastering/helper-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 declare namespace sm = "http://marklogic.com/smart-mastering";
@@ -701,7 +703,7 @@ declare function merge-impl:build-headers(
 
   if ($format = ($const:FORMAT-XML, $const:FORMAT-JSON)) then
     ()
-  else fn:error(xs:QName("SM-INVALID-FORMAT"), "merge-impl:build-headers called with invalid format " || $format),
+  else httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "merge-impl:build-headers called with invalid format " || $format),
   let $current-dateTime := fn:current-dateTime()
   let $all-uris :=
       for $uri in fn:distinct-values(($docs ! xdmp:node-uri(.), $uris))

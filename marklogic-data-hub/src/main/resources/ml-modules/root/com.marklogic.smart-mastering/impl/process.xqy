@@ -40,6 +40,8 @@ import module namespace coll = "http://marklogic.com/smart-mastering/collections
   at "collections.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare option xdmp:mapping "false";
 
@@ -54,7 +56,7 @@ declare function proc-impl:process-match-and-merge($input as item()*)
       return
         proc-impl:process-match-and-merge-with-options-save($input, $merge-options, $match-options, cts:true-query(), fn:false())
     else
-      fn:error($const:NO-MERGE-OPTIONS-ERROR, "No Merging Options are present. See: https://marklogic-community.github.io/smart-mastering-core/docs/merging-options/")
+      httputils:throw-bad-request($const:NO-MERGE-OPTIONS-ERROR, "No Merging Options are present. See: https://marklogic-community.github.io/smart-mastering-core/docs/merging-options/")
 };
 
 declare function proc-impl:process-match-and-merge(
@@ -389,7 +391,7 @@ declare function proc-impl:build-match-summary(
     ))
   let $_min-threshold-err :=
     if (fn:empty($minimum-threshold)) then
-      fn:error($const:NO-THRESHOLD-ACTION-FOUND, "No threshold actions to act on.", ($thresholds))
+      httputils:throw-bad-request($const:NO-THRESHOLD-ACTION-FOUND, ("No threshold actions to act on.", $thresholds))
     else ()
   let $max-scan := fn:head((
     $match-options-node//(*:max-scan|maxScan) ! xs:integer(.),
@@ -774,7 +776,7 @@ declare function proc-impl:build-content-objects-from-match-summary(
                       $action-func
                     )
                   let $_check-function-exists := if (fn:empty($action-func)) then
-                      fn:error(xs:QName("SM-CONFIGURATION"), "Threshold action is not configured or not found", ($action, $action-details))
+                    httputils:throw-bad-request(xs:QName("SM-CONFIGURATION"), ("Threshold action is not configured or not found", $action, $action-details))
                     else ()
                   let $custom-action-options :=
                     let $match-results := $custom-action => map:get("matchResults")

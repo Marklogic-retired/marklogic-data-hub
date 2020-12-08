@@ -28,6 +28,8 @@ xquery version "1.0-ml";
  :)
 module namespace func = "http://snelson.org.uk/functions/functional";
 declare default function namespace "http://snelson.org.uk/functions/functional";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 (:~ Returns the argument :)
 declare function id($a)
@@ -124,8 +126,8 @@ declare function curry($f as function(*)) as function(item()*) as item()*
   else if($arity eq 8) then curry8($f)
   else if($arity eq 9) then curry9($f)
   else if($arity eq 10) then curry10($f)
-  else if($arity eq 0) then fn:error(xs:QName("func:FNDY0001"), "Can't curry a 0 arity function item")
-  else fn:error(xs:QName("func:FNDY0002"), "Currying not implemented for a function item with arity greater than 10")
+  else if($arity eq 0) then httputils:throw-bad-request(xs:QName("func:FNDY0001"), "Can't curry a 0 arity function item")
+  else httputils:throw-bad-request(xs:QName("func:FNDY0002"), "Currying not implemented for a function item with arity greater than 10")
 };
 
 declare %private function curry2($f as function(*)) as function(item()*) as item()*
@@ -201,7 +203,7 @@ declare function Y($f as function(*)) as function(*)
   else if($arity eq 8) then Y8($f)
   else if($arity eq 9) then Y9($f)
   else if($arity eq 10) then Y10($f)
-  else fn:error(xs:QName("func:FNDY0002"), "Y combinator not implemented for a function item with arity greater than 10")
+  else httputils:throw-bad-request(xs:QName("func:FNDY0002"), "Y combinator not implemented for a function item with arity greater than 10")
 };
 
 declare %private function Y1($f as function(*)) as function(*)
@@ -255,7 +257,7 @@ declare %private function Y10($f as function(*)) as function(*)
 };
 
 (:~
- : Compose a sequence of functions into a single function. All the functions 
+ : Compose a sequence of functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments. ie:
  :
@@ -287,7 +289,7 @@ declare %private function compose-helper($functions as function(*)+, $result as 
 };
 
 (:~
- : Compose two functions into a single function. All the functions 
+ : Compose two functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments. ie:
  :
@@ -314,11 +316,11 @@ declare function compose($f1 as function(*), $f2 as function(*)) as function(*)
   else if($arity eq 8) then function($a, $b, $c, $d, $e, $f, $g, $h) { $f1($f2($a, $b, $c, $d, $e, $f, $g, $h)) }
   else if($arity eq 9) then function($a, $b, $c, $d, $e, $f, $g, $h, $i) { $f1($f2($a, $b, $c, $d, $e, $f, $g, $h, $i)) }
   else if($arity eq 10) then function($a, $b, $c, $d, $e, $f, $g, $h, $i, $j) { $f1($f2($a, $b, $c, $d, $e, $f, $g, $h, $i, $j)) }
-  else fn:error(xs:QName("func:FNDY0002"), "compose not implemented for final function items with arity greater than 10")
+  else httputils:throw-bad-request(xs:QName("func:FNDY0002"), "compose not implemented for final function items with arity greater than 10")
 };
 
 (:~
- : Compose three functions into a single function. All the functions 
+ : Compose three functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -331,7 +333,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose four functions into a single function. All the functions 
+ : Compose four functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -344,7 +346,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose five functions into a single function. All the functions 
+ : Compose five functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -357,7 +359,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose six functions into a single function. All the functions 
+ : Compose six functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -371,7 +373,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose seven functions into a single function. All the functions 
+ : Compose seven functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -385,7 +387,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose eight functions into a single function. All the functions 
+ : Compose eight functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -399,7 +401,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose nine functions into a single function. All the functions 
+ : Compose nine functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
@@ -413,7 +415,7 @@ declare function compose($f1 as function(*), $f2 as function(*), $f3 as function
 };
 
 (:~
- : Compose ten functions into a single function. All the functions 
+ : Compose ten functions into a single function. All the functions
  : except the last one must have an arity of 1. The last function may accept
  : between 0 and 10 arguments.
  :
