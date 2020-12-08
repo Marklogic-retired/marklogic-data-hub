@@ -15,6 +15,8 @@ import module namespace helper-impl = "http://marklogic.com/smart-mastering/help
   at "/com.marklogic.smart-mastering/matcher-impl/helper-impl.xqy";
 import module namespace sem = "http://marklogic.com/semantics"
   at "/MarkLogic/semantics.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace es = "http://marklogic.com/entity-services";
 declare variable $_entity-descriptors as array-node() := array-node {
@@ -113,7 +115,7 @@ declare function es-impl:get-entity-def($target-entity as item()?) as object-nod
           map:put($_cached-entities, $target-entity, $entity-def),
           $entity-def
         ) else
-          fn:error($const:ENTITY-NOT-FOUND-ERROR, ("Specified entity not found"), ($target-entity))
+          httputils:throw-not-found($const:ENTITY-NOT-FOUND-ERROR, ("Specified entity not found", $target-entity))
   else ()
 };
 
@@ -136,7 +138,7 @@ declare function es-impl:get-entity-def-property(
             map:put($_cached-entity-properties, $key, $property-def),
             $property-def
           ) else
-            fn:error($const:ENTITY-PROPERTY-NOT-FOUND-ERROR, ("Specified entity property not found"), ($entity-def, $property-title))
+            httputils:throw-not-found($const:ENTITY-PROPERTY-NOT-FOUND-ERROR, ("Specified entity property not found", $entity-def, $property-title))
   else ()
 };
 

@@ -38,6 +38,9 @@ import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 import module namespace trace = "http://marklogic.com/data-hub/trace"
   at "/data-hub/4/impl/trace-lib.xqy";
 
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
+
 declare namespace error = "http://marklogic.com/xdmp/error";
 
 declare namespace hub = "http://marklogic.com/data-hub";
@@ -69,7 +72,7 @@ declare function get(
           return
             if (fn:exists($flow)) then $flow
             else
-              fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested flow was not found"))
+              httputils:throw-not-found((), "The requested flow was not found")
         else
           flow:get-flows($entity-name)
       return
@@ -174,12 +177,12 @@ declare function post(
 
         let $resp :=
           if (trace:get-error-count() > 0 and $is-plugin-error) then
-            fn:error((),"RESTAPI-SRVEXERR", (400, "Plugin error", text{$output}))
+            httputils:throw-bad-request((), ("Plugin error", text{$output}))
           else
             $output
         return
           $resp
       else
-        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested flow was not found"))
+        httputils:throw-not-found((),"The requested flow was not found")
   })
 };

@@ -27,6 +27,8 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
   at "/com.marklogic.smart-mastering/constants.xqy";
 import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
   at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare variable $write-objects-by-uri as map:map := map:map();
 
@@ -159,7 +161,7 @@ declare function util-impl:handle-option-messages($type as xs:string, $message a
   if (fn:exists($messages-output)) then
     map:put($messages-output, $type, (map:get($messages-output, $type),$message))
   else if ($type eq "error") then
-    fn:error((), 'RESTAPI-SRVEXERR', (400, $message))
+    httputils:throw-bad-request((), $message)
   else
     xdmp:log($message, $type)
 };

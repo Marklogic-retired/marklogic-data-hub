@@ -35,6 +35,9 @@ at "/data-hub/4/impl/perflog-lib.xqy";
 import module namespace esi = "http://marklogic.com/entity-services-impl"
 at "/MarkLogic/entity-services/entity-services-impl.xqy";
 
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
+
 declare namespace es = "http://marklogic.com/entity-services";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
@@ -684,8 +687,8 @@ declare function service:get(
           else
             service:generate-sjs($entity, $flow-type, $model, $mapping)
         else
-          fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested mapping: " || $mapping-name || " was not found"))
+          httputils:throw-not-found((), "The requested mapping: " || $mapping-name || " was not found")
       else
-        fn:error((),"RESTAPI-SRVEXERR", (404, "Not Found", "The requested entity: " || $entity || " was not found"))
+        httputils:throw-not-found((), "The requested entity: " || $entity || " was not found")
   })
 };

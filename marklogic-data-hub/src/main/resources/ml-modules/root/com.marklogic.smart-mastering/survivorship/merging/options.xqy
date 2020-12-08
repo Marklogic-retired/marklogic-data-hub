@@ -23,6 +23,8 @@ import module namespace merge-impl = "http://marklogic.com/smart-mastering/survi
   at  "standard.xqy";
 import module namespace util-impl = "http://marklogic.com/smart-mastering/util-impl"
   at "/com.marklogic.smart-mastering/impl/util.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare namespace merging = "http://marklogic.com/smart-mastering/merging";
 
@@ -56,7 +58,7 @@ declare function merge-impl:get-options($format as xs:string)
     else if ($format eq $const:FORMAT-JSON) then
       array-node { $options ! merge-impl:options-to-json(.) }
     else
-      fn:error(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option-names called with invalid format " || $format)
+      httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "matcher:get-option-names called with invalid format " || $format)
 };
 
 declare function merge-impl:get-options($options-name, $format as xs:string)
@@ -68,7 +70,7 @@ declare function merge-impl:get-options($options-name, $format as xs:string)
     else if ($format eq $const:FORMAT-JSON) then
       merge-impl:options-to-json($options)
     else
-      fn:error(xs:QName("SM-INVALID-FORMAT"), "merge-impl:get-options called with invalid format " || $format)
+      httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "merge-impl:get-options called with invalid format " || $format)
 };
 
 declare function merge-impl:save-options(
@@ -522,7 +524,7 @@ declare function merge-impl:get-option-names($format as xs:string)
   else if ($format eq $const:FORMAT-JSON) then
     merge-impl:option-names-to-json(merge-impl:get-option-names($const:FORMAT-XML))
   else
-    fn:error(xs:QName("SM-INVALID-FORMAT"), "Attempted to call merge-impl:get-option-names with invalid format: " || $format)
+    httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "Attempted to call merge-impl:get-option-names with invalid format: " || $format)
 };
 
 declare variable $option-names-json-config := merge-impl:_option-names-json-config();

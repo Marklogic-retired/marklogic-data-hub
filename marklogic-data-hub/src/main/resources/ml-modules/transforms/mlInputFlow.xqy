@@ -32,6 +32,9 @@ at "/data-hub/4/impl/trace-lib.xqy";
 import module namespace perf = "http://marklogic.com/data-hub/perflog-lib"
 at "/data-hub/4/impl/perflog-lib.xqy";
 
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
+
 declare namespace hub = "http://marklogic.com/data-hub";
 
 declare namespace rapi = "http://marklogic.com/rest-api";
@@ -53,7 +56,7 @@ declare %rapi:transaction-mode("query") function inputFlow:transform(
     let $_ :=
       if ($flow) then ()
       else
-        fn:error((),"RESTAPI-SRVEXERR", ("404","MISSING_FLOW", "The specified flow " || $entity-name || ":" || $flow-name || " is missing."))
+        httputils:throw-not-found((), "The specified flow " || $entity-name || ":" || $flow-name || " is missing.")
 
     (: configure the options :)
     let $options as map:map := (

@@ -6,6 +6,8 @@ import module namespace hent = "http://marklogic.com/data-hub/hub-entities" at "
 import module namespace tde = "http://marklogic.com/xdmp/tde"
         at "/MarkLogic/tde.xqy";
 import module namespace trgr = 'http://marklogic.com/xdmp/triggers' at '/MarkLogic/triggers.xqy';
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+at "/data-hub/5/impl/http-utils.xqy";
 
 declare variable $ENTITY-MODEL-COLLECTION as xs:string := "http://marklogic.com/entity-services/models";
 
@@ -23,7 +25,7 @@ let $uber-model :=
         xdmp:json-validate-node($entity-def/info, xdmp:unquote('{type: "object", properties: {"baseUri":{type:"string", format:"uri"}}, required: ["baseUri"]}'), "strict")
       } catch ($ex) {
         if(($ex/error:code eq "XDMP-JSVALIDATEINVFORMAT" or $ex/error:code eq "XDMP-JSVALIDATEMISSING") and fn:contains($ex/error:format-string/text(), "baseUri")) then (
-          fn:error(fn:QName("error","XDMP-JSVALIDATEINVFORMAT"),fn:concat("A valid Base URI is required (e.g. http://example.org/) for entity: ", $entity-title, "."), fn:concat("Error Message: ", $ex/error:format-string/text()))
+          httputils:throw-bad-request(fn:QName("error","XDMP-JSVALIDATEINVFORMAT"), fn:concat("A valid Base URI is required (e.g. http://example.org/) for entity: ", $entity-title, "."))
         )
         else xdmp:rethrow()
       }
@@ -84,7 +86,7 @@ let $uber-model :=
     (: build uber model with original info :)
     return hent:uber-model((xdmp:to-json($entity-def-map)/object-node(), $supporting-entity-defs)) => map:with("info", $info-map)
   } catch ($e) {
-    fn:error(xs:QName("INVALID-MODEL"), "Unable to validate entity model at URI: " || $trgr:uri || "; cause: " || xdmp:quote($e))
+    httputils:throw-bad-request(xs:QName("INVALID-MODEL"), "Unable to validate entity model at URI: " || $trgr:uri || "; cause: " || xdmp:quote($e))
   }
 
 (: This is kept separate from the above try/catch as model-validate is expected to throw a helpful error message :)

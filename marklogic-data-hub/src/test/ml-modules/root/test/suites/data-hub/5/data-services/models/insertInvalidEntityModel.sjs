@@ -38,6 +38,6 @@ try {
   throw Error("Expected failure because the title property is invalid");
 } catch (e) {
   const errorMessage = e.toString();
-  test.assertTrue(errorMessage.startsWith("Unable to validate entity model at URI: /entities/BadEntity.entity.json"),
+  test.assertTrue(errorMessage.startsWith("RESTAPI-SRVEXERR: (INVALID-MODEL) Extension Error:  code: 400 message: Unable to validate entity model at URI: /entities/BadEntity.entity.json"),
     "Expected the original error to be wrapped with a new error that identifies which entity model failed validation");
 }
