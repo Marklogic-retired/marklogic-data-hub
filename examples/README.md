@@ -3,6 +3,20 @@
 To try out any of the below example projects, clone this repository and follow the instructions in the README.md file 
 in an example project directory.
 
+Many of the Data Hub 5 example projects can be tested against a snapshot version of the Data Hub Gradle plugin; this is 
+typically done when testing these projects locally against the develop branch. A snapshot version will be used when the
+Gradle property "testing" has a value of "true". 
+
+If you are trying to use a snapshot version of the Gradle plugin and get an error about not being able to find the 
+plugin - e.g. "Could not find com.marklogic:ml-data-hub:5.4-SNAPSHOT" - then run the following Gradle task from the root
+of this repository (this is also described in the CONTRIBUTING.md guide in the section named "Testing changes to the 
+Data Hub Gradle plugin"): 
+
+    ./gradlew publishToMavenLocal
+
+That task will build and publish a copy of the Data Hub Gradle plugin to your local Maven repository, thus making it 
+available for use within an example project. 
+
 ## Data Hub 5
 
 1. [insurance](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/insurance) - an example that ingests, maps, and masters customer data from two fictitious insurance companies
