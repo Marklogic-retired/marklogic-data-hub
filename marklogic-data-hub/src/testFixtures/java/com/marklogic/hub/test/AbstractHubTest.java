@@ -383,7 +383,6 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
      * @return
      */
     protected RunFlowResponse runFlow(FlowInputs flowInputs) {
-        makeInputFilePathsAbsoluteInFlow(flowInputs.getFlowName());
         FlowRunnerImpl flowRunner = new FlowRunnerImpl(getHubClient());
         RunFlowResponse response = flowRunner.runFlow(flowInputs);
         flowRunner.awaitCompletion();

@@ -14,10 +14,10 @@ public class ConstrainSourceQueryToJobTest extends AbstractHubCoreTest {
     @Test
     public void test() {
         installReferenceModelProject();
-        runAsDataHubOperator();
-
         final String flowName = "ingestToFinal";
+        makeInputFilePathsAbsoluteInFlow(flowName);
 
+        runAsDataHubOperator();
         RunFlowResponse flowResponse = runFlow(new FlowInputs(flowName, "1").withJobId("job1"));
         RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
         assertEquals("job1", stepResponse.getJobId());

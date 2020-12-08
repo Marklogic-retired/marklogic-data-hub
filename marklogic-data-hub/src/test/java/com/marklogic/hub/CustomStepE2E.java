@@ -14,6 +14,7 @@ public class CustomStepE2E extends AbstractHubCoreTest {
     public void testCustomStep() {
         installProjectInFolder("mapping-test");
 
+        makeInputFilePathsAbsoluteInFlow("Admissions");
         RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "1", "2", "3", "4"));
         RunStepResponse ingestionJob = flowResponse.getStepResponses().get("3");
         assertTrue(ingestionJob.isSuccess(), "Custom ingestion job failed: " + ingestionJob.stepOutput);

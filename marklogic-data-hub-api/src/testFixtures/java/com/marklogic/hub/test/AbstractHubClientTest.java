@@ -18,7 +18,16 @@ public abstract class AbstractHubClientTest extends TestObject {
 
     protected abstract HubClient getHubClient();
 
-    protected abstract HubClient runAsUser(String username, String password);
+    protected abstract HubClient doRunAsUser(String username, String password);
+
+    protected final HubClient runAsUser(String username, String password) {
+        long start = System.currentTimeMillis();
+        HubClient hubClient = doRunAsUser(username, password);
+        logger.info("Running as user: " + username + "; switching time: " +
+                (System.currentTimeMillis() - start) + "ms");
+
+        return hubClient;
+    }
 
     protected void resetDatabases() {
         // Admin is needed to clear out provenance data

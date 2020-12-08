@@ -32,6 +32,7 @@ public class RunFlowWithStemmingEnabledTest extends AbstractHubCoreTest {
             enableAdvancedStemming(true);
             installProjectInFolder("flow-runner-test");
 
+            makeInputFilePathsAbsoluteInFlow("testFlow");
             RunFlowResponse resp = runFlow(new FlowInputs("testFlow"));
             assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus().toLowerCase());
 
