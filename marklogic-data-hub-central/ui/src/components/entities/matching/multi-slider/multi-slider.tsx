@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Icon} from "antd";
-import {Slider, Handles} from "@marklogic/react-compound-slider";
+import {Slider, Handles, Ticks} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
 
 const MultiSlider = (props) => {
@@ -9,12 +9,18 @@ const MultiSlider = (props) => {
   const handleDelete = props.handleDelete;
   const handleEdit = props.handleEdit;
   const [activeHandleIdOptions, setActiveHandleIdOptions] = useState<object>({});
+  const [tickValue, setTickValue] = useState<any>(0);
 
 
   function Handle({handle: {id, value, percent},
     options: options,
     getHandleProps
   }) {
+
+    const onHover = () => {
+      setTickValue(value);
+    };
+
     return (
       <>
         <div className={"tooltipContainer"} style={{left: `${percent}%`}}>
@@ -39,6 +45,7 @@ const MultiSlider = (props) => {
         </div>
         <div
           className={"handle"}
+          onMouseOver={() => onHover()}
           data-testid={`${options[0].prop}-active`}
           style={{
             left: `${percent}%`,
@@ -49,6 +56,40 @@ const MultiSlider = (props) => {
       </>
     );
   }
+
+  function Tick({tick, count}) {
+    return (
+      <div>
+        <div onMouseOver={() => onHover(tick.value)}
+          style={{
+            position: "absolute",
+            marginTop: 6,
+            width: 1,
+            height: 5,
+            backgroundColor: "rgb(200,200,200)",
+            left: `${tick.percent}%`
+          }}
+        />
+        {(tickValue===tick.value) ?<div
+          className={"tooltipValue"}
+          style={{
+            marginLeft: `${-(100 / count) / 2}%`,
+            left: `${tick.percent}%`,
+          }}
+        >
+          {tick.value}
+        </div>:null}
+      </div>
+
+    );
+  }
+
+  const onHover = (value) => {
+    setTickValue(value);
+  };
+  const onMouseLeave = () => {
+    setTickValue(0);
+  };
 
   const onUpdate = values => {
     // console.log('onUpdate values', values);
@@ -66,11 +107,13 @@ const MultiSlider = (props) => {
   };
 
   const onSlideStart = (e, handleId) => {
+    setTickValue(0);
     let parsedHandleId = handleId.activeHandleID.split("-")[1];
     setActiveHandleIdOptions({...options[parsedHandleId].props[0], index: parsedHandleId});
   };
 
   const onSlideEnd = values => {
+    setTickValue(0);
     let result = options.map((opt, i) => {
       // TODO handle multiple tooltips
       return {
@@ -88,20 +131,20 @@ const MultiSlider = (props) => {
     props.handleSlider(result, sliderOptions);
   };
 
+
   return (
-    <div className={"multiSlider"}>
+    <div className={"multiSlider"} onMouseLeave={onMouseLeave}>
       <Slider
         mode={1}
         className={"slider"}
-        domain={[0, 12]}
+        domain={[1, 100]}
         values={options.map(opt => opt.value)} // Array of starting values
-        step={0.1}
+        step={1}
         onUpdate={onUpdate}
         onChange={onChange}
         onSlideStart={onSlideStart}
         onSlideEnd={onSlideEnd}
       >
-        <div className={"sliderRail"} data-testid={`${props.type}-slider-rail`}/>
         <Handles>
           {({handles, getHandleProps}) => {
             return (
@@ -121,6 +164,16 @@ const MultiSlider = (props) => {
             );
           }}
         </Handles>
+        <div className={"sliderRail"} data-testid={`${props.type}-slider-rail`}/>
+        <Ticks count={100}>
+          {({ticks}) => (
+            <div data-testid={`${props.type}-slider-ticks`} >
+              {ticks.map((tick) => (
+                <Tick key={tick.id} tick={tick} count={ticks.length}/>
+              ))}
+            </div>
+          )}
+        </Ticks>
       </Slider>
       <div className={"sliderOptions"} data-testid={`${props.type}-slider-options`}><span>LOW</span><span>MEDIUM</span><span>HIGH</span></div>
     </div>
