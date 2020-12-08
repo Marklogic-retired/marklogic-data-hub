@@ -618,13 +618,13 @@ class BrowsePage {
   }
 
   getPaginationPageSizeOptions() {
-    return cy.get('.ant-pagination-options .ant-select-selection-selected-value');
+    return cy.get(".ant-pagination-options .ant-select-selection-selected-value");
   }
 
   getPageSizeOption(pageSizeOption: string) {
     return cy.findByText(pageSizeOption);
   }
-  
+
 }
 
 const browsePage = new BrowsePage();

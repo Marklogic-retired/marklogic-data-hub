@@ -47,7 +47,7 @@ describe("Detail page for non-entity view component", () => {
   });
 
   test("Detail page for non-entity with XML data renders", () => {
-    const {getByTestId, getByText, queryByTestId, getByLabelText} = render(
+    const {getByTestId, getByText, queryByTestId} = render(
       <Router>
         <DetailPageNonEntity
           {...testData.NonEntityDocumentData}

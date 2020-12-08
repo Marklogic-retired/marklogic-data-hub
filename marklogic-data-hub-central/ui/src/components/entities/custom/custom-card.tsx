@@ -1,10 +1,12 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Card, Icon, Row, Col} from "antd";
+import {Card, Row, Col} from "antd";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {AdvCustomTooltips} from "../../../config/tooltips.config";
 import {MLTooltip} from "@marklogic/design-system";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Steps from "../../steps/steps";
+import {faEye} from "@fortawesome/free-solid-svg-icons";
 
 
 interface Props {
@@ -31,7 +33,9 @@ const CustomCard: React.FC<Props> = (props) => {
           <Col key={index}>
             <Card
               actions={[
-                <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom"><Icon type="edit" key="edit" role="edit-custom button" data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></MLTooltip>,
+                <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom">
+                  <span onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
+                </MLTooltip>,
               ]}
               className={styles.cardStyle}
               size="small"
