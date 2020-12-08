@@ -29,9 +29,11 @@ describe("Matching Step Detail view component", () => {
     expect(queryByLabelText("threshold-more")).toBeNull();
     expect(queryByLabelText("ruleset-more")).toBeNull();
     expect(getByTestId("threshold-slider-rail")).toBeInTheDocument();
+    expect(getByTestId("threshold-slider-ticks")).toBeInTheDocument();
     expect(getByTestId("threshold-slider-options")).toBeInTheDocument();
     expect(getByTestId("ruleSet-slider-rail")).toBeInTheDocument();
     expect(getByTestId("ruleSet-slider-options")).toBeInTheDocument();
+    expect(getByTestId("ruleSet-slider-ticks")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("threshold-less"));
     expect(queryByLabelText("threshold-more")).toBeInTheDocument();
