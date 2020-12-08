@@ -34,6 +34,7 @@ class Tiles {
 
   closeRunMessage() {
     cy.wait(500);
+    cy.get("body").type("{esc}");
     return cy.get("body").type("{esc}");
   }
 }

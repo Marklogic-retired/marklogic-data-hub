@@ -94,6 +94,13 @@ const Header:React.FC<Props> = (props) => {
     </div>
   </div>;
 
+  let infoContainer = <div aria-label="info-text">
+      Data Hub Version: <strong>{props.environment.dataHubVersion}</strong><br/>
+      MarkLogic Version: <strong>{props.environment.marklogicVersion}</strong><br/>
+      Service Name: <strong>{props.environment.serviceName}</strong><br/><br/>
+      Click to see details, to download configuration files, and to clear user data.
+  </div>;
+
   let globalIcons;
   if (user.authenticated) {
     globalIcons =
@@ -105,7 +112,7 @@ const Header:React.FC<Props> = (props) => {
         theme="dark"
       >
         <Menu.Item>
-          <i id="service-name" className={styles.serviceName} onClick={handleSystemInfoDisplay}>{props.environment.serviceName}</i>
+          <MLTooltip title={infoContainer} placement={"bottomLeft"} overlayClassName={styles.infoTooltip}><i id="info-details" onClick={handleSystemInfoDisplay}><Icon type="info-circle" className={styles.infoIcon}/></i></MLTooltip>
         </Menu.Item>
         <div className={styles.vertical}></div>
         {/* <Menu.Item>
@@ -119,7 +126,7 @@ const Header:React.FC<Props> = (props) => {
         </Menu.Item> */}
         <Dropdown overlay={userMenu}>
           <span className="userDropdown">
-            <MLTooltip title="User"><Icon type="user"/></MLTooltip>
+            <MLTooltip title="User"><Icon type="user" className={styles.userIcon}/></MLTooltip>
           </span>
         </Dropdown>
       </Menu>
