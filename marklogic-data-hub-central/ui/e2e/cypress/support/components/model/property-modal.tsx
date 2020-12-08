@@ -16,7 +16,7 @@ class PropertyModal {
   }
 
   clearPropertyDropdown() {
-    cy.findByLabelText("icon: close-circle").click();
+    cy.findByLabelText("icon: close-circle").trigger("mouseover").click();
   }
 
   getTypeFromDropdown(type: string) {
