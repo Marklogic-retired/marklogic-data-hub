@@ -213,4 +213,21 @@ describe("login", () => {
     cy.contains("No Entity Type");
   });
 
+  it("can login, navigate to modeling tile, logout, login and auto return to tile view", () => {
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
+      .withUI()
+      .url().should("include", "/tiles");
+
+    toolbar.getModelToolbarIcon().trigger("mouseover").click();
+    cy.url().should('include', '/tiles/model');
+    tiles.getModelTile().should('exist');
+    cy.get(".userDropdown").trigger("mouseover");
+    cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
+
+    cy.loginAsTestUserWithRoles("hub-central-entity-model-reader")
+      .withUI()
+      .url().should("include", "/tiles");
+    cy.contains('Welcome to MarkLogic Data Hub Central');
+  });
+
 });
