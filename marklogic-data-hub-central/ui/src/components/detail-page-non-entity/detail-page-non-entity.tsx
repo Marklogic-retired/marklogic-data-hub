@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {Layout, PageHeader, Menu} from "antd";
+import {Layout, PageHeader, Menu, Icon} from "antd";
 import styles from "./detail-page-non-entity.module.scss";
 import {useHistory, useLocation} from "react-router-dom";
 import {MLTooltip, MLTable} from "@marklogic/design-system";
@@ -9,6 +9,7 @@ import {UserContext} from "../../util/user-context";
 import AsyncLoader from "../async-loader/async-loader";
 import {updateUserPreferences} from "../../services/user-preferences";
 import {xmlFormatter, jsonFormatter} from "../../util/record-parser";
+import {getRecord} from "../../api/record";
 
 const DetailPageNonEntity = (props) => {
   const history: any = useHistory();
@@ -173,6 +174,30 @@ const DetailPageNonEntity = (props) => {
     }
   };
 
+  const download = async () => {
+    try {
+      const response = await getRecord(props.uri, props.database);
+      if (response) {
+        let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
+        let filename = result.replace(/"/g, "");
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const displayFileSize = () => {
+    let size = props.documentSize?.hasOwnProperty("value") ? props.documentSize?.value : "";
+    let unit = props.documentSize?.hasOwnProperty("units") ? props.documentSize?.units : "";
+    return `Download (${size} ${unit})`;
+  };
+
   return (
     <div id="detailPageNonEntityContainer" className={styles.container}>
       <Layout>
@@ -181,21 +206,23 @@ const DetailPageNonEntity = (props) => {
             <span id="back-button" className={styles.backButtonHeader} onClick={() => history.push(props.selectedSearchOptions)} >
               <PageHeader
                 title={<span className={styles.title}>Back to results</span>}
-                data-tesid="back-button"
+                data-testid="back-button"
                 onBack={() => history.push(props.selectedSearchOptions)}
               />
             </span>
             <span className={styles.metadataCollapseIconContainer}>
-              {metadataCollapse ? <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleLeft} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-collapsed"/></span>{" Metadata"}</span></span> :
-                <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleRight} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-expanded"/></span>{" Metadata"}</span></span>}
+              {metadataCollapse ? <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="collapsed" icon={faAngleDoubleLeft} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-collapsed" /></span>{" Metadata"}</span></span> :
+                <span className={styles.metadataCollapseIcon}><span className={styles.collapseIconsAlignment} onClick={onCollapse} ><span><FontAwesomeIcon aria-label="expanded" icon={faAngleDoubleRight} size="lg" className={styles.collapseExpandIcons} data-testid="metadataIcon-expanded" /></span>{" Metadata"}</span></span>}
             </span>
           </div>
           <div>{nonEntityMenu()}</div>
+          <div className={styles.download}>
+            <a data-testid="download-link" onClick={download}><Icon type="download" className={styles.downloadIcon} /> <span>{displayFileSize()}</span></a>
+          </div>
           <div className={styles.documentContainer}>
             <div className={styles.contentElements}>{contentElements}</div>
           </div>
         </Content>
-
         <Sider
           trigger={null}
           collapsedWidth={0}

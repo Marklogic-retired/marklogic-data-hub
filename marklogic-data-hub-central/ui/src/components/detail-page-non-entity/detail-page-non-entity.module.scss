@@ -68,7 +68,6 @@
 }
 
 .documentContainer {
-  padding-top: 10px;
   max-height: 60vh;
   overflow: auto;
 }
@@ -136,4 +135,15 @@
   .fileSearchIcon {
     font-size: 20px;
   }
+}
+
+.download {
+  font-size: 12px;
+  color: #5B69AF;
+  margin-left: 40px;
+  margin-top: 20px;
+}
+
+.downloadIcon {
+  font-size: 12px;
 }

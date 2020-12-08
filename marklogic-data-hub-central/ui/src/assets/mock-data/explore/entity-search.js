@@ -8,6 +8,9 @@ export const entitySearch = {
     {
       "index": 1,
       "uri": "/Customer/Cust1.json",
+      "documentSize": {
+        "value": 815,
+        "units": "B"},
       "primaryKey": {
         "propertyPath": "customerId",
         "propertyValue": 101

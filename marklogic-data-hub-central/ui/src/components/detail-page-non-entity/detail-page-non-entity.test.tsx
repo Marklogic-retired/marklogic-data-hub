@@ -1,11 +1,18 @@
 import React from "react";
-import {render} from "@testing-library/react";
+import {render, fireEvent} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import DetailPageNonEntity from "./detail-page-non-entity";
 import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
 import userEvent from "@testing-library/user-event";
+import axiosMock from "axios";
+
+jest.mock("axios");
 
 describe("Detail page for non-entity view component", () => {
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   test("Detail page for non-entity with JSON data renders", () => {
     const {getByTestId, getByText, queryByTestId} = render(
@@ -132,4 +139,22 @@ describe("Detail page for non-entity view component", () => {
 
   });
 
+
+  test("Verify file download on Detail page", async () => {
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.detailRecordDownloadResponse)));
+
+    const {getByTestId} = render(
+      <Router>
+        <DetailPageNonEntity
+          {...testData.NonEntityDocumentData}
+        />
+      </Router>
+    );
+
+    //verify download icon
+    expect(getByTestId("download-link")).toBeInTheDocument();
+    //click on download icon and verify api call.
+    fireEvent.click(getByTestId("download-link"));
+    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=/loadCustomers.json&database=staging"});
+  });
 });

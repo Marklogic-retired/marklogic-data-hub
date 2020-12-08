@@ -121,7 +121,7 @@ function verifyDocumentSizes() {
     test.assertEqual(1, response.results[1].documentSize.value),
     test.assertEqual("MB", response.results[1].documentSize.units),
     test.assertEqual(192, response.results[2].documentSize.value),
-    test.assertEqual("Bytes", response.results[2].documentSize.units)
+    test.assertEqual("B", response.results[2].documentSize.units)
   ]
 }
 

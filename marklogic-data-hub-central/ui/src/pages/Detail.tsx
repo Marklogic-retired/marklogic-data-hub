@@ -44,7 +44,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [xml, setXml] = useState();
   const [isEntityInstance, setIsEntityInstance] = useState(false);
   const [sources, setSources] = useState(location && location.state && location.state["sources"] ? location.state["sources"] : []);
-
+  const [documentSize, setDocumentSize] = useState();
   const [entityInstanceDocument, setIsEntityInstanceDocument] = useState<boolean | undefined>(undefined);
   const [sourcesTableData, setSourcesTableData] = useState<any[]>([]);
   const [historyData, setHistoryData] = useState<any[]>([]);
@@ -99,7 +99,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
           setSources(result.data.sources);
           setSourcesTableData(generateSourcesData(result.data.sources));
           setHistoryData(generateHistoryData(result.data.history));
-
+          setDocumentSize(result.data?.documentSize);
           setIsLoading(false);
         }
 
@@ -372,6 +372,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
           data={data}
           xml={xml}
           detailPagePreferences={detailPagePreferences}
+          documentSize={documentSize}
+          database={database}
         />
   );
 };

@@ -639,7 +639,7 @@ function findFlowsAsMap() {
 }
 
 function getDocumentSize(doc) {
-  const sizes = ['Bytes', 'KB', 'MB'];
+  const sizes = ['B', 'KB', 'MB'];
   const documentSize = {};
   const nodeKind = xdmp.nodeKind(doc.root);
   let bytes = 0;

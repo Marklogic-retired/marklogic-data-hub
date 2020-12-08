@@ -3,7 +3,7 @@
   padding-right: 10px;
   .cardStyle {
     width: 370px;
-    height: 140px;
+    height: 145px;
     margin-top: 24px;
     text-align: left;
     align-content: left;
@@ -48,7 +48,7 @@
   padding-top: 12px;
   color: #333;
   display: inline-block;
-  width: 346px;
+  width: 344px;
   text-overflow: ellipsis;
   overflow: hidden;
   max-height: 6em;
@@ -110,4 +110,13 @@
 .binaryIcon {
   font-size: 24px;
   color: #777;
+}
+
+.downloadIcon {
+  font-size: 12px;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  margin-top: -20px;
+  margin-right: 5px;
 }
