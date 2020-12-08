@@ -173,7 +173,7 @@
     <range-path-index>
       <scalar-type>string</scalar-type>
       <collation>http://marklogic.com/collation/</collation>
-      <path-expression>//actionDetails/*/uris</path-expression>
+      <path-expression>/matchSummary/actionDetails/*/uris</path-expression>
       <range-value-positions>true</range-value-positions>
       <invalid-values>reject</invalid-values>
     </range-path-index>

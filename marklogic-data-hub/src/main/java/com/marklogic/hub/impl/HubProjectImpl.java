@@ -507,7 +507,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
 
-            XPathExpression expr = xPath.compile("//range-path-index/*[local-name()='path-expression']/text()='//actionDetails/*/uris'");
+            XPathExpression expr = xPath.compile("//range-path-index/*[local-name()='path-expression']/text()='/matchSummary/actionDetails/*/uris'");
 
             Boolean isNodePresent = Boolean.parseBoolean(expr.evaluate(document));
 
@@ -524,7 +524,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                 collation.setTextContent("http://marklogic.com/collation/");
 
                 Element pathExpression = document.createElement("path-expression");
-                pathExpression.setTextContent("//actionDetails/*/uris");
+                pathExpression.setTextContent("/matchSummary/actionDetails/*/uris");
 
                 Element rangeValuePosition = document.createElement("range-value-positions");
                 rangeValuePosition.setTextContent("true");
@@ -550,7 +550,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             }
         }
         catch (Exception e) {
-            throw new DataHubProjectException("Error while upgrading project; was not able to add //actionDetails/*/uris " +
+            throw new DataHubProjectException("Error while upgrading project; was not able to add /matchSummary/actionDetails/*/uris " +
                 "path range index to final-database.xml file; cause: " + e.getMessage(), e);
         }
 
