@@ -36,7 +36,6 @@ const ZeroStateExplorer = (props) => {
       selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: false,
-      manageQueryModal: false,
       sortOrder: [],
       database: zeroStatePageDatabase,
     };
@@ -90,7 +89,6 @@ const ZeroStateExplorer = (props) => {
           selectedQuery: query["savedQuery"]["name"],
           propertiesToDisplay: query.savedQuery.propertiesToDisplay,
           zeroState: false,
-          manageQueryModal: false,
           sortOrder: query.savedQuery.sortOrder,
           database: searchOptions.database,
         };

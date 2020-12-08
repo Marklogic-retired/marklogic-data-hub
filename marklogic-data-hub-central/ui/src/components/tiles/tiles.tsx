@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, {useContext, useState} from "react";
 import {Mosaic, MosaicWindow} from "react-mosaic-component";
 import "react-mosaic-component/react-mosaic-component.css";
 import {ArrowsAltOutlined, ShrinkOutlined, CloseOutlined} from "@ant-design/icons";
@@ -9,6 +9,8 @@ import "./tiles.scss";
 import Run from "../../pages/Run";
 import {MLTooltip, MLButton} from "@marklogic/design-system";
 import {SearchContext} from "../../util/search-context";
+import {AuthoritiesContext} from "../../util/authorities";
+import QueryModal from "../queries/managing/manage-query-modal/manage-query";
 
 interface Props {
     id: string;
@@ -25,7 +27,23 @@ const Tiles: React.FC<Props> = (props) => {
   const options = props.options;
   const controls = props.options.controls;
   const viewId = props.id;
-  const {savedQueries} = useContext(SearchContext);
+  const {savedQueries, entityDefinitionsArray} = useContext(SearchContext);
+  const [manageQueryModal, setManageQueryModal]= useState(false);
+
+  /*** For Manage Queries - Explore tab ****/
+  const auth = useContext(AuthoritiesContext);
+  const canExportQuery = auth.canExportEntityInstances();
+  const isSavedQueryUser = auth.isSavedQueryUser();
+
+  const queryModal = <QueryModal
+    canExportQuery={canExportQuery}
+    isSavedQueryUser={isSavedQueryUser}
+    modalVisibility={manageQueryModal}
+    setManageQueryModal={setManageQueryModal}
+    entityDefArray={entityDefinitionsArray}
+  />;
+  /******************************************/
+
 
   const showControl = (control) => {
     return controls.indexOf(control) !== -1;
@@ -59,6 +77,7 @@ const Tiles: React.FC<Props> = (props) => {
   };
 
   const onMenuClick = () => {
+    setManageQueryModal(true);
     props.onMenuClick();
   };
 
@@ -82,13 +101,16 @@ const Tiles: React.FC<Props> = (props) => {
         <div className={styles.controls}>
           {showControl("menu") ? (
             savedQueries.length ? ( // only display if there are saved queries
-              <div>
-                <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
-                  <MLButton id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
-                    <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}}/> Manage Queries
-                  </MLButton>
-                </i>
-              </div>
+              <>
+                <div>
+                  <i className={styles.faCog} aria-label={"menu"} style={{color: options["color"]}}>
+                    <MLButton id="manage-queries-button" onClick={onMenuClick} style={{height: "25px"}}>
+                      <FontAwesomeIcon icon={faCog} style={{color: "#394494", fontSize: "14px", paddingRight: "4px", paddingTop: "1px"}} /> Manage Queries
+                    </MLButton>
+                  </i>
+                </div>
+                {manageQueryModal && queryModal}
+              </>
             ) : null
           ) : null}
           {showControl("newTab") ? (

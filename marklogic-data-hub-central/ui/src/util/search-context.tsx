@@ -15,7 +15,6 @@ type SearchContextInterface = {
   maxRowsPerPage: number,
   selectedQuery: string,
   zeroState: boolean,
-  manageQueryModal: boolean,
   selectedTableProperties: any,
   view: JSX.Element|null,
   sortOrder: any,
@@ -34,7 +33,6 @@ const defaultSearchOptions = {
   maxRowsPerPage: 100,
   selectedQuery: "select a query",
   zeroState: true,
-  manageQueryModal: false,
   selectedTableProperties: [],
   view: null,
   sortOrder: [],
@@ -71,7 +69,6 @@ interface ISearchContextInterface {
   applySaveQuery: (query: QueryOptions) => void;
   setSelectedQuery: (query: string) => void;
   setZeroState: (zeroState: boolean) => void;
-  setManageQueryModal: (visibility: boolean) => void;
   setSelectedTableProperties: (propertiesToDisplay: string[]) => void;
   setView: (viewId: JSX.Element| null, zeroState?:boolean) => void;
   setPageWithEntity: (option: [], pageNumber: number, start: number, facets: any, searchString: string, sortOrder: [], targetDatabase: string) => void;
@@ -81,6 +78,8 @@ interface ISearchContextInterface {
   setSavedQueries: (queries: any) => void;
   setDatabase: (option: string) => void;
   setLatestDatabase: (option: string, jobId: string) => void;
+  entityDefinitionsArray: any;
+  setEntityDefinitionsArray: (entDefinitionsArray: any) => void;
 }
 
 export const SearchContext = React.createContext<ISearchContextInterface>({
@@ -88,6 +87,8 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   greyedOptions: defaultSearchOptions,
   savedQueries: [],
   setSavedQueries: () => { },
+  entityDefinitionsArray: [],
+  setEntityDefinitionsArray: () => { },
   setSearchFromUserPref: () => { },
   setQuery: () => { },
   setPage: () => { },
@@ -113,7 +114,6 @@ export const SearchContext = React.createContext<ISearchContextInterface>({
   applySaveQuery: () => { },
   setSelectedQuery: () => { },
   setZeroState: () => { },
-  setManageQueryModal: () => { },
   setSelectedTableProperties: () => { },
   setView: () => { },
   setPageWithEntity: () => { },
@@ -128,6 +128,7 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   const [searchOptions, setSearchOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [greyedOptions, setGreyedOptions] = useState<SearchContextInterface>(defaultSearchOptions);
   const [savedQueries, setSavedQueries] = useState<any>([]);
+  const [entityDefinitionsArray, setEntityDefinitionsArray] = useState<any>([]);
   const {user} = useContext(UserContext);
 
   const setSearchFromUserPref = (username: string) => {
@@ -472,7 +473,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedQuery: query.selectedQuery,
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
-      manageQueryModal: query.manageQueryModal,
       sortOrder: query.sortOrder,
       database: query.database,
     });
@@ -499,13 +499,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
     setSearchOptions({
       ...searchOptions,
       zeroState: zeroState,
-    });
-  };
-
-  const setManageQueryModal = (visibility: boolean) => {
-    setSearchOptions({
-      ...searchOptions,
-      manageQueryModal: visibility
     });
   };
 
@@ -569,7 +562,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       selectedQuery: query.selectedQuery,
       selectedTableProperties: query.propertiesToDisplay,
       zeroState: query.zeroState,
-      manageQueryModal: query.manageQueryModal,
       sortOrder: query.sortOrder,
       database: query.database,
     });
@@ -601,6 +593,8 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       greyedOptions,
       savedQueries,
       setSavedQueries,
+      entityDefinitionsArray,
+      setEntityDefinitionsArray,
       setSearchFromUserPref,
       setQuery,
       setPage,
@@ -626,7 +620,6 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
       applySaveQuery,
       setSelectedQuery,
       setZeroState,
-      setManageQueryModal,
       setSelectedTableProperties,
       setView,
       setPageWithEntity,
