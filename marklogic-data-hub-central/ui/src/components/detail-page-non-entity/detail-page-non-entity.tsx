@@ -15,7 +15,7 @@ const DetailPageNonEntity = (props) => {
   const location: any = useLocation();
   const {user} = useContext(UserContext);
   const {Content, Sider} = Layout;
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [metadataCollapse, setMetadataCollapse] = useState(false);
 
   useEffect(() => {

@@ -308,7 +308,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   return (
-    entityInstanceDocument == undefined ? <div style={{marginTop: "40px"}}>
+    entityInstanceDocument === undefined ? <div style={{marginTop: "40px"}}>
       <AsyncLoader />
     </div> :
 
