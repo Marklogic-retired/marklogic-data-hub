@@ -18,6 +18,12 @@ const getSubElements=(content, node, title) => {
   return nodeHasText && childrenDontHaveText;
 };
 
+Object.assign(navigator, {
+  clipboard: {
+    writeText: () => {},
+  },
+});
+
 describe("Update data load settings component", () => {
 
 
@@ -39,9 +45,9 @@ describe("Update data load settings component", () => {
       />
     </AuthoritiesContext.Provider></Router>);
     expect(getByText(data.environment.serviceName)).toBeInTheDocument();
-    expect(getByText("Data Hub version:")).toBeInTheDocument();
+    expect(getByText("Data Hub Version:")).toBeInTheDocument();
     expect(getByText(data.environment.dataHubVersion)).toBeInTheDocument();
-    expect(getByText("MarkLogic version:")).toBeInTheDocument();
+    expect(getByText("MarkLogic Version:")).toBeInTheDocument();
     expect(getByText(data.environment.marklogicVersion)).toBeInTheDocument();
     expect(getByText("Download Configuration Files")).toBeInTheDocument();
     expect(getByTestId("clearData")).toBeInTheDocument();
@@ -51,17 +57,25 @@ describe("Update data load settings component", () => {
     expect(getByText("Clear")).toBeDisabled();
   });
 
-  test("Verify project info display, user with \"Download\" button enabled", async () => {
+  test("Verify project info display, user with \"Download\" button enabled, and copy service name to clipboard", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["downloadProjectFiles"]);
-    const {getByText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
-      <SystemInfo
+    const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+      <SystemInfo {...data.environment}
         systemInfoVisible={true}
         setSystemInfoVisible={jest.fn()}
       />
     </AuthoritiesContext.Provider></Router>);
     expect(getByText("Download")).toBeEnabled();
     expect(getByText("Clear")).toBeDisabled();
+
+    //verify copy icon and tooltip
+    fireEvent.mouseOver(getByTestId("copyServiceName"));
+    await waitForElement(() => getByText("Copy to clipboard"));
+    jest.spyOn(navigator.clipboard, "writeText");
+    fireEvent.click(getByTestId("copyServiceName"));
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(data.environment.serviceName);
+
   });
 
   test("Verify project info display, user with \"Clear\" button enabled", async () => {

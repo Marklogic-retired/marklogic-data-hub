@@ -1,11 +1,22 @@
 import React from "react";
-import {render, cleanup} from "@testing-library/react";
+import {render, cleanup, waitForElement} from "@testing-library/react";
 import {BrowserRouter as Router} from "react-router-dom";
 import {UserContext} from "../../util/user-context";
 import Header from "./header";
 import data from "../../assets/mock-data/system-info.data";
 import {userAuthenticated} from "../../assets/mock-data/user-context-mock";
 import {Application} from "../../config/application.config";
+import {fireEvent} from "@testing-library/dom";
+
+
+const getSubElements = (content, node, title) => {
+  const hasText = node => node.textContent === title;
+  const nodeHasText = hasText(node);
+  const childrenDontHaveText = Array.from(node.children).every(
+    child => !hasText(child)
+  );
+  return nodeHasText && childrenDontHaveText;
+};
 
 describe("Header component", () => {
 
@@ -36,14 +47,22 @@ describe("Header component", () => {
         </UserContext.Provider>
       </Router>
     );
-    expect(getByLabelText("header-logo")).toBeInTheDocument();
     expect(getByText(Application.title)).toBeInTheDocument();
-    expect(getByText(data.environment.serviceName)).toBeInTheDocument();
+    expect(getByLabelText("header-logo")).toBeInTheDocument();
     // expect(getByLabelText('icon: search')).toBeInTheDocument();
-    expect(getByLabelText("icon: question-circle")).toBeInTheDocument();
-    expect(getByLabelText("icon: user")).toBeInTheDocument();
+    // expect(getByLabelText('icon: question-circle')).toBeInTheDocument();
+    // expect(getByLabelText('icon: user')).toBeInTheDocument();
     // expect(getByLabelText('icon: setting')).toBeInTheDocument();
 
+    //verify icons and respective tooltips
+    fireEvent.mouseOver(getByLabelText("icon: user"));
+    await waitForElement(() => getByText("User"));
+
+    fireEvent.mouseOver(getByLabelText("icon: question-circle"));
+    await waitForElement(() => getByText("Help"));
+
+    fireEvent.mouseOver(getByLabelText("icon: info-circle"));
+    await waitForElement(() => getByLabelText("info-text"));
 
     //verify correct version specific link when environment hub version data is set to '5.3-SNAPSHOT'
     expect(document.querySelector("#help-link")).toHaveAttribute("href", "https://docs.marklogic.com/datahub/5.3");

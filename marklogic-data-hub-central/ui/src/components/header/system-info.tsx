@@ -5,9 +5,9 @@ import axios from "axios";
 import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import Axios from "axios";
-import {MLButton, MLSpin} from "@marklogic/design-system";
+import {MLButton, MLSpin, MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faExclamationTriangle} from "@fortawesome/free-solid-svg-icons";
+import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -22,6 +22,7 @@ const SystemInfo = (props) => {
   const [message, setMessage] = useState({show: false});
   const [isLoading, setIsLoading] = useState(false);
   const [clearDataVisible, setClearDataVisible] = useState(false);
+  const [copySuccess, setCopySuccess] = useState("");
 
   useEffect(() => {
     if (!user.authenticated && props.systemInfoVisible) {
@@ -46,6 +47,15 @@ const SystemInfo = (props) => {
         document.body.appendChild(link);
         link.click();
       });
+  };
+
+  const copyToClipBoard = async copyMe => {
+    try {
+      await navigator.clipboard.writeText(copyMe);
+      setCopySuccess("Copied!");
+    } catch (err) {
+      setCopySuccess("Failed to copy!");
+    }
   };
 
   const clear =async () => {
@@ -111,13 +121,13 @@ const SystemInfo = (props) => {
         <div data-testid="alertTrue" className={styles.alertPosition} style={message.show ? {display: "block"} : {display: "none"}}>
           <Alert message={<span><b>Clear All User Data </b>completed successfully</span>} type="success" showIcon />
         </div>
-        <div className={styles.serviceName}>{serviceName}</div>
+        <div className={styles.serviceName}>{serviceName}<MLTooltip title="Copy to clipboard" placement={"bottom"}><FontAwesomeIcon icon={faCopy} data-testid="copyServiceName" className={styles.copyIcon} onClick={() => copyToClipBoard(serviceName)}/></MLTooltip></div>
         <div className={styles.version}>
-          <div className={styles.label}>Data Hub version:</div>
+          <div className={styles.label}>Data Hub Version:</div>
           <div className={styles.value}>{dataHubVersion}</div>
         </div>
         <div className={styles.version}>
-          <div className={styles.label}>MarkLogic version:</div>
+          <div className={styles.label}>MarkLogic Version:</div>
           <div className={styles.value}>{marklogicVersion}</div>
         </div>
         <div className={styles.cardsContainer}>

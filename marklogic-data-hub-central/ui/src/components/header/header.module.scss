@@ -40,6 +40,21 @@ header.container {
     color: white;
 }
 
+.infoIcon { 
+  font-size: 24px !important;
+  color: #b5b8bb;
+  padding-bottom: 15px;
+}
+
+.userIcon {
+  padding-bottom: 15px;
+}
+
+.infoTooltip {
+  top: 62px !important;
+  max-width: 100%;
+}
+
 li.menuLink {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -50,7 +65,7 @@ li.menuLink {
 }
 div.iconsContainerAuth {
   position: absolute;
-  top: 8px;
+  top: 13px;
   right: 10px;
   i:hover {
     cursor: pointer;
