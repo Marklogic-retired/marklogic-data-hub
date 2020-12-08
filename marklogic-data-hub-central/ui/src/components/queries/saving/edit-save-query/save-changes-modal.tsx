@@ -37,8 +37,7 @@ const SaveChangesModal: React.FC<Props> = (props) => {
     setAllSearchFacets,
     searchOptions,
     applySaveQuery,
-    setAllGreyedOptions,
-    setZeroState
+    setAllGreyedOptions
   } = useContext(SearchContext);
 
   const {
@@ -114,7 +113,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             selectedQuery: queryName,
             propertiesToDisplay: searchOptions.selectedTableProperties,
             zeroState: searchOptions.zeroState,
-            manageQueryModal: searchOptions.manageQueryModal,
             sortOrder: searchOptions?.sortOrder || [],
             database: searchOptions.database,
           };
@@ -134,7 +132,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
           props.toggleEntityQueryUpdate();
         }
         if (props.resetYesClicked && !props.entityQueryUpdate) {
-          setZeroState(true);
           let options: QueryOptions = {
             searchText: "",
             entityTypeIds: [],
@@ -142,7 +139,6 @@ const SaveChangesModal: React.FC<Props> = (props) => {
             selectedQuery: "select a query",
             propertiesToDisplay: [],
             zeroState: true,
-            manageQueryModal: false,
             sortOrder: [],
             database: "final",
           };

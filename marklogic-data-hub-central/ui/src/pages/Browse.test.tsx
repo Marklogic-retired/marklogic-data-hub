@@ -22,10 +22,10 @@ describe("Explorer Browse page tests ", () => {
     maxRowsPerPage: 100,
     selectedQuery: "select a query",
     zeroState: false,
-    manageQueryModal: false,
     selectedTableProperties: [],
     view: null,
-    sortOrder: []
+    sortOrder: [],
+    database: "final"
   };
 
   afterEach(() => {

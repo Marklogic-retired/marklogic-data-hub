@@ -59,13 +59,12 @@ const TilesView = (props) => {
   };
 
   const {
-    setManageQueryModal,
     setView,
     searchOptions
   } = useContext(SearchContext);
 
   const onMenuClick = () => {
-    setManageQueryModal(true);
+    //Logic can be added here if menu is changed/added for any tile
   };
 
   const onTileClose = () => {

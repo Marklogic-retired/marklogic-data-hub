@@ -9,8 +9,6 @@ import SaveQueryModal from "../../components/queries/saving/save-query-modal/sav
 import SaveQueriesDropdown from "../../components/queries/saving/save-queries-dropdown/save-queries-dropdown";
 import {fetchQueries, creatNewQuery, fetchQueryById} from "../../api/queries";
 import styles from "./queries.module.scss";
-import QueryModal from "../../components/queries/managing/manage-query-modal/manage-query";
-import {AuthoritiesContext} from "../../util/authorities";
 import EditQueryDetails from "./saving/edit-save-query/edit-query-details";
 import SaveChangesModal from "./saving/edit-save-query/save-changes-modal";
 import DiscardChangesModal from "./saving/discard-changes/discard-changes-modal";
@@ -46,8 +44,8 @@ const Query: React.FC<Props> = (props) => {
     clearAllGreyFacets,
     setEntity,
     setNextEntity,
-    setZeroState,
-    setSavedQueries
+    setSavedQueries,
+    savedQueries
   } = useContext(SearchContext);
 
   const [openSaveModal, setOpenSaveModal] = useState(false);
@@ -74,8 +72,6 @@ const Query: React.FC<Props> = (props) => {
 
   const [existingQueryYesClicked, toggleExistingQueryYesClicked] = useState(false);
   const [resetYesClicked, toggleResetYesClicked] = useState(false);
-  const authorityService = useContext(AuthoritiesContext);
-  const canExportQuery = authorityService.canExportEntityInstances();
 
   const saveNewQuery = async (queryName, queryDescription, facets) => {
     let query = {
@@ -124,7 +120,6 @@ const Query: React.FC<Props> = (props) => {
             selectedQuery: response.data.savedQuery.name,
             propertiesToDisplay: response.data.savedQuery.propertiesToDisplay,
             zeroState: searchOptions.zeroState,
-            manageQueryModal: searchOptions.manageQueryModal,
             sortOrder: response.data.savedQuery.sortOrder,
             database: searchOptions.database,
           };
@@ -186,6 +181,19 @@ const Query: React.FC<Props> = (props) => {
   useEffect(() => {
     getSaveQueries();
   }, [searchOptions.entityTypeIds]);
+
+  useEffect(() => {
+    if (savedQueries && savedQueries.length > 0) {
+      for (let key of savedQueries) {
+        if (key.savedQuery.name === currentQueryName) {
+          setCurrentQuery(key);
+        }
+      }
+    }
+    if (searchOptions.selectedQuery === "select a query") {
+      setCurrentQueryDescription("");
+    }
+  }, [savedQueries]);
 
   useEffect(() => {
     initializeUserPreferences();
@@ -277,7 +285,6 @@ const Query: React.FC<Props> = (props) => {
   };
 
   const onNoResetClick = () => {
-    setZeroState(true);
     let options: QueryOptions = {
       searchText: "",
       entityTypeIds: [],
@@ -285,7 +292,6 @@ const Query: React.FC<Props> = (props) => {
       selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: true,
-      manageQueryModal: false,
       sortOrder: [],
       database: "final",
     };
@@ -307,7 +313,6 @@ const Query: React.FC<Props> = (props) => {
     } else if (resetQueryEditedConfirmation) {
       toggleResetQueryEditedConfirmation(true);
     } else {
-      setZeroState(true);
       let options: QueryOptions = {
         searchText: "",
         entityTypeIds: [],
@@ -315,7 +320,6 @@ const Query: React.FC<Props> = (props) => {
         selectedQuery: "select a query",
         propertiesToDisplay: [],
         zeroState: true,
-        manageQueryModal: false,
         sortOrder: [],
         database: "final",
       };
@@ -584,21 +588,6 @@ const Query: React.FC<Props> = (props) => {
           toggleApplyClicked={(clicked) => toggleApplyClicked(clicked)}
         />
       </div>
-      <QueryModal
-        canExportQuery={canExportQuery}
-        queries={props.queries}
-        setQueries={props.setQueries}
-        columns={props.columns}
-        toggleApply={toggleApply}
-        currentQueryName={currentQueryName}
-        setCurrentQueryName={setCurrentQueryName}
-        currentQueryDescription={currentQueryDescription}
-        setCurrentQueryDescription={setCurrentQueryDescription}
-        isSavedQueryUser={props.isSavedQueryUser}
-        modalVisibility={searchOptions.manageQueryModal}
-        entityDefArray={props.entityDefArray}
-        database={searchOptions.database}
-      />
       <Modal
         visible={showEntityConfirmation}
         title={"Existing Query"}

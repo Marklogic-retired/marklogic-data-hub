@@ -625,6 +625,10 @@ class BrowsePage {
     return cy.findByText(pageSizeOption);
   }
 
+  getDetailInstanceViewIcon(docUri: string) {
+    return cy.findByTestId(`${docUri}-detailOnSeparatePage`);
+  }
+
 }
 
 const browsePage = new BrowsePage();

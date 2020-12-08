@@ -44,6 +44,7 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageQueryOptions,
     setDatabase,
     setLatestDatabase,
+    setEntityDefinitionsArray
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -75,8 +76,10 @@ const Browse: React.FC<Props> = ({location}) => {
       if (componentIsMounted.current) {
         const parsedModelData = entityFromJSON(response.data);
         let entityArray = [...entityFromJSON(response.data).map(entity => entity.info.title)];
+        let parsedEntityDef = entityParser(parsedModelData);
         setEntites(entityArray);
-        setEntityDefArray(entityParser(parsedModelData));
+        setEntityDefArray(parsedEntityDef);
+        setEntityDefinitionsArray(parsedEntityDef);
       }
     } catch (error) {
       handleError(error);
@@ -188,7 +191,6 @@ const Browse: React.FC<Props> = ({location}) => {
       selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: true,
-      manageQueryModal: false,
       sortOrder: [],
       database: "final",
     };
@@ -220,7 +222,6 @@ const Browse: React.FC<Props> = ({location}) => {
             pageLength: parsedPreferences.pageLength,
             propertiesToDisplay: searchOptions.selectedTableProperties || [],
             zeroState: parsedPreferences.zeroState,
-            manageQueryModal: false,
             sortOrder: parsedPreferences.sortOrder || [],
             database: parsedPreferences.database
           };

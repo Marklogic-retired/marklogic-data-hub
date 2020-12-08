@@ -39,7 +39,7 @@ const QueryExportModal = (props) => {
             entityTypeIds: searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : props.entities,
             selectedFacets: searchOptions.selectedFacets,
           },
-          propertiesToDisplay: props.columns,
+          propertiesToDisplay: searchOptions.selectedTableProperties,
         }
       };
 
