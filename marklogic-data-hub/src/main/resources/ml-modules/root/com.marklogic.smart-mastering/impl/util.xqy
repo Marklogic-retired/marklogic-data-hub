@@ -165,3 +165,22 @@ declare function util-impl:handle-option-messages($type as xs:string, $message a
   else
     xdmp:log($message, $type)
 };
+
+(:
+ :
+ : @param $options as node()? match or merge options as object-node() or element()
+ : @return map:map {
+ :  "targetEntityType" The reference to the entity type in the options, either IRI or title
+ :  "targetEntityTypeDefinition" Object with entity type defintion information
+ :  "targetEntityTypeIRI" The full IRI for the entity type
+ : }
+ :)
+declare function util-impl:get-entity-type-information($options as node()?) {
+  let $target-entity-type := fn:head(($options/targetEntityType,$options/(*:target-entity|targetEntity))) ! fn:string(.)
+  let $target-entity-type-def := es-helper:get-entity-def($target-entity-type)
+  let $target-entity-type-iri := $target-entity-type-def/entityIRI ! fn:string(.)
+  return
+    map:entry("targetEntityType", $target-entity-type)
+      => map:with("targetEntityTypeDefinition", $target-entity-type-def)
+      => map:with("targetEntityTypeIRI", $target-entity-type-iri)
+};

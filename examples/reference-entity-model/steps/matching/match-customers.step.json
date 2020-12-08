@@ -4,7 +4,7 @@
   "stepDefinitionType" : "MATCHING",
   "sourceQuery" : "cts.collectionQuery('mapCustomersJSON')",
   "acceptsBatch" : true,
-  "targetEntity" : "Customer",
+  "targetEntityType" : "Customer",
   "sourceDatabase" : "data-hub-FINAL",
   "collections" : [ "matched-customers", "match-customers" ],
   "targetDatabase" : "data-hub-FINAL",

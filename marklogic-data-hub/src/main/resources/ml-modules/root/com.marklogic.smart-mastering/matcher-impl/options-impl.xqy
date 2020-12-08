@@ -391,8 +391,9 @@ declare function opt-impl:compile-match-options(
         $lowest-threshold-score
       else
         $original-minimum-threshold
-    let $target-entity := $match-options/(*:target-entity|targetEntity|targetEntityType) ! fn:string(.)
-    let $target-entity-def := es-helper:get-entity-def($target-entity)
+    let $target-entity-type-info := util-impl:get-entity-type-information($match-options)
+    let $target-entity-type-iri := $target-entity-type-info => map:get("targetEntityTypeIRI")
+    let $target-entity-type-def := $target-entity-type-info => map:get("targetEntityTypeDefinition")
     let $match-rulesets := $match-options/(*:scoring|matchRulesets)/(*:add|*:expand|*:reduce[fn:empty(parent::matchRulesets)]|self::matchRulesets)
     let $max-property-score := fn:max(($match-rulesets/(@weight|weight) ! fn:number(.)))
     let $algorithms := algorithms:build-algorithms-map((
@@ -410,7 +411,7 @@ declare function opt-impl:compile-match-options(
       util-impl:properties-to-values-functions(
         ($match-rulesets[@property-name|propertyName],$match-rulesets/matchRules),
         $match-options/(*:property-defs|propertyDefs),
-        $target-entity-def/entityIRI,
+        $target-entity-type-iri,
         (: Don't need all property value queries :) fn:false(),
         $message-output
       )
@@ -517,7 +518,7 @@ declare function opt-impl:compile-match-options(
         map:entry("normalizedOptions", $match-options),
         map:entry("minimumThreshold", $minimum-threshold),
         (: Ensure we're using the full IRI in the compiled options :)
-        map:entry("targetEntityType", $target-entity-def/entityIRI ! fn:string(.)),
+        map:entry("targetEntityType", $target-entity-type-iri),
         map:entry("scoreRatio", $score-ratio),
         map:entry("algorithms", $algorithms),
         map:entry("queries", $queries),
@@ -525,15 +526,15 @@ declare function opt-impl:compile-match-options(
         map:entry("minimumThresholdCombinations", $minimum-threshold-combinations),
         map:entry("propertyNamesToValues", $property-names-to-values),
         map:entry("baseContentQuery",
-          if (fn:exists($target-entity)) then
+          if (fn:exists($target-entity-type-def)) then
             cts:or-query((
               cts:json-property-scope-query(
                 "info",
-                cts:json-property-value-query("title", fn:string($target-entity-def/entityTitle), (), 0)
+                cts:json-property-value-query("title", fn:string($target-entity-type-def/entityTitle), (), 0)
               ),
               cts:element-query(
                 xs:QName("es:info"),
-                cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-def/entityTitle), (), 0)
+                cts:element-value-query(xs:QName("es:title"), fn:string($target-entity-type-def/entityTitle), (), 0)
               )
             ))
           else
