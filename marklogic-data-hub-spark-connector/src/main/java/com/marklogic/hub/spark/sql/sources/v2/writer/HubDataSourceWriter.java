@@ -13,6 +13,7 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.spark.dataservices.SparkService;
+import com.marklogic.hub.spark.sql.sources.v2.ModuleWriter;
 import com.marklogic.hub.spark.sql.sources.v2.Util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.catalyst.InternalRow;
@@ -37,6 +38,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private final String jobId;
     private final ObjectMapper objectMapper;
     private CustomWriteApiDefinitions customWriteApiDefinitions;
+    private ModuleWriter moduleWriter;
 
     public HubDataSourceWriter(Map<String, String> options, StructType schema, Boolean streaming) {
         this.options = options;
@@ -45,6 +47,7 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         this.objectMapper = new ObjectMapper();
         this.hubClientConfig = Util.buildHubClientConfig(options);
         this.hubClient = HubClient.withHubClientConfig(hubClientConfig);
+        this.moduleWriter = new ModuleWriter(hubClient, hubClientConfig);
         verifyUserIsAuthorized();
         validateUriTemplateIfPresent();
         this.endpointParams = determineWriteRecordsEndpointParams(options);
@@ -174,13 +177,13 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
         }
 
         // Always load writeLib, as a custom endpoint may need it
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/writeLib.sjs", Format.TEXT);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/writeLib.sjs", Format.TEXT);
 
         if (doesNotHaveApiPath) {
             String apiPath = "/marklogic-data-hub-spark-connector/writeRecords.api";
             String scriptPath = "/marklogic-data-hub-spark-connector/writeRecords.sjs";
-            loadModuleIfNotPresent(scriptPath, Format.TEXT);
-            loadModuleIfNotPresent(apiPath, Format.JSON);
+            moduleWriter.loadModuleIfNotPresent(scriptPath, Format.TEXT);
+            moduleWriter.loadModuleIfNotPresent(apiPath, Format.JSON);
 
 
             endpointParams.put("apiPath", apiPath);
@@ -207,32 +210,6 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
                 endpointConstants.put(key, options.get(key));
             }
         });
-    }
-
-    private void loadModuleIfNotPresent(String modulePath, Format format) {
-        if (!endpointExists(modulePath)) {
-            try {
-                DocumentManager modMgr = hubClient.getModulesClient().newDocumentManager();
-                DocumentMetadataHandle metadata = buildDocumentMetadata();
-                logger.info("Loading module: " + modulePath);
-                modMgr.write(modulePath, metadata, new InputStreamHandle(new ClassPathResource(modulePath).getInputStream()).withFormat(format));
-            } catch (IOException e) {
-                throw new RuntimeException("Unable to write endpoint at path: " + modulePath + "; cause: " + e.getMessage(), e);
-            }
-        }
-    }
-
-    private DocumentMetadataHandle buildDocumentMetadata() {
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        String modulePermissions = hubClientConfig.getModulePermissions();
-        new DefaultDocumentPermissionsParser().parsePermissions(modulePermissions, metadata.getPermissions());
-
-        // It seems preferable to use this collection so that modules loaded by the connector are considered OOTB
-        // modules. Otherwise, if the modules are not loaded in this collection, tasks like mlClearUserModules will
-        // delete them, which does not seem expected.
-        metadata.getCollections().addAll("hub-core-module");
-
-        return metadata;
     }
 
     private String initializeWrite(StructType schema) {
@@ -283,13 +260,13 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     }
 
     private void loadInitializeModulesIfNotPresent() {
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.sjs", Format.TEXT);
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.api", Format.JSON);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.sjs", Format.TEXT);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeWrite.api", Format.JSON);
     }
 
     private void loadFinalizeModulesIfNotPresent() {
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.sjs", Format.TEXT);
-        loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.api", Format.JSON);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.sjs", Format.TEXT);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/finalizeWrite.api", Format.JSON);
     }
 
     private void addJobIdToEndpointConstants() {
@@ -304,10 +281,6 @@ public class HubDataSourceWriter extends LoggingObject implements StreamWriter {
     private void finalizeWrite(String status) {
         logger.info(format("Finalizing write; job ID: %s; status: %s", jobId, status));
         SparkService.on(hubClient.getJobsClient(), customWriteApiDefinitions.getFinalizeWriteApiDefinition()).finalizeWrite(jobId, status);
-    }
-
-    private boolean endpointExists(String scriptPath) {
-        return !(hubClient.getModulesClient().newJSONDocumentManager().exists(scriptPath) == null);
     }
 }
 

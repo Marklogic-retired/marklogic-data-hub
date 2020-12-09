@@ -5,10 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubClientConfig;
 import com.marklogic.hub.spark.dataservices.SparkService;
+import com.marklogic.hub.spark.sql.sources.v2.ModuleWriter;
 import com.marklogic.hub.spark.sql.sources.v2.Util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.SparkSession;
@@ -35,6 +37,9 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
     private final StructType sparkSchema;
     private JsonNode endpointParams;
     private boolean hasCustomApiPath;
+    private HubClient hubClient;
+    private HubClientConfig hubClientConfig;
+    private ModuleWriter moduleWriter;
 
     /**
      * The current default for partition count is based on the active SparkSession. The PartitionCountProvider is used
@@ -46,6 +51,9 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         logger.debug("Created: " + toString());
 
         this.options = dataSourceOptions.asMap();
+        hubClientConfig = Util.buildHubClientConfig(options);
+        hubClient = HubClient.withHubClientConfig(hubClientConfig);
+        this.moduleWriter = new ModuleWriter(hubClient, hubClientConfig);
         validateOptions(this.options);
 
         this.initializationResponse = initializeRead(this.options);
@@ -77,11 +85,10 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
      */
     private JsonNode initializeRead(Map<String, String> options) {
         ObjectNode inputs = buildInitializeReadInputs(options);
-        HubClientConfig hubClientConfig = Util.buildHubClientConfig(options);
-        HubClient hubClient = HubClient.withHubClientConfig(hubClientConfig);
+
         InputStreamHandle initializeDefinition;
 
-        initializeDefinition = readCustomInitializeApiDefinition(options, hubClient);
+        initializeDefinition = readCustomInitializeApiDefinition(options);
 
         try {
             if(options.containsKey("initializereadapipath")) {
@@ -143,7 +150,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         return numPartitions;
     }
 
-    private InputStreamHandle readCustomInitializeApiDefinition(Map<String, String> options, HubClient hubClient) {
+    private InputStreamHandle readCustomInitializeApiDefinition(Map<String, String> options) {
         InputStreamHandle initializeDefinition = null;
         String key = "initializereadapipath";
         if (options.containsKey(key)) {
@@ -152,6 +159,10 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
             } catch (Exception ex) {
                 throw new RuntimeException("Unable to read custom API module for initializing Read job: " + options.get(key) + "; cause: " + ex.getMessage(), ex);
             }
+        }
+        else {
+            moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeRead.sjs", Format.TEXT);
+            moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/initializeRead.api", Format.JSON);
         }
 
         return initializeDefinition;
@@ -195,7 +206,12 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         if(hasEndpointConstants)
             throw new IllegalArgumentException("Cannot set endpointConstants in readrowsendpointparams option; can only set apiPath and endpointState.");
 
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/readLib.sjs", Format.TEXT);
+        moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/partition-lib.xqy", Format.TEXT);
+
         if (doesNotHaveApiPath) {
+            moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/readRows.sjs", Format.TEXT);
+            moduleWriter.loadModuleIfNotPresent("/marklogic-data-hub-spark-connector/readRows.api", Format.JSON);
             String apiPath = "/marklogic-data-hub-spark-connector/readRows.api";
 
             endpointParams.put("apiPath", apiPath);
@@ -203,6 +219,7 @@ public class HubDataSourceReader extends LoggingObject implements DataSourceRead
         this.hasCustomApiPath = !doesNotHaveApiPath;
         return endpointParams;
     }
+
 
 }
 
