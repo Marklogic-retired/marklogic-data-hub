@@ -409,7 +409,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   };
 
   return (
-    <div className={styles.newMatchingForm}>
+    <div className={styles.createEditStep}>
       <Form {...formItemLayout} onSubmit={handleSubmit} colon={false}>
         <Form.Item label={<span>
             Name:&nbsp;<span className={styles.asterisk}>*</span>
@@ -426,7 +426,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewMatchTooltips.name}>
+          <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
@@ -442,7 +442,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
-          <MLTooltip title={NewMergeTooltips.description}>
+          <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
@@ -476,7 +476,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleTypeaheadChange}
           >
             {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}<MLTooltip title={NewMatchTooltips.sourceQuery}>
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}<MLTooltip title={NewMatchTooltips.sourceQuery} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
           </MLTooltip></span></div> : <span><TextArea
             id="srcQuery"
@@ -485,7 +485,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery}>
+          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
           </MLTooltip></span>}
         </Form.Item>
@@ -503,7 +503,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
             />&nbsp;&nbsp;
-            <MLTooltip title={NewMergeTooltips.timestampPath}>
+            <MLTooltip title={NewMergeTooltips.timestampPath} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
             </MLTooltip>
           </Form.Item> : ""}
