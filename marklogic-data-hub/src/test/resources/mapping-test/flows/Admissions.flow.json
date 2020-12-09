@@ -60,7 +60,7 @@
       "retryLimit" : null,
       "batchSize" : null,
       "threadCount" : null,
-      "stepDefinitionName" : "default-ingestion",
+      "stepDefinitionName" : "LabsCore",
       "stepDefinitionType" : "INGESTION",
       "fileLocations" : {
         "inputFilePath" : "input/labs-core",
