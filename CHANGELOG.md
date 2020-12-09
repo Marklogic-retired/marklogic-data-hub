@@ -1,4 +1,10 @@
 # Change Log
+
+# [v5.2.6](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.6) (2020-12-09)
+**Fixed Bugs:**
+- [DHFPROD-6304] - Upgrade MarkLogic client API to version 5.3.2
+- [DHFPROD-6337] - Fix RunFlowWithCustomHubConfig in dh-5-example project.
+
 # [v5.2.5](https://github.com/marklogic/marklogic-data-hub/releases/tag/v5.2.5) (2020-10-29)
 **Fixed Bugs:**
 - [DHFPROD-6162] - Writing temporal documents to temporal collections fails with "data-hub-operator".
