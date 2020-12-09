@@ -156,7 +156,7 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
     protected void addStagingDoc(String resource, String uri, String... collections) {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.getCollections().addAll(collections);
-        metadata.getPermissions().add("data-hub-common", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
+        addDefaultPermissions(metadata);
         FileHandle handle = new FileHandle(getFileFromClasspath(resource));
         getHubClient().getStagingClient().newDocumentManager().write(uri, metadata, handle);
     }

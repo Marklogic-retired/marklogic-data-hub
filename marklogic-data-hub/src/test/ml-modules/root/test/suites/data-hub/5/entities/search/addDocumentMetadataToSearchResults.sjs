@@ -95,7 +95,38 @@ function verifyMetadataForDocumentWithPartialMetadata() {
   ];
 }
 
+function verifyDocumentSizes() {
+  let response = {
+    "snippet-format": "snippet",
+    "total": 3,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/5KB.png",
+      },
+      {
+        "index": 2,
+        "uri": "/content/1MB.png",
+      },
+      {
+        "index": 3,
+        "uri": "/content/jane.json",
+      }
+    ]
+  };
+  entitySearchLib.addDocumentMetadataToSearchResults(response);
+  return [
+    test.assertEqual(5, response.results[0].documentSize.value),
+    test.assertEqual("KB", response.results[0].documentSize.units),
+    test.assertEqual(1, response.results[1].documentSize.value),
+    test.assertEqual("MB", response.results[1].documentSize.units),
+    test.assertEqual(192, response.results[2].documentSize.value),
+    test.assertEqual("Bytes", response.results[2].documentSize.units)
+  ]
+}
+
 []
     .concat(verifyMetadataForDocumentWithAllMetadata())
     .concat(verifyMetadataForDocumentWithoutMetadata())
-    .concat(verifyMetadataForDocumentWithPartialMetadata());
+    .concat(verifyMetadataForDocumentWithPartialMetadata())
+    .concat(verifyDocumentSizes());
