@@ -116,9 +116,9 @@ const Flows: React.FC<Props> = (props) => {
     }
     // Get the latest job info when a step is added to an existing flow from Curate or Load Tile
     if (JSON.stringify(props.flows) !== JSON.stringify([])) {
-      if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
+      if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.existingFlow && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
         getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
-        if (startRun && props.newStepToFlowOptions.existingFlow) {
+        if (startRun) {
           //run step after step is added to an existing flow
           if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
             setShowUploadError(false);
