@@ -1,5 +1,7 @@
 {
   "database-name": "data-hub-FINAL",
+  "three-character-searches": true,
+  "trailing-wildcard-searches": true,
   "path-namespace": [
     {
       "prefix": "es",
