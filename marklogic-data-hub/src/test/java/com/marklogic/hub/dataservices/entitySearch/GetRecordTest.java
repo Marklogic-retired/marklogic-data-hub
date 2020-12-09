@@ -8,16 +8,11 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,6 +46,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         // xml record with metadata
         ObjectNode response = (ObjectNode) service.getRecord("/Customer1.xml");
         assertNotNull(response.get("data"));
+        assertNotNull(response.get("documentSize"));
         assertEquals("getRecordTestStep", response.get("recordMetadata").get("datahubCreatedByStep").asText());
         assertEquals("getRecordTestFlow", response.get("recordMetadata").get("datahubCreatedInFlow").asText());
         assertTrue(response.get("isHubEntityInstance").asBoolean());
@@ -59,6 +55,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         // json record with metadata
         response = (ObjectNode) service.getRecord("/Customer1.json");
         assertNotNull(response.get("data"));
+        assertNotNull(response.get("documentSize"));
         assertEquals("getRecordTestStep", response.get("recordMetadata").get("datahubCreatedByStep").asText());
         assertEquals("getRecordTestFlow", response.get("recordMetadata").get("datahubCreatedInFlow").asText());
         assertTrue(response.get("isHubEntityInstance").asBoolean());
@@ -71,6 +68,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertNull(response.get("recordType"));
         assertNull(response.get("sources"));
         assertNull(response.get("history"));
+        assertNull(response.get("documentSize"));
 
         // record with no metadata
         project.setCustomerDocumentMetadata(new DocumentMetadataHandle()
@@ -86,6 +84,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
 
         response = (ObjectNode) service.getRecord("/Customer2.json");
         assertNotNull(response.get("data"));
+        assertNotNull(response.get("documentSize"));
         assertTrue(response.get("recordMetadata").isNull());
         assertTrue(response.get("isHubEntityInstance").asBoolean());
         assertEquals("json", response.get("recordType").asText());

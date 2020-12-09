@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.ext.helper.LoggingObject;
+import com.marklogic.client.io.DocumentMetadataHandle;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
 
@@ -66,4 +67,9 @@ public abstract class TestObject extends LoggingObject {
         }
     }
 
+    protected DocumentMetadataHandle addDefaultPermissions(DocumentMetadataHandle metadata) {
+        return metadata.withPermission("data-hub-common",
+            DocumentMetadataHandle.Capability.READ,
+            DocumentMetadataHandle.Capability.UPDATE);
+    }
 }

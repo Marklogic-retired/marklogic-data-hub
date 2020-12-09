@@ -31,6 +31,7 @@ if(doc) {
     record["recordType"] = getDocumentType(nodeKind);
     record["sources"] = entitySearchLib.getEntitySources(docUri);
     record["history"] = entitySearchLib.getRecordHistory(docUri);
+    record["documentSize"] = entitySearchLib.getDocumentSize(cts.doc(docUri));
 }
 
 function getDocumentType(nodeKind) {
