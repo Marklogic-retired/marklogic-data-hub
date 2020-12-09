@@ -1,3 +1,7 @@
+.createEditStep {
+    margin-left: 10px;
+}
+
 .modal {
     &.modal-header {
     border-bottom: 0 none;
@@ -27,9 +31,6 @@
     cursor: not-allowed;
 }
 
-.newMatchingForm {
-    margin-left: 10px;
-}
 .questionCircle {
     font-size: 12px;
     color: #7F86B5;
