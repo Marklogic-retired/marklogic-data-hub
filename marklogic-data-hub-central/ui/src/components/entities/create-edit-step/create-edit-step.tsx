@@ -418,17 +418,28 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? "" : "error"}
         help={(stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          <Input
+          { tobeDisabled?<MLTooltip title={NewMatchTooltips.nameField} placement={'bottom'}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />&nbsp;&nbsp;
-          <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
+          /></MLTooltip>:<Input
+            id="name"
+            placeholder="Enter name"
+            value={stepName}
+            onChange={handleChange}
+            disabled={tobeDisabled}
+            className={styles.input}
+          />}&nbsp;&nbsp;
+          { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>:
+          <MLTooltip title={NewMergeTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
+          }
         </Form.Item>
         <Form.Item label={<span>
             Description:
@@ -442,9 +453,13 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
           />&nbsp;&nbsp;
+          { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
+            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+          </MLTooltip>:
           <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
+          }
         </Form.Item>
 
         <Form.Item label={<span>
