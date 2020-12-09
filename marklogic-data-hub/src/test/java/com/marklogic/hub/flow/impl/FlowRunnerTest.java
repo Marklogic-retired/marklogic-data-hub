@@ -115,7 +115,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         List<String> errors = resp.getStepResponses().get("1").getStepOutput();
         assertEquals(1, errors.size(), "Expecting an error due to the missing module");
         assertTrue(errors.get(0).contains("Unable to access module: /custom-modules/custom/value-step/main.sjs. " +
-            "Verify that this module is in your modules database and that your user account has a role that grants read permission to this module."),
+            "Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."),
             "Did not find expected message in error; error: " + errors.get(0));
     }
 
