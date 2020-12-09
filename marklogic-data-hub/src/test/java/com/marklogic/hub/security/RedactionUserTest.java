@@ -14,6 +14,7 @@ import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
 import com.marklogic.mgmt.resource.databases.DatabaseManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,12 +46,16 @@ public class RedactionUserTest extends AbstractHubCoreTest {
 
     @Test
     void testRedactionAsHubCentralOperator() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
         runFlowAsUser(() -> runAsTestUserWithRoles("hub-central-operator"));
         verifyRedactedDoc();
     }
 
     @Test
     void testRedactionAsAForbiddenUser() {
+        Assumptions.assumeTrue(isVersionCompatibleWith520Roles());
+
         RunFlowResponse response = runFlowAsUser(() -> runAsTestUserWithRoles("hub-central-step-runner"));
         verifyRedactedDocNotPresent(response);
     }
