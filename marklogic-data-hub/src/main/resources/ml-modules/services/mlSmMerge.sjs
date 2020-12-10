@@ -29,7 +29,7 @@ function post(context, params, input) {
   let refStepNumber = params.step || '1';
   let flow = datahub.flow.getFlow(refFlowName);
   let stepRef = flow.steps[refStepNumber];
-  let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+  let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
   // build combined options
   let flowOptions = flow.options || {};
   let stepRefOptions = stepRef.options || {};

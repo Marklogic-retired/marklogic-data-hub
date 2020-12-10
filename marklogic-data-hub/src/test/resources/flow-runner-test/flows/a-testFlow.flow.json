@@ -1,0 +1,26 @@
+{
+  "name": "a-testFlow",
+  "description": "flow description",
+  "stopOnError": "true",
+  "options": {
+    "name": "testFlow"
+  },
+  "steps": {
+    "1": {
+      "name": "e2e-xml",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "fileLocations": {
+        "inputFilePath": "input",
+        "inputFileType": "xml",
+        "outputURIReplacement": ".*/input,''"
+      },
+      "options": {
+        "collections": ["xml-coll"],
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-operator,read,data-hub-operator,update",
+        "outputFormat": "xml"
+      }
+    }
+  }
+}

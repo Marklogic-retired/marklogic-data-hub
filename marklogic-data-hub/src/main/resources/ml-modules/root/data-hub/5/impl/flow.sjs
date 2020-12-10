@@ -15,7 +15,7 @@
  */
 'use strict';
 const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const Step = require("/data-hub/5/impl/step.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
@@ -45,7 +45,7 @@ class Flow {
       datahub = new DataHub(config);
     }
     this.datahub = datahub;
-    this.step = new Step(config, datahub);
+    this.stepDefinition = new StepDefinition(config, datahub);
     this.flowUtils = new FlowUtils(config);
     this.consts = datahub.consts;
     this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
@@ -128,7 +128,7 @@ class Flow {
       httpUtils.throwBadRequest(`Could not find step '${stepNumber}' in flow '${flowName}'`);
     }
 
-    const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
     if (!stepDefinition) {
       httpUtils.throwBadRequest(`Could not find a step definition with name '${flowStep.stepDefinitionName}' and type '${flowStep.stepDefinitionType}' for step '${stepNumber}' in flow '${flowName}'`);
     }
@@ -245,7 +245,7 @@ class Flow {
       this.datahub.debug.log({message: 'Step '+stepNumber+' for the flow: '+flowName+' could not be found.', type: 'error'});
       throw Error('Step '+stepNumber+' for the flow: '+flowName+' could not be found.');
     }
-    const stepDefinition = this.step.getStepByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    const stepDefinition = this.stepDefinition.getStepDefinitionByNameAndType(flowStep.stepDefinitionName, flowStep.stepDefinitionType);
 
     //here we consolidate options and override in order of priority: runtime flow options, step defined options, process defined options
     let combinedOptions = Object.assign({}, stepDefinition.options, flow.options, flowStep.options, options);
@@ -335,7 +335,7 @@ class Flow {
    */
   runStep(items, content, combinedOptions, flowName, stepNumber, flowStep) {
     let flowInstance = this;
-    let processor = flowInstance.step.getStepProcessor(flowInstance, flowStep.stepDefinitionName, flowStep.stepDefinitionType);
+    let processor = flowInstance.stepDefinition.getStepProcessor(flowInstance, flowStep.stepDefinitionName, flowStep.stepDefinitionType);
     if (!(processor && processor.run)) {
       let errorMsq = `Could not find main() function for process ${flowStep.stepDefinitionType}/${flowStep.stepDefinitionName} for step # ${stepNumber} for the flow: ${flowName} could not be found.`;
       flowInstance.datahub.debug.log({message: errorMsq, type: 'error'});

@@ -7,11 +7,11 @@ const assertions = [];
 const flowName = "flowNameDoesntMatter";
 
 // This module is known to exist, as it's in src/test/ml-modules
-const result = datahub.flow.step.makeFunction(flowName, "echo", "/custom-modules/mapping-functions/custom-mapping-functions.sjs");
+const result = datahub.flow.stepDefinition.makeFunction(flowName, "echo", "/custom-modules/mapping-functions/custom-mapping-functions.sjs");
 assertions.push(test.assertTrue(result != null));
 
 try {
-  datahub.flow.step.makeFunction("flowNameDoesntMatter", "main", "/doesnt/exist.sjs")
+  datahub.flow.stepDefinition.makeFunction("flowNameDoesntMatter", "main", "/doesnt/exist.sjs")
   throw Error("Expected makeFunction to fail because module path does not exist");
 } catch (e) {
   console.log(e.data[1]);

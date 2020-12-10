@@ -66,6 +66,7 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         RunFlowResponse resp = runFlow("testFlow", null, null, null, null);
         flowRunner.awaitCompletion();
 
+        assertEquals("testFlow", resp.getFlowName());
         verifyCollectionCountsFromRunningTestFlow();
         Assertions.assertTrue(JobStatus.FINISHED.toString().equalsIgnoreCase(resp.getJobStatus()));
         XMLDocumentManager docMgr = getHubClient().getStagingClient().newXMLDocumentManager();

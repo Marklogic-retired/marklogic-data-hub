@@ -47,7 +47,7 @@ function getPermissions() {
 
 function getArtifactNode(artifactName, artifactVersion) {
     const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
-    return fn.head(results);
+    return results.toArray().find(artifact => artifact.toObject().name === artifactName);
 }
 
 function getDirectory(artifactName, artifact) {
