@@ -59,10 +59,13 @@ public class WriteDataViaCustomEndpointTest extends AbstractSparkConnectorTest {
     }
 
     private void writeRowUsingCustomEndpoint(ObjectNode customEndpointConstants, ObjectNode customEndpointState) {
+        ObjectNode writeRecordsEndpointparams = objectMapper.createObjectNode()
+            .put("apiPath", CUSTOM_INGESTION_API_PATH)
+            .set("endpointConstants", customEndpointConstants);
+        writeRecordsEndpointparams.set("endpointState", customEndpointState);
+
         initializeDataWriter(new Options(getHubPropertiesAsMap())
-            .withIngestApiPath(CUSTOM_INGESTION_API_PATH)
-            .withWriteRecordsEndpointConstants(customEndpointConstants)
-            .withWriteRecordsEndpointState(customEndpointState));
+            .withWriteRecordsEndpointparams(writeRecordsEndpointparams));
 
         try {
             writeRows(buildRow("apple", "red"));

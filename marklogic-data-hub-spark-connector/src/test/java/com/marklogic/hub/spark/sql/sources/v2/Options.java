@@ -1,7 +1,6 @@
 package com.marklogic.hub.spark.sql.sources.v2;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.spark.sql.sources.v2.DataSourceOptions;
 
@@ -21,9 +20,7 @@ public class Options {
     private String permissions;
     private String sourceName;
     private String sourceType;
-    private String writeRecordsApiPath;
-    private JsonNode writeRecordsEndpointConstants;
-    private JsonNode writeRecordsEndpointState;
+    private ObjectNode writerecordsendpointparams;
     private String initializeWriteApiPath;
     private String finalizeWriteApiPath;
     private JsonNode additionalExternalMetadata;
@@ -42,8 +39,6 @@ public class Options {
     private String selectedColumns;
     private String serializedPlan;
     private String sparkSchema;
-    private String readRowsApiPath;
-    private JsonNode readRowsEndpointState;
     private ObjectNode readrowsendpointparams;
 
     // Has a default value so that tests don't depend on a Spark cluster running to determine minDefaultPartitions
@@ -85,19 +80,8 @@ public class Options {
             params.put("sourceType", sourceType);
         }
 
-        if (writeRecordsApiPath != null || writeRecordsEndpointConstants != null || writeRecordsEndpointState != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode node = mapper.createObjectNode();
-            if (writeRecordsApiPath != null) {
-                node.put("apiPath", writeRecordsApiPath);
-            }
-            if (writeRecordsEndpointConstants != null) {
-                node.set("endpointConstants", writeRecordsEndpointConstants);
-            }
-            if (writeRecordsEndpointState != null) {
-                node.set("endpointState", writeRecordsEndpointState);
-            }
-            params.put("writerecordsendpointparams", node.toString());
+        if(writerecordsendpointparams != null) {
+            params.put("writerecordsendpointparams", writerecordsendpointparams.toString());
         }
 
         if (initializeWriteApiPath != null) {
@@ -140,18 +124,6 @@ public class Options {
             params.put("readrowsendpointparams", readrowsendpointparams.toString());
         }
 
-        else if (readRowsApiPath != null || readRowsEndpointState != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            ObjectNode node = mapper.createObjectNode();
-            if (readRowsApiPath != null) {
-                node.put("apiPath", readRowsApiPath);
-            }
-            if (readRowsEndpointState != null) {
-                node.set("endpointState", readRowsEndpointState);
-            }
-            params.put("readrowsendpointparams", node.toString());
-        }
-
         params.put("numpartitions", numPartitions);
 
         return new DataSourceOptions(params);
@@ -164,11 +136,6 @@ public class Options {
 
     public Options withUriPrefix(String uriPrefix) {
         this.uriPrefix = uriPrefix;
-        return this;
-    }
-
-    public Options withIngestApiPath(String ingestApiPath) {
-        this.writeRecordsApiPath = ingestApiPath;
         return this;
     }
 
@@ -189,16 +156,6 @@ public class Options {
 
     public Options withSourceType(String sourceType) {
         this.sourceType = sourceType;
-        return this;
-    }
-
-    public Options withWriteRecordsEndpointConstants(JsonNode writeRecordsEndpointConstants) {
-        this.writeRecordsEndpointConstants = writeRecordsEndpointConstants;
-        return this;
-    }
-
-    public Options withWriteRecordsEndpointState(JsonNode writeRecordsEndpointState) {
-        this.writeRecordsEndpointState = writeRecordsEndpointState;
         return this;
     }
 
@@ -262,18 +219,13 @@ public class Options {
         return this;
     }
 
-    public Options withReadRowsApiPath(String readRowsApiPath) {
-        this.readRowsApiPath = readRowsApiPath;
-        return this;
-    }
-
-    public Options withReadRowsEndpointState(JsonNode readRowsEndpointState) {
-        this.readRowsEndpointState = readRowsEndpointState;
-        return this;
-    }
-
     public Options withReadRowsEndpointparams(ObjectNode readrowsendpointparams) {
         this.readrowsendpointparams = readrowsendpointparams;
+        return this;
+    }
+
+    public Options withWriteRecordsEndpointparams(ObjectNode writerecordsendpointparams) {
+        this.writerecordsendpointparams = writerecordsendpointparams;
         return this;
     }
 }
