@@ -29,6 +29,7 @@
           "name": "SimpleCustomerMapping",
           "version": 1
         },
+        "provenanceGranularityLevel": "fine",
         "sourceDatabase": "data-hub-FINAL",
         "collections": [
           "mastering-flow-mapping-json"
