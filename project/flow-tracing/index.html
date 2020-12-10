@@ -1,0 +1,741 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Flow Tracing - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Flow Tracing
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <!--- DHFPROD-646 TODO since this is primarily a debugging thing, does it make more sense under Using the DHF than under Concepts? -->
+
+<h1 id="flow-tracing">Flow Tracing</h1>
+
+<p>Flow tracing produces a detailed view of the flows as they happened. For each plugin in a flow, the inputs and outputs to that plugin are recorded into the JOBS database. Flow tracing is great for debugging your flows because you can see exactly what came in and went out of each step. You can use flow tracing to track down bugs in your flows as well as performance issues.</p>
+
+<p>Flow tracing can be enabled and disabled as needed. We recommend you disable flow tracing in production as there is a performance penalty for writing the additional trace information. Any uncaught exception will always result in a flow tracing event, regardless of whether tracing is currently enabled.</p>
+
+<p>Flow tracing can be viewed with several UIs, described below.</p>
+
+<h2 id="controlling-flow-tracing-events">Controlling Flow Tracing Events</h2>
+<p>A flag in the Modules database controls whether flow tracing is turned on. There are two ways to enable and disable flow tracing: using a gradle task, or via the QuickStart UI.</p>
+
+<h3 id="enabling-and-disabling-via-gradle">Enabling and Disabling via Gradle</h3>
+<p>In the directory where the project framework code lives, run these commands to enable/disable flow tracing:</p>
+
+<h4 id="enable">Enable</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="linux-1" href="#linux-1">Unix Systems</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="windows-1" href="#windows-1">Windows</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="linux-1">
+      <pre class="cmdline">./gradlew hubEnableTracing</pre>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="windows-1">
+      <pre class="cmdline">gradlew.bat hubEnableTracing</pre>
+    </div>
+  </div>
+</div>
+
+<h4 id="disable">Disable</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="linux-2" href="#linux-2">Unix Systems</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="windows-2" href="#windows-2">Windows</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="linux-2">
+      <pre class="cmdline">./gradlew hubDisableTracing</pre>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="windows-2">
+      <pre class="cmdline">gradlew.bat hubDisableTracing</pre>
+    </div>
+  </div>
+</div>
+
+<h3 id="enabling-and-disabling-via-the-quickstart-ui">Enabling and Disabling via the Quickstart UI</h3>
+<p>Navigate to the Settings screen in QuickStart. On that page, you will find a selector to enable and disable flow tracing.</p>
+
+<p><img src="/marklogic-data-hub/images/traces/FlowTracingEnableDisableViaQuickStart.png" alt="Quickstart enable disable" /></p>
+
+<h2 id="flow-tracing-database">Flow Tracing Database</h2>
+<p>Initializing a project creates a JOBS database trace flow tracing events and job logs. By default, the database is called <em>your-project-name</em>-JOBS. The database is configured to index the text in trace events to facilitate searching this data.</p>
+
+<p>Project initialization also creates an App Server attached to this database, called <em>your-project-name</em>-JOBS. By default, this App Server uses port 8013.</p>
+
+<h2 id="viewing-flow-tracing">Viewing Flow Tracing</h2>
+
+<p>You can view flow tracing events in the following ways:</p>
+<ul>
+  <li>In QuickStart: Click <strong>Traces</strong> in the QuickStart top navigation bar.</li>
+  <li>Standalone: Navigate your browser to the Trace Viewer application. By default, the application is installed on port 8013 of your MarkLogic host.</li>
+</ul>
+
+<p>Both methods display a UI like the following. The viewer displays a list of all flow trace events in the JOBS database. You can search the text of trace events via the search bar and browse events via the facet navigation control on the left side.</p>
+
+<p><img src="/marklogic-data-hub/images/traces/TraceViewer.png" alt="Displaying traces Quickstart 1" class="screenshot-border" /></p>
+
+<p>Tracing logs inputs and outputs to each of the plugins that run during a flow. Clicking on a trace event displays the detailed flow for that event. For example:</p>
+
+<p><img src="/marklogic-data-hub/images/traces/DisplaySingleTrace.png" alt="Displaying single trace Quickstart" class="screenshot-border" /></p>
+
+<p>Across the top is the flow plugin pipeline. Clicking on a plugin displays its inputs and output.</p>
+
+<h2 id="cleaning-up-traces">Cleaning up Traces</h2>
+<p>You can delete traces by deleting the job that created them. To do so, go to the Jobs page, click the checkboxes for the jobs you wish to delete, click <code class="highlighter-rouge">ACTION</code>, then select “Delete Jobs and Traces”. After confirming, the selected jobs and the associated traces will be removed from the JOBS databases.</p>
+
+<p><img src="/marklogic-data-hub/images/traces/DeleteJobs.png" alt="Displaying deletion of a job" /></p>
+
+<h2 id="exporting-traces">Exporting Traces</h2>
+<p>You can export jobs and traces associated with those jobs. Go to the Jobs page, click the checkboxes for the Jobs you wish to export, click <code class="highlighter-rouge">ACTION</code>, then select “Export Jobs and Traces”. After confirming, the selected jobs and their associated traces will be exported to a zip file, which your browser will download. This feature is generally used to help communicate with MarkLogic’s support team.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

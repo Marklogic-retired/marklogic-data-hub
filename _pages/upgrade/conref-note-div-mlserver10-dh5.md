@@ -1,0 +1,1 @@
+If you would like to use MarkLogic Server 10, you must upgrade to Data Hub 5.

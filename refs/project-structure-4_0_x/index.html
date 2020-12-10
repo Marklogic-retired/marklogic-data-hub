@@ -1,0 +1,829 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Project Directory Structure - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Project Directory Structure
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="project-directory-structure-for-dhf-40x">Project Directory Structure for DHF 4.0.x</h1>
+
+<p>When you initialize a Data Hub Framework project using QuickStart or the <code class="highlighter-rouge">hubInit</code> gradle task, it sets up the following directory hierarchy. The diagram includes some placeholder entries so you can see, for example, how creation of entities, flows, and mappings interacts with the layout. An explanation of the sub-directories and files follows the diagram.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|- your-data-hub-dir
+   |- build.gradle
+   |- gradle
+      |- wrapper
+         |- gradle-wrapper.jar
+         |- gradle-wrapper.properties
+   |- gradle.properties
+   |- gradle-local.properties
+   |- gradlew
+   |- gradlew.bat
+   |- plugins
+      |- entities
+         |- Employee
+            |- input
+               |- inputflow 1
+                  |- content.(sjs|xqy)
+                  |- headers.(sjs|xqy)
+                  |- main.(sjs|xqy)
+                  |- triples.(sjs|xqy)
+               |- inputflow 2
+               |- ...
+               |- inputflow N
+            |- harmonize
+               |- harmonizeflow 1
+                  |- collector.(sjs|xqy)
+                  |- content.(sjs|xqy)
+                  |- headers.(sjs|xqy)
+                  |- main.(sjs|xqy)
+                  |- triples.(sjs|xqy)
+                  |- writer.(sjs|xqy)
+               |- ...
+               |- harmonizeflow N
+      |- mappings
+        |- mappingName 1
+          |- mappingName-0.mapping.json
+          |- ...
+          |- mappingName-N.mapping.json
+   |- src
+      |- main
+         |- hub-internal-config
+         |- ml-config
+         |- ml-modules
+   |- .tmp
+</code></pre></div></div>
+
+<h2 id="root">Root</h2>
+
+<h3 id="buildgradle">build.gradle</h3>
+<p>This file enables you to use <a href="https://gradle.org/">Gradle</a> to configure and manage your data hub instance. Visit the <a href="https://gradle.org/">Gradle website</a> for full documentation on how to configure it.</p>
+
+<h3 id="gradle">gradle</h3>
+<p>This directory houses the gradle wrapper. When you provision a new DHF project you get the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.</p>
+
+<h3 id="gradleproperties">gradle.properties</h3>
+<p>This properties file defines variables needed by the hub to install and run properly. Ideally you would store values here that apply to all instances of your data hub.</p>
+
+<h3 id="gradle-localproperties">gradle-local.properties</h3>
+<p>This properties file overrides the variables in gradle.properties for your local environment. If you need to change a value to run locally this is where you would do it.</p>
+
+<h3 id="gradle-envproperties">gradle-{env}.properties</h3>
+<p>DHF looks for various environments based on which override files you have in your hub project. You can have as many environments as you like. Simply create a new override file with the environment name after the dash.</p>
+
+<p>For example: gradle-dev.properties, gradle-qa.properties, gradle-prod.properties</p>
+
+<h3 id="gradlew-gradlewbat">gradlew, gradlew.bat</h3>
+<p>These are the *nix and Windows executable files to run the gradle wrapper. Gradle wrapper is a specific, local version of gradle. You can use the wrapper to avoid having to install gradle on your system.</p>
+
+<h2 id="plugins-folder">plugins folder</h2>
+<p>This folder contains project-specific server-side modules that get deployed into MarkLogic. You can put any server-side files in here that you like, but the recommended location for custom modules and transforms is src/main/ml-modules; see the <a href="https://github.com/marklogic-community/ml-gradle/wiki/How-modules-are-loaded">ml-gradle documentation</a>.</p>
+
+<p>When deployed to MarkLogic ./plugins is equivalent to the root uri <strong>/</strong>, so a library module at <code class="highlighter-rouge">./plugins/my-folder/my-lib.xqy</code> would be loaded into the modules database as <code class="highlighter-rouge">/my-folder/my-lib.xqy</code>.</p>
+
+<p>The only caveat is that the <strong>entities</strong> folder is reserved for Hub use and is treated as a special case by the deploy process.</p>
+
+<h3 id="pluginsentities">plugins/entities</h3>
+<p>This folder contains your entity definitions. An entity is a domain object like Employee or SalesOrder. Each entity folder contains two subfolders: <strong>input</strong> and <strong>harmonize</strong>. DHF has custom logic to handle the deployment of this folder to MarkLogic.</p>
+
+<h3 id="pluginsentitiesentityinput">plugins/entities/{entity}/input</h3>
+<p>The input subfolder contains all of the input flows for a given entity. Input flows are responsible for creating an XML or JSON envelope during content ingest. This folder contains one server-side module for each part of the envelope: content, headers, and triples. You may also optionally include a REST folder that contains custom MarkLogic REST extensions related to this input flow.</p>
+
+<h3 id="pluginsentitiesentityinputcontentsjsxqy">plugins/entities/{entity}/input/content.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the content section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityinputheaderssjsxqy">plugins/entities/{entity}/input/headers.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the headers section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityinputmainsjsxqy">plugins/entities/{entity}/input/main.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for orchestrating your plugins.</p>
+
+<h3 id="pluginsentitiesentityinputtriplessjsxqy">plugins/entities/{entity}/input/triples.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the triples section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityharmonize">plugins/entities/{entity}/harmonize</h3>
+<p>The harmonize subfolder contains all of the harmonize flows for a given entity. Harmonize flows are responsible for creating an XML or JSON envelope during content harmonization. This folder contains one server-side module for each part of the envelope: content, headers, and triples. It also contains <strong>collector</strong> and <strong>writer</strong> modules as described below. You may also optionally include a REST folder that contains custom MarkLogic REST extensions that are related to this input flow.</p>
+
+<h3 id="pluginsentitiesentityharmonizecollectorsjsxqy">plugins/entities/{entity}/harmonize/collector.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for returning a list of things to harmonize. Harmonization is a batch process that operates on one or more items. The returned items should be an array of strings. Each string can have any meaning you like: uri, identifier, sequence number, etc.</p>
+
+<h3 id="pluginsentitiesentityharmonizecontentsjsxqy">plugins/entities/{entity}/harmonize/content.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the content section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityharmonizeheaderssjsxqy">plugins/entities/{entity}/harmonize/headers.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the headers section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityharmonizemainsjsxqy">plugins/entities/{entity}/harmonize/main.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for orchestrating your plugins.</p>
+
+<h3 id="pluginsentitiesentityharmonizetriplessjsxqy">plugins/entities/{entity}/harmonize/triples.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for creating the triples section of your envelope.</p>
+
+<h3 id="pluginsentitiesentityharmonizewritersjsxqy">plugins/entities/{entity}/harmonize/writer.(sjs|xqy)</h3>
+<p>The server-side module (XQuery or JavaScript) responsible for persisting your envelope into MarkLogic.</p>
+
+<h3 id="pluginsentitiesentityharmonizerest">plugins/entities/{entity}/harmonize/REST</h3>
+<p>In DHF 4.0, items that used to be here should be placed in <code class="highlighter-rouge">src/main/ml-modules</code></p>
+
+<h3 id="pluginsmappings">plugins/mappings</h3>
+<p>This folder contains model-to-model mapping configuration artifacts that can be used to configure an input flow. See <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>.</p>
+
+<h3 id="pluginsmappingsmapping">plugins/mappings/{mapping}</h3>
+<p>This folder contains all versions of a given model-to-model mapping. The name of the folder is the same as mapping name. See <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>.</p>
+
+<h3 id="pluginsmappingsmappingmapping-versionjson">plugins/mappings/{mapping}/{mapping}-{version}.json</h3>
+<p>A model-to-model mapping configuration file. There may be multiple versions. For example, QuickStart creates a new version each time you modify a mapping. See <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>.</p>
+
+<h2 id="srcmainhub-internal-config-folder">src/main/hub-internal-config folder</h2>
+
+<p>This folder contains subfolders and JSON files used to configure your DHF project’s <strong>STAGING</strong> environment.</p>
+
+<p>These files represent the minimum configuration necessary for DHF to function. Do not edit anything in this directory. Instead, make a file with the same name and directory structure under the <a href="#ml-config">ml-config folder</a> and add any properties you’d like to override.</p>
+
+<div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>NOTE:</b>
+<span>As of DHF 4.0.0, the internal structure of all configuration directories aligns with that of <code class="highlighter-rouge">ml-gradle</code> and should work as documented in that project.</span></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>|- databases
+  |- staging-database.json
+  |- job-database.json
+  |- modules-database.json
+  |- staging-schemas-database.json
+  |- staging-triggers-database.json
+|- security
+  |- roles
+     |- data-hub-role.json
+     |- hub-admin-role.json
+  |- users
+     |- data-hub-user.json
+     |- hub-admin-user.json
+|- servers
+  |- job-server.json
+  |- staging-server.json
+</code></pre></div></div>
+
+<p>Each of the above JSON files conforms to the MarkLogic REST API for creating <a href="https://docs.marklogic.com/REST/PUT/manage/v2/databases/[id-or-name]/properties">databases</a>, <a href="https://docs.marklogic.com/REST/PUT/manage/v2/mimetypes/[id-or-name]/properties">mimetypes</a>, <a href="https://docs.marklogic.com/REST/PUT/manage/v2/roles/[id-or-name]/properties">roles</a>, <a href="https://docs.marklogic.com/REST/PUT/manage/v2/users/[id-or-name]/properties">users</a>, or <a href="https://docs.marklogic.com/REST/PUT/manage/v2/servers/[id-or-name]/properties">servers</a>.</p>
+
+<h2 id="srcmainml-config-folder">src/main/ml-config folder</h2>
+
+<p>This folder contains subfolders and JSON files used to configure your DHF project’s <strong>FINAL</strong> environment.</p>
+
+<p>You can add configuration artifacts here to customize the system. See <a href="https://github.com/marklogic-community/ml-gradle/wiki">ml-gradle wiki</a>.</p>
+
+<p>Any JSON files you put here will be merged with the hub-internal-config configurations by the Data Hub Framework during deployment.</p>
+
+<h2 id="srcmainml-modules">src/main/ml-modules</h2>
+<p>This folder is the standard <code class="highlighter-rouge">ml-gradle</code> location for artifacts to be deployed to the modules database.  It comes out of the box with a default Search options configuration.</p>
+
+<h3 id="srcmainml-modules-jobs">src/main/ml-modules-jobs</h3>
+<p>This folder is the standard <code class="highlighter-rouge">ml-gradle</code> location for artifacts to be deployed to the modules database, but to be used with the JOBS appserver (specifically, the jobs and traces search options configuration).  Users probably have no need to add to this directory.</p>
+
+<h2 id="tmp-folder">.tmp folder</h2>
+<p>This folder contains temporary hub artifacts. You may safely ignore it.</p>
+
+<h2 id="see-also">See Also</h2>
+<ul>
+  <li><a href="/marklogic-data-hub/understanding/plugins/">Plugins</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

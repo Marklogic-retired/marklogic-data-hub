@@ -1,0 +1,952 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Tutorial - Install the Data Hub Framework - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Tutorial - Install the Data Hub Framework
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          
+<h1 id="tutorial-install-the-data-hub-framework">Tutorial: Install the Data Hub Framework</h1>
+
+<h2 id="1---set-up-the-project-directory-and-sample-data">1 - Set Up the Project Directory and Sample Data</h2>
+
+<ol class="ol-steps">
+  <li>Create a directory called <code class="highlighter-rouge">data-hub</code>. This directory will be referred to as “your project root” or simply “root”.</li>
+  <li><a href="https://github.com/marklogic/marklogic-data-hub/releases/download/v4.3.2/quick-start-4.3.2.war">Download the <code class="highlighter-rouge">quick-start-4.3.2.war</code> file</a> and place it your project root directory.</li>
+  <li>Under your project root, create a directory called <code class="highlighter-rouge">input</code>.</li>
+  <li>Download the <a href="/marklogic-data-hub/data/store-data.zip" target="_blank">sample data .zip file</a>. Expand it, as needed.</li>
+  <li>Copy the subdirectories (e.g., <code class="highlighter-rouge">campaigns</code>, <code class="highlighter-rouge">customers</code>, <code class="highlighter-rouge">orders</code>) inside the sample data .zip file into the <code class="highlighter-rouge">input</code> directory.</li>
+</ol>
+
+<h3 id="result">Result</h3>
+
+<p>Your project directory structure will be as follows:</p>
+
+<pre class="dirtree">
+  data-hub
+  ├─ quick-start-4.3.2.war
+  └─ input
+     ├─ campaigns
+     ├─ customers
+     ├─ issuehistories
+     ├─ issues
+     ├─ orders
+     ├─ parties
+     ├─ products
+     │  ├─ games
+     │  └─ misc
+     ├─ responses
+     └─ supportcustomers
+</pre>
+
+<h2 id="2---start-quickstart">2 - Start QuickStart</h2>
+
+<ol class="ol-steps">
+  <li>Open a command-line window, and navigate to your DHF project root directory.</li>
+  <li>Run the QuickStart .war.
+    <ul class="ol-substeps">
+      <li>To use the default port number for the internal web server (port 8080):
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java -jar quick-start-4.3.2.war
+</code></pre></div>        </div>
+      </li>
+      <li>To use a custom port number; e.g., port 9000:
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java -jar quick-start-4.3.2.war --server.port=9000
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>NOTE:</b>
+<span>If you are using Windows and a firewall alert appears, click <code class="highlighter-rouge">Allow access</code>.</span></p>
+  </li>
+</ol>
+
+<h3 id="result-1">Result</h3>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-install.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install.png" alt="" class="img-results" />
+  </a></p>
+
+<h2 id="3---install-the-data-hub">3 - Install the Data Hub</h2>
+
+<ol class="ol-steps">
+  <li>
+    <p>Open a web browser, and navigate to <a href="http://localhost:8080" target="_blank"><code class="highlighter-rouge">http://localhost:8080</code></a>.</p>
+  </li>
+  <li>
+    <details><summary>Browse to your project root directory. Then click <span class="inline-button">NEXT</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz01-projdir.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Click <span class="inline-button">INITIALIZE</span> to initialize your project directory.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz02-projinit-short.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>After initializing your Data Hub Framework project, your project directory contains additional files and directories. Click <span class="inline-button">NEXT</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz03-projinit-done.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Choose the <code>local</code> environment, then click <span class="inline-button">NEXT</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz04-projenv.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Enter your MarkLogic Server credentials, then click <span class="inline-button">LOGIN</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz05-login.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Click <span class="inline-button">INSTALL</span> to install the data hub into MarkLogic.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz06-instdhf.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Wait for the installation to complete.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz07-dhf-progress-30pc.png" alt="" class="screenshot" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>When installation is complete, Click <span class="inline-button">FINISHED</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-install-wiz08-complete.png" alt="" class="img-50" />
+     
+</details>
+  </li>
+</ol>
+
+<h3 id="result-2">Result</h3>
+
+<p>When installation is complete, the <strong class="uilabel">Dashboard</strong> page displays the three initial databases and the number of documents in each.</p>
+<ul>
+  <li><strong class="uilabel">Staging</strong> contains incoming data.</li>
+  <li><strong class="uilabel">Final</strong> contains harmonized data.</li>
+  <li>
+    <p><strong class="uilabel">Jobs</strong> contains data about the jobs that are run and tracing data about each harmonized document.</p>
+
+    <p><a href="/marklogic-data-hub/images/4x/qs-4x-dashboard-00.png" target="_blank">
+<img src="/marklogic-data-hub/images/4x/qs-4x-dashboard-00.png" alt="" class="img-results" />
+</a></p>
+  </li>
+</ul>
+
+<h2 id="see-also">See Also</h2>
+<ul>
+  <li><a href="/marklogic-data-hub/refs/project-structure/">DHF Project Directory Structure</a></li>
+</ul>
+
+<div class="navgrid">
+
+
+
+  
+    
+      
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+              <span class="nextbtn"><a href="/marklogic-data-hub/tutorial/4x/create-entities/"><strong>NEXT:</strong> Create the Entities <strong>»</strong></a></span>
+              
+            
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+
+<span class="go2pagebtn">
+<details><summary><b>Go to page</b></summary>
+<div>
+
+        <div class="tut-nav">
+
+          <p><a href="/marklogic-data-hub/tutorial/4x/">Tutorial Home</a></p>
+
+          <ol>
+            <li>
+              <p><strong>Install the Data Hub Framework</strong></p>
+            </li>
+            <li>
+              <p>Load the Raw Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/create-entities/">Create the Entities</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/create-run-input-flows/">Create and Run the Input Flows</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>View Jobs, Traces, and the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-jobs/">View the Jobs Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-traces/">View the Traces Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/browse-data/">Browse the Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>Harmonize the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/harmonize-product-data-by-mappings/">Harmonize the “Product” Data by Mappings</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/harmonize-order-data-by-custom-code/">Harmonize the “Order” Data by Custom Code</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/secure-pii-in-customer-data/">Secure PII in the “Customer” Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/access-data/">Access the Data from MarkLogic Server</a></p>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/takeaways/">Takeaways</a></p>
+            </li>
+          </ol>
+
+        </div>
+      </div>
+</details>
+</span>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

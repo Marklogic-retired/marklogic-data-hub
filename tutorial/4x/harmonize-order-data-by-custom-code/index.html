@@ -1,0 +1,1281 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Tutorial - Harmonize the Order Data by Custom Code - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Tutorial - Harmonize the Order Data by Custom Code
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          
+<h1 id="tutorial-harmonize-the-order-data-by-custom-code">Tutorial: Harmonize the Order Data by Custom Code</h1>
+
+<p>Harmonization of the <strong>Order</strong> entity is more complex.</p>
+<ul>
+  <li>The <code class="highlighter-rouge">price</code> property of the entity model is the total amount for the entire order; therefore, it must be calculated.</li>
+  <li>The <code class="highlighter-rouge">product</code> property is an array of the products ordered, but they are not represented as an array in the source.</li>
+</ul>
+
+<p>Therefore, we must use DHF code scaffolding to generate the harmonization code and then customize it.</p>
+
+<p>We have already loaded the <strong>Order</strong> raw data by:</p>
+<ul>
+  <li><a href="/marklogic-data-hub/tutorial/4x/create-entities/">creating the <strong>Order</strong> entity</a> and</li>
+  <li><a href="/marklogic-data-hub/tutorial/4x/create-run-input-flows/">creating and running the associated input flow</a>.</li>
+</ul>
+
+<p>In this section, we will:</p>
+<ul>
+  <li><a href="#1_-_define_the_entity_model">Define the entity model</a> by adding properties to the entity model.</li>
+  <li><a href="#2_-_create_the_harmonize_flow">Create the Harmonize flow.</a></li>
+  <li><a href="#3_-_customize_the_harmonize_flow">Customize the Harmonize flow</a>, specifically the <strong>Collector</strong> code and the <strong>Content</strong> code.</li>
+  <li>Run the Harmonize Flow.</li>
+  <li>View the results.</li>
+</ul>
+
+<h2 id="1---define-the-entity-model">1 - Define the Entity Model</h2>
+
+<p>We assume the following about the <strong>Order</strong> data:</p>
+
+<ul>
+  <li>Each product is identified by its SKU.</li>
+  <li>Each order can have more than one product.</li>
+  <li>Each product in the order has a specified quantity.</li>
+  <li>Each order includes a total amount, which must be calculated.</li>
+</ul>
+
+<p>Based on these assumptions, we will add the following properties to the <strong>Order</strong> entity model for harmonization:</p>
+
+<table class="table-b1gray">
+  <thead>
+    <tr>
+      <th style="text-align: center">Name</th>
+      <th style="text-align: center">Type</th>
+      <th style="text-align: center">Other settings</th>
+      <th>Notes</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center"><code class="highlighter-rouge">id</code></td>
+      <td style="text-align: center">string</td>
+      <td style="text-align: center"><strong><i class="fa fa-key"></i></strong> <strong><i class="fa fa-bolt"></i></strong></td>
+      <td>Used as the primary key because order ID is unique for each order. Needs an element range index.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="highlighter-rouge">total</code></td>
+      <td style="text-align: center">decimal</td>
+      <td style="text-align: center"> </td>
+      <td>The calculated total amount of the entire order.</td>
+    </tr>
+    <tr>
+      <td style="text-align: center"><code class="highlighter-rouge">products</code></td>
+      <td style="text-align: center"><strong>Product</strong> entity</td>
+      <td style="text-align: center">Cardinality: 1..∞</td>
+      <td>An array of pointers to the <code class="highlighter-rouge">Product</code> entities in our FINAL database.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To define the <span class="uilabel">Order</span> entity model,</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-entities-add-properties-Order.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-entities-add-properties-Order.png" alt="entity properties" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+
+  <li>In QuickStart's navigation bar, click <span class="uimenuitem">Entities</span>.</li>
+
+  <li>At the top of the <span class="uilabel">Order</span> entity card, click the pencil icon <span><i class="fa fa-pencil-alt"></i></span> to edit the <span class="uilabel">Order</span> entity definition.</li>
+
+  
+  
+  
+    
+
+
+
+
+<li>
+    In the <span class="uilabel">Order</span> entity editor, click <span class="circle-button">+</span> in the <span class="uilabel">Properties</span> section to add a new property.
+
+  <ol class="ol-substeps">
+
+    <li>Set <span class="uilabel">Name</span> to <code>id</code>.</li>
+
+    
+      <li>Set <span class="uilabel">Type</span> to <code>string</code>.</li>
+    
+
+    <li>To make <code>id</code> the primary key, click the area in the key <span><i class="fa fa-key"></i></span> column for the <code>id</code> row.</li>
+
+    <li>To specify that <code>id</code> needs an element range index, click the area in the lightning bolt <span><i class="fa fa-bolt"></i></span> column for the <code>id</code> row.</li>
+
+    
+
+    
+
+  </ol>
+</li>
+    
+  
+    
+
+
+
+
+<li>
+    Click <span class="circle-button">+</span> again to add another property.
+
+  <ol class="ol-substeps">
+
+    <li>Set <span class="uilabel">Name</span> to <code>total</code>.</li>
+
+    
+      <li>Set <span class="uilabel">Type</span> to <code>decimal</code>.</li>
+    
+
+    
+
+    
+
+    
+
+    
+
+  </ol>
+</li>
+    
+  
+    
+
+
+
+
+<li>
+    Click <span class="circle-button">+</span> again to add another property.
+
+  <ol class="ol-substeps">
+
+    <li>Set <span class="uilabel">Name</span> to <code>products</code>.</li>
+
+    
+      <li>
+        
+        
+        
+
+<details><summary>Set <span class="uilabel">Type</span> to the entity <span class="uilabel">Product</span>.</summary>
+     
+     <img src="/marklogic-data-hub/images/4x/qs-4x-entities-add-properties-type-entities-Order.png" alt="" class="screenshot" />
+     
+   </details>
+      </li>
+    
+
+    
+
+    
+
+    
+
+    <li>To indicate that the entity can have multiple instances of this property, set <span class="uilabel">Cardinality</span> to <span class="uilabel">1..∞</span>.</li>
+
+  </ol>
+</li>
+    
+  
+  
+
+  <li>Click <span class="inline-button">SAVE</span>.</li>
+
+  <li>
+  
+  
+  
+
+<details><summary>If prompted to update the index, click <span class="inline-button">Yes</span>.</summary>
+     
+     <img src="/marklogic-data-hub/images/4x/qs-4x-update-indexes-yes.png" alt="" class="img-small" />
+     
+   </details>
+  </li>
+
+  <li>
+  
+  
+  
+
+<details><summary>Drag the bottom-right corner of the entity card to resize it and see the newly added properties.</summary>
+     
+     <img src="/marklogic-data-hub/images/4x/qs-4x-entities-resize-card.png" alt="" class="img-small" />
+     
+   </details>
+  </li>
+
+</ol>
+
+<h3 id="result">Result</h3>
+
+<p>Because the <strong>Order</strong> entity contains pointers to the <strong>Product</strong> entity, an arrow connects the <strong class="uilabel">Order</strong> entity card to the <strong class="uilabel">Product</strong> entity card with the cardinality we selected (<span class="uilabel">1..∞</span>).</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-entities-order-card-to-product-card.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-entities-order-card-to-product-card.png" alt="" class="img-results" />
+  </a></p>
+
+<h2 id="2---create-the-harmonize-flow">2 - Create the Harmonize Flow</h2>
+
+<p>Harmonization uses the data in your <strong>STAGING</strong> database to generate canonical entity instances (documents) in the <strong>FINAL</strong> database.</p>
+
+<p>To create a harmonization flow for the <span class="uilabel">Order</span> entity,</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-create-harmonize-flow-Order.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-create-harmonize-flow-Order.png" alt="Create Harmonize Flow form" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>In QuickStart’s navigation bar, click <strong class="uimenuitem">Flows</strong>.</li>
+  <li>Expand the tab named <span class="uilabel">Order</span> in the left panel.</li>
+  <li>Click the <strong class="uilabel">+</strong> for <strong class="uilabel">Harmonize Flows</strong>.</li>
+  <li>
+    <p>In the <strong class="uilabel">Create Harmonize Flow</strong> dialog, set <strong class="uilabel">Harmonize Flow Name</strong> to <code>Harmonize Orders</code>.</p>
+  </li>
+  <li>Click <strong class="inline-button">CREATE</strong>.</li>
+</ol>
+
+<p>Because we used the default <strong class="uilabel">Create Structure from Entity Definition</strong> and we did not specify a mapping, DHF creates boilerplate code based on the entity model. This code includes default initialization for the entity properties, which we will customize.</p>
+
+<h2 id="3---customize-the-harmonize-flow">3 - Customize the Harmonize Flow</h2>
+
+<h3 id="3a---customize-the-collector-plugin">3a - Customize the Collector Plugin</h3>
+
+<p>The <strong>Collector</strong> plugin generates a list of IDs for the flow to operate on. The IDs can be whatever your application needs (e.g., URIs, relational row IDs, twitter handles). The default <strong>Collector</strong> plugin produces a list of source document URIs.</p>
+
+<p>An <code class="highlighter-rouge">options</code> parameter is passed to the <strong>Collector</strong> plugin, and it contains the following properties:</p>
+
+<ul>
+  <li><strong>entity</strong>: the name of the entity this plugin belongs to (e.g., “Order”)</li>
+  <li><strong>flow</strong>: the name of the flow this plugin belongs to (e.g., “Harmonize Orders”)</li>
+  <li><strong>flowType</strong>: the type of flow being run (“input” or “harmonize”; e.g., “harmonize”)</li>
+</ul>
+
+<p>The <strong>Load Orders</strong> input flow automatically groups the source documents into a collection named <strong>Order</strong>. The default <strong>Collector</strong> plugin uses that collection to derive a list of URIs.</p>
+
+<details><summary>View code snippet.</summary>
+  ```javascript
+  cts.uris(null, null, cts.collectionQuery(options.entity))
+  ```
+  </details>
+
+<p>In our source <strong>Order</strong> CSV file, each row represented one line item in an order. For example, if the order had three line items, then three documents were created for that order in the staging database during the input phase. To combine all three documents into a single <strong>Order</strong> entity, they must be harmonized.</p>
+
+<p>Each of those three documents would have the same order ID but different URIs. Therefore, we must customize the collector plugin to return a list of unique order IDs, instead of a list of URIs.</p>
+
+<p><strong>Technical Notes</strong></p>
+
+<ul>
+  <li>In our custom collector plugin code, we use the <a href="https://docs.marklogic.com/guide/search-dev/javascript">jsearch library</a> library to find all the values of <strong>id</strong> in the <strong>Order</strong> collection and return the result.</li>
+  <li>By default, jsearch paginates results; therefore, we call <code class="highlighter-rouge">slice()</code> to get all results at once.</li>
+</ul>
+
+<p><strong>Steps</strong></p>
+
+<p>To customize the <strong>Collector</strong> plugin,</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-harmonize-collector-custom-Order.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-harmonize-collector-custom-Order.png" alt="Harmonize Flow - Collector - custom code" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>Click the <strong class="uilabel">COLLECTOR</strong> tab.</li>
+  <li>
+    <p>Replace the collector plugin code with the following:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/*
+        * Collect IDs plugin
+        * @param options - a map containing options. Options are sent from Java
+        * @return - an array of ids or uris
+ */
+function collect(options) {
+ const jsearch = require('/MarkLogic/jsearch.sjs');
+  return jsearch
+ .values('id')
+ .where(cts.collectionQuery(options.entity))
+ .slice(0, Number.MAX_SAFE_INTEGER)
+ .result();
+}
+module.exports = {
+  collect: collect
+};
+</code></pre></div>    </div>
+  </li>
+  <li>Click <strong class="inline-button">SAVE</strong>.</li>
+</ol>
+
+<h3 id="3b---customize-the-content-plugin">3b - Customize the Content Plugin</h3>
+
+<p>The list of order IDs collected by our custom <strong>Collector</strong> plugin is passed to the <strong>Content</strong> plugin, specifically to its <code class="highlighter-rouge">createContent</code> function.</p>
+
+<p>We will customize <code class="highlighter-rouge">createContent</code> to do the following:</p>
+
+<ul>
+  <li>Collect all the line items of the same order into a single <strong>Order</strong> entity.</li>
+  <li>Calculate the total cost of the order.</li>
+</ul>
+
+<p><strong>Technical Notes</strong></p>
+
+<ul>
+  <li>
+    <p>A <a href="https://docs.marklogic.com/guide/search-dev/javascript">jsearch library</a> query searches the <strong>Order</strong> collection for all source documents that have the same order id.</p>
+
+    <p>We also apply a <code class="highlighter-rouge">map</code> function to each matching document to extract the original content inside the envelope.</p>
+
+    <p>The <code class="highlighter-rouge">orders</code> variable will contain an array of original JSON objects.</p>
+
+    <details><summary>View code snippet.</summary>
+  <pre><code>
+var orders = jsearch
+  .collections('Order')
+  .documents()
+  .where(
+jsearch.byExample({
+  'id': id
+})
+  )
+  .result('value')
+  .results.map(function(doc) {
+return doc.document.envelope.instance;
+  });
+  </code></pre>
+</details>
+  </li>
+  <li>
+    <p>After collecting the line items in the same order,</p>
+
+    <ul>
+      <li>We calculate the total amount of the order and</li>
+      <li>We store the appropriate <strong>Product</strong> entity references (using the SKU) in the <strong>products</strong> property of the <strong>Order</strong> instance.</li>
+    </ul>
+
+    <details><summary>View code snippet.</summary>
+  <pre><code>
+/* The following property is a local reference. */
+var products = [];
+var price = 0;
+for (var i = 0; i &lt; orders.length; i++) {
+  var order = orders[i];
+  if (order.sku) {
+products.push(makeReferenceObject('Product', order.sku));
+price += xs.decimal(parseFloat(order.price)) * xs.decimal(parseInt(order.quantity, 10));
+  }
+}
+  </code></pre>
+</details>
+  </li>
+  <li>
+    <p>The default code includes some additional functions that we will remove because we do not need them.</p>
+
+    <ul>
+      <li><code class="highlighter-rouge">extractInstanceProduct</code>: Extracts a Product instance in a form suitable for insertion into an Order instance. Because we reference Product entities within the Order instance, we do not need this function.</li>
+      <li><code class="highlighter-rouge">extractInstanceOrder</code>: Extracts an Order instance from an order source document. Since we do not have a one-to-one correspondence, we cannot use this function.</li>
+    </ul>
+
+    <p>However, although we do not use <code class="highlighter-rouge">extractInstanceOrder</code>, our customized <code class="highlighter-rouge">createContent</code> function must produce a similar structure.</p>
+
+    <details><summary>View code snippet.</summary>
+  <pre><code>
+return {
+  '$attachments': attachments,
+  '$type': 'Order',
+  '$version': '0.0.1',
+  'id': id,
+  'price': price,
+  'products': products
+}
+  </code></pre>
+</details>
+  </li>
+</ul>
+
+<p><strong>Steps</strong></p>
+
+<p>To customize the content plugin code,</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-harmonize-content-custom-Order.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-harmonize-content-custom-Order.png" alt="Harmonize Flow - Content - custom code" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>Click the <strong class="uilabel">CONTENT</strong> tab.</li>
+  <li>Replace the content plugin code with the following:
+    <div class="embed-git lang-js" href="//raw.githubusercontent.com/marklogic/marklogic-data-hub/71db3957114fd69f9cb584c6bfd38ec564410806/examples/online-store/plugins/entities/Order/harmonize/Harmonize Orders/content/content.sjs"></div>
+  </li>
+  <li>Click <strong class="inline-button">SAVE</strong>.</li>
+</ol>
+
+<h2 id="4---run-the-harmonize-flow">4 - Run the Harmonize Flow</h2>
+
+<p>When you create a flow with mapping, QuickStart automatically generates harmonization code based on the entity model and the mapping and then deploys the code to MarkLogic Server.</p>
+
+<p>To run the harmonization flow,</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-run-harmonize-flow-Order.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-run-harmonize-flow-Order.png" alt="Run Flow form" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>Click the <strong class="uilabel">Flow Info</strong> tab.</li>
+  <li>Click <strong class="inline-button">Run Harmonize</strong>.</li>
+</ol>
+
+<h2 id="5---view-the-harmonized-orders">5 - View the Harmonized Orders</h2>
+
+<p>As with other flow runs, you can view the job status.</p>
+
+<ol class="ol-steps">
+  <li>In the QuickStart menu, click <strong class="uimenuitem">Jobs</strong> to open the Jobs list.</li>
+  <li>In the list, click <strong class="inline-button">&gt;_</strong> for .
+    <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>TIP:</b>
+<span>You can filter the list by using the free-text search field or the faceted search filters.</span></p>
+  </li>
+</ol>
+
+<p>You can also explore your harmonized data in the <strong>FINAL</strong> database.</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-browse-data-FINAL.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-browse-data-FINAL.png" alt="Browse Data" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>In the QuickStart menu, click <strong class="uimenuitem">Browse Data</strong>.</li>
+  <li>From the database selection dropdown, choose the <strong>FINAL</strong> database.</li>
+  <li>(Optional) To narrow the list to include entities only, check the <strong class="uilabel">Entities Only</strong> box.
+    <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>TIP:</b>
+<span>You can further filter the list by using the free-text search field or the faceted search filters.</span></p>
+  </li>
+  <li>In the list, click the row of the first <strong>Order</strong> dataset item.</li>
+</ol>
+
+<div class="navgrid">
+
+
+
+  
+    
+      
+        
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+      
+        
+          <span class="prevbtn"><a href="/marklogic-data-hub/tutorial/4x/harmonize-product-data-by-mappings/"><strong>«</strong> <strong>PREVIOUS:</strong> Harmonize the “Product” Data by Mappings</a></span>
+          
+        
+      
+    
+      
+        
+          
+            
+              <span class="nextbtn"><a href="/marklogic-data-hub/tutorial/4x/secure-pii-in-customer-data/"><strong>NEXT:</strong> Secure PII in the “Customer” Data <strong>»</strong></a></span>
+              
+            
+          
+        
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+
+<span class="go2pagebtn">
+<details><summary><b>Go to page</b></summary>
+<div>
+
+        <div class="tut-nav">
+
+          <p><a href="/marklogic-data-hub/tutorial/4x/">Tutorial Home</a></p>
+
+          <ol>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/install/">Install the Data Hub Framework</a></p>
+            </li>
+            <li>
+              <p>Load the Raw Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/create-entities/">Create the Entities</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/create-run-input-flows/">Create and Run the Input Flows</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>View Jobs, Traces, and the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-jobs/">View the Jobs Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-traces/">View the Traces Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/browse-data/">Browse the Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>Harmonize the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/harmonize-product-data-by-mappings/">Harmonize the “Product” Data by Mappings</a></p>
+                </li>
+                <li>
+                  <p><strong>Harmonize the “Order” Data by Custom Code</strong></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/secure-pii-in-customer-data/">Secure PII in the “Customer” Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/access-data/">Access the Data from MarkLogic Server</a></p>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/takeaways/">Takeaways</a></p>
+            </li>
+          </ol>
+
+        </div>
+      </div>
+</details>
+</span>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

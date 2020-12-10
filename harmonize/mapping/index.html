@@ -1,0 +1,863 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Using Model-to-Model Mapping - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Using Model-to-Model Mapping
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="using-model-to-model-mapping">Using Model-to-Model Mapping</h1>
+
+<p>Use a model-to-model mapping to quickly and easily define how to harmonize source data to produce entity instances without writing any code.</p>
+<ul>
+  <li><a href="#what-is-model-to-model-mapping?">What is Model-to-Model Mapping?</a></li>
+  <li><a href="#creating-a-mapping">Creating a Mapping</a></li>
+  <li><a href="#changing-the-mapping-source-document">Changing the Mapping Source Document</a></li>
+  <li><a href="#using-a-mapping-for-harmonization">Using a Mapping for Harmonization</a></li>
+  <li><a href="#modifying-an-existing-mapping">Modifying an Existing Mapping</a></li>
+  <li><a href="#understanding-the-harmonization-code">Understanding the Harmonization Code</a></li>
+  <li><a href="#model-to-model-mapping-limitations">Model-to-Model Mapping Limitations</a></li>
+</ul>
+
+<h2 id="what-is-model-to-model-mapping">What is Model-to-Model Mapping?</h2>
+
+<p>The process of harmonization extracts values from your source data and uses them to create canonical instances of your entity model. A model-to-model mapping defines the source property from which to extract a given entity property value.</p>
+
+<p>For example, the following diagram illustrates a case where the <strong>sku</strong> entity property is extracted from the <strong>SKU</strong> source property and the <strong>price</strong> entity property is extracted from the <strong>price</strong> source property.</p>
+
+<p><img src="/marklogic-data-hub/images/mapping/m2m-basic.png" alt="Basic Mapping Diagram" /></p>
+
+<p>A model-to-model mapping enables you to encode such relationships so Data Hub Framework can act on them.</p>
+
+<p>The models in “model-to-model mapping” are your source model and your entity model. The source model is inferred from your source data, rather than explicitly defined in the same way as your entity model. When you create a mapping using the QuickStart <strong>Mappings</strong> view, QuickStart infers this for you.</p>
+
+<p>When you configure a harmonization flow, you can associate a mapping with the flow, so mapping creation fits into your workflow between modeling and harmonization. For example, you might go through steps such as the following:</p>
+
+<p><img src="/marklogic-data-hub/images/mapping/workflow.png" alt="Mapping Workflow" /></p>
+
+<p>For details, see <a href="#using-a-mapping-for-harmonization">Using a Mapping for Harmonization</a>.</p>
+
+<p>When you associate a mapping with a harmonization flow, Data Hub Framework generates harmonization code that extracts entity property values from the sources specified in the mapping. You can customize the generated code. For more details, see <a href="#understanding-the-harmonization-code">Understanding the Harmonization Code</a>.</p>
+
+<p>Model-to-model mapping addresses many common harmonization use cases, but it is not the best choice for some cases. For details, see <a href="#model-to-model-mapping-limitations">Model-to-Model Mapping Limitations</a>.</p>
+
+<h2 id="creating-a-mapping">Creating a Mapping</h2>
+
+<p>Use the <strong>Mappings</strong> view of QuickStart to create a model-to-model mapping. Mappings are stored in your project under <code class="highlighter-rouge">plugins/mappings/</code>.</p>
+
+<p>Before you can create a mapping in QuickStart, you must do the following:</p>
+<ul>
+  <li>ingest some source data</li>
+  <li>model the entity properties you want to target with the map</li>
+</ul>
+
+<p>You must ingest some data first because QuickStart uses the source data to create the list of source properties from which you can select.</p>
+
+<p>Use the following procedure to create a mapping in QuickStart:</p>
+<ol>
+  <li>Click <strong>Mappings</strong> in the top navigation bar. The Mappings view appears.</li>
+  <li>Click <strong>+</strong> next to the entity type for which you want to create a mapping. The mapping creation dialog opens.</li>
+  <li>Enter a name for the mapping.</li>
+  <li>Optionally, enter a description of the mapping.</li>
+  <li>Click <strong>CREATE</strong> to save the mapping. The mapping editor appears.</li>
+</ol>
+
+<p>The mapping editor displays a row for each property in the target entity model. The right column in each row is the name of an entity property. The left column in each row is a dropdown list from which you can select the source property to map on to the entity property in the right column.</p>
+
+<p>The following diagram highlights key parts of the mapping editor:</p>
+
+<p><img src="/marklogic-data-hub/images/mapping/mapping-editor.png" alt="Mapping Editor Highlights" class="screenshot-border" /></p>
+
+<p>QuickStart chooses an arbitrary document from the appropriate source documents in the STAGING database from which to create the list of source properties, but you can change it. For details, see <a href="#changing-the-mapping-source-document">Changing the Mapping Source Document</a>.</p>
+
+<p>When you create or update a mapping, QuickStart saves the mapping configuration in your project as:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>plugins/mappings/mappingName/mappingName-version.json
+</code></pre></div></div>
+<p>For example, version 1 of a mapping named ProductMapping is saved as:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>plugins/mappings/ProductMapping/ProductMapping-1.json
+</code></pre></div></div>
+<p>Each time you modify a mapping, QuickStart saves a new version. For details, see <a href="#modifying-an-existing-mapping">Modifying an Existing Mapping</a>.</p>
+
+<h2 id="changing-the-mapping-source-document">Changing the Mapping Source Document</h2>
+
+<p>You can change the source document from which QuickStart generates the list of source property names. When you change the source document, the mapping resets, and you will have to re-map all the properties.</p>
+
+<p>You can browse the <strong>STAGING</strong> data base to find an alternative source document:</p>
+
+<ol>
+  <li>Click <strong>Browse Data</strong> in the top navigation bar. The data browser view appears.</li>
+  <li>Choose <strong>STAGING</strong> from the database dropdown at the top of the data browser.</li>
+  <li>In the Collections control on the left, click the name of the entity type whose source data you want to review. The browser lists only the documents in the selected collection.</li>
+  <li>Review or search the documents to find a suitable source.</li>
+  <li>Copy or note the URI of your chosen source.</li>
+</ol>
+
+<p>Once you know the source URI, use these steps to modify the mapping:</p>
+
+<ol>
+  <li>Click <strong>Mappings</strong> in the top navigation bar. The Mappings view appears.</li>
+  <li>Click on the name of the mapping you want to change. The mapping editor appears.</li>
+  <li>Click the pencil icon next to the Source URI.</li>
+  <li>Replace the current URI with your new one.</li>
+  <li>Click the checkmark to save your change.</li>
+  <li>Click <strong>OK</strong> in the confirmation dialog.</li>
+</ol>
+
+<h2 id="using-a-mapping-for-harmonization">Using a Mapping for Harmonization</h2>
+
+<p>When you create a harmonization flow from the QuickStart <strong>Flows</strong> view, you can specify the name of an existing mapping. In the following picture, “ProductMapping” is the name of a previously created mapping.</p>
+
+<p><img src="/marklogic-data-hub/images/mapping/add-map-to-flow.png" alt="Add Mapping to Flow" class="screenshot-border" /></p>
+
+<p>When you save the flow, Data Hub Framework generates harmonization code based on the mapping. The mapping affects the code you see on the <strong>CONTENT</strong> tab of the flows view. To learn more about the resulting code, see <a href="#understanding-the-harmonization-code">Understanding the Harmonization Code</a>.</p>
+
+<p>You cannot add a mapping to an existing flow. Instead, create a new flow that uses the mapping.</p>
+
+<p>For an end to end example, see the following parts of the QuickStart tutorial:</p>
+
+<ul>
+  <li><a href="/marklogic-data-hub/tutorial/3x/mapping-product-entity/">Create a Model-to-Model Mapping for Product</a></li>
+  <li><a href="/marklogic-data-hub/tutorial/3x/harmonizing-product-data/">Harmonize the Product Data</a></li>
+</ul>
+
+<h2 id="modifying-an-existing-mapping">Modifying an Existing Mapping</h2>
+
+<p>Each time you modify a mapping, QuickStart saves a new version of the mapping configuration file under <code class="highlighter-rouge">plugins/mappings/</code>.</p>
+
+<p>A harmonization flow configured to use a mapping always uses the latest version of the mapping <em>at the time you create the flow</em>. The harmonization code is not regenerated when you change the mapping.</p>
+
+<p>Therefore, when you modify a mapping, you must create a new harmonization flow to exercise it. If you have harmonization code customizations, you must reapply them to the new code.</p>
+
+<p>Creating a new mapping version and a new flow for each mapping change enables you to safely experiment with different harmonization flows.</p>
+
+<p>To modify a mapping and then use it for harmonization:</p>
+
+<ol>
+  <li>Click the <strong>Mappings</strong> tab in in the top navigation bar. The Mappings view appears.</li>
+  <li>Click on the name of the mapping to be modified.</li>
+  <li>Make your changes.</li>
+  <li>Click <strong>SAVE MAP</strong> to save your changes.</li>
+  <li>Click the <strong>Flows</strong> tab.</li>
+  <li>Create a new harmonization flow that uses the mapping.</li>
+</ol>
+
+<h2 id="understanding-the-harmonization-code">Understanding the Harmonization Code</h2>
+
+<p>When you configure a harmonization flow with a mapping, Data Hub Framework generates code for the Content plugin based on the mapping.</p>
+
+<p>Harmonization code for some entity type <em>T</em> always includes a function named <code class="highlighter-rouge">extractInstanceT</code>. Data Hub Framework calls this function when constructing entity instance envelope documents during harmonization. The code in the function is affected by your mapping, and this function is usually where you will apply content customizations.</p>
+
+<p>The <code class="highlighter-rouge">extractInstanceT</code> function contains a variable declaration for each entity property. This declaration extracts the source property value for use as the corresponding entity property value.</p>
+
+<p>For some entity property <em>EP</em> whose value gets extracted from a source property <em>SP</em>, the declaration looks like the following. Notice that if the source data does not include the targeted property, then the entity property is initialized to <code class="highlighter-rouge">null</code>.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">EPName</span> <span class="o">=</span> <span class="o">!</span><span class="nx">fn</span><span class="p">.</span><span class="nx">empty</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="nx">pathToSP</span><span class="p">))</span>
+             <span class="p">?</span> <span class="nx">EPType</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">head</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="nx">pathToSP</span><span class="p">)))</span>
+             <span class="p">:</span> <span class="kc">null</span>
+</code></pre></div></div>
+
+<p>If you need to customize the handling of a property and you do so through setting this variable, then you generally do not need to change the rest of the code.</p>
+
+<p>For example, the QuickStart tutorial uses a mapping to harmonize Product entity instances. The mapping maps <strong>SKU</strong> to <strong>sku</strong>, resulting in the following declaration in the <code class="highlighter-rouge">extractInstanceProduct</code> function of the content plugin:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">sku</span> <span class="o">=</span> <span class="o">!</span><span class="nx">fn</span><span class="p">.</span><span class="nx">empty</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="s1">'//SKU'</span><span class="p">))</span>
+          <span class="p">?</span> <span class="nx">xs</span><span class="p">.</span><span class="nx">string</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">head</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="s1">'//SKU'</span><span class="p">)))</span>
+          <span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
+</code></pre></div></div>
+<p>The generated code casts the source value to the entity property type. If this is not sufficient to transform the source value to the entity property type, you must customize the code.</p>
+
+<p>For example, in the tutorial’s Product mapping, the <strong>price</strong> property has string type in the source data, but decimal type in the Product entity type, so the generated code looks like the following. Since the <strong>price</strong> source data always contains serialized numbers, no customization is needed transform the source string value into an <code class="highlighter-rouge">xs:decimal</code> value.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">let</span> <span class="nx">price</span> <span class="o">=</span> <span class="o">!</span><span class="nx">fn</span><span class="p">.</span><span class="nx">empty</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="s1">'//price'</span><span class="p">))</span>
+            <span class="p">?</span> <span class="nx">xs</span><span class="p">.</span><span class="nx">decimal</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">head</span><span class="p">(</span><span class="nx">source</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="s1">'//price'</span><span class="p">)))</span>
+            <span class="p">:</span> <span class="kc">null</span><span class="p">;</span>
+</code></pre></div></div>
+<p>Data Hub Framework generates default harmonization code for any entity property not specified in the mapping. The default code is based on the following assumption:</p>
+
+<ul>
+  <li>The source property has the same name as the entity property.</li>
+  <li>The source property value can be cast directly to the entity property data type.</li>
+  <li>The source property can be accessed with the XPath expression ‘/<em>propName</em>’.</li>
+</ul>
+
+<h2 id="model-to-model-mapping-limitations">Model-to-Model Mapping Limitations</h2>
+
+<p>A model-to-model mapping is best suited for defining the relationship between source and entity properties when all of the following conditions are true:</p>
+
+<ul>
+  <li>Your source documents are flat JSON documents. That is, all the source properties are root level properties. For details, see <a href="#flat-json-requirement">Flat JSON Requirement</a>.</li>
+  <li>The relationship between source and entity property value is one-to-one. That is, harmonization extracts the value of a given entity property from exactly one value in one source document. For details, see <a href="#one-to-one-mapping-requirement">One-to-One Mapping Requirement</a>.</li>
+  <li>The source value does not require transformation beyond a simple type cast. For details, see <a href="#simple-value-transformation-requirement">Simple Value Transformation Requirement</a></li>
+</ul>
+
+<p>If these conditions are not met, you might still be able to use a mapping to generate baseline code and then customize the code to handle properties that cannot be covered by the mapping.</p>
+
+<p>To learn more about the generated code, see <a href="#understanding-the-harmonization-code">Understanding the Harmonization Code</a>.</p>
+
+<h3 id="flat-json-requirement">Flat JSON Requirement</h3>
+
+<p>The following is an example of hierarchical source data that is not suitable for model-to-model mapping. You could use model-to-model mapping to define “id” as a source for an entity property, but you could not use “first” or “last” because they are not root level properties.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w"> </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1234</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"first"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Joe"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"last"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Schmoe"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>In such a case, you can generate a harmonization flow without using a mapping, and then customize the code for your application.</p>
+
+<h3 id="one-to-one-mapping-requirement">One-to-One Mapping Requirement</h3>
+
+<p>The products property of the Order entity type used by the QuickStart tutorial is an example of a property whose value is derived from multiple sources.</p>
+
+<p>The products property of an Order is an array of references to Product entity instances, and each reference in the array is derived from a different source document, as shown in the following diagram.</p>
+
+<p><img src="/marklogic-data-hub/images/mapping/many-to-one.png" alt="Many Sources to One Instance" /></p>
+
+<p>Such a relationship cannot be captured in a mapping. Whether you use a mapping to generate baseline code or not, you must customize the content plugin to handle this case.</p>
+
+<p>In the tutorial, the Order harmonization flow does not use a mapping to generate baseline code, but it could: The same code customizations could be applied to mapping-based baseline code. To review the Order customizations, see <a href="/marklogic-data-hub/tutorial/3x/harmonizing-order-data/">Harmonize the Order Data</a> in the tutorial.</p>
+
+<h3 id="simple-value-transformation-requirement">Simple Value Transformation Requirement</h3>
+<p>The code generated from a mapping handles the case where the source value can be converted to the entity property data type through a simple type conversion. For example, if you have a string source property whose contents can always be safely cast to a number, such as “1234”, then you can map it on to an entity property of type decimal.</p>
+
+<p>However, if a source value requires a more sophisticated transformation, such as date normalization, string concatenation, or a computation, then the code generated from a mapping will not work out of the box. The <strong>price</strong> property of the Order entity type in the QuickStart tutorial is an example of a property whose value is computed during harmonization. See <a href="/marklogic-data-hub/tutorial/3x/harmonizing-order-data/">Harmonize the Order Data</a> in the tutorial.</p>
+
+<p>Whether you use a mapping as a baseline or not, you must customize the content plugin to handle this case.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

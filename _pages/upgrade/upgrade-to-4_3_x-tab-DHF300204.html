@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>marklogic-data-hub | The MarkLogic Data Hub: documentation ==&gt;</title>
+<meta property="og:title" content="marklogic-data-hub" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The MarkLogic Data Hub: documentation ==&gt;" />
+<meta property="og:description" content="The MarkLogic Data Hub: documentation ==&gt;" />
+<meta property="og:site_name" content="marklogic-data-hub" />
+<script type="application/ld+json">
+{"name":null,"description":"The MarkLogic Data Hub: documentation ==&gt;","author":null,"@type":"WebPage","url":"/marklogic-data-hub/_pages/upgrade/upgrade-to-4_3_x-tab-DHF300204","image":null,"publisher":null,"headline":"marklogic-data-hub","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link href="/marklogic-data-hub/assets/css/style.css?v=513ebc351820b3b65a7a030c9eef22e68bb64ff4" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+        <h1><a href="/marklogic-data-hub/">marklogic-data-hub</a></h1>
+      
+
+      <div id="DHF300204to43x" class="tabcontent">
+
+  <p>The notes and steps in this tab are for the following upgrade paths:</p>
+  <ul>
+    <li>DHF 3.0.0 » 4.3.x</li>
+    <li>DHF 2.0.6 » 4.3.x</li>
+    <li>DHF 2.0.5 » 4.3.x</li>
+    <li>DHF 2.0.4 » 4.3.x</li>
+  </ul>
+
+  <h3 id="additional-upgrade-notes">Additional Upgrade Notes</h3>
+
+  <ul>
+    <li>
+      <p>The <code class="highlighter-rouge">hubUpdate</code> Gradle task makes the following changes.</p>
+
+      <ul>
+        <li>
+          <p>Renames old configuration directories under your project root.</p>
+
+          <table class="table-b1gray">
+            <thead>
+              <tr>
+                <th>old directory</th>
+                <th>new directory</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code class="highlighter-rouge">hub-internal-config</code></td>
+                <td><code class="highlighter-rouge">hub-internal-config.old</code></td>
+              </tr>
+              <tr>
+                <td><code class="highlighter-rouge">user-config</code></td>
+                <td><code class="highlighter-rouge">user-config.old</code></td>
+              </tr>
+              <tr>
+                <td><code class="highlighter-rouge">entity-config</code></td>
+                <td><code class="highlighter-rouge">entity-config.old</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+        <li>
+          <p>Creates the new project directory structure (<code class="highlighter-rouge">your-project-root/src/main</code> and its subdirectories) and new files.</p>
+        </li>
+        <li>
+          <p>Copies some settings from the old configuration files to the new ones.</p>
+        </li>
+        <li>
+          <p>Updates all flows to use updated imports. See the <a href="https://marklogic.github.io/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-from-204-to-40x">notes to upgrade to 4.0.x</a>.</p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <p>Running the <code class="highlighter-rouge">hubUpdate</code> task with the <code class="highlighter-rouge">-i</code> option (info mode) displays specifically what the task does, including configuration settings that changed.</p>
+
+      <details><summary><b>Example:</b> A verbose report.</summary>
+  <pre>
+  Upgrading entity-config dir
+  Upgrading hub-internal-config dir
+  Processing /your-project-root/hub-internal-config/databases/job-database.json
+  Setting "schema-database" to "%%mlStagingSchemasDbName%%"
+  Setting "triggers-database" to "%%mlStagingTriggersDbName%%"
+  Adding path range indexes to job-database.json
+  Writing /your-project-root/hub-internal-config/databases/job-database.json to /your-project-root/src/main/hub-internal-config/databases/job-database.json
+  Processing /your-project-root/hub-internal-config/databases/final-database.json
+  Setting "schema-database" to "%%mlFinalSchemasDbName%%"
+  Setting "triggers-database" to "%%mlFinalTriggersDbName%%"
+  Writing /your-project-root/hub-internal-config/databases/final-database.json to /your-project-root/src/main/ml-config/databases/final-database.json
+  Processing /your-project-root/hub-internal-config/databases/staging-database.json
+  Setting "schema-database" to "%%mlStagingSchemasDbName%%"
+  Setting "triggers-database" to "%%mlStagingTriggersDbName%%"
+  Writing /your-project-root/hub-internal-config/databases/staging-database.json to /your-project-root/src/main/hub-internal-config/databases/staging-database.json
+  Writing /your-project-root/hub-internal-config/databases/modules-database.json to /your-project-root/src/main/ml-config/databases/modules-database.json
+  Processing /your-project-root/hub-internal-config/servers/job-server.json
+  Setting "url-rewriter" to "/data-hub/4/tracing/tracing-rewriter.xml"
+  Writing /your-project-root/hub-internal-config/servers/job-server.json to /your-project-root/src/main/hub-internal-config/servers/job-server.json
+  Writing /your-project-root/hub-internal-config/servers/final-server.json to /your-project-root/src/main/ml-config/servers/final-server.json
+  Processing /your-project-root/hub-internal-config/servers/staging-server.json
+  Setting "url-rewriter" to "/data-hub/4/rest-api/rewriter.xml"
+  Setting "error-handler" to "/data-hub/4/rest-api/error-handler.xqy"
+  Writing /your-project-root/hub-internal-config/servers/staging-server.json to /your-project-root/src/main/hub-internal-config/servers/staging-server.json
+  Upgrading user-config dir
+  </pre>
+</details>
+    </li>
+    <li>
+      <p>If custom configurations (i.e., from <code class="highlighter-rouge">user-config</code>) are missing, you must manually copy them to <code class="highlighter-rouge">ml-config</code>.</p>
+    </li>
+    <li>
+      <p>Because DHF 3.0.0 and DHF 2.0.4+ had only a single SCHEMAS database and a single TRIGGERS database, you must decide whether to use those existing databases as the staging databases or as the final databases in DHF 4.x. The settings in <code class="highlighter-rouge">gradle.properties</code> (and possibly other configurations) depend on your decision.</p>
+
+      <table class="table-b1gray">
+        <thead>
+          <tr>
+            <th>DHF 3.0.0 and 2.0.4+</th>
+            <th>DHF 4.x</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code class="highlighter-rouge">data-hub-SCHEMAS</code> database</td>
+            <td><code class="highlighter-rouge">data-hub-staging-SCHEMAS</code> database<br /><code class="highlighter-rouge">data-hub-final-SCHEMAS</code> database</td>
+          </tr>
+          <tr>
+            <td><code class="highlighter-rouge">data-hub-TRIGGERS</code> database</td>
+            <td><code class="highlighter-rouge">data-hub-staging-TRIGGERS</code> database<br /><code class="highlighter-rouge">data-hub-final-TRIGGERS</code> database</td>
+          </tr>
+        </tbody>
+      </table>
+    </li>
+  </ul>
+
+  <h3 id="procedure">Procedure</h3>
+
+  <ol class="ol-steps">
+    <li>
+      <p>In your <code class="highlighter-rouge">build.gradle</code> file, replace all occurrences of your old DHF version number with <code class="highlighter-rouge">4.3.2</code>.</p>
+
+      <p><strong>Example:</strong> In the <code class="highlighter-rouge">plugins</code> section and the <code class="highlighter-rouge">dependencies</code> section,</p>
+
+      <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   plugins {
+       id 'net.saliman.properties' version '1.4.6'
+       id 'com.marklogic.ml-data-hub' version '4.3.2'
+   }
+   ...
+   dependencies {
+     compile 'com.marklogic:marklogic-data-hub:4.3.2'
+     compile 'com.marklogic:marklogic-xcc:9.0.6'
+   }
+</code></pre></div>      </div>
+    </li>
+    <li>
+      <p>At your project’s root folder, run the <code class="highlighter-rouge">hubUpdate -i</code> Gradle task.</p>
+
+      <div class="code-tabs">
+     <ul class="nav nav-tabs" role="tablist">
+       <li role="presentation" class="active">
+         <a role="tab" aria-controls="tab1-1" href="#tab1-1">Unix Systems</a>
+       </li>
+       <li role="presentation" class="">
+         <a role="tab" aria-controls="tab2-1" href="#tab2-1">Windows</a>
+       </li>
+     </ul>
+     <div class="tab-content">
+       <div role="tabpanel" class="tab-pane active" id="tab1-1">
+         <pre class="cmdline">./gradlew hubUpdate -i</pre>
+       </div>
+       <div role="tabpanel" class="tab-pane" id="tab2-1">
+         <pre class="cmdline">gradlew.bat hubUpdate -i</pre>
+       </div>
+     </div>
+   </div>
+
+      <p><strong>Result:</strong> A <code class="highlighter-rouge">gradle-GENERATED.properties</code> file is created.</p>
+    </li>
+    <li>
+      <p>Update your <code class="highlighter-rouge">gradle.properties</code> file based on the <code class="highlighter-rouge">gradle-GENERATED.properties</code> file.</p>
+
+      <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>IMPORTANT:</b>
+<span>Do NOT update <code class="highlighter-rouge">mlUsername</code> or <code class="highlighter-rouge">mlPassword</code> yet, and do NOT delete the old <code class="highlighter-rouge">mlHubUser*</code> and <code class="highlighter-rouge">mlHubAdmin*</code> properties yet. You need the old user accounts to access MarkLogic Server in the <code class="highlighter-rouge">mlDeploy</code> task.</span></p>
+
+      <p>a. Add the following properties and replace the values accordingly.</p>
+
+      <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   mlDHFVersion=4.3.2
+   ...
+   mlFlowOperatorRole=flow-operator-role
+   mlFlowOperatorUserName=flow-operator
+   mlFlowOperatorPassword=your-flow-operator-password
+   ...
+   mlFlowDeveloperRole=flow-developer-role
+   mlFlowDeveloperUserName=flow-developer
+   mlFlowDeveloperPassword=your-flow-developer-password
+   ...
+   mlDataHubAdminRole=data-hub-admin-role
+   ...
+   mlStagingTriggersDbName=data-hub-staging-TRIGGERS
+   mlStagingTriggersForestsPerHost=1
+   mlStagingSchemasDbName=data-hub-staging-SCHEMAS
+   mlStagingSchemasForestsPerHost=1
+   ...
+   mlFinalTriggersDbName=data-hub-final-TRIGGERS
+   mlFinalTriggersForestsPerHost=1
+   mlFinalSchemasDbName=data-hub-final-SCHEMAS
+   mlFinalSchemasForestsPerHost=1
+</code></pre></div>      </div>
+
+      <p>b. Assign default module permissions to the new roles.</p>
+
+      <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   mlModulePermissions=rest-reader,read,rest-writer,insert,rest-writer,update,rest-extension-user,execute,flow-developer-role,read,flow-developer-role,execute,flow-developer-role,insert,flow-operator-role,read,flow-operator-role,execute
+</code></pre></div>      </div>
+
+      <p>c. Remove the following properties. <!-- What are the actual names of the databases? --></p>
+
+      <ul>
+        <li>data-hub-TRACING server</li>
+        <li>data-hub-TRACING database</li>
+        <li>data-hub-TRIGGERS database</li>
+        <li>data-hub-SCHEMAS database</li>
+      </ul>
+    </li>
+    <li>
+      <p>If your custom code refers to the old roles/users, change them to refer to the new roles/users.</p>
+    </li>
+    <li>
+      <p>At your project’s root folder, run the <code class="highlighter-rouge">mlDeploy</code> Gradle task.</p>
+
+      <div class="code-tabs">
+     <ul class="nav nav-tabs" role="tablist">
+       <li role="presentation" class="active">
+         <a role="tab" aria-controls="tab1-2" href="#tab1-2">Unix Systems</a>
+       </li>
+       <li role="presentation" class="">
+         <a role="tab" aria-controls="tab2-2" href="#tab2-2">Windows</a>
+       </li>
+     </ul>
+     <div class="tab-content">
+       <div role="tabpanel" class="tab-pane active" id="tab1-2">
+         <pre class="cmdline">./gradlew mlDeploy</pre>
+       </div>
+       <div role="tabpanel" class="tab-pane" id="tab2-2">
+         <pre class="cmdline">gradlew.bat mlDeploy</pre>
+       </div>
+     </div>
+   </div>
+    </li>
+    <li>
+      <p>Edit your <code class="highlighter-rouge">gradle.properties</code> file again.</p>
+
+      <p>a. Update <code class="highlighter-rouge">mlUsername</code> or <code class="highlighter-rouge">mlPassword</code> with a new user assigned to <code class="highlighter-rouge">flow-developer-role</code> (to create and deploy flows) or to <code class="highlighter-rouge">flow-operator-role</code> (to run flows).</p>
+
+      <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   mlUsername=flow-operator
+   mlPassword=your-flow-operator-password
+</code></pre></div>      </div>
+
+      <p>b. Remove the following properties.</p>
+
+      <ul>
+        <li>mlHubUserRole</li>
+        <li>mlHubUserName</li>
+        <li>mlHubUserPassword</li>
+        <li>mlHubAdminRole</li>
+        <li>mlHubAdminUserName</li>
+        <li>mlHubAdminUserPassword</li>
+      </ul>
+    </li>
+    <li>
+      <p>(Optional) Delete the old roles from MarkLogic Server.</p>
+
+      <ul>
+        <li>hub-admin-role</li>
+        <li>data-hub-role</li>
+      </ul>
+    </li>
+    <li>
+      <p>Run your <a href="/marklogic-data-hub/ingest/">ingest</a> and <a href="/marklogic-data-hub/harmonize/">harmonize</a> flows.</p>
+
+      <p>If you use <a href="https://docs.marklogic.com/guide/mlcp">MarkLogic Content Pump</a> for your input flows, run MLCP with the <code class="highlighter-rouge">-transform_module</code> option as follows:</p>
+
+      <div class="code-tabs">
+     <ul class="nav nav-tabs" role="tablist">
+       <li role="presentation" class="active">
+         <a role="tab" aria-controls="tab1-3" href="#tab1-3">XQuery plugin (.xqy)</a>
+       </li>
+       <li role="presentation" class="">
+         <a role="tab" aria-controls="tab2-3" href="#tab2-3">JavaScript plugin (.sjs)</a>
+       </li>
+     </ul>
+     <div class="tab-content">
+       <div role="tabpanel" class="tab-pane active" id="tab1-3">
+         <pre class="cmdline">-transform_module "/data-hub/4/transforms/mlcp-flow-transform.xqy"</pre>
+       </div>
+       <div role="tabpanel" class="tab-pane" id="tab2-3">
+         <pre class="cmdline">-transform_module "/data-hub/4/transforms/mlcp-flow-transform.sjs"</pre>
+       </div>
+     </div>
+   </div>
+    </li>
+  </ol>
+
+  <h3 id="remarks">Remarks</h3>
+
+  <p>Before running <code class="highlighter-rouge">mlUndeploy</code>, delete the resources associated with the properties that were removed from the <code class="highlighter-rouge">gradle.properties</code> file:</p>
+
+  <ul>
+    <li>data-hub-TRACING server</li>
+    <li>data-hub-TRACING database</li>
+    <li>data-hub-TRIGGERS database</li>
+    <li>data-hub-SCHEMAS database</li>
+  </ul>
+
+  <!-- To undeploy, "./gradlew mlUndeploy -Pconfirm=true" -->
+</div>
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="http://github.com/marklogic/marklogic-data-hub/edit/gh-pages/_pages/upgrade/upgrade-to-4_3_x-tab-DHF300204.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="/marklogic-data-hub/assets/javascript/anchor-js/anchor.min.js"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

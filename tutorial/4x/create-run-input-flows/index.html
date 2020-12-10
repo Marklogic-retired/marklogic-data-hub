@@ -1,0 +1,947 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Tutorial - Create and Run the Input Flows - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Tutorial - Create and Run the Input Flows
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          
+<h1 id="tutorial-create-the-input-flows">Tutorial: Create the Input Flows</h1>
+
+<p>An <strong>input flow</strong> is a series of plugins that ingest data into the staging data hub. Input flows wrap incoming raw data in envelopes and store them in the staging database. The envelopes contain metadata, including those related to lineage and provenance; for example, who loaded the data, when it was loaded, and where it came from.</p>
+
+<p>The QuickStart <strong>Run Input Flow</strong> wizard enables you to quickly start loading data without learning the intricacies of the underlying tools. When you run your flow, QuickStart loads data into MarkLogic Server using <a href="https://docs.marklogic.com/guide/mlcp" target="_blank">MarkLogic Content Pump</a> (MLCP), a tool capable of importing a large volume of data into MarkLogic Server.</p>
+
+<p>In this section, we create and run an input flow for each entity: <code class="highlighter-rouge">Product</code>, <code class="highlighter-rouge">Customer</code>, and <code class="highlighter-rouge">Order</code>. Each input flow performs the following:</p>
+
+<ul>
+  <li>Load data from the sample data directory.</li>
+  <li>Interpret the input data as delimited text (CSV), where each row is considered a <em>document</em>.</li>
+  <li>Automatically generate a unique URI to identify the wrapped document as it is added to the staging server. This prevents one document from overwriting another if multiple rows contain the same value in the first field.</li>
+</ul>
+
+<h2 id="product">Product</h2>
+
+<h3 id="1---create-an-input-flow-for-the-product-entity">1 - Create an input flow for the <span class="uilabel">Product</span> entity.</h3>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-create-input-flow-Product.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-create-input-flow-Product.png" alt="Create Input Flow form" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>In QuickStart’s navigation bar, click <strong class="uimenuitem">Flows</strong>.</li>
+  <li>Expand the tab named <span class="uilabel">Product</span> in the left panel.</li>
+  <li>Click the <strong class="uilabel">+</strong> for <strong class="uilabel">Input Flows</strong>.</li>
+  <li>In the <strong class="uilabel">Create Input Flow</strong> dialog, set <strong class="uilabel">Input Flow Name</strong> to <code>Load Products</code>.</li>
+  <li>Click <strong class="inline-button">CREATE</strong>.</li>
+</ol>
+
+<p><strong>Result</strong></p>
+
+<ul>
+  <li>Your new flow appears under <strong class="uilabel">Input Flows</strong> in the left panel.</li>
+  <li>The <strong class="uilabel">Run Input Flow</strong> wizard appears on the right.</li>
+</ul>
+
+<h3 id="2---configure-and-run-the-load-products-flow">2 - Configure and run the <strong>Load Products</strong> flow.</h3>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-load-data-Product.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-load-data-Product.png" alt="" class="screenshot" />
+  </a></p>
+
+<ol class="ol-steps">
+  <li>
+    <details><summary>Under <span class="uilabel">Input Files</span>, use the file browser to select the <code>input\products\games</code> directory.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-load-raw-input-files-Product.png" alt="Run Input Flow - Input Files" class="screenshot" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Under <span class="uilabel">General Options</span>, change <span class="uilabel">Input File Type</span> to <span class="uilabel">Delimited Text</span>.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-load-raw-general-options-Product.png" alt="Run Input Flow - General Options" class="screenshot" />
+     
+</details>
+  </li>
+  <li>
+    <details><summary>Under <span class="uilabel">Delimited Text Options</span>, enable the <span class="uilabel">Generate URI?</span> option to automatically generate a unique URI for each document you load.</summary>
+     
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-load-raw-delimited-text-options-Product.png" alt="Run Input Flow - Delimited Text Options" class="screenshot" />
+     
+</details>
+  </li>
+  <li>Click <strong class="inline-button">SAVE OPTIONS</strong>. <!-- `MLCP options saved.` --></li>
+  <li>Click <strong class="inline-button">RUN IMPORT</strong>. <!-- `(entity): (jobname) starting...` then `Job (job number) Finished. OK` --></li>
+</ol>
+
+<p><strong>Result</strong></p>
+
+<p>QuickStart displays a completion notice.</p>
+
+<p><a href="/marklogic-data-hub/images/4x/qs-4x-flows-job-finished.png" target="_blank">
+  <img src="/marklogic-data-hub/images/4x/qs-4x-flows-job-finished.png" alt="Job Finished notice" class="img-results" />
+  </a></p>
+
+<h2 id="order">Order</h2>
+
+<p>Perform the same steps for <strong>Order</strong>.</p>
+
+<h3 id="1---create-an-input-flow-for-the-order-entity">1 - Create an input flow for the <span class="uilabel">Order</span> entity.</h3>
+
+<ol class="ol-steps">
+  <li>Expand the tab named <span class="uilabel">Order</span> in the left panel.</li>
+  <li>Click the <strong class="uilabel">+</strong> for <strong class="uilabel">Input Flows</strong>.</li>
+  <li>In the <strong class="uilabel">Create Input Flow</strong> dialog, set <strong class="uilabel">Input Flow Name</strong> to <code>Load Orders</code>.</li>
+  <li>Click <strong class="inline-button">CREATE</strong>.</li>
+</ol>
+
+<h3 id="2---configure-and-run-the-load-orders-flow">2 - Configure and run the <strong>Load Orders</strong> flow.</h3>
+
+<ol class="ol-steps">
+  <li>
+    <p>Under <span class="uilabel">Input Files</span>, use the file browser to select the <code>input\orders</code> directory.</p>
+  </li>
+  <li>
+    <p>Under <span class="uilabel">General Options</span>, change <span class="uilabel">Input File Type</span> to <span class="uilabel">Delimited Text</span>.</p>
+  </li>
+  <li>
+    <p>Under <span class="uilabel">Delimited Text Options</span>, enable the <span class="uilabel">Generate URI?</span> option to automatically generate a unique URI for each document you load.</p>
+  </li>
+  <li>Click <strong class="inline-button">SAVE OPTIONS</strong>. <!-- `MLCP options saved.` --></li>
+  <li>Click <strong class="inline-button">RUN IMPORT</strong>. <!-- `(entity): (jobname) starting...` then `Job (job number) Finished. OK` --></li>
+</ol>
+
+<h2 id="customer">Customer</h2>
+
+<p>Perform the same steps for <strong>Customer</strong>.</p>
+
+<h3 id="1---create-an-input-flow-for-the-customer-entity">1 - Create an input flow for the <span class="uilabel">Customer</span> entity.</h3>
+
+<ol class="ol-steps">
+  <li>Expand the tab named <span class="uilabel">Customer</span> in the left panel.</li>
+  <li>Click the <strong class="uilabel">+</strong> for <strong class="uilabel">Input Flows</strong>.</li>
+  <li>In the <strong class="uilabel">Create Input Flow</strong> dialog, set <strong class="uilabel">Input Flow Name</strong> to <code>Load Customers</code>.</li>
+  <li>Click <strong class="inline-button">CREATE</strong>.</li>
+</ol>
+
+<h3 id="2---configure-and-run-the-load-customers-flow">2 - Configure and run the <strong>Load Customers</strong> flow.</h3>
+
+<ol class="ol-steps">
+  <li>
+    <p>Under <span class="uilabel">Input Files</span>, use the file browser to select the <code>input\customers</code> directory.</p>
+  </li>
+  <li>
+    <p>Under <span class="uilabel">General Options</span>, change <span class="uilabel">Input File Type</span> to <span class="uilabel">Delimited Text</span>.</p>
+  </li>
+  <li>
+    <p>Under <span class="uilabel">Delimited Text Options</span>, enable the <span class="uilabel">Generate URI?</span> option to automatically generate a unique URI for each document you load.</p>
+  </li>
+  <li>Click <strong class="inline-button">SAVE OPTIONS</strong>. <!-- `MLCP options saved.` --></li>
+  <li>Click <strong class="inline-button">RUN IMPORT</strong>. <!-- `(entity): (jobname) starting...` then `Job (job number) Finished. OK` --></li>
+</ol>
+
+<div class="navgrid">
+
+
+
+  
+    
+      
+        
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+            
+          
+        
+      
+    
+      
+        
+          <span class="prevbtn"><a href="/marklogic-data-hub/tutorial/4x/create-entities/"><strong>«</strong> <strong>PREVIOUS:</strong> Create the Entities</a></span>
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+            
+              <span class="nextbtn"><a href="/marklogic-data-hub/tutorial/4x/view-jobs/"><strong>NEXT:</strong> View the Jobs Log <strong>»</strong></a></span>
+              
+            
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+      
+        
+          
+        
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+  
+    
+      
+    
+  
+
+
+<span class="go2pagebtn">
+<details><summary><b>Go to page</b></summary>
+<div>
+
+        <div class="tut-nav">
+
+          <p><a href="/marklogic-data-hub/tutorial/4x/">Tutorial Home</a></p>
+
+          <ol>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/install/">Install the Data Hub Framework</a></p>
+            </li>
+            <li>
+              <p>Load the Raw Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/create-entities/">Create the Entities</a></p>
+                </li>
+                <li>
+                  <p><strong>Create and Run the Input Flows</strong></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>View Jobs, Traces, and the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-jobs/">View the Jobs Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/view-traces/">View the Traces Log</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/browse-data/">Browse the Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p>Harmonize the Data</p>
+
+              <ol>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/harmonize-product-data-by-mappings/">Harmonize the “Product” Data by Mappings</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/harmonize-order-data-by-custom-code/">Harmonize the “Order” Data by Custom Code</a></p>
+                </li>
+                <li>
+                  <p><a href="/marklogic-data-hub/tutorial/4x/secure-pii-in-customer-data/">Secure PII in the “Customer” Data</a></p>
+                </li>
+              </ol>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/access-data/">Access the Data from MarkLogic Server</a></p>
+            </li>
+            <li>
+              <p><a href="/marklogic-data-hub/tutorial/4x/takeaways/">Takeaways</a></p>
+            </li>
+          </ol>
+
+        </div>
+      </div>
+</details>
+</span>
+
+</div>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

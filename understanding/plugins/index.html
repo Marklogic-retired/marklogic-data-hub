@@ -1,0 +1,975 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Plugins in Flows - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Plugins in Flows
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="plugins-in-flows">Plugins in Flows</h1>
+
+<p>MarkLogic DHF uses different plugin modules within flows to generate parts of the envelope (content, headers, and triples) and to perform other tasks.</p>
+
+<p>An input flow is comprised of four plugins; a harmonize flow is comprised of six plugins.</p>
+
+<table class="table-b1gray">
+  <thead>
+    <tr>
+      <th>input flow</th>
+      <th>harmonize flow</th>
+      <th>mode</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Main Plugin</td>
+      <td>Main Plugin</td>
+      <td>n/a</td>
+    </tr>
+    <tr>
+      <td>n/a</td>
+      <td>Collector Plugin</td>
+      <td>query mode</td>
+    </tr>
+    <tr>
+      <td>Content Plugin</td>
+      <td>Content Plugin</td>
+      <td>query mode</td>
+    </tr>
+    <tr>
+      <td>Headers Plugin</td>
+      <td>Headers Plugin</td>
+      <td>query mode</td>
+    </tr>
+    <tr>
+      <td>Triples Plugin</td>
+      <td>Triples Plugin</td>
+      <td>query mode</td>
+    </tr>
+    <tr>
+      <td>n/a</td>
+      <td>Writer Plugin</td>
+      <td>update mode</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="main-plugin">Main Plugin</h2>
+<p>The main plugin orchestrates the running of other plugins within the flow.</p>
+
+<h2 id="collector-plugin">Collector Plugin</h2>
+
+<p>The collector plugin returns the IDs and/or document URIs of the set of items that subsequent plugins would process as a batch. Only used in harmonize flows; input flows run on one document at a time and, therefore, do not need collectors. <strong>NOTE: This plugin runs in query mode.</strong></p>
+
+<p>To create your own collector plugin, it must be defined either as an XQuery module or as a JavaScript plugin.</p>
+
+<h3 id="xquery">XQuery</h3>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">xquery</span> <span class="kp">version</span> <span class="s2">"1.0-ml"</span><span class="p">;</span>
+
+<span class="kd">module</span> <span class="kd">namespace</span> <span class="nn">plugin</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">option</span> <span class="nv">xdmp:mapping</span> <span class="s2">"false"</span><span class="p">;</span>
+
+<span class="c">(:~
+ : Collect IDs plugin
+ :
+ : @param $options - a map containing options. Options are sent from Java
+ :
+ : @return - a sequence of ids or uris
+ :)</span>
+<span class="kd">declare</span> <span class="kd">function</span> <span class="nf">plugin:collect</span><span class="p">(</span>
+  <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="o">*</span>
+<span class="p">{</span>
+  <span class="nf">cts:uris</span><span class="p">((),</span> <span class="p">(),</span> <span class="nf">cts:true-query</span><span class="p">())</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="javascript">JavaScript</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Collect IDs plugin
+ *
+ * @param options - a map containing options. Options are sent from Java
+ *
+ * @return - an array of ids or uris
+ */</span>
+<span class="kd">function</span> <span class="nx">collect</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">cts</span><span class="p">.</span><span class="nx">uris</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">cts</span><span class="p">.</span><span class="nx">trueQuery</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">collect</span><span class="p">:</span> <span class="nx">collect</span>
+<span class="p">};</span>
+
+</code></pre></div></div>
+
+<h2 id="content-plugin">Content Plugin</h2>
+
+<p>A content plugin copies all or parts of the input data to fill in the <strong>instance</strong> section of the envelope. <strong>NOTE: This plugin runs in query mode.</strong></p>
+
+<p>To create your own content plugin, it must be defined either as an XQuery module or as a JavaScript plugin.</p>
+
+<h3 id="xquery-1">XQuery</h3>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">xquery</span> <span class="kp">version</span> <span class="s2">"1.0-ml"</span><span class="p">;</span>
+
+<span class="kd">module</span> <span class="kd">namespace</span> <span class="nn">plugin</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">namespace</span> <span class="nn">envelope</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/envelope"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">option</span> <span class="nv">xdmp:mapping</span> <span class="s2">"false"</span><span class="p">;</span>
+
+<span class="c">(:~
+ : Create Content Plugin
+ :
+ : @param $id          - the identifier returned by the collector
+ : @param $options     - a map containing options. Options are sent from Java
+ :
+ : @return - your transformed content
+ :)</span>
+<span class="kd">declare</span> <span class="kd">function</span> <span class="nf">plugin:create-content</span><span class="p">(</span>
+  <span class="nv">$</span><span class="n">id</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">,</span>
+  <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span> <span class="k">as</span> <span class="nt">node</span><span class="p">()?</span>
+<span class="p">{</span>
+  <span class="k">let</span> <span class="nv">$</span><span class="n">doc</span> <span class="p">:=</span> <span class="nf">fn:doc</span><span class="p">(</span><span class="nv">$</span><span class="n">id</span><span class="p">)</span>
+  <span class="k">return</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$</span><span class="n">doc</span><span class="p">/</span><span class="nt">envelope:envelope</span><span class="p">)</span> <span class="k">then</span>
+      <span class="nv">$</span><span class="n">doc</span><span class="p">/</span><span class="nt">envelope:envelope</span><span class="p">/</span><span class="nt">envelope:content</span><span class="p">/</span><span class="nf">node</span><span class="p">()</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nv">$</span><span class="n">doc</span><span class="p">/</span><span class="nt">content</span><span class="p">)</span> <span class="k">then</span>
+      <span class="nv">$</span><span class="n">doc</span><span class="p">/</span><span class="nt">content</span>
+    <span class="k">else</span>
+      <span class="nv">$</span><span class="n">doc</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="javascript-1">JavaScript</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Create Content Plugin
+ *
+ * @param id         - the identifier returned by the collector
+ * @param options    - an object containing options. Options are sent from Java
+ *
+ * @return - your content
+ */</span>
+<span class="kd">function</span> <span class="nx">createContent</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">doc</span> <span class="o">=</span> <span class="nx">cts</span><span class="p">.</span><span class="nx">doc</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">root</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">root</span><span class="p">;</span>
+
+  <span class="c1">// for xml we need to use xpath</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="nx">xdmp</span><span class="p">.</span><span class="nx">nodeKind</span><span class="p">(</span><span class="nx">root</span><span class="p">)</span> <span class="o">===</span> <span class="s1">'element'</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">xpath</span><span class="p">(</span><span class="s1">'/*:envelope/*:content/node()'</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="c1">// for json we need to return the content</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">root</span> <span class="o">&amp;&amp;</span> <span class="nx">root</span><span class="p">.</span><span class="nx">content</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">root</span><span class="p">.</span><span class="nx">content</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="c1">// for everything else</span>
+  <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">doc</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">createContent</span><span class="p">:</span> <span class="nx">createContent</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="headers-plugin">Headers Plugin</h2>
+<p>A headers plugin extracts header information from the content to copy to the <strong>headers</strong> section of the envelope. This is useful for normalizing common fields (hire-date, last-updated, etc), which can be indexed for faster search operations. <strong>NOTE: This plugin runs in query mode.</strong></p>
+
+<p>To create your own headers plugin, it must be defined either as an XQuery module or as a JavaScript plugin.</p>
+
+<h3 id="xquery-2">XQuery</h3>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">xquery</span> <span class="kp">version</span> <span class="s2">"1.0-ml"</span><span class="p">;</span>
+
+<span class="kd">module</span> <span class="kd">namespace</span> <span class="nn">plugin</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">namespace</span> <span class="nn">envelope</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/envelope"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">option</span> <span class="nv">xdmp:mapping</span> <span class="s2">"false"</span><span class="p">;</span>
+
+<span class="c">(:~
+ : Create Headers Plugin
+ :
+ : @param $id      - the identifier returned by the collector
+ : @param $content - the output of your content plugin
+ : @param $options - a map containing options. Options are sent from Java
+ :
+ : @return - zero or more header nodes
+ :)</span>
+<span class="kd">declare</span> <span class="kd">function</span> <span class="nf">plugin:create-headers</span><span class="p">(</span>
+  <span class="nv">$</span><span class="n">id</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">,</span>
+  <span class="nv">$</span><span class="n">content</span> <span class="k">as</span> <span class="nt">node</span><span class="p">()?,</span>
+  <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span> <span class="k">as</span> <span class="nt">node</span><span class="p">()*</span>
+<span class="p">{</span>
+  <span class="p">()</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="javascript-2">JavaScript</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Create Headers Plugin
+ *
+ * @param id       - the identifier returned by the collector
+ * @param content  - the output of your content plugin
+ * @param options  - an object containing options. Options are sent from Java
+ *
+ * @return - an array of header objects
+ */</span>
+<span class="kd">function</span> <span class="nx">createHeaders</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[];</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">createHeaders</span><span class="p">:</span> <span class="nx">createHeaders</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="triples-plugin">Triples Plugin</h2>
+<p>A triples plugin extracts semantic triples from the source content and stores them in the <strong>triples</strong> section of the envelope. <strong>NOTE: This plugin runs in query mode.</strong></p>
+
+<p>To create your own triples plugin, it must be defined either as an XQuery module or as a JavaScript plugin.</p>
+
+<h3 id="xquery-3">XQuery</h3>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">xquery</span> <span class="kp">version</span> <span class="s2">"1.0-ml"</span><span class="p">;</span>
+
+<span class="kd">module</span> <span class="kd">namespace</span> <span class="nn">plugin</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">namespace</span> <span class="nn">envelope</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/envelope"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">option</span> <span class="nv">xdmp:mapping</span> <span class="s2">"false"</span><span class="p">;</span>
+
+<span class="c">(:~
+ : Create Triples Plugin
+ :
+ : @param $id      - the identifier returned by the collector
+ : @param $content - the output of your content plugin
+ : @param $headers - the output of your headers plugin
+ : @param $options - a map containing options. Options are sent from Java
+ :
+ : @return - zero or more triples
+ :)</span>
+<span class="kd">declare</span> <span class="kd">function</span> <span class="nf">plugin:create-triples</span><span class="p">(</span>
+  <span class="nv">$</span><span class="n">id</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">,</span>
+  <span class="nv">$</span><span class="n">content</span> <span class="k">as</span> <span class="nt">node</span><span class="p">()?,</span>
+  <span class="nv">$</span><span class="n">headers</span> <span class="k">as</span> <span class="nt">node</span><span class="p">()*,</span>
+  <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span> <span class="k">as</span> <span class="kt">sem:triple</span><span class="o">*</span>
+<span class="p">{</span>
+  <span class="p">()</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="javascript-3">JavaScript</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Create Triples Plugin
+ *
+ * @param id       - the identifier returned by the collector
+ * @param content  - the output of your content plugin
+ * @param headers  - the output of your heaaders plugin
+ * @param options  - an object containing options. Options are sent from Java
+ *
+ * @return - an array of triples
+ */</span>
+<span class="kd">function</span> <span class="nx">createTriples</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">[];</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">createTriples</span><span class="p">:</span> <span class="nx">createTriples</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="writer-plugin">Writer Plugin</h2>
+<p>A writer plugin saves the final envelope to the database. <strong>NOTE: This plugin runs in update mode.</strong></p>
+
+<p>To create your own writer plugin, it must be defined either as an XQuery module or as a JavaScript plugin.</p>
+
+<h3 id="xquery-4">XQuery</h3>
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kp">xquery</span> <span class="kp">version</span> <span class="s2">"1.0-ml"</span><span class="p">;</span>
+
+<span class="kd">module</span> <span class="kd">namespace</span> <span class="nn">plugin</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span><span class="p">;</span>
+
+<span class="kd">declare</span> <span class="kd">option</span> <span class="nv">xdmp:mapping</span> <span class="s2">"false"</span><span class="p">;</span>
+
+<span class="c">(:~
+ : Writer Plugin
+ :
+ : @param $id       - the identifier returned by the collector
+ : @param $envelope - the final envelope
+ : @param $options  - a map containing options. Options are sent from Java
+ :
+ : @return - nothing
+ :)</span>
+<span class="kd">declare</span> <span class="kd">function</span> <span class="nf">plugin:write</span><span class="p">(</span>
+  <span class="nv">$</span><span class="n">id</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">,</span>
+  <span class="nv">$</span><span class="n">envelope</span> <span class="k">as</span> <span class="nt">node</span><span class="p">(),</span>
+  <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span> <span class="k">as</span> <span class="nt">empty-sequence</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="nf">xdmp:document-insert</span><span class="p">(</span><span class="nv">$</span><span class="n">id</span><span class="p">,</span> <span class="nv">$</span><span class="n">envelope</span><span class="p">)</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="javascript-4">JavaScript</h3>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*~
+ * Writer Plugin
+ *
+ * @param id       - the identifier returned by the collector
+ * @param envelope - the final envelope
+ * @param options  - an object options. Options are sent from Java
+ *
+ * @return - nothing
+ */</span>
+<span class="kd">function</span> <span class="nx">write</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">envelope</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">xdmp</span><span class="p">.</span><span class="nx">documentInsert</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">envelope</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">write</span><span class="p">:</span> <span class="nx">write</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="see-also">See Also</h2>
+<ul>
+  <li><a href="/marklogic-data-hub/understanding/project-structure/#plugins">Project Directory Structure — Plugins Folder</a></li>
+  <li><a href="/marklogic-data-hub/understanding/entities/">Entities</a></li>
+  <li><a href="/marklogic-data-hub/understanding/flows/">Flows</a></li>
+  <li><a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

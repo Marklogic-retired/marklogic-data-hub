@@ -1,0 +1,1370 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>DHF Server-Side Library - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            DHF Server-Side Library
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="dhf-server-side-library">DHF Server-Side Library</h1>
+
+<p>The <code class="highlighter-rouge">/MarkLogic/data-hub-framework/dhf.xqy</code> library module exposes functions to make interacting with the Data Hub Framework from your XQuery or JavaScript code easier.</p>
+
+<h2 id="including-the-library">Including the Library</h2>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-1" href="#javascript-1">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-1" href="#xquery-1">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-1">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-1">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span> <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<h2 id="dhf-lib-functions">DHF-LIB Functions</h2>
+
+<ul>
+  <li><a href="#run">Run</a></li>
+  <li><a href="#run-writer">Run Writer</a></li>
+  <li><a href="#make-envelope">Make Envelope</a></li>
+  <li><a href="#make-legacy-envelope">Make Legacy Envelope</a></li>
+  <li><a href="#context">Context</a></li>
+  <li><a href="#content-context">Content Context</a></li>
+  <li><a href="#headers-context">Headers Context</a></li>
+  <li><a href="#triples-context">Triples Context</a></li>
+  <li><a href="#writer-context">Writer Context</a></li>
+  <li><a href="#add-trace-input">Add Trace Input</a></li>
+  <li><a href="#log-trace">Log Trace</a></li>
+</ul>
+
+<h3 id="run">Run</h3>
+
+<p>Runs a given function as a plugin. This method provides tracing around your function. Tracing will catch uncaught exceptions and log them into the traces database.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span> <span class="k">as</span> <span class="kt">json:object</span><span class="p">,</span> <span class="nv">$</span><span class="n">func</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="parameters">Parameters</h4>
+<ul>
+  <li>context - the context for this plugin</li>
+  <li>func - the function to run</li>
+</ul>
+
+<h4 id="returns">Returns</h4>
+<p>returns whatever your function returns</p>
+
+<h4 id="usage">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-2" href="#javascript-2">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-2" href="#xquery-2">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-2">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">context</span><span class="p">(</span><span class="s1">'My Plugin'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-2">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:context</span><span class="p">(</span><span class="s2">"My Plugin"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="run-writer">Run Writer</h3>
+
+<p>Runs a writer plugin. This function is needed to run a writer in update mode. All of the DHF plugins run in query-only mode and thus cannot persist data. Running your writer with this function allows you to persist data.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:run-writer</span><span class="p">(</span><span class="nv">$</span><span class="n">writer-function</span><span class="p">,</span> <span class="nv">$</span><span class="n">id</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="o">+</span><span class="p">,</span> <span class="nv">$</span><span class="n">envelope</span> <span class="k">as</span> <span class="nt">item</span><span class="p">(),</span> <span class="nv">$</span><span class="n">options</span> <span class="k">as</span> <span class="kt">map:map</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="parameters-1">Parameters</h4>
+
+<ul>
+  <li><strong>writer-function</strong> - the writer function to run. It must be an xdmp:function. See the examples below for more info.</li>
+  <li><strong>id</strong> - the id for the current flow execution</li>
+  <li><strong>envelope</strong> - the envelope to write</li>
+  <li><strong>options</strong> - a map:map of options</li>
+</ul>
+
+<h4 id="usage-1">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-3" href="#javascript-3">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-3" href="#xquery-3">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-3">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">writerPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'./writer.sjs'</span><span class="p">);</span>
+
+<span class="c1">// we are hand waving how the envelope gets constructed</span>
+<span class="kd">var</span> <span class="nx">envelope</span> <span class="o">=</span> <span class="p">{};</span>
+
+<span class="cm">/*
+ note how we refer to the path of the writer sjs module. For this to work
+ your sjs module must export the function properly.
+
+ function write(id, envelope, options) {
+ }
+ module.exports = write;
+*/</span>
+
+<span class="nx">dhf</span><span class="p">.</span><span class="nx">runWriter</span><span class="p">(</span><span class="nx">writerPlugin</span><span class="p">,</span> <span class="nx">id</span><span class="p">,</span> <span class="nx">envelope</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-3">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+<span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">writer</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/data-hub/plugins"</span> 
+  <span class="k">at</span> <span class="s2">"writer.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">envelope</span> <span class="p">:=</span> <span class="nt">&lt;envelope/&gt;</span>
+<span class="k">return</span>
+  <span class="c">(:
+  : writers must conform to this signature
+  :
+  : declare function plugin:write($id as xs:string, $envelope as node(), $options as map:map) as empty-sequence()
+  :)</span>
+  <span class="nf">dhf:run-writer</span><span class="p">(</span><span class="nf">xdmp:function</span><span class="p">(</span><span class="nf">xs:QName</span><span class="p">(</span><span class="s2">"writer:write"</span><span class="p">)),</span> <span class="nv">$</span><span class="n">id</span><span class="p">,</span> <span class="nv">$</span><span class="n">envelope</span><span class="p">,</span> <span class="nv">$</span><span class="n">options</span><span class="p">)</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="make-envelope">Make Envelope</h3>
+
+<p>Creates an envelope in the desired format (XML or JSON). If the data format is XML, then the namespace is <code class="highlighter-rouge">http://marklogic.com/entity-services</code>.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:make-envelope</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">,</span> <span class="nv">$</span><span class="n">triples</span><span class="p">,</span> <span class="nv">$</span><span class="n">data-format</span><span class="p">)</span> <span class="k">as</span> <span class="nt">document-node</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h4 id="parameters-2">Parameters</h4>
+
+<ul>
+  <li><strong>content</strong> - the content section of the envelope</li>
+  <li><strong>headers</strong> - the headers section of the envelope</li>
+  <li><strong>triples</strong> - the triples section of the envelope</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>data-format</strong> - the format to use for making the envelope (xml</td>
+          <td>json)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="returns-1">Returns</h4>
+<p>Either an XML or JSON envelope (depending on data-format).</p>
+
+<h4 id="usage-2">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-4" href="#javascript-4">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-4" href="#xquery-4">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-4">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="p">{</span> <span class="na">a</span><span class="p">:</span> <span class="s1">'a!'</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">header1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="na">header2</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">triples</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="nx">sem</span><span class="p">.</span><span class="nx">triple</span><span class="p">(</span><span class="s1">'subject1'</span><span class="p">,</span> <span class="s1">'predicate1'</span><span class="p">,</span> <span class="s1">'object1'</span><span class="p">),</span>
+  <span class="nx">sem</span><span class="p">.</span><span class="nx">triple</span><span class="p">(</span><span class="s1">'subject2'</span><span class="p">,</span> <span class="s1">'predicate2'</span><span class="p">,</span> <span class="s1">'object2'</span><span class="p">)</span>
+<span class="p">];</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">dataFormat</span> <span class="o">=</span> <span class="s1">'json'</span> <span class="c1">// can also be 'xml'</span>
+<span class="kd">var</span> <span class="nx">envelope</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">:</span><span class="nx">makeEnvelope</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">triples</span><span class="p">,</span> <span class="nx">dataFormat</span><span class="p">);</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-4">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">content</span> <span class="p">:=</span> <span class="nt">&lt;a&gt;</span><span class="l">a!</span><span class="nt">&lt;/a&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">headers</span> <span class="p">:=</span> <span class="p">(</span><span class="nt">&lt;header1&gt;</span><span class="l">1</span><span class="nt">&lt;/header1&gt;</span><span class="p">,</span> <span class="nt">&lt;header1&gt;</span><span class="l">2</span><span class="nt">&lt;/header2&gt;</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">triples</span> <span class="p">:=</span> <span class="p">(</span>
+  <span class="nf">sem:triple</span><span class="p">(</span><span class="s2">"subject1"</span><span class="p">,</span> <span class="s2">"predicate1"</span><span class="p">,</span> <span class="s2">"object1"</span><span class="p">),</span>
+  <span class="nf">sem:triple</span><span class="p">(</span><span class="s2">"subject2"</span><span class="p">,</span> <span class="s2">"predicate2"</span><span class="p">,</span> <span class="s2">"object2"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">data-format</span> <span class="p">:=</span> <span class="s2">"xml"</span> <span class="c">(: can also be "json" :)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">envelope</span> <span class="p">:=</span> <span class="nf">dhf:make-envelope</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">,</span> <span class="nv">$</span><span class="n">triples</span><span class="p">,</span> <span class="nv">$</span><span class="n">data-format</span><span class="p">)</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">envelope</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="make-legacy-envelope">Make Legacy Envelope</h3>
+
+<p>Creates a legacy envelope in the desired format (XML or JSON). If the data format is XML then the namespace is <code class="highlighter-rouge">http://marklogic.com/data-hub/envelope</code>. This function is for users who upgraded from 1.x and have legacy envelopes already in production.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:make-legacy-envelope</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">,</span> <span class="nv">$</span><span class="n">triples</span><span class="p">,</span> <span class="nv">$</span><span class="n">data-format</span><span class="p">)</span> <span class="k">as</span> <span class="nt">document-node</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h4 id="parameters-3">Parameters</h4>
+
+<ul>
+  <li><strong>content</strong> - the content section of the envelope</li>
+  <li><strong>headers</strong> - the headers section of the envelope</li>
+  <li><strong>triples</strong> - the triples section of the envelope</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><strong>data-format</strong> - the format to use for making the envelope (xml</td>
+          <td>json)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<h4 id="returns-2">Returns</h4>
+<p>Either an XML or JSON envelope (depending on data-format).</p>
+
+<h4 id="usage-3">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-5" href="#javascript-5">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-5" href="#xquery-5">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-5">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="p">{</span> <span class="na">a</span><span class="p">:</span> <span class="s1">'a!'</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">header1</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="na">header2</span><span class="p">:</span> <span class="mi">2</span>
+<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">triples</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="nx">sem</span><span class="p">.</span><span class="nx">triple</span><span class="p">(</span><span class="s1">'subject1'</span><span class="p">,</span> <span class="s1">'predicate1'</span><span class="p">,</span> <span class="s1">'object1'</span><span class="p">),</span>
+  <span class="nx">sem</span><span class="p">.</span><span class="nx">triple</span><span class="p">(</span><span class="s1">'subject2'</span><span class="p">,</span> <span class="s1">'predicate2'</span><span class="p">,</span> <span class="s1">'object2'</span><span class="p">)</span>
+<span class="p">];</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">dataFormat</span> <span class="o">=</span> <span class="s1">'json'</span> <span class="c1">// can also be 'xml'</span>
+<span class="kd">var</span> <span class="nx">envelope</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">:</span><span class="nx">makeLegacyEnvelope</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">,</span> <span class="nx">triples</span><span class="p">,</span> <span class="nx">dataFormat</span><span class="p">);</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-5">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">content</span> <span class="p">:=</span> <span class="nt">&lt;a&gt;</span><span class="l">a!</span><span class="nt">&lt;/a&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">headers</span> <span class="p">:=</span> <span class="p">(</span><span class="nt">&lt;header1&gt;</span><span class="l">1</span><span class="nt">&lt;/header1&gt;</span><span class="p">,</span> <span class="nt">&lt;header1&gt;</span><span class="l">2</span><span class="nt">&lt;/header2&gt;</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">triples</span> <span class="p">:=</span> <span class="p">(</span>
+  <span class="nf">sem:triple</span><span class="p">(</span><span class="s2">"subject1"</span><span class="p">,</span> <span class="s2">"predicate1"</span><span class="p">,</span> <span class="s2">"object1"</span><span class="p">),</span>
+  <span class="nf">sem:triple</span><span class="p">(</span><span class="s2">"subject2"</span><span class="p">,</span> <span class="s2">"predicate2"</span><span class="p">,</span> <span class="s2">"object2"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">data-format</span> <span class="p">:=</span> <span class="s2">"xml"</span> <span class="c">(: can also be "json" :)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">envelope</span> <span class="p">:=</span> <span class="nf">dhf:make-legacy-envelope</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">,</span> <span class="nv">$</span><span class="n">triples</span><span class="p">,</span> <span class="nv">$</span><span class="n">data-format</span><span class="p">)</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">envelope</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="context">Context</h3>
+
+<p>Creates a generic context for use in any plugin. Contexts are passed to the <a href="#run">the Run function</a>. A Context defines information needed for proper tracing.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:context</span><span class="p">(</span><span class="nv">$</span><span class="n">label</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">)</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-4">Parameters</h4>
+<ul>
+  <li><strong>label</strong> - the label to give this plugin for tracing</li>
+</ul>
+
+<h4 id="returns-3">Returns</h4>
+<p>A context object for use in <a href="#run">the Run function</a></p>
+
+<h4 id="usage-4">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-6" href="#javascript-6">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-6" href="#xquery-6">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-6">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">context</span><span class="p">(</span><span class="s1">'My Plugin'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-6">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:context</span><span class="p">(</span><span class="s2">"My Plugin"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="content-context">Content Context</h3>
+
+<p>Creates a context for a content plugin. This is a convenience method for <a href="#context">Context</a> and merely uses the label “content”.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:content-context</span><span class="p">([</span><span class="nv">$</span><span class="n">raw-content</span><span class="p">])</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-5">Parameters</h4>
+<ul>
+  <li><strong>raw-content</strong> (optional) - the raw content passed into an input flow</li>
+</ul>
+
+<h4 id="returns-4">Returns</h4>
+<p>A context object for use in <a href="#run">the Run function</a>. This context object contains the label “content”</p>
+
+<h4 id="usage-5">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-7" href="#javascript-7">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-7" href="#xquery-7">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-7">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">contentContext</span><span class="p">();</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-7">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:content-context</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="headers-context">Headers Context</h3>
+
+<p>Creates a context for a headers plugin. This is a convenience method for <a href="#context">Context</a> and merely uses the label “headers”.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:headers-context</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">)</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-6">Parameters</h4>
+<ul>
+  <li><strong>content</strong> - the output from the content plugin</li>
+</ul>
+
+<h4 id="returns-5">Returns</h4>
+<p>A context object for use in <a href="#run">the Run function</a>. This context object contains the label “headers”</p>
+
+<h4 id="usage-6">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-8" href="#javascript-8">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-8" href="#xquery-8">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-8">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">headersContext</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-8">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">content</span> <span class="p">:=</span> <span class="nt">&lt;content/&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:headers-context</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="triples-context">Triples Context</h3>
+
+<p>Creates a context for a triples plugin. This is a convenience method for <a href="#context">Context</a> and merely uses the label “triples”.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:triples-context</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">)</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-7">Parameters</h4>
+<ul>
+  <li><strong>content</strong> - the output from the content plugin</li>
+  <li><strong>headers</strong> - the output from the headers plugin</li>
+</ul>
+
+<h4 id="returns-6">Returns</h4>
+<p>A context object for use in <a href="#run">the Run function</a>. This context object contains the label “triples”</p>
+
+<h4 id="usage-7">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-9" href="#javascript-9">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-9" href="#xquery-9">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-9">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">triplesContext</span><span class="p">(</span><span class="nx">content</span><span class="p">,</span> <span class="nx">headers</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-9">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">content</span> <span class="p">=</span> <span class="nt">&lt;content/&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">headers</span> <span class="p">=</span> <span class="p">()</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:triples-context</span><span class="p">(</span><span class="nv">$</span><span class="n">content</span><span class="p">,</span> <span class="nv">$</span><span class="n">headers</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="writer-context">Writer Context</h3>
+
+<p>Creates a context for a writer plugin. This is a convenience method for <a href="#context">Context</a> and merely uses the label “writer”.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:writer-context</span><span class="p">(</span><span class="nv">$</span><span class="n">envelope</span><span class="p">)</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-8">Parameters</h4>
+<ul>
+  <li><strong>envelope</strong> - the envelope you constructed</li>
+</ul>
+
+<h4 id="returns-7">Returns</h4>
+<p>A context object for use in <a href="#log-trace">the Log Trace function</a>. This context object contains the label “writer”</p>
+
+<h4 id="usage-8">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-10" href="#javascript-10">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-10" href="#xquery-10">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-10">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">envelope</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">dhf</span><span class="p">.</span><span class="nx">logTrace</span><span class="p">(</span><span class="nx">dhf</span><span class="p">.</span><span class="nx">writerContext</span><span class="p">(</span><span class="nx">envelope</span><span class="p">));</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-10">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">envelope</span> <span class="p">:=</span> <span class="nt">&lt;envelope/&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">_</span> <span class="p">:=</span> <span class="nf">dhf:log-trace</span><span class="p">(</span><span class="nf">dhf:writer-context</span><span class="p">(</span><span class="nv">$</span><span class="n">envelope</span><span class="p">))</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">envelope</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="add-trace-input">Add Trace Input</h3>
+<p>Adds a trace input to the context. You can add as many trace inputs as you like so long as each one has a unique label. These inputs are later logged into traces if/when they are logged.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:add-trace-input</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span> <span class="k">as</span> <span class="kt">json:object</span><span class="p">,</span> <span class="nv">$</span><span class="n">input-label</span> <span class="k">as</span> <span class="kt">xs:string</span><span class="p">,</span> <span class="nv">$</span><span class="n">input</span><span class="p">)</span> <span class="k">as</span> <span class="kt">json:object</span>
+</code></pre></div></div>
+
+<h4 id="parameters-9">Parameters</h4>
+<ul>
+  <li><strong>context</strong> - the context</li>
+  <li><strong>input-label</strong> - the label for the input</li>
+  <li><strong>input</strong> - the input to add to the context</li>
+</ul>
+
+<h4 id="returns-8">Returns</h4>
+<p>Returns the passed in $context with the new inputs added.</p>
+
+<h4 id="usage-9">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-11" href="#javascript-11">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-11" href="#xquery-11">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-11">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">expenseReport</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">context</span><span class="p">(</span><span class="s1">'My Plugin'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">addTraceInput</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="s1">'expense report'</span><span class="p">,</span> <span class="nx">expenseReport</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">dhf</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">});</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-11">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">expense-report</span> <span class="p">:=</span> <span class="nt">&lt;expense-report/&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:context</span><span class="p">(</span><span class="s2">"My Plugin"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">context</span> <span class="p">:=</span> <span class="nf">dhf:add-trace-input</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="s2">"expense report"</span><span class="p">,</span> <span class="nv">$</span><span class="n">expense-report</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">result</span> <span class="p">:=</span> <span class="nf">dhf:run</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span><span class="p">,</span> <span class="nf">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="mi">1</span>
+<span class="p">})</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">result</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+<hr />
+
+<h3 id="log-trace">Log Trace</h3>
+<p>Logs a trace, but only if tracing is enabled.</p>
+
+<div class="language-xquery highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">declare</span> <span class="kd">function</span> <span class="nf">dhf:log-trace</span><span class="p">(</span><span class="nv">$</span><span class="n">context</span> <span class="k">as</span> <span class="kt">json:object</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="parameters-10">Parameters</h4>
+<ul>
+  <li><strong>context</strong> - the context</li>
+</ul>
+
+<h4 id="returns-9">Returns</h4>
+<p>Nothing</p>
+
+<h4 id="usage-10">Usage</h4>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="javascript-12" href="#javascript-12">JavaScript</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="xquery-12" href="#xquery-12">XQuery</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="javascript-12">
+      
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">dhf</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'/data-hub/4/dhf.xqy'</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">envelope</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="nx">dhf</span><span class="p">.</span><span class="nx">logTrace</span><span class="p">(</span><span class="nx">dhf</span><span class="p">.</span><span class="nx">writerContext</span><span class="p">(</span><span class="nx">envelope</span><span class="p">));</span></code></pre></figure>
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="xquery-12">
+      
+<figure class="highlight"><pre><code class="language-xquery" data-lang="xquery"><span class="kp">import</span> <span class="kp">module</span> <span class="k">namespace</span> <span class="nn">dhf</span> <span class="o">=</span> <span class="s2">"http://marklogic.com/dhf"</span>
+  <span class="k">at</span> <span class="s2">"/data-hub/4/dhf.xqy"</span><span class="p">;</span>
+
+<span class="k">let</span> <span class="nv">$</span><span class="n">envelope</span> <span class="p">:=</span> <span class="nt">&lt;envelope/&gt;</span>
+<span class="k">let</span> <span class="nv">$</span><span class="n">_</span> <span class="p">:=</span> <span class="nf">dhf:log-trace</span><span class="p">(</span><span class="nf">dhf:writer-context</span><span class="p">(</span><span class="nv">$</span><span class="n">envelope</span><span class="p">))</span>
+<span class="k">return</span>
+  <span class="nv">$</span><span class="n">envelope</span></code></pre></figure>
+
+    </div>
+  </div>
+</div>
+
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

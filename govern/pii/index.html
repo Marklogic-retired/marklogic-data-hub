@@ -1,0 +1,855 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Managing Personally Identifiable Information (PII) - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Managing Personally Identifiable Information (PII)
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="managing-personally-identifiable-information">Managing Personally Identifiable Information</h1>
+
+<p>Data governance policies often require access to Personally Identifiable Information (PII) to be more tightly controlled than access to other data. PII can include information such as phone numbers, social security numbers, credit or bank account numbers, and addresses.</p>
+
+<p>The Data Hub Framework enables you to easily restrict access to PII in your harmonized data using the Element Level Security (ELS) feature of MarkLogic, using the following steps:</p>
+
+<ol>
+  <li>Designate properties as PII in your entity model.</li>
+  <li>Deploy your model to your FINAL database.</li>
+  <li>Use Data Hub Framework to generate a security configuration that restricts access to the PII properties to users with the “pii-reader” security role.</li>
+  <li>Deploy the security configuration to your FINAL database.</li>
+</ol>
+
+<p>For a user to be able to read the value of a PII property in a document:</p>
+
+<ul>
+  <li>The property must be marked as PII in the entity model.</li>
+  <li>The user must be assigned the <code class="highlighter-rouge">pii-reader</code> role.</li>
+  <li>The user must have permissions to view the document (i.e., through another role).</li>
+</ul>
+
+<p>When the document is displayed to users who do not have the “pii-reader” role, PII properties are omitted entirely (i.e., neither property names nor values are visible).</p>
+
+<p>See the following topics for more details:</p>
+
+<ul>
+  <li><a href="#identifying-pii-in-an-entity-model">Identifying PII in an Entity Model</a></li>
+  <li><a href="#generating-pii-security-configuration-files">Generating PII Security Configuration Files</a></li>
+  <li><a href="#deploying-pii-security-configuration-files">Deploying PII Security Configuration Files</a></li>
+  <li><a href="#understanding-the-pii-security-configuration">Understanding the PII Security Configuration</a></li>
+</ul>
+
+<h2 id="identifying-pii-in-an-entity-model">Identifying PII in an Entity Model</h2>
+
+<p>You can specify an entity property as PII in your model using one of the following methods:</p>
+
+<ul>
+  <li><a href="#modeling-pii-in-quickstart">Modeling PII in QuickStart</a></li>
+  <li><a href="#modeling-pii-manually">Modeling PII Manually</a></li>
+</ul>
+
+<h3 id="modeling-pii-in-quickstart">Modeling PII in QuickStart</h3>
+
+<p>When you model an entity in QuickStart, you can designate an entity property as PII by clicking in the PII column of the entity descriptor. Entity properties designated as PII have a padlock icon in their PII column. For example:</p>
+
+<p><img src="/marklogic-data-hub/images/pii/pii-tagging.png" alt="Marking an entity as PII" class="screenshot-border" /></p>
+
+<p>When you save a model that includes PII entity properties, QuickStart generates security configuration files from the model. For details, see <a href="#generating-pii-security-configuration-files">Generating PII Security Configuration Files</a>.</p>
+
+<h3 id="modeling-pii-manually">Modeling PII Manually</h3>
+
+<p>If you manually create an entity model, rather than using QuickStart, designate a property as PII by including the property name in the “pii” property of the entity definition in your descriptor. For example, the following model snippet defines a “Customer” entity that contains an “address” property designated as PII:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{ "info": { ... },
+  "definitions": {
+    "Customer": {
+      "pii" : ["address"],
+      ...,
+      "properties": {
+        "address": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        ...
+      }
+}}}
+</code></pre></div></div>
+<p>Once your model is updated, you can instruct Data Hub Framework to generate a PII security configuration from the model. For details, see <a href="#generating-pii-security-configuration-files">Generating PII Security Configuration Files</a>.</p>
+
+<h2 id="generating-pii-security-configuration-files">Generating PII Security Configuration Files</h2>
+
+<p>This section describes how to generate PII-related security configuration files once you mark entity properties as containing PII. You can generate the configuration files using the following methods:</p>
+
+<ul>
+  <li><a href="#generating-a-configuration-in-quickstart">Generating a Configuration in QuickStart</a></li>
+  <li><a href="#generating-a-configuration-with-gradle">Generating a Configuration with Gradle</a></li>
+</ul>
+
+<p>Regardless of the method you use to generate the PII security configuration files, Data Hub Framework saves the files in the following location in your project:</p>
+
+<ul>
+  <li>PROJECT_DIR/src/main/ml-config/security/protected-paths/</li>
+  <li>PROJECT_DIR/src/main/ml-config/security/query-rolesets/</li>
+</ul>
+
+<p>These configuration files must be deployed to the FINAL database to take effect. For details, see <a href="#deploying-pii-security-configuration">Deploying PII Security Configuration Files</a>.</p>
+
+<h3 id="generating-a-configuration-in-quickstart">Generating a Configuration in QuickStart</h3>
+
+<p>If you use QuickStart for entity modeling, then QuickStart generates the PII security configuration files when you save your model in QuickStart’s Entity Modeler. When you save an entity model, QuickStart does the following:</p>
+
+<ul>
+  <li>Deploys the model descriptor to the FINAL database.</li>
+  <li>Requests MarkLogic to generate a security configuration for the PII properties in the model.</li>
+  <li>Saves the resulting configuration files to your project.</li>
+</ul>
+
+<p>If you need to generate the configuration files without using QuickStart, you can use gradle, as described in the next section.</p>
+
+<h3 id="generating-a-configuration-with-gradle">Generating a Configuration with Gradle</h3>
+
+<p>Data Hub Framework includes a gradle task called hubGeneratePii that generates PII security configuration files from a model stored in your FINAL database. QuickStart performs the equivalent steps for you when you save a model.</p>
+
+<p>To generate PII security configuration files using gradle, run the following tasks:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">mlLoadModules</code> (or <code class="highlighter-rouge">mlDeploy</code>): Deploys the model to the FINAL database. Run this task if the latest version of your model is not yet deployed to your FINAL database.</li>
+  <li><code class="highlighter-rouge">hubGeneratePii</code>: Generates the PII security configuration files and saves them to your project.</li>
+</ul>
+
+<p>For example, run the following command from your project directory:</p>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="linux-1" href="#linux-1">Unix Systems</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="windows-1" href="#windows-1">Windows</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="linux-1">
+      <pre class="cmdline">./gradlew mlLoadModules hubGeneratePii</pre>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="windows-1">
+      <pre class="cmdline">gradlew.bat mlLoadModules hubGeneratePii</pre>
+    </div>
+  </div>
+</div>
+
+<h2 id="deploying-pii-security-configuration-files">Deploying PII Security Configuration Files</h2>
+
+<p>You must deploy the PII security configuration files generated by Data Hub Framework to your FINAL database before the PII access controls can take effect.</p>
+
+<p>You will need the following:</p>
+
+<ul>
+  <li>Your MarkLogic Server account must be assigned to both <code class="highlighter-rouge">manage-admin</code> and <code class="highlighter-rouge">security</code> roles.</li>
+  <li>In your <code class="highlighter-rouge">gradle.properties</code> file, <code class="highlighter-rouge">mlSecurityUsername</code> and <code class="highlighter-rouge">mlSecurityPassword</code> must be set to your MarkLogic Server credentials.</li>
+</ul>
+
+<p>Then use the gradle tasks <code class="highlighter-rouge">mlDeploySecurity</code> or <code class="highlighter-rouge">mlDeploy</code> to install your PII configuration files in the FINAL database. For example, run the following command from your project directory:</p>
+
+<div class="code-tabs">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active">
+      <a role="tab" aria-controls="linux-2" href="#linux-2">Unix Systems</a>
+    </li>
+    <li role="presentation" class="">
+      <a role="tab" aria-controls="windows-2" href="#windows-2">Windows</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="linux-2">
+      <pre class="cmdline">./gradlew mlDeploySecurity</pre>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="windows-2">
+      <pre class="cmdline">gradlew.bat mlDeploySecurity</pre>
+    </div>
+  </div>
+</div>
+
+<p>Once your configuration is deployed, users with the “pii-reader” role can see PII properties in your harmonized data, but users without the “pii-reader” role cannot.</p>
+
+<h2 id="understanding-the-pii-security-configuration">Understanding the PII Security Configuration</h2>
+
+<p>This section provides details on how PII security polices are implemented in a Data Hub Framework application. You do not need to understand these details to use the feature. You might find them useful for debugging or when integrating PII protection into a larger security model.</p>
+
+<p>Data Hub Framework implements PII security policies using the Element Level Security (ELS) feature of MarkLogic. ELS enables you to identify “protected paths” in XML and JSON documents, and then impose tighter access controls to those paths than to the containing documents.</p>
+
+<p>When you generate PII security configuration files, Data Hub Framework generates the following kinds of configuration files:</p>
+
+<ul>
+  <li>A protected path configuration for each PII property. Data Hub Framework stores these configurations in PROJECT_DIR/src/main/ml-config/security/protected-paths/.</li>
+  <li>A query roleset. Data Hub Framework stores this configuration in PROJECT_DIR/src/main/ml-config/security/query-rolesets/.</li>
+</ul>
+
+<p>The protected path configuration limits read access to PII properities to users with the “pii-reader” security role. The query roleset prevents users without the “pii-reader” role from seeing the protected content in response to a query or XPath expression. The “pii-reader” role is pre-defined by MarkLogic.</p>
+
+<p>Protected path restrictions are only relevant if a user also has read access to a document. That is, a user with the “pii-reader” role must still have read access to the enclosing document in order to access the PII data.</p>
+
+<p>For example, if you have a Customer entity model that designates its “address” property as PII, then Data Hub Framework generates a protected path configuration such as the following:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "path-expression" : "/envelope//instance//Customer/address",
+  "path-namespace" : [ ],
+  "permission" : {
+    "role-name" : "pii-reader",
+    "capability" : "read"
+  }
+}
+</code></pre></div></div>
+<p>The path to the protected “address” property corresponds to the layout of a harmonized Customer instance. For example, a harmonized Customer instance looks like the following:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{"envelope": {
+  "headers": {},
+  "triples": [],
+  "instance": {
+    "Customer": {
+      ...
+      "address": "100 Main Street, Hometown, USA"
+    }
+    "info": { ... }
+  }, ...
+} }
+</code></pre></div></div>
+<p>Note that, by default, a harmonized instance contains its original source document as an attachment. The PII security configuration generated by Data Hub Framework only protects the PII in the instance data (/envelope/instance/*). For full protection, you should customize your code to exclude the source attachment from your envelope documents or define additional protected paths for the PII in the source attachment.</p>
+
+<p>To learn more about ELS, see <a href="http://docs.marklogic.com/guide/security/element">Element Level Security</a> in the MarkLogic <a href="http://docs.marklogic.com/guide/security">Security Guide</a>.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

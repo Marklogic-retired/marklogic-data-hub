@@ -1,0 +1,1030 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Deploy to MarkLogic Data Hub Service - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Deploy to MarkLogic Data Hub Service
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="deploy-to-marklogic-data-hub-service">Deploy to MarkLogic Data Hub Service</h1>
+
+<h2 id="data-hub-service">Data Hub Service</h2>
+
+<p>You can deploy your DHF project in the cloud instead of setting up your own. The <a href="https://www.marklogic.com/blog/introducing-marklogic-data-hub-service/">MarkLogic Data Hub Service (DHS)</a> is a cloud-based solution that provides a preconfigured MarkLogic cluster in which you can run flows and from which you can serve harmonized data.</p>
+
+<p>In a DHS environment, the databases, app servers, and security roles are automatically set up. Admins can create user accounts.</p>
+
+<p>To learn more about MarkLogic Data Hub Service (DHF), see <a href="http://www.marklogic.com/product/marklogic-database-overview/data-hub-service/">MarkLogic Data Hub Service</a> and <a href="https://cloudservices.marklogic.com/help?type=datahub">the DHS documentation</a>.</p>
+
+<div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>TIP:</b>
+<span>Use DHF to develop your project locally then deploy it to DHS. You can have multiple DHS services that use the same DHF project files. For example, you can set up a DHS project as a testing environment and another as your production environment.</span></div>
+
+<h3 id="deploying-a-dhf-project-to-dhs">Deploying a DHF Project to DHS</h3>
+
+<p>After you create and test your project locally (your development environment) using Data Hub Framework, you can deploy your project to a DHS cluster (your production environment).</p>
+
+<p>DHF projects and DHS projects have the following default configurations:</p>
+
+<ul>
+  <li>
+    <p>Ports and load balancers for app servers</p>
+
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>app servers</th>
+          <th style="text-align: center">ports</th>
+          <th style="text-align: center">DHS load balancers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>staging</td>
+          <td style="text-align: center">8010</td>
+          <td style="text-align: center">curation</td>
+        </tr>
+        <tr>
+          <td>final</td>
+          <td style="text-align: center">8011</td>
+          <td style="text-align: center">operations</td>
+        </tr>
+        <tr>
+          <td>jobs</td>
+          <td style="text-align: center">8013</td>
+          <td style="text-align: center">analytics</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>IMPORTANT:</b>
+<span>Use port 8004 to deploy the Data Hub Framework core <strong>only</strong>. To deploy custom plugins (REST extensions, search options, etc.) against the FINAL database, use port 8011.</span></div>
+  </li>
+  <li>
+    <p>Roles — The DHS roles are automatically created as part of provisioning your DHS environment. See <a href="https://cloudservices.marklogic.com/help?type=datahub&amp;subtype=user#DHSroles">Data Hub Service Roles</a>.</p>
+
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th style="text-align: center">DHF</th>
+          <th style="text-align: center">DHS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align: center"><code class="highlighter-rouge">data-hub-admin</code></td>
+          <td style="text-align: center"> </td>
+        </tr>
+        <tr>
+          <td style="text-align: center"> </td>
+          <td style="text-align: center"><code class="highlighter-rouge">endpointDeveloper</code></td>
+        </tr>
+        <tr>
+          <td style="text-align: center"> </td>
+          <td style="text-align: center"><code class="highlighter-rouge">endpointUser</code></td>
+        </tr>
+        <tr>
+          <td style="text-align: center"><code class="highlighter-rouge">flow-developer-role</code></td>
+          <td style="text-align: center"><code class="highlighter-rouge">flowDeveloper</code></td>
+        </tr>
+        <tr>
+          <td style="text-align: center"><code class="highlighter-rouge">flow-operator-role</code></td>
+          <td style="text-align: center"><code class="highlighter-rouge">flowOperator</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Database names, if customized in the DHF environment</p>
+  </li>
+  <li>
+    <p>Some DHS-only settings in the <code class="highlighter-rouge">gradle.properties</code> file, including <code class="highlighter-rouge">mlIsHostLoadBalancer</code> and <code class="highlighter-rouge">mlIsProvisionedEnvironment</code>, which are set to <code class="highlighter-rouge">true</code> to enable DHF to work correctly in DHS</p>
+  </li>
+</ul>
+
+<p>If your endpoints are private, you need a bastion host inside a virtual private cloud (VPC) that can access the MarkLogic VPC. The bastion host securely relays:</p>
+<ul>
+  <li>the requests from the outside world to MarkLogic</li>
+  <li>the results from MarkLogic to the requester
+<!-- See [Creating a Bastion Host in DHS](). --></li>
+</ul>
+
+<p>If your endpoints are publicly available, you can use any machine that is set up <a href="https://cloudservices.marklogic.com/help?type=network#peer-role">as a peer of the MarkLogic VPC</a>.</p>
+
+<div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>IMPORTANT:</b>
+<span>The DHF QuickStart tool cannot be used in DHS.</span></div>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+  <li>A DHF project that has been set up and tested locally</li>
+  <li><a href="https://cloudservices.marklogic.com/help">A provisioned MarkLogic Data Hub Service environment</a>
+    <ul>
+      <li>For private endpoints only: A bastion host inside a virtual private cloud (VPC)</li>
+      <li>Information from your DHS administrator:
+        <ul>
+          <li>Your DHS host name (typically, the curation endpoint)</li>
+          <li>REST curation endpoint URL (including port number) for testing</li>
+          <li>The username and password of the user account associated with each of the following roles. (See <a href="https://cloudservices.marklogic.com/help?type=datahub&amp;subtype=admin#manageusers">Creating a User</a>.)
+            <ul>
+              <li><code class="highlighter-rouge">endpointDeveloper</code></li>
+              <li><code class="highlighter-rouge">endpointUser</code></li>
+              <li><code class="highlighter-rouge">flowDeveloper</code></li>
+              <li><code class="highlighter-rouge">flowOperator</code>
+<!-- What security permissions/roles do they need to be able to create user accounts and assign them to these roles? --></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="https://docs.marklogic.com/guide/mlcp/install">MarkLogic Content Pump</a></li>
+</ul>
+
+<h2 id="procedure">Procedure</h2>
+
+<ol class="ol-steps">
+  <li>Copy your entire DHF project directory to the machine from which you will access the endpoints, and perform the following steps on that machine.
+    <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>IMPORTANT:</b>
+<span>If your endpoints are private, this machine must be a bastion host.</span></p>
+  </li>
+  <li>Open a command-line window, and navigate to your DHF project root directory.</li>
+  <li>
+    <p>At your project root, create a new <code class="highlighter-rouge">gradle-DHS.properties</code> file.</p>
+
+    <p><strong>NOTE:</strong> If you use a different name for the properties file,</p>
+    <ul>
+      <li>The filename must be in the format <code class="highlighter-rouge">gradle-{env}.properties</code>, where <code class="highlighter-rouge">{env}</code> is any string you want to represent an environment. For example, you can store the settings for your development environment in <code class="highlighter-rouge">gradle-dev.properties</code>.</li>
+      <li>Remember to update the value of the <code class="highlighter-rouge">-PenvironmentName</code> parameter to <code class="highlighter-rouge">{env}</code> in the Gradle commands in the following steps.</li>
+    </ul>
+
+    <p>a. Copy the following to the new file:</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> mlDHFVersion=YOUR_DHF_VERSION
+ mlHost=YOUR_DHS_HOSTNAME
+
+ mlIsHostLoadBalancer=true
+
+ mlUsername=YOUR_FLOW_OPERATOR_USER
+ mlPassword=YOUR_FLOW_OPERATOR_PASSWORD
+ mlManageUsername=YOUR_FLOW_DEVELOPER_USER
+ mlManagePassword=YOUR_FLOW_DEVELOPER_PASSWORD
+
+ mlStagingAppserverName=data-hub-STAGING
+ mlStagingPort=8010
+ mlStagingDbName=data-hub-STAGING
+ mlStagingForestsPerHost=1
+
+ mlFinalAppserverName=data-hub-FINAL
+ mlFinalPort=8011
+ mlFinalDbName=data-hub-FINAL
+ mlFinalForestsPerHost=1
+
+ mlJobAppserverName=data-hub-JOBS
+ mlJobPort=8013
+ mlJobDbName=data-hub-JOBS
+ mlJobForestsPerHost=1
+
+ mlModulesDbName=data-hub-MODULES
+ mlStagingTriggersDbName=data-hub-staging-TRIGGERS
+ mlStagingSchemasDbName=data-hub-staging-SCHEMAS
+
+ mlFinalTriggersDbName=data-hub-final-TRIGGERS
+ mlFinalSchemasDbName=data-hub-final-SCHEMAS
+
+ mlModulePermissions=flowDeveloper,read,flowDeveloper,execute,flowDeveloper,insert,flowOperator,read,flowOperator,execute,flowOperator,insert
+
+ mlIsProvisionedEnvironment=true
+</code></pre></div>    </div>
+
+    <p>b. Replace the values.</p>
+
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Replace the value with …</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>mlDHFVersion</td>
+          <td>The <a href="https://github.com/marklogic/marklogic-data-hub/releases">DHF version</a> to use in your production environment.</td>
+        </tr>
+        <tr>
+          <td>mlHost</td>
+          <td>The name of your DHS host. <strong>Tip:</strong> The host name is the domain name of the DHS final endpoint (remove ‘http://’ and the ‘:’ and port number from the endpoint URL).</td>
+        </tr>
+        <tr>
+          <td>mlUsername<br />mlPassword</td>
+          <td>The username and password of the user account assigned to the <code class="highlighter-rouge">flowOperator</code> role. <strong>Note:</strong> This can also be a user account assigned to the <code class="highlighter-rouge">flowDeveloper</code> role if additional permissions are required.</td>
+        </tr>
+        <tr>
+          <td>mlManageUsername<br />mlManagePassword</td>
+          <td>The username and password of the user account assigned to the <code class="highlighter-rouge">flowDeveloper</code> role.</td>
+        </tr>
+        <tr>
+          <td>ml*DbName</td>
+          <td>The names of the DHS databases, if customized.</td>
+        </tr>
+        <tr>
+          <td>ml*AppserverName</td>
+          <td>The names of the DHS app servers, if customized.</td>
+        </tr>
+        <tr>
+          <td>ml*Port</td>
+          <td>The ports that your DHS project is configured with, if not the defaults.</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>Install the DHF core modules.</p>
+
+    <div class="code-tabs">
+   <ul class="nav nav-tabs" role="tablist">
+     <li role="presentation" class="active">
+       <a role="tab" aria-controls="tab1-1" href="#tab1-1">Unix Systems</a>
+     </li>
+     <li role="presentation" class="">
+       <a role="tab" aria-controls="tab2-1" href="#tab2-1">Windows</a>
+     </li>
+   </ul>
+   <div class="tab-content">
+     <div role="tabpanel" class="tab-pane active" id="tab1-1">
+       <pre class="cmdline">./gradlew hubInstallModules -PenvironmentName=DHS</pre>
+     </div>
+     <div role="tabpanel" class="tab-pane" id="tab2-1">
+       <pre class="cmdline">gradlew.bat hubInstallModules -PenvironmentName=DHS</pre>
+     </div>
+   </div>
+ </div>
+  </li>
+  <li>
+    <p>Install the plugins for your project.</p>
+
+    <div class="code-tabs">
+   <ul class="nav nav-tabs" role="tablist">
+     <li role="presentation" class="active">
+       <a role="tab" aria-controls="tab1-2" href="#tab1-2">Unix Systems</a>
+     </li>
+     <li role="presentation" class="">
+       <a role="tab" aria-controls="tab2-2" href="#tab2-2">Windows</a>
+     </li>
+   </ul>
+   <div class="tab-content">
+     <div role="tabpanel" class="tab-pane active" id="tab1-2">
+       <pre class="cmdline">./gradlew mlLoadModules -PenvironmentName=DHS</pre>
+     </div>
+     <div role="tabpanel" class="tab-pane" id="tab2-2">
+       <pre class="cmdline">gradlew.bat mlLoadModules -PenvironmentName=DHS</pre>
+     </div>
+   </div>
+ </div>
+  </li>
+  <li>
+    <p>If you are using DHF 4.0.2 or later, load the indexes in the DHS databases.</p>
+
+    <div class="code-tabs">
+   <ul class="nav nav-tabs" role="tablist">
+     <li role="presentation" class="active">
+       <a role="tab" aria-controls="tab1-3" href="#tab1-3">Unix Systems</a>
+     </li>
+     <li role="presentation" class="">
+       <a role="tab" aria-controls="tab2-3" href="#tab2-3">Windows</a>
+     </li>
+   </ul>
+   <div class="tab-content">
+     <div role="tabpanel" class="tab-pane active" id="tab1-3">
+       <pre class="cmdline">./gradlew mlUpdateIndexes -PenvironmentName=DHS</pre>
+     </div>
+     <div role="tabpanel" class="tab-pane" id="tab2-3">
+       <pre class="cmdline">gradlew.bat mlUpdateIndexes -PenvironmentName=DHS</pre>
+     </div>
+   </div>
+ </div>
+  </li>
+  <li>
+    <p><a href="https://marklogic.github.io/marklogic-data-hub/ingest/mlcp/">Run the input flows using MarkLogic Content Pump (MLCP).</a></p>
+
+    <p>You can also use any of the following:</p>
+    <ul>
+      <li>the <a href="https://marklogic.github.io/marklogic-data-hub/ingest/marklogic-client-api/">Java Client API</a></li>
+      <li>the <a href="https://marklogic.github.io/marklogic-data-hub/ingest/rest/">REST Client API</a></li>
+      <li><a href="https://developer.marklogic.com/code/apache-nifi">Apache NiFi</a> <!-- TODO: After DHFPROD-1542, replace this link. --></li>
+    </ul>
+  </li>
+  <li>
+    <p>Run the harmonization flows. <!-- Code from https://marklogic.github.io/marklogic-data-hub/harmonize/gradle/ --></p>
+
+    <div class="code-tabs">
+   <ul class="nav nav-tabs" role="tablist">
+     <li role="presentation" class="active">
+       <a role="tab" aria-controls="tab1-4" href="#tab1-4">Unix Systems</a>
+     </li>
+     <li role="presentation" class="">
+       <a role="tab" aria-controls="tab2-4" href="#tab2-4">Windows</a>
+     </li>
+   </ul>
+   <div class="tab-content">
+     <div role="tabpanel" class="tab-pane active" id="tab1-4">
+       <pre class="cmdline">./gradlew hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS</pre>
+     </div>
+     <div role="tabpanel" class="tab-pane" id="tab2-4">
+       <pre class="cmdline">gradlew.bat hubRunFlow -PentityName=MyAwesomeEntity -PflowName=MyHarmonizeFlow -PflowType=harmonize -PenvironmentName=DHS</pre>
+     </div>
+   </div>
+ </div>
+
+    <div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>IMPORTANT:</b>
+<span>If the value of a Gradle parameter contains a blank space, you <em>must</em> enclose the value in double quotation marks. If the value does <em>not</em> contain a blank space, you <em>must not</em> enclose the value in quotation marks.</span></div>
+  </li>
+  <li>
+    <p>Verify that your documents are in the databases.</p>
+
+    <p>a. In the following URLs, replace <code class="highlighter-rouge">OPERATIONS-REST-ENDPOINT-URL</code> and <code class="highlighter-rouge">CURATION-REST-ENDPOINT-URL</code> with the appropriate endpoint URLs from your DHS administrator.</p>
+
+    <table class="table-b1gray">
+      <tbody>
+        <tr>
+          <td>Final database</td>
+          <td><code class="highlighter-rouge">http://OPERATIONS-REST-ENDPOINT-URL:8011/v1/search</code></td>
+        </tr>
+        <tr>
+          <td>Staging database</td>
+          <td><code class="highlighter-rouge">http://CURATION-REST-ENDPOINT-URL:8010/v1/search</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Example:</strong> <code class="highlighter-rouge">http://internal-mlaas-xxx-xxx-xxx.us-west-2.elb.amazonaws.com:8011/v1/search</code></p>
+
+    <p class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"> </i>
+<b>TIP:</b>
+<span>Narrow the search to return fewer items. See <a href="https://docs.marklogic.com/REST/GET/v1/search">MarkLogic REST API Search</a>.</span></p>
+
+    <p>b. In a web browser, navigate to one of the URLs.</p>
+
+    <p>The result is an XML list of all your documents in the database. Each item in the list includes the document’s URI, path, and other metadata, as well as a preview of the content.</p>
+  </li>
+</ol>
+
+<h2 id="remarks">Remarks</h2>
+<p>If you update your flows after the initial project upload, you can redeploy your flow updates by running <code class="highlighter-rouge">gradle mlLoadModules</code> again and then running the flows.</p>
+
+<h2 id="see-also">See Also</h2>
+<ul>
+  <li><a href="https://github.com/marklogic/marklogic-data-hub/tree/v4.3.1/examples/DHS-e2e">DHS-e2e</a> — An end-to-end example of deploying from DHF to DHS</li>
+  <li><a href="https://cloudservices.marklogic.com/help?type=datahub">Data Hub Service Online Help</a></li>
+  <li><a href="https://developer.marklogic.com/learn/data-hub-service-aws">Getting Started with Data Hub Service (DHS) on AWS</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

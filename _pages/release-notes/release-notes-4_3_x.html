@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Begin Jekyll SEO tag v2.3.0 -->
+<title>Release Notes for DHF 4.3.2 | marklogic-data-hub</title>
+<meta property="og:title" content="Release Notes for DHF 4.3.2" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The MarkLogic Data Hub: documentation ==&gt;" />
+<meta property="og:description" content="The MarkLogic Data Hub: documentation ==&gt;" />
+<meta property="og:site_name" content="marklogic-data-hub" />
+<script type="application/ld+json">
+{"name":null,"description":"The MarkLogic Data Hub: documentation ==&gt;","author":null,"@type":"WebPage","url":"/marklogic-data-hub/_pages/release-notes/release-notes-4_3_x","image":null,"publisher":null,"headline":"Release Notes for DHF 4.3.2","dateModified":null,"datePublished":null,"sameAs":null,"mainEntityOfPage":null,"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <link href="/marklogic-data-hub/assets/css/style.css?v=513ebc351820b3b65a7a030c9eef22e68bb64ff4" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      
+        <h1><a href="/marklogic-data-hub/">marklogic-data-hub</a></h1>
+      
+
+      <h1 id="release-notes-for-dhf-432">Release Notes for DHF 4.3.2</h1>
+
+<details open=""><summary class="relnote-summary">Base URI Required for Entities</summary>
+  <div>
+
+    <p>In previous versions, the base URI property of entities was optional, as it still is in Entity Services.</p>
+
+    <p>Now, Data Hub validates the base URI property of entities and makes the property required. It must be in the format <code class="highlighter-rouge">http://example.org</code>.</p>
+
+    <p>To add the base URI property to existing entity definitions,</p>
+
+    <ul>
+      <li>you can edit the entity in QuickStart, or</li>
+      <li>you can manually edit the entity definition file in <code class="highlighter-rouge">your-project-root/entities</code> to add the <code class="highlighter-rouge">baseUri</code> property.
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "info" : {
+    "title" : "MyEntity",
+    "version" : "0.0.1",
+    "baseUri" : "http://example.org"
+  },
+  "definitions" : {
+    ...
+  }
+}
+</code></pre></div>        </div>
+      </li>
+    </ul>
+
+    <p><em>Important:</em> If your application uses multiple entity definitions, you must provide a valid base URI in every entity definition used. Otherwise, deploying your application will fail when the entity definitions are loaded into MarkLogic.</p>
+
+    <p><em>Tip:</em> Use the same base URI for related entities.</p>
+
+  </div>
+</details>
+
+<details open=""><summary class="relnote-summary">Compliance with Entity Services Format</summary>
+  <div>
+
+    <p>Manually created or modified entity definitions must now comply with the required format as defined in the Entity Services documentation, except that Base URI is required by Data Hub.</p>
+
+  </div>
+</details>
+
+<details open=""><summary class="relnote-summary">Requires MarkLogic Server 9.0-7</summary>
+  <div>
+
+    <p>Data Hub Framework 4.3.2 requires MarkLogic Server 9.0-7 up to the latest 9.x version.</p>
+
+    <p><strong>NOTE:</strong> Data Hub Framework 4.3.2 is not compatible with MarkLogic Server 10.x. If you prefer to use MarkLogic Server 10.x, you must upgrade to <a href="https://docs.marklogic.com/datahub/upgrade.html">Data Hub 5.x</a>.</p>
+
+  </div>
+</details>
+
+<details open=""><summary class="relnote-summary">Improvements</summary>
+  <div>
+
+    <ul>
+      <li>Made necessary changes in 4.3.2 to make it work with 9.0-10+ ML server.</li>
+      <li>Upgraded to ml-gradle 3.16.0.</li>
+      <li>Upgraded to Java API Client 4.2.0.</li>
+    </ul>
+
+  </div>
+</details>
+
+<h1 id="release-notes-for-dhf-431">Release Notes for DHF 4.3.1</h1>
+
+<p>Bug fixes.</p>
+
+<h1 id="release-notes-for-dhf-430">Release Notes for DHF 4.3.0</h1>
+
+<details><summary class="relnote-summary">Added Support for XQuery Namespaces</summary>
+  <div>
+    <p>To align better with Entity Services, DHF now supports XQuery namespaces. For more information on namespaces, see <a href="https://docs.marklogic.com/guide/xquery/namespaces">Understanding XML Namespaces in XQuery</a>.</p>
+  </div>
+</details>
+
+<details><summary class="relnote-summary">Replaced Security Roles</summary>
+  <div>
+
+    <p>For easier integration with other MarkLogic services, DHF 4.3 uses new security roles.</p>
+
+    <p>The old security roles <code class="highlighter-rouge">hub-admin-role</code> and <code class="highlighter-rouge">data-hub-role</code> are now replaced with the following new roles:</p>
+
+    <ul>
+      <li>Data Hub Admin (<code class="highlighter-rouge">data-hub-admin</code>)</li>
+      <li>Flow Developer (<code class="highlighter-rouge">flow-developer</code>)</li>
+      <li>Flow Operator (<code class="highlighter-rouge">flow-operator</code>)</li>
+    </ul>
+
+    <p>For more information on these roles, see <a href="/marklogic-data-hub/refs/security/">Security Roles</a>.</p>
+
+    <p>To update your data hub to use these new roles, see <a href="/marklogic-data-hub/upgrade/upgrade-to-4_3_x/">Upgrading to DHF 4.3.x</a>.</p>
+
+  </div>
+</details>
+
+<!--
+<details open><summary class="relnote-summary"></summary>
+  <div markdown="1">
+  </div>
+</details>
+-->
+
+
+      
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source. <a href="http://github.com/marklogic/marklogic-data-hub/edit/gh-pages/_pages/release-notes/release-notes-4_3_x.md">Improve this page</a>.
+      </div>
+      
+    </div>
+    <script src="/marklogic-data-hub/assets/javascript/anchor-js/anchor.min.js"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>

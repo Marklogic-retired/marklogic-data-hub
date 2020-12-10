@@ -1,0 +1,1 @@
+Before you can ingest, you must already have a DHF project. You can create one with [QuickStart]({{site.baseurl}}/project/quickstart/) or with the [Gradle plugin]({{site.baseurl}}/project/gradle/).

@@ -1,0 +1,1 @@
+{% include note.html type="TIP" content="Before any upgrade, back up your project or, if under source control, check in all changes." %}

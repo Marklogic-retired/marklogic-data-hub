@@ -1,0 +1,1598 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Gradle Tasks in DHF - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Gradle Tasks in DHF
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item active"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="gradle-tasks-in-dhf">Gradle Tasks in DHF</h1>
+
+<p><a href="https://gradle.org/releases/">Gradle</a> is a third-party tool that automates build tasks. MarkLogic provides a Gradle plugin (<a href="https://github.com/marklogic-community/ml-gradle/wiki">ml-gradle</a>) that automates many of tasks required to manage a MarkLogic server.</p>
+
+<p>The DHF Gradle Plugin (ml-data-hub) expands ml-gradle with DHF-specific tasks and uses it to deploy MarkLogic server resources (e.g., databases, users, roles, app servers). ml-gradle deploys these resources according to the configurations in the following directories:</p>
+<ul>
+  <li><code class="highlighter-rouge">hub-internal-config</code> (<code class="highlighter-rouge">your-project-root/src/main/hub-internal-config</code>)</li>
+  <li><code class="highlighter-rouge">ml-config</code> (<code class="highlighter-rouge">your-project-root/src/main/ml-config</code>)</li>
+</ul>
+
+<p>This page provides a complete list of all of the Gradle tasks available in DHF Gradle Plugin (ml-data-hub).</p>
+<ul>
+  <li>Tasks with names starting with <code class="highlighter-rouge">ml</code> are customized for DHF from the ml-gradle implementation.</li>
+  <li>Tasks with names starting with <code class="highlighter-rouge">hub</code> are created specifically for DHF.</li>
+</ul>
+
+<p>See <a href="https://github.com/marklogic-community/ml-gradle/wiki/Common-tasks">ml-gradle Common Tasks</a> or <a href="https://github.com/marklogic-community/ml-gradle/wiki/Task-reference">ml-gradle Task Reference</a> for the default (non-DHF) behavior of ml-gradle tasks.</p>
+
+<p>In this page:</p>
+<ul>
+  <li><a href="#using-gradle-in-dhf">Using Gradle in DHF</a></li>
+  <li><a href="#marklogic-data-hub-setup-tasks">MarkLogic Data Hub Setup tasks</a></li>
+  <li><a href="#marklogic-data-hub-scaffolding-tasks">MarkLogic Data Hub Scaffolding tasks</a></li>
+  <li><a href="#marklogic-data-hub-flow-management-tasks">MarkLogic Data Hub Flow Management tasks</a></li>
+  <li><a href="#uninstalling-your-marklogic-data-hub">Uninstalling Your MarkLogic Data Hub</a></li>
+</ul>
+
+<h2 id="using-gradle-in-dhf">Using Gradle in DHF</h2>
+
+<p>To use DHF Gradle Plugin in the DHF flows (i.e., ingest and harmonize), see <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>.</p>
+
+<p>To pass parameters to Gradle tasks, use the <code class="highlighter-rouge">-P</code> option.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;div class="code-tabs"&gt;
+  &lt;ul class="nav nav-tabs" role="tablist"&gt;
+    &lt;li role="presentation" class="active"&gt;
+      &lt;a role="tab" aria-controls="tab1-1" href="#tab1-1"&gt;Unix Systems&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li role="presentation" class=""&gt;
+      &lt;a role="tab" aria-controls="tab2-1" href="#tab2-1"&gt;Windows&lt;/a&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;div class="tab-content"&gt;
+    &lt;div role="tabpanel" class="tab-pane active" id="tab1-1"&gt;
+      &lt;pre class="cmdline"&gt;./gradlew taskname ... -PparameterName=parameterValue ...&lt;/pre&gt;
+    &lt;/div&gt;
+    &lt;div role="tabpanel" class="tab-pane" id="tab2-1"&gt;
+      &lt;pre class="cmdline"&gt;gradlew.bat taskname ... -PparameterName=parameterValue ...&lt;/pre&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre></div></div>
+
+<div class="alert alert-info" role="alert">
+<i class="fa fa-info-circle"></i>
+<b>IMPORTANT:</b>
+<span>If the value of a Gradle parameter contains a blank space, you <em>must</em> enclose the value in double quotation marks. If the value does <em>not</em> contain a blank space, you <em>must not</em> enclose the value in quotation marks.</span></div>
+
+<h3 id="running-ml-gradle-tasks-for-different-environments">Running ml-gradle Tasks for Different Environments</h3>
+
+<p>You can run ml-gradle tasks for a specific environment (e.g., development, QA, production, local).</p>
+
+<ol>
+  <li>
+    <p>For each environment, create a properties file with a filename in the format <code class="highlighter-rouge">gradle-${env}.properties</code>, where <code class="highlighter-rouge">${env}</code> is the environment the file is intended for.</p>
+
+    <p><strong>Examples:</strong></p>
+    <ul>
+      <li>For a <code class="highlighter-rouge">development</code> environment, create a file called <code class="highlighter-rouge">gradle-dev.properties</code>.</li>
+      <li>For a <code class="highlighter-rouge">QA</code> environment, create a file called <code class="highlighter-rouge">gradle-qa.properties</code>.</li>
+      <li>For a <code class="highlighter-rouge">production</code> environment, create a file called <code class="highlighter-rouge">gradle-prod.properties</code>.</li>
+    </ul>
+
+    <p>By default, DHF uses <code class="highlighter-rouge">gradle-local.properties</code> for your local environment.</p>
+  </li>
+  <li>
+    <p>Enter the environment-specific property settings inside the appropriate properties file. The contents of these environment files will override any values set in the <code class="highlighter-rouge">gradle.properties</code> file.</p>
+  </li>
+  <li>
+    <p>To specify an environment at runtime, use the <code class="highlighter-rouge">-PenvironmentName=xxx</code> option.</p>
+
+    <p><strong>Example:</strong> To run a Gradle command against the production environment,</p>
+
+    <div class="code-tabs">
+   <ul class="nav nav-tabs" role="tablist">
+     <li role="presentation" class="active">
+       <a role="tab" aria-controls="tab1-2" href="#tab1-2">Unix Systems</a>
+     </li>
+     <li role="presentation" class="">
+       <a role="tab" aria-controls="tab2-2" href="#tab2-2">Windows</a>
+     </li>
+   </ul>
+   <div class="tab-content">
+     <div role="tabpanel" class="tab-pane active" id="tab1-2">
+       <pre class="cmdline">./gradlew taskname ... -PenvironmentName=production ...</pre>
+     </div>
+     <div role="tabpanel" class="tab-pane" id="tab2-2">
+       <pre class="cmdline">gradlew.bat taskname ... -PenvironmentName=production ...</pre>
+     </div>
+   </div>
+ </div>
+  </li>
+</ol>
+
+<h2 id="marklogic-data-hub-setup-tasks">MarkLogic Data Hub Setup Tasks</h2>
+<p>These tasks are used to configure the Data Hub Framework and manage the data hub.</p>
+
+<dl>
+
+<dt>mlDeploy</dt>
+<dd>Uses `hubPreinstallCheck` to deploy your DHF project.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-3" href="#tab1-3">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-3" href="#tab2-3">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-3">
+          <pre class="cmdline">./gradlew mlDeploy</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-3">
+          <pre class="cmdline">gradlew.bat mlDeploy</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>mlWatch</dt>
+<dd>Extends ml-gradle's WatchTask by ensuring that modules in DHF-specific folders (`plugins` and `entity-config`) are monitored.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-4" href="#tab1-4">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-4" href="#tab2-4">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-4">
+          <pre class="cmdline">./gradlew mlWatch</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-4">
+          <pre class="cmdline">gradlew.bat mlWatch</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>mlUpdateIndexes</dt>
+<dd>Updates the properties of every database without creating or updating forests. Many properties of a database are related to indexing.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-5" href="#tab1-5">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-5" href="#tab2-5">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-5">
+          <pre class="cmdline">./gradlew mlUpdateIndexes</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-5">
+          <pre class="cmdline">gradlew.bat mlUpdateIndexes</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<!-- dt>mlClearModulesDatabase</dt>
+<dd>Clears modules in the modules database, except the DHF-specific modules deployed by `hubInstallModules` from the DHF .jar file.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-6" href="#tab1-6">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-6" href="#tab2-6">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-6">
+          <pre class="cmdline">./gradlew mlClearModulesDatabase</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-6">
+          <pre class="cmdline">gradlew.bat mlClearModulesDatabase</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+<!-- dt>mlDeleteModuleTimestampsFile</dt>
+<dd>Uses `hubDeleteModuleTimestampsFile` to delete both module timestamps files.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-7" href="#tab1-7">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-7" href="#tab2-7">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-7">
+          <pre class="cmdline">./gradlew mlDeleteModuleTimestampsFile</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-7">
+          <pre class="cmdline">gradlew.bat mlDeleteModuleTimestampsFile</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+<dt>hubUpdate</dt>
+<dd>Updates your DHF instance to a newer version.
+  At your project's root folder, run the `hubUpdate -i` Gradle task.
+      
+      
+      <div class="code-tabs">
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a role="tab" aria-controls="tab1-8" href="#tab1-8">Unix Systems</a>
+          </li>
+          <li role="presentation" class="">
+            <a role="tab" aria-controls="tab2-8" href="#tab2-8">Windows</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="tab1-8">
+            <pre class="cmdline">./gradlew hubUpdate -i</pre>
+          </div>
+          <div role="tabpanel" class="tab-pane" id="tab2-8">
+            <pre class="cmdline">gradlew.bat hubUpdate -i</pre>
+          </div>
+        </div>
+      </div>
+
+  <div>
+      <p>Before you run the <code class="highlighter-rouge">hubUpdate</code> task, edit the <code class="highlighter-rouge">build.gradle</code> file. Under <code class="highlighter-rouge">plugins</code>, change the value of <code class="highlighter-rouge">'com.marklogic.ml-data-hub' version</code> to the new DHF version.</p>
+
+      <p><strong>Example:</strong> If you are updating to DHF 4.3.2,</p>
+      <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  plugins {
+      id 'com.marklogic.ml-data-hub' version '4.3.2'
+  }
+</code></pre></div>      </div>
+    </div>
+
+  For complete instructions to upgrade to a newer DHF version, see [Upgrading DHF](/marklogic-data-hub/upgrade/).
+
+  Running the `hubUpdate` task with the `-i` option (info mode) displays specifically what the task does, including configuration settings that changed.
+
+  <details><summary><b>Example:</b> A verbose report.</summary>
+    <pre>
+    Upgrading entity-config dir
+    Upgrading hub-internal-config dir
+    Processing /your-project-root/hub-internal-config/databases/job-database.json
+    Setting "schema-database" to "%%mlStagingSchemasDbName%%"
+    Setting "triggers-database" to "%%mlStagingTriggersDbName%%"
+    Adding path range indexes to job-database.json
+    Writing /your-project-root/hub-internal-config/databases/job-database.json to /your-project-root/src/main/hub-internal-config/databases/job-database.json
+    Processing /your-project-root/hub-internal-config/databases/final-database.json
+    Setting "schema-database" to "%%mlFinalSchemasDbName%%"
+    Setting "triggers-database" to "%%mlFinalTriggersDbName%%"
+    Writing /your-project-root/hub-internal-config/databases/final-database.json to /your-project-root/src/main/ml-config/databases/final-database.json
+    Processing /your-project-root/hub-internal-config/databases/staging-database.json
+    Setting "schema-database" to "%%mlStagingSchemasDbName%%"
+    Setting "triggers-database" to "%%mlStagingTriggersDbName%%"
+    Writing /your-project-root/hub-internal-config/databases/staging-database.json to /your-project-root/src/main/hub-internal-config/databases/staging-database.json
+    Writing /your-project-root/hub-internal-config/databases/modules-database.json to /your-project-root/src/main/ml-config/databases/modules-database.json
+    Processing /your-project-root/hub-internal-config/servers/job-server.json
+    Setting "url-rewriter" to "/data-hub/4/tracing/tracing-rewriter.xml"
+    Writing /your-project-root/hub-internal-config/servers/job-server.json to /your-project-root/src/main/hub-internal-config/servers/job-server.json
+    Writing /your-project-root/hub-internal-config/servers/final-server.json to /your-project-root/src/main/ml-config/servers/final-server.json
+    Processing /your-project-root/hub-internal-config/servers/staging-server.json
+    Setting "url-rewriter" to "/data-hub/4/rest-api/rewriter.xml"
+    Setting "error-handler" to "/data-hub/4/rest-api/error-handler.xqy"
+    Writing /your-project-root/hub-internal-config/servers/staging-server.json to /your-project-root/src/main/hub-internal-config/servers/staging-server.json
+    Upgrading user-config dir
+    </pre>
+  </details>
+</dd>
+
+<dt>hubInfo</dt>
+<dd>Prints out basic info about the DHF configuration.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-9" href="#tab1-9">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-9" href="#tab2-9">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-9">
+          <pre class="cmdline">./gradlew hubInfo</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-9">
+          <pre class="cmdline">gradlew.bat hubInfo</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubEnableDebugging</dt>
+<dd>Enables extra debugging features in DHF.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-10" href="#tab1-10">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-10" href="#tab2-10">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-10">
+          <pre class="cmdline">./gradlew hubEnableDebugging</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-10">
+          <pre class="cmdline">gradlew.bat hubEnableDebugging</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubDisableDebugging</dt>
+<dd>Disables extra debugging features in DHF.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-11" href="#tab1-11">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-11" href="#tab2-11">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-11">
+          <pre class="cmdline">./gradlew hubDisableDebugging</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-11">
+          <pre class="cmdline">gradlew.bat hubDisableDebugging</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubEnableTracing</dt>
+<dd>Enables tracing in DHF.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-12" href="#tab1-12">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-12" href="#tab2-12">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-12">
+          <pre class="cmdline">./gradlew hubEnableTracing</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-12">
+          <pre class="cmdline">gradlew.bat hubEnableTracing</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubDisableTracing</dt>
+<dd>Disables tracing in DHF.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-13" href="#tab1-13">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-13" href="#tab2-13">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-13">
+          <pre class="cmdline">./gradlew hubDisableTracing</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-13">
+          <pre class="cmdline">gradlew.bat hubDisableTracing</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubDeployUserArtifacts</dt>
+<dd>Installs user artifacts, such as entities and mappings, to the MarkLogic server. (DHF 4.2 or later)
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-14" href="#tab1-14">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-14" href="#tab2-14">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-14">
+          <pre class="cmdline">./gradlew hubDeployUserArtifacts</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-14">
+          <pre class="cmdline">gradlew.bat hubDeployUserArtifacts</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<!-- dt>hubDeployAmps</dt>
+<dd>Deploys the amps included in the DHF .jar file.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-15" href="#tab1-15">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-15" href="#tab2-15">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-15">
+          <pre class="cmdline">./gradlew hubDeployAmps</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-15">
+          <pre class="cmdline">gradlew.bat hubDeployAmps</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+<!-- dt>hubInstallModules</dt>
+<dd>Installs the hub modules from the DHF .jar file to the MarkLogic server.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-16" href="#tab1-16">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-16" href="#tab2-16">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-16">
+          <pre class="cmdline">./gradlew hubInstallModules</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-16">
+          <pre class="cmdline">gradlew.bat hubInstallModules</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+<!-- dt>hubDeployUserModules</dt>
+<dd>Loads the user modules from the DHF-specific folders (`plugins` and `entity-config`).
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-17" href="#tab1-17">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-17" href="#tab2-17">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-17">
+          <pre class="cmdline">./gradlew hubDeployUserModules</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-17">
+          <pre class="cmdline">gradlew.bat hubDeployUserModules</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+<!-- dt>hubDeleteModuleTimestampsFile</dt>
+<dd>Deletes the module timestamps file that DHF uses for DHF-specific module locations.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-18" href="#tab1-18">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-18" href="#tab2-18">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-18">
+          <pre class="cmdline">./gradlew hubDeleteModuleTimestampsFile</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-18">
+          <pre class="cmdline">gradlew.bat hubDeleteModuleTimestampsFile</pre>
+        </div>
+      </div>
+    </div>
+</dd -->
+
+</dl>
+
+<h2 id="marklogic-data-hub-scaffolding-tasks">MarkLogic Data Hub Scaffolding Tasks</h2>
+<p>These tasks allow you to scaffold projects, entities, and flows.</p>
+
+<dt>hubInit</dt>
+<dd>Initializes the current directory as a DHF project.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-19" href="#tab1-19">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-19" href="#tab2-19">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-19">
+          <pre class="cmdline">./gradlew hubInit</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-19">
+          <pre class="cmdline">gradlew.bat hubInit</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<dt>hubCreateEntity</dt>
+<dd>Creates a boilerplate entity.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-20" href="#tab1-20">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-20" href="#tab2-20">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-20">
+          <pre class="cmdline">./gradlew hubCreateEntity -PentityName=yourentityname</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-20">
+          <pre class="cmdline">gradlew.bat hubCreateEntity -PentityName=yourentityname</pre>
+        </div>
+      </div>
+    </div>
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>entityName</strong></td>
+          <td>(Required) The name of the entity to create.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</dd>
+
+<dt>hubCreateInputFlow</dt>
+<dd>Creates an input flow.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-21" href="#tab1-21">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-21" href="#tab2-21">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-21">
+          <pre class="cmdline">./gradlew hubCreateInputFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs)</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-21">
+          <pre class="cmdline">gradlew.bat hubCreateInputFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs)</pre>
+        </div>
+      </div>
+    </div>
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>entityName</strong></td>
+          <td>(Required) The name of the entity that owns the flow.</td>
+        </tr>
+        <tr>
+          <td><strong>flowName</strong></td>
+          <td>(Required) The name of the input flow to create.</td>
+        </tr>
+        <tr>
+          <td><strong>dataFormat</strong></td>
+          <td><code class="highlighter-rouge">xml</code> or <code class="highlighter-rouge">json</code>. Default is <code class="highlighter-rouge">json</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</dd>
+
+<dt>hubCreateHarmonizeFlow</dt>
+<dd>Creates a harmonization flow.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-22" href="#tab1-22">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-22" href="#tab2-22">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-22">
+          <pre class="cmdline">./gradlew hubCreateHarmonizeFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs) -PmappingName=yourmappingname</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-22">
+          <pre class="cmdline">gradlew.bat hubCreateHarmonizeFlow -PentityName=yourentityname -PflowName=yourflowname -PdataFormat=(xml|json) -PpluginFormat=(xqy|sjs) -PmappingName=yourmappingname</pre>
+        </div>
+      </div>
+    </div>
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>entityName</strong></td>
+          <td>(Required) The name of the entity that owns the flow.</td>
+        </tr>
+        <tr>
+          <td><strong>flowName</strong></td>
+          <td>(Required) The name of the harmonize flow to create.</td>
+        </tr>
+        <tr>
+          <td><strong>dataFormat</strong></td>
+          <td><code class="highlighter-rouge">xml</code> or <code class="highlighter-rouge">json</code>. Default is <code class="highlighter-rouge">json</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>pluginFormat</strong></td>
+          <td><code class="highlighter-rouge">xqy</code> or <code class="highlighter-rouge">sjs</code>. The plugin programming language.</td>
+        </tr>
+        <tr>
+          <td><strong>mappingName</strong></td>
+          <td>The name of a model-to-model mapping to use during code generation.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</dd>
+
+<dt>hubGeneratePii</dt>
+<dd><span>Generates security configuration files for protecting entity properties designated as Personally Identifiable Information (PII). For details, see <a href="/marklogic-data-hub/govern/pii">Managing Personally Identifiable Information</a>.</span>
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-23" href="#tab1-23">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-23" href="#tab2-23">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-23">
+          <pre class="cmdline">./gradlew hubGeneratePii</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-23">
+          <pre class="cmdline">gradlew.bat hubGeneratePii</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+<h2 id="marklogic-data-hub-flow-management-tasks">MarkLogic Data Hub Flow Management tasks</h2>
+<p>These tasks allow you to run flows and clean up.</p>
+
+<dt>hubRunFlow</dt>
+<dd>Runs a harmonization flow.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-24" href="#tab1-24">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-24" href="#tab2-24">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-24">
+          <pre class="cmdline">./gradlew hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -PbatchSize=100 -PthreadCount=4 -PsourceDB=data-hub-STAGING-PdestDB=data-hub-FINAL -PshowOptions=(true|false)</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-24">
+          <pre class="cmdline">gradlew.bat hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -PbatchSize=100 -PthreadCount=4 -PsourceDB=data-hub-STAGING-PdestDB=data-hub-FINAL -PshowOptions=(true|false)</pre>
+        </div>
+      </div>
+    </div>
+
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>entityName</strong></td>
+          <td>(Required) The name of the entity containing the harmonize flow.</td>
+        </tr>
+        <tr>
+          <td><strong>flowName</strong></td>
+          <td>(Required) The name of the harmonize flow to run.</td>
+        </tr>
+        <tr>
+          <td><strong>batchSize</strong></td>
+          <td>The number of items to include in a batch. Default is 100.</td>
+        </tr>
+        <tr>
+          <td><strong>threadCount</strong></td>
+          <td>The number of threads to run. Default is 4.</td>
+        </tr>
+        <tr>
+          <td><strong>sourceDB</strong></td>
+          <td>The name of the database to run against. Default is the name of your staging database.</td>
+        </tr>
+        <tr>
+          <td><strong>destDB</strong></td>
+          <td>The name of the database to put harmonized results into. Default is the name of your final database.</td>
+        </tr>
+        <tr>
+          <td><strong>showOptions</strong></td>
+          <td>Whether or not to print out options that were passed in to the command. Default is <code class="highlighter-rouge">false</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>You can also pass custom key-value parameters to your flows. These key-value pairs will be available in the $options (xqy) or options (sjs) passed to your flows. To pass custom key-value pairs, prefix your keys with <code class="highlighter-rouge">dhf</code>.</p>
+  </div>
+
+  <span><strong>Example:</strong></span>
+
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-25" href="#tab1-25">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-25" href="#tab2-25">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-25">
+          <pre class="cmdline">./gradlew hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -Pdhf.myKey=myValue -Pdhf.myOtherKey=myOtherValue</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-25">
+          <pre class="cmdline">gradlew.bat hubRunFlow -PentityName=yourentityname -PflowName=yourflowname -Pdhf.myKey=myValue -Pdhf.myOtherKey=myOtherValue</pre>
+        </div>
+      </div>
+    </div>
+
+  <div>
+    <p>The following options become available:</p>
+    <div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="w">    </span><span class="p">{</span><span class="w">
+      </span><span class="s2">"myKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myValue"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"myOtherKey"</span><span class="p">:</span><span class="w"> </span><span class="s2">"myOtherValue"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span></code></pre></div>    </div>
+  </div>
+</dd>
+
+<dt>hubExportJobs</dt>
+<dd>Exports job records and their associated traces. This task does not affect the contents of the staging or final databases.
+
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-26" href="#tab1-26">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-26" href="#tab2-26">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-26">
+          <pre class="cmdline">./gradlew hubExportJobs -PjobIds=list-of-ids -Pfilename=export.zip</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-26">
+          <pre class="cmdline">gradlew.bat hubExportJobs -PjobIds=list-of-ids -Pfilename=export.zip</pre>
+        </div>
+      </div>
+    </div>
+
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>jobIds</strong></td>
+          <td>A comma-separated list of job IDs to export. Any traces associated with those jobs will be exported.</td>
+        </tr>
+        <tr>
+          <td><strong>filename</strong></td>
+          <td>The name of the zip file to generated, including the file extension. Default is <code class="highlighter-rouge">jobexport.zip</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</dd>
+
+<dt>hubDeleteJobs</dt>
+<dd>Deletes job records and their associated traces. This task does not affect the contents of the staging or final databases.
+
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-27" href="#tab1-27">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-27" href="#tab2-27">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-27">
+          <pre class="cmdline">./gradlew hubDeleteJobs -PjobIds=list-of-ids</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-27">
+          <pre class="cmdline">gradlew.bat hubDeleteJobs -PjobIds=list-of-ids</pre>
+        </div>
+      </div>
+    </div>
+
+  <div>
+    <table class="table-b1gray">
+      <thead>
+        <tr>
+          <th>Parameter</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>jobIds</strong></td>
+          <td>(Required) A comma-separated list of job IDs to delete.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</dd>
+
+<h2 id="uninstalling-your-marklogic-data-hub">Uninstalling Your MarkLogic Data Hub</h2>
+
+<dt>mlUndeploy</dt>
+<dd>Removes all components of your data hub from the MarkLogic server, including databases, application servers, forests, and users.
+      
+    
+    <div class="code-tabs">
+      <ul class="nav nav-tabs" role="tablist">
+        <li role="presentation" class="active">
+          <a role="tab" aria-controls="tab1-28" href="#tab1-28">Unix Systems</a>
+        </li>
+        <li role="presentation" class="">
+          <a role="tab" aria-controls="tab2-28" href="#tab2-28">Windows</a>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="tab1-28">
+          <pre class="cmdline">./gradlew mlUndeploy -Pconfirm=true</pre>
+        </div>
+        <div role="tabpanel" class="tab-pane" id="tab2-28">
+          <pre class="cmdline">gradlew.bat mlUndeploy -Pconfirm=true</pre>
+        </div>
+      </div>
+    </div>
+</dd>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+

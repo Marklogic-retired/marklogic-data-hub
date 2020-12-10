@@ -1,0 +1,778 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html itemscope itemtype="http://schema.org/Organization" id="ie6" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 7 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie7" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 8 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie8" class="ie ie-old" lang="en-US"><![endif]-->
+<!--[if IE 9 ]>   <html itemscope itemtype="http://schema.org/Organization" id="ie9" class="ie" lang="en-US"><![endif]-->
+<!--[if gt IE 9]><!--><html itemscope itemtype="http://schema.org/Organization" lang="en-US"><!--<![endif]-->
+<head>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <title>Release Notes for DHF 4.0.x - Data Hub Framework 4</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" sizes="16x16 24x24 32x32 48x48 64x64 96x96" href="/marklogic-data-hub/favicon.ico">
+    <meta name="application-name" content="Data Hub Framework 4 - A data hub framework for MarkLogic">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-6638631-15', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+
+    <!-- Facebook Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1879746318909687'); // Insert your pixel ID here.
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1879746318909687&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- DO NOT MODIFY -->
+    <!-- End Facebook Pixel Code -->
+    <link type="text/css" rel="stylesheet" href="/marklogic-data-hub/assets/bundle.css">
+</head>
+<body class="">
+
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/marklogic-data-hub">
+                  <span class="logo">
+                    <img src="/marklogic-data-hub/images/logo-marklogic.svg" width="150px" height="36px" alt="MarkLogic" title="MarkLogic" scale="0">
+                  </span>
+                  <span class="global-title">Data Hub Framework 4</span>
+                </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    
+                        <li  >
+                            
+                            <a href="https://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/docs/">DHF 4.x docs</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/learndhf/">Learn</a>
+                            
+                        </li>
+                    
+                        <li  >
+                            
+                            <a href="/marklogic-data-hub/contact/">Contact</a>
+                            
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+  <!-- <div class="bannered-image">
+  <picture>
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-xs.jpg" media="(max-width: 400px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-sm.jpg" media="(max-width: 800px)">
+    <source srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" media="(min-width: 801px)">
+    <img srcset="/marklogic-data-hub/images/Solution-enterprise-data-hub-lg.jpg" alt="Operational Data Hub" scale="0">
+  </picture>
+  <div class="banner banner-light banner-center text-center">
+    <div class="center-container">
+      <div class="centered-text">
+        <div class="col-sm-12 text-right text-center">
+          <img alt="dhf icon" src="/marklogic-data-hub/images/odh.svg" scale="0" class="icon-left">
+          <h3>
+          
+            Release Notes for DHF 4.0.x
+          
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+ -->
+
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="side-nav col-md-2 hide-small">
+          <div class="panel panel-default">
+  <!-- <div class="panel-heading">Navigation</div> -->
+  <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/">Data Hub Framework 4.x</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="http://docs.marklogic.com/datahub/">NEW! Data Hub 5.0 docs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/release-notes/">Release Notes</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub/releases/">Download</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/upgrade/">Upgrade</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/learndhf/">Learning DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tutorial/">QuickStart Tutorial</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://mlu.marklogic.com/ondemand/index.xqy?q=Concept%3A%22data%20hub%20framework%22">MarkLogic University</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/">Understanding DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/concepts/">DHF as an Operational Data Hub</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/entities/">Entities</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/flows/">Flows</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/plugins/">Plugins</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/understanding/envelope-pattern/">Envelope Pattern</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/">DHF Tools</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/quickstart/">DHF QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/tools/gradle-plugin/">DHF Gradle Plugin</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF Java Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/mlcp/">MarkLogic Content Pump</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client/">REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/javadoc/client/">Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/using/">Using DHF</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/">Create Project</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/project/flow-tracing/">Configure Flow Tracing</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/">Ingest</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/mlcp/">Using MLCP</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/ingest/marklogic-client-api/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/">Harmonize</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/quickstart/">Using QuickStart</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/gradle/">Using Gradle</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/rest/">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/java/">Using the Java Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/harmonize/mapping/">Using Model-to-Model Mapping</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/">Deploy</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/deploy/deploy-to-dhs/">Deploy to DHS</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/serve/">Serve</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/REST/client">Using the REST Client API</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/admin/odbc">Using ODBC</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://docs.marklogic.com/guide/java/DataServices">Using Java</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/govern/pii/">Protect PII</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/">References</a>
+    
+    
+      <ul class="list-group">
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/javadocs/">DHF API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/servers-databases/">Servers and Databases</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/project-structure/">Project Directory Structure</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/rest-extensions/">REST Extensions</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-properties/">DHF Gradle Properties</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/gradle-tasks/">DHF Gradle Tasks</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/server-side-library/">Server Side API Library</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/security/">Security</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/index-settings/">Index Settings</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/version-compatibility/">Version Compatibility</a>
+    
+    
+  </li>
+  
+</ul>
+
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/faqs/">FAQs</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="/marklogic-data-hub/refs/glossary/">DHF Glossary</a>
+    
+    
+  </li>
+  
+  <li  class="list-group-item"  >
+    
+    <a href="https://github.com/marklogic/marklogic-data-hub">DHF on GitHub</a>
+    
+    
+  </li>
+  
+</ul>
+
+</div>
+
+        </div>
+        <div class="col-md-10">
+          <h1 id="release-notes-for-dhf-40x">Release Notes for DHF 4.0.x</h1>
+
+<ul>
+  <li><a href="#new-features-in-dhf-4.0.0">New Features in DHF 4.0.0</a></li>
+  <li><a href="#changes-and-incompatibilities">Changes and Incompatibilities</a></li>
+</ul>
+
+<h2 id="new-features-in-dhf-400">New Features in DHF 4.0.0</h2>
+
+<ul>
+  <li><a href="#declarative-mapping-of-harmonization-flows">Declarative Mapping of Harmonization Flows</a></li>
+  <li><a href="#support-for-securing-personally-identifiable-information">Support for Securing Personally Identifiable Information</a></li>
+</ul>
+
+<h3 id="declarative-mapping-of-harmonization-flows">Declarative Mapping of Harmonization Flows</h3>
+
+<p>You can now generate harmonization flows from a declarative source-to-entity-model mapping called a <em>model-to-model mapping</em>. Use a model-to-model mapping to quickly and easily define how to harmonize source data to produce entity instances, without writing any code.</p>
+
+<p>DHF 4.0.0 also includes a new Mapping interface in QuickStart for defining model-to-model mappings.</p>
+
+<p>For details, see <a href="/marklogic-data-hub/tutorial/3x/mapping-product-entity/">Create a Model-to-Model Mapping for Product</a> in the DHF tutorial, and <a href="/marklogic-data-hub/harmonize/mapping">Using Model-to-Model Mapping</a>.</p>
+
+<h3 id="support-for-securing-personally-identifiable-information">Support for Securing Personally Identifiable Information</h3>
+
+<p>As of DHF 4.0.0, you can easily restrict access to Personally Identifiable Information (PII) in your harmonized instances by flagging PII properties in your entity model. DHF then generates MarkLogic Element Level Security configuration artifacts for controlling access to these properties.</p>
+
+<p>This feature requires MarkLogic 9.0-6 or later.</p>
+
+<p>For details, see <a href="/marklogic-data-hub/govern/pii">Managing Personally Identifiable Information (PII)</a>.</p>
+
+<h2 id="changes-and-incompatibilities">Changes and Incompatibilities</h2>
+
+<p>See the following topics for details on changes and incompatibilities in DHF:</p>
+
+<ul>
+  <li><a href="#dhf-400-changes-and-incompatibilities">DHF 4.0.0 Changes and Incompatibilities</a></li>
+  <li><a href="#dhf-401-changes-and-incompatibilities">DHF 4.0.1 Changes and Incompatibilities</a></li>
+</ul>
+
+<h3 id="dhf-400-changes-and-incompatibilities">DHF 4.0.0 Changes and Incompatibilities</h3>
+
+<p>Data Hub Framework 4.0.0 includes the following changes, some of which may introduce incompatibilities.</p>
+
+<ul>
+  <li><a href="#security-model-improvements">Security Model Improvements</a></li>
+  <li><a href="#ml-gradle-compatible-project-structure">ml-gradle Compatible Project Structure</a></li>
+  <li><a href="#new-dhf-core-server-side-module-paths">New DHF Core Server-Side Module Paths</a></li>
+  <li><a href="#traces-database-no-longer-used"><strong>TRACES</strong> database no longer used</a></li>
+  <li><a href="#independent-staging-and-final-app-server-stacks">Independent <strong>STAGING</strong> and <strong>FINAL</strong> App Server Stacks</a></li>
+</ul>
+
+<h4 id="security-model-improvements">Security Model Improvements</h4>
+<p>DHF 4.0.0 supports better separation of roles and responsibilities between development, deployment, and ingestion tasks. For more details, see the new security model documentation: <a href="/marklogic-data-hub/refs/security/">Security</a>.</p>
+
+<p>You do not have to make changes to your DHF project or data application in response to this change, but you may be able to improve the security of your project by taking advantage of the new configurable roles.</p>
+
+<h4 id="ml-gradle-compatible-project-structure">ml-gradle Compatible Project Structure</h4>
+
+<p>Projects created (or upgraded) using DHF 4.0.0 have a structure that is compatible with the <code class="highlighter-rouge">ml-gradle</code> default project structure. This change eliminates or relocates the following project directories:</p>
+
+<ul>
+  <li>YOUR_PROJECT/plugins/entities/YOUR_ENTITY/input/REST/</li>
+  <li>YOUR_PROJECT/plugins/entities/YOUR_ENTITY/harmonize/REST/</li>
+  <li>YOUR_PROJECT/user-config/</li>
+  <li>YOUR_PROJECT/entity-config/</li>
+</ul>
+
+<p>The content that was previously stored in these directories now belongs under  YOUR_PROJECT/src/main/, in accordance with the standard <code class="highlighter-rouge">ml-gradle</code> <a href="https://github.com/marklogic-community/ml-gradle/wiki/Project-layout">project structure</a>.</p>
+
+<p>When you upgrade an existing project to DHF 4.0.0, some project directories will be renamed with a “.old” suffix. You should migrate any customizations not addressed by the DHF upgrade process into YOUR_PROJECT/src/main/.</p>
+
+<p>As a general guideline:</p>
+<ul>
+  <li>Files that used to go in YOUR_PROJECT/user-config/ now belong in YOUR_PROJECT/src/main/ml-config.</li>
+  <li>Files that used to go in YOUR_PROJECT/entity-config/ now belong in YOUR_PROJECT/src/main/entity-config.</li>
+  <li>Customizations you may have made under YOUR_PROJECT/hub-internal-config are better kept in YOUR_PROJECT/src/main/ml-config.</li>
+</ul>
+
+<p>For more details, see <a href="/marklogic-data-hub/understanding/project-structure">Project Structure</a>. To learn more about <code class="highlighter-rouge">ml-gradle</code>, see the <a href="https://github.com/marklogic-community/ml-gradle/wiki">ml-gradle wiki</a> on GitHub.</p>
+
+<h4 id="new-dhf-core-server-side-module-paths">New DHF Core Server-Side Module Paths</h4>
+
+<p>Data Hub Framework includes a core set of library modules that get deployed to a modules database. The URIs of these modules have changed, so any code that imports these modules must be updated.</p>
+
+<p>The Data Hub Framework core modules are now installed with a URI prefix of the following form:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/data-hub/majorVersion/
+</code></pre></div></div>
+<p>For example, for DHF 4.0.0, the modules are installed with the URI prefix <code class="highlighter-rouge">/data-hub/4/</code>.</p>
+
+<p>Older versions of DHF used the following URI prefix:</p>
+
+<ul>
+  <li>DHF 2.0.4: <code class="highlighter-rouge">/com.marklogic.hub/modulename/</code></li>
+  <li>DHF 3.0.0: <code class="highlighter-rouge">/MarkLogic/data-hub-framework/modulename/</code></li>
+</ul>
+
+<p>When you upgrade your DHF project using the <code class="highlighter-rouge">hubUpdate</code> ml-gradle task, the upgrade attempts to fix the module paths for you, but it cannot update custom modules or heavily modified code. You are responsible for updating the DHF module paths in XQuery <code class="highlighter-rouge">import</code> and JavaScript <code class="highlighter-rouge">require</code> statements in any such code.</p>
+
+<h4 id="traces-database-no-longer-used"><strong>TRACES</strong> Database No Longer Used</h4>
+<p>The <strong>TRACES</strong> database is no longer used by Data Hub Framework. As of version 4.0.0, Data Hub Framework records trace data in the <strong>JOBS</strong> database.</p>
+
+<p>Upgrading does not affect any existing <strong>TRACES</strong> database. However, DHF will not store any future traces in your existing <strong>TRACES</strong> database.</p>
+
+<h4 id="independent-staging-and-final-app-server-stacks">Independent <strong>STAGING</strong> and <strong>FINAL</strong> App Server Stacks</h4>
+
+<p>As of DHF 4.0.0, the <strong>STAGING</strong> and <strong>FINAL</strong> final App Servers each have their own content, schemas, and triggers databases. In previous versions, the <strong>STAGING</strong> and <strong>FINAL</strong> application servers shared the same modules, triggers, and schemas databases. This change introduces several new gradle properties.</p>
+
+<p>You do not need to make changes to your project to accommodate this change unless your hub databases and App Servers use a prefix other than “data-hub”. For example, if your <strong>STAGING</strong> database is not named “data-hub-STAGING”, then see <a href="/marklogic-data-hub/upgrade/upgrade-to-4_0_x/#upgrading-a-project-with-a-custom-hub-name">Upgrading a Project with a Custom Hub Name</a>.</p>
+
+<p><strong>NOTE</strong>: DHF 4.0.0 projects have separate modules databases for <strong>STAGING</strong> and <strong>FINAL</strong>. As of DHF 4.0.1, <strong>STAGING</strong> and <strong>FINAL</strong> share a single modules database. For details, see <a href="#shared-modules-database-for-staging-and-final-environments">Shared Modules Database for Staging and Final Environments</a>.</p>
+
+<p>See also <a href="/marklogic-data-hub/refs/servers-databases">Servers and Databases</a>.</p>
+
+<h3 id="dhf-401-changes-and-incompatibilities">DHF 4.0.1 Changes and Incompatibilities</h3>
+
+<p>DHF 4.0.1 introduces no incompatibilities with DHF 4.0.1. However, you should be aware of the following changes:</p>
+
+<ul>
+  <li><a href="#shared-modules-database-for-staging-and-final-environments">Shared Modules Database for Staging and Final Environments</a></li>
+</ul>
+
+<h4 id="shared-modules-database-for-staging-and-final-environments">Shared Modules Database for Staging and Final Environments</h4>
+
+<p>Projects created using DHF 4.0.0 are configured by default to provision one modules database for the <strong>STAGING</strong> App Server and another for the <strong>FINAL</strong> App Server. Projects created using DHF 4.0.1 and later share a modules database across the <strong>STAGING</strong> and <strong>FINAL</strong> App Servers.</p>
+
+<p>The name of the gradle property that controls the modules database name has changed between DHF 4.0.0 and DHF 4.0.1. The new property name is <code class="highlighter-rouge">mlModulesDbName</code>. This is the same name used by DHF 2.x and DHF 3.x.</p>
+
+<p>You do not need to modify your existing projects in response to this change, but any new projects you create will use this configuration.</p>
+
+<p>If you plan to deploy your data hub application to a MarkLogic Data Hub Service cluster, you must use a shared modules database. For more details, see https://www.marklogic.com/product/marklogic-database-overview/data-hub-service/.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>
+                    Copyright © 2016-2020 MarkLogic Corporation. All Rights Reserved. MARKLOGIC® is a registered trademark of MarkLogic Corporation.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!--[if lt IE 9]>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.2/html5shiv.min.js"></script>
+        <script src="/marklogic-data-hub/js/respond.min.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="/marklogic-data-hub/assets/bundle.js" id="1"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-79716597-1', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
+
