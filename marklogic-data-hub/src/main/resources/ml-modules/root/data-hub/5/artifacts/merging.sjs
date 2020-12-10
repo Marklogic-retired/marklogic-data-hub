@@ -54,8 +54,12 @@ function getDirectory() {
 }
 
 function getArtifactNode(artifactName, artifactVersion) {
-    const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.jsonPropertyValueQuery('name', artifactName)]));
-    return fn.head(results);
+  const results = cts.search(cts.andQuery([cts.collectionQuery(collections[0]), cts.documentQuery(getArtifactUri(artifactName))]));
+  return fn.head(results);
+}
+
+function getArtifactUri(artifactName){
+  return getDirectory().concat(artifactName).concat(getFileExtension());
 }
 
 function validateArtifact(artifact) {

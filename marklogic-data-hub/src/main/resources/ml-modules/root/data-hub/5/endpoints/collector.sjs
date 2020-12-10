@@ -51,7 +51,7 @@ if (!stepDoc) {
   httpUtils.throwNotFoundWithArray(["Not Found", `The step number "${step}" of the flow was not found`]);
 }
 
-let stepDefinition = datahub.flow.step.getStepByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
+let stepDefinition = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepDoc.stepDefinitionName, stepDoc.stepDefinitionType);
 if (!stepDefinition) {
   httpUtils.throwNotFoundWithArray(["Not Found", `A step with name "${stepDoc.stepDefinitionName}" and type of "${stepDoc.stepDefinitionType}" was not found`]);
 }
