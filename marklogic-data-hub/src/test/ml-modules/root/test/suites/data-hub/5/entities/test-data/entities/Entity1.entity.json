@@ -1,0 +1,36 @@
+{
+  "info": {
+    "title": "Entity1",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Entity1": {
+      "tdeGenerationDisabled": false,
+      "properties": {
+        "prop1": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/StructuredProp1"
+          }
+        }
+      }
+    },
+    "StructuredProp1": {
+      "tdeGenerationDisabled": true,
+      "properties": {
+        "prop1": {
+          "$ref": "#/definitions/StructuredProp2"
+        }
+      }
+    },
+    "StructuredProp2": {
+      "properties": {
+        "prop1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
