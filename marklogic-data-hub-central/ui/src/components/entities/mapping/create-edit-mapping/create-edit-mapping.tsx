@@ -4,7 +4,6 @@ import styles from "./create-edit-mapping.module.scss";
 import {NewMapTooltips} from "../../../../config/tooltips.config";
 import {UserContext} from "../../../../util/user-context";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
-import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 import axios from "axios";
 
 interface Props {
@@ -20,9 +19,11 @@ interface Props {
   targetEntityType: any;
   sourceDatabase: any;
   currentTab: string;
-  setIsValid?: any;
-  resetTabs?: any;
-  setHasChanged?: any;
+  setIsValid: any;
+  resetTabs: any;
+  setHasChanged: any;
+  setPayload: any;
+  onCancel: any;
 }
 
 const CreateEditMapping: React.FC<Props> = (props) => {
@@ -48,9 +49,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   const [isNameDuplicate, setIsNameDuplicate] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
-  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
   const [changed, setChanged] = useState(false);
 
   const initStep = () => {
@@ -113,23 +112,14 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   }, [props.stepData]);
 
   const onCancel = () => {
-    if (hasFormChanged()) {
-      setDiscardChangesVisible(true);
-    } else {
-      props.setOpenStepSettings(false);
-      props.resetTabs();
-    }
+    // Parent checks changes across tabs
+    props.onCancel();
   };
 
-  useEffect(() => {
-    if (props.currentTab !== props.tabKey && hasFormChanged()) {
-      setSaveChangesVisible(true);
-    }
-  }, [props.currentTab]);
-
-  // On change of any form field, update the changed flag for parent
+  // On change of any form field, update the changed flag and payload for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
+    props.setPayload(getPayload());
     setChanged(false);
   }, [changed]);
 
@@ -145,43 +135,6 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       return true;
     }
   };
-
-  const discardOk = () => {
-    props.setOpenStepSettings(false);
-    setDiscardChangesVisible(false);
-  };
-
-  const discardCancel = () => {
-    setMapNameTouched(false);
-    setCollectionsTouched(false);
-    setSrcQueryTouched(false);
-
-    setDiscardChangesVisible(false);
-  };
-
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
-
-  const saveOk = () => {
-    props.createMappingArtifact(getPayload());
-    setSaveChangesVisible(false);
-  };
-
-  const saveCancel = () => {
-    setSaveChangesVisible(false);
-    initStep();
-  };
-
-  const saveChanges = <ConfirmYesNo
-    visible={saveChangesVisible}
-    type="saveChanges"
-    onYes={saveOk}
-    onNo={saveCancel}
-  />;
 
   const getPayload = () => {
     let result;
@@ -288,6 +241,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         setIsValid(false);
       }
     }
+    setChanged(true);
   };
 
   const handleChange = (event) => {
@@ -560,8 +514,6 @@ const CreateEditMapping: React.FC<Props> = (props) => {
           </div>
         </Form.Item>
       </Form>
-      {discardChanges}
-      {saveChanges}
     </div>
   );
 };

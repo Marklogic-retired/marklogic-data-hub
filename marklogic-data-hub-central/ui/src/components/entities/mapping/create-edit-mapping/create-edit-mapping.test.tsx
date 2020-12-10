@@ -190,37 +190,6 @@ describe("Create/Edit Mapping Step artifact component", () => {
     expect(getByText("Name is required")).toBeInTheDocument();
   });
 
-  test("Verify New Mapping Step modal closes when Cancel is clicked", () => {
-    const {getByText, rerender} = render(<CreateEditMapping {...data.newMap} />);
-
-    fireEvent.click(getByText("Cancel"));
-    //setting newMap to false to close the modal
-    rerender(<CreateEditMapping {...data.newMap} openStepSettings={false}/>);
-    //queryByText returns null and getByText throws an error. So we use queryByText to verify element not present scenarios
-  });
-
-  test("Verify delete dialog modal when Cancel is clicked", async () => {
-    const {getByLabelText, getByText} = render(<CreateEditMapping {...data.newMap} />);
-    fireEvent.click(getByLabelText("Query"));
-
-    fireEvent.click(getByText("Cancel"));
-    await wait(() =>
-      expect(getByLabelText("confirm-body")).toBeInTheDocument(),
-    );
-    // Cancel discarding changes
-    fireEvent.click(getByLabelText(`No`));
-    expect(data.newMap.setOpenStepSettings).toHaveBeenCalledTimes(0);
-
-    fireEvent.click(getByText("Cancel"));
-    await wait(() =>
-      expect(getByLabelText("confirm-body")).toBeInTheDocument(),
-    );
-    // Discard changes
-    fireEvent.click(getByLabelText(`Yes`));
-    expect(data.newMap.setOpenStepSettings).toHaveBeenCalledTimes(1);
-
-  });
-
   test("Verify Edit Mapping Step dialog renders correctly", () => {
     const {getByText, getByPlaceholderText, getByLabelText} = render(
       <CreateEditMapping {...data.editMap} />

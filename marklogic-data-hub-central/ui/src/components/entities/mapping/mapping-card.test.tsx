@@ -161,7 +161,7 @@ describe("Mapping Card component", () => {
   test("Open step settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["writeMapping", "readMapping"]);
-    const {debug, getByText, getByLabelText, getByTestId, queryByText, getByPlaceholderText} = render(
+    const {debug, getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard
         {...mappingProps}
         canReadWrite={true}
@@ -212,9 +212,8 @@ describe("Mapping Card component", () => {
     expect(getByText("Processors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByLabelText("Close"));
     await wait(() => {
-      expect(queryByText("Mapping Step Settings")).not.toBeInTheDocument();
+      fireEvent.click(getByLabelText("Close"));
     });
 
   });

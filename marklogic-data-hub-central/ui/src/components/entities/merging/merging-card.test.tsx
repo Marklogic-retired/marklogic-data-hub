@@ -46,7 +46,7 @@ describe("Merging cards view component", () => {
     const deleteMergingArtifact = jest.fn(() => {});
     const {getByText, getByLabelText, getByTestId, queryAllByRole} =  render(
       <Router>
-        <MergingCard 
+        <MergingCard
           {...defaultProps}
           deleteMergingArtifact={deleteMergingArtifact}
         />

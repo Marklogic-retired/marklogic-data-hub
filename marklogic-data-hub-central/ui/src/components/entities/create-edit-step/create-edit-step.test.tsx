@@ -1,6 +1,5 @@
 import React from "react";
-import {render, fireEvent, cleanup, wait, screen} from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import CreateEditStep from "./create-edit-step";
 import data from "../../../assets/mock-data/curation/create-edit-step-props";
 import axiosMock from "axios";
@@ -201,29 +200,6 @@ describe("Create Edit Step Dialog component", () => {
 
     fireEvent.click(saveButton);
     expect(saveButton.onclick).toHaveBeenCalled();
-
-  });
-
-  test("Verify discard changes modal when Cancel is clicked", async () => {
-    const {getByLabelText, getByText} = render(<CreateEditStep {...data.newMerging} />);
-    // Add change to form
-    userEvent.click(getByLabelText("Query"));
-
-    userEvent.click(getByText("Cancel"));
-    await wait(() =>
-      expect(screen.getByLabelText("confirm-body")).toBeInTheDocument(),
-    );
-    // Cancel discarding changes
-    userEvent.click(screen.getByLabelText(`No`));
-    expect(data.newMerging.setOpenStepSettings).toHaveBeenCalledTimes(0);
-
-    userEvent.click(getByText("Cancel"));
-    await wait(() =>
-      expect(screen.getByLabelText("confirm-body")).toBeInTheDocument(),
-    );
-    // Discard changes
-    userEvent.click(screen.getByLabelText(`Yes`));
-    expect(data.newMerging.setOpenStepSettings).toHaveBeenCalledTimes(1);
 
   });
 

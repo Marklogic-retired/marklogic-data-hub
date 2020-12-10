@@ -12,6 +12,8 @@ const advancedLoad = {
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
 };
 
 // Passed as prop
@@ -28,6 +30,8 @@ const advancedMapping = {
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
 };
 
 // Passed as prop
@@ -45,7 +49,9 @@ const advancedMatching = {
   currentTab: "2",
   setIsValid: true,
   resetTabs: jest.fn(),
-  setHasChanged: jest.fn()
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
 };
 
 const advancedMerging = {
@@ -62,7 +68,9 @@ const advancedMerging = {
   currentTab: "2",
   setIsValid: true,
   resetTabs: jest.fn(),
-  setHasChanged: jest.fn()
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
 };
 
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad

@@ -56,6 +56,7 @@ describe("Default ingestion ", () => {
     loadPage.stepNameInput().should("be.disabled");
     loadPage.stepDescriptionInput().clear().type("UPDATE");
     loadPage.saveButton().click();
+    cy.waitForAsyncRequest();
     cy.findByText("UPDATE").should("be.visible");
 
     //Verify Advanced Settings
@@ -71,6 +72,7 @@ describe("Default ingestion ", () => {
     //Verify JSON error
     cy.get("#headers").clear().type("{").tab();
     loadPage.jsonValidateError().should("be.visible");
+    cy.findByTestId(`${stepName}-save-settings`).should("be.disabled"); // Errors disable save button
     loadPage.setHeaderContent("loadTile/headerContent");
     //Verify JSON error
     cy.findByText("Processors").click();
@@ -87,7 +89,34 @@ describe("Default ingestion ", () => {
     loadPage.cancelSettings(stepName).click();
     loadPage.confirmationOptions("No").click();
     loadPage.saveSettings(stepName).click();
+    cy.waitForAsyncRequest();
     loadPage.stepName(stepName).should("be.visible");
+
+    // Open settings, change setting, switch tabs, save
+    loadPage.stepName(stepName).click();
+    loadPage.stepDescriptionInput().clear().type("UPDATE2");
+    loadPage.switchEditAdvanced().click();
+    loadPage.saveSettings(stepName).click();
+    cy.waitForAsyncRequest();
+
+    // Verify that change was saved
+    loadPage.stepName(stepName).click();
+    loadPage.stepDescription("UPDATE2").should("be.visible");
+    loadPage.cancelButton().click();
+
+    // Open settings, change setting, switch tabs, cancel, discard changes
+    loadPage.stepName(stepName).click();
+    loadPage.stepDescriptionInput().clear().type("DISCARD");
+    loadPage.switchEditAdvanced().click();
+    cy.findByTestId(`${stepName}-cancel-settings`).click();
+    cy.findByText("Discard changes?").should("be.visible");
+    loadPage.confirmationOptions("Yes").click();
+
+    // Verify that change was NOT saved.
+    loadPage.stepName(stepName).click();
+    loadPage.stepDescription("UPDATE2").should("be.visible");
+    loadPage.stepDescription("DISCARD").should("not.be.visible");
+    loadPage.cancelButton().click();
 
     //Cancel Add to New Flow
     loadPage.addStepToNewFlowListView(stepName);

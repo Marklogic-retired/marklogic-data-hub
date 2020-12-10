@@ -4,10 +4,9 @@ import {Form, Input, Icon, Select} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
-import {createStep, getStep} from "../../api/steps";
+import {getStep} from "../../api/steps";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import "./advanced-settings.scss";
-import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import AdvancedTargetCollections from "./advanced-target-collections";
 
 const {TextArea} = Input;
@@ -23,9 +22,12 @@ type Props = {
   activityType: any;
   canWrite: boolean;
   currentTab: string;
-  setIsValid?: any;
-  resetTabs?: any;
-  setHasChanged?: any;
+  setIsValid: any;
+  resetTabs: any;
+  setHasChanged: any;
+  setPayload: any;
+  createStep: any;
+  onCancel: any;
 }
 
 const AdvancedSettings: React.FC<Props> = (props) => {
@@ -98,9 +100,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [customHookValid, setCustomHookValid] = useState(true);
   const [additionalSettings, setAdditionalSettings] = useState("");
 
-  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
-  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [changed, setChanged] = useState(false);
 
   const canReadWrite = props.canWrite;
@@ -151,7 +150,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setCustomHookValid(true);
       setTargetPermissionsValid(true);
     };
-  }, [props.openStepSettings, loading]);
+  }, [props.openStepSettings]);
 
   const isFormValid = () => {
     return headersValid && processorsValid && customHookValid && targetPermissionsValid;
@@ -179,19 +178,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const createSettings = async (settingsObj) => {
+  const createSettings = (settingsObj) => {
+    // Parent handles saving of all tabs
     if (props.stepData.name) {
-      try {
-        setLoading(true);
-        let response = await createStep(props.stepData.name, stepType, settingsObj);
-        if (response.status === 200) {
-          setLoading(false);
-        }
-      } catch (error) {
-        let message = error.response.data.message;
-        console.error("Error while creating the step", message);
-        setLoading(false);
-      }
+      props.createStep(settingsObj);
     }
   };
 
@@ -263,24 +253,15 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const onCancel = () => {
-    if (hasFormChanged()) {
-      setDiscardChangesVisible(true);
-    } else {
-      props.setOpenStepSettings(false);
-      props.resetTabs();
-    }
+    // Parent handles checking changes across tabs
+    props.onCancel();
   };
-
-  useEffect(() => {
-    if (props.currentTab !== props.tabKey && hasFormChanged()) {
-      setSaveChangesVisible(true);
-    }
-  }, [props.currentTab]);
 
   // On change of any form field, update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     setChanged(false);
+    props.setPayload(getPayload());
   }, [changed]);
 
   //Check if Delete Confirmation dialog should be opened or not.
@@ -303,42 +284,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       return true;
     }
   };
-
-  const discardOk = () => {
-    props.setOpenStepSettings(false);
-    props.resetTabs();
-    props.setIsValid(true);
-    setDiscardChangesVisible(false);
-  };
-
-  const discardCancel = () => {
-    setDiscardChangesVisible(false);
-  };
-
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
-
-  const saveOk = () => {
-    createSettings(getPayload());
-    props.updateLoadArtifact(getPayload());
-    setSaveChangesVisible(false);
-  };
-
-  const saveCancel = () => {
-    setSaveChangesVisible(false);
-    getSettings();
-    initStep();
-  };
-  const saveChanges = <ConfirmYesNo
-    visible={saveChangesVisible}
-    type="saveChanges"
-    onYes={saveOk}
-    onNo={saveCancel}
-  />;
 
   const getPayload = () => {
     return {
@@ -519,6 +464,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setAdvancedTargetCollectionsTouched(true);
       setTargetCollections(value);
     }
+    setChanged(true);
   };
 
   const handleTargetFormat = (value) => {
@@ -900,8 +846,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
           </div>
         </Form.Item>
       </Form>
-      {discardChanges}
-      {saveChanges}
     </div>
   );
 

@@ -19,9 +19,9 @@ class LoadPage {
     return cy.findByText(stepName);
   }
 
-  // stepDescription(stepName: string) {
-  //
-  // }
+  stepDescription(stepDesc: string) {
+    return cy.findByText(stepDesc);
+  }
   //
   // stepSourceFormat(stepName: string) {
   //

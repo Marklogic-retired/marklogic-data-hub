@@ -38,11 +38,15 @@ const DEFAULT_TAB = "1";
 const Steps: React.FC<Props> = (props) => {
   const [currentTab, setCurrentTab] = useState(DEFAULT_TAB);
   const [isValid, setIsValid] = useState(true);
-  const [hasChanged, setHasChanged] = useState(false);
+  const [hasBasicChanged, setHasBasicChanged] = useState(false);
+  const [hasAdvancedChanged, setHasAdvancedChanged] = useState(false);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
+  const [basicPayload, setBasicPayload] = useState({});
+  const [advancedPayload, setAdvancedPayload] = useState({});
+
   const onCancel = () => {
-    if (hasChanged) {
+    if (hasBasicChanged || hasAdvancedChanged) {
       setDiscardChangesVisible(true);
     } else {
       props.setOpenStepSettings(false);
@@ -55,6 +59,8 @@ const Steps: React.FC<Props> = (props) => {
     props.setOpenStepSettings(false);
     resetTabs();
     setIsValid(true);
+    setHasBasicChanged(false);
+    setHasAdvancedChanged(false);
   };
 
   const discardCancel = () => {
@@ -73,8 +79,15 @@ const Steps: React.FC<Props> = (props) => {
   };
 
   const handleTabChange = (key) => {
-    setHasChanged(false);
     setCurrentTab(key);
+  };
+
+  const createStep = async (payload) => {
+    // Save payloads from both tabs, ensure name property is set
+    let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
+    await props.createStep(Object.assign(basicPayload, advancedPayload, {name: name}));
+    setHasBasicChanged(false);
+    setHasAdvancedChanged(false);
   };
 
   const createEditDefaults = {
@@ -86,20 +99,22 @@ const Steps: React.FC<Props> = (props) => {
     currentTab: currentTab,
     setIsValid: setIsValid,
     resetTabs: resetTabs,
-    setHasChanged: setHasChanged
+    setHasChanged: setHasBasicChanged,
+    setPayload: setBasicPayload,
+    onCancel: onCancel
   };
 
   const createEditLoad = (<CreateEditLoad
     {...createEditDefaults}
     isEditing={props.isEditing}
-    createLoadArtifact={props.createStep}
+    createLoadArtifact={createStep}
     stepData={props.stepData}
   />);
 
   const createEditMapping = (<CreateEditMapping
     {...createEditDefaults}
     isEditing={props.isEditing}
-    createMappingArtifact={props.createStep}
+    createMappingArtifact={createStep}
     stepData={props.stepData}
     openStepDetails= {props.openStepDetails}
     targetEntityType={props.targetEntityType}
@@ -112,7 +127,7 @@ const Steps: React.FC<Props> = (props) => {
     editStepArtifactObject={props.stepData}
     stepType={StepType.Matching}
     targetEntityType={props.targetEntityType}
-    createStepArtifact={props.createStep}
+    createStepArtifact={createStep}
   />);
 
   const createEditMerging = (<CreateEditStep
@@ -121,7 +136,7 @@ const Steps: React.FC<Props> = (props) => {
     editStepArtifactObject={props.stepData}
     stepType={StepType.Merging}
     targetEntityType={props.targetEntityType}
-    createStepArtifact={props.createStep}
+    createStepArtifact={createStep}
   />);
 
   const viewCustom = (<ViewCustom
@@ -199,7 +214,10 @@ const Steps: React.FC<Props> = (props) => {
                 currentTab={currentTab}
                 setIsValid={setIsValid}
                 resetTabs={resetTabs}
-                setHasChanged={setHasChanged}
+                setHasChanged={setHasAdvancedChanged}
+                setPayload={setAdvancedPayload}
+                createStep={createStep}
+                onCancel={onCancel}
               />
             </TabPane>
           </Tabs>

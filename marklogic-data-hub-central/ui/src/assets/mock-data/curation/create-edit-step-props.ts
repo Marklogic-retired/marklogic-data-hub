@@ -18,6 +18,8 @@ const newMerging = {
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 const editMerging = {
@@ -37,6 +39,8 @@ const editMerging = {
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
   setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 const data = {

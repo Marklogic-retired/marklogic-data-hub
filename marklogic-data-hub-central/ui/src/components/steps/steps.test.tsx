@@ -22,7 +22,7 @@ describe("Steps settings component", () => {
   const stepLoad = data.stepLoad.data;
   const stepMapping = data.stepMapping.data;
   const stepMatching = data.stepMatching.data;
-  //const stepMerging = data.stepMerging.data;
+  const stepMerging = data.stepMerging.data;
   const stepCustom = {...data.stepLoad.data, stepDefinitionName: "custom-ingestion", name: "CustomLoad"};
 
   const stepsProps = {
@@ -41,8 +41,8 @@ describe("Steps settings component", () => {
     openStepDetails: jest.fn()
   };
 
-  test("Verify rendering of Load step, tab switching, save changes confirmation on tab change", async () => {
-    const {baseElement, getByText, getByLabelText, getByPlaceholderText} = render(
+  test("Verify rendering of Load step, tab switching, discard dialog on cancel, saving", async () => {
+    const {baseElement, getByText, getByLabelText, getAllByLabelText, getByPlaceholderText} = render(
       <Steps {...stepsProps} activityType="ingestion" stepData={stepLoad} />
     );
 
@@ -64,13 +64,22 @@ describe("Steps settings component", () => {
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
     // Other Advanced settings details tested in advanced-settings.test.tsx
 
-    // Change form content, switch tabs, verify save confirm dialog
+    // Change form content
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-common,read"}});
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read");
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
 
-    fireEvent.click(getByText("Basic"));
-    expect(getByText("Save changes?")).toBeInTheDocument();
+    // Switch to Basic tab and cancel
+    await wait(() => {
+      fireEvent.click(getByText("Basic"));
+    });
+    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+
+    fireEvent.click(getAllByLabelText("Cancel")[0]);
+
+    // Verify discard dialog
+    expect(getByText("Discard changes?")).toBeInTheDocument();
     expect(getByText("Yes")).toBeInTheDocument();
     expect(getByText("No")).toBeInTheDocument();
 
@@ -84,9 +93,18 @@ describe("Steps settings component", () => {
     fireEvent.click(yesButton);
     expect(yesButton.onclick).toHaveBeenCalledTimes(1);
 
+    // Save
+    await wait(() => {
+      fireEvent.click(getAllByLabelText("Save")[0]);
+    });
+    const saveButton = getAllByLabelText("Save")[0];
+    saveButton.onclick = jest.fn();
+    fireEvent.click(saveButton);
+    expect(saveButton.onclick).toHaveBeenCalledTimes(1);
+
   });
 
-  test.only("Verify rendering of Mapping step, tab disabling on form error, discard changes dialog on close", async () => {
+  test("Verify rendering of Mapping step, tab disabling on form error, discard changes dialog on close", async () => {
     const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
       <Steps {...stepsProps} activityType="mapping" stepData={stepMapping} />
     );
@@ -154,15 +172,14 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
   });
 
-  // TODO add test for merging
-  // test('Verify rendering of Merging step', async () => {
-  //     const { getByText, getByLabelText } = render(
-  //         <Steps {...stepsProps} activityType='merging' stepData={stepMerging} />
-  //     );
+  test("Verify rendering of Merging step", async () => {
+    const {getByText, getByLabelText} = render(
+      <Steps {...stepsProps} activityType="merging" stepData={stepMerging} />
+    );
 
-  //     expect(getByText('Merging Step Settings')).toBeInTheDocument();
-  //     expect(getByLabelText('Close')).toBeInTheDocument();
-  // });
+    expect(getByText("Merging Step Settings")).toBeInTheDocument();
+    expect(getByLabelText("Close")).toBeInTheDocument();
+  });
 
   test("Verify rendering of Custom step", async () => {
     const {getByText, getByLabelText} = render(

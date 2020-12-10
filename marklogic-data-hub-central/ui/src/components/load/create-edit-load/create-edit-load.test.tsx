@@ -19,7 +19,9 @@ describe("New/edit load step configuration", () => {
     currentTab: "1",
     setIsValid: () => {},
     resetTabs: () => {},
-    setHasChanged: () => {}
+    setHasChanged: () => {},
+    setPayload: () => {},
+    onCancel: () => {}
   };
 
   test("fields non-Delimited Text render", async () => {
@@ -102,7 +104,7 @@ describe("New/edit load step configuration", () => {
 
   test("Verify name is required for form submission and error messaging appears", async () => {
     const {queryByText, getByText, getByPlaceholderText} =
-    render(<BrowserRouter><CreateEditLoad {...loadProps} /></BrowserRouter>);
+    render(<BrowserRouter><CreateEditLoad {...loadProps} isEditing={false} /></BrowserRouter>);
     const nameInput = getByPlaceholderText("Enter name");
 
 

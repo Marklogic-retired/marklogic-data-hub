@@ -3,7 +3,6 @@ import {Form, Input, Icon, Select} from "antd";
 import styles from "./create-edit-load.module.scss";
 import {srcOptions, tgtOptions, fieldSeparatorOptions} from "../../../config/formats.config";
 import {NewLoadTooltips} from "../../../config/tooltips.config";
-import ConfirmYesNo from "../../common/confirm-yes-no/confirm-yes-no";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 
 interface Props {
@@ -13,16 +12,18 @@ interface Props {
   isEditing: boolean;
   canReadWrite: boolean;
   canReadOnly: boolean;
-  createLoadArtifact
+  createLoadArtifact: any;
   stepData: any;
   currentTab: string;
-  setIsValid?: any;
-  resetTabs?: any;
-  setHasChanged?: any;
+  setIsValid: any;
+  resetTabs: any;
+  setHasChanged: any;
+  setPayload: any;
+  onCancel: any;
 }
 
 const CreateEditLoad: React.FC<Props> = (props) => {
-  const [stepName, setStepName] = useState("");
+  const [stepName, setStepName] = useState(props.stepData && props.stepData !== {} ? props.stepData.name : "");
   const [description, setDescription] = useState(props.stepData && props.stepData !== {} ? props.stepData.description : "");
   const [srcFormat, setSrcFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.sourceFormat : "json");
   const [tgtFormat, setTgtFormat] = useState(props.stepData && props.stepData !== {} ? props.stepData.targetFormat : "json");
@@ -34,9 +35,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
 
   const [isStepNameTouched, setStepNameTouched] = useState(false);
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
   const [changed, setChanged] = useState(false);
 
   const initStep = () => {
@@ -92,26 +91,18 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   }, [props.stepData, props.isEditing]);
 
   const onCancel = () => {
-    if (hasFormChanged()) {
-      setDiscardChangesVisible(true);
-    } else {
-      props.setOpenStepSettings(false);
-      props.resetTabs();
-    }
+    // Parent checks changes across tabs
+    props.onCancel();
   };
 
-  useEffect(() => {
-    if (props.currentTab !== props.tabKey && hasFormChanged()) {
-      setSaveChangesVisible(true);
-    }
-  }, [props.currentTab]);
-
-  // On change of any form field, update the changed flag for parent
+  // On change of any form field, update the changed flag and payload for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
+    props.setPayload(getPayload());
     setChanged(false);
   }, [changed]);
 
+  // TODO update hasFormChanged() pattern to match other create-edit-* components
   const hasFormChanged = () => {
     const step = props.stepData;
     // Edit
@@ -140,39 +131,6 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       } else return true;
     }
   };
-
-  const discardOk = () => {
-    props.setOpenStepSettings(false);
-    setDiscardChangesVisible(false);
-  };
-
-  const discardCancel = () => {
-    setDiscardChangesVisible(false);
-  };
-
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
-
-  const saveOk = () => {
-    props.createLoadArtifact(getPayload());
-    setSaveChangesVisible(false);
-  };
-
-  const saveCancel = () => {
-    setSaveChangesVisible(false);
-    initStep();
-  };
-
-  const saveChanges = <ConfirmYesNo
-    visible={saveChangesVisible}
-    type="saveChanges"
-    onYes={saveOk}
-    onNo={saveCancel}
-  />;
 
   const getPayload = () => {
     let result;
@@ -488,8 +446,6 @@ const CreateEditLoad: React.FC<Props> = (props) => {
           </div>
         </Form.Item>
       </Form>
-      {discardChanges}
-      {saveChanges}
     </div>
   );
 };
