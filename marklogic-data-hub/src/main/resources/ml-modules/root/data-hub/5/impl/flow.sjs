@@ -540,7 +540,10 @@ class Flow {
         // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
         if (content.provenance !== false) {
           let provResult;
-          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance) {
+          if (prov.granularityLevel() === prov.FINE_LEVEL && flowStep.stepDefinitionName === "entity-services-mapping") {
+            xdmp.trace(this.datahub.consts.TRACE_RUN_STEP, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. So, coarse grained provenance data will be generated.`);
+          }
+          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance && flowStep.stepDefinitionName !== "entity-services-mapping") {
             provResult = this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info);
           } else {
             provResult = prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);

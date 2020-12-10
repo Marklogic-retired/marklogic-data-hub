@@ -8,16 +8,13 @@ import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.EntitySearchService;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.FlowRunner;
-import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.step.RunStepResponse;
 import com.marklogic.hub.test.Customer;
 import com.marklogic.hub.test.ReferenceModelProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
-
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -99,8 +96,12 @@ public class GetRecordTest extends AbstractHubCoreTest {
         FlowInputs inputs = new FlowInputs("inline");
         inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
         FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
-        flowRunner.runFlow(inputs);
+        RunFlowResponse flowResponse = flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
+
+        RunStepResponse mappingStepResponse = flowResponse.getStepResponses().get("2");
+        assertEquals(true, mappingStepResponse.isSuccess());
+        assertNull( mappingStepResponse.getStepOutput());
 
         ObjectNode response = (ObjectNode) service.getRecord("/customers/customer1.json");
         ArrayNode history = (ArrayNode) response.get("history");
