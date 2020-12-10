@@ -132,8 +132,14 @@ return (
       }, map:entry("database", xdmp:schema-database())
     ),
 
+  (: Check if TDE generation is disabled. Any value other than false or "false" disables TDE generation. :)
+  let $definitions := $entity-def-map => map:get("definitions")
+  let $primary-type-def := $definitions => map:get(map:keys($definitions)[1])
+  let $tdes-disabled := map:contains($primary-type-def, "tdeGenerationDisabled") and
+    not(xs:string(map:get($entity-type-definition, "tdeGenerationDisabled")) = "false")
+
   (: Attempt to generate TDE :)
-  if (local:should-write-tde($tde-uri)) then
+  if (local:should-write-tde($tde-uri) and not($tdes-disabled)) then
     try {
       tde:template-insert(
         $tde-uri,
