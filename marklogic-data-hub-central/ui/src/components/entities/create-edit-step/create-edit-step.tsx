@@ -6,7 +6,6 @@ import {UserContext} from "../../../util/user-context";
 import {NewMatchTooltips, NewMergeTooltips} from "../../../config/tooltips.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
-import ConfirmYesNo from "../../common/confirm-yes-no/confirm-yes-no";
 
 type Props = {
   tabKey: string;
@@ -20,9 +19,11 @@ type Props = {
   canReadOnly: boolean;
   createStepArtifact: (stepArtifact: any) => void;
   currentTab: string;
-  setIsValid?: any;
-  resetTabs?: any;
-  setHasChanged?: any;
+  setIsValid: any;
+  resetTabs: any;
+  setHasChanged: any;
+  setPayload: any;
+  onCancel: any;
 }
 
 const formItemLayout = {
@@ -66,8 +67,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
-  const [saveChangesVisible, setSaveChangesVisible] = useState(false);
   const [changed, setChanged] = useState(false);
 
   const initStep = () => {
@@ -125,25 +124,15 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (props.currentTab !== props.tabKey && hasFormChanged()) {
-      setSaveChangesVisible(true);
-    }
-  }, [props.currentTab]);
-
   const onCancel = () => {
-    if (hasFormChanged()) {
-      setDiscardChangesVisible(true);
-    } else {
-      reset();
-      props.setOpenStepSettings(false);
-      props.resetTabs();
-    }
+    // Parent checks changes across tabs
+    props.onCancel();
   };
 
   // On change of any form field, update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
+    props.setPayload(getPayload());
     setChanged(false);
   }, [changed]);
 
@@ -160,39 +149,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       return true;
     }
   };
-
-  const discardOk = () => {
-    props.setOpenStepSettings(false);
-    setDiscardChangesVisible(false);
-  };
-
-  const discardCancel = () => {
-    setDiscardChangesVisible(false);
-  };
-
-  const discardChanges = <ConfirmYesNo
-    visible={discardChangesVisible}
-    type="discardChanges"
-    onYes={discardOk}
-    onNo={discardCancel}
-  />;
-
-  const saveOk = () => {
-    props.createStepArtifact(getPayload());
-    setSaveChangesVisible(false);
-  };
-
-  const saveCancel = () => {
-    setSaveChangesVisible(false);
-    initStep();
-  };
-
-  const saveChanges = <ConfirmYesNo
-    visible={saveChangesVisible}
-    type="saveChanges"
-    onYes={saveOk}
-    onNo={saveCancel}
-  />;
 
   const getPayload = () => {
     let result;
@@ -533,8 +489,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           </div>
         </Form.Item>
       </Form>
-      {discardChanges}
-      {saveChanges}
     </div>
   );
 };

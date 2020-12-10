@@ -257,17 +257,17 @@ const MergingCard: React.FC<Props> = (props) => {
         trigger={["click"]}
         disabled = {!props.canWriteFlow}
       >
-      {props.canWriteMatchMerge ? (
-        <MLTooltip title={"Run"} placement="bottom">
-          <i aria-label="icon: run">
-            <Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={step.name+"-run"}/></i>
-        </MLTooltip>
-      ) : (
-        <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
-          <i role="disabled-run-matching button" data-testid={step.name+"-disabled-run"}>
-            <Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i>
-        </MLTooltip>
-      )}
+        {props.canWriteMatchMerge ? (
+          <MLTooltip title={"Run"} placement="bottom">
+            <i aria-label="icon: run">
+              <Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={step.name+"-run"}/></i>
+          </MLTooltip>
+        ) : (
+          <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+            <i role="disabled-run-matching button" data-testid={step.name+"-disabled-run"}>
+              <Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i>
+          </MLTooltip>
+        )}
       </Dropdown>,
 
       props.canWriteMatchMerge ? (

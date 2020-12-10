@@ -346,6 +346,7 @@ const newMap = {
   isEditing: false,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
+  openStepDetails: jest.fn(),
   createMappingArtifact: jest.fn(),
   stepData: {},
   targetEntityType: "",
@@ -355,7 +356,10 @@ const newMap = {
   currentTab: "1",
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
-  setHasChanged: jest.fn()
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 const editMap = {
@@ -363,7 +367,8 @@ const editMap = {
   isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
-  createLoadArtifact: jest.fn(),
+  openStepDetails: jest.fn(),
+  createMappingArtifact: jest.fn(),
   stepData: {
     name: "testMap",
     description: "Description of testMap",
@@ -382,7 +387,10 @@ const editMap = {
   currentTab: "1",
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),
-  setHasChanged: jest.fn()
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 const advancedSettings = {
