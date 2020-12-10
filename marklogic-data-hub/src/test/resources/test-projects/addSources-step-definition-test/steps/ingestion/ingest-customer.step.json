@@ -1,0 +1,17 @@
+{
+  "name": "ingest-customer",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "ingest-customer-ingestion",
+  "sourceFormat": "json",
+  "targetFormat": "json",
+  "collections": [
+    "Customer"
+  ],
+  "inputFilePath": "input/json",
+  "outputURIReplacement": ".*data,'/sources-test'",
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse"
+}

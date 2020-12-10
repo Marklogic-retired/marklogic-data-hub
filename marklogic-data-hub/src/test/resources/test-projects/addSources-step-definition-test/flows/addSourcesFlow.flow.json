@@ -1,0 +1,18 @@
+{
+  "name" : "addSourcesFlow",
+  "description" : "Flow with steps that adds source name and source type to existing documents",
+  "steps" : {
+    "1": {
+      "stepId": "ingest-customer-ingestion"
+    },
+    "2": {
+      "stepId": "ingest-customer-xml-ingestion"
+    },
+    "3": {
+      "stepId": "addSourcesStep-custom"
+    },
+    "4": {
+      "stepId": "addSourcesStepWithoutSourceQuery-custom"
+    }
+  }
+}

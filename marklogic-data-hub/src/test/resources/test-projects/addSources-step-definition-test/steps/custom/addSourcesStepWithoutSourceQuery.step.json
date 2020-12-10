@@ -1,0 +1,13 @@
+{
+  "stepId" : "addSourcesStepWithoutSourceQuery-custom",
+  "name" : "addSourcesStepWithoutSourceQuery",
+  "stepDefinitionType" : "custom",
+  "stepDefinitionName" : "addSourceNameAndType",
+  "selectedSource" : "query",
+  "sourceDatabase" : "data-hub-STAGING",
+  "targetDatabase" : "data-hub-STAGING",
+  "collections" : [ "Customer" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "batchSize" : 100,
+  "provenanceGranularityLevel" : "coarse"
+}

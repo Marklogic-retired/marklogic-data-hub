@@ -3,10 +3,12 @@ package com.marklogic.hub.test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
+import org.w3c.dom.Document;
 
 import java.net.ConnectException;
 import java.util.Arrays;
@@ -157,5 +159,13 @@ public abstract class AbstractHubClientTest extends TestObject {
 
     protected JsonNode getFinalDoc(String uri) {
         return getHubClient().getFinalClient().newJSONDocumentManager().read(uri, new JacksonHandle()).get();
+    }
+
+    protected Document getStagingXmlDoc(String uri) {
+        return getHubClient().getStagingClient().newXMLDocumentManager().read(uri, new DOMHandle()).get();
+    }
+
+    protected Document getFinalXmlDoc(String uri) {
+        return getHubClient().getFinalClient().newXMLDocumentManager().read(uri, new DOMHandle()).get();
     }
 }
