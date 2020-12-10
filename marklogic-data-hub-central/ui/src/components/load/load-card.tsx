@@ -3,7 +3,7 @@ import styles from "./load-card.module.scss";
 import {useHistory} from "react-router-dom";
 import {Card, Icon, Row, Col, Modal, Select, Dropdown, Menu} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import sourceFormatOptions from "../../config/formats.config";
 import {convertDateFromISO, sortStepsByUpdated} from "../../util/conversionFunctions";
@@ -295,7 +295,7 @@ const LoadCard: React.FC<Props> = (props) => {
             >
               <Card
                 actions={[
-                  <MLTooltip title={"Edit"} placement="bottom"><i key="edit"></i><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></MLTooltip>,
+                  <MLTooltip title={"Step Settings"} placement="bottom"><i key="edit" className={styles.editIcon}><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
                   <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={["click"]} disabled = {!props.canWriteFlow}>
                     {props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-load button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
                   </Dropdown>,

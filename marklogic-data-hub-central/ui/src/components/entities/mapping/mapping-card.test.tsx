@@ -82,11 +82,11 @@ describe("Mapping Card component", () => {
 
     fireEvent.mouseOver(getByText("Mapping1"));
     wait(() => expect(getByText("Curate: "+SecurityTooltips.missingPermission)).toBeInTheDocument());
-    fireEvent.mouseOver(getByRole("edit-mapping"));
-    await wait(() => expect(getByText("Edit")).toBeInTheDocument());
-    fireEvent.mouseOver(getByTestId("Mapping1-stepDetails"));
-    await wait(() => expect(getByText("Step Details")).toBeInTheDocument());
+    wait(() => expect(getByText("Step Details")).toBeInTheDocument());
     expect(queryAllByRole("delete-mapping")).toHaveLength(0);
+    fireEvent.mouseOver(getByRole("edit-mapping"));
+    await wait(() => expect(getByText("Step Settings")).toBeInTheDocument());
+    fireEvent.mouseOver(getByTestId("Mapping1-stepDetails"));
 
     // test delete icon displays correct tooltip when disabled
     fireEvent.mouseOver(getByRole("disabled-delete-mapping"));

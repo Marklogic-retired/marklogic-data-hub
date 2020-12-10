@@ -4,7 +4,7 @@ import {Card, Modal, Table, Icon, Popover, Input, Alert, Dropdown, Menu} from "a
 import styles from "./source-to-entity-map.module.scss";
 import "./source-to-entity-map.scss";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faObjectUngroup, faList, faPencilAlt, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faObjectUngroup, faList, faPencilAlt, faSearch, faCog} from "@fortawesome/free-solid-svg-icons";
 import {getInitialChars, convertDateFromISO, getLastChars} from "../../../../util/conversionFunctions";
 import {getMappingValidationResp} from "../../../../util/manageArtifacts-service";
 import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWithSearch";
@@ -1162,7 +1162,7 @@ const SourceToEntityMap = (props) => {
   >
 
     <div className={styles.stepSettingsLink} onClick={() => handleStepSettings()}>
-      <Icon type="edit" role="step-settings button" aria-label={"stepSettings"} />
+      <FontAwesomeIcon icon={faCog} type="edit" role="step-settings button" aria-label={"stepSettings"} />
       <span className={styles.stepSettingsLabel}>Step Settings</span>
     </div>
 

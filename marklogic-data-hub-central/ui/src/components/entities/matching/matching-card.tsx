@@ -3,7 +3,7 @@ import {Link, useHistory} from "react-router-dom";
 import {Card, Icon, Row, Col, Select} from "antd";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSlidersH} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import styles from "./matching-card.module.scss";
 
@@ -123,27 +123,16 @@ const MatchingCard: React.FC<Props> = (props) => {
 
   const renderCardActions = (step, index) => {
     return [
-      <MLTooltip title={"Edit"} placement="bottom">
-        <Icon
-          className={styles.editIcon}
-          type="edit"
-          key ="last"
-          role="edit-merging button"
-          data-testid={step.name+"-edit"}
-          onClick={() => OpenStepSettings(index)}
-        />
-      </MLTooltip>,
-
       <MLTooltip title={"Step Details"} placement="bottom">
         <i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}>
-          <FontAwesomeIcon
-            icon={faSlidersH}
-            data-testid={`${step.name}-stepDetails`}
-            onClick={() => openStepDetails(step)}
-          />
+          <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
       </MLTooltip>,
-
+      <MLTooltip title={"Step Settings"} placement="bottom">
+        <i className={styles.editIcon} key ="last" role="edit-merging button">
+          <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
+        </i>
+      </MLTooltip>,
       // <MLTooltip title={'Settings'} placement="bottom">
       //   <Icon
       //     type="setting"
