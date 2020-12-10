@@ -1,0 +1,17 @@
+{
+  "name": "ingest-customer-xml",
+  "stepDefinitionName": "default-ingestion",
+  "stepDefinitionType": "ingestion",
+  "stepId": "ingest-customer-xml-ingestion",
+  "sourceFormat": "xml",
+  "targetFormat": "xml",
+  "collections": [
+    "Customer"
+  ],
+  "inputFilePath": "input/xml",
+  "outputURIReplacement": ".*data,'/sources-test'",
+  "sourceDatabase": null,
+  "targetDatabase": "data-hub-STAGING",
+  "permissions": "data-hub-common,read,data-hub-common,update",
+  "provenanceGranularityLevel": "coarse"
+}

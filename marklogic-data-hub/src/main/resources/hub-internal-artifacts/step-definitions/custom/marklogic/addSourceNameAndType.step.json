@@ -1,0 +1,11 @@
+{
+  "lang": "zxx",
+  "name": "addSourceNameAndType",
+  "type": "CUSTOM",
+  "options": {
+    "sourceDatabase": "data-hub-STAGING",
+    "sourceNameToAdd": "",
+    "sourceTypeToAdd": ""
+  },
+  "modulePath": "/data-hub/5/builtins/steps/custom/addSourceNameAndType/main.sjs"
+}

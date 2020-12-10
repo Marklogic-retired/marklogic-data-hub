@@ -468,6 +468,11 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         }
     }
 
+    protected void addAbsoluteInputFilePath(FlowInputs flowInputs, String inputFilePath) {
+        String absolutePath = new File(getHubProject().getProjectDir() + "/" + inputFilePath).getAbsolutePath();
+        flowInputs.setInputFilePath(absolutePath);
+    }
+
     protected int getDocumentCount(DatabaseClient client) {
         String query = "cts.estimate(cts.trueQuery())";
         return Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
