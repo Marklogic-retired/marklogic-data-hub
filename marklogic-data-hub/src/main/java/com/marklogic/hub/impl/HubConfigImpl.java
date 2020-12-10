@@ -1794,7 +1794,7 @@ public class HubConfigImpl implements HubConfig
 
         // this lets debug builds work from an IDE
         if (version.equals("${project.version}")) {
-            version = "5.2.5";
+            version = "5.2.6";
         }
         return version;
     }
@@ -1940,7 +1940,9 @@ public class HubConfigImpl implements HubConfig
 
         initializeModulePaths(config);
 
-        config.setSchemasPath(getUserSchemasDir().toString());
+        List<String> schemaPaths = new ArrayList<>();
+        schemaPaths.add(getUserSchemasDir().toString());
+        config.setSchemaPaths(schemaPaths);
 
         addDhfPropertiesToCustomTokens(config);
 

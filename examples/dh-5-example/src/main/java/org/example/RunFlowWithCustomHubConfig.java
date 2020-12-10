@@ -17,7 +17,7 @@ public class RunFlowWithCustomHubConfig {
         final String password = args[2];
         final String inputFilePath = args[3];
 
-        HubConfigImpl hubConfig = new HubConfigImpl();
+        HubConfigImpl hubConfig = HubConfigImpl.withDefaultProperties();
         hubConfig.setHost(host);
         hubConfig.setMlUsername(username);
         hubConfig.setMlPassword(password);

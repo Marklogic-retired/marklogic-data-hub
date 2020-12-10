@@ -49,17 +49,22 @@ repositories {
     mavenCentral()
     maven { url 'http://repo.spring.io/milestone' }
     maven { url 'http://developer.marklogic.com/maven2' }
+    //ToDo: Remove this once java-client-api-5.3.2 is released
+    maven {url 'http://distro.marklogic.com/nexus/repository/maven-releases/'}
 }
 
 dependencies {
     compile gradleApi()
     compile (project(':marklogic-data-hub')) {
         exclude group: 'ch.qos.logback'
+        exclude group: "com.squareup.okhttp3", module: "okhttp"
+        exclude group: "com.squareup.okhttp3", module: "logging-interceptor"
     }
     compile ('com.marklogic:ml-gradle:3.16.3') {
         exclude group: 'ch.qos.logback'
     }
-
+    compile "com.squareup.okhttp3:okhttp:4.4.0"
+    compile "com.squareup.okhttp3:logging-interceptor:4.4.0"
     testCompile localGroovy()
     testCompile gradleTestKit()
     testCompile 'xmlunit:xmlunit:1.3'

@@ -7,17 +7,20 @@ plugins {
     id 'com.moowork.node' version '1.1.1'
     id 'org.springframework.boot' version '2.1.3.RELEASE'
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
-    id 'com.marklogic.ml-development-tools' version '4.2.0'
+    id 'com.marklogic.ml-development-tools' version '5.3.2'
 }
 
 mainClassName='com.marklogic.hub.ApplicationConfig'
 repositories {
+    //ToDo: Remove this once java-client-api-5.3.2 is released
+    maven {url 'http://distro.marklogic.com/nexus/repository/maven-releases/'}
     jcenter()
     maven { url 'http://repo.spring.io/milestone' }
     maven { url 'https://developer.marklogic.com/maven2/' }
 
     // Needed for marklogic-junit
     maven { url 'https://dl.bintray.com/marklogic-community/Maven/' }
+
 }
 
 group = 'com.marklogic'
@@ -31,10 +34,28 @@ ext.junitVintageVersion  = '4.12.0-RC3'
 ext.junitPlatformVersion = '1.4.0'
 ext.junitJupiterVersion  = '5.4.0'
 
+// This enables including a logging jar in the application artifacts produced by this project - the installer and the client jars
+// without that jar ending up in the library artifact.
+configurations {
+    datahubLogging
+}
+
 dependencies {
-    compile 'com.marklogic:marklogic-client-api:4.2.0'
-    compile('com.marklogic:ml-app-deployer:3.16.3'){
+    // Forcing use of 1.3.71 - which is what OkHttp 4.7.2 wants, which is what Java Client 5.3 uses - so that 1.2.x
+    // versions don't come onto the classpath
+    compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
+    compile ('com.marklogic:marklogic-client-api:5.3.2'){
+        exclude group: 'com.fasterxml.woodstox', module: 'woodstox-core'
+        // Oddly, the OkHttp 4.4.0 dependency includes version 1.2.70 and 1.3.x of these dependencies. This causes
+        // class conflict errors. So they're excluded from here, and we force inclusion of 1.3.x below.
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+        exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
+    }
+    compile('com.marklogic:ml-app-deployer:4.1.0'){
         exclude group: 'org.springframework', module: 'http'
+        // prefer the version declared above
+        exclude group: 'com.marklogic', module: 'marklogic-client-api'
     }
     // Temporarily forcing a dependency on this version until a new version of ml-app-deployer depends on this as well
     compile("com.marklogic:ml-javaclient-util:3.13.2")
@@ -44,10 +65,13 @@ dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.3.RELEASE'
 
     compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:marklogic-data-movement-components:1.0'
+    compile ('com.marklogic:marklogic-data-movement-components:2.2.0'){
+        // prefer the version declared above
+        exclude group: 'com.marklogic', module: 'marklogic-client-api'
+    }
     compile 'commons-io:commons-io:2.4'
     compile 'org.apache.commons:commons-text:1.1'
-
+    datahubLogging 'ch.qos.logback:logback-classic:1.2.3'
     // For installer program
     compile "com.beust:jcommander:1.72"
 
@@ -80,7 +104,10 @@ dependencies {
     }
 
     // Provides support for invoking marklogic-unit-test tests via JUnit
-    testCompile "com.marklogic:marklogic-junit:1.0.beta"
+    testCompile ("com.marklogic:marklogic-junit:1.0.beta"){
+        // prefer the version declared above
+        exclude group: 'com.marklogic', module: 'marklogic-client-api'
+    }
     mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.beta"
 }
 
@@ -98,6 +125,11 @@ configurations.all {
 bootJar {
     archiveClassifier = "installer"
     mainClassName = "com.marklogic.hub.dhs.installer.Main"
+    from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
 }
 
 task clientJar(type: Jar) {
@@ -106,6 +138,11 @@ task clientJar(type: Jar) {
         attributes "Main-Class": "com.marklogic.hub.cli.client.Main"
     }
     archiveClassifier = "client"
+    from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
     from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
