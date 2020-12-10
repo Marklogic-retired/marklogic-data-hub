@@ -133,7 +133,7 @@ return (
     ),
 
   (: Attempt to generate TDE :)
-  if (local:should-write-tde($tde-uri)) then
+  if (local:should-write-tde($tde-uri) and hent:is-tde-generation-enabled($entity-def))then
     try {
       tde:template-insert(
         $tde-uri,

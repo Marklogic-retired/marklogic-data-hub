@@ -83,6 +83,19 @@ declare function hent:uber-model($models as object-node()*) as map:map
     $uber-model
 };
 
+declare function hent:is-tde-generation-enabled($entity-def as object-node()) as xs:boolean
+{
+  let $entity-def-map as map:map := $entity-def
+  let $definitions := $entity-def-map => map:get("definitions")
+  let $entity-title := $entity-def/info/title
+  (: Check if TDE generation is enabled. If the property is not set or has any value other than true/'true', it enables TDE generation. :)
+  let $primary-type-def := ($definitions => map:get($entity-title), $definitions => map:get(map:keys($definitions)[1]))[1]
+  let $is-property-set := map:contains($primary-type-def, "tdeGenerationDisabled")
+  let $property-value := xs:string(map:get($primary-type-def, "tdeGenerationDisabled"))
+  let $tdes-enabled := not($is-property-set) or $property-value != "true"
+  return $tdes-enabled
+};
+
 declare function hent:wrap-duplicates(
   $duplicate-map as map:map,
   $property-name as xs:string,

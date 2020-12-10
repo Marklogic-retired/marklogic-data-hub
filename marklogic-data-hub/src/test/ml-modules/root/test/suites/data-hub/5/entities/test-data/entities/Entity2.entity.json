@@ -1,0 +1,25 @@
+{
+  "info": {
+    "title": "Entity2",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/"
+  },
+  "definitions": {
+    "Entity2": {
+      "tdeGenerationDisabled": "true",
+      "properties": {
+        "prop1": {
+          "$ref": "#/definitions/StructuredProp1"
+        }
+      }
+    },
+    "StructuredProp1": {
+      "properties": {
+        "prop1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}

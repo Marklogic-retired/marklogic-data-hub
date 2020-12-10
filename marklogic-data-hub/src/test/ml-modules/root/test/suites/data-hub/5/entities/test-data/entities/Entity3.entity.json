@@ -1,0 +1,18 @@
+{
+  "info" : {
+    "title" : "Entity3",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/"
+  },
+  "definitions" : {
+    "Entity3" : {
+      "tdeGenerationDisabled": true,
+      "properties" : {
+        "prop1" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
