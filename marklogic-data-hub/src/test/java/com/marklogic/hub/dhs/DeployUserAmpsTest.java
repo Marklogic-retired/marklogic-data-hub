@@ -43,10 +43,8 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         assumeTrue((mlVersion.isNightly() && mlVersion.getMajor() >= 10) ||
                 (mlVersion.getMajor() > 10) || (mlVersion.getMajor() == 10 && mlVersion.getMinor() >= 404)
         );
-        if (operatorHubClient == null || adminHubClient == null) {
-            operatorHubClient = runAsDataHubOperator();
-            adminHubClient = runAsAdmin();
-        }
+        operatorHubClient = runAsDataHubOperator();
+        adminHubClient = runAsAdmin();
     }
 
     @Test
@@ -174,6 +172,15 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         catch (Exception e){
             logger.error("Amp creation expected to fail as it points to a module in filesystem");
         }
+    }
+
+    @Test
+    void runCommandAsDataHubDeveloperWithNoAmpsToDeploy() {
+        runAsDataHubDeveloper();
+        logger.info("Deploying the security-admin-related resources should not fail since there aren't any such " +
+            "resources to deploy. This ensures that deploying amps doesn't cause an error when there are no amps to " +
+            "deploy.");
+        new DhsDeployer().deployAsSecurityAdmin(getHubConfig());
     }
 
     private void writeAmpFileToProjectAndDeploy(String dbName, String ... roleNames) {
