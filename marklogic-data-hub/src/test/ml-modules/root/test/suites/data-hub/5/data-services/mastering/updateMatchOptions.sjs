@@ -398,7 +398,7 @@ const largeExpected =
       },
       {
         "thresholdName": "household",
-        "action": "household-action",
+        "action": "custom",
         "score": 8.5,
         "actionModulePath": "/custom-modules/matching/custom-action.xqy",
         "actionModuleNamespace": "http://marklogic.com/smart-mastering/action",
