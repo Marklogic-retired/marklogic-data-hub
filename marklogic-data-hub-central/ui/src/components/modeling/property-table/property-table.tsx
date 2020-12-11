@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import scrollIntoView from "scroll-into-view";
 import useDeepCompareEffect from "use-deep-compare-effect";
 import styles from "./property-table.module.scss";
-
 import PropertyModal from "../property-modal/property-modal";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 
@@ -26,6 +25,16 @@ import {ModelingContext} from "../../../util/modeling-context";
 import {definitionsParser} from "../../../util/data-conversion";
 import {ModelingTooltips} from "../../../config/tooltips.config";
 import {getSystemInfo} from "../../../api/environment";
+
+let CryptoJS = require("crypto-js");
+let key = CryptoJS.lib.WordArray.random(16);
+let iv = CryptoJS.lib.WordArray.random(16);
+
+const encrypt = (text) => (CryptoJS.AES.encrypt(text, key, {
+  mode: CryptoJS.mode.CTR,
+  iv: iv,
+  padding: CryptoJS.pad.NoPadding
+})).ciphertext.toString();
 
 type Props = {
   canReadEntityModel: boolean;
@@ -134,7 +143,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: "identifier",
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={"identifier-"+ text}/>;
+        return text && <FontAwesomeIcon className={styles.identifierIcon} icon={faCircle} data-testid={"identifier-" + text} />;
       }
     },
     {
@@ -146,7 +155,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: "multiple",
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={"multiple-"+ text}/>;
+        return text && <FontAwesomeIcon className={styles.multipleIcon} icon={faCheck} data-testid={"multiple-" + text} />;
       }
     },
     {
@@ -158,7 +167,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: "sortable",
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={"sort-"+ text}/>;
+        return text && <FontAwesomeIcon className={styles.sortIcon} icon={faCheck} data-testid={"sort-" + text} />;
       }
     },
     {
@@ -170,7 +179,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: "facetable",
       width: 100,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={"facet-"+ text}/>;
+        return text && <FontAwesomeIcon className={styles.facetIcon} icon={faCheck} data-testid={"facet-" + text} />;
       }
     },
     // {
@@ -194,7 +203,7 @@ const PropertyTable: React.FC<Props> = (props) => {
       dataIndex: "pii",
       width: 75,
       render: text => {
-        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={"pii-"+ text}/>;
+        return text && <FontAwesomeIcon className={styles.icon} icon={faCheck} data-testid={"pii-" + text} />;
       }
     },
     {
@@ -228,7 +237,7 @@ const PropertyTable: React.FC<Props> = (props) => {
             } else {
               deletePropertyShowModal(text, record, definitionName);
             }
-          }}/>;
+          }} />;
       }
     },
     {
@@ -237,12 +246,12 @@ const PropertyTable: React.FC<Props> = (props) => {
       width: 75,
       render: text => {
         let textParse = text && text.split(",");
-        let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length-1] : text;
+        let structuredTypeName = Array.isArray(textParse) ? textParse[textParse.length - 1] : text;
 
         const addIcon = props.canWriteEntityModel ? (
           <MLTooltip title={ModelingTooltips.addStructuredProperty} placement="topRight">
             <FontAwesomeIcon
-              data-testid={"add-struct-"+ structuredTypeName}
+              data-testid={"add-struct-" + structuredTypeName}
               className={styles.addIcon}
               icon={faPlusSquare}
               onClick={() => {
@@ -259,7 +268,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         ) : (
           <MLTooltip title={ModelingTooltips.addStructuredProperty + " " + ModelingTooltips.noWriteAccess} placement="topRight" overlayStyle={{maxWidth: "175px"}}>
             <FontAwesomeIcon
-              data-testid={"add-struct-"+ structuredTypeName} className={styles.addIconReadOnly}
+              data-testid={"add-struct-" + structuredTypeName} className={styles.addIconReadOnly}
               icon={faPlusSquare}
             />
           </MLTooltip>
@@ -350,7 +359,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && !multiple) {
       return {
-        $ref: "#/definitions/"+ propertyOptions.type,
+        $ref: "#/definitions/" + propertyOptions.type,
       };
 
     } else if (propertyOptions.propertyType === PropertyType.Structured && multiple) {
@@ -359,7 +368,7 @@ const PropertyTable: React.FC<Props> = (props) => {
         facetable: facetable,
         sortable: sortable,
         items: {
-          $ref: "#/definitions/"+ propertyOptions.type,
+          $ref: "#/definitions/" + propertyOptions.type,
         }
       };
 
@@ -382,15 +391,14 @@ const PropertyTable: React.FC<Props> = (props) => {
       };
     }
   };
-
   // Covers both Entity Type and Structured Type
   const addPropertyToDefinition = (definitionName: string, propertyName: string, propertyOptions: PropertyOptions) => {
     let parseName = definitionName.split(",");
-    let parseDefinitionName = parseName[parseName.length-1];
+    let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(propertyOptions);
-    let newRowKey = props.entityName + "-" + propertyName;
+    let newRowKey = "scroll-" + encrypt(props.entityName) + "-" + encrypt(propertyName);
 
     if (propertyOptions.identifier === "yes") {
       entityTypeDefinition["primaryKey"] = propertyName;
@@ -415,12 +423,12 @@ const PropertyTable: React.FC<Props> = (props) => {
     // }
 
     if (structuredTypeOptions.isStructured) {
-      newRowKey = props.entityName + "-" + structuredTypeOptions.name.split(",").join("-");
+      let structuredString = structuredTypeOptions.name.split(",").map(item => encrypt(item)).join("-");
+      newRowKey = "scroll-" + encrypt(props.entityName) + "-" + structuredString;
     }
 
     entityTypeDefinition["properties"][propertyName] = newProperty;
     updatedDefinitions[parseDefinitionName] = entityTypeDefinition;
-
 
     let entityModified: EntityModified = {
       entityName: props.entityName,
@@ -494,7 +502,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const editPropertyUpdateDefinition = (definitionName: string, propertyName: string, editPropertyOptions: EditPropertyOptions) => {
     let parseName = definitionName.split(",");
-    let parseDefinitionName = parseName[parseName.length-1];
+    let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
     let newProperty = createPropertyDefinitionPayload(editPropertyOptions.propertyOptions);
@@ -550,23 +558,23 @@ const PropertyTable: React.FC<Props> = (props) => {
       });
       entityTypeDefinition["properties"] = reMapDefinition.reduce((a, b) => Object.assign({}, a, b));
 
-      if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
         let index = entityTypeDefinition.required.indexOf(propertyName);
         entityTypeDefinition.required[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
         let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
         entityTypeDefinition.rangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
         let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
         entityTypeDefinition.pathRangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
         let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
         entityTypeDefinition.elementRangeIndex[index] = editPropertyOptions.name;
       }
-      if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value ===  propertyName)) {
+      if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
         let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
         entityTypeDefinition.wordLexicon[index] = editPropertyOptions.name;
       }
@@ -609,34 +617,34 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const deletePropertyFromDefinition = (definitionName: string, propertyName: string) => {
     let parseName = definitionName.split(",");
-    let parseDefinitionName = parseName[parseName.length-1];
+    let parseDefinitionName = parseName[parseName.length - 1];
     let updatedDefinitions = {...definitions};
     let entityTypeDefinition = updatedDefinitions[parseDefinitionName];
 
     if (entityTypeDefinition.hasOwnProperty("primaryKey") && entityTypeDefinition.primaryKey === propertyName) {
       delete entityTypeDefinition.primaryKey;
     }
-    if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("wordLexicon") && entityTypeDefinition.wordLexicon.some(value => value === propertyName)) {
       let index = entityTypeDefinition.wordLexicon.indexOf(propertyName);
       entityTypeDefinition.wordLexicon.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("pii") && entityTypeDefinition.pii.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("pii") && entityTypeDefinition.pii.some(value => value === propertyName)) {
       let index = entityTypeDefinition.pii.indexOf(propertyName);
       entityTypeDefinition.pii.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("required") && entityTypeDefinition.required.some(value => value === propertyName)) {
       let index = entityTypeDefinition.required.indexOf(propertyName);
       entityTypeDefinition.required.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("rangeIndex") && entityTypeDefinition.rangeIndex.some(value => value === propertyName)) {
       let index = entityTypeDefinition.rangeIndex.indexOf(propertyName);
       entityTypeDefinition.rangeIndex.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("pathRangeIndex") && entityTypeDefinition.pathRangeIndex.some(value => value === propertyName)) {
       let index = entityTypeDefinition.pathRangeIndex.indexOf(propertyName);
       entityTypeDefinition.pathRangeIndex.splice(index, 1);
     }
-    if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value ===  propertyName)) {
+    if (entityTypeDefinition.hasOwnProperty("elementRangeIndex") && entityTypeDefinition.elementRangeIndex.some(value => value === propertyName)) {
       let index = entityTypeDefinition.elementRangeIndex.indexOf(propertyName);
       entityTypeDefinition.elementRangeIndex.splice(index, 1);
     }
@@ -681,25 +689,25 @@ const PropertyTable: React.FC<Props> = (props) => {
                   facetable: structProperty.facetable ? structProperty.name : "",
                   sortable: structProperty.sortable ? structProperty.name : "",
                   //wildcard: structuredType?.wordLexicon.some(value => value ===  structProperty.name) ? structProperty.name : '',
-                  pii: structuredType?.pii?.some(value => value ===  structProperty.name) ? structProperty.name : "",
+                  pii: structuredType?.pii?.some(value => value === structProperty.name) ? structProperty.name : "",
                   delete: entityTypeDefinition.name
                 };
               }
             });
 
-            let piiValue = entityTypeDefinition?.pii?.some(value => value ===  property.name) ? property.name : "";
+            let piiValue = entityTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "";
             let addValue = property.name + "," + structuredType.name;
 
             if (parentDefinitionName) {
               let parentTypeDefinition: Definition = entityDefinitionsArray.find(definition => definition.name === parentDefinitionName) || DEFAULT_ENTITY_DEFINITION;
-              piiValue = parentTypeDefinition?.pii?.some(value => value ===  property.name) ? property.name : "";
+              piiValue = parentTypeDefinition?.pii?.some(value => value === property.name) ? property.name : "";
               addValue = property.name + "," + parentDefinitionName + "," + structuredType.name;
             }
             return {
               key: property.name + "," + index + counter,
               structured: structuredType.name,
               propertyName: property.name,
-              multiple: property.multiple ? property.name: "",
+              multiple: property.multiple ? property.name : "",
               facetable: property.facetable ? property.name : "",
               sortable: property.sortable ? property.name : "",
               type: property.ref.split("/").pop(),
@@ -732,7 +740,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   };
 
   const onExpand = (expanded, record) => {
-    let newExpandedRows =  [...expandedRows];
+    let newExpandedRows = [...expandedRows];
     if (expanded) {
       if (newExpandedRows.indexOf(record.key) === -1) {
         newExpandedRows.push(record.key);
@@ -758,7 +766,7 @@ const PropertyTable: React.FC<Props> = (props) => {
 
   const addPropertyButton = <MLButton
     type="primary"
-    aria-label={props.entityName +"-add-property"}
+    aria-label={props.entityName + "-add-property"}
     disabled={!props.canWriteEntityModel}
     className={!props.canWriteEntityModel && styles.disabledButton}
     onClick={() => addPropertyButtonClicked()}
@@ -767,7 +775,7 @@ const PropertyTable: React.FC<Props> = (props) => {
   return (
     <div>
       <div className={styles.addButtonContainer}>
-        { props.canWriteEntityModel ?
+        {props.canWriteEntityModel ?
           <MLTooltip title={ModelingTooltips.addProperty}>
             <span>{addPropertyButton}</span>
           </MLTooltip>
@@ -799,8 +807,8 @@ const PropertyTable: React.FC<Props> = (props) => {
       />
       <MLTable
         rowClassName={(record) => {
-          let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").join("-") : record.propertyName;
-          return props.entityName + "-" + propertyName;
+          let propertyName = record.hasOwnProperty("add") && record.add !== "" ? record.add.split(",").map(item => encrypt(item)).join("-") : encrypt(record.propertyName);
+          return "scroll-" + encrypt(props.entityName) + "-" + propertyName;
         }}
         locale={{emptyText: " "}}
         columns={headerColumns}
