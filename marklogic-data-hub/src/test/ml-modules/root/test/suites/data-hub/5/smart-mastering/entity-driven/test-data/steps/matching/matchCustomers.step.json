@@ -117,6 +117,13 @@
       "actionModuleFunction": "householdAction"
     },
     {
+      "thresholdName": "testSecondCustomAction",
+      "action": "custom",
+      "score": 9.5,
+      "actionModulePath": "/test/suites/data-hub/5/smart-mastering/entity-driven/test-data/secondAction.sjs",
+      "actionModuleFunction": "secondAction"
+    },
+    {
       "thresholdName": "similarThreshold",
       "action": "notify",
       "score": 4.5

@@ -568,7 +568,7 @@ declare function proc-impl:build-match-summary(
       for $custom-threshold in $custom-thresholds
       return
         map:entry(
-          $custom-threshold/action,
+          $custom-threshold/thresholdName,
           map:map()
             => map:with("action", $custom-threshold/action)
             => map:with("function", fn:string($custom-threshold/actionModuleFunction))
@@ -585,12 +585,12 @@ declare function proc-impl:build-match-summary(
         map:entry($uri, map:new((
           map:entry("action", "customActions"),
           map:entry("actions", json:to-array(
-            let $distinct-actions := fn:distinct-values($custom-actions/@action)
-            for $custom-action in $distinct-actions
+            let $distinct-thresholds := fn:distinct-values($custom-actions/@threshold)
+            for $custom-threshold in $distinct-thresholds
             return map:new((
-              map:entry("action", $custom-action),
-              map:get($action-map, $custom-action),
-              map:entry("matchResults", proc-impl:matches-to-json($custom-actions[@action = $custom-action]))
+              map:entry("thresholdName", $custom-threshold),
+              map:get($action-map, $custom-threshold),
+              map:entry("matchResults", proc-impl:matches-to-json($custom-actions[@threshold = $custom-threshold]))
             ))
           ))
         )))
@@ -760,10 +760,10 @@ declare function proc-impl:build-content-objects-from-match-summary(
               default return
                 let $custom-actions := $action-details => map:get("actions") => json:array-values()
                 for $custom-action in $custom-actions
-                let $action := $custom-action => map:get("action")
+                let $threshold-name := $custom-action => map:get("thresholdName")
                 let $action-func :=
-                  if (map:contains($custom-action-function-map, $action)) then
-                    $custom-action-function-map => map:get($action)
+                  if (map:contains($custom-action-function-map, $threshold-name)) then
+                    $custom-action-function-map => map:get($threshold-name)
                   else
                     let $action-func := fun-ext:function-lookup(
                                   $custom-action => map:get("function"),
