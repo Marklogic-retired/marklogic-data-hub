@@ -24,10 +24,11 @@ repositories {
 }
 
 dependencies {
-    api "com.marklogic:marklogic-client-api:5.3.0"
+    // Brings marklogic-client-api with it
+    api "com.marklogic:ml-app-deployer:4.1.1"
 
-    // Needed for ManageClient, and need 4.1.0 or higher, as 4.1.0 now runs on Java 8 again
-    api "com.marklogic:ml-app-deployer:4.1.0"
+    // marklogic-client-api 5.3.0 included this, but 5.3.2 does not
+    testFixturesCompile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
