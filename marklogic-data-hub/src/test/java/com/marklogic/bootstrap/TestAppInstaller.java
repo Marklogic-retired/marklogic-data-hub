@@ -40,7 +40,7 @@ public class TestAppInstaller {
 
     private final static Logger logger = LoggerFactory.getLogger(TestAppInstaller.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication app = new SpringApplication(HubCoreTestConfig.class);
         app.setWebApplicationType(WebApplicationType.NONE);
         ConfigurableApplicationContext ctx = app.run();
@@ -74,6 +74,8 @@ public class TestAppInstaller {
      *                                code into RMLUTT
      */
     public static void loadTestModules(HubConfig hubConfig, boolean includeSecurityCommands) {
+        logger.info("Loading test modules");
+
         final AppConfig appConfig = hubConfig.getAppConfig();
         final Integer originalAppServicesPort = appConfig.getAppServicesPort();
         final Integer originalBatchSize = appConfig.getModulesLoaderBatchSize();
@@ -122,10 +124,10 @@ public class TestAppInstaller {
             modulesClient.newServerEval().xquery("cts:uri-match('/test/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
             // Preserves the modules loaded from src/test/ml-modules/root/custom-modules
             modulesClient.newServerEval().xquery("cts:uri-match('/custom-modules/**') ! xdmp:document-add-collections(., 'hub-core-module')").evalAs(String.class);
+            logger.info("Finished loading test modules");
         } catch (Exception ex) {
             throw new RuntimeException(ex);
-        }
-        finally {
+        } finally {
             appConfig.setAppServicesPort(originalAppServicesPort);
             appConfig.setModulesLoaderBatchSize(originalBatchSize);
             appConfig.setModulePaths(originalModulePaths);
@@ -148,65 +150,87 @@ class InstallerThread extends LoggingObject implements Runnable {
         try {
             logger.info("Installing test application in host: " + hubConfig.getHost());
 
-            applicationContext.getBean(DataHub.class).install();
-
+            installDataHubIfNecessary(hubConfig);
             TestAppInstaller.loadTestModules(hubConfig, false);
-
-            final API api = new API(hubConfig.getManageClient());
-
-            User dataHubDeveloper = new User(api, "test-data-hub-developer");
-            dataHubDeveloper.setPassword("password");
-            dataHubDeveloper.addRole("data-hub-developer");
-            dataHubDeveloper.addRole("hub-central-developer");
-            dataHubDeveloper.save();
-
-            User dataHubOperator = new User(api, "test-data-hub-operator");
-            dataHubOperator.setPassword("password");
-            dataHubOperator.addRole("data-hub-operator");
-            dataHubOperator.addRole("hub-central-operator");
-            dataHubOperator.save();
-
-            User dataHubSecurityAdmin = new User(api, "test-data-hub-security-admin");
-            dataHubSecurityAdmin.setPassword("password");
-            dataHubSecurityAdmin.addRole("data-hub-security-admin");
-            dataHubSecurityAdmin.save();
-            
-            User hubCentralMappingReader = new User(api, "test-hub-mapping-reader");
-            hubCentralMappingReader.setPassword("password");
-            hubCentralMappingReader.addRole("hub-central-mapping-reader");
-            hubCentralMappingReader.save();
-
-            User hubCentralLoadReader = new User(api, "test-hub-load-reader");
-            hubCentralLoadReader.setPassword("password");
-            hubCentralLoadReader.addRole("hub-central-load-reader");
-            hubCentralLoadReader.save();
-
-            User testAdmin = new User(api, "test-admin-for-data-hub-tests");
-            testAdmin.setDescription("This user is intended to be used by DHF tests that require admin or " +
-                "admin-like capabilities, such as being able to deploy a DHF application");
-            testAdmin.setPassword("password");
-            testAdmin.addRole("admin");
-            testAdmin.save();
-
-            User dataHubEnvManager = new User(api, "test-data-hub-environment-manager");
-            dataHubEnvManager.setPassword("password");
-            dataHubEnvManager.addRole("data-hub-environment-manager");
-            // Temporary
-            dataHubEnvManager.addRole("hub-central-user");
-            dataHubEnvManager.save();
-
-            User dataHubTestUser = new User(api, "test-data-hub-user");
-            dataHubTestUser.setDescription("Each JUnit test is free to change the roles on this to test whatever it wants to test");
-            dataHubTestUser.save();
-
-            addStatusPrivilegeToDataHubDeveloper(hubConfig);
-
+            createTestUsers(hubConfig);
             HubTestBase.applyDatabasePropertiesForTests(hubConfig);
 
             logger.info("Finished installing test application in host: " + hubConfig.getHost());
         } finally {
             applicationContext.getBean(HubConfigInterceptor.class).returnHubConfig(Thread.currentThread().getName());
         }
+    }
+
+    /**
+     * When running the tests in DHS, we do not want to install DHF.
+     */
+    private void installDataHubIfNecessary(HubConfig hubConfig) {
+        if (Boolean.TRUE.equals(hubConfig.getIsProvisionedEnvironment())) {
+            logger.info("Will not install DHF since environment is provisioned");
+        } else {
+            logger.info("Installing DHF");
+            applicationContext.getBean(DataHub.class).install();
+        }
+    }
+
+    /**
+     * Create a set of users that tests depend on a) existing, and b) having a certain set of roles.
+     *
+     * @param hubConfig
+     */
+    private void createTestUsers(HubConfig hubConfig) {
+        logger.info("Creating test users");
+
+        final API api = new API(hubConfig.getManageClient());
+
+        User dataHubDeveloper = new User(api, "test-data-hub-developer");
+        dataHubDeveloper.setPassword("password");
+        dataHubDeveloper.addRole("data-hub-developer");
+        dataHubDeveloper.addRole("hub-central-developer");
+        dataHubDeveloper.save();
+
+        User dataHubOperator = new User(api, "test-data-hub-operator");
+        dataHubOperator.setPassword("password");
+        dataHubOperator.addRole("data-hub-operator");
+        dataHubOperator.addRole("hub-central-operator");
+        dataHubOperator.save();
+
+        User dataHubSecurityAdmin = new User(api, "test-data-hub-security-admin");
+        dataHubSecurityAdmin.setPassword("password");
+        dataHubSecurityAdmin.addRole("data-hub-security-admin");
+        dataHubSecurityAdmin.save();
+
+        User hubCentralMappingReader = new User(api, "test-hub-mapping-reader");
+        hubCentralMappingReader.setPassword("password");
+        hubCentralMappingReader.addRole("hub-central-mapping-reader");
+        hubCentralMappingReader.save();
+
+        User hubCentralLoadReader = new User(api, "test-hub-load-reader");
+        hubCentralLoadReader.setPassword("password");
+        hubCentralLoadReader.addRole("hub-central-load-reader");
+        hubCentralLoadReader.save();
+
+        User testAdmin = new User(api, "test-admin-for-data-hub-tests");
+        testAdmin.setDescription("This user is intended to be used by DHF tests that require admin or " +
+            "admin-like capabilities, such as being able to deploy a DHF application");
+        testAdmin.setPassword("password");
+        testAdmin.addRole("admin");
+        testAdmin.save();
+
+        User dataHubEnvManager = new User(api, "test-data-hub-environment-manager");
+        dataHubEnvManager.setPassword("password");
+        dataHubEnvManager.addRole("data-hub-environment-manager");
+        // Temporary
+        dataHubEnvManager.addRole("hub-central-user");
+        dataHubEnvManager.save();
+
+        User dataHubTestUser = new User(api, "test-data-hub-user");
+        dataHubTestUser.setDescription("Each JUnit test is free to change the roles on this to test whatever it wants to test");
+        dataHubTestUser.save();
+
+        addStatusPrivilegeToDataHubDeveloper(hubConfig);
+
+        logger.info("Finished creating test users");
     }
 
     /**
