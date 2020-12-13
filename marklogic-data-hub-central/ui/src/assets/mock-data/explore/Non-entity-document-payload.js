@@ -84,7 +84,7 @@ const detailRecordDownloadResponse =
     }
   };
 
-  const allDataRecordDownloadResponse =
+const allDataRecordDownloadResponse =
   {
     "data": {
 
