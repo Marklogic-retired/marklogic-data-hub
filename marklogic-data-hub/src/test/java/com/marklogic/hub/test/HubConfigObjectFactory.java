@@ -32,15 +32,25 @@ public class HubConfigObjectFactory extends BasePooledObjectFactory<HubConfigImp
         this.gradleProperties = gradleProperties;
         this.hostCounter = new AtomicInteger(0);
 
-        String hostsSysProp = System.getProperty("mlHost");
-        if (StringUtils.isNotEmpty(hostsSysProp)) {
-            logger.info("Using mlHost system property to set hosts: " + hostsSysProp);
-            this.hosts = hostsSysProp.split(",");
-        } else {
-            this.hosts = gradleProperties.getProperty("mlHost").split(",");
-        }
+        overrideGradlePropsWithSystemProps(gradleProperties);
+        this.hosts = gradleProperties.getProperty("mlHost").split(",");
 
         logger.info("Will create HubConfigImpl instances for hosts: " + Arrays.asList(this.hosts));
+    }
+
+    private void overrideGradlePropsWithSystemProps(Properties gradleProperties) {
+        gradleProperties.keySet().forEach(key -> {
+            String propertyName = (String)key;
+            String systemValue = System.getProperty(propertyName);
+            if (StringUtils.isNotEmpty(systemValue)) {
+                String message = String.format("Overriding Gradle property '%s' with system property", propertyName);
+                if (!propertyName.contains("Password")) {
+                    message += "; value: " + systemValue;
+                }
+                logger.info(message);
+                gradleProperties.setProperty(propertyName, systemValue);
+            }
+        });
     }
 
     /**
@@ -94,7 +104,7 @@ public class HubConfigObjectFactory extends BasePooledObjectFactory<HubConfigImp
         return hosts;
     }
 
-    public Properties getGradleProperties(){
+    public Properties getGradleProperties() {
         return gradleProperties;
     }
 }

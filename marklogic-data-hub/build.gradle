@@ -404,37 +404,69 @@ ext {
     }
 }
 
-def propFile = file("gradle.properties")
-boolean sslRun = Boolean.parseBoolean(System.properties['ssl'])
-boolean certAuth = Boolean.parseBoolean(System.properties['certauth'])
-def props = new Properties()
-propFile.withInputStream { props.load(it) }
-
 task bootstrap(type: JavaExec) {
+    description = "Install the test application - an instance of DHF - so that the tests can be run against it"
     classpath = sourceSets.test.runtimeClasspath
     main = 'com.marklogic.bootstrap.TestAppInstaller'
-    systemProperty "mlHost", mlHost
-}
 
+    // Pass some Gradle properties as system properties so they can be easily overridden
+    systemProperty "mlHost", mlHost
+    systemProperty "hubDhs", hubDhs
+    systemProperty "hubSsl", hubSsl
+    systemProperty "mlUsername", mlUsername
+    systemProperty "mlPassword", mlPassword
+    systemProperty "mlSecurityUsername", mlSecurityUsername
+    systemProperty "mlSecurityPassword", mlSecurityPassword
+}
+bootstrap.dependsOn extractFastXmlParserZip
+bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is downloaded
+test.mustRunAfter bootstrap
+
+// Configure the Gradle "test" task
 test {
     systemProperty "mlHost", mlHost
     useJUnitPlatform()
     minHeapSize = "128m"
     maxHeapSize = "256m"
-    exclude 'com/marklogic/bootstrap/**'
     classpath = project.sourceSets.test.runtimeClasspath
 }
+
+task bootstrapAndTest(dependsOn:["bootstrap", "test"])
 
 task testAcceptance(type: Test) {
     systemProperty "mlHost", mlHost
     useJUnitPlatform  {
         include 'com/marklogic/hub_unit_test/RunMarkLogicUnitTestsTest*'
         include 'com/marklogic/hub/**'
-        if (!(certAuth || sslRun)){
-            include 'com/marklogic/hub/PiiE2E.class'
-        }
     }
 }
+testAcceptance.dependsOn bootstrap
+
+task testDhsTests(type: Test) {
+    description = "Runs a subset of tests known to work against DHS; not everyone test can run against a DHS instance " +
+        "as it may depend on roles/privileges that DHS does not allow"
+    useJUnitPlatform  {
+        include 'com/marklogic/hub/dataservices/**'
+        // This test is failing due to an old 5.2.x DS module that gets installed by DHS 5.2.x
+        exclude 'com/marklogic/hub/dataservices/VerifyEndpointPrivileges*'
+        include 'com/marklogic/hub/flow/**'
+        include 'com/marklogic/hub/mapping/**'
+        include 'com/marklogic/hub/master/**'
+        include 'com/marklogic/hub/security/**'
+    }
+
+    // Pass some Gradle properties as system properties so they can be easily overridden
+    systemProperty "mlHost", mlHost
+    systemProperty "hubDhs", "true"
+    systemProperty "hubSsl", "true"
+    systemProperty "mlUsername", mlUsername
+    systemProperty "mlPassword", mlPassword
+    systemProperty "mlSecurityUsername", mlSecurityUsername
+    systemProperty "mlSecurityPassword", mlSecurityPassword
+    systemProperty "mlFlowDeveloperRole", "flowDeveloper"
+    systemProperty "mlFlowOperatorRole", "flowOperator"
+}
+testDhsTests.dependsOn bootstrap
 
 task testIntegration(type: Test) {
     systemProperty "mlHost", mlHost
@@ -442,12 +474,7 @@ task testIntegration(type: Test) {
         include 'com/marklogic/hub_integration/**'
     }
 }
-
-task testBootstrap(type: Test) {
-    useJUnitPlatform  {
-        include 'com/marklogic/bootstrap/**'
-    }
-}
+testIntegration.dependsOn bootstrap
 
 task testUnit(type: Test) {
     description = "Run the marklogic-unit-test tests, which also forces those modules to be loaded"
@@ -456,57 +483,3 @@ task testUnit(type: Test) {
     }
 }
 
-task setupSSL{
-    doFirst{
-        def bootStrapHost = null
-        if(sslRun || certAuth){
-            com.marklogic.mgmt.ManageClient manageClient = new ManageClient(new com.marklogic.mgmt.ManageConfig(mlHost, 8002, mlSecurityUsername, mlSecurityPassword))
-            com.marklogic.mgmt.resource.hosts.HostManager hostManager = new HostManager(manageClient)
-            bootStrapHost = hostManager.getHostNames().get(0)
-            if(! bootStrapHost.toLowerCase().contains("marklogic.com")){
-                throw new GradleException("The test with current options will run only in marklogic.com domain")
-            }
-
-            javaexec {
-                classpath = sourceSets.test.runtimeClasspath
-                main = 'com.marklogic.bootstrap.SSLsetup'
-                args = [mlHost, mlSecurityUsername, mlSecurityPassword, certAuth, sslRun]
-                }
-            }
-            if(sslRun) {
-                //checking if one of the property is already set
-                if(props.getProperty('mlJobSimpleSsl')==null){
-                    propFile.append("\n" +
-                            "mlJobSimpleSsl=true\n" +
-                            "mlFinalSimpleSsl=true\n" +
-                            "mlAdminScheme=https\n" +
-                            "mlManageScheme=https\n" +
-                            "mlAppServicesSimpleSsl=true\n" +
-                            "mlManageSimpleSsl=true\n" +
-                            "mlStagingSimpleSsl=true")
-                }
-            }
-            if(certAuth) {
-                if(props.getProperty('mlStagingAuth')==null){
-                    propFile.append("\n" +
-                            "mlStagingAuth=certificate\n" +
-                            "mlFinalAuth=certificate\n" +
-                            "mlHost="+bootStrapHost+"\n"+
-                            "mlAdminScheme=https\n" +
-                            "mlManageScheme=https\n" +
-                            "mlJobAuth=certificate")
-            }
-        }
-    }
-}
-
-bootstrap.dependsOn extractFastXmlParserZip
-bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is downloaded
-
-setupSSL.dependsOn(testClasses)
-bootstrap.dependsOn(setupSSL)
-task bootstrapAndTest(dependsOn:["bootstrap", "test"])
-test.mustRunAfter bootstrap
-testIntegration.dependsOn(bootstrap)
-testAcceptance.dependsOn(bootstrap)
-testBootstrap.dependsOn(bootstrap)
