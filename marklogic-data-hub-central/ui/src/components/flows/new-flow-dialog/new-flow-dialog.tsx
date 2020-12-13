@@ -139,7 +139,7 @@ const NewFlowDialog = (props) => {
         </span>} labelAlign="left"
         validateStatus={(flowName || !isFlowNameTouched) ? "" : "error"}
         help={(flowName || !isFlowNameTouched) ? "" : "Name is required"}>
-          { tobeDisabled?<MLTooltip title={NewFlowTooltips.nameField} placement={'bottom'}> <Input
+          { tobeDisabled?<MLTooltip title={NewFlowTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={flowName}
@@ -147,13 +147,13 @@ const NewFlowDialog = (props) => {
             disabled={tobeDisabled}
             className={styles.input}
           /></MLTooltip>:<Input
-          id="name"
-          placeholder="Enter name"
-          value={flowName}
-          onChange={handleChange}
-          disabled={tobeDisabled}
-          className={styles.input}
-        />} &nbsp;
+            id="name"
+            placeholder="Enter name"
+            value={flowName}
+            onChange={handleChange}
+            disabled={tobeDisabled}
+            className={styles.input}
+          />} &nbsp;
           <MLTooltip title={NewFlowTooltips.name}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>

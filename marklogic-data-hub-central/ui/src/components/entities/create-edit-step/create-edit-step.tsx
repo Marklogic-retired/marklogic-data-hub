@@ -418,7 +418,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? "" : "error"}
         help={(stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          { tobeDisabled?<MLTooltip title={NewMatchTooltips.nameField} placement={'bottom'}> <Input
+          { tobeDisabled?<MLTooltip title={NewMatchTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
@@ -436,9 +436,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>:
-          <MLTooltip title={NewMergeTooltips.name} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+            <MLTooltip title={NewMergeTooltips.name} placement={"right"}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </MLTooltip>
           }
         </Form.Item>
         <Form.Item label={<span>
@@ -456,9 +456,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>:
-          <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
+            <MLTooltip title={NewMergeTooltips.description} placement={"right"}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </MLTooltip>
           }
         </Form.Item>
 
