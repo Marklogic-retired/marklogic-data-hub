@@ -39,7 +39,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
+ * Abstract base class for tests that depend on a HubConfigImpl (which generally means they depend on both a HubClient
+ * and a HubProject).
  */
 public abstract class AbstractHubTest extends AbstractHubClientTest {
 

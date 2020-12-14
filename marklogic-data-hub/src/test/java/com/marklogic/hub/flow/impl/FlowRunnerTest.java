@@ -18,19 +18,16 @@ package com.marklogic.hub.flow.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.marklogic.client.DatabaseClient;
-import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.eval.EvalResult;
 import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
-import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
@@ -105,19 +102,30 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         // Delete the module that the value-step step-definition points to
         runAsDataHubDeveloper();
         getHubClient().getModulesClient().newDocumentManager().delete("/custom-modules/custom/value-step/main.sjs");
-
         runAsDataHubOperator();
+
+        // Create a couple documents to process so we can verify the counts for events
+        writeFinalJsonDoc("/customer1.json", "{}", "example");
+        writeFinalJsonDoc("/customer2.json", "{}", "example");
+
         Map<String, Object> options = new HashMap<>();
         options.put("collections", Arrays.asList("collector-test-output"));
-        options.put("sourceQuery", "cts.collectionQuery('shouldnt-return-anything')");
-        RunFlowResponse resp = runFlow("testValuesFlow", "1", UUID.randomUUID().toString(), options, null);
-        flowRunner.awaitCompletion();
+        options.put("sourceQuery", "cts.uris(null, null, cts.collectionQuery('example'))");
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("testValuesFlow", "1").withOptions(options));
 
-        List<String> errors = resp.getStepResponses().get("1").getStepOutput();
+        RunStepResponse stepResponse = flowResponse.getStepResponses().get("1");
+        List<String> errors = stepResponse.getStepOutput();
         assertEquals(1, errors.size(), "Expecting an error due to the missing module");
         assertTrue(errors.get(0).contains("Unable to access module: /custom-modules/custom/value-step/main.sjs. " +
             "Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."),
             "Did not find expected message in error; error: " + errors.get(0));
+
+        assertEquals(2, stepResponse.getTotalEvents(), "Expecting 2, as there are 2 URIs matching the collection query");
+        assertEquals(0, stepResponse.getSuccessfulEvents(), "Expecting 0, since the step module doesn't exist");
+        assertEquals(2, stepResponse.getFailedEvents(), "Expecting 2, since both URIs should have failed");
+        assertEquals(0, stepResponse.getSuccessfulBatches());
+        assertEquals(1, stepResponse.getFailedBatches());
+        assertFalse(stepResponse.isSuccess());
     }
 
     /**
@@ -131,12 +139,8 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
         final String flowName = "testValuesFlow";
 
         // Write a couple test documents that have range indexed values on them
-        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
-        metadata.getCollections().add("collector-test-input");
-        metadata.getPermissions().add("data-hub-operator", DocumentMetadataHandle.Capability.READ, DocumentMetadataHandle.Capability.UPDATE);
-        GenericDocumentManager finalDocMgr = getHubClient().getFinalClient().newDocumentManager();
-        finalDocMgr.write("/collector-test1.json", metadata, new BytesHandle("{\"PersonGivenName\":\"Jane\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
-        finalDocMgr.write("/collector-test2.json", metadata, new BytesHandle("{\"PersonGivenName\":\"John\", \"PersonSurName\":\"Smith\"}".getBytes()).withFormat(Format.JSON));
+        writeFinalJsonDoc("/collector-test1.json", "{\"PersonGivenName\":\"Jane\", \"PersonSurName\":\"Smith\"}", "collector-test-input");
+        writeFinalJsonDoc("/collector-test2.json", "{\"PersonGivenName\":\"John\", \"PersonSurName\":\"Smith\"}", "collector-test-input");
 
         Map<String, Object> options = new HashMap<>();
         options.put("collections", Arrays.asList("collector-test-output"));
