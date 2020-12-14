@@ -7,12 +7,14 @@ import com.marklogic.hub.HubProject;
 import com.marklogic.mgmt.api.database.Database;
 import com.marklogic.mgmt.api.database.ElementIndex;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
+import com.marklogic.rest.util.Fragment;
 import org.apache.commons.io.FileUtils;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileCopyUtils;
 import org.w3c.dom.Document;
 
 import java.io.File;
@@ -130,18 +132,15 @@ public class UpgradeProjectTest extends AbstractHubCoreTest {
         assertFalse(props.contains("mlJobPermissions"));
         assertFalse(props.contains("mlModulePermissions"));
 
-        //Ensure the path index from DHFPROD-3911 is added to xml payload
-        XMLUnit.setIgnoreWhitespace(true);
-        // DHFPROD-6271 Temporarily commenting out until we have a real fix
-//        Document expected = getXmlFromResource("upgrade-projects/dhf43x/key/final-database.xml");
-//        Document actual = getXmlFromInputStream(FileUtils.openInputStream(hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile()));
-//        assertXMLEqual(expected, actual);
+        File finalDatabaseXmlFile = hubProject.getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
+        Fragment finalDatabaseXmlProps = new Fragment(new String(FileCopyUtils.copyToByteArray(finalDatabaseXmlFile)));
+        // This doesn't really matter because we know the file didn't exist before, but doesn't hurt to verify these things
+        UpgradeFinalDatabaseXmlFileTest.verify540ChangesAreApplied(finalDatabaseXmlProps);
 
         // Check that artifact directories are created
         assertTrue(hubProject.getProjectDir().resolve("entities").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("step-definitions").toFile().exists());
         assertTrue(hubProject.getProjectDir().resolve("steps").toFile().exists());
-
     }
 
     @Test
