@@ -1,0 +1,31 @@
+{
+  "lang": "zxx",
+  "name": "OrdersMapping",
+  "description": "The structured properties are mapped to invalid properties",
+  "version": 4,
+  "targetEntityType": "http://marklogic.com/data-hub/example/OrderType-0.0.1/OrderType",
+  "sourceContext": "/",
+  "properties": {
+    "id": {
+      "sourcedFrom": "id"
+    },
+    "customer": {
+      "targetEntityType": "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType",
+      "sourcedFrom": "customer",
+      "properties": {
+        "firstname": {
+          "sourcedFrom": "missingFirstName"
+        }
+      }
+    },
+    "items": {
+      "targetEntityType": "http://marklogic.com/data-hub/example/ItemType-0.0.1/ItemType",
+      "sourcedFrom": "items",
+      "properties": {
+        "name": {
+          "sourcedFrom": "missingName"
+        }
+      }
+    }
+  }
+}

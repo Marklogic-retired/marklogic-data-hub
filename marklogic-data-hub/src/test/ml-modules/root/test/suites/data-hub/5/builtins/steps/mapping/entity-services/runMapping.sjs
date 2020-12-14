@@ -1,6 +1,5 @@
 const lib = require("lib/lib.sjs");
 const mapping = require("/data-hub/5/builtins/steps/mapping/entity-services/main.sjs");
-const mappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
 const test = require("/test/test-helper.xqy");
 
 let assertions = [];
