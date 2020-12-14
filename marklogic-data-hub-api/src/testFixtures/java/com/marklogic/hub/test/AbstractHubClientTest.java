@@ -124,8 +124,11 @@ public abstract class AbstractHubClientTest extends TestObject {
         String query = "xquery version '1.0-ml';" +
             "\n declare namespace ss = 'http://marklogic.com/xdmp/status/server';" +
             "\n declare namespace hs = 'http://marklogic.com/xdmp/status/host';" +
-            "\n let $task-server-id as xs:unsignedLong := xdmp:host-status(xdmp:host())//hs:task-server-id" +
-            "\n return fn:count(xdmp:server-status(xdmp:host(), $task-server-id)/ss:request-statuses/*)";
+            "\n fn:sum(" +
+            "\n  for $host in xdmp:hosts()" +
+            "\n  let $task-server-id as xs:unsignedLong := xdmp:host-status($host)//hs:task-server-id" +
+            "\n  return fn:count(xdmp:server-status($host, $task-server-id)/ss:request-statuses/*)" +
+            "\n )";
 
         final int maxTries = 100;
         final long sleepPeriod = 200;
@@ -134,7 +137,7 @@ public abstract class AbstractHubClientTest extends TestObject {
 
         int taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
         int tries = 0;
-        logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
+        logger.info("Waiting for task server tasks to finish, count: " + taskCount);
         while (taskCount > 0 && tries < maxTries) {
             tries++;
             try {
@@ -143,13 +146,40 @@ public abstract class AbstractHubClientTest extends TestObject {
                 // ignore
             }
             taskCount = Integer.parseInt(stagingClient.newServerEval().xquery(query).evalAs(String.class));
-            logger.debug("Waiting for task server tasks to finish, count: " + taskCount);
+            logger.info("Waiting for task server tasks to finish, count: " + taskCount);
         }
+    }
 
-        // Hack for cluster tests - if there's more than one host, wait a couple more seconds. Sigh.
-        String secondHost = stagingClient.newServerEval().xquery("xdmp:hosts()[2]").evalAs(String.class);
-        if (secondHost != null && secondHost.trim().length() > 0) {
-            sleep(2000);
+    protected void waitForRebalance(HubClient hubClient, String database){
+        String query = "(\n" +
+                "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
+                "  return xdmp:forest-status($forest-id)//*:rebalancing\n" +
+                ") = fn:true()";
+        waitForQueryToBeTrue(hubClient, query, "Rebalancing " + database + " database");
+    }
+
+    protected void waitForQueryToBeTrue(HubClient hubClient, String query, String message){
+        boolean currentStatus;
+        int attempts = 125;
+        boolean previousStatus = false;
+        do{
+            sleep(200L);
+            currentStatus = Boolean.parseBoolean(hubClient.getStagingClient().newServerEval().xquery(query).evalAs(String.class));
+            if(currentStatus){
+                logger.info(message);
+            }
+            if(!currentStatus && previousStatus){
+                logger.info("Finished: " + message);
+                return;
+            }
+            else{
+                previousStatus = currentStatus;
+            }
+            attempts--;
+        }
+        while(attempts > 0);
+        if(currentStatus){
+            logger.warn(message + " is taking more than 25 seconds");
         }
     }
 
