@@ -453,11 +453,13 @@ public class QueryStepRunner implements StepRunner {
                     }
                     // if exception is thrown update the failed related metrics
                     stepMetrics.getFailedBatches().addAndGet(1);
-                    stepMetrics.getFailedEvents().addAndGet(batchSize);
+                    stepMetrics.getFailedEvents().addAndGet(batch.getItems().length);
                 }
             })
             .onQueryFailure((QueryBatchException failure) -> {
                 stepMetrics.getFailedBatches().addAndGet(1);
+                // In the event of a QueryBatchException, there's no QueryBatch, and thus we don't know the exact number
+                // of items that failed. Best guess then is the value of batchSize.
                 stepMetrics.getFailedEvents().addAndGet(batchSize);
             });
 

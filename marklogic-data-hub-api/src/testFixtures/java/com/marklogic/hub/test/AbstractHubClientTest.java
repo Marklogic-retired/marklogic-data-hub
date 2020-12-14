@@ -3,8 +3,7 @@ package com.marklogic.hub.test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
-import com.marklogic.client.io.DOMHandle;
-import com.marklogic.client.io.JacksonHandle;
+import com.marklogic.client.io.*;
 import com.marklogic.hub.HubClient;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.security.User;
@@ -14,7 +13,7 @@ import java.net.ConnectException;
 import java.util.Arrays;
 
 /**
- * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
+ * Abstract base class tests that only depend on a HubClient and not a HubProject.
  */
 public abstract class AbstractHubClientTest extends TestObject {
 
@@ -168,4 +167,13 @@ public abstract class AbstractHubClientTest extends TestObject {
     protected Document getFinalXmlDoc(String uri) {
         return getHubClient().getFinalClient().newXMLDocumentManager().read(uri, new DOMHandle()).get();
     }
+
+    protected void writeFinalJsonDoc(String uri, String content, String... collections) {
+        DocumentMetadataHandle metadata = new DocumentMetadataHandle();
+        addDefaultPermissions(metadata);
+        metadata.getCollections().addAll(collections);
+        getHubClient().getFinalClient().newDocumentManager().write(uri, metadata,
+            new BytesHandle(content.getBytes()).withFormat(Format.JSON));
+    }
+
 }
