@@ -144,16 +144,18 @@ public class DeployDatabaseFieldCommand extends AbstractResourceCommand {
 
     protected void addExistingPathNamespaces(Fragment newProps, Fragment existingProps) {
         Element newNamespaces = newProps.getInternalDoc().getRootElement().getChild("path-namespaces", MANAGE_NS);
-        List<String> newNamespacePrefixes = new ArrayList<>();
+        if (newNamespaces != null) {
+            List<String> newNamespacePrefixes = new ArrayList<>();
 
-        newProps.getElements("/m:database-properties/m:path-namespaces/m:path-namespace").forEach(namespace ->
-            newNamespacePrefixes.add(namespace.getChildText("prefix", MANAGE_NS))
-        );
+            newProps.getElements("/m:database-properties/m:path-namespaces/m:path-namespace").forEach(namespace ->
+                newNamespacePrefixes.add(namespace.getChildText("prefix", MANAGE_NS))
+            );
 
-        for (Element namespace : existingProps.getElements("/m:database-properties/m:path-namespaces/m:path-namespace")) {
-            String prefix = namespace.getChildText("prefix", MANAGE_NS);
-            if (!newNamespacePrefixes.contains(prefix)) {
-                newNamespaces.addContent(namespace.detach());
+            for (Element namespace : existingProps.getElements("/m:database-properties/m:path-namespaces/m:path-namespace")) {
+                String prefix = namespace.getChildText("prefix", MANAGE_NS);
+                if (!newNamespacePrefixes.contains(prefix)) {
+                    newNamespaces.addContent(namespace.detach());
+                }
             }
         }
     }
