@@ -164,8 +164,7 @@ const MappingCard: React.FC<Props> = (props) => {
   </Modal>;
 
 
-  const getSourceData = async (index) => {
-    let stepName = props.data[index].name;
+  const getSourceData = async (stepName, index) => {
     try {
       setIsLoading(true);
       let response = await getUris(stepName, 20);
@@ -548,7 +547,7 @@ const MappingCard: React.FC<Props> = (props) => {
     setDocUris([]);
     setSourceData([]);
     setMapData({...mData});
-    await getSourceData(index);
+    await getSourceData(name, index);
     extractEntityInfoForTable();
     setMapName(name);
     setSourceDatabaseName(mData.sourceDatabase);
