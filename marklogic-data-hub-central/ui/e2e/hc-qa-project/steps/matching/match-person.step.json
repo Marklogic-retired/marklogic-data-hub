@@ -6,109 +6,91 @@
   "additionalCollections" : [ ],
   "sourceQuery" : "cts.collectionQuery([\"mapPersonJSON\"])",
   "provenanceGranularityLevel" : "fine",
-  "targetEntity" : "Person",
   "sourceDatabase" : "data-hub-FINAL",
   "collections" : [ "match-person", "Person" ],
-  "matchOptions" : {
-    "dataFormat" : "json",
-    "algorithms" : {
-      "algorithm" : [ {
-        "name" : "double-metaphone",
-        "function" : "double-metaphone",
-        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
-        "at" : "/com.marklogic.smart-mastering/algorithms/double-metaphone.xqy"
-      }, {
-        "name" : "thesaurus",
-        "function" : "thesaurus",
-        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
-        "at" : "/com.marklogic.smart-mastering/algorithms/thesaurus.xqy"
-      }, {
-        "name" : "zip-match",
-        "function" : "zip-match",
-        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
-        "at" : "/com.marklogic.smart-mastering/algorithms/zip.xqy"
-      }, {
-        "name" : "standard-reduction",
-        "function" : "standard-reduction"
-      }, {
-        "name" : "dob-match",
-        "function" : "dob-match",
-        "namespace" : "http://marklogic.com/smart-mastering/algorithms",
-        "at" : "/custom-modules/custom/dob-match.xqy"
-      } ]
-    },
-    "collections" : {
-      "content" : [ ]
-    },
-    "scoring" : {
-      "add" : [ {
-        "propertyName" : "lname",
-        "weight" : "10"
-      }, {
-        "propertyName" : "SSN",
-        "weight" : "20"
-      } ],
-      "expand" : [ {
-        "propertyName" : "fname",
-        "algorithmRef" : "double-metaphone",
-        "weight" : "10",
-        "dictionary" : "/dictionary/first-names.xml",
-        "distanceThreshold" : "100"
-      }, {
-        "propertyName" : "fname",
-        "algorithmRef" : "thesaurus",
-        "weight" : "10",
-        "thesaurus" : "/thesaurus/nicknames.xml"
-      }, {
-        "propertyName" : "DateOfBirth",
-        "algorithmRef" : "dob-match",
-        "weight" : "10"
-      }, {
-        "propertyName" : "ZipCode",
-        "algorithmRef" : "zip-match",
-        "zip" : [ {
-          "origin" : 5,
-          "weight" : "10"
-        }, {
-          "origin" : 9,
-          "weight" : "10"
-        } ]
-      } ],
-      "reduce" : [ {
-        "allMatch" : {
-          "property" : [ "Address" ]
-        },
-        "algorithmRef" : "standard-reduction",
-        "weight" : "5"
-      } ]
-    },
-    "actions" : {
-      "action" : [ {
-        "name" : "customMatch",
-        "at" : "/custom-modules/custom/custom-match-action.sjs",
-        "function" : "customMatch"
-      } ]
-    },
-    "thresholds" : {
-      "threshold" : [ {
-        "above" : "19",
-        "label" : "Match",
-        "action" : "merge"
-      }, {
-        "above" : "9",
-        "label" : "Likely Match",
-        "action" : "notify"
-      }, {
-        "above" : "4",
-        "label" : "Slight Match",
-        "action" : "customMatch"
-      } ]
-    },
-    "tuning" : {
-      "maxScan" : 200
-    }
-  },
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
-  "stepId" : "match-person-matching"
+  "stepId" : "match-person-matching",
+  "targetEntityType" : "Person",
+  "matchRulesets" : [ {
+    "name" : "lname - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "lname",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "SSN - Exact",
+    "weight" : 20,
+    "matchRules" : [ {
+      "entityPropertyPath" : "SSN",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "fname - Double Metaphone",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "fname",
+      "matchType" : "doubleMetaphone",
+      "options" : {
+        "dictionaryURI" : "/dictionary/first-names.xml",
+        "distanceThreshold" : 100
+      }
+    } ]
+  }, {
+    "name" : "fname - Synonym",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "fname",
+      "matchType" : "synonym",
+      "options" : {
+        "thesaurusURI" : "/thesaurus/nicknames.xml"
+      }
+    } ]
+  }, {
+    "name" : "DateOfBirth - Custom",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "DateOfBirth",
+      "matchType" : "custom",
+      "algorithmModuleNamespace" : "http://marklogic.com/smart-mastering/algorithms",
+      "algorithmModulePath" : "/custom-modules/custom/dob-match.xqy",
+      "algorithmFunction" : "dob-match",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "ZipCode - Zip",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "ZipCode",
+      "matchType" : "zip",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Address - Reduce",
+    "weight" : 5,
+    "reduce" : true,
+    "matchRules" : [ {
+      "entityPropertyPath" : "Address",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "Match",
+    "action" : "merge",
+    "score" : 19
+  }, {
+    "thresholdName" : "Likely Match",
+    "action" : "notify",
+    "score" : 9
+  }, {
+    "thresholdName" : "Slight Match",
+    "action" : "custom",
+    "score" : 4,
+    "actionModulePath" : "/custom-modules/custom/custom-match-action.sjs",
+    "actionModuleFunction" : "customMatch"
+  } ]
 }

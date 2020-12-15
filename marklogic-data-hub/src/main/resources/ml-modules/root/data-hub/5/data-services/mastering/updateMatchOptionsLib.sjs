@@ -91,7 +91,7 @@ function exactRuleset(item, properties, maxWeight) {
     "weight": adjustWeight(item.weight, maxWeight),
     "matchRules": [
       {
-        "entityPropertyPath": properties[item.propertyName].localname,
+        "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
         "matchType": "exact",
         "options": {}
       }
@@ -112,7 +112,7 @@ function zipRuleset(item, properties, maxWeight) {
     "weight": adjustWeight(zipMaxWeight, maxWeight),
     "matchRules": [
       {
-        "entityPropertyPath": properties[item.propertyName].localname,
+        "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
         "matchType": "zip",
         "options": {}
       }
@@ -132,7 +132,7 @@ function reduceRuleset(item, properties, maxWeight) {
     item.allMatch.property.forEach((prop) => {
       ruleset.matchRules.push(
         {
-          "entityPropertyPath": properties[prop].localname,
+          "entityPropertyPath": getEntityPropertyPath(prop, properties),
           "matchType": "exact",
           "options": {}
         }
@@ -147,7 +147,7 @@ function reduceRuleset(item, properties, maxWeight) {
       "reduce": true,
       "matchRules": [
         {
-          "entityPropertyPath": properties[item.propertyName].localname,
+          "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
           "matchType": "exact",
           "options": {}
         }
@@ -164,7 +164,7 @@ function doubleMetaphoneRuleset(item, properties, maxWeight)
     "weight": adjustWeight(item.weight, maxWeight),
     "matchRules": [
       {
-        "entityPropertyPath": properties[item.propertyName].localname,
+        "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
         "matchType": "doubleMetaphone",
         "options": {
           "dictionaryURI": item.dictionary,
@@ -182,7 +182,7 @@ function synonymRuleset(item, properties, maxWeight) {
     "weight": adjustWeight(item.weight, maxWeight),
     "matchRules": [
       {
-        "entityPropertyPath": properties[item.propertyName].localname,
+        "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
         "matchType": "synonym",
         "options": {
           "thesaurusURI": item.thesaurus,
@@ -201,7 +201,7 @@ function customRuleset(item, properties, algorithms, maxWeight) {
     "weight": adjustWeight(item.weight, maxWeight),
     "matchRules": [
       {
-        "entityPropertyPath": properties[item.propertyName].localname,
+        "entityPropertyPath": getEntityPropertyPath(item.propertyName, properties),
         "matchType": "custom",
         "algorithmModuleNamespace": algorithm.namespace,
         "algorithmModulePath": algorithm.at,
@@ -246,6 +246,11 @@ function adjustWeight(weight, maxWeight) {
   return w
 };
 
+function getEntityPropertyPath(propName, propertyDefinitions = {})
+{
+  let propertyDefinition = propertyDefinitions[propName];
+  return propertyDefinition ? propertyDefinition.localname : propName;
+}
 
 module.exports = {
   updateMatchOptions

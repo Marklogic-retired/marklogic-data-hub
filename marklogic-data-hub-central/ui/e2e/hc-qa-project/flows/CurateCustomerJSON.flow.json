@@ -1,12 +1,12 @@
 {
-  "name": "CurateCustomerJSON",
-  "steps": {
-    "1": {
-      "stepId": "loadCustomersJSON-ingestion"
+  "name" : "CurateCustomerJSON",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadCustomersJSON-ingestion"
     },
-    "2": {
-      "stepId": "mapCustomersJSON-mapping"
+    "2" : {
+      "stepId" : "mapCustomersJSON-mapping"
     }
   },
-  "lastUpdated": "2020-08-18T00:14:41.237511Z"
+  "lastUpdated" : "2020-08-18T00:14:41.237511Z"
 }

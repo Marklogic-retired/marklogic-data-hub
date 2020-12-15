@@ -30,9 +30,10 @@ function updateMergeOptions(opt)
   }
 
   if (opt.merging) {
+    const namespaces = opt.propertyDefs ? opt.propertyDefs.namespaces : {};
     opt.merging.forEach((item) =>
       {
-        mergeRules.push(mergeRule(item, algorithms, properties, opt.propertyDefs.namespaces));
+        mergeRules.push(mergeRule(item, algorithms, properties, namespaces));
       }
     );
   }
@@ -151,6 +152,8 @@ function mergeRule(item, algorithms, properties, namespaces) {
       else if (prop.localname) {
         mr.entityPropertyPath = prop.localname;
       }
+    } else {
+      mr.entityPropertyPath = item.propertyName;
     }
   }
   if (item.strategy) { mr.mergeStrategyName = item.strategy; }

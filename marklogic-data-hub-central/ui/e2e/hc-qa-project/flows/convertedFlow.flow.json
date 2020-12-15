@@ -4,8 +4,8 @@
     "1" : {
       "stepId" : "ingest-orders-ingestion"
     },
-    "2": {
-      "stepId": "map-orders-mapping"
+    "2" : {
+      "stepId" : "map-orders-mapping"
     }
   }
 }
