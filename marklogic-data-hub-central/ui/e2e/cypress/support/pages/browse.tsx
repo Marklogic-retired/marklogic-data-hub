@@ -582,6 +582,10 @@ class BrowsePage {
     return cy.findByText("Staging");
   }
 
+  getDatabaseButton(database: string) {
+    return cy.get(`[aria-label='switch-database-${database}']`);
+  }
+
   getTableViewButton() {
     return cy.findByText("Table");
   }

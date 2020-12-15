@@ -80,6 +80,7 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Data");
+    browsePage.getDatabaseButton("final").should("have.attr", "checked");
 
     //verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations
     toolbar.getLoadToolbarIcon().click();
@@ -147,7 +148,10 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getInstanceView().should("exist");
     detailPage.getDocumentTable().should("exist");
     detailPage.clickBackButton();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Entities");
+    browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSearchText().should("have.value", "10256");
     browsePage.getFacetView().should("have.css", "color", "rgb(91, 105, 175)");
   });
@@ -372,10 +376,14 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentTable().should("exist");
     //Verify navigating back from detail view should persist search options
     detailPage.clickBackButton();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getClearFacetSearchSelection("Alice").should("exist");
     browsePage.getSearchText().should("have.value", "Alice");
     browsePage.getTableView().should("have.css", "color", "rgb(91, 105, 175)");
+
   });
 
   it("verify instance view of the document with pk", () => {
@@ -447,6 +455,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.waitForSpinnerToDisappear();
     //Verify navigating back from detail view should persist search options
     browsePage.getSelectedEntity().should("contain", "Customer");
+    browsePage.getDatabaseButton("final").should("have.attr", "checked");
     browsePage.getFinalDatabaseButton().parent().find("input").invoke("attr", "checked").should("exist");
     browsePage.getClearFacetSearchSelection("mapCustomersJSON").should("exist");
     browsePage.getSearchText().should("have.value", "Adams Cole");

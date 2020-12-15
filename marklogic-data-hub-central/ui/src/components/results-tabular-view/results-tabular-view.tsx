@@ -226,7 +226,7 @@ const ResultsTabularView = (props) => {
                   primaryKey: path.primaryKey,
                   uri: item.uri,
                   entityInstance: item.entityInstance,
-                  database: searchOptions.database
+                  targetDatabase: searchOptions.database
                 }
               }} id={"instance"}
               data-cy="instance">
@@ -247,7 +247,7 @@ const ResultsTabularView = (props) => {
                   primaryKey: path.primaryKey,
                   uri: item.uri,
                   entityInstance: item.entityInstance,
-                  database: searchOptions.database
+                  targetDatabase: searchOptions.database
                 }
               }} id={"source"}
               data-cy="source">
@@ -371,7 +371,8 @@ const ResultsTabularView = (props) => {
                 sources: rowId.sources,
                 primaryKey: rowId.primaryKeyPath.primaryKey,
                 uri: rowId.uri,
-                entityInstance: rowId.entityInstance
+                entityInstance: rowId.entityInstance,
+                targetDatabase: searchOptions.database
               }
             }}
             data-cy="nested-instance">

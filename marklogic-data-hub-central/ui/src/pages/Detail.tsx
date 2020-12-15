@@ -303,7 +303,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
       sortOrder: location.state && location.state.hasOwnProperty("sortOrder") ? location.state["sortOrder"] : parentPagePreferences["sortOrder"],
       sources: location.state && location.state.hasOwnProperty("sources") ? location.state["sources"] : parentPagePreferences["sources"],
       isEntityInstance: location.state && location.state.hasOwnProperty("isEntityInstance") ? location.state["isEntityInstance"] : parentPagePreferences["isEntityInstance"],
-      targetDatabase: location.state && location.state.hasOwnProperty("database") ? location.state["database"] : parentPagePreferences["targetDatabase"],
+      targetDatabase: location.state && location.state.hasOwnProperty("targetDatabase") ? location.state["targetDatabase"] : parentPagePreferences["targetDatabase"],
     }
   };
 
