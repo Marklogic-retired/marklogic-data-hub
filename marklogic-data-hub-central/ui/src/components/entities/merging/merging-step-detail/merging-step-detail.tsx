@@ -13,8 +13,8 @@ import {MergeStrategyTooltips, MergingStepDetailText} from "../../../../config/t
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
-import EditMergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
-import AddMergeRuleDialog from "../add-merge-rule/add-merge-rule-dialog";
+import MergeStrategyDialog from "../merge-strategy-dialog/merge-strategy-dialog";
+import MergeRuleDialog from "../add-merge-rule/merge-rule-dialog";
 import {RightOutlined, DownOutlined} from "@ant-design/icons";
 import {Icon, Modal, Table} from "antd";
 import {updateMergingArtifact} from "../../../../api/merging";
@@ -50,8 +50,10 @@ const MergingStepDetail: React.FC = () => {
   const [mergingStep, setMergingStep] = useState<MergingStep>(DEFAULT_MERGING_STEP);
   const [showCreateEditStrategyModal, toggleCreateEditStrategyModal] = useState(false);
   const [isEditStrategy, toggleIsEditStrategy] = useState(false);
-  const [openAddMergeRuleDialog, setOpenAddMergeRuleDialog] = useState(false);
+  const [isEditRule, toggleIsEditRule] = useState(false);
+  const [showCreateEditRuleModal, toggleCreateEditRuleModal] = useState(false);
   const [currentStrategyName, setCurrentStrategyName] = useState("");
+  const [currentPropertyName, setCurrentPropertyName] = useState("");
   const [currentMergeObj, setCurrentMergeObj] = useState<any>({});
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const [sourceNames, setSourceNames] = useState<string[]>([]);
@@ -87,6 +89,12 @@ const MergingStepDetail: React.FC = () => {
     toggleCreateEditStrategyModal(true);
     setCurrentStrategyName(strategyName);
     toggleIsEditStrategy(true);
+  };
+
+  const editMergeRule = (propertyName) => {
+    toggleCreateEditRuleModal(true);
+    setCurrentPropertyName(propertyName);
+    toggleIsEditRule(true);
   };
 
   const mergeStrategyColumns : any = [
@@ -152,6 +160,14 @@ const MergingStepDetail: React.FC = () => {
       },
       width: 200,
       sortDirections: ["ascend", "descend", "ascend"],
+      render: text => {
+        return (
+          <span className={styles.link}
+            id={"property-name-link"}
+            onClick={ () => editMergeRule(text)}>
+            {text}</span>
+        );
+      }
     },
     {
       title: "Merge Type",
@@ -397,7 +413,11 @@ const MergingStepDetail: React.FC = () => {
             <div><p>A <span className={styles.italic}>merge rule</span><span> defines how to combine the values of a specific property</span>
             </p></div>
             <div className={styles.addButtonContainer}>
-              <MLButton aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => { setOpenAddMergeRuleDialog(true); }}>Add</MLButton>
+              <MLButton aria-label="add-merge-rule" type="primary" size="default" className={styles.addMergeButton} onClick={() => {
+                toggleCreateEditRuleModal(true);
+                toggleIsEditRule(false);
+                setCurrentPropertyName("");
+              }}>Add</MLButton>
             </div>
           </div>
           <MLTable
@@ -408,18 +428,21 @@ const MergingStepDetail: React.FC = () => {
             size="middle"
           />
         </div>
-        <EditMergeStrategyDialog
+        <MergeStrategyDialog
           sourceNames={sourceNames}
           strategyName={currentStrategyName}
           createEditMergeStrategyDialog={showCreateEditStrategyModal}
           setOpenEditMergeStrategyDialog={toggleCreateEditStrategyModal}
           isEditStrategy={isEditStrategy}
+          toggleIsEditStrategy={toggleIsEditStrategy}
         />
-        <AddMergeRuleDialog
-          data={[]}
+        <MergeRuleDialog
           sourceNames={sourceNames}
-          openAddMergeRuleDialog={openAddMergeRuleDialog}
-          setOpenAddMergeRuleDialog={setOpenAddMergeRuleDialog}
+          createEditMergeRuleDialog={showCreateEditRuleModal}
+          setOpenMergeRuleDialog={toggleCreateEditRuleModal}
+          isEditRule={isEditRule}
+          toggleEditRule={toggleIsEditRule}
+          propertyName={currentPropertyName}
         />
         {deleteModal}
       </div>

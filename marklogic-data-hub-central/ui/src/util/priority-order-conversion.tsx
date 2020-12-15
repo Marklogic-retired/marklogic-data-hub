@@ -22,7 +22,7 @@ export const addSliderOptions =  (priorityOrderOptions, dropdownOption) => {
   let priorityOrderDropdownOptions = [...priorityOrderOptions];
   for (let key of priorityOrderDropdownOptions) {
     if (key.hasOwnProperty("props") && (key.props[0].type === dropdownOption || key.props[0].prop === dropdownOption)) {
-      return;
+      return priorityOrderDropdownOptions;
     }
   }
   priorityOrderDropdownOptions.push(
