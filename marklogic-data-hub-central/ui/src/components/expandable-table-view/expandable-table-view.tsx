@@ -48,7 +48,8 @@ const ExpandableTableView: React.FC<Props> = (props) => {
             sources: props.item.sources,
             primaryKey: primaryKeyValue,
             uri: props.item.uri,
-            entityInstance: props.item.entityInstance
+            entityInstance: props.item.entityInstance,
+            targetDatabase: searchOptions.database
           }}} data-cy="nested-instance">
             <MLTooltip title={"Show nested detail on a separate page"}><FontAwesomeIcon icon={faExternalLinkAlt}
               size="sm"/></MLTooltip>
