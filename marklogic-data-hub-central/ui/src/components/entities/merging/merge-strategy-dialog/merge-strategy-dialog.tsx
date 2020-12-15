@@ -20,6 +20,7 @@ type Props = {
     createEditMergeStrategyDialog: boolean;
     setOpenEditMergeStrategyDialog: (createEditMergeStrategyDialog: boolean) => void;
     isEditStrategy: boolean;
+    toggleIsEditStrategy: (isEditStrategy:boolean) => void;
 };
 
 const {MLOption} = MLSelect;
@@ -138,6 +139,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     if (hasFormChanged()) {
       setDiscardChangesVisible(true);
     } else {
+      props.toggleIsEditStrategy(false);
       props.setOpenEditMergeStrategyDialog(false);
       resetModal();
     }

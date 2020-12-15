@@ -9,7 +9,7 @@ import {updateMergingArtifact} from "../../../../api/merging";
 jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
 
-describe("Edit Merge Strategy Dialog component", () => {
+describe("Merge Strategy Dialog component", () => {
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -21,7 +21,7 @@ describe("Edit Merge Strategy Dialog component", () => {
     const {getByText, getByPlaceholderText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
-          {...data.editMergingDataProps}
+          {...data.mergeStrategyDataProps}
           isEditStrategy={false}
         />
       </CurationContext.Provider>
@@ -43,7 +43,7 @@ describe("Edit Merge Strategy Dialog component", () => {
     let saveButton = getByText("Save");
     //Modal will close now
     fireEvent.click(saveButton);
-    expect(data.editMergingDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
+    expect(data.mergeStrategyDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -51,14 +51,14 @@ describe("Edit Merge Strategy Dialog component", () => {
     const {getByText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
-          {...data.editMergingDataProps}
+          {...data.mergeStrategyDataProps}
         />
       </CurationContext.Provider>
     );
     let cancelButton = getByText("Cancel");
     fireEvent.click(cancelButton);
     expect(screen.queryByLabelText("confirm-body")).toBeNull();
-    expect(data.editMergingDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
+    expect(data.mergeStrategyDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(1);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
   });
 
@@ -66,7 +66,7 @@ describe("Edit Merge Strategy Dialog component", () => {
     const {getByText, getByPlaceholderText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
-          {...data.editMergingDataProps}
+          {...data.mergeStrategyDataProps}
           strategyName={"myFavouriteSource"}
         />
       </CurationContext.Provider>
@@ -86,14 +86,14 @@ describe("Edit Merge Strategy Dialog component", () => {
     fireEvent.click(saveButton);
     //Verify if error message is displayed correctly
     expect(getByText("Strategy name is required")).toBeInTheDocument();
-    expect(data.editMergingDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(0);
+    expect(data.mergeStrategyDataProps.setOpenEditMergeStrategyDialog).toHaveBeenCalledTimes(0);
   });
 
   it("Verify Edit Merge Strategy dialog renders correctly for custom step", () => {
     const {getByText, getByPlaceholderText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
-          {...data.editMergingDataProps}
+          {...data.mergeStrategyDataProps}
           strategyName={"customMergeStrategy"}
         />
       </CurationContext.Provider>

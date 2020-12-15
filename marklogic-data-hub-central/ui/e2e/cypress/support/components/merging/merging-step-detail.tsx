@@ -19,6 +19,20 @@ class MergingStepDetail {
   confirmMergeDeleteModalButton() {
     return cy.findByLabelText("delete-merge-modal-confirm");
   }
+
+  addMergeRuleButton() {
+    return cy.findByLabelText("add-merge-rule");
+  }
+
+  getDeleteMergeRuleButton(str: string) {
+    return cy.findByTestId(`mergerule-${str}`);
+  }
+
+  getDeleteMergeRuleText() {
+    return cy.findByLabelText("delete-merge-rule-text");
+  }
+
+
 }
 
 const mergingStepDetail = new MergingStepDetail();

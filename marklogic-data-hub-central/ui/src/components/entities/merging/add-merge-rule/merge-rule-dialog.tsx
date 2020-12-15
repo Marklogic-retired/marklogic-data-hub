@@ -4,7 +4,7 @@ import {
   Icon, Radio, Input,
 } from "antd";
 import React, {useState, useContext, useEffect} from "react";
-import styles from "./add-merge-rule-dialog.module.scss";
+import styles from "./merge-rule-dialog.module.scss";
 import {MLButton, MLTooltip, MLInput, MLSelect} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
@@ -20,10 +20,12 @@ import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteS
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 
 type Props = {
-    data: any;
     sourceNames: string[];
-    openAddMergeRuleDialog: boolean;
-    setOpenAddMergeRuleDialog: (openAddMergeRuleDialog: boolean) => void;
+    createEditMergeRuleDialog: boolean;
+    setOpenMergeRuleDialog: (createEditMergeRuleDialog: boolean) => void;
+    isEditRule: boolean;
+    propertyName: string;
+    toggleEditRule: (isEditRule: boolean) => void;
 };
 
 const DEFAULT_ENTITY_DEFINITION: Definition = {
@@ -33,7 +35,7 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
 
 const {MLOption} = MLSelect;
 
-const AddMergeRuleDialog: React.FC<Props> = (props) => {
+const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const {curationOptions, updateActiveStepArtifact} = useContext(CurationContext);
   const [entityTypeDefinition, setEntityTypeDefinition] = useState<Definition>(DEFAULT_ENTITY_DEFINITION);
@@ -41,7 +43,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
   const [property, setProperty] = useState<string | undefined>(undefined);
   const [propertyTouched, setPropertyTouched] = useState(false);
   const [propertyErrorMessage, setPropertyErrorMessage] = useState("");
-  const [mergeType, setMergeType] = useState(undefined);
+  const [mergeType, setMergeType] = useState<string | undefined>(undefined);
   const [mergeTypeErrorMessage, setMergeTypeErrorMessage] = useState("");
   const [mergeTypeTouched, setMergeTypeTouched] = useState(false);
   const [dropdownOption, setDropdownOption] = useState("Length");
@@ -55,13 +57,14 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
   const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState("");
   const [namespace, setNamespace] = useState("");
   const [namespaceTouched, setNamespaceTouched] = useState(false);
-  const [maxValueRuleInput, setMaxValueRuleInput] = useState();
+  const [maxValueRuleInput, setMaxValueRuleInput] = useState<any>("");
   const [maxValueRuleInputTouched, setMaxValueRuleInputTouched] = useState(false);
-  const [maxSourcesRuleInput, setMaxSourcesRuleInput] = useState();
+  const [maxSourcesRuleInput, setMaxSourcesRuleInput] = useState<any>("");
   const [maxSourcesRuleInputTouched, setMaxSourcesRuleInputTouched] = useState(false);
-  const [radioOptionClicked, setRadioOptionClicked] = useState(1);
   const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([]);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
+  const [radioSourcesOptionClicked, setRadioSourcesOptionClicked] = useState(1);
+  const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
 
   const titleLegend = <div className={styles.titleLegend}>
     <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
@@ -69,31 +72,101 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
   </div>;
 
   const mergeTypes = ["Custom", "Strategy", "Property-specific"];
-  const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
+  const mergeTypeOptions = mergeTypes.map(elem => <MLOption data-testid={`mergeTypeOptions-${elem}`} value={elem} key={elem}>{elem}</MLOption>);
   const dropdownTypes = ["Length"].concat(props.sourceNames);
   const dropdownTypeOptions = dropdownTypes.map(elem => <MLOption data-testid={`dropdownTypeOptions-${elem}`} key={elem}>{elem}</MLOption>);
 
   useEffect(() => {
-    if (props.openAddMergeRuleDialog && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
+    if (!props.isEditRule && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
       setEntityTypeDefinition(entityTypeDefinition);
       let mergeStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
       let mergeStrategies: any[] = mergeStepArtifact.mergeStrategies || [];
       setMergeStrategyNames(mergeStrategies.map((mergeStrategy) => mergeStrategy.strategyName));
-      setProperty(undefined);
-      setMergeType(undefined);
-      setUriTouched(false);
-      setFunctionValueTouched(false);
-      setStrategyValueTouched(false);
+      resetModal();
     }
-  }, [props.openAddMergeRuleDialog, props.sourceNames]);
+    if (props.isEditRule && props.propertyName.length) {
+      setProperty(props.propertyName);
+      setFormDetails(curationOptions.activeStep.stepArtifact);
+    }
+  }, [props.isEditRule, props.sourceNames, props.propertyName]);
+
+
+  const setFormDetails = (data) => {
+    let mergeRulesData: any[] = data.mergeRules;
+    for (let key of mergeRulesData) {
+      if (props.propertyName === key.entityPropertyPath) {
+        if (key.mergeType === "strategy") {
+          setMergeType("Strategy");
+          setStrategyValue(key.mergeStrategyName);
+        } else if (key.mergeType === "custom") {
+          setMergeType("Custom");
+          setUri(key.mergeModulePath);
+          setFunctionValue(key.mergeModuleFunction);
+          setNamespace(key.mergeModuleNamespace);
+        } else {
+          let priorityOrderRuleOptions: any[] = [];
+          setMergeType("Property-specific");
+          if (key.hasOwnProperty("priorityOrder")) {
+            for (let key1 of key.priorityOrder.sources) {
+              const priorityOrderSourceObject = {
+                props: [{
+                  prop: "Source",
+                  type: key1.sourceName,
+                }],
+                value: key1.weight,
+              };
+              priorityOrderRuleOptions.push(priorityOrderSourceObject);
+            }
+            if (key.priorityOrder.hasOwnProperty("lengthWeight")) {
+              const priorityOrderLengthObject = {
+                props: [{
+                  prop: "Length",
+                  type: "",
+                }],
+                value: key.priorityOrder.lengthWeight,
+              };
+              priorityOrderRuleOptions.push(priorityOrderLengthObject);
+            }
+            setPriorityOrderOptions(priorityOrderRuleOptions);
+          }
+          if (key.hasOwnProperty("maxValues")) {
+            if (key.maxValues === "All") {
+              setRadioValuesOptionClicked(1);
+              setMaxValueRuleInput("");
+            } else {
+              setRadioValuesOptionClicked(2);
+              setMaxValueRuleInput(key.maxValues);
+            }
+          }
+          if (key.hasOwnProperty("maxSources")) {
+            if (key.maxSources === "All") {
+              setRadioSourcesOptionClicked(1);
+              setMaxSourcesRuleInput("");
+            } else {
+              setRadioSourcesOptionClicked(2);
+              setMaxSourcesRuleInput(key.maxSources);
+            }
+          }
+        }
+      }
+    }
+  };
 
   const resetModal = () => {
+    props.toggleEditRule(false);
     setProperty("");
     setPropertyErrorMessage("");
     setMergeTypeErrorMessage("");
     setMergeType(undefined);
     setUri("");
+    setProperty(undefined);
+    setMergeType(undefined);
+    setUriTouched(false);
+    setRadioValuesOptionClicked(1);
+    setRadioSourcesOptionClicked(1);
+    setMaxSourcesRuleInput("");
+    setMaxValueRuleInput("");
     setStrategyValue(undefined);
     setNamespace("");
     setFunctionValue("");
@@ -118,8 +191,9 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     if (hasFormChanged()) {
       setDiscardChangesVisible(true);
     } else {
+      props.toggleEditRule(false);
       resetModal();
-      props.setOpenAddMergeRuleDialog(false);
+      props.setOpenMergeRuleDialog(false);
     }
   };
 
@@ -140,7 +214,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
       }
     } else if (mergeType === "Property-specific") {
       let checkPropertySpecificValues = hasPropertySpecificFormValuesChanged();
-      if (!propertyTouched && !mergeTypeTouched && checkPropertySpecificValues) {
+      if (!propertyTouched && !mergeTypeTouched && !checkPropertySpecificValues) {
         return false;
       } else {
         return true;
@@ -185,7 +259,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
   };
 
   const onOk = () => {
-    props.setOpenAddMergeRuleDialog(false);
+    props.setOpenMergeRuleDialog(false);
   };
 
   const formItemLayout = {
@@ -278,10 +352,16 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
         setMaxSourcesRuleInputTouched(true);
         setMaxSourcesRuleInput(event.target.value);
       }
-    } else if (event.target.id === "maxValues") {
-      setRadioOptionClicked(event.target.value);
-    } else if (event.target.id === "maxSources") {
-      setRadioOptionClicked(event.target.value);
+    } else if (event.target.name === "maxValues") {
+      setRadioValuesOptionClicked(event.target.value);
+      if (event.target.value === 1) {
+        setMaxValueRuleInput("");
+      }
+    } else if (event.target.name === "maxSources") {
+      setRadioSourcesOptionClicked(event.target.value);
+      if (event.target.value === 1) {
+        setMaxSourcesRuleInput("");
+      }
     }
   };
 
@@ -293,7 +373,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
     let strategyNameErrorMessage = "";
     if (property === "" || property === undefined) {
       propertyErrorMessage = "Property is required";
-    } else if (newStepArtifact.mergeRules.some((rule) => rule.entityPropertyPath === property)) {
+    } else if (newStepArtifact.mergeRules.some((rule) => rule.entityPropertyPath === property) && !props.isEditRule) {
       propertyErrorMessage = "Property cannot be referenced in multiple merge rules";
     }
     if (mergeType === "" || mergeType === undefined) {
@@ -306,7 +386,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
       let newMergeRules = {};
       if (mergeType === "Custom") {
         if (uri && functionValue && property && mergeType) {
-          props.setOpenAddMergeRuleDialog(false);
+          props.setOpenMergeRuleDialog(false);
           newMergeRules =
                         {
                           "entityPropertyPath": property,
@@ -329,12 +409,12 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             "mergeStrategyName": strategyValue
           };
           onSave(newMergeRules);
-          props.setOpenAddMergeRuleDialog(false);
+          props.setOpenMergeRuleDialog(false);
         } else {
           setStrategyValueTouched(true);
         }
       } else {
-        if (radioOptionClicked && property && mergeType) {
+        if ((radioSourcesOptionClicked || radioValuesOptionClicked) && property && mergeType) {
           newMergeRules = {
             "entityPropertyPath": property,
             "mergeType": "property-specific",
@@ -343,7 +423,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
             "priorityOrder": parsePriorityOrder(priorityOrderOptions)
           };
           onSave(newMergeRules);
-          props.setOpenAddMergeRuleDialog(false);
+          props.setOpenMergeRuleDialog(false);
         } else {
           setMaxSourcesRuleInputTouched(true);
           setMaxValueRuleInputTouched(true);
@@ -361,10 +441,25 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
   const onSave = async (newMergeRules) => {
     let newStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
-    newStepArtifact.mergeRules.push(newMergeRules);
-    await updateMergingArtifact(newStepArtifact);
-    updateActiveStepArtifact(newStepArtifact);
-    resetModal();
+    let index = 0;
+    while (index < (newStepArtifact.mergeRules.length)) {
+      let key = newStepArtifact.mergeRules[index];
+      if (key.entityPropertyPath === props.propertyName && props.isEditRule) {
+        break;
+      }
+      index++;
+    }
+    // New Rule
+    if (index === newStepArtifact.mergeRules.length) {
+      newStepArtifact.mergeRules.push(newMergeRules);
+      await updateMergingArtifact(newStepArtifact);
+      updateActiveStepArtifact(newStepArtifact);
+    } else {
+      // Edit Rule
+      newStepArtifact.mergeRules[index] = newMergeRules;
+      await updateMergingArtifact(newStepArtifact);
+      updateActiveStepArtifact(newStepArtifact);
+    }
   };
 
   const handleSlider = (values, options) => {
@@ -383,7 +478,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
   const discardOk = () => {
     resetModal();
-    props.setOpenAddMergeRuleDialog(false);
+    props.setOpenMergeRuleDialog(false);
   };
 
   const discardCancel = () => {
@@ -399,8 +494,8 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      visible={props.openAddMergeRuleDialog}
-      title={null}
+      visible={props.createEditMergeRuleDialog}
+      title={props.isEditRule ? "Edit Merge Rule" : "Add Merge Rule"}
       width={700}
       onCancel={() => onCancel()}
       onOk={() => onOk()}
@@ -410,7 +505,6 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
       maskClosable={false}
       destroyOnClose={true}
     >
-      <p className={styles.title}>Add Merge Rule</p>
       <p>Select the property and the merge type for this merge rule. When you select a structured type property, the merge rule is applied to all the properties within that structured type property as well.</p>
       {titleLegend}
       <br />
@@ -541,7 +635,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                 label="Max Values:"
                 labelAlign="left"
               >
-                <Radio.Group  defaultValue={radioOptionClicked} onChange={handleChange} id="maxValues">
+                <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
@@ -554,7 +648,7 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
                 label="Max Sources:"
                 labelAlign="left"
               >
-                <Radio.Group  defaultValue={radioOptionClicked} onChange={handleChange} id="maxSources">
+                <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
                   <Radio value={1} > All</Radio>
                   <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
@@ -589,8 +683,8 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
           }
           <Form.Item className={styles.submitButtonsForm}>
             <div className={styles.submitButtons}>
-              <MLButton onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
-              <MLButton id={"saveButton"} type="primary" onClick={handleSubmit} >Save</MLButton>
+              <MLButton aria-label={"cancel-merge-rule"} onClick={() => onCancel()}>Cancel</MLButton>&nbsp;&nbsp;
+              <MLButton aria-label={"confirm-merge-rule"} id={"saveButton"} type="primary" onClick={handleSubmit} >Save</MLButton>
             </div>
           </Form.Item>
         </Form>
@@ -600,4 +694,4 @@ const AddMergeRuleDialog: React.FC<Props> = (props) => {
   );
 };
 
-export default AddMergeRuleDialog;
+export default MergeRuleDialog;

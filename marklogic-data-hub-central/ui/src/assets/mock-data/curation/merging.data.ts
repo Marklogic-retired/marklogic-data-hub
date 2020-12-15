@@ -1,24 +1,27 @@
 // Test data for merging
 
-const mergingDataProps = {
-  data: [],
+const mergeRuleDataProps = {
   sourceNames: ["less favorite", "more favorite"],
-  openAddMergeRuleDialog: true,
-  setOpenAddMergeRuleDialog: jest.fn()
+  createEditMergeRuleDialog: true,
+  setOpenMergeRuleDialog: jest.fn(),
+  propertyName: "",
+  toggleEditRule: jest.fn(),
+  isEditRule: true,
 };
 
-const editMergingDataProps = {
+const mergeStrategyDataProps = {
   sourceNames: ["less favorite", "more favorite"],
   strategyName: "",
   createEditMergeStrategyDialog: true,
   setOpenEditMergeStrategyDialog: jest.fn(),
-  isEditStrategy: true
+  isEditStrategy: true,
+  toggleIsEditStrategy: jest.fn()
 };
 
 
 const data = {
-  mergingDataProps,
-  editMergingDataProps
+  mergeRuleDataProps,
+  mergeStrategyDataProps
 };
 
 export default data;
