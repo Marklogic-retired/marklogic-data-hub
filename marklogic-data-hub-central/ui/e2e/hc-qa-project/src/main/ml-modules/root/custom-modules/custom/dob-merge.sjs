@@ -3,10 +3,10 @@
  *
  * @param propertyName
  * @param properties
- * @param propertySpec
+ * @param mergeRule
  * @return {*}
  */
-function mergeDob(propertyName, properties, propertySpec) {
+function mergeDob(propertyName, properties, mergeRule) {
   return properties.map((property) => {
       return Object.assign({}, property, {values: fn.string(property.values)});
     })

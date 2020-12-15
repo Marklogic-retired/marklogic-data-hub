@@ -269,6 +269,10 @@ const largeInput =
         {
           "propertyName": "name",
           "weight": "3.5"
+        },
+        {
+          "propertyName": "propertyWithoutDefinition",
+          "weight": "3.5"
         }
       ],
       "expand": [
@@ -330,6 +334,17 @@ const largeExpected =
         "matchRules": [
           {
             "entityPropertyPath": "localnameForName",
+            "matchType": "exact",
+            "options": {}
+          }
+        ]
+      },
+      {
+        "name": "propertyWithoutDefinition - Exact",
+        "weight": 3.5,
+        "matchRules": [
+          {
+            "entityPropertyPath": "propertyWithoutDefinition",
             "matchType": "exact",
             "options": {}
           }

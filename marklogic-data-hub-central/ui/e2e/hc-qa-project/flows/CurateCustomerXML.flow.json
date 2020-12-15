@@ -1,12 +1,12 @@
 {
-  "name": "CurateCustomerXML",
-  "steps": {
-    "1": {
-      "stepId": "loadCustomersXML-ingestion"
+  "name" : "CurateCustomerXML",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadCustomersXML-ingestion"
     },
-    "2": {
-      "stepId": "mapCustomersXML-mapping"
+    "2" : {
+      "stepId" : "mapCustomersXML-mapping"
     }
   },
-  "lastUpdated": "2020-08-18T00:14:41.476305Z"
+  "lastUpdated" : "2020-08-18T00:14:41.476305Z"
 }

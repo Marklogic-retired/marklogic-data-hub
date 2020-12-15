@@ -14,18 +14,17 @@ Example of a simple DOB matching algorithm that expands the query by bumping eac
 :)
 declare function algorithms:dob-match(
   $expand-values as xs:string*,
-  $expand-xml as element(matcher:expand),
-  $options-xml as element(matcher:options)
+  $match-rule as node(),
+  $options-node as node()
 ) as cts:query*
 {
-  let $property-name := $expand-xml/@property-name
-  let $weight := $expand-xml/@weight
-
+  let $property-name := $match-rule/entityPropertyPath
+  let $weight := $match-rule/weight
   for $value in $expand-values
   where $value castable as xs:date
   return
-    let $query := helper-impl:property-name-to-query($options-xml, $property-name)($value, $weight)
+    let $query := helper-impl:property-name-to-query($options-node, $property-name)($value, $weight)
     let $next-year := xs:date($value) + xs:yearMonthDuration("P1Y")
-    let $next-query := helper-impl:property-name-to-query($options-xml, $property-name)(xs:string($next-year), $weight)
+    let $next-query := helper-impl:property-name-to-query($options-node, $property-name)(xs:string($next-year), $weight)
     return cts:or-query(($query, $next-query))
 };

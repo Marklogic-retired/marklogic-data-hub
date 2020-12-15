@@ -1,24 +1,24 @@
 {
-  "name": "personJSON",
-  "steps": {
-    "1": {
-      "stepId": "loadPersonJSON-ingestion"
+  "name" : "personJSON",
+  "steps" : {
+    "1" : {
+      "stepId" : "loadPersonJSON-ingestion"
     },
-    "2": {
-      "stepId": "mapPersonJSON-mapping"
+    "2" : {
+      "stepId" : "mapPersonJSON-mapping"
     },
-    "3": {
-      "stepId": "generate-dictionary-custom"
+    "3" : {
+      "stepId" : "generate-dictionary-custom"
     },
-    "4": {
-      "stepId": "match-person-matching"
+    "4" : {
+      "stepId" : "match-person-matching"
     },
-    "5": {
-      "stepId": "merge-person-merging"
+    "5" : {
+      "stepId" : "merge-person-merging"
     },
-    "6": {
-      "stepId": "master-person-mastering"
+    "6" : {
+      "stepId" : "master-person-mastering"
     }
   },
-  "lastUpdated": "2020-08-18T00:14:41.463042Z"
+  "lastUpdated" : "2020-08-18T00:14:41.463042Z"
 }

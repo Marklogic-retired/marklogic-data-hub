@@ -1,12 +1,12 @@
 {
-  "name": "testCustomFlow",
-  "steps": {
-    "1": {
-      "stepId": "ingestion-step-ingestion"
+  "name" : "testCustomFlow",
+  "steps" : {
+    "1" : {
+      "stepId" : "ingestion-step-ingestion"
     },
-    "2": {
-      "stepId": "mapping-step-custom"
+    "2" : {
+      "stepId" : "mapping-step-custom"
     }
   },
-  "lastUpdated": "2020-08-18T00:14:41.488072Z"
+  "lastUpdated" : "2020-08-18T00:14:41.488072Z"
 }

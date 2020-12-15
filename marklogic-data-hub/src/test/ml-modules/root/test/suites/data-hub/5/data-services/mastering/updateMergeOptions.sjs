@@ -212,6 +212,70 @@ const xpathExpected =
     ]
   };
 
+// -----------------------------------------------
+// without property definitions
+// -----------------------------------------------
+const withoutPropDefsInput =
+    {
+      "mergeStrategies": [
+        {
+          "algorithmRef": "standard",
+          "length": {
+            "weight": "2"
+          },
+          "name": "myFavoriteSource",
+          "maxSources": 1,
+          "sourceWeights": [
+            {
+              "source": {
+                "name": "favoriteSource",
+                "weight": "12"
+              }
+            },
+            {
+              "source": {
+                "name": "lessFavoriteSource",
+                "weight": "10"
+              }
+            }
+          ]
+        }
+      ],
+      "merging": [
+        {
+          "propertyName": "name",
+          "strategy": "myFavoriteSource"
+        }
+      ]
+    };
+const withoutPropDefsExpected =
+    {
+      "mergeStrategies": [
+        {
+          "maxSources": 1,
+          "priorityOrder": {
+            "lengthWeight": 2,
+            "sources": [
+              {
+                "sourceName": "favoriteSource",
+                "weight": 12
+              },
+              {
+                "sourceName": "lessFavoriteSource",
+                "weight": 10
+              }
+            ]
+          },
+          "strategyName": "myFavoriteSource"
+        }
+      ],
+      "mergeRules": [
+        {
+          "entityPropertyPath": "name",
+          "mergeStrategyName": "myFavoriteSource"
+        }
+      ]
+    };
 
 // -----------------------------------------------
 // collections
@@ -313,6 +377,7 @@ const lastExpected =
 [
   test.assertEqualJson(defExpected, invokeService(defInput), "default merge strategy"),
   test.assertEqualJson(custExpected, invokeService(custInput), "custom merge strategy"),
+  test.assertEqualJson(xpathExpected, invokeService(xpathInput), "merge with XPath"),
   test.assertEqualJson(xpathExpected, invokeService(xpathInput), "merge with XPath"),
   test.assertEqualJson(collExpected, invokeService(collInput), "merge collections"),
   test.assertEqualJson(lastExpected, invokeService(lastInput), "last updated location")
