@@ -75,11 +75,11 @@ const Curate: React.FC = () => {
     }
   };
 
-  // POST mapping step to existing flow
-  const addStepToFlow = async (mappingArtifactName, flowName) => {
+  // POST step artifact to existing flow
+  const addStepToFlow = async (stepArtifactName, flowName, stepType) => {
     let stepToAdd = {
-      "stepName": mappingArtifactName,
-      "stepDefinitionType": "mapping"
+      "stepName": stepArtifactName,
+      "stepDefinitionType": stepType
     };
     try {
       // setIsLoading(true);
@@ -91,10 +91,10 @@ const Curate: React.FC = () => {
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error("Error while adding mapping step to flow.", message);
+      console.error("Error while adding step to flow.", message);
       // setIsLoading(false);
       Modal.error({
-        content: "Error adding step \"" + mappingArtifactName + "\" to flow \"" + flowName + ".\"",
+        content: "Error adding step \"" + stepArtifactName + "\" to flow \"" + flowName + ".\"",
       });
       handleError(error);
     }

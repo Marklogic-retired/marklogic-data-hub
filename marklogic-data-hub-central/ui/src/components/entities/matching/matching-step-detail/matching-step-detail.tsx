@@ -87,7 +87,7 @@ const MatchingStepDetail: React.FC = () => {
   const matchRuleSetOptions = matchingStep.matchRulesets.map((i) => {
     const matchRuleOptionsObject = {
       props: [{
-        prop: i.name,
+        prop: i.name.split(" -")[0],
         type: i.matchRules.length > 0 ? i.matchRules[0]["matchType"] : ""
       }],
       value: i.weight
@@ -115,7 +115,7 @@ const MatchingStepDetail: React.FC = () => {
       let updateThreshold = stepArtifactThresholds.find(threshold => threshold.thresholdName === options["prop"]);
       let changedSlider = values.find(item => item["props"]["prop"] === options["prop"]);
 
-      updateThreshold["score"] = parseFloat(changedSlider["value"].toFixed(1));
+      updateThreshold["score"] = parseInt(changedSlider["value"]);
       stepArtifactThresholds[index] = updateThreshold;
       stepArtifact["thresholds"] = stepArtifactThresholds;
 
@@ -126,7 +126,7 @@ const MatchingStepDetail: React.FC = () => {
       let stepArtifactRulesets = curationOptions.activeStep.stepArtifact.matchRulesets;
       let index = parseInt(options["index"]);
 
-      stepArtifactRulesets[index]["weight"] = parseFloat(values[index]["value"].toFixed(1));
+      stepArtifactRulesets[index]["weight"] = parseInt(values[index]["value"]);
       stepArtifact["matchRulesets"] = stepArtifactRulesets;
 
       await updateMatchingArtifact(stepArtifact);
