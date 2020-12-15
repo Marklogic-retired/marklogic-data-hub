@@ -3,5 +3,12 @@
   "description": "5.4-SNAPSHOT: Permits developing and operating a Data Hub application, along with clearing databases",
   "role": [
     "data-hub-developer"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "temporal:document-wipe",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-document-wipe",
+      "kind": "execute"
+    }
   ]
 }

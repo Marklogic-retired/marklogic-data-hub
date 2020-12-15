@@ -17,7 +17,8 @@
     "data-hub-custom-reader",
     "tde-view",
     "data-hub-saved-query-user",
-    "redaction-user"
+    "redaction-user",
+    "data-hub-temporal-user"
   ],
   "privilege": [
     {
