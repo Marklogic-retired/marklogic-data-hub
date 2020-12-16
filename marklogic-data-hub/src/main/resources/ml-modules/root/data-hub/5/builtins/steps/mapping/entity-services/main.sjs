@@ -104,6 +104,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
 
 
   headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
+  headers = flowUtils.updateHeaders(headers, outputFormat);
   triples = triples.concat(datahub.hubUtils.normalizeToArray(docTriples));
   let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
