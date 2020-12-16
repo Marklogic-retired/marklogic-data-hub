@@ -254,6 +254,8 @@ def flexcodeScanAndReport(){
     def palamida_url="http://palamida-2.marklogic.com:8888"
     def inventoriesRprt=''
 
+    cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
+
     withCredentials([string(credentialsId: 'palamida_jwt', variable: 'jwt')]) {
 
         StartScan(baseUrl: palamida_url, projectName: 'ml-dhf', token: jwt)
