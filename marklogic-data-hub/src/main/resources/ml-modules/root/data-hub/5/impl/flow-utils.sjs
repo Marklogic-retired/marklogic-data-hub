@@ -597,6 +597,36 @@ class FlowUtils {
     return headers;
   }
 
+  //If the document header has 'createdBy' or 'createdOn' properties, this method updates it with current values.
+  updateHeaders(headers, outputFormat){
+    const currentUser = xdmp.getCurrentUser();
+    const currentDateTime = fn.currentDateTime();
+    if (outputFormat === this.consts.XML) {
+      var response = [];
+      for (const headerElement of headers) {
+        if(fn.localName(headerElement) == "createdBy"){
+          response.push(this.normalizeValuesInNode(xdmp.unquote(`<createdBy xmlns="">${currentUser}</createdBy>`)));
+        }
+        else if(fn.localName(headerElement) == "createdOn"){
+          response.push(this.normalizeValuesInNode(xdmp.unquote(`<createdOn xmlns="">${currentDateTime}</createdOn>`)));
+        }
+        else {
+          response.push(headerElement);
+        }
+      }
+      return Sequence.from(response);
+    }
+    else{
+      if(headers.createdBy){
+        headers["createdBy"] = currentUser;
+      }
+      if(headers.createdOn){
+        headers["createdOn"] = currentDateTime;
+      }
+      return headers;
+    }
+  }
+
   createMetadata(metaData = {}, flowName, stepName, jobId) {
     if (!metaData) {
       metaData = {};

@@ -2,9 +2,11 @@ package com.marklogic.hub.central.controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.hub.central.AbstractMvcTest;
+import com.marklogic.hub.central.controllers.steps.IngestionStepControllerTest;
 import com.marklogic.hub.central.controllers.steps.MappingStepControllerTest;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.flow.FlowRunner;
+import com.marklogic.hub.job.JobStatus;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,13 +87,22 @@ public class FlowControllerTest extends AbstractMvcTest {
                 assertEquals(info.description, response.get("description").asText());
             });
 
+        // Create an ingestion step to add to the flow
+        final String ingestionStepDefinitionType = "ingestion";
+        IngestionStepControllerTest.IngestionStep ingestionInfo = IngestionStepControllerTest.newDefaultIngestionStep("myIngester");
+        StepService.on(getHubClient().getStagingClient()).saveStep(ingestionStepDefinitionType, objectMapper.valueToTree(ingestionInfo), false);
+
+        // Add the ingestion step to the flow
+        postJson(flowPath + "/steps", new FlowController.AddStepInfo(ingestionInfo.name, ingestionStepDefinitionType))
+            .andExpect(status().isOk());
+
         // Create a mapping step to add to the flow
-        final String stepDefinitionType = "mapping";
+        final String mappingStepDefinitionType = "mapping";
         MappingStepControllerTest.MappingStep mappingInfo = MappingStepControllerTest.newDefaultMappingStep("myMapper");
-        StepService.on(getHubClient().getStagingClient()).saveStep(stepDefinitionType, objectMapper.valueToTree(mappingInfo), false);
+        StepService.on(getHubClient().getStagingClient()).saveStep(mappingStepDefinitionType, objectMapper.valueToTree(mappingInfo), false);
 
         // Add the mapping step to the flow
-        postJson(flowPath + "/steps", new FlowController.AddStepInfo(mappingInfo.name, stepDefinitionType))
+        postJson(flowPath + "/steps", new FlowController.AddStepInfo(mappingInfo.name, mappingStepDefinitionType))
             .andExpect(status().isOk());
 
         // Get the flows, verify the step is there
@@ -100,36 +111,79 @@ public class FlowControllerTest extends AbstractMvcTest {
                 FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
                 for (FlowController.FlowWithStepDetails flow : flows) {
                     if (info.name.equals(flow.name)) {
-                        assertEquals(1, flow.steps.size());
+                        assertEquals(2, flow.steps.size());
                         assertEquals("1", flow.steps.get(0).stepNumber);
-                        assertEquals(mappingInfo.name, flow.steps.get(0).stepName);
-                        assertEquals(stepDefinitionType, flow.steps.get(0).stepDefinitionType);
+                        assertEquals(ingestionInfo.name, flow.steps.get(0).stepName);
+                        assertEquals(ingestionStepDefinitionType, flow.steps.get(0).stepDefinitionType);
+
+                        assertEquals("2", flow.steps.get(1).stepNumber);
+                        assertEquals(mappingInfo.name, flow.steps.get(1).stepName);
+                        assertEquals(mappingStepDefinitionType, flow.steps.get(1).stepDefinitionType);
                     }
                 }
             });
 
-        // Run the step
         flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
-        final String[] jobIds = new String[1];
-        postJson(flowPath + "/steps/1", "{}")
+
+        // Run step 1 as "data-hub-developer"
+
+        loginAsDataHubDeveloper();
+        final String[] ingestionJobId = new String[1];
+        MockMultipartFile file1 = new MockMultipartFile("files","file1.json", MediaType.APPLICATION_JSON, "{\"name\": \"Joe\"}".getBytes(StandardCharsets.UTF_8));
+        mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
+            .file(file1)
+            .session(mockHttpSession))
+            .andExpect(status().isOk())
+            .andDo(handler ->{
+                ingestionJobId[0] = objectMapper.readTree(handler.getResponse().getContentAsString()).get("jobId").asText();
+            });
+
+        // Check on the Job
+        getJson("/api/jobs/" + URLEncoder.encode(ingestionJobId[0],"UTF-8"))
+            .andExpect(status().isOk())
+            .andDo(result -> {
+                JsonNode response = parseJsonResponse(result);
+                assertEquals(JobStatus.FINISHED.toString(), response.get("jobStatus").asText());
+            });
+
+        //Check the ingested file header
+        JsonNode ingestedDocHeader = getHeader(getStagingDoc("file1.json"));
+        assertEquals("test-data-hub-developer", ingestedDocHeader.get("createdBy").asText());
+
+
+        // Run step 2 as "data-hub-operator"
+        loginAsUser("test-data-hub-operator");
+        final String[] mappingJobId = new String[1];
+        postJson(flowPath + "/steps/2", "{}")
             .andExpect(status().isOk())
             .andDo(result -> {
                 JsonNode response = parseJsonResponse(result);
                 assertTrue(response.has("jobId"), "Running a step should result in a response with a jobId so that the " +
                     "client can then query for job status; response: " + response);
-                jobIds[0] = response.get("jobId").asText();
+                mappingJobId[0] = response.get("jobId").asText();
             });
 
         // Check on the Job
-        getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
+        getJson("/api/jobs/" + URLEncoder.encode(mappingJobId[0],"UTF-8"))
                 .andExpect(status().isOk())
                 .andDo(result -> {
                     JsonNode response = parseJsonResponse(result);
-                assertEquals(mappingInfo.targetEntityType, response.path("stepResponses").path("1").path("targetEntityType").asText(), "Info for the step should specify the Target Entity Type; response: " + response);
-                assertEquals("final", response.path("stepResponses").path("1").path("targetDatabase").asText(), "Step response should specify the target database since the step options contain the targetDatabase; response: " + response);
+                assertEquals(mappingInfo.targetEntityType, response.path("stepResponses").path("2").path("targetEntityType").asText(), "Info for the step should specify the Target Entity Type; response: " + response);
+                assertEquals("final", response.path("stepResponses").path("2").path("targetDatabase").asText(), "Step response should specify the target database since the step options contain the targetDatabase; response: " + response);
             });
 
+        //Check the mapped file header
+        JsonNode mappedDocHeader = getHeader(getFinalDoc("file1.json"));
+        assertEquals("test-data-hub-operator", mappedDocHeader.get("createdBy").asText());
+        assertNotEquals(ingestedDocHeader.get("createdOn").asText(), mappedDocHeader.get("createdOn").asText());
+
+        //Delete step as "hub-central-flow-writer"
+        loginAsTestUserWithRoles("hub-central-flow-writer");
+
         // Remove the step
+        delete(flowPath + "/steps/2")
+            .andExpect(status().isOk());
+
         delete(flowPath + "/steps/1")
             .andExpect(status().isOk());
 
@@ -139,7 +193,7 @@ public class FlowControllerTest extends AbstractMvcTest {
                 FlowController.FlowsWithStepDetails flows = parseFlowsWithStepDetails(result);
                 for (FlowController.FlowWithStepDetails flow : flows) {
                     if (info.name.equals(flow.name)) {
-                        assertEquals(0, flow.steps.size(), "The step should have been removed");
+                        assertEquals(0, flow.steps.size(), "The steps should have been removed");
                     }
                 }
             });
@@ -293,5 +347,9 @@ public class FlowControllerTest extends AbstractMvcTest {
     private FlowController.FlowsWithStepDetails parseFlowsWithStepDetails(MvcResult result) throws Exception {
         return objectMapper.readerFor(FlowController.FlowsWithStepDetails.class)
             .readValue(result.getResponse().getContentAsString());
+    }
+
+    private JsonNode getHeader(JsonNode doc){
+        return doc.get("envelope").get("headers");
     }
 }
