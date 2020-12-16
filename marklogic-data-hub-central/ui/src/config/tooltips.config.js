@@ -141,8 +141,8 @@ const AdvCustomOtherTooltips = {};
 const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
   addNewEntity: 'Add a new entity type.',
-  instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
-  lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
+  instanceNumber: 'Click to navigate to the Explore tile showing all instances of this entity type.',
+  lastProcessed: 'Click to navigate to the Explore tile showing all instances of this entity type processed by the job that finished at the displayed time.',
   nameRegex: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
   entityDescription: 'Description for the entity.',
   saveIcon: 'Save changes to this entity type.',
