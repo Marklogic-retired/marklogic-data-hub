@@ -81,6 +81,12 @@ const Tiles: React.FC<Props> = (props) => {
     props.onMenuClick();
   };
 
+  const onKeyDownClose = (event) => {
+    if (event.key === "Enter") {
+      onClickClose();
+    }
+  };
+
   const renderHeader = function (props) {
     return (
       <div
@@ -132,7 +138,8 @@ const Tiles: React.FC<Props> = (props) => {
               </MLTooltip>
             </i>) : null}
           {showControl("close") ? (
-            <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} onClick={onClickClose}>
+            <i className={styles.close} aria-label={"close"} style={{color: options["controlColor"]}} tabIndex={0}
+              onClick={onClickClose} onMouseDown={onClickClose} onKeyDown={onKeyDownClose}>
               <MLTooltip title={"Close"} placement="top">
                 <CloseOutlined />
               </MLTooltip>
