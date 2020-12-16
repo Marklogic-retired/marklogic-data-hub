@@ -55,6 +55,13 @@
             position: relative;
             top: 5px;
             font-size: 20px;
+            padding: 0 5px; // padding top = 0; left/right = 5px;
+            height: 28px; // determines bottom padding
+        }
+        i.close:focus {
+            box-shadow: 0 0 1.5px 1.5px #7F86B5 inset;
+            outline: none;
+            // outline: 2px solid #7F86B5; // alternative indicator; ! disable above line first !
         }
     }
 }

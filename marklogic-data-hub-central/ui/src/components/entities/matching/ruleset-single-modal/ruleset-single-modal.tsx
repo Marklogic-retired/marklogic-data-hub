@@ -245,7 +245,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     case "exact":
     case "reduce":
     case "zip":
-    {      
+    {
 
       let matchRule: MatchRule = {
         entityPropertyPath: propertyName,

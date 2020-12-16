@@ -301,3 +301,9 @@ ul.ant-cascader-menu:nth-child(2) {
   outline-offset: 1px;
   background-color: #5b69af;
 }
+
+/* styling for close button focus */
+.ant-modal-close:focus {
+  outline: none;
+  box-shadow: 0 0 2px 2px #7f86b5 inset;
+}
