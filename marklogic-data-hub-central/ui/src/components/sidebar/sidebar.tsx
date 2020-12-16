@@ -94,7 +94,7 @@ const Sidebar: React.FC<Props> = (props) => {
           for (let i in newEntityFacets) {
             let entityFacetName = newEntityFacets[i]["facetName"].split(".");
             newEntityFacets[i].referenceType = "path";
-            newEntityFacets[i].entityTypeId = entityDef.info["baseUri"] + entityDef.info["title"] + "-" + entityDef.info["version"] + "/" + entityDef.name;
+            newEntityFacets[i].entityTypeId = entityDef?.info["baseUri"] + entityDef?.info["title"] + "-" + entityDef?.info["version"] + "/" + entityDef?.name;
             newEntityFacets[i].propertyPath = entityFacetName.length > 1 ? entityFacetName.pop() : entityFacetName[0];
           }
         }
@@ -473,7 +473,7 @@ const Sidebar: React.FC<Props> = (props) => {
         setUserPreferences({...parsedPreferences});
         setActiveKey([...parsedPreferences.activeFacets]);
       } else {
-        props.selectedEntities.length === 1 ? setActiveKey(["entityProperties"]) : setActiveKey(["hubProperties", "entityProperties"]);
+        props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties"]);
       }
     }
   };

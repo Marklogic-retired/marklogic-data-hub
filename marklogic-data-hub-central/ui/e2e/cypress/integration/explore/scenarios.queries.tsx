@@ -622,4 +622,58 @@ describe("User without hub-central-saved-query-user role should not see saved qu
   });
 });
 
+describe("manage queries modal scenarios on detail page", () => {
 
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
+
+  it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
+    //create a query
+    browsePage.selectEntity("Person");
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveModalIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveQueryName().should("be.visible");
+    browsePage.getSaveQueryName().type("person-query");
+    browsePage.getSaveQueryButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //switch to explorer zero state page
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+
+    //open record instance view for the first document
+    cy.get("#instance").first().click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+
+    //verify the manage queries modal button is visible
+    browsePage.getManageQueriesButton().should("be.visible");
+
+    //open manage queries modal dialog and remove previosly saved query
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+    queryComponent.getDeleteQuery().first().click();
+    queryComponent.getDeleteQueryYesButton().click({force: true});
+    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+
+    //return back to explore page and verify data display
+    detailPage.clickBackButton();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should("not.be.equal", 0);
+  });
+});

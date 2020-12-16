@@ -69,7 +69,6 @@ const Browse: React.FC<Props> = ({location}) => {
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView);
 
-
   const getEntityModel = async () => {
     try {
       const response = await axios(`/api/models`);
@@ -154,6 +153,11 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
+  useEffect(() => {
+    if (location.state && location.state["zeroState"] === false && location.state["isBackToResultsClicked"]) {
+      getSearchResults(entities);
+    }
+  }, []);
 
   useEffect(() => {
     if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
