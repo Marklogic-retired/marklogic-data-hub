@@ -1,6 +1,6 @@
 import React, {useState, useContext, useEffect} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Card, Icon, Row, Col, Select} from "antd";
+import {Card, Icon, Row, Col, Select, Dropdown, Menu, Modal} from "antd";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
@@ -27,6 +27,7 @@ interface Props {
   createMergingArtifact: (mergingObj) => void;
   addStepToFlow: any;
   addStepToNew: any;
+  canWriteFlow: any;
 }
 
 const {Option} = Select;
@@ -45,6 +46,11 @@ const MergingCard: React.FC<Props> = (props) => {
   const [sortedMergingSteps, setSortedMergingSteps] = useState(props.mergingStepsArray);
   const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  const [addToFlowVisible, setAddToFlowVisible] = useState(false);
+  const [mergingArtifactName, setMergingArtifactName] = useState("");
+  const [flowName, setFlowName] = useState("");
+  const [addRun, setAddRun] = useState(false);
 
   useEffect(() => {
     let sortedArray = props.mergingStepsArray.length > 1 ? sortStepsByUpdated(props.mergingStepsArray) : props.mergingStepsArray;
@@ -112,9 +118,63 @@ const MergingCard: React.FC<Props> = (props) => {
     let selectedNew = {...selected};
     selectedNew[obj.loadName] = obj.flowName;
     setSelected(selectedNew);
-    // TODO handle adding step to existing flow
-    //handleStepAdd(obj.mappingName, obj.flowName);
+    handleStepAdd(obj.mergingName, obj.flowName);
   }
+
+  function handleSelectAddRun(obj) {
+    let selectedNew = {...selected};
+    selectedNew[obj.loadName] = obj.flowName;
+    setSelected(selectedNew);
+    setAddRun(true);
+    handleStepAdd(obj.mergingName, obj.flowName);
+  }
+
+  const handleStepAdd = (mergingName, flowName) => {
+    setMergingArtifactName(mergingName);
+    setFlowName(flowName);
+    setAddToFlowVisible(true);
+  };
+
+  const onAddOk = async (lName, fName) => {
+    await props.addStepToFlow(lName, fName, "merging");
+    setAddToFlowVisible(false);
+
+    if (addRun) {
+      history.push({
+        pathname: "/tiles/run/add-run",
+        state: {
+          flowName: fName,
+          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+          existingFlow: true,
+          addFlowDirty: true,
+          stepToAdd: mergingArtifactName,
+          stepDefinitionType: "merging"
+        }
+      });
+    } else {
+      history.push({
+        pathname: "/tiles/run/add",
+        state: {
+          flowName: fName,
+          addFlowDirty: true,
+          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+          existingFlow: true
+        }
+      });
+    }
+  };
+
+  const onAddCancel = () => {
+    setAddToFlowVisible(false);
+    setSelected({});
+  };
+
+  const isStepInFlow = (mergingStepName, flowName) => {
+    let result = false, flow;
+    if (props.flows) flow = props.flows.find(f => f.name === flowName);
+    if (flow) result = flow["steps"].findIndex(s => s.stepName === mergingStepName) > -1;
+    return result;
+  };
 
   const confirmAction = () => {
     if (confirmType === ConfirmationType.AddStepToFlow) {
@@ -124,6 +184,59 @@ const MergingCard: React.FC<Props> = (props) => {
       toggleConfirmModal(false);
     }
   };
+
+  const renderAddConfirmation = (
+    <Modal
+      visible={addToFlowVisible}
+      okText={<div data-testid={`${mergingArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
+      cancelText="No"
+      onOk={() => onAddOk(mergingArtifactName, flowName)}
+      onCancel={() => onAddCancel()}
+      width={400}
+      maskClosable={false}
+    >
+      <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+        { isStepInFlow(mergingArtifactName, flowName) ?
+          !addRun ? <p aria-label="step-in-flow">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{mergingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
+          : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mergingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{mergingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
+        }
+      </div>
+    </Modal>
+  );
+
+  const renderRunFlowMenu = (name) => (
+    <Menu style={{right: "80px"}}>
+      <Menu.Item key="0">
+        { <Link data-testid="link" id="tiles-add-run" to={
+          {pathname: "/tiles/run/add-run",
+            state: {
+              stepToAdd: name,
+              stepDefinitionType: "merging",
+              targetEntityType: props.entityModel.entityTypeId,
+              existingFlow: false
+            }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+      </Menu.Item>
+      <Menu.Item key="1">
+        <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
+          <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+            <Select
+              style={{width: "100%"}}
+              value={selected[name] ? selected[name] : undefined}
+              onChange={(flowName) => handleSelectAddRun({flowName: flowName, mergingName: name})}
+              placeholder="Select Flow"
+              defaultActiveFirstOption={false}
+              disabled={!props.canWriteFlow}
+              data-testid={`${name}-run-flowsList`}
+            >
+              { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
+              )) : null}
+            </Select>
+          </div>
+        </div>
+      </Menu.Item>
+    </Menu>
+  );
 
   const renderCardActions = (step, index) => {
     return [
@@ -137,15 +250,25 @@ const MergingCard: React.FC<Props> = (props) => {
           <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}></FontAwesomeIcon>
         </i>
       </MLTooltip>,
-      // <MLTooltip title={'Settings'} placement="bottom">
-      //   <Icon
-      //     type="setting"
-      //     key="setting"
-      //     role="settings-merging button"
-      //     data-testid={step.name+'-settings'}
-      //     onClick={() => stepSettingsClicked(index)}
-      //     />
-      // </MLTooltip>,
+
+      <Dropdown
+        data-testid={`${step.name}-dropdown`}
+        overlay={renderRunFlowMenu(step.name)}
+        trigger={["click"]}
+        disabled = {!props.canWriteFlow}
+      >
+      {props.canWriteMatchMerge ? (
+        <MLTooltip title={"Run"} placement="bottom">
+          <i aria-label="icon: run">
+            <Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={step.name+"-run"}/></i>
+        </MLTooltip>
+      ) : (
+        <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+          <i role="disabled-run-matching button" data-testid={step.name+"-disabled-run"}>
+            <Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i>
+        </MLTooltip>
+      )}
+      </Dropdown>,
 
       props.canWriteMatchMerge ? (
         <MLTooltip title={"Delete"} placement="bottom">
@@ -231,7 +354,7 @@ const MergingCard: React.FC<Props> = (props) => {
                           <Select
                             style={{width: "100%"}}
                             value={selected[step.name] ? selected[step.name] : undefined}
-                            onChange={(flowName) => handleSelect({flowName: flowName, mappingName: step.name})}
+                            onChange={(flowName) => handleSelect({flowName: flowName, mergingName: step.name})}
                             placeholder="Select Flow"
                             defaultActiveFirstOption={false}
                             disabled={!props.canWriteMatchMerge}
@@ -274,7 +397,7 @@ const MergingCard: React.FC<Props> = (props) => {
         activityType={StepType.Merging}
         targetEntityType={props.entityName}
       />
-
+      {renderAddConfirmation}
     </div>
   );
 };
