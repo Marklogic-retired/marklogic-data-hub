@@ -63,15 +63,6 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertTrue(response.get("isHubEntityInstance").asBoolean());
         assertEquals("json", response.get("recordType").asText());
 
-        response = (ObjectNode) service.getRecord("/non-existent-doc.xml");
-        assertNull(response.get("data"));
-        assertNull(response.get("recordMetadata"));
-        assertNull(response.get("isHubEntityInstance"));
-        assertNull(response.get("recordType"));
-        assertNull(response.get("sources"));
-        assertNull(response.get("history"));
-        assertNull(response.get("documentSize"));
-
         // record with no metadata
         project.setCustomerDocumentMetadata(new DocumentMetadataHandle()
                 .withCollections(ReferenceModelProject.CUSTOMER_ENTITY_TYPE)
