@@ -308,6 +308,7 @@ const EntityTiles = (props) => {
           createMergingArtifact={createMergingArtifact}
           addStepToFlow={props.addStepToFlow}
           addStepToNew={props.addStepToNew}
+          canWriteFlow={props.canWriteFlow}
         />
       </div>;
     } else if (viewData[index] === "custom-" + entityType) {
