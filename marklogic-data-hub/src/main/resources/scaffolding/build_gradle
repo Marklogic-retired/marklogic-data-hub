@@ -1,37 +1,12 @@
-buildscript {
-  repositories {
-    maven {url 'http://developer.marklogic.com/maven2/'}
-  }
-}
-
 plugins {
-    id 'java'
-    id 'eclipse'
-    id 'idea'
+    // Applies the Gradle properties plugin, which allows for different Gradle property values to be configured for
+    // different environments. Each properties file has a filename of "gradle-${environmentName}.properties", and an
+    // environment can be specified when running a Gradle task via e.g. "-PenvironmentName=prod" .
+    // For more information, see https://github.com/stevesaliman/gradle-properties-plugin .
+    id 'net.saliman.properties' version '1.5.1'
 
-    // This plugin allows you to create different environments
-    // for your gradle deploy. Each environment is represented
-    // by a gradle-${env}.properties file
-    // See https://github.com/stevesaliman/gradle-properties-plugin
-    // specify the env on the command line with:
-    // gradle -PenvironmentName=x ...
-    id 'net.saliman.properties' version '1.4.6'
-
-    // This gradle plugin extends the ml-gradle plugin with
-    // commands that make Data Hub do its magic
+    // Applies the Data Hub Gradle plugin, which extends ml-gradle with behavior specific to Data Hub.
+    // For more information on this plugin, see https://docs.marklogic.com/datahub/tools/gradle/dhf-gradle-plugin.html .
+    // For more information on ml-gradle, see https://github.com/marklogic-community/ml-gradle .
     id 'com.marklogic.ml-data-hub' version '5.4-SNAPSHOT'
 }
-
-repositories {
-    jcenter()
-    maven {url 'http://developer.marklogic.com/maven2/'}
-}
-
-dependencies {
-    // this allows you to write custom java code that depends
-    // on the Data Hub library
-    compile 'com.marklogic:marklogic-data-hub:5.4-SNAPSHOT'
-    compile 'com.marklogic:marklogic-xcc:9.0.7'
-}
-
-
