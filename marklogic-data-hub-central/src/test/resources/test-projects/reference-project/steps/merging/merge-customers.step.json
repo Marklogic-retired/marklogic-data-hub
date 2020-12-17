@@ -1,0 +1,24 @@
+{
+  "name" : "merge-customers",
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "sourceQuery" : "cts.collectionQuery('matched-customers')",
+  "targetEntityType" : "Customer",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "merged-customer", "merge-customers" ],
+  "targetFormat" : "json",
+  "stepId" : "merge-customers-merging",
+  "mergeStrategies" : [ ],
+  "mergeRules" : [ {
+    "entityPropertyPath": "customerId",
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  } ],
+  "targetCollections" : {
+    "onNoMatch" : {
+      "add" : [],
+      "remove" : []
+    }
+  }
+}

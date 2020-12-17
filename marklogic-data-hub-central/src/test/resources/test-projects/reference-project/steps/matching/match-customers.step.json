@@ -1,0 +1,27 @@
+{
+  "name" : "match-customers",
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
+  "sourceQuery" : "cts.collectionQuery('mapCustomersJSON')",
+  "acceptsBatch" : true,
+  "targetEntityType" : "Customer",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "matched-customers", "match-customers" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "stepId" : "match-customers-matching",
+  "matchRulesets" : [ {
+    "name" : "customerId - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "customerId",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "Definitive Match",
+    "action" : "merge",
+    "score" : 10
+  } ]
+}
