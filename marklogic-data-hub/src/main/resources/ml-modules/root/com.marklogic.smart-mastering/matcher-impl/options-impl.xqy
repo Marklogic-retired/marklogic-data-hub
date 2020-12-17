@@ -388,7 +388,7 @@ declare function opt-impl:compile-match-options(
     let $lowest-threshold-score := fn:head(fn:reverse($ordered-thresholds))/score
     let $minimum-threshold as xs:double :=
       if (fn:empty($original-minimum-threshold)) then
-        $lowest-threshold-score
+        fn:head(($lowest-threshold-score,1))
       else
         $original-minimum-threshold
     let $target-entity-type-info := util-impl:get-entity-type-information($match-options)
@@ -515,6 +515,9 @@ declare function opt-impl:compile-match-options(
             => map:with("notQueries", $negative-combinations)
 
     let $compiled-match-options := map:new((
+        if (fn:exists($match-options/(dataFormat|matcher:data-format))) then
+          map:entry("dataFormat", fn:string($match-options/(dataFormat|matcher:data-format)))
+        else (),
         map:entry("normalizedOptions", $match-options),
         map:entry("minimumThreshold", $minimum-threshold),
         (: Ensure we're using the full IRI in the compiled options :)

@@ -32,8 +32,8 @@ declare function algorithms:zip-match(
   let $property-name := helper-impl:get-property-name($expand)
   let $weight := $expand/weight
   let $sep := "-"
-  let $origin-5-weight := fn:head(($expand/*:zip[(@origin|origin) = "5"]/(weight|@weight)/fn:data(),$weight))
-  let $origin-9-weight := fn:head(($expand/*:zip[(@origin|origin) = "9"]/(weight|@weight)/fn:data(),$weight))
+  let $origin-5-weight := fn:head(($expand/*:zip[fn:string(@origin|origin) = "5"]/(weight|@weight)/fn:data(),$weight))
+  let $origin-9-weight := fn:head(($expand/*:zip[fn:string(@origin|origin) = "9"]/(weight|@weight)/fn:data(),$weight))
   for $value in $expand-values
   return
     if (fn:string-length($value) = 5) then
