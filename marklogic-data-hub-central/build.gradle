@@ -194,6 +194,13 @@ task copyUiFiles(type: Copy, dependsOn: deleteSpringBootUiFiles, group: taskGrou
     into springBootUiPath
 }
 
+task lintUI(type: NpmTask, dependsOn: installDependencies, group: taskGroup) {
+    description = "Linting UI files. Task fails, if any lint errors, with exit value = 1 and success with exit value = 0, if no lint errors"
+    args = ["run", "lint", "."]
+    execOverrides { it.workingDir = reactUiPath }
+}
+
+
 // When creating the HC war file, need to build the UI files and add them to the classpath so that the war file includes them
 ext {
     def taskNames = gradle.startParameter.taskNames*.toLowerCase()
