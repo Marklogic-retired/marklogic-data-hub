@@ -53,7 +53,7 @@ function getArtifactUri(artifactName){
 function validateArtifact(artifact) {
     const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
     if (missingProperties.length) {
-        return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
+        return new Error(`Ingestion step '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
     }
     if(artifact.hasOwnProperty('outputURIReplacement') && artifact.hasOwnProperty('outputURIPrefix')){
       xdmp.trace(consts.TRACE_STEP, `Ingestion step ${artifact.name}'s 'outputURIReplacement' property will be unset as 'outputURIPrefix' is being set`);

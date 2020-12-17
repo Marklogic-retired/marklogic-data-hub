@@ -16,11 +16,11 @@ function validArtifact() {
 
 function invalidArtifact() {
   try {
-    const result = invokeService('ingestion', "invalidArtifact", { name: 'invalidArtifact'});
-    return [test.assertTrue(false, 'Should have thrown a validation error')];
+    invokeService('ingestion', "invalidArtifact", { name: 'invalidArtifact'});
+    throw Error ("Should have thrown a validation error");
   } catch (e) {
     let msg = e.data[1];
-    return test.assertEqual('Missing the following required properties: ["sourceFormat","targetFormat"]', msg);
+    return test.assertEqual("Ingestion step 'invalidArtifact' is missing the following required properties: [\"sourceFormat\",\"targetFormat\"]", msg);
   }
 }
 

@@ -293,10 +293,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
      * @param hubClient
      * @throws IOException
      */
-    private void loadSteps(HubClient hubClient) throws IOException {
+    private void loadSteps(HubClient hubClient) {
         final Path stepsPath = hubConfig.getHubProject().getStepsPath();
         if (stepsPath.toFile().exists()) {
-            ObjectMapper objectMapper = new ObjectMapper();
             StepService stepService = StepService.on(hubClient.getStagingClient());
             for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepType = stepTypeDir.getName();
@@ -315,10 +314,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void loadFlows(HubClient hubClient) throws IOException {
+    private void loadFlows(HubClient hubClient) {
         final Path flowsPath = hubConfig.getHubProject().getFlowsDir();
         if (flowsPath.toFile().exists()) {
-            ObjectMapper objectMapper = new ObjectMapper();
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
                 JsonNode flow = readArtifact(file);
@@ -332,10 +330,9 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
-    private void loadStepDefinitions(HubClient hubClient) throws IOException {
+    private void loadStepDefinitions(HubClient hubClient) {
         final Path stepDefsPath = hubConfig.getHubProject().getStepDefinitionsDir();
         if (stepDefsPath.toFile().exists()) {
-            ObjectMapper objectMapper = new ObjectMapper();
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File typeDir : stepDefsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepDefType = typeDir.getName();
