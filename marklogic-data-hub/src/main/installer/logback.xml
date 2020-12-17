@@ -50,4 +50,9 @@
     <appender-ref ref="STDOUT" />
   </logger>
 
+  <!-- Quieting this down, as it logs a lot of not-helpful warnings when running the installer against DHS -->
+  <logger name="org.apache.http.client.protocol.ResponseProcessCookies" level="ERROR" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+
 </configuration>

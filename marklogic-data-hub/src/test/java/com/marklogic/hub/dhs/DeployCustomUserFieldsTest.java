@@ -59,7 +59,7 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
     }
 
     private void resetFieldsAndIndexes() {
-        runAsFlowDeveloper();
+        runAsAdmin();
 
         // Wipe out all fields/indexes
         Database db = new Database(new API(getHubClient().getManageClient()), getHubClient().getDbName(DatabaseKind.FINAL));

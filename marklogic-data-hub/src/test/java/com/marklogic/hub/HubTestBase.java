@@ -145,6 +145,7 @@ public class HubTestBase extends AbstractHubTest {
         LegacyTracing.create(getHubClient().getStagingClient()).disable();
     }
 
+    @Deprecated(since = "Deprecated in DHF 5.4.0; using this may not work when the test is run against DHS; use runAsDataHubOperator instead")
     protected HubConfigImpl runAsFlowOperator() {
         runAsUser("flow-operator", "password");
         return getHubConfig();
@@ -156,6 +157,7 @@ public class HubTestBase extends AbstractHubTest {
      *
      * @return
      */
+    @Deprecated(since = "Deprecated in DHF 5.4.0; using this may not work when the test is run against DHS; use runAsAdmin or runAsDataHubDeveloper instead")
     protected HubConfigImpl runAsFlowDeveloper() {
         runAsUser("flow-developer", "password");
         return getHubConfig();

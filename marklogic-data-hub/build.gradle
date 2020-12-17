@@ -152,6 +152,21 @@ bootJar {
     }
 }
 
+task installDhfIntoDhs(type: Exec) {
+    description = "Builds and runs the DHF installer for DHS"
+    workingDir = "."
+    commandLine = "java"
+    args = [
+        "-jar", "build/libs/marklogic-data-hub-${version}-installer.jar",
+        "--path", "build/dhsInstaller",
+        "--host", mlHost,
+        "--username", mlUsername,
+        "--password", mlPassword,
+        "dhsInstall"
+    ]
+}
+installDhfIntoDhs.dependsOn bootJar
+
 task clientJar(type: Jar) {
     description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
     manifest {
@@ -408,19 +423,29 @@ task bootstrap(type: JavaExec) {
     description = "Install the test application - an instance of DHF - so that the tests can be run against it"
     classpath = sourceSets.test.runtimeClasspath
     main = 'com.marklogic.bootstrap.TestAppInstaller'
-
-    // Pass some Gradle properties as system properties so they can be easily overridden
     systemProperty "mlHost", mlHost
-    systemProperty "hubDhs", hubDhs
-    systemProperty "hubSsl", hubSsl
-    systemProperty "mlUsername", mlUsername
-    systemProperty "mlPassword", mlPassword
-    systemProperty "mlSecurityUsername", mlSecurityUsername
-    systemProperty "mlSecurityPassword", mlSecurityPassword
 }
 bootstrap.dependsOn extractFastXmlParserZip
 bootstrap.finalizedBy mlPrepareBundles // ensures that marklogic-unit-test is downloaded
 test.mustRunAfter bootstrap
+
+task dhsBootstrap(type: JavaExec) {
+    description = "Install the test application in a DHS instance"
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.marklogic.bootstrap.TestAppInstaller'
+    // Pass some Gradle properties as system properties so they can be easily overridden
+    systemProperty "mlHost", mlHost
+    systemProperty "hubDhs", "true"
+    systemProperty "hubSsl", "true"
+    systemProperty "mlUsername", mlUsername
+    systemProperty "mlPassword", mlPassword
+    systemProperty "mlSecurityUsername", mlUsername
+    systemProperty "mlSecurityPassword", mlPassword
+    systemProperty "mlFlowDeveloperRole", "flowDeveloper"
+    systemProperty "mlFlowOperatorRole", "flowOperator"
+}
+dhsBootstrap.dependsOn extractFastXmlParserZip
+dhsBootstrap.finalizedBy mlPrepareBundles
 
 // Configure the Gradle "test" task
 test {
@@ -449,7 +474,15 @@ task testDhsTests(type: Test) {
         include 'com/marklogic/hub/dataservices/**'
         // This test is failing due to an old 5.2.x DS module that gets installed by DHS 5.2.x
         exclude 'com/marklogic/hub/dataservices/VerifyEndpointPrivileges*'
+
+        include 'com/marklogic/hub/dhs/**'
+        // Doesn't work in DHS because the options expected to be created already exist
+        exclude '**/CopyQueryOptionsCommandTest*'
+        // Not run in DHS because it has to re-install DHF modules, which messes up what the DHF installer did
+        exclude '**/UpdateDhsRestExtensionPermissionsTest*'
+
         include 'com/marklogic/hub/flow/**'
+        include 'com/marklogic/hub/hubcentral/**'
         include 'com/marklogic/hub/mapping/**'
         include 'com/marklogic/hub/master/**'
         include 'com/marklogic/hub/security/**'
@@ -461,12 +494,12 @@ task testDhsTests(type: Test) {
     systemProperty "hubSsl", "true"
     systemProperty "mlUsername", mlUsername
     systemProperty "mlPassword", mlPassword
-    systemProperty "mlSecurityUsername", mlSecurityUsername
-    systemProperty "mlSecurityPassword", mlSecurityPassword
+    systemProperty "mlSecurityUsername", mlUsername
+    systemProperty "mlSecurityPassword", mlPassword
     systemProperty "mlFlowDeveloperRole", "flowDeveloper"
     systemProperty "mlFlowOperatorRole", "flowOperator"
 }
-testDhsTests.dependsOn bootstrap
+testDhsTests.dependsOn dhsBootstrap
 
 task testIntegration(type: Test) {
     systemProperty "mlHost", mlHost

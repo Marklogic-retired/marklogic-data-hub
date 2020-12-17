@@ -113,16 +113,20 @@ public class DataHubSecurityAdminTest extends AbstractSecurityTest {
             new Role(adminUserApi, roleName).delete();
         }
 
-        runAsAdmin();
-        PrivilegeManager mgr = new PrivilegeManager(getHubConfig().getManageClient());
-        int roleInheritPrivilegeCount = 0;
-        for (String name : mgr.getAsXml().getListItemNameRefs()) {
-            if (name.startsWith("data-role-inherit-")) {
-                roleInheritPrivilegeCount++;
+        // We can't verify this in DHS because DHS creates its own data-role-inherit- privileges, so we don't know the
+        // exact count of those privileges should be
+        if (!getHubConfig().getIsProvisionedEnvironment()) {
+            runAsAdmin();
+            PrivilegeManager mgr = new PrivilegeManager(getHubConfig().getManageClient());
+            int roleInheritPrivilegeCount = 0;
+            for (String name : mgr.getAsXml().getListItemNameRefs()) {
+                if (name.startsWith("data-role-inherit-")) {
+                    roleInheritPrivilegeCount++;
+                }
             }
+            assertEquals(customRole.getRole().size(), roleInheritPrivilegeCount, "Verifying that the role we tested with " +
+                "includes the same number of DH/HC roles that are expected to be inheritable by a data-hub-security-admin");
         }
-        assertEquals(customRole.getRole().size(), roleInheritPrivilegeCount, "Verifying that the role we tested with " +
-            "includes the same number of DH/HC roles that are expected to be inheritable by a data-hub-security-admin");
     }
 
     @Test

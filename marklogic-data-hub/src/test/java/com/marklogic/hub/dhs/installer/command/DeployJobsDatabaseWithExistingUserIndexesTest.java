@@ -41,10 +41,13 @@ public class DeployJobsDatabaseWithExistingUserIndexesTest extends AbstractHubCo
 
     private void givenTheJobsDatabaseHasCustomUserIndexes() {
         installProjectInFolder("test-projects/custom-job-indexes");
-        runAsFlowDeveloper();
+
+        // Running as admin, as an admin user is expected to use the DHF installer for DHS
+        runAsAdmin();
         DeployOtherDatabasesCommand command = new DeployOtherDatabasesCommand();
         command.setDeployDatabaseCommandFactory(new HubDeployDatabaseCommandFactory(getHubConfig()));
         command.execute(newCommandContext());
+
         verifyUserIndexesExist();
     }
 
