@@ -1,0 +1,10 @@
+{
+  "name": "collectionAdder",
+  "stepId": "collectionAdder-custom",
+  "stepDefinitionName": "collectionAdder",
+  "stepDefinitionType": "CUSTOM",
+  "sourceQuery": "cts.collectionQuery('Customer')",
+  "collectionToAdd": "added-collection",
+  "sourceDatabase": "data-hub-FINAL",
+  "targetDatabase": "data-hub-FINAL"
+}

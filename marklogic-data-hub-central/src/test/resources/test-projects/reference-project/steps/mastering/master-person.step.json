@@ -1,0 +1,19 @@
+{
+  "name" : "master-person",
+  "description" : "",
+  "stepDefinitionName" : "default-mastering",
+  "stepDefinitionType" : "MASTERING",
+  "stepUpdate" : true,
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"mapPersonJSON\"])",
+  "provenanceGranularityLevel" : "fine",
+  "acceptsBatch" : true,
+  "targetEntity" : "Person",
+  "targetDatabase" : "data-hub-FINAL",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "master-person", "Person" ],
+  "mergeOptions" : {
+  },
+  "targetFormat" : "json",
+  "stepId" : "master-person-mastering"
+}

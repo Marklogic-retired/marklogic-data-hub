@@ -1,6 +1,7 @@
 package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -14,10 +15,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class StepControllerTest extends AbstractStepControllerTest {
     private final static String PATH = "/api/steps";
 
-    @Test
-    void permittedReadUser() throws Exception {
+    @BeforeEach
+    void setup() {
         runAsDataHubDeveloper();
         installProjectInFolder("test-projects/reference-project");
+    }
+
+    @Test
+    void permittedReadUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-step-runner");
 
         getJson(PATH)
@@ -30,6 +35,10 @@ public class StepControllerTest extends AbstractStepControllerTest {
                 assertEquals(stepsByType.get("ingestionSteps").get(1).get("name").asText(), "testLoadData");
                 verifyStepsByStepType(stepsByType, "ingestionSteps");
                 verifyStepsByStepType(stepsByType, "mappingSteps");
+                verifyStepsByStepType(stepsByType, "matchingSteps");
+                verifyStepsByStepType(stepsByType, "mergingSteps");
+                verifyStepsByStepType(stepsByType, "masteringSteps");
+                verifyStepsByStepType(stepsByType, "customSteps");
             });
     }
 
@@ -48,8 +57,6 @@ public class StepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void forbiddenReadUser() throws Exception {
-        runAsDataHubDeveloper();
-        installProjectInFolder("test-projects/reference-project");
         loginAsTestUserWithRoles("hub-central-user");
         getJson(PATH)
             .andExpect(status().isForbidden());
