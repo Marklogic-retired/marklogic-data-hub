@@ -48,17 +48,24 @@ public abstract class AbstractSecurityTest extends AbstractHubCoreTest {
         );
 
         createUserWithRoleBeingTested();
-
-        userWithRoleBeingTestedClient = new ManageClient(
-            new ManageConfig(
-                getHubClient().getManageClient().getManageConfig().getHost(),
-                getHubClient().getManageClient().getManageConfig().getPort(),
-                userWithRoleBeingTested.getUserName(), userWithRoleBeingTested.getPassword()
-            )
-        );
+        userWithRoleBeingTestedClient = new ManageClient(buildManageConfigForUserBeingTested());
         userWithRoleBeingTestedApi = new API(userWithRoleBeingTestedClient);
 
         logger.info("Finished setting up role to be tested and a user with that role");
+    }
+
+    private ManageConfig buildManageConfigForUserBeingTested() {
+        ManageConfig originalManageConfig = getHubClient().getManageClient().getManageConfig();
+        ManageConfig userWithRoleManageConfig = new ManageConfig(
+            originalManageConfig.getHost(),
+            originalManageConfig.getPort(),
+            userWithRoleBeingTested.getUserName(), userWithRoleBeingTested.getPassword()
+        );
+        userWithRoleManageConfig.setScheme(originalManageConfig.getScheme());
+        if (originalManageConfig.isConfigureSimpleSsl()) {
+            userWithRoleManageConfig.setConfigureSimpleSsl(true);
+        }
+        return userWithRoleManageConfig;
     }
 
     @AfterEach
