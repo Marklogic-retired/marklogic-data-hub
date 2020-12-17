@@ -45,7 +45,6 @@ const srcTypeOptions = [
 const {TextArea} = Input;
 
 const CreateEditStep: React.FC<Props>  = (props) => {
-
   const {handleError} = useContext(UserContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
@@ -206,6 +205,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   };
 
   const handleSearch = async (value: any) => {
+    let database = props.editStepArtifactObject["targetDatabase"] === "data-hub-FINAL" ? "final" : "staging";
     if (value && value.length > 2) {
       try {
         let data = {
@@ -216,7 +216,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
           "dataType": "string",
           "pattern": value,
         };
-        const response = await axios.post(`/api/entitySearch/facet-values?database=staging`, data);
+        const response = await axios.post(`/api/entitySearch/facet-values?database=${database}`, data);
         if (response?.status === 200) {
           setCollectionOptions(response.data);
         }
