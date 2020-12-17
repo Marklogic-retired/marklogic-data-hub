@@ -1,10 +1,11 @@
 import React from "react";
-import {fireEvent, render, wait, cleanup} from "@testing-library/react";
+import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import Steps from "./steps";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/advanced-settings.data";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
+import {ErrorTooltips} from "../../config/tooltips.config";
 
 jest.mock("axios");
 
@@ -50,8 +51,8 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Default Basic tab
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
     expect(baseElement.querySelector("#name")).toHaveValue("AdvancedLoad");
     // Other Basic settings details tested in create-edit-*.test.tsx
 
@@ -59,8 +60,8 @@ describe("Steps settings component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read,data-hub-common,update");
     // Other Advanced settings details tested in advanced-settings.test.tsx
 
@@ -73,8 +74,8 @@ describe("Steps settings component", () => {
     await wait(() => {
       fireEvent.click(getByText("Basic"));
     });
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     fireEvent.click(getAllByLabelText("Cancel")[0]);
 
@@ -119,8 +120,8 @@ describe("Steps settings component", () => {
     expect(detailsLink.onclick).toHaveBeenCalledTimes(1);
 
     // Default Basic tab
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");    
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     // Switch to Advanced tab, create error, verify other tab disabled
     await wait(() => {
@@ -132,7 +133,9 @@ describe("Steps settings component", () => {
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
     expect(getByTestId("validationError")).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
 
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+    fireEvent.mouseOver(getByText("Basic"));
+    wait(() => expect(screen.getByText(ErrorTooltips.disabledTab)).toBeInTheDocument());
 
     // Fix error, verify other tab enabled
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-common,read"}});
@@ -140,7 +143,7 @@ describe("Steps settings component", () => {
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
     expect(getByTestId("validationError")).toHaveTextContent("");
 
-    expect(getByText("Basic")).not.toHaveClass("ant-tabs-tab-disabled");
+    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-disabled");
 
     // Close dialog, verify discard changes confirm dialog
     await wait(() => {

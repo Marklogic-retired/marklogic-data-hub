@@ -9,9 +9,11 @@ import ConfirmYesNo from "../common/confirm-yes-no/confirm-yes-no";
 import styles from "./steps.module.scss";
 import "./steps.scss";
 import {StepType} from "../../types/curation-types";
+import {MLTooltip} from "@marklogic/design-system";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {ErrorTooltips} from "../../config/tooltips.config";
 
 const {TabPane} = Tabs;
 
@@ -189,7 +191,7 @@ const Steps: React.FC<Props> = (props) => {
     maskClosable={false}
     destroyOnClose={true}
   >
-    <div aria-label="steps" className={styles.stepsContainer}>
+    <div aria-label="steps" id="stepSettings" className={styles.stepsContainer}>
       <header>
         <div className={styles.title}>{getTitle()}</div>
       </header>
@@ -198,10 +200,18 @@ const Steps: React.FC<Props> = (props) => {
       </div> :
         <div className={styles.tabs}>
           <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
-            <TabPane tab="Basic" key="1" disabled={!isValid && currentTab !== "1"}>
+            <TabPane tab={(
+              <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+                id="basicTooltip" style={ {wordBreak: "break-all"} }
+                title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</MLTooltip>
+            )} key="1" disabled={!isValid && currentTab !== "1"}>
               {getCreateEditStep(props.activityType)}
             </TabPane>
-            <TabPane tab="Advanced" key="2"  disabled={!isValid && currentTab !== "2"}>
+            <TabPane tab={(
+              <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+                id="advTooltip" style={ {wordBreak: "break-all"} }
+                title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</MLTooltip>
+            )} key="2" disabled={!isValid && currentTab !== "2"}>
               <AdvancedSettings
                 tabKey="2"
                 tooltipsData={props.tooltipsData}

@@ -141,8 +141,8 @@ describe("Load data component", () => {
     await wait(() => {
       fireEvent.click(getByText(data.loadData.data[0].name));
     });
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     // Basic settings values
     expect(getByText("testLoad")).toBeInTheDocument();
@@ -156,8 +156,8 @@ describe("Load data component", () => {
       fireEvent.click(getByText("Advanced"));
     });
     expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion/" + data.loadData.data[0].name);
-    expect(getByText("Basic")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
     let saveButton = getAllByText("Save"); // Each tab has a Save button
     expect(saveButton.length > 0);
     let stepName = loadData.loads.data[0].name;

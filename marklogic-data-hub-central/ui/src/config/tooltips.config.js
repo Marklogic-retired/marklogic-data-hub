@@ -195,6 +195,10 @@ const multiSliderTooltips = {
   timeStamp: 'Timestamp cannot be moved or deleted.'
 }
 
+const ErrorTooltips = {
+  disabledTab: 'You must correct the errors in \nthe current tab before switching.'
+}
+
 export {
     AdvancedSettingsTooltips,
     NewFlowTooltips,
@@ -215,5 +219,6 @@ export {
     MergeRuleTooltips,
     MergingStepDetailText,
     MergeStrategyTooltips,
-    multiSliderTooltips
+    multiSliderTooltips,
+    ErrorTooltips
 }

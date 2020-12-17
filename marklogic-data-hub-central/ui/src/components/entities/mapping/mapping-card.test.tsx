@@ -175,8 +175,8 @@ describe("Mapping Card component", () => {
     });
     expect(getByText("Mapping Step Settings")).toBeInTheDocument();
     debug;
-    expect(getByText("Basic")).toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     // Basic settings values
     expect(getByPlaceholderText("Enter name")).toHaveValue("Mapping1");
@@ -194,8 +194,8 @@ describe("Mapping Card component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(getByText("Basic")).not.toHaveClass("ant-tabs-tab-active");
-    expect(getByText("Advanced")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
 
     // Advanced settings values
     expect(getByText("Source Database")).toBeInTheDocument();
