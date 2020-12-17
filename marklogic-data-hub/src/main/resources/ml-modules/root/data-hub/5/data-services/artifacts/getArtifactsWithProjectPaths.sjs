@@ -24,19 +24,19 @@ const hubEs = require('/data-hub/5/impl/hub-es.sjs');
 
 const artifactsWithProjectPaths = [];
 
-const userArtifactQuery = cts.andQuery([
+const userArtifactQuery = cts.andNotQuery(
   cts.collectionQuery([
     // Can't use USER_ARTIFACT_COLLECTIONS here as we don't want to include step definitions, which as of 5.3.0
     // cannot be managed via HC
     consts.FLOW_COLLECTION,
     consts.ENTITY_MODEL_COLLECTION,
     "http://marklogic.com/data-hub/steps/ingestion",
-    "http://marklogic.com/data-hub/steps/mapping"
+    "http://marklogic.com/data-hub/steps/mapping",
+    "http://marklogic.com/data-hub/steps/matching",
+    "http://marklogic.com/data-hub/steps/merging"
   ]),
-  cts.notQuery(
-    cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
-  )
-]);
+  cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)
+);
 
 cts.search(userArtifactQuery).toArray().forEach(artifact => {
   // The path starts with "/" will not work with windows winzip. So removing "/" from the nodeUri path
