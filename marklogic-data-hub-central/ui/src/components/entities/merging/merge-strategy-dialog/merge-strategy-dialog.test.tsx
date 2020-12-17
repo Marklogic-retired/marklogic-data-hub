@@ -1,10 +1,12 @@
 import React from "react";
-import {render, cleanup, fireEvent, screen} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen, waitForElement} from "@testing-library/react";
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 import MergeStrategyDialog from "./merge-strategy-dialog";
 import {updateMergingArtifact} from "../../../../api/merging";
+import userEvent from "@testing-library/user-event";
+import {multiSliderTooltips} from "../../../../config/tooltips.config";
 
 jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
@@ -18,7 +20,7 @@ describe("Merge Strategy Dialog component", () => {
 
   it("Verify Add Merge Strategy dialog renders correctly", async () => {
     mockMergingUpdate.mockResolvedValueOnce({status: 200, data: {}});
-    const {getByText, getByPlaceholderText, getByTestId, getByLabelText} = render(
+    const {getByText, getByPlaceholderText, getByTestId, getByLabelText, getAllByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeStrategyDialog
           {...data.mergeStrategyDataProps}
@@ -39,6 +41,18 @@ describe("Merge Strategy Dialog component", () => {
     fireEvent.change(getByPlaceholderText("Enter max sources"), {target: {value: 2}});
     expect(getByPlaceholderText("Enter max sources")).toHaveAttribute("value", "2");
     expect(getByTestId("prioritySlider")).toBeInTheDocument();
+
+    //Verify priority option slider tooltip
+    userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+
+    //Timestamp handle is visible by default
+    let timestampHandle = getByTestId("Timestamp-active");
+    expect(timestampHandle).toHaveClass("handleDisabled");
+    expect(getByLabelText("Timestamp")).toBeInTheDocument();
+    userEvent.hover(timestampHandle);
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.timeStamp))))).toBeInTheDocument();
+
     fireEvent.click(getByLabelText("add-slider-button"));
     let saveButton = getByText("Save");
     //Modal will close now

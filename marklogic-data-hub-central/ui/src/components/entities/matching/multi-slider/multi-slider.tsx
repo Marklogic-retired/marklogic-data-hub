@@ -2,6 +2,8 @@ import React, {useState} from "react";
 import {Icon} from "antd";
 import {Slider, Handles, Ticks} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
+import {MLTooltip} from "@marklogic/design-system";
+import {multiSliderTooltips} from "../../../../config/tooltips.config";
 
 const MultiSlider = (props) => {
 
@@ -14,7 +16,8 @@ const MultiSlider = (props) => {
 
   function Handle({handle: {id, value, percent},
     options: options,
-    getHandleProps
+    getHandleProps,
+    disabled
   }) {
 
     const onHover = () => {
@@ -24,35 +27,45 @@ const MultiSlider = (props) => {
     return (
       <>
         <div className={"tooltipContainer"} style={{left: `${percent}%`}}>
-          {activeHandleIdOptions.hasOwnProperty("prop") && options[0].prop === activeHandleIdOptions["prop"] && activeHandleIdOptions.hasOwnProperty("type") && options[0].type === activeHandleIdOptions["type"]? <div className="tooltip">
+          {activeHandleIdOptions.hasOwnProperty("prop") && options[0].prop === activeHandleIdOptions["prop"] && activeHandleIdOptions.hasOwnProperty("type") && options[0].type === activeHandleIdOptions["type"]? <div className={disabled ? "tooltipDisabled" : "tooltip"}>
             {options.map((opt, i) => (
               <div className={activeHandleIdOptions["index"] === id.split("-")[1] ? "activeTooltipText": "tooltipText"} data-testid={`${options[0].prop}-active-tooltip`} key={i}>
                 <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span>{opt.prop}</span> {opt.type.length ? `-  ${opt.type}` : ""}</span>
-                <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}>X</div>
+                {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}>X</div>}
               </div>)
             )}
           </div>
             :
-            <div className="tooltip">
+            <div className={disabled ? "tooltipDisabled" : "tooltip"}>
               {options.map((opt, i) => (
                 <div className="tooltipText"  data-testid={`${options[0].prop}-tooltip`} key={i}>
                   <span className="editText" data-testid={`edit-${options[0].prop}`} onClick={() => handleEdit({...options[0], sliderType: props.type, index: id.split("-")[1]})}><span aria-label={opt.type.length ? `${opt.prop}-${opt.type}`: `${opt.prop}` }>{opt.prop}</span>  {opt.type.length ? `-  ${opt.type}` : ""}</span>
-                  <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}><Icon type="close" /></div>
+                  {disabled ? null : <div data-testid={`delete-${options[0].prop}`} className="clearIcon" onClick={() => handleDelete({...options[0], sliderType: props.type, index: id.split("-")[1]})}><Icon type="close" /></div>}
                 </div>
               ))}
             </div>
           }
         </div>
-        <div
-          className={"handle"}
-          onMouseOver={() => onHover()}
-          data-testid={`${options[0].prop}-active`}
-          style={{
-            left: `${percent}%`,
-          }}
-          {...getHandleProps(id)}
-        >
-        </div>
+        <MLTooltip title={disabled ? multiSliderTooltips.timeStamp : ""} placement="bottom">
+          {disabled ? <div className={"handleDisabledParent"}><div
+            className={"handleDisabled"}
+            data-testid={`${options[0].prop}-active`}
+            style={{
+              left: `${percent}%`,
+            }}
+            {...getHandleProps(id)}
+          >
+          </div></div> : <div
+            className={"handle"}
+            onMouseOver={() => onHover()}
+            data-testid={`${options[0].prop}-active`}
+            style={{
+              left: `${percent}%`,
+            }}
+            {...getHandleProps(id)}
+          >
+          </div> }
+        </MLTooltip>
       </>
     );
   }
@@ -156,6 +169,7 @@ const MultiSlider = (props) => {
                       handle={handle}
                       options={options[index].props}
                       getHandleProps={getHandleProps}
+                      disabled={props.stepType === "merging" && options[index].props[0].prop === "Timestamp" && options[index].props[0].type === "" ? true : false}
                     />
                   );
                 }

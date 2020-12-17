@@ -56,6 +56,30 @@
         background-color: #fff;
     }
 
+    .handleDisabled {
+        position: absolute;
+        z-index: 2;
+        width: 25px;
+        height: 25px;
+        border: solid 3px #8b94c6;
+        text-align: center;
+        pointer-events: none;
+        border-radius: 50%;
+        background-color: #fff;
+    }
+
+    .handleDisabledParent{
+        position: absolute;
+        margin-left: -15px;
+        margin-top: -10px;
+        z-index: 2;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        cursor: not-allowed !important;
+        border-radius: 50%;
+    }
+
     .tooltipContainer {
 
         position: absolute;
@@ -152,6 +176,56 @@
               white-space: nowrap;
               padding-left: 7px;
               width: 165px;
+              overflow: hidden;
+            }
+        }
+
+        .tooltipDisabled {
+            position: relative;
+            display: block;
+            width: 120px;
+            bottom: 10px;
+            right: 62px;
+            border-radius: 6px;
+            box-shadow: 5px 5px 5px #ccc;
+
+            .tooltipText{
+                margin-top: -30px;
+                width: 120px;
+                background-color: #444;
+                color: #f0f0f0;
+                opacity: 0.8;
+                text-align: center;
+                border-radius: 6px;
+                padding: 3px 0;
+                position: relative;
+                z-index: 1;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                cursor: not-allowed;
+            }
+
+            .tooltipText::after {
+                content: "";
+                position: absolute;
+                top: 100%;
+                left: 50%;
+                margin-left: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: #444 transparent transparent transparent;
+            }
+
+            span {
+              background-color: inherit;
+              color: inherit;
+            }
+
+            .editText {
+              display: block;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              width: 120px;
               overflow: hidden;
             }
         }

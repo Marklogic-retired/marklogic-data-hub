@@ -190,6 +190,11 @@ const MergingStepDetailText = {
     'matched entities are combined into the merged entity by default. To define exceptions to this default behavior, create merge strategies and merge rules.'
 }
 
+const multiSliderTooltips = {
+  priorityOrder: 'The length weights and source weights plotted on a continuum from low to high. Each weight indicates the importance of the length or source when merging documents.',
+  timeStamp: 'Timestamp cannot be moved or deleted.'
+}
+
 export {
     AdvancedSettingsTooltips,
     NewFlowTooltips,
@@ -209,5 +214,6 @@ export {
     MatchingStepDetailText,
     MergeRuleTooltips,
     MergingStepDetailText,
-    MergeStrategyTooltips
+    MergeStrategyTooltips,
+    multiSliderTooltips
 }
