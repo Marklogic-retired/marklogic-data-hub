@@ -12,6 +12,13 @@ function invokeGetAllService(artifactType) {
     ));
 }
 
+function invokeGetArtifactsWithProjectPaths() {
+    return fn.head(xdmp.invoke(
+        "/data-hub/5/data-services/artifacts/getArtifactsWithProjectPaths.sjs",
+        {}
+    ));
+}
+
 function invokeValidateService(artifactType, artifactName, artifact) {
     return Artifacts.validateArtifact(artifactType, artifactName, artifact);
 }
@@ -19,5 +26,6 @@ function invokeValidateService(artifactType, artifactName, artifact) {
 module.exports = {
     invokeSetService,
     invokeGetAllService,
-    invokeValidateService
+    invokeValidateService,
+    invokeGetArtifactsWithProjectPaths
 };
