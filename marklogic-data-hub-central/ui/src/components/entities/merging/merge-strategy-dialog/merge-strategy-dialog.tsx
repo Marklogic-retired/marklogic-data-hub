@@ -8,9 +8,9 @@ import styles from "./merge-strategy-dialog.module.scss";
 import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
 import {CurationContext} from "../../../../util/curation-context";
-import {MergeRuleTooltips} from "../../../../config/tooltips.config";
+import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
-import {MergingStep} from "../../../../types/curation-types";
+import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
 
@@ -37,7 +37,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const [maxSources, setMaxSources] = useState<any>("");
   const [maxSourcesTouched, setMaxSourcesTouched] = useState(false);
   const [isCustomStrategy, setIsCustomStrategy] = useState(false);
-  const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([]);
+  const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
   const [strategyNameErrorMessage, setStrategyNameErrorMessage] = useState("");
   const [dropdownOption, setDropdownOption] = useState("Length");
   const [dropdownOptionTouched, setDropdownOptionTouched] = useState(false);
@@ -181,7 +181,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   const resetModal = () => {
     setStrategyNameErrorMessage("");
-    setPriorityOrderOptions([]);
+    setPriorityOrderOptions([defaultPriorityOption]);
     setDropdownOption("Length");
     setRadioValuesOptionClicked(1);
     setRadioSourcesOptionClicked(1);
@@ -216,7 +216,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (props.strategyName.length === 0) {
-      setPriorityOrderOptions([]);
+      setPriorityOrderOptions([defaultPriorityOption]);
       setStrategyName("");
     }
     if (props.isEditStrategy && props.strategyName.length) {
@@ -228,7 +228,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     }
   }, [props.strategyName, curationOptions, props.isEditStrategy, props.sourceNames]);
 
-  let priorityOrderStrategyOptions:any[] = [];
+  let priorityOrderStrategyOptions:any[] = [defaultPriorityOption];
   const parsedEditedFormDetails = (data) => {
     let mergeStrategiesData: any[]  = data.mergeStrategies;
     for (let key of mergeStrategiesData) {
@@ -348,7 +348,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
           </MLTooltip>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
-          <div><p className={styles.priorityText}>Priority Order<MLTooltip title={""}>
+          <div><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip></p></div>
           <div className={styles.addButtonContainer}>
@@ -367,7 +367,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
           </div>
           <div>
-            <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit}/>
+            <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging}/>
           </div>
         </div>}
         <Form.Item className={styles.submitButtonsForm}>

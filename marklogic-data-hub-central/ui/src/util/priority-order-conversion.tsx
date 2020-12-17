@@ -6,12 +6,14 @@ export const parsePriorityOrder = (priorityOptions) => {
       if (key.props[0].prop === "Length") {
         priorityOrder.lengthWeight = key.value;
       } else {
-        priorityOrder.sources.push(
-          {
-            "sourceName": key.props[0].type,
-            "weight": key.value
-          }
-        );
+        if (key.props[0].type) {
+          priorityOrder.sources.push(
+            {
+              "sourceName": key.props[0].type,
+              "weight": key.value
+            }
+          );
+        }
       }
     }
   }

@@ -1,10 +1,12 @@
 import React from "react";
-import {render, cleanup, fireEvent, screen} from "@testing-library/react";
+import {render, cleanup, fireEvent, screen, waitForElement} from "@testing-library/react";
 import MergeRuleDialog from "./merge-rule-dialog";
 import data from "../../../../assets/mock-data/curation/merging.data";
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMergingArtifact} from "../../../../api/merging";
+import userEvent from "@testing-library/user-event";
+import {multiSliderTooltips} from "../../../../config/tooltips.config";
 
 
 jest.mock("../../../../api/merging");
@@ -72,8 +74,8 @@ describe("Merge Rule Dialog component", () => {
 
   });
 
-  it("Verify Add Merge Rule dialog with property-specific mergeType renders correctly", () => {
-    const {getByText, getByTestId, getByLabelText, queryByLabelText, getByPlaceholderText} = render(
+  it("Verify Add Merge Rule dialog with property-specific mergeType renders correctly", async () => {
+    const {getByText, getByTestId, getByLabelText, queryByLabelText, getByPlaceholderText, getAllByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeRuleDialog
           {...data.mergeRuleDataProps}
@@ -106,6 +108,18 @@ describe("Merge Rule Dialog component", () => {
     expect(getByPlaceholderText("Enter max values")).toBeInTheDocument();
     expect(getByPlaceholderText("Enter max sources")).toBeInTheDocument();
     expect(getByTestId("priorityOrderSlider")).toBeInTheDocument();
+
+    //Verify priority Order slider tooltip
+    userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+
+    //Timestamp handle is visible by default
+    let timestampHandle = getByTestId("Timestamp-active");
+    expect(timestampHandle).toHaveClass("handleDisabled");
+    expect(getByLabelText("Timestamp")).toBeInTheDocument();
+    userEvent.hover(timestampHandle);
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.timeStamp))))).toBeInTheDocument();
+
     expect(getByLabelText("add-slider-button")).toBeInTheDocument();
 
     fireEvent.click(saveButton); //Modal will close now

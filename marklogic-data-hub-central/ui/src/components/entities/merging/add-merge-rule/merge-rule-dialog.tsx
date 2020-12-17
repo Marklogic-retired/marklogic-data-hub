@@ -12,9 +12,9 @@ import EntityPropertyTreeSelect from "../../../entity-property-tree-select/entit
 import {Definition} from "../../../../types/modeling-types";
 import {CurationContext} from "../../../../util/curation-context";
 import arrayIcon from "../../../../assets/icon_array.png";
-import {MergeRuleTooltips} from "../../../../config/tooltips.config";
+import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
-import {MergingStep} from "../../../../types/curation-types";
+import {MergingStep, StepType, defaultPriorityOption} from "../../../../types/curation-types";
 import {updateMergingArtifact} from "../../../../api/merging";
 import {addSliderOptions, parsePriorityOrder, handleSliderOptions, handleDeleteSliderOptions} from "../../../../util/priority-order-conversion";
 import ConfirmYesNo from "../../../common/confirm-yes-no/confirm-yes-no";
@@ -61,7 +61,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [maxValueRuleInputTouched, setMaxValueRuleInputTouched] = useState(false);
   const [maxSourcesRuleInput, setMaxSourcesRuleInput] = useState<any>("");
   const [maxSourcesRuleInputTouched, setMaxSourcesRuleInputTouched] = useState(false);
-  const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([]);
+  const [priorityOrderOptions, setPriorityOrderOptions] = useState<any>([defaultPriorityOption]);
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
   const [radioSourcesOptionClicked, setRadioSourcesOptionClicked] = useState(1);
   const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
@@ -170,7 +170,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
     setStrategyValue(undefined);
     setNamespace("");
     setFunctionValue("");
-    setPriorityOrderOptions([]);
+    setPriorityOrderOptions([defaultPriorityOption]);
     setDropdownOption("Length");
     resetTouched();
   };
@@ -657,7 +657,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                 </MLTooltip>
               </Form.Item>
               <div className={styles.priorityOrderContainer} data-testid={"priorityOrderSlider"}>
-                <div><p className={styles.priorityText}>Priority Order<MLTooltip title={MergeRuleTooltips.priorityOrder}>
+                <div><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
                 </MLTooltip></p></div>
                 <div className={styles.addButtonContainer}>
@@ -676,7 +676,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
                   <MLButton aria-label="add-slider-button" type="primary" size="default" className={styles.addSliderButton} onClick={onAddOptions}>Add</MLButton>
                 </div>
                 <div>
-                  <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit}/>
+                  <MultiSlider options={priorityOrderOptions} handleSlider={handleSlider} handleDelete={handleDelete} handleEdit={handleEdit} stepType={StepType.Merging}/>
                 </div>
               </div>
             </> : ""

@@ -92,3 +92,11 @@ export interface MergingStep {
   mergeStrategies: any[],
   mergeRules: any[],
 }
+
+export const defaultPriorityOption = {
+  props: [{
+    prop: "Timestamp",
+    type: ""
+  }],
+  value: 0
+};

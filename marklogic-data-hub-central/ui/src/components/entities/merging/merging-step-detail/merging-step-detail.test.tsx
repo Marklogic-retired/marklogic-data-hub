@@ -10,7 +10,7 @@ import {customerMergingStep, customerMergingStepEmpty} from "../../../../assets/
 import MergingStepDetail from "./merging-step-detail";
 import userEvent from "@testing-library/user-event";
 import {updateMergingArtifact} from "../../../../api/merging";
-import {MergeStrategyTooltips} from "../../../../config/tooltips.config";
+import {MergeStrategyTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
 
 jest.mock("../../../../api/merging");
 const mockMergingUpdate = updateMergingArtifact as jest.Mock;
@@ -48,7 +48,7 @@ describe("Merging Step Detail view component", () => {
 
   it("can render merging step with merge strategies and rulesets", async () => {
 
-    const {getByText, getAllByText} = render(
+    const {getByText, getAllByText, getByLabelText, getByTestId} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergingStepDetail />
       </CurationContext.Provider>
@@ -63,6 +63,18 @@ describe("Merging Step Detail view component", () => {
 
     //check table data is rendered correctly
     expect(getByText("customMergeStrategy")).toBeInTheDocument();
+    userEvent.click(getByLabelText("right"));
+
+    //Verify priority option slider tooltip
+    userEvent.hover(getByLabelText("icon: question-circle"));
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
+
+    //Timestamp handle is visible by default
+    let timestampHandle = getByTestId("Timestamp-active");
+    expect(timestampHandle).toHaveClass("handleDisabled");
+    expect(getByLabelText("Timestamp")).toBeInTheDocument();
+    userEvent.hover(timestampHandle);
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.timeStamp))))).toBeInTheDocument();
 
     //Verify merge rules table is rendered with data
     // Check table column headers are rendered

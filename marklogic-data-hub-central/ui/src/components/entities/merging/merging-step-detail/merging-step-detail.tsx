@@ -7,9 +7,9 @@ import NumberIcon from "../../../number-icon/number-icon";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {CurationContext} from "../../../../util/curation-context";
 import {
-  MergingStep
+  MergingStep, StepType, defaultPriorityOption
 } from "../../../../types/curation-types";
-import {MergeStrategyTooltips, MergingStepDetailText} from "../../../../config/tooltips.config";
+import {MergeStrategyTooltips, MergingStepDetailText, multiSliderTooltips} from "../../../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-solid-svg-icons";
 import MultiSlider from "../../matching/multi-slider/multi-slider";
@@ -257,7 +257,7 @@ const MergingStepDetail: React.FC = () => {
   };
 
   const expandedRowRender = (strategyObj) => {
-    let priorityOrderStrategyOptions:any[] = [];
+    let priorityOrderStrategyOptions:any[] = [defaultPriorityOption];
     for (let strategy of mergingStep.mergeStrategies) {
       if (strategy.hasOwnProperty("priorityOrder") && strategy.strategyName === strategyObj.strategyName) {
         for (let key of strategy.priorityOrder.sources) {
@@ -291,10 +291,10 @@ const MergingStepDetail: React.FC = () => {
       }
     }
     return <>
-      <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={""}>
+      <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
-      <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete}/>
+      <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging}/>
       </div>
     </>;
   };
