@@ -5,6 +5,7 @@ const assertions = [];
 
 const options = {
   "targetEntityType": "http://example.org/Address-0.0.1/Address",
+  "dataFormat": "json",
   "matchRulesets": [
     {
       "name": "zip",
