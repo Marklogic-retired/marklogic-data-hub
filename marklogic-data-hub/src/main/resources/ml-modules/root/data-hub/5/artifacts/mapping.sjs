@@ -62,7 +62,7 @@ function getArtifactUri(artifactName){
 function validateArtifact(artifact) {
   const missingProperties = requiredProperties.filter((propName) => !artifact[propName]);
   if (missingProperties.length) {
-    return new Error(`Missing the following required properties: ${JSON.stringify(missingProperties)}`);
+    return new Error(`Mapping '${artifact.name}' is missing the following required properties: ${JSON.stringify(missingProperties)}`);
   }
 
   const mappingWithSameNameButDifferentEntityTypeExists = cts.exists(cts.andQuery([

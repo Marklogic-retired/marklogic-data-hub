@@ -50,11 +50,11 @@ function validArtifact() {
 
 function invalidArtifact() {
   try {
-    const result = ArtifactService.invokeValidateService('mapping', "invalidMapping", {name: 'invalidMapping'});
-    return [test.assertTrue(false, 'Should have thrown a validation error')];
+    ArtifactService.invokeValidateService('mapping', "invalidMapping", {name: 'invalidMapping'});
+    throw Error("Should have thrown a validation error");
   } catch (e) {
     let msg = e.data[1];
-    return test.assertEqual('Missing the following required properties: ["targetEntityType","selectedSource"]', msg);
+    return test.assertEqual("Mapping 'invalidMapping' is missing the following required properties: [\"targetEntityType\",\"selectedSource\"]", msg);
   }
 }
 
