@@ -13,6 +13,7 @@ import {MLTooltip, MLPopover} from "@marklogic/design-system";
 import {CardViewDateConverter} from "../../util/date-conversion";
 import {Link} from "react-router-dom";
 import {SearchContext} from "../../util/search-context";
+import {getRecord} from "../../api/record";
 
 const RecordCardView = (props) => {
   const authorityService = useContext(AuthoritiesContext);  // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -133,6 +134,30 @@ const RecordCardView = (props) => {
     return linkObject;
   };
 
+  const download = async (docUri) => {
+    try {
+      const response = await getRecord(docUri, searchOptions.database);
+      if (response) {
+        let result = String(response.headers["content-disposition"]).split(";")[1].trim().split("=")[1];
+        let filename = result.replace(/"/g, "");
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const displayFileSize = (elem) => {
+    let size = elem.documentSize?.hasOwnProperty("value") ? elem.documentSize?.value : "";
+    let unit = elem.documentSize?.hasOwnProperty("units") ? elem.documentSize?.units : "";
+    return `Download (${size} ${unit})`;
+  };
+
   return (
     <div id="record-data-card" aria-label="record-data-card" className={styles.recordDataCard}>
       <Row gutter={24} type="flex" >
@@ -179,6 +204,11 @@ const RecordCardView = (props) => {
                   {displaySnippet(elem)}
                 </div>
               </Card>
+              <span className={styles.downloadIcon}>
+                <MLTooltip title={displayFileSize(elem)} placement="bottom" >
+                  <span><Icon type="download" onClick={() => download(elem.uri)} data-testid={elem.uri + "-download-icon"} /></span>
+                </MLTooltip>
+              </span>
             </div>
           </Col>)) : <span></span>}
       </Row>

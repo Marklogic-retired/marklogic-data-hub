@@ -43,6 +43,18 @@ class ManageQuery {
   getErrorMessage() {
     return cy.get(".ant-form-explain");
   }
+
+  getEditQueryIconForFirstRow() {
+    return cy.get(".ant-table-row:first-child [data-testid=edit]");
+  }
+
+  getExportQueryIconForFirstRow() {
+    return cy.get(".ant-table-row:first-child [data-testid=export]");
+  }
+
+  getDeleteQueryIconForFirstRow() {
+    return cy.get(".ant-table-row:first-child [data-testid=delete]");
+  }
 }
 
 const queryComponent = new ManageQuery();

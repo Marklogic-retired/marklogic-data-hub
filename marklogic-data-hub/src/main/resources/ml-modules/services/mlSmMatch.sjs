@@ -43,7 +43,7 @@ function post(context, params, input) {
   if (stepRef.stepDefinitionType.toLowerCase() !== 'mastering') {
     httpUtils.throwBadRequestWithArray(['Bad Request', 'The step must be a mastering step.']);
   }
-  let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+  let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
   // build combined options
   let flowOptions = flow.options || {};
   let stepRefOptions = stepRef.options || {};

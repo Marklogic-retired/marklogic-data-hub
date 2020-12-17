@@ -22,7 +22,7 @@ const SystemInfo = (props) => {
   const [message, setMessage] = useState({show: false});
   const [isLoading, setIsLoading] = useState(false);
   const [clearDataVisible, setClearDataVisible] = useState(false);
-  const [copySuccess, setCopySuccess] = useState("");
+  const [copySuccess, setCopySuccess] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   useEffect(() => {
     if (!user.authenticated && props.systemInfoVisible) {

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from "react";
+import React, {useState, useContext, useEffect} from "react";
 import {Modal, Table} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPencilAlt, faFileExport, faTrashAlt, faTimes} from "@fortawesome/free-solid-svg-icons";
@@ -18,7 +18,6 @@ const QueryModal = (props) => {
   const {
     applySaveQuery,
     searchOptions,
-    setManageQueryModal,
     clearAllGreyFacets,
     setSavedQueries
   } = useContext(SearchContext);
@@ -32,13 +31,24 @@ const QueryModal = (props) => {
   const [tableData, setTableData] = useState<Object[]>();
   const [query, setQuery] = useState({});
   const [hasStructured, setStructured] = useState<boolean>(false);
-  const data = new Array();
+  const [data, setData] = useState<any[]>([]);
+  const [queries, setQueries] = useState<any>([]);
+  const [currentQueryDescription, setCurrentQueryDescription] = useState("");
+  const [currentQueryName, setCurrentQueryName] = useState("");
+
+  useEffect(() => {
+    getQueries();
+  }, []);
+
+  useEffect(() => {
+    updateTableData();
+  }, [queries]);
 
   const getQueries = async () => {
     try {
       const response = await fetchQueries();
       if (response["data"]) {
-        props.setQueries(response["data"]);
+        setQueries(response["data"]);
         setSavedQueries(response["data"]);
       }
     } catch (error) {
@@ -49,7 +59,7 @@ const QueryModal = (props) => {
   const editQuery = async (query) => {
     const response = await axios.put(`/api/entitySearch/savedQueries`, query);
     if (response.data) {
-      props.setQueries(response.data);
+      setQueries(response.data);
       setSavedQueries(response.data);
       return {code: response.status};
     }
@@ -68,12 +78,14 @@ const QueryModal = (props) => {
     setEditModalVisibility(true);
   };
 
-  const onDelete = () => {
+  const onDelete = (row) => {
+    setCurrentQueryName(row.name);
+    setCurrentQueryDescription(row.description);
     setDeleteModalVisibility(true);
   };
 
   const onClose = () => {
-    setManageQueryModal(false);
+    props.setManageQueryModal(false);
   };
 
   const onOk = (query) => {
@@ -87,12 +99,11 @@ const QueryModal = (props) => {
       selectedQuery: "select a query",
       propertiesToDisplay: [],
       zeroState: searchOptions.zeroState,
-      manageQueryModal: true,
       sortOrder: [],
       database: searchOptions.database,
     };
     applySaveQuery(options);
-    props.setCurrentQueryDescription("");
+    setCurrentQueryDescription("");
   };
 
   const onCancel = () => {
@@ -100,7 +111,8 @@ const QueryModal = (props) => {
   };
 
   const onApply = (e) => {
-    props.queries && props.queries.length > 0 && props.queries.forEach(query => {
+
+    queries && queries.length > 0 && queries.forEach(query => {
       if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
         let options: QueryOptions = {
           searchText: query["savedQuery"]["query"]["searchText"],
@@ -108,27 +120,25 @@ const QueryModal = (props) => {
           selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
           selectedQuery: query["savedQuery"]["name"],
           propertiesToDisplay: query.savedQuery.propertiesToDisplay,
-          zeroState: query.zeroState,
-          manageQueryModal: query.manageQueryModal,
+          zeroState: false,
           sortOrder: query.savedQuery.sortOrder,
           database: searchOptions.database,
         };
         applySaveQuery(options);
-        props.setCurrentQueryDescription(query["savedQuery"]["description"]);
+        setCurrentQueryDescription(query["savedQuery"]["description"]);
       }
     });
-    props.toggleApply(false);
+    props.setManageQueryModal(false);
   };
 
   const displayExportModal = (id) => {
     setRecordID(id);
     let query;
-    props.queries.map((selectedQuery) => {
+    queries.map((selectedQuery) => {
       if (selectedQuery["savedQuery"]["id"] === id) {
         query = selectedQuery;
       }
     });
-
     let arrayProperties = new Array();
     props.entityDefArray && props.entityDefArray.forEach(entity => {
       if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
@@ -202,7 +212,7 @@ const QueryModal = (props) => {
     dataIndex: "delete",
     key: "delete",
     align: "center" as "center",
-    render: text => <a data-testid={"delete"} onClick={onDelete}>{text}</a>,
+    render: (text, row) => <a data-testid={"delete"} onClick={() => onDelete(row)}>{text}</a>,
     width: 75
   };
 
@@ -236,21 +246,25 @@ const QueryModal = (props) => {
     columns.push(deleteObj);
   }
 
-  props.queries && props.queries.length > 0 && props.queries.forEach(query => {
-    data.push(
-      {
-        key: query["savedQuery"]["id"],
-        name: query["savedQuery"]["name"],
-        description: query["savedQuery"]["description"],
-        edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
-        edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" />,
-        export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" />,
-        // TODO: Uncomment once link for query is implemented
-        // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
-        delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" />
-      }
-    );
-  });
+  const updateTableData = () => {
+    let data = new Array();
+    queries && queries.length > 0 && queries.forEach(query => {
+      data.push(
+        {
+          key: query["savedQuery"]["id"],
+          name: query["savedQuery"]["name"],
+          description: query["savedQuery"]["description"],
+          edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
+          edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" />,
+          export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" />,
+          // TODO: Uncomment once link for query is implemented
+          // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
+          delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" />
+        }
+      );
+    });
+    setData(data);
+  };
 
   const deleteConfirmation = <Modal
     visible={deleteModalVisibility}
@@ -262,7 +276,7 @@ const QueryModal = (props) => {
     maskClosable={false}
   >
     <span style={{fontSize: "16px", position: "relative", top: "10px"}} data-testid="deleteConfirmationText">
-            Are you sure you would like to delete the <b>{props.currentQueryName}</b> query? This action cannot be undone.
+      Are you sure you would like to delete the <b>{currentQueryName}</b> query? This action cannot be undone.
     </span>
   </Modal>;
 
@@ -286,7 +300,7 @@ const QueryModal = (props) => {
 
   return (
     <div>
-      <ExportQueryModal hasStructured={hasStructured} queries={props.queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
+      <ExportQueryModal hasStructured={hasStructured} queries={queries} tableColumns={tableColumns} tableData={tableData} recordID={recordID} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} />
       <Modal
         title={null}
         visible={props.modalVisibility}
@@ -295,16 +309,17 @@ const QueryModal = (props) => {
         footer={null}
         maskClosable={false}
         closeIcon={<FontAwesomeIcon icon={faTimes} className={"manage-modal-close-icon"} />}
+        destroyOnClose={true}
       >
         <p className={styles.title} data-testid="manage-queries-modal">{"Manage Queries"}</p>
-        <Table columns={columns} dataSource={data} pagination={{hideOnSinglePage: data.length <= 10}}
+        <Table columns={columns} dataSource={data}
           onRow={(record) => {
             return {
               onClick: () => {
-                props.queries.forEach((query) => {
+                queries.forEach((query) => {
                   if (query["savedQuery"]["id"] === record.key) {
                     setQuery(query);
-                    props.setCurrentQueryName(record.name);
+                    setCurrentQueryName(record.name);
                   }
                 });
               }
@@ -314,10 +329,10 @@ const QueryModal = (props) => {
         </Table>
       </Modal>
       <EditQueryDialog
-        currentQueryName={props.currentQueryName}
-        setCurrentQueryName={props.setCurrentQueryName}
-        currentQueryDescription={props.currentQueryDescription}
-        setCurrentQueryDescription={props.setCurrentQueryDescription}
+        currentQueryName={currentQueryName}
+        setCurrentQueryName={setCurrentQueryName}
+        currentQueryDescription={currentQueryDescription}
+        setCurrentQueryDescription={setCurrentQueryDescription}
         query={query}
         editQuery={editQuery}
         getQueries={getQueries}

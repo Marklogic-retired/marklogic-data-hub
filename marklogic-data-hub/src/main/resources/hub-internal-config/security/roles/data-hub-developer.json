@@ -101,6 +101,11 @@
       "privilege-name": "unprotect-path",
       "action": "http://marklogic.com/xdmp/privileges/unprotect-path",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "temporal:set-use-lsqt",
+      "action": "http://marklogic.com/xdmp/privileges/temporal-set-use-lsqt",
+      "kind": "execute"
     }
   ]
 }

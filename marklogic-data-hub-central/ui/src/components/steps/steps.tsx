@@ -11,7 +11,7 @@ import "./steps.scss";
 import {StepType} from "../../types/curation-types";
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSlidersH} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt} from "@fortawesome/free-solid-svg-icons";
 
 const {TabPane} = Tabs;
 
@@ -207,7 +207,7 @@ const Steps: React.FC<Props> = (props) => {
       {/* Step Details link for Mapping steps */}
       { (props.isEditing && props.activityType === StepType.Mapping) ?
         <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>
-          <FontAwesomeIcon icon={faSlidersH} aria-label={"stepDetails"}/>
+          <FontAwesomeIcon icon={faPencilAlt} aria-label={"stepDetails"}/>
           <span className={styles.stepDetailsLabel}>Step Details</span>
         </div> : null }
       {discardChanges}

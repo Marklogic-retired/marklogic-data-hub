@@ -166,7 +166,7 @@ describe("Entity Modeling: Writer Role", () => {
     propertyTable.getFacetIcon("nicknames").should("exist");
     propertyTable.getSortIcon("nicknames").should("exist");
 
-    cy.get(".userDropdown").trigger("mouseover");
+    cy.get("[aria-label=\"user-dropdown\"]").trigger("mousedown");
     cy.waitUntil(() => cy.get("#logOut").should("be.visible")).click();
     confirmationModal.getNavigationWarnText().should("be.visible");
     confirmationModal.getYesButton(ConfirmationType.NavigationWarn).click();

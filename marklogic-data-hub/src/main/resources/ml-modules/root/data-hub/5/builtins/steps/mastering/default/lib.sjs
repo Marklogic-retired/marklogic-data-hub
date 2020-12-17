@@ -71,6 +71,9 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
 
   const targetEntityType = options.targetEntityType || options.targetEntity;
   options.targetEntityType = targetEntityType;
+  if (options.targetEntity) {
+    delete options.targetEntity;
+  }
   const optionsRoot = (options.mergeOptions || options.matchOptions || options);
   setCollectionDefaults(optionsRoot, targetEntityType);
 

@@ -35,7 +35,7 @@ function post(context, params, input) {
     const datahub = DataHubSingleton.instance();
     let flow = datahub.flow.getFlow(flowName);
     let stepRef = flow.steps[stepNumber];
-    let stepDetails = datahub.flow.step.getStepByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
+    let stepDetails = datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepRef.stepDefinitionName, stepRef.stepDefinitionType);
     let modPath = stepDetails.modulePath;
     let response, validationOutput, modPerms;
 

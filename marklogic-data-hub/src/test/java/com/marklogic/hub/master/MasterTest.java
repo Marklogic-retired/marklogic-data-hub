@@ -10,6 +10,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.Format;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MasteringManager;
 import com.marklogic.hub.flow.FlowInputs;
@@ -72,8 +73,14 @@ public class MasterTest extends AbstractHubCoreTest {
         makeInputFilePathsAbsoluteInFlow("myNewFlow");
 
         runAsDataHubOperator();
-        RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "1", "2", "3"));
+        // Run ingestion and mapping flow first
+        runFlow(new FlowInputs("myNewFlow", "1", "2"));
+        // Wait for any rebalancing of the forests to finish. May need to investigate more into the root cause, but this
+        // approach resulted in tests consistently passing with an ML 9 nightly cluster.
+        waitForRebalance(getHubClient(), getHubClient().getDbName(DatabaseKind.FINAL));
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "3"));
         RunStepResponse masterJob = flowResponse.getStepResponses().get("3");
+
         assertTrue(masterJob.isSuccess(), "Mastering job failed!");
         assertTrue(getFinalDocCount("sm-person-merged") >= 10, "At least 10 merges occur");
         assertTrue(getFinalDocCount("master") > 0, "Documents didn't receive master collection");

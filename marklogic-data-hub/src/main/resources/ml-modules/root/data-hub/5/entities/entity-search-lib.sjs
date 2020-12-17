@@ -495,6 +495,7 @@ function addDocumentMetadataToSearchResults(searchResponse) {
       hubMetadata["lastProcessedDateTime"] = documentMetadata.datahubCreatedOn;
       hubMetadata["sources"] = getEntitySources(docUri);
     }
+    result["documentSize"] = getDocumentSize(cts.doc(docUri));
     result["hubMetadata"] = hubMetadata;
   });
 }
@@ -637,10 +638,30 @@ function findFlowsAsMap() {
   return flows;
 }
 
+function getDocumentSize(doc) {
+  const sizes = ['B', 'KB', 'MB'];
+  const documentSize = {};
+  const nodeKind = xdmp.nodeKind(doc.root);
+  let bytes = 0;
+
+  if(nodeKind === 'binary') {
+    bytes = xdmp.binarySize(fn.head(doc).root);
+  } else {
+    bytes = xdmp.binarySize(fn.head(xdmp.unquote(xdmp.quote(doc), null, "format-binary")).root)
+  }
+
+  let power = Math.floor(Math.log(bytes) / Math.log(1024));
+  power = power > 2 ? 2 : power;
+  documentSize["value"] = (bytes / Math.pow(1024, power)).toFixed(0) * 1;
+  documentSize["units"] = sizes[power];
+  return documentSize;
+}
+
 module.exports = {
   addDocumentMetadataToSearchResults,
   addPropertiesToSearchResponse,
   buildPropertyMetadata,
+  getDocumentSize,
   getEntityInstance,
   getEntitySources,
   getRecordHistory,

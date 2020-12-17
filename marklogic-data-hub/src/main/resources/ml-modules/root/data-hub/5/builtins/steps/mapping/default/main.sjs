@@ -110,6 +110,7 @@ function buildEnvelope(doc, instance, outputFormat, options) {
   let docHeaders = flowUtils.normalizeValuesInNode(flowUtils.getHeaders(doc)) || {};
   let docTriples = flowUtils.normalizeValuesInNode(flowUtils.getTriples(doc)) || [];
   headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
+  headers = flowUtils.updateHeaders(headers, outputFormat);
   triples = triples.concat(docTriples);
   return flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 }

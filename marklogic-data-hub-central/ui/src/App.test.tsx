@@ -42,16 +42,9 @@ describe("App component", () => {
     fireEvent.click(getByLabelText("tool-" + firstTool));
     await expect(getByLabelText("icon-" + firstTool)).toBeInTheDocument();
     expect(queryByText("overview")).not.toBeInTheDocument();
-    fireEvent.click(getByLabelText("header-logo"));
+    expect(getByLabelText("logo-link").href).toBe("https://www.marklogic.com/");
+    fireEvent.mouseDown(getByLabelText("title-link"));
     expect(getByLabelText("overview")).toBeInTheDocument();
-
-    // After switching to non-default, click application name to return to overview
-    fireEvent.click(getByLabelText("tool-" + firstTool));
-    await expect(getByLabelText("icon-" + firstTool)).toBeInTheDocument();
-    expect(queryByText("overview")).not.toBeInTheDocument();
-    fireEvent.click(getByLabelText("header-title"));
-    expect(getByLabelText("overview")).toBeInTheDocument();
-
   });
 
   test("Session token stored in local storage", async () => {

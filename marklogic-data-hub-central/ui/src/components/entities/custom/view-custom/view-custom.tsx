@@ -84,13 +84,19 @@ const ViewCustom: React.FC<Props>  = (props) => {
           &nbsp;
         </span>} labelAlign="left"
         >
-          <Input
+          { !props.canReadWrite?<MLTooltip title={NewCustomTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={customName}
             disabled={!props.canReadWrite}
             className={styles.input}
-          />&nbsp;&nbsp;
+          /></MLTooltip>:<Input
+            id="name"
+            placeholder="Enter name"
+            value={customName}
+            disabled={!props.canReadWrite}
+            className={styles.input}
+          />}&nbsp;&nbsp;
           <MLTooltip title={NewCustomTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>

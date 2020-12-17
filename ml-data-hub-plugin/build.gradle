@@ -63,7 +63,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile (project(':marklogic-data-hub'))
-    compile 'com.marklogic:ml-gradle:4.1.0'
+    compile 'com.marklogic:ml-gradle:4.1.1'
 
     testCompile localGroovy()
     testCompile gradleTestKit()

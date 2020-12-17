@@ -5,6 +5,7 @@ import queryComponent from "../../support/components/query/manage-queries-modal"
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
+import detailPage from "../../support/pages/detail";
 
 describe("save/manage queries scenarios, developer role", () => {
 
@@ -506,6 +507,25 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedQuery().should("contain", "select a query");
     browsePage.getSelectedQueryDescription().should("contain", "");
     browsePage.getResetQueryButton().should("be.visible");
+
+    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json")).click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //Navigate to detail page and verify if manage query modal opens up.
+    detailPage.getInstanceView().should("exist");
+    detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
+    detailPage.getDocumentTimestamp().should("exist");
+    detailPage.getDocumentSource().should("contain", "PersonSourceName");
+    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentTable().should("exist");
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+    queryComponent.getEditQueryIconForFirstRow().should("be.visible");
+    queryComponent.getExportQueryIconForFirstRow().should("be.visible");
+    queryComponent.getDeleteQueryIconForFirstRow().should("be.visible");
+    browsePage.getManageQueryCloseIcon().click();
+    queryComponent.getManageQueryModal().should("not.be.visible");
+    detailPage.getInstanceView().should("exist");
   });
 });
 

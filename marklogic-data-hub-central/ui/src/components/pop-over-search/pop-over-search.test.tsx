@@ -23,8 +23,8 @@ describe("<PopOverSearch/>", () => {
       facetName={""}
       database="final"
     />);
-    expect(getByText("Search")).toBeInTheDocument();
-    fireEvent.click(getByText("Search"));
+
+    fireEvent.click(getByText("See all"));
     let inputField = getByPlaceholderText("Search");
     await wait(() => {
       fireEvent.change(inputField, {target: {value: "ad"}});

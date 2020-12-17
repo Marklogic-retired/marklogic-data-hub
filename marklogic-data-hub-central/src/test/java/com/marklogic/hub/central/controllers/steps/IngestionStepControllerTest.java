@@ -24,7 +24,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         public String sourceFormat;
         public String targetFormat;
         public ArrayNode processors;
-        public ObjectNode headers;
+        public ArrayNode collections;
     }
 
     public static IngestionStep newDefaultIngestionStep(String name) {
@@ -33,7 +33,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         step.description = "the description";
         step.sourceFormat = "json";
         step.targetFormat = "json";
-        step.headers = objectMapper.createObjectNode();
+        step.collections = objectMapper.createArrayNode().add("test");
         step.processors = objectMapper.createArrayNode();
         return step;
     }

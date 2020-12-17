@@ -13,6 +13,9 @@ margin-bottom: 10px;
 .cardStyle:hover {
 border: 1px solid #67749c;
 }
+.editIcon {
+font-size: 20px;
+}
 .addNewCardDisabled{
 width: 300px;
 margin-top: 9px;
@@ -130,4 +133,29 @@ cursor: default;
 .cardLinkSelect {
 margin-top: 7px;
 margin-bottom: 10px;
+}
+
+.stepLink {
+  color: #44499C;
+}
+
+.stepLinkExisting {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+
+.stepLinkSelect {
+  margin-top: 5px;
+}
+
+.runIcon {
+  font-size: 19px;
+  padding-top: 2px;
+}
+
+.disabledRunIcon {
+  font-size: 19px;
+  opacity: 0.5;
+  padding-bottom: 2px;
+  cursor: not-allowed !important;
 }

@@ -26,10 +26,12 @@ public class ReadWithCustomEndpointsTest extends AbstractSparkReadTest {
         testRow.put("myId", 12345);
         testRow.put("myName", "This is a test row");
 
+        ObjectNode readrowsendpointparams = objectMapper.createObjectNode().put("apiPath",
+            "/custom-read-endpoints/customReadRows.api").set("endpointState", endpointState);
+
         Options options = newOptions()
             .withInitializeReadApiPath("/custom-read-endpoints/initializeRead.api")
-            .withReadRowsApiPath("/custom-read-endpoints/customReadRows.api")
-            .withReadRowsEndpointState(endpointState);
+            .withReadRowsEndpointparams(readrowsendpointparams);
 
         List<InternalRow> rows = readRows(new HubDataSourceReader(options.toDataSourceOptions()));
         assertEquals(1, rows.size(), "Expecting a single row back, which should be the testRow in endpointState. And the " +

@@ -19,6 +19,7 @@ xquery version "1.0-ml";
 module namespace xquery-lib = "http://marklogic.com/mapping/es/xquery";
 
 import module namespace inst="http://marklogic.com/entity-services-instance" at "/MarkLogic/entity-services/entity-services-instance.xqy";
+import module namespace json = "http://marklogic.com/xdmp/json" at "/MarkLogic/json/json.xqy";
 
 declare function document-with-nodes($nodes as node()*) {
   document {
@@ -64,5 +65,28 @@ declare function data-hub-map-to-canonical(
   return
     if ($format="xml")
     then inst:canonical-xml($results)
-    else inst:canonical-json($results)
+    else(
+      let $element := $results/element()
+      return
+      (: This change is necessitated by DHFPROD-6219. In case the entity doesn't have strucutred properties, it
+         returns empty json object. If it has structured properties, the empty structured properties are removed.
+         inst:canonical-json() method introduces the '$ref'.  :)
+      if (empty($element/*)) then
+        document{json:object()=>map:with(string(fn:node-name($element)), json:object())}
+      else
+        inst:canonical-json(xquery-lib:remove-empty-structured-properties($element))
+    )
+};
+
+
+declare function remove-empty-structured-properties($element as item()*) as document-node() {
+  document{
+    element {fn:node-name($element)} {
+      $element/namespace::node(),
+      $element/@*,
+      for $child in $element/element()
+      where not($child/element() instance of element() and empty($child/element()/element()))
+      return $child
+    }
+  }
 };

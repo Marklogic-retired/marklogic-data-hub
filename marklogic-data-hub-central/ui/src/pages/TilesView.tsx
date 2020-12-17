@@ -59,13 +59,12 @@ const TilesView = (props) => {
   };
 
   const {
-    setManageQueryModal,
     setView,
     searchOptions
   } = useContext(SearchContext);
 
   const onMenuClick = () => {
-    setManageQueryModal(true);
+    //Logic can be added here if menu is changed/added for any tile
   };
 
   const onTileClose = () => {
@@ -123,7 +122,6 @@ const TilesView = (props) => {
 
   return (
     <>
-      <Toolbar tiles={tiles} enabled={enabled}/>
       { (searchOptions.view !== null) ?  (
         <div className={styles.tilesViewContainer}>
           { (selection !== "") ?  (
@@ -150,7 +148,7 @@ const TilesView = (props) => {
         </div>) :
         <Overview enabled={enabled}/>
       }
-
+      <Toolbar tiles={tiles} enabled={enabled}/>
     </>
   );
 };

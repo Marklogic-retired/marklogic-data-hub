@@ -39,7 +39,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * Abstract base class for all Data Hub tests. Intended to provide a set of reusable methods for all tests.
+ * Abstract base class for tests that depend on a HubConfigImpl (which generally means they depend on both a HubClient
+ * and a HubProject).
  */
 public abstract class AbstractHubTest extends AbstractHubClientTest {
 
@@ -394,28 +395,7 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
             "  for $forest-id in xdmp:database-forests(xdmp:database('" + database + "'))\n" +
             "  return xdmp:forest-status($forest-id)//*:reindexing\n" +
             ") = fn:true()";
-        boolean currentStatus;
-        int attempts = 125;
-        boolean previousStatus = false;
-        do{
-            sleep(200L);
-            currentStatus = Boolean.parseBoolean(hubClient.getStagingClient().newServerEval().xquery(query).evalAs(String.class));
-            if(currentStatus){
-                logger.info("Reindexing staging database");
-            }
-            if(!currentStatus && previousStatus){
-                logger.info("Finished reindexing staging database");
-                return;
-            }
-            else{
-                previousStatus = currentStatus;
-            }
-            attempts--;
-        }
-        while(attempts > 0);
-        if(currentStatus){
-            logger.warn("Reindexing is taking more than 25 seconds");
-        }
+        waitForQueryToBeTrue(hubClient, query, "Reindexing " + database + " database");
     }
 
     protected HubProjectImpl getHubProject() {
@@ -466,6 +446,11 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
                 fileLocations.put("inputFilePath", projectDir + "/" + currentPath);
             }
         }
+    }
+
+    protected void addAbsoluteInputFilePath(FlowInputs flowInputs, String inputFilePath) {
+        String absolutePath = new File(getHubProject().getProjectDir() + "/" + inputFilePath).getAbsolutePath();
+        flowInputs.setInputFilePath(absolutePath);
     }
 
     protected int getDocumentCount(DatabaseClient client) {

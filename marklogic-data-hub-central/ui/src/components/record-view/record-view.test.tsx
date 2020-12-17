@@ -3,8 +3,38 @@ import {render, fireEvent, waitForElement} from "@testing-library/react";
 import {entitySearch} from "../../assets/mock-data/explore/entity-search";
 import {BrowserRouter as Router} from "react-router-dom";
 import RecordCardView from "./record-view";
+import axiosMock from "axios";
+import {MemoryRouter} from "react-router-dom";
+import {SearchContext} from "../../util/search-context";
+import testData from "../../assets/mock-data/explore/Non-entity-document-payload";
+
+jest.mock("axios");
 
 describe("Raw data card view component", () => {
+
+  const defaultSearchOptions = {
+    query: "",
+    entityTypeIds: [],
+    nextEntityType: "",
+    start: 1,
+    pageNumber: 1,
+    pageLength: 20,
+    pageSize: 20,
+    selectedFacets: {},
+    maxRowsPerPage: 100,
+    selectedQuery: "select a query",
+    zeroState: false,
+    manageQueryModal: false,
+    selectedTableProperties: [],
+    view: null,
+    sortOrder: [],
+    database: "final",
+  };
+
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   test("Raw data card with data renders", async () => {
     const {getByTestId, getByText, getAllByText} = render(
@@ -58,5 +88,30 @@ describe("Raw data card view component", () => {
     //verify popover metadata info for missing properties
     fireEvent.click(getByTestId("/Customer/Cust2.json-InfoIcon"));
     expect(getAllByText("none")).toHaveLength(4);
+  });
+
+  test("Verify file download on Raw data card ", async () => {
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve(testData.allDataRecordDownloadResponse)));
+
+    const {getByTestId, getByText} = render(<MemoryRouter>
+      <SearchContext.Provider value={{
+        searchOptions: defaultSearchOptions,
+        greyedOptions: defaultSearchOptions,
+        setEntity: jest.fn(),
+        applySaveQuery: jest.fn()
+      }}>
+        <RecordCardView
+          data={entitySearch.results}
+        />
+      </SearchContext.Provider></MemoryRouter>);
+
+    //verify download icon
+    expect(getByTestId("/Customer/Cust1.json-download-icon")).toBeInTheDocument();
+    //verify download icon tooltip
+    fireEvent.mouseOver(getByTestId("/Customer/Cust1.json-download-icon"));
+    await waitForElement(() => getByText("Download (815 B)"));
+    //click on download icon and verify api call.
+    fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
+    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=/Customer/Cust1.json&database=final"});
   });
 });

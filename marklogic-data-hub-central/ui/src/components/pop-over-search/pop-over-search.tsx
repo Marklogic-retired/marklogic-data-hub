@@ -107,7 +107,7 @@ const PopOverSearch: React.FC<Props> = (props) => {
       trigger="click"
       onVisibleChange={handleChange}
       visible={popOverVisibility}>
-      <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={"popover-search-label"}>Search</div>
+      <div className={styles.search} data-testid={(props.facetName)+"-search-input"} aria-label={"popover-search-label"}>See all</div>
     </Popover>
   );
 };

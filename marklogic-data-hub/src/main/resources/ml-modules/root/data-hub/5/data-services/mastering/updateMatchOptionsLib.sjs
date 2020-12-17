@@ -222,6 +222,7 @@ function threshold(thr, actions) {
 
   if (thr.action && thr.action !== "merge" && thr.action !== "notify") {
     let action = actions[thr.action];
+    t.action = "custom";
     t.actionModulePath = action.at;
     t.actionModuleNamespace = action.namespace;
     t.actionModuleFunction = action.function;

@@ -459,14 +459,21 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? "" : "error") : "error"}
         help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :"") : "Name is required"}
         >
-          <Input
+          { tobeDisabled?<MLTooltip title={NewMapTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={mapName}
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />&nbsp;&nbsp;
+          /></MLTooltip>:<Input
+            id="name"
+            placeholder="Enter name"
+            value={mapName}
+            onChange={handleChange}
+            disabled={tobeDisabled}
+            className={styles.input}
+          />}&nbsp;&nbsp;
           <MLTooltip title={NewMapTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>

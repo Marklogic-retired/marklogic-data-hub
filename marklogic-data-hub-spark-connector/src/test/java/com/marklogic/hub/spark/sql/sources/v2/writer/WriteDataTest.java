@@ -23,7 +23,8 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         customEndpointConstants.put("userDefinedValue", 0);
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointparams(objectMapper.createObjectNode()
+                .set("endpointConstants", customEndpointConstants))),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());
@@ -32,7 +33,8 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
     @Test
     public void ingestWithIncorrectApi() {
         ResourceNotFoundException ex = assertThrows(ResourceNotFoundException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("/incorrect.api")),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointparams(objectMapper.createObjectNode()
+            .put("apiPath","/incorrect.api"))),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         System.out.println(ex.getMessage());
@@ -44,8 +46,11 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         ObjectNode customEndpointConstants = objectMapper.createObjectNode();
         customEndpointConstants.put("userDefinedValue", 0);
 
+        ObjectNode writeRecordsEndpointParams = objectMapper.createObjectNode().put("apiPath", "")
+            .set("endpointConstants", customEndpointConstants);
+
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withWriteRecordsEndpointConstants(customEndpointConstants)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointparams(writeRecordsEndpointParams)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());
@@ -56,8 +61,11 @@ public class WriteDataTest extends AbstractSparkConnectorTest {
         ObjectNode customEndpointState = objectMapper.createObjectNode();
         customEndpointState.put("userDefinedValue", 0);
 
+        ObjectNode writeRecordsEndpointParams = objectMapper.createObjectNode().put("apiPath", "")
+            .set("endpointState", customEndpointState);
+
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withIngestApiPath("").withWriteRecordsEndpointState(customEndpointState)),
+            () -> initializeDataWriter(new Options(getHubPropertiesAsMap()).withWriteRecordsEndpointparams(writeRecordsEndpointParams)),
             "Expected an error because a custom work unit was provided without a custom API path"
         );
         assertEquals("Cannot set endpointConstants or endpointState in writerecordsendpointparams unless apiPath is defined as well.", ex.getMessage());

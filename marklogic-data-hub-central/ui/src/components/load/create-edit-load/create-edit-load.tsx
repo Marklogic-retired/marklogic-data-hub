@@ -326,14 +326,22 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         validateStatus={(stepName || !isStepNameTouched) ? "" : "error"}
         help={(stepName || !isStepNameTouched) ? "" : "Name is required"}
         >
-          <Input
+          { tobeDisabled?<MLTooltip title={NewLoadTooltips.nameField} placement={"bottom"}> <Input
             id="name"
             placeholder="Enter name"
             value={stepName}
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
-          />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={"right"}>
+          /></MLTooltip>:<Input
+            id="name"
+            placeholder="Enter name"
+            value={stepName}
+            onChange={handleChange}
+            disabled={tobeDisabled}
+            className={styles.input}
+          />}
+        &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>

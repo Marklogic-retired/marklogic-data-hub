@@ -21,10 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
 
     @Test
-    public void test() {
+    public void finalDatabaseHasCustomFieldAndIndexes() {
         givenTheFinalDatabaseHasACustomFieldAndIndexes();
         whenTheDatabaseFieldCommandIsExecuted();
         thenTheCustomFieldAndIndexesAndNamespacesStillExist();
+    }
+
+    @Test
+    void jobDatabaseHasExistingPathNamespace() {
+        givenTheJobDatabaseHasExistingPathNamespace();
+        whenTheDatabaseFieldCommandIsExecuted();
+        thenTheJobDatabaseStillHasItsPathNamespace();
     }
 
     private void givenTheFinalDatabaseHasACustomFieldAndIndexes() {
@@ -103,13 +110,13 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         List<String> fieldNames = new ArrayList<>();
         fields.forEach(field -> fieldNames.add(field.get("field-name").asText()));
         assertTrue(fieldNames.containsAll(Arrays.asList("myField", "fieldWithNamespace", "datahubSourceName", "datahubSourceType")),
-                "Expected to find the myField, fieldWithNamespace fields that was added before executing the command along with atahubSourceName, datahubSourceType OOTB fields");
+            "Expected to find the myField, fieldWithNamespace fields that was added before executing the command along with atahubSourceName, datahubSourceType OOTB fields");
 
         ArrayNode indexes = (ArrayNode) db.get("range-field-index");
         List<String> fieldIndexNames = new ArrayList<>();
         indexes.forEach(rangeFieldIndex -> fieldIndexNames.add(rangeFieldIndex.get("field-name").asText()));
         assertTrue(fieldIndexNames.containsAll(Arrays.asList("myField", "fieldWithNamespace", "datahubSourceName", "datahubSourceType")),
-                "Expected to find the myField, fieldWithNamespace range field index that was added before executing the command along with datahubSourceName and datahubSourceType OOTB indexes");
+            "Expected to find the myField, fieldWithNamespace range field index that was added before executing the command along with datahubSourceName and datahubSourceType OOTB indexes");
 
         ArrayNode pathIndexes = (ArrayNode) db.get("range-path-index");
         JsonNode myPathIndex = null;
@@ -144,7 +151,7 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
             if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {
                 array.remove(i);
                 fieldsToBeRemoved.remove(field.get("field-name").asText());
-                if(fieldsToBeRemoved.size() == 0) break;
+                if (fieldsToBeRemoved.size() == 0) break;
             }
         }
 
@@ -155,7 +162,7 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
             if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {
                 array.remove(i);
                 fieldsToBeRemoved.remove(field.get("field-name").asText());
-                if(fieldsToBeRemoved.size() == 0) break;
+                if (fieldsToBeRemoved.size() == 0) break;
             }
         }
 
@@ -186,5 +193,26 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
             }
         }
         new DatabaseManager(getHubClient().getManageClient()).save(newNode.toString());
+    }
+
+    private void givenTheJobDatabaseHasExistingPathNamespace() {
+        new DatabaseManager(getHubClient().getManageClient()).save(format("{\n" +
+            "  \"database-name\": \"%s\",\n" +
+            "  \"path-namespace\": [\n" +
+            "    {\n" +
+            "      \"prefix\": \"example\",\n" +
+            "      \"namespace-uri\": \"http://example.org\"\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}", getHubClient().getDbName(DatabaseKind.JOB)));
+    }
+
+    private void thenTheJobDatabaseStillHasItsPathNamespace() {
+        ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.JOB));
+        assertNotNull(db.get("path-namespace"), "This is verifying that the user's custom path namespace exists, and" +
+            "also that no error is thrown by the command given that job-database.xml does not have any path-namespaces " +
+            "in it.");
+        assertEquals("example", db.get("path-namespace").get(0).get("prefix").asText());
+        assertEquals("http://example.org", db.get("path-namespace").get(0).get("namespace-uri").asText());
     }
 }

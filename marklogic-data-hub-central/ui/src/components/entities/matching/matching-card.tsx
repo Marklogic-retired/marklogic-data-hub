@@ -1,9 +1,9 @@
 import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
-import {Card, Icon, Row, Col, Select} from "antd";
+import {Card, Icon, Row, Col, Select, Dropdown, Menu, Modal} from "antd";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSlidersH} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import styles from "./matching-card.module.scss";
 
@@ -40,6 +40,10 @@ const MatchingCard: React.FC<Props> = (props) => {
   const [showLinks, setShowLinks] = useState("");
 
   const [editStepArtifact, setEditStepArtifact] = useState({});
+  const [addToFlowVisible, setAddToFlowVisible] = useState(false);
+  const [matchingArtifactName, setMatchingArtifactName] = useState("");
+  const [flowName, setFlowName] = useState("");
+  const [addRun, setAddRun] = useState(false);
 
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
@@ -103,9 +107,63 @@ const MatchingCard: React.FC<Props> = (props) => {
     let selectedNew = {...selected};
     selectedNew[obj.loadName] = obj.flowName;
     setSelected(selectedNew);
-    // TODO handle adding step to existing flow
-    //handleStepAdd(obj.mappingName, obj.flowName);
+    handleStepAdd(obj.matchingName, obj.flowName);
   }
+
+  function handleSelectAddRun(obj) {
+    let selectedNew = {...selected};
+    selectedNew[obj.loadName] = obj.flowName;
+    setSelected(selectedNew);
+    setAddRun(true);
+    handleStepAdd(obj.matchingName, obj.flowName);
+  }
+
+  const handleStepAdd = (matchingName, flowName) => {
+    setMatchingArtifactName(matchingName);
+    setFlowName(flowName);
+    setAddToFlowVisible(true);
+  };
+
+  const onAddOk = async (lName, fName) => {
+    await props.addStepToFlow(lName, fName, "matching");
+    setAddToFlowVisible(false);
+
+    if (addRun) {
+      history.push({
+        pathname: "/tiles/run/add-run",
+        state: {
+          flowName: fName,
+          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+          existingFlow: true,
+          addFlowDirty: true,
+          stepToAdd: matchingArtifactName,
+          stepDefinitionType: "matching"
+        }
+      });
+    } else {
+      history.push({
+        pathname: "/tiles/run/add",
+        state: {
+          flowName: fName,
+          addFlowDirty: true,
+          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+          existingFlow: true
+        }
+      });
+    }
+  };
+
+  const onAddCancel = () => {
+    setAddToFlowVisible(false);
+    setSelected({});
+  };
+
+  const isStepInFlow = (matchingStepName, flowName) => {
+    let result = false, flow;
+    if (props.flows) flow = props.flows.find(f => f.name === flowName);
+    if (flow) result = flow["steps"].findIndex(s => s.stepName === matchingStepName) > -1;
+    return result;
+  };
 
   const confirmAction = () => {
     if (confirmType === ConfirmationType.AddStepToFlow) {
@@ -121,38 +179,90 @@ const MatchingCard: React.FC<Props> = (props) => {
     history.push({pathname: "/tiles/curate/match"});
   };
 
+  const renderAddConfirmation = (
+    <Modal
+      visible={addToFlowVisible}
+      okText={<div data-testid={`${matchingArtifactName}-to-${flowName}-Confirm`}>Yes</div>}
+      cancelText="No"
+      onOk={() => onAddOk(matchingArtifactName, flowName)}
+      onCancel={() => onAddCancel()}
+      width={400}
+      maskClosable={false}
+    >
+      <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+        { isStepInFlow(matchingArtifactName, flowName) ?
+          !addRun ? <p aria-label="step-in-flow">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{matchingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
+          : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{matchingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{matchingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
+        }
+      </div>
+    </Modal>
+  );
+
+  const renderRunFlowMenu = (name) => (
+    <Menu style={{right: "80px"}}>
+      <Menu.Item key="0">
+        { <Link data-testid="link" id="tiles-add-run" to={
+          {pathname: "/tiles/run/add-run",
+            state: {
+              stepToAdd: name,
+              stepDefinitionType: "matching",
+              targetEntityType: props.entityModel.entityTypeId,
+              existingFlow: false
+            }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
+      </Menu.Item>
+      <Menu.Item key="1">
+        <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
+          <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
+            <Select
+              style={{width: "100%"}}
+              value={selected[name] ? selected[name] : undefined}
+              onChange={(flowName) => handleSelectAddRun({flowName: flowName, matchingName: name})}
+              placeholder="Select Flow"
+              defaultActiveFirstOption={false}
+              disabled={!props.canWriteFlow}
+              data-testid={`${name}-run-flowsList`}
+            >
+              { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
+                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
+              )) : null}
+            </Select>
+          </div>
+        </div>
+      </Menu.Item>
+    </Menu>
+  );
+
   const renderCardActions = (step, index) => {
     return [
-      <MLTooltip title={"Edit"} placement="bottom">
-        <Icon
-          className={styles.editIcon}
-          type="edit"
-          key ="last"
-          role="edit-merging button"
-          data-testid={step.name+"-edit"}
-          onClick={() => OpenStepSettings(index)}
-        />
-      </MLTooltip>,
-
       <MLTooltip title={"Step Details"} placement="bottom">
         <i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}>
-          <FontAwesomeIcon
-            icon={faSlidersH}
-            data-testid={`${step.name}-stepDetails`}
-            onClick={() => openStepDetails(step)}
-          />
+          <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
+        </i>
+      </MLTooltip>,
+      <MLTooltip title={"Step Settings"} placement="bottom">
+        <i className={styles.editIcon} key ="last" role="edit-merging button">
+          <FontAwesomeIcon icon={faCog} data-testid={step.name+"-edit"} onClick={() => OpenStepSettings(index)}/>
         </i>
       </MLTooltip>,
 
-      // <MLTooltip title={'Settings'} placement="bottom">
-      //   <Icon
-      //     type="setting"
-      //     key="setting"
-      //     role="settings-merging button"
-      //     data-testid={step.name+'-settings'}
-      //     onClick={() => stepSettingsClicked(index)}
-      //     />
-      // </MLTooltip>,
+      <Dropdown
+        data-testid={`${step.name}-dropdown`}
+        overlay={renderRunFlowMenu(step.name)}
+        trigger={["click"]}
+        disabled = {!props.canWriteFlow}
+      >
+        {props.canWriteMatchMerge ? (
+          <MLTooltip title={"Run"} placement="bottom">
+            <i aria-label="icon: run">
+              <Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={step.name+"-run"}/></i>
+          </MLTooltip>
+        ) : (
+          <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
+            <i role="disabled-run-matching button" data-testid={step.name+"-disabled-run"}>
+              <Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledRunIcon}/></i>
+          </MLTooltip>
+        )}
+      </Dropdown>,
 
       props.canWriteMatchMerge ? (
         <MLTooltip title={"Delete"} placement="bottom">
@@ -224,7 +334,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                           pathname: "/tiles/run/add",
                           state: {
                             stepToAdd: step.name,
-                            stepDefinitionType: "merging"
+                            stepDefinitionType: "matching"
                           }}}
                       >
                         <div className={styles.cardLink} data-testid={`${step.name}-toNewFlow`}> Add step to a new flow</div>
@@ -238,7 +348,7 @@ const MatchingCard: React.FC<Props> = (props) => {
                           <Select
                             style={{width: "100%"}}
                             value={selected[step.name] ? selected[step.name] : undefined}
-                            onChange={(flowName) => handleSelect({flowName: flowName, mappingName: step.name})}
+                            onChange={(flowName) => handleSelect({flowName: flowName, matchingName: step.name})}
                             placeholder="Select Flow"
                             defaultActiveFirstOption={false}
                             disabled={!props.canWriteMatchMerge}
@@ -281,8 +391,7 @@ const MatchingCard: React.FC<Props> = (props) => {
         activityType={StepType.Matching}
         targetEntityType={props.entityName}
       />
-
-
+      {renderAddConfirmation}
     </div>
   );
 };

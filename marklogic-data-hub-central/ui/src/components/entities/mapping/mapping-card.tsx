@@ -1,19 +1,18 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect} from "react";
 import styles from "./mapping-card.module.scss";
-import {Card, Icon, Tooltip, Dropdown, Row, Col, Modal, Select, Menu} from "antd";
+import {Card, Icon, Dropdown, Row, Col, Modal, Select, Menu} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from "../../../util/conversionFunctions";
 import SourceToEntityMap from "./source-entity-map/source-to-entity-map";
 import {getUris, getDoc} from "../../../util/search-service";
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
-import {AuthoritiesContext} from "../../../util/authorities";
 import {getNestedEntities} from "../../../util/manageArtifacts-service";
 import axios from "axios";
 import {xmlParserForMapping} from "../../../util/record-parser";
 import {Link, useHistory} from "react-router-dom";
 import {MLTooltip} from "@marklogic/design-system";
-import {faSlidersH, faPencilAlt} from "@fortawesome/free-solid-svg-icons";
+import {faPencilAlt, faCog} from "@fortawesome/free-solid-svg-icons";
 import Steps from "../../steps/steps";
 
 const {Option} = Select;
@@ -165,8 +164,7 @@ const MappingCard: React.FC<Props> = (props) => {
   </Modal>;
 
 
-  const getSourceData = async (index) => {
-    let stepName = props.data[index].name;
+  const getSourceData = async (stepName, index) => {
     try {
       setIsLoading(true);
       let response = await getUris(stepName, 20);
@@ -549,7 +547,7 @@ const MappingCard: React.FC<Props> = (props) => {
     setDocUris([]);
     setSourceData([]);
     setMapData({...mData});
-    await getSourceData(index);
+    await getSourceData(name, index);
     extractEntityInfoForTable();
     setMapName(name);
     setSourceDatabaseName(mData.sourceDatabase);
@@ -702,8 +700,8 @@ const MappingCard: React.FC<Props> = (props) => {
             >
               <Card
                 actions={[
-                  <MLTooltip title={"Edit"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faPencilAlt} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
-                  <MLTooltip title={"Step Details"} placement="bottom"><i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}><FontAwesomeIcon icon={faSlidersH} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
+                  <MLTooltip title={"Step Details"} placement="bottom"><i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
+                  <MLTooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
                   <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={["click"]} disabled = {!props.canWriteFlow}>
                     {props.canReadWrite ?<MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
                   </Dropdown>,

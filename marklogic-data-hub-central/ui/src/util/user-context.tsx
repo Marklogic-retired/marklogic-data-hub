@@ -116,8 +116,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        // redirect: true,
-        // pageRoute: values.pageRoute,
+        pageRoute: defaultUserData.pageRoute,
         maxSessionTime: sessionCount.current
       });
     } else {
@@ -126,7 +125,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        // redirect: true,
+        pageRoute: defaultUserData.pageRoute,
         maxSessionTime: sessionCount.current
       });
     }
@@ -141,7 +140,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
         ...user,
         name: username,
         authenticated: true,
-        // pageRoute: values.pageRoute,
+        pageRoute: defaultUserData.pageRoute,
         maxSessionTime: sessionCount.current
       });
     } else {
@@ -151,7 +150,7 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   const userNotAuthenticated = () => {
-    setUser({...user, name: "", authenticated: false});
+    setUser({...user, name: "", authenticated: false, pageRoute: defaultUserData.pageRoute});
     resetSessionMonitor().then(() => {
       localStorage.setItem("dataHubUser", "");
       localStorage.setItem("serviceName", "");

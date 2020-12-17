@@ -32,22 +32,22 @@ describe("Custom Card component", () => {
 
   test("Custom card does not allow edit", async () => {
     let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
-    let getByRole, queryAllByRole, getAllByLabelText, getByText;
+    let getByRole, queryAllByRole, getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
         <Router><CustomCard data={customData} canReadOnly={true} canReadWrite={false}/></Router>
       );
       getByRole = renderResults.getByRole;
       queryAllByRole = renderResults.queryAllByRole;
-      getAllByLabelText=renderResults.getAllByLabelText;
       getByText=renderResults.getByText;
+      getByTestId=renderResults.getByTestId;
     });
 
     expect(getByRole("edit-custom")).toBeInTheDocument();
     expect(queryAllByRole("delete-custom")).toHaveLength(0);
 
-    let tipIconView  = getAllByLabelText("icon: edit");
-    fireEvent.mouseOver(tipIconView[0]);
+    let tipIconView = getByTestId("customJSON-edit");
+    fireEvent.mouseOver(tipIconView);
     await waitForElement(() => getByText(AdvCustomTooltips.viewCustom));
   });
 

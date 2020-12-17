@@ -83,7 +83,7 @@ describe("Merging", () => {
     curatePage.editStep(mergeStep).click();
     curatePage.switchEditAdvanced().click();
     //cy.findAllByText('keptMerged').should('exist');
-    advancedSettings.cancelSettingsButton(mergeStep).trigger('mouseover').dblclick();
+    advancedSettings.cancelSettingsButton(mergeStep).trigger("mouseover").dblclick();
 
     //open matching step details
     curatePage.openStepDetails(mergeStep);

@@ -39,7 +39,8 @@ public class HandleFailedWriteTest extends AbstractSparkConnectorTest {
 
     @Test
     void errorDispositionShouldDefaultToSkipCall() {
-        initializeDataWriter(newFruitOptions().withIngestApiPath(CUSTOM_INGESTION_API_PATH));
+        initializeDataWriter(newFruitOptions().withWriteRecordsEndpointparams(objectMapper.createObjectNode()
+            .put("apiPath",CUSTOM_INGESTION_API_PATH)));
 
         WriterCommitMessage message = writeRowsAndCommitWithSourceWriter(
             buildRow("apple", "red"),

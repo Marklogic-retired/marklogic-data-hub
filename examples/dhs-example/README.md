@@ -92,8 +92,7 @@ src/main/ml-config/tasks for an example in this project. Also see
 
 Temporal axes and collections files are stored in the directory "./databases/(name of content database)/temporal". 
 See src/main/ml-config/databases/data-hub-FINAL/temporal for an example in this project. Also see
-[the ml-gradle docs](https://github.com/marklogic-community/ml-gradle/wiki/Resource-reference#temporal) for more information. 
-Note too that LSQT collections are not yet supported.
+[the ml-gradle docs](https://github.com/marklogic-community/ml-gradle/wiki/Resource-reference#temporal) for more information.
 
 ## Triggers
 

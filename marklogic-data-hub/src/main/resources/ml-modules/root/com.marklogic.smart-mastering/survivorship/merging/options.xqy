@@ -634,9 +634,10 @@ declare function merge-impl:compile-merge-options(
         map:map()
       else ()
     (: Gather target Entity Type information :)
-    let $target-entity := $merge-options/(*:target-entity|targetEntity|targetEntityType) ! fn:string(.)
-    let $target-entity-type-def := es-helper:get-entity-def($target-entity)
-    let $target-entity-type := $target-entity-type-def/entityIRI ! fn:string(.)
+    let $target-entity-type-info := util-impl:get-entity-type-information($merge-options)
+    let $target-entity := $target-entity-type-info => map:get("targetEntityType")
+    let $target-entity-type-def := $target-entity-type-info => map:get("targetEntityTypeDefinition")
+    let $target-entity-type := $target-entity-type-info => map:get("targetEntityTypeIRI")
     let $target-entity-properties-info := $target-entity-type ! es-helper:get-entity-property-info(.)
     let $target-entity-namespaces := $target-entity-type ! es-helper:get-entity-type-namespaces(.)
 
@@ -646,7 +647,7 @@ declare function merge-impl:compile-merge-options(
       util-impl:properties-to-values-functions(
         $merge-rules,
         $property-defs,
-        $target-entity-type-def/entityIRI,
+        $target-entity-type,
         fn:true(),
         $message-output
       )

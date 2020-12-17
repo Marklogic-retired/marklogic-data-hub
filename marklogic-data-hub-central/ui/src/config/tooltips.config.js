@@ -21,13 +21,15 @@ const AdvancedSettingsTooltips = {
 };
 
 const NewFlowTooltips = {
-    'name': 'The name of this flow definition.',
-    'description': 'The description of this flow definition.'
+    'name': 'The name of this flow configuration. This cannot be changed after the flow is created.',
+    'nameField': 'The flow name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the flow is created.',
+    'description': 'A description of this flow configuration.'
 };
 
 const NewLoadTooltips = {
-    'name': 'The name of this data load configuration.',
-    'description': 'The description of this data load configuration.',
+    'name': 'The name of this loading step configuration. This cannot be changed after the step is created.',
+    'nameField': 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
+    'description': 'A description of this loading step configuration.',
     'files' : 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
     'sourceFormat': 'The format of the source files to load.',
     'targetFormat': 'The format of the processed record.',
@@ -44,8 +46,9 @@ const AdvLoadTooltips = {
 };
 
 const NewMapTooltips = {
-    'name':'The name of this mapping configuration.',
-    'description':'The description of this mapping configuration.',
+    'name':'The name of this mapping step configuration. This cannot be changed after the step is created.',
+    'nameField': 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
+    'description':'A description of this mapping step configuration.',
     'sourceQuery':'The collection or CTS query that selects the source data to process in this configuration.',
     'missingPermission':'Contact your security administrator for access.',
 };
@@ -72,7 +75,8 @@ const NewMatchTooltips = {
     collation: 'The URI for a collation, which specifies the order for sorting strings',
     namespace: 'The namespace of the module that contains the function.',
     function: 'The function to run if this action definition is selected.',
-    name: 'The alias for this action definition.',
+    name: 'The name of this matching step configuration. This cannot be changed after the step is created.',
+    nameField: 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
     uri: 'The path to the module that contains the function.',
     distanceThreshold: 'The threshold below which the phonetic difference (distance) between two strings is considered insignificant; i.e., the strings are similar to each other.',
     dictionaryUri: 'The location of the phonetic dictionary that is stored in a database and used when comparing words phonetically.',
@@ -87,16 +91,18 @@ const AdvMatchTooltips = {
 };
 
 const NewCustomTooltips = {
-  'name':'The name of this custom configuration.',
-  'description':'The description of this custom configuration.',
+  'name': 'The name of this custom step configuration. This cannot be changed after the step is created.',
+  'nameField': 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
+  'description': 'A description of this custom step configuration.',
   'sourceQuery':'The collection or CTS query that selects the source data to process in this configuration.',
 };
 
 const NewMergeTooltips = {
-    'description':'The description of this merge configuration.',
     'timestampPath': 'The path to a timestamp field within the record. This field is used to determine which values to include in the merged property, based on their recency.',
     'missingPermission': 'Contact your security administrator for access.',
-};
+    'name': 'The name of this merging step configuration. This cannot be changed after the step is created.',
+    'description': 'A description of this merging step configuration.'
+  };
 
 const AdvMergeTooltips = {
     'sourceDatabase': 'The database where the input data is read from. Must be the same as the Matching Step *Source Database*.',
@@ -135,8 +141,8 @@ const AdvCustomOtherTooltips = {};
 const ModelingTooltips = {
   entityTypeName: 'Click to view or edit settings for this entity type.',
   addNewEntity: 'Add a new entity type.',
-  instanceNumber: 'Click to navigate to the Explorer tile showing all instances of this entity type.',
-  lastProcessed: 'Click to navigate to the Explorer tile showing all instances of that enttiy processed at the time.',
+  instanceNumber: 'Click to navigate to the Explore tile showing all instances of this entity type.',
+  lastProcessed: 'Click to navigate to the Explore tile showing all instances of this entity type processed by the job that finished at the displayed time.',
   nameRegex: 'Names must start with a letter, and can contain letters, numbers, hyphens, and underscores.',
   entityDescription: 'Description for the entity.',
   saveIcon: 'Save changes to this entity type.',

@@ -1,0 +1,15 @@
+{
+  "lang": "zxx",
+  "name": "CustomerMapping",
+  "description": "This is intentionally mapping with invalid source properties",
+  "version": 1,
+  "targetEntityType": "http://marklogic.com/data-hub/example/CustomerType-0.0.1/CustomerType",
+  "properties": {
+    "id": {
+      "sourcedFrom": "missingProp1"
+    },
+    "firstname": {
+      "sourcedFrom": "missingProp2"
+    }
+  }
+}

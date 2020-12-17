@@ -1,6 +1,9 @@
 import React from "react";
 import {fireEvent, render, waitForElement} from "@testing-library/react";
 import ManageQuery from "./manage-query";
+import axiosMock from "axios";
+
+jest.mock("axios");
 
 const getSubElements = (content, node, title) => {
   const hasText = node => node.textContent === title;
@@ -13,17 +16,17 @@ const getSubElements = (content, node, title) => {
 
 describe("Query Modal Component", () => {
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   let query = [{"savedQuery": {"id": "00529904-ed6e-4539-b7d8-eeddaf15aaa4", "name": "Lee", "description": "", "query": {"searchText": "", "entityTypeIds": ["Customer"], "selectedFacets": {"firstname": {"dataType": "xs:string", "stringValues": ["Lee"]}}}, "propertiesToDisplay": ["id"], "owner": "admin", "systemMetadata": {"createdBy": "admin", "createdDateTime": "2020-05-05T14:48:53.206721-07:00", "lastUpdatedBy": "admin", "lastUpdatedDateTime": "2020-05-05T14:48:53.206721-07:00"}}}];
   let defaultProps = {
     modalVisibility: true,
     canExportQuery: false,
     isSavedQueryUser: false,
-    queries: query,
-    setQueries: jest.fn(),
-    toggleApply: jest.fn(),
-    queryName: "Lee",
-    setQueryName: jest.fn(),
-    setCurrentQueryName: jest.fn()
+    entityDefArray: [],
+    setManageQueryModal: jest.fn()
   };
 
   test("Verify modal is not visible", () => {
@@ -31,12 +34,18 @@ describe("Query Modal Component", () => {
     expect(queryByTestId("manage-queries-modal")).toBeNull();
   });
 
-  test("Verify export, edit, delete buttons are visible", () => {
+  test("Verify export, edit, delete buttons are visible", async () => {
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({response: {status: 200, data: query}})));
     const {getByTestId} = render(<ManageQuery {...defaultProps} canExportQuery={true} isSavedQueryUser={true} />);
+
+    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "url": "/api/entitySearch/savedQueries"});
     expect(getByTestId("manage-queries-modal")).toBeInTheDocument();
-    expect(getByTestId("export")).toBeInTheDocument();
-    expect(getByTestId("delete")).toBeInTheDocument();
-    expect(getByTestId("edit")).toBeInTheDocument();
+
+    waitForElement(() => {
+      expect(getByTestId("export")).toBeInTheDocument();
+      expect(getByTestId("delete")).toBeInTheDocument();
+      expect(getByTestId("edit")).toBeInTheDocument();
+    });
   });
 
   test("Verify export, edit, delete buttons are not visible", () => {
@@ -52,17 +61,16 @@ describe("Query Modal Component", () => {
   });
 
   test("Verify confirmation modal message for deleting a query", async () => {
-    const {getByTestId, getByText} = render(<ManageQuery {...defaultProps} isSavedQueryUser={true} currentQueryName={"Lee"}/>);
-    expect(getByTestId("delete")).toBeInTheDocument();
-    fireEvent.click(getByTestId("delete"));
-    expect(await(waitForElement(() => getByText((content, node) => {
-      return getSubElements(content, node, "Are you sure you would like to delete the Lee query? This action cannot be undone.");
-    })))).toBeInTheDocument();
-  });
+    axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: query})));
+    const {getByTestId, getByText} = render(<ManageQuery {...defaultProps} isSavedQueryUser={true} />);
 
-  test("Verify pagination hiding", () => {
-    const {container} = render(<ManageQuery />);
-    expect(container.querySelector(".ant-pagination")).toBeNull();
+    waitForElement(() => {
+      expect(getByTestId("delete")).toBeInTheDocument();
+      fireEvent.click(getByTestId("delete"));
+      expect((waitForElement(() => getByText((content, node) => {
+        return getSubElements(content, node, "Are you sure you would like to delete the Lee query? This action cannot be undone.");
+      })))).toBeInTheDocument();
+    });
   });
 
 });

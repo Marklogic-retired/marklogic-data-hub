@@ -31,12 +31,17 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
     @BeforeEach
     public void beforeEachHubTestBaseTest(TestInfo testInfo) {
         if (!initialized) {
+            logger.info("Initializing before first test module runs");
             // Need to do these things just once, before the first test module is run
             resetHubProject();
             applyDatabasePropertiesForTests(getHubConfig());
+
+            // TODO Shouldn't need to do this, since resetHubProject does it
             resetDatabases();
+
             runAsDataHubDeveloper();
             initialized = true;
+            logger.info("Finished one-time initialization before running test modules");
         }
     }
 
@@ -71,10 +76,14 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
     @ParameterizedTest
     @ArgumentsSource(DataHubArgumentsProvider.class)
     public void test(TestModule testModule) {
-        // Ensure we run as data-hub-developer, which has the hub-central-developer role, which flow-developer does not
-        runAsDataHubDeveloper();
         logger.info("Running test: " + testModule.getTest() + "; thread: " + Thread.currentThread().getName() + "; host: " + getHubConfig().getHost());
+        long start = System.currentTimeMillis();
+        // This shouldn't be necessary, and it's causing each test to run a bit longer
+        // TODO See if this can be removed
+        runAsDataHubDeveloper();
         TestSuiteResult result = new TestManager(getHubConfig().newFinalClient()).run(testModule);
+        logger.info("Finished test: " + testModule.getTest() + "; time: " + (System.currentTimeMillis() - start) + "ms");
+
         for (TestResult testResult : result.getTestResults()) {
             String failureXml = testResult.getFailureXml();
             if (failureXml != null) {
@@ -82,5 +91,4 @@ public class RunMarkLogicUnitTestsTest extends AbstractHubCoreTest {
             }
         }
     }
-
 }

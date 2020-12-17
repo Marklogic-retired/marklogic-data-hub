@@ -19,8 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.FailedRequestException;
-import com.marklogic.client.eval.EvalResultIterator;
-import com.marklogic.client.eval.ServerEvaluationCall;
 import com.marklogic.client.ext.helper.LoggingObject;
 import com.marklogic.client.extensions.ResourceManager;
 import com.marklogic.client.io.StringHandle;
@@ -158,14 +156,10 @@ public class Versions extends LoggingObject {
         DatabaseClient client = hubClient != null ?
             hubClient.getStagingClient() :
             hubConfig.getAppConfig().newAppServicesDatabaseClient(null);
-        ServerEvaluationCall eval = client.newServerEval();
-        String xqy = "xdmp:version()";
-        try (EvalResultIterator result = eval.xquery(xqy).eval()) {
-            if (result.hasNext()) {
-                return result.next().getString();
-            } else {
-                throw new RuntimeException("Couldn't determine MarkLogic Version");
-            }
+        try {
+            return client.newServerEval().xquery("xdmp:version()").evalAs(String.class);
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to get version of MarkLogic; cause: " + ex.getMessage(), ex);
         }
     }
 

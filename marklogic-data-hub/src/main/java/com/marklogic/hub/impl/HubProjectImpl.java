@@ -317,8 +317,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
         Path userDatabaseFieldsDir = getUserConfigDir().resolve("database-fields");
         userDatabaseFieldsDir.toFile().mkdirs();
-        // DHFPROD-6271 Temporarily overwriting the file until a real fix is ready
-        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), true);
+        writeResourceFile("ml-config/database-fields/final-database.xml", userDatabaseFieldsDir.resolve("final-database.xml"), overwriteUserConfigFiles);
 
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         try {
@@ -492,65 +491,20 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     /**
      * Because this file is under src/main/ml-config, we cannot overwrite it, as a user may have modifications to it,
      * and we don't want to lose those (while we could copy the existing file to a separate directory, forcing the user
-     * to then have to restore all their additions is a lousy user experience). Thus, any time we may additions to
-     * final-database.xml, we must also apply them via this file. 
+     * to then have to restore all their additions is a lousy user experience).
+     *
+     * Because dataHub.upgradeHub initializes the project first, we don't have a way of skipping this if the file
+     * didn't already exist.
      */
     private void upgradeFinalDatabaseXmlFile() {
         File finalDbFile = getUserConfigDir().resolve("database-fields").resolve("final-database.xml").toFile();
         try {
-            FileInputStream fileInputStream = new FileInputStream(finalDbFile);
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-
-            Document document = documentBuilder.parse(fileInputStream);
-
-            XPathFactory xPathFactory = XPathFactory.newInstance();
-            XPath xPath = xPathFactory.newXPath();
-
-            XPathExpression expr = xPath.compile("//range-path-index/*[local-name()='path-expression']/text()='//actionDetails/*/uris'");
-
-            Boolean isNodePresent = Boolean.parseBoolean(expr.evaluate(document));
-
-            if(!isNodePresent) {
-                Node node = (Node) xPath
-                    .evaluate("//*[local-name()='range-path-indexes']", document.getDocumentElement(), XPathConstants.NODE);
-
-                Node newNode = node.appendChild(document.createElement("range-path-index"));
-
-                Element scalarType = document.createElement("scalar-type");
-                scalarType.setTextContent("string");
-
-                Element collation = document.createElement("scalar-type");
-                collation.setTextContent("http://marklogic.com/collation/");
-
-                Element pathExpression = document.createElement("path-expression");
-                pathExpression.setTextContent("//actionDetails/*/uris");
-
-                Element rangeValuePosition = document.createElement("range-value-positions");
-                rangeValuePosition.setTextContent("true");
-
-                Element invalidValues = document.createElement("invalid-values");
-                invalidValues.setTextContent("reject");
-
-                newNode.appendChild(scalarType);
-                newNode.appendChild(collation);
-                newNode.appendChild(pathExpression);
-                newNode.appendChild(rangeValuePosition);
-                newNode.appendChild(invalidValues);
-
-                TransformerFactory tf = TransformerFactory.newInstance();
-                Transformer transformer = tf.newTransformer();
-                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-                transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
-                transformer.transform(new DOMSource(document),
-                    new StreamResult(new OutputStreamWriter(new FileOutputStream(finalDbFile), "UTF-8")));
-            }
+            String fileContents = new String(FileCopyUtils.copyToByteArray(finalDbFile));
+            String upgradedFileContents = new FinalDatabaseXmlFileUpgrader().updateFinalDatabaseXmlFile(fileContents);
+            FileCopyUtils.copy(upgradedFileContents.getBytes(), finalDbFile);
         }
         catch (Exception e) {
-            throw new DataHubProjectException("Error while upgrading project; was not able to add //actionDetails/*/uris " +
+            throw new DataHubProjectException("Error while upgrading project; was not able to add /matchSummary/actionDetails/*/uris " +
                 "path range index to final-database.xml file; cause: " + e.getMessage(), e);
         }
 

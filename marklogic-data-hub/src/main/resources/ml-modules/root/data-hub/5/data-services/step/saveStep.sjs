@@ -16,7 +16,7 @@
 'use strict';
 
 const Artifacts = require('/data-hub/5/artifacts/core.sjs');
-const Step = require("/data-hub/5/impl/step.sjs");
+const StepDefinition = require("/data-hub/5/impl/stepDefinition.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
@@ -107,7 +107,7 @@ else {
     delete stepProperties.entityType;
   }
 
-  const stepDef = new Step().getStepByNameAndType(stepDefinitionName, stepDefinitionType);
+  const stepDef = new StepDefinition().getStepDefinitionByNameAndType(stepDefinitionName, stepDefinitionType);
   if (stepDef != null && stepDef.options != null) {
     const stepDefOptions = stepDef.options;
     Object.keys(stepDefOptions).forEach(key => {
