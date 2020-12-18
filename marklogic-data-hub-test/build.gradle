@@ -23,8 +23,10 @@ repositories {
 }
 
 dependencies {
-    // Brings marklogic-client-api with it
-    api "com.marklogic:ml-app-deployer:4.1.1"
+    api(project(":marklogic-data-hub-api"))
+
+    // marklogic-client-api 5.3.0 included this, but 5.3.2 does not
+    api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.1"
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
