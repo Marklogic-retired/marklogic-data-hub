@@ -33,6 +33,21 @@ class RunPage {
     return cy.findByText("New Flow");
   }
 
+  addStep(stepName: string) {
+    return cy.findByLabelText(`addStep-${stepName}`);
+  }
+
+  addStepToFlow(stepName: string) {
+    cy.findByLabelText(`${stepName}-to-flow`).click();
+    return cy.findByLabelText("Yes").click();
+  }
+
+  verifyStepInFlow(stepType: string, stepName: string) {
+    cy.waitForModalToDisappear();
+    cy.findByText(stepType).should("be.visible");
+    cy.findAllByText(stepName).first().should("be.visible");
+  }
+
   runStep(stepName: string) {
     return cy.findByLabelText(`runStep-${stepName}`);
   }
