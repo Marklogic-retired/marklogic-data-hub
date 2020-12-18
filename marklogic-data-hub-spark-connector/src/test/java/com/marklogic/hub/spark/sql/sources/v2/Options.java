@@ -25,6 +25,7 @@ public class Options {
     private String finalizeWriteApiPath;
     private JsonNode additionalExternalMetadata;
     private String initializeReadApiPath;
+    private String optimizationlevel;
 
     // Can contain any DHF properties - e.g. mlHost, mlUsername, etc
     private Map<String, String> hubProperties;
@@ -122,6 +123,10 @@ public class Options {
 
         if(readrowsendpointparams !=null) {
             params.put("readrowsendpointparams", readrowsendpointparams.toString());
+        }
+
+        if(optimizationlevel !=null){
+            params.put("optimizationlevel", optimizationlevel);
         }
 
         params.put("numpartitions", numPartitions);
@@ -226,6 +231,16 @@ public class Options {
 
     public Options withWriteRecordsEndpointparams(ObjectNode writerecordsendpointparams) {
         this.writerecordsendpointparams = writerecordsendpointparams;
+        return this;
+    }
+
+    public Options withStringOptimizationlevel(String optimizationlevel) {
+        this.optimizationlevel = optimizationlevel;
+        return this;
+    }
+
+    public Options withIntegerOptimizationlevel(int optimizationlevel) {
+        this.optimizationlevel = String.valueOf(optimizationlevel);
         return this;
     }
 }
