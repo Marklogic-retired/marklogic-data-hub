@@ -347,7 +347,7 @@ const Flows: React.FC<Props> = (props) => {
       <Menu>
         <Menu.ItemGroup title="Load">
           { props.steps && props.steps["ingestionSteps"] && props.steps["ingestionSteps"].length > 0 ? props.steps["ingestionSteps"].map((elem, index) => (
-            <Menu.Item key={index}>
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "ingestion"); }}
               >{elem.name}</div>
@@ -356,9 +356,45 @@ const Flows: React.FC<Props> = (props) => {
         </Menu.ItemGroup>
         <Menu.ItemGroup title="Map">
           { props.steps && props.steps["mappingSteps"] && props.steps["mappingSteps"].length > 0 ? props.steps["mappingSteps"].map((elem, index) => (
-            <Menu.Item key={index}>
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
               <div
                 onClick={() => { handleStepAdd(elem.name, flowName, "mapping"); }}
+              >{elem.name}</div>
+            </Menu.Item>
+          )) : null }
+        </Menu.ItemGroup>
+        <Menu.ItemGroup title="Match">
+          { props.steps && props.steps["matchingSteps"] && props.steps["matchingSteps"].length > 0 ? props.steps["matchingSteps"].map((elem, index) => (
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
+              <div
+                onClick={() => { handleStepAdd(elem.name, flowName, "matching"); }}
+              >{elem.name}</div>
+            </Menu.Item>
+          )) : null }
+        </Menu.ItemGroup>
+        <Menu.ItemGroup title="Merge">
+          { props.steps && props.steps["mergingSteps"] && props.steps["mergingSteps"].length > 0 ? props.steps["mergingSteps"].map((elem, index) => (
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
+              <div
+                onClick={() => { handleStepAdd(elem.name, flowName, "merging"); }}
+              >{elem.name}</div>
+            </Menu.Item>
+          )) : null }
+        </Menu.ItemGroup>
+        <Menu.ItemGroup title="Master">
+          { props.steps && props.steps["masteringSteps"] && props.steps["masteringSteps"].length > 0 ? props.steps["masteringSteps"].map((elem, index) => (
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
+              <div
+                onClick={() => { handleStepAdd(elem.name, flowName, "mastering"); }}
+              >{elem.name}</div>
+            </Menu.Item>
+          )) : null }
+        </Menu.ItemGroup>
+        <Menu.ItemGroup title="Custom">
+          { props.steps && props.steps["customSteps"] && props.steps["customSteps"].length > 0 ? props.steps["customSteps"].map((elem, index) => (
+            <Menu.Item key={index} aria-label={`${elem.name}-to-flow`}>
+              <div
+                onClick={() => { handleStepAdd(elem.name, flowName, "custom"); }}
               >{elem.name}</div>
             </Menu.Item>
           )) : null }
@@ -385,7 +421,7 @@ const Flows: React.FC<Props> = (props) => {
           <MLButton
             className={styles.addStep}
             size="default"
-            aria-label={"addStep-"+i}
+            aria-label={`addStep-${name}`}
             style={{}}
             type="primary"
           >Add Step <DownOutlined /></MLButton>
