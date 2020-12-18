@@ -83,7 +83,7 @@ dependencies {
     // For installer program
     compile "com.beust:jcommander:1.72"
 
-    testFixturesApi(testFixtures(project(":marklogic-data-hub-api")))
+    testFixturesApi(testCompile(project(":marklogic-data-hub-test")))
 
     // Still need these; trying to bring them in via marklogic-data-hub-api leads to compile errors
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"

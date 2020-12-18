@@ -54,8 +54,8 @@ dependencies {
     testImplementation "org.apache.spark:spark-streaming_2.11:${sparkVersion}"
     testImplementation "org.apache.spark:spark-core_2.11:${sparkVersion}"
 
-    // Depends on the test plumbing classes in the api project
-    testImplementation(testFixtures(project(":marklogic-data-hub-api")))
+    // Depends on the test plumbing classes in the test project
+    testImplementation(project(":marklogic-data-hub-test"))
 
     testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
