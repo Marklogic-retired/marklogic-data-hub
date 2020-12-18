@@ -270,8 +270,8 @@ def flexcodeScanAndReport(){
     def vulnerabilities = []
     slurper.inventoryItems.each { key, value ->
         key.vulnerabilities.each { key1, value1 ->
-            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL' || key1.vulnerabilityCvssV3Severity == 'HIGH'){
-                def msg = "    inventory name: $key.name; volnarability name: $key1.vulnerabilityName; with Severity V2: $key1.vulnerabilityCvssV2Severity; with Severity V3: $key1.vulnerabilityCvssV3Severity; "
+            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL'){
+                def msg = " item:$key.itemNumber inventory name:$key.name; volnarability name:$key1.vulnerabilityName; with Severity V2:$key1.vulnerabilityCvssV2Severity; with Severity V3:$key1.vulnerabilityCvssV3Severity; "
                 vulnerabilities.add(msg)
             }
         }}
@@ -744,7 +744,8 @@ pipeline{
                 agent {label 'dhfLinuxAgent'}
                 steps{
                     script{
-                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {sh 'exit 123'}
+//                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {sh 'exit 123'}
+                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {postFailureFlexcodeScanAndReport(high_vulnerabilities)}
                     }
                 }
                 post{
