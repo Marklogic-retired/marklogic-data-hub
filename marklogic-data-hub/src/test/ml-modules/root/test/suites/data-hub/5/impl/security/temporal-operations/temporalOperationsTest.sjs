@@ -4,7 +4,7 @@ const temporal = require("/MarkLogic/temporal.xqy");
 
 const assertions = [];
 
-const setLsqtUsingAForbiddenUser = (roles) => {
+const setUseLsqtUsingAForbiddenUser = (roles) => {
   hubTest.runWithRolesAndPrivileges(roles, [], function () {
     xdmp.invokeFunction(function () {
       try {
@@ -19,10 +19,33 @@ const setLsqtUsingAForbiddenUser = (roles) => {
   });
 }
 
-const setLsqtUsingAPermittedUser = (roles) => {
+const setLsqtAutomationUsingAForbiddenUser = (roles) => {
+  hubTest.runWithRolesAndPrivileges(roles, [], function () {
+    xdmp.invokeFunction(function () {
+      try {
+        temporal.setLsqtAutomation("kool", true, 5000);
+        assertions.push(test.fail('Exception not thrown when attempting to set LSQT Automation using a forbidden user'));
+      } catch (e) {
+        assertions.push(test.assertTrue(e.data && Array.isArray(e.data) && e.data.length === 1,
+          "Expected exception object's 'data' property to be an array of one item"));
+        assertions.push(test.assertEqual('http://marklogic.com/xdmp/privileges/temporal-set-lsqt-automation', e.data[0]));
+      }
+    }, {update: "true"});
+  });
+}
+
+const setUseLsqtUsingAPermittedUser = (roles) => {
   hubTest.runWithRolesAndPrivileges(roles, [], function () {
     xdmp.invokeFunction(function () {
       assertions.push(test.assertEqual(null, temporal.setUseLsqt("kool", true)));
+    }, {update: "true"});
+  });
+}
+
+const setLsqtAutomationUsingAPermittedUser = (roles) => {
+  hubTest.runWithRolesAndPrivileges(roles, [], function () {
+    xdmp.invokeFunction(function () {
+      assertions.push(test.assertEqual(null, temporal.setLsqtAutomation("kool", true, 5000)));
     }, {update: "true"});
   });
 }
@@ -87,9 +110,11 @@ const wipeDocumentUsingAPermittedUser = (roles, i) => {
 
 [['data-hub-operator'],
   ['data-hub-temporal-user', 'data-hub-common']].forEach((roles) => {
-  setLsqtUsingAForbiddenUser(roles);
+  setUseLsqtUsingAForbiddenUser(roles);
+  setLsqtAutomationUsingAForbiddenUser(roles);
 });
-setLsqtUsingAPermittedUser(['data-hub-developer']);
+setUseLsqtUsingAPermittedUser(['data-hub-developer']);
+setLsqtAutomationUsingAPermittedUser(['data-hub-developer']);
 [['data-hub-developer'],
   ['data-hub-operator'],
   ['data-hub-temporal-user', 'data-hub-common-writer']].forEach((roles, index) => {
