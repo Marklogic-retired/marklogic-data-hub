@@ -9,6 +9,7 @@ import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.HubClient;
 import com.marklogic.hub.spark.sql.sources.v2.Util;
+import org.apache.commons.lang.StringUtils;
 import org.apache.spark.sql.catalyst.InternalRow;
 import org.apache.spark.sql.sources.v2.reader.InputPartitionReader;
 import org.apache.spark.sql.types.StructType;
@@ -43,7 +44,7 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
 
         StructType sparkSchema = (StructType) StructType.fromJson(initializationResponse.get("sparkSchema").toString());
         this.jsonRowParser = new JsonRowParser(sparkSchema);
-        ObjectNode endpointConstants = buildEndpointConstants(initializationResponse, partitionNumber);
+        ObjectNode endpointConstants = buildEndpointConstants(options, initializationResponse, partitionNumber);
         this.bulkOutputCaller = buildOutputCaller(endpointConstants, endpointParams);
     }
 
@@ -88,10 +89,11 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
         logger.debug("Closing");
     }
 
-    private ObjectNode buildEndpointConstants(JsonNode initializationResponse, int partitionNumber) {
+    private ObjectNode buildEndpointConstants(Map<String, String> options, JsonNode initializationResponse, int partitionNumber) {
         ObjectNode endpointConstants = objectMapper.createObjectNode();
         endpointConstants.set("initializationResponse", initializationResponse);
         endpointConstants.put("partitionNumber", partitionNumber);
+        addOptimizationLevel(options,endpointConstants);
         return endpointConstants;
     }
 
@@ -100,10 +102,14 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
             .read(endpointParams.get("apiPath").asText(), new InputStreamHandle());
         ObjectNode readEndpointState = (endpointParams.hasNonNull("endpointState"))?
             (ObjectNode) endpointParams.get("endpointState") :objectMapper.createObjectNode().put("batchNumber", 1);
+
+        ObjectNode readEndpointConstants = endpointParams.hasNonNull("endpointConstants")?
+            (ObjectNode) endpointParams.get("endpointConstants"):endpointConstants;
+
         OutputCaller<InputStream> outputCaller = OutputCaller.on(hubClient.getFinalClient(), defaultApi, new InputStreamHandle());
 
         return outputCaller.bulkCaller(outputCaller.newCallContext()
-            .withEndpointConstants(new JacksonHandle(endpointConstants))
+            .withEndpointConstants(new JacksonHandle(readEndpointConstants))
             .withEndpointState(new JacksonHandle(readEndpointState)));
     }
 
@@ -116,5 +122,20 @@ public class HubInputPartitionReader extends LoggingObject implements InputParti
             }
             rowIndex = 0;
         }
+    }
+
+    private ObjectNode addOptimizationLevel(Map<String, String> options, ObjectNode endpointConstants){
+        String optimizationlevel = options.get("optimizationlevel");
+        if(StringUtils.isNotEmpty(optimizationlevel)) {
+            try {
+                int readOptimizationlevel = Integer.parseInt(optimizationlevel);
+                if(!(readOptimizationlevel == 0 || readOptimizationlevel == 1 || readOptimizationlevel == 2))
+                    throw new IllegalArgumentException("optimizationlevel needs to be 0,1 or 2");
+                endpointConstants.put("optimizationlevel", readOptimizationlevel);
+            } catch(NumberFormatException ex) {
+                throw new IllegalArgumentException("optimizationlevel needs to be 0,1 or 2");
+            }
+        }
+        return endpointConstants;
     }
 }
