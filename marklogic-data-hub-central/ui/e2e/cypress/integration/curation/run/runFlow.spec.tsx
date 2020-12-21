@@ -73,7 +73,7 @@ describe("Run Tile tests", () => {
     browsePage.getFacetApplyButton().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    browsePage.getTotalDocuments().should("be", 2);	 
+    browsePage.getTotalDocuments().should("be", 2);
     browsePage.getSourceViewIcon().first().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();

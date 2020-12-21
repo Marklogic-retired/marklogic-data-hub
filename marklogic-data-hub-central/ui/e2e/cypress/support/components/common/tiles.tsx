@@ -33,9 +33,7 @@ class Tiles {
   }
 
   closeRunMessage() {
-    cy.get("body").type("{esc}");
-    cy.wait(500);
-    return cy.get("body").type("{esc}");
+    return cy.get("div.ant-modal-confirm-btns button").click({multiple: true, force: true});
   }
 }
 
