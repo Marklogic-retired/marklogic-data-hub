@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ReadWithCustomOptimizationlevel extends AbstractSparkReadTest {
+public class ReadWithCustomOptimizationlevelTest extends AbstractSparkReadTest {
 
     @BeforeEach
     public void setUp() {
@@ -22,23 +22,20 @@ public class ReadWithCustomOptimizationlevel extends AbstractSparkReadTest {
 
     @Test
     public void testStringOptimizationlevel() {
-        setUp();
         Options options = newOptions().withView("Customer").withStringOptimizationlevel("2");
         List<InternalRow> rows = readRows(new HubDataSourceReader(options.toDataSourceOptions()));
-        assertEquals(10, rows.size(), "All 10 rows could not be read.");
+        assertEquals(10, rows.size(), rows.size()+" were read.");
     }
 
     @Test
     public void testIntegerOptimizationlevel() {
-        setUp();
         Options options = newOptions().withView("Customer").withIntegerOptimizationlevel(2);
         List<InternalRow> rows = readRows(new HubDataSourceReader(options.toDataSourceOptions()));
-        assertEquals(10, rows.size(), "All 10 rows could not be read.");
+        assertEquals(10, rows.size(), rows.size()+" were read.");
     }
 
     @Test
     public void testInvalidOptimizationlevel() {
-        setUp();
         Options options = newOptions().withView("Customer").withIntegerOptimizationlevel(6);
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> readRows(new HubDataSourceReader(options.toDataSourceOptions())));
@@ -54,7 +51,6 @@ public class ReadWithCustomOptimizationlevel extends AbstractSparkReadTest {
 
     @Test
     public void testDecimalOptimizationlevel() {
-        setUp();
         Options options = newOptions().withView("Customer").withStringOptimizationlevel("1.5");
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
             () -> readRows(new HubDataSourceReader(options.toDataSourceOptions())));
