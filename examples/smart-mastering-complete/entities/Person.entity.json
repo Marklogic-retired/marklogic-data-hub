@@ -9,13 +9,12 @@
     "Person" : {
       "required" : [ ],
       "pii" : [ ],
-      "elementRangeIndex" : [ "FirstName" ],
-      "rangeIndex" : [ ],
       "wordLexicon" : [ ],
       "properties" : {
         "FirstName" : {
           "datatype" : "string",
-          "collation" : "http://marklogic.com/collation/codepoint"
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
         },
         "LastName" : {
           "datatype" : "string",

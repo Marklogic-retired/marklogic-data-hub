@@ -1,0 +1,15 @@
+{
+  "name" : "generate-dictionary",
+  "description" : "",
+  "stepDefinitionName" : "generate-dictionary",
+  "stepDefinitionType" : "custom",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.documentQuery('/flows/persons.flow.json')",
+  "collections" : [ "generate-dictionary", "" ],
+  "sourceDatabase" : "data-hub-FINAL",
+  "sourceCollection" : "",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "",
+  "stepId" : "generate-dictionary-custom"
+}

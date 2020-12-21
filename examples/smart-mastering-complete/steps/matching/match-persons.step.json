@@ -1,0 +1,96 @@
+{
+  "name" : "match-persons",
+  "description" : "",
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
+  "provenanceGranularityLevel" : "fine",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"map-persons\"])",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "match-persons", "Person" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Person",
+  "stepId" : "match-persons-matching",
+  "matchRulesets" : [ {
+    "name" : "LastName - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "LastName",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "SSN - Exact",
+    "weight" : 20,
+    "matchRules" : [ {
+      "entityPropertyPath" : "SSN",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "FirstName - Double Metaphone",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "FirstName",
+      "matchType" : "doubleMetaphone",
+      "options" : {
+        "dictionaryURI" : "/dictionary/first-names.xml",
+        "distanceThreshold" : 100
+      }
+    } ]
+  }, {
+    "name" : "FirstName - Synonym",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "FirstName",
+      "matchType" : "synonym",
+      "options" : {
+        "thesaurusURI" : "/thesaurus/nicknames.xml"
+      }
+    } ]
+  }, {
+    "name" : "DateOfBirth - Custom",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "DateOfBirth",
+      "matchType" : "custom",
+      "algorithmModuleNamespace" : "http://marklogic.com/smart-mastering/algorithms",
+      "algorithmModulePath" : "/custom-modules/custom/dob-match.xqy",
+      "algorithmFunction" : "dob-match",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "ZipCode - Zip",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "ZipCode",
+      "matchType" : "zip",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "Address - Reduce",
+    "weight" : 5,
+    "reduce" : true,
+    "matchRules" : [ {
+      "entityPropertyPath" : [ "Address" ],
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "Match",
+    "action" : "merge",
+    "score" : 19
+  }, {
+    "thresholdName" : "Likely Match",
+    "action" : "notify",
+    "score" : 9
+  }, {
+    "thresholdName" : "Slight Match",
+    "action" : "custom",
+    "score" : 4,
+    "actionModulePath" : "/custom-modules/custom/custom-match-action.sjs",
+    "actionModuleFunction" : "customMatch"
+  } ]
+}

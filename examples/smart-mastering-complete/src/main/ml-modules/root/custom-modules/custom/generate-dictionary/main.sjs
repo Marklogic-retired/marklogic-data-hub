@@ -18,7 +18,11 @@ const spell = require("/MarkLogic/spell");
 
 function main(content, options) {
 
-  const values = cts.elementValues(xs.QName('FirstName')).toArray();
+  const values = cts.values(cts.pathReference(
+    '/(es:envelope|envelope)/(es:instance|instance)/Person/FirstName',
+    ["collation=http://marklogic.com/collation/codepoint"],
+    {"es": "http://marklogic.com/entity-services"}
+  )).toArray();
 
   const dictionary = spell.makeDictionary(values, "element");
   const uri = "/dictionary/first-names.xml";
@@ -27,7 +31,7 @@ function main(content, options) {
 
   xdmp.eval(
     "declareUpdate(); var d, uri; xdmp.documentInsert(uri, d, " +
-    "[xdmp.permission('rest-reader', 'read'), xdmp.permission('rest-writer', 'update')], ['mdm-dictionary'])",
+    "[xdmp.permission('data-hub-common', 'read'), xdmp.permission('data-hub-common', 'update')], ['mdm-dictionary'])",
     {uri: uri, d: dictionary}
   );
 

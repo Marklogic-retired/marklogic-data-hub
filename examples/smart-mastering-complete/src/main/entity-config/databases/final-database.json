@@ -1,15 +1,16 @@
 {
+  "lang" : "zxx",
   "path-namespace" : [ {
     "prefix" : "es",
     "namespace-uri" : "http://marklogic.com/entity-services"
   } ],
-  "range-element-index" : [ {
-    "collation" : "http://marklogic.com/collation/codepoint",
+  "range-path-index" : [ {
     "invalid-values" : "reject",
-    "localname" : "FirstName",
-    "namespace-uri" : null,
+    "path-expression" : "/(es:envelope|envelope)/(es:instance|instance)/Person/FirstName",
     "range-value-positions" : false,
-    "scalar-type" : "string"
+    "scalar-type" : "string",
+    "collation" : "http://marklogic.com/collation/codepoint"
   } ],
+  "range-element-index" : [ ],
   "database-name" : "%%mlFinalDbName%%"
 }
