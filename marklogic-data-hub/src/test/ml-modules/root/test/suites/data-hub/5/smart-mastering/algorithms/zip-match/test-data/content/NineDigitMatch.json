@@ -5,6 +5,7 @@
         "title": "Address"
       },
       "Address": {
+        "city": "Springfield",
         "zip": "11111-1234"
       }
     }
