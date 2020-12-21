@@ -52,64 +52,113 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   const [tobeDisabled, setTobeDisabled] = useState(false);
   const [changed, setChanged] = useState(false);
 
+  // const initStep = () => {
+  //   setMapName(props.stepData.name);
+  //   setDescription(props.stepData.description);
+  //   setSrcQuery(props.stepData.sourceQuery);
+  //   setSelectedSource(props.stepData.selectedSource);
+  //   if (isQuerySelected === true) setCollections("");
+  //   if (props.stepData.selectedSource === "collection") {
+  //     if (props.stepData.sourceQuery.includes("[") && props.stepData.sourceQuery.includes("]")) {
+  //       let srcCollection = props.stepData.sourceQuery.substring(
+  //         props.stepData.sourceQuery.lastIndexOf("[") + 2,
+  //         props.stepData.sourceQuery.lastIndexOf("]") - 1
+  //       );
+  //       setCollections(srcCollection);
+  //     } else if ((props.stepData.sourceQuery.includes("(") && props.stepData.sourceQuery.includes(")"))) {
+  //       let srcCollection = props.stepData.sourceQuery.substring(
+  //         props.stepData.sourceQuery.lastIndexOf("(") + 2,
+  //         props.stepData.sourceQuery.lastIndexOf(")") - 1
+  //       );
+  //       setCollections(srcCollection);
+  //     } else {
+  //       setCollections(props.stepData.sourceQuery);
+  //     }
+  //   }
+  //   setIsValid(true);
+  //   setTobeDisabled(true);
+
+  //   setDescriptionTouched(false);
+  //   setCollectionsTouched(false);
+  //   setSrcQueryTouched(false);
+  //   setSelectedSourceTouched(false);
+  // };
+
   const initStep = () => {
     setMapName(props.stepData.name);
     setDescription(props.stepData.description);
     setSrcQuery(props.stepData.sourceQuery);
     setSelectedSource(props.stepData.selectedSource);
-    if (isQuerySelected === true) setCollections("");
     if (props.stepData.selectedSource === "collection") {
-      if (props.stepData.sourceQuery.includes("[") && props.stepData.sourceQuery.includes("]")) {
-        let srcCollection = props.stepData.sourceQuery.substring(
-          props.stepData.sourceQuery.lastIndexOf("[") + 2,
-          props.stepData.sourceQuery.lastIndexOf("]") - 1
-        );
-        setCollections(srcCollection);
-      } else if ((props.stepData.sourceQuery.includes("(") && props.stepData.sourceQuery.includes(")"))) {
-        let srcCollection = props.stepData.sourceQuery.substring(
-          props.stepData.sourceQuery.lastIndexOf("(") + 2,
-          props.stepData.sourceQuery.lastIndexOf(")") - 1
-        );
-        setCollections(srcCollection);
-      } else {
-        setCollections(props.stepData.sourceQuery);
-      }
+      let srcCollection = props.stepData.sourceQuery.substring(
+        props.stepData.sourceQuery.lastIndexOf("[") + 2,
+        props.stepData.sourceQuery.lastIndexOf("]") - 1
+      );
+      setCollections(srcCollection);
     }
+    resetTouchedValues();
     setIsValid(true);
     setTobeDisabled(true);
 
-    setDescriptionTouched(false);
-    setCollectionsTouched(false);
-    setSrcQueryTouched(false);
-    setSelectedSourceTouched(false);
+    props.setIsValid(true);
   };
 
-  useEffect(() => {
-    // Edit step
-    if (props.stepData && JSON.stringify(props.stepData) !== JSON.stringify({}) && props.isEditing) {
-      initStep();
-    } else {     // New step
-      setMapName("");
-      setMapNameTouched(false);
-      setCollections("");
-      setDescription("");
-      setSrcQuery("");
-      setIsNameDuplicate(false);
-    }
-    // Reset
-    return (() => {
-      setMapName("");
-      setMapNameTouched(false);
-      setDescription("");
-      setDescriptionTouched(false);
-      setSelectedSource("collection");
-      setSelectedSourceTouched(false);
-      setCollectionsTouched(false);
-      setTobeDisabled(false);
-      setIsNameDuplicate(false);
-    });
+  // useEffect(() => {
+  //   // Edit step
+  //   if (props.stepData && JSON.stringify(props.stepData) !== JSON.stringify({}) && props.isEditing) {
+  //     initStep();
+  //   } else {     // New step
+  //     setMapName("");
+  //     setMapNameTouched(false);
+  //     setCollections("");
+  //     setDescription("");
+  //     setSrcQuery("");
+  //     setIsNameDuplicate(false);
+  //     props.setIsValid(false);
+  //   }
+  //   // Reset
+  //   return (() => {
+  //     setMapName("");
+  //     setMapNameTouched(false);
+  //     setDescription("");
+  //     setDescriptionTouched(false);
+  //     setSelectedSource("collection");
+  //     setSelectedSourceTouched(false);
+  //     setCollectionsTouched(false);
+  //     setTobeDisabled(false);
+  //     setIsNameDuplicate(false);
+  //   });
 
-  }, [props.stepData]);
+  // }, [props.stepData]);
+
+  useEffect(() => {
+    if (props.currentTab === props.tabKey) {
+      // Edit mapping
+      if (props.isEditing) {
+        initStep();
+      } else { // New mapping
+        reset();
+        props.setIsValid(false);
+      }
+    }
+  }, [props.currentTab]);
+
+  const reset = () => {
+    setMapName("");
+    setDescription("");
+    setSelectedSource("collection");
+    setTobeDisabled(false);
+    setCollections("");
+    setSrcQuery("");
+    resetTouchedValues();
+  };
+
+  const resetTouchedValues = () => {
+    setMapNameTouched(false);
+    setDescriptionTouched(false);
+    setSelectedSourceTouched(false);
+    setCollectionsTouched(false);
+  };
 
   const onCancel = () => {
     // Parent checks changes across tabs
@@ -223,6 +272,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const handleTypeaheadChange = (data: any) => {
+
     if (data === " ") {
       setCollectionsTouched(false);
     } else {
@@ -245,6 +295,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const handleChange = (event) => {
+    console.log("handleChange");
     if (event.target.id === "name") {
       if (event.target.value === " ") {
         setMapNameTouched(false);
@@ -254,10 +305,12 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         if (event.target.value.length > 0) {
           if (collections|| srcQuery) {
             setIsValid(true);
+            props.setIsValid(true);
             setIsNameDuplicate(false);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -290,9 +343,11 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         if (event.target.value.length > 0) {
           if (mapName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -311,9 +366,11 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         if (event.target.value.length > 0) {
           if (mapName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -344,6 +401,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   */
 
   const handleSelectedSource = (event) => {
+    console.log("handleSelectedSource");
     if (event.target.value === " ") {
       setSelectedSourceTouched(false);
     } else {
@@ -356,14 +414,18 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       if (event.target.value === "collection") {
         if (mapName && collections) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       } else {
         if (mapName && srcQuery) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -371,11 +433,16 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const isSourceQueryValid = () => {
-    if ((collections && selectedSource === "collection") ||
-    (srcQuery && selectedSource !== "collection") ||
-    (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
+    if ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection")) {
+      // Touched
       if (props.currentTab === props.tabKey) {
         props.setIsValid(true);
+      }
+      return true;
+    } else if ((!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
+      // Untouched
+      if (props.currentTab === props.tabKey) {
+        props.setIsValid(false);
       }
       return true;
     } else {

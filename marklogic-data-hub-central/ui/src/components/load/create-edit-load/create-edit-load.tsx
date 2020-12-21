@@ -33,7 +33,17 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   const [fieldSeparator, setFieldSeparator] = useState(props.stepData && props.stepData !== {} ? props.stepData.fieldSeparator : ",");
   const [otherSeparator, setOtherSeparator] = useState("");
 
+  //To check submit validity
   const [isStepNameTouched, setStepNameTouched] = useState(false);
+  const [isDescriptionTouched, setDescriptionTouched] = useState(false);
+  const [isSrcFormatTouched, setSrcFormatTouched] = useState(false);
+  const [isTgtFormatTouched, setTgtFormatTouched] = useState(false);
+  const [isSourceNameTouched, setSourceNameTouched] = useState(false);
+  const [isSourceTypeTouched, setSourceTypeTouched] = useState(false);
+  const [isOutputUriPrefixTouched, setOutputUriPrefixTouched] = useState(false);
+  const [isFieldSeparatorTouched, setFieldSeparatorTouched] = useState(false);
+  const [isOtherSeparatorTouched, setOtherSeparatorTouched] = useState(false);
+
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
   const [tobeDisabled, setTobeDisabled] = useState(false);
   const [changed, setChanged] = useState(false);
@@ -54,6 +64,13 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setOutputUriPrefix(props.stepData.outputURIPrefix);
     setIsValid(true);
     setTobeDisabled(true);
+
+    setDescriptionTouched(false);
+    setSrcFormatTouched(false);
+    setTgtFormatTouched(false);
+    setSourceNameTouched(false);
+    setSourceTypeTouched(false);
+    setOutputUriPrefixTouched(false);
   };
 
   useEffect(() => {
@@ -64,27 +81,44 @@ const CreateEditLoad: React.FC<Props> = (props) => {
       setStepName("");
       setStepNameTouched(false);
       setDescription("");
+      setDescriptionTouched(false);
       setSrcFormat("json");
+      setSrcFormatTouched(false);
       setFieldSeparator(",");
+      setFieldSeparatorTouched(false);
       setOtherSeparator("");
+      setOtherSeparatorTouched(false);
       setTgtFormat("json");
+      setTgtFormatTouched(false);
       setSourceName("");
+      setSourceNameTouched(false);
       setSourceType("");
+      setSourceTypeTouched(false);
       setOutputUriPrefix("");
+      setOutputUriPrefixTouched(false);
       setIsValid(false);
+      props.setIsValid(false);
     }
     // Reset
     return (() => {
       setStepName("");
       setStepNameTouched(false);
       setDescription("");
+      setDescriptionTouched(false);
       setSrcFormat("json");
+      setSrcFormatTouched(false);
       setFieldSeparator(",");
+      setFieldSeparatorTouched(false);
       setOtherSeparator("");
+      setOtherSeparatorTouched(false);
       setTgtFormat("json");
+      setTgtFormatTouched(false);
       setSourceName("");
+      setSourceNameTouched(false);
       setSourceType("");
+      setSourceTypeTouched(false);
       setOutputUriPrefix("");
+      setOutputUriPrefixTouched(false);
       setTobeDisabled(false);
     });
 
@@ -102,35 +136,52 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setChanged(false);
   }, [changed]);
 
-  // TODO update hasFormChanged() pattern to match other create-edit-* components
   const hasFormChanged = () => {
-    const step = props.stepData;
-    // Edit
-    if (step && JSON.stringify(step) !== JSON.stringify({}) && props.isEditing) {
-      // Any settings changed (excluding separator)?
-      if (
-        stepName === step.name && description === step.description && srcFormat === step.sourceFormat
-        && tgtFormat === step.targetFormat && sourceName === step.sourceName && sourceType === step.sourceType
-        && outputUriPrefix === step.outputURIPrefix
-      ) {
-        // Separator?
-        if ((step.separator && fieldSeparator === "Other" && otherSeparator === step.separator) ||
-          (step.separator && fieldSeparator !== "Other" && fieldSeparator === step.separator) ||
-          (!step.separator && (fieldSeparator === "," || !fieldSeparator) && otherSeparator === "")) {
-          return false;
-        } else return true;
-      } else return true;
-    } else {     // New
-      // Any settings changed (excluding separator)?
-      if (stepName === "" && description === "" && srcFormat === "json" && tgtFormat === "json"
-        && sourceName === "" && sourceType === "" && outputUriPrefix === "") {
-        // Separator?
-        if (fieldSeparator === "," && otherSeparator === "") {
-          return false;
-        } else return true;
-      } else return true;
+    if (!isStepNameTouched
+      && !isDescriptionTouched
+      && !isSrcFormatTouched
+      && !isTgtFormatTouched
+      && !isSourceNameTouched
+      && !isSourceTypeTouched
+      && !isOutputUriPrefixTouched
+      && !isFieldSeparatorTouched
+      && !isOtherSeparatorTouched
+    ) {
+      return false;
+    } else {
+      return true;
     }
   };
+
+  // DONE: update hasFormChanged() pattern to match other create-edit-* components
+  // const hasFormChanged = () => {
+  //   const step = props.stepData;
+  //   // Edit
+  //   if (step && JSON.stringify(step) !== JSON.stringify({}) && props.isEditing) {
+  //     // Any settings changed (excluding separator)?
+  //     if (
+  //       stepName === step.name && description === step.description && srcFormat === step.sourceFormat
+  //       && tgtFormat === step.targetFormat && sourceName === step.sourceName && sourceType === step.sourceType
+  //       && outputUriPrefix === step.outputURIPrefix
+  //     ) {
+  //       // Separator?
+  //       if ((step.separator && fieldSeparator === "Other" && otherSeparator === step.separator) ||
+  //         (step.separator && fieldSeparator !== "Other" && fieldSeparator === step.separator) ||
+  //         (!step.separator && (fieldSeparator === "," || !fieldSeparator) && otherSeparator === "")) {
+  //         return false;
+  //       } else return true;
+  //     } else return true;
+  //   } else {     // New
+  //     // Any settings changed (excluding separator)?
+  //     if (stepName === "" && description === "" && srcFormat === "json" && tgtFormat === "json"
+  //       && sourceName === "" && sourceType === "" && outputUriPrefix === "") {
+  //       // Separator?
+  //       if (fieldSeparator === "," && otherSeparator === "") {
+  //         return false;
+  //       } else return true;
+  //     } else return true;
+  //   }
+  // };
 
   const getPayload = () => {
     let result;
@@ -198,30 +249,105 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         }
       }
     }
+
     if (event.target.id === "description") {
-      setDescription(event.target.value);
+      if (event.target.value === " ") {
+        setDescriptionTouched(false);
+      } else {
+        setDescriptionTouched(true);
+        setDescription(event.target.value);
+        if (props.stepData && props.stepData.description) {
+          if (event.target.value === props.stepData.description) {
+            setDescriptionTouched(false);
+          }
+        }
+        if (!props.isEditing) {
+          if (event.target.value === "") {
+            setDescriptionTouched(false);
+          }
+        }
+      }
     }
 
     if (event.target.id === "sourceName") {
-      setSourceName(event.target.value);
+      if (event.target.value === " ") {
+        setSourceNameTouched(false);
+      } else {
+        setSourceNameTouched(true);
+        setSourceName(event.target.value);
+        if (props.stepData && props.stepData.sourceName) {
+          if (event.target.value === props.stepData.sourceName) {
+            setSourceNameTouched(false);
+          }
+        }
+        if (!props.isEditing) {
+          if (event.target.value === "") {
+            setSourceNameTouched(false);
+          }
+        }
+      }
+      setChanged(true);
     }
 
     if (event.target.id === "sourceType") {
-      setSourceType(event.target.value);
+      if (event.target.value === " ") {
+        setSourceTypeTouched(false);
+      } else {
+        setSourceTypeTouched(true);
+        setSourceType(event.target.value);
+        if (props.stepData && props.stepData.sourceType) {
+          if (event.target.value === props.stepData.sourceType) {
+            setSourceTypeTouched(false);
+          }
+        }
+        if (!props.isEditing) {
+          if (event.target.value === "") {
+            setSourceTypeTouched(false);
+          }
+        }
+      }
     }
     setChanged(true);
   };
 
   const handleOutputUriPrefix = (event) => {
     if (event.target.id === "outputUriPrefix") {
-      setOutputUriPrefix(event.target.value);
+      if (event.target.value === " ") {
+        setOutputUriPrefixTouched(false);
+      } else {
+        setOutputUriPrefixTouched(true);
+        setOutputUriPrefix(event.target.value);
+        if (props.stepData && props.stepData.outputURIPrefix) {
+          if (event.target.value === props.stepData.outputURIPrefix) {
+            setOutputUriPrefixTouched(false);
+          }
+        }
+        if (!props.isEditing) {
+          if (event.target.value === "") {
+            setOutputUriPrefixTouched(false);
+          }
+        }
+      }
     }
     setChanged(true);
   };
 
   const handleSrcFormat = (value) => {
-    if (value !== " ") {
+    if (value === " ") {
+      setSrcFormatTouched(false);
+    } else {
+      setSrcFormatTouched(true);
       setSrcFormat(value);
+      if (props.stepData && props.stepData.srcFormat) {
+        if (value === props.stepData.srcFormat) {
+          setSrcFormatTouched(false);
+        }
+      }
+      if (!props.isEditing) {
+        if (value === "") {
+          setSrcFormatTouched(false);
+        }
+      }
       if (value === "csv") {
         setFieldSeparator(",");
       }
@@ -230,25 +356,64 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   };
 
   const handleFieldSeparator = (value) => {
-    if (value !== " ") {
+    if (value === " ") {
+      setFieldSeparatorTouched(false);
+    } else {
+      setFieldSeparatorTouched(true);
       setFieldSeparator(value);
       if (value === "Other") {
         setOtherSeparator("");
+      }
+      if (props.stepData && props.stepData.fieldSeparator) {
+        if (value === props.stepData.fieldSeparator) {
+          setFieldSeparatorTouched(false);
+        }
+      }
+      if (!props.isEditing) {
+        if (value === ",") {
+          setFieldSeparatorTouched(false);
+        }
       }
     }
     setChanged(true);
   };
 
   const handleOtherSeparator = (event) => {
-    if (event.target.id === "otherSeparator") {
+    if (event.target.value === " ") {
+      setOtherSeparatorTouched(false);
+    } else {
+      setOtherSeparatorTouched(true);
       setOtherSeparator(event.target.value);
+      if (props.stepData && props.stepData.fieldSeparator) {
+        if (event.target.value === props.stepData.fieldSeparator) {
+          setOtherSeparatorTouched(false);
+        }
+      }
+      if (!props.isEditing) {
+        if (event.target.value === "") {
+          setOtherSeparatorTouched(false);
+        }
+      }
     }
     setChanged(true);
   };
 
   const handleTgtFormat = (value) => {
-    if (value !== " ") {
+    if (value === " ") {
+      setTgtFormatTouched(false);
+    } else {
+      setTgtFormatTouched(true);
       setTgtFormat(value);
+      if (props.stepData && props.stepData.tgtFormat) {
+        if (value === props.stepData.tgtFormat) {
+          setTgtFormatTouched(false);
+        }
+      }
+      if (!props.isEditing) {
+        if (value === "") {
+          setTgtFormatTouched(false);
+        }
+      }
       if (value !== "json" && value !== "xml") {
         setSourceName("");
         setSourceType("");
@@ -380,7 +545,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>
-        {(tgtFormat === "json" || tgtFormat === "xml") && <Form.Item label={<span>
+        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Name:&nbsp;
         </span>} labelAlign="left">
           <Input
@@ -394,7 +559,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
         </Form.Item>}
-        {(tgtFormat === "json" || tgtFormat === "xml") && <Form.Item label={<span>
+        {(tgtFormat && (tgtFormat.toLowerCase() === "json" || tgtFormat.toLowerCase() === "xml")) && <Form.Item label={<span>
           Source Type:&nbsp;
         </span>} labelAlign="left">
           <Input

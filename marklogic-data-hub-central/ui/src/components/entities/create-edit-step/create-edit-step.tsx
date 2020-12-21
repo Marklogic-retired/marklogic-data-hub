@@ -86,6 +86,8 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     resetTouchedValues();
     setIsValid(true);
     setTobeDisabled(true);
+
+    props.setIsValid(true);
   };
 
   useEffect(() => {
@@ -95,6 +97,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         initStep();
       } else { // New Step Artifact
         reset();
+        props.setIsValid(false);
       }
     }
   }, [props.currentTab]);
@@ -248,9 +251,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       if (data.length > 0) {
         if (stepName) {
           setIsValid(true);
+          props.setIsValid(true);
         }
       } else {
         setIsValid(false);
+        props.setIsValid(false);
       }
     }
   };
@@ -265,9 +270,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (collections || srcQuery) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -295,9 +302,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (stepName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -315,9 +324,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (stepName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -350,14 +361,18 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       if (event.target.value === "collection") {
         if (stepName && collections) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       } else {
         if (stepName && srcQuery) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }

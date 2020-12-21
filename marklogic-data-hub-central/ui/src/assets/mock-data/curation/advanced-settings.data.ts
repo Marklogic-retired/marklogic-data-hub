@@ -2,6 +2,7 @@
 const advancedLoad = {
   tabKey: "2",
   tooltipsData: {},
+  isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   stepData: {name: "AdvancedLoad"},
@@ -14,12 +15,14 @@ const advancedLoad = {
   setHasChanged: jest.fn(),
   setPayload: jest.fn(),
   createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 // Passed as prop
 const advancedMapping = {
   tabKey: "2",
   tooltipsData: {},
+  isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   stepData: {name: "AdvancedMapping"},
@@ -32,12 +35,14 @@ const advancedMapping = {
   setHasChanged: jest.fn(),
   setPayload: jest.fn(),
   createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 // Passed as prop
 const advancedMatching = {
   tabKey: "2",
   tooltipsData: {},
+  isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   openAdvancedSettings: true,
@@ -52,11 +57,13 @@ const advancedMatching = {
   setHasChanged: jest.fn(),
   setPayload: jest.fn(),
   createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 const advancedMerging = {
   tabKey: "2",
   tooltipsData: {},
+  isEditing: true,
   openStepSettings: true,
   setOpenStepSettings: jest.fn(),
   openAdvancedSettings: true,
@@ -71,6 +78,7 @@ const advancedMerging = {
   setHasChanged: jest.fn(),
   setPayload: jest.fn(),
   createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad
