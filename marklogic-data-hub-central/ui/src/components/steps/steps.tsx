@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Modal, Tabs} from "antd";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
 import CreateEditMapping from "../entities/mapping/create-edit-mapping/create-edit-mapping";
@@ -31,6 +31,7 @@ interface Props {
     activityType: string;
     canWrite?: any;
     targetEntityType?: any;
+    targetEntityName?: any;
     toggleModal?: any;
     openStepDetails?: any;
 }
@@ -46,6 +47,18 @@ const Steps: React.FC<Props> = (props) => {
 
   const [basicPayload, setBasicPayload] = useState({});
   const [advancedPayload, setAdvancedPayload] = useState({});
+  const [defaultCollections, setDefaultCollections] = useState<any[]>([]);
+
+  // Adavnced settings needs step name (and target entity name for mapping) for default collections
+  useEffect(() => {
+    if (basicPayload["name"]) {
+      if (props.activityType === StepType.Mapping && props.targetEntityName) {
+        setDefaultCollections([basicPayload["name"], props.targetEntityName]);
+      } else {
+        setDefaultCollections([basicPayload["name"]]);
+      }
+    }
+  }, [basicPayload]);
 
   const onCancel = () => {
     if (hasBasicChanged || hasAdvancedChanged) {
@@ -87,9 +100,12 @@ const Steps: React.FC<Props> = (props) => {
   const createStep = async (payload) => {
     // Save payloads from both tabs, ensure name property is set
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
-    await props.createStep(Object.assign(basicPayload, advancedPayload, {name: name}));
+    await props.createStep(Object.assign(props.stepData, basicPayload, advancedPayload, payload, {name: name}));
     setHasBasicChanged(false);
     setHasAdvancedChanged(false);
+    if (props.activityType === StepType.Mapping && !props.isEditing) {
+      props.openStepDetails(name);
+    }
   };
 
   const createEditDefaults = {
@@ -118,7 +134,6 @@ const Steps: React.FC<Props> = (props) => {
     isEditing={props.isEditing}
     createMappingArtifact={createStep}
     stepData={props.stepData}
-    openStepDetails= {props.openStepDetails}
     targetEntityType={props.targetEntityType}
     sourceDatabase={props.sourceDatabase}
   />);
@@ -195,43 +210,42 @@ const Steps: React.FC<Props> = (props) => {
       <header>
         <div className={styles.title}>{getTitle()}</div>
       </header>
-      { !props.isEditing ? <div className={styles.noTabs}>
-        {getCreateEditStep(props.activityType)}
-      </div> :
-        <div className={styles.tabs}>
-          <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
-            <TabPane tab={(
-              <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
-                id="basicTooltip" style={ {wordBreak: "break-all"} }
-                title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</MLTooltip>
-            )} key="1" disabled={!isValid && currentTab !== "1"}>
-              {getCreateEditStep(props.activityType)}
-            </TabPane>
-            <TabPane tab={(
-              <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
-                id="advTooltip" style={ {wordBreak: "break-all"} }
-                title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</MLTooltip>
-            )} key="2" disabled={!isValid && currentTab !== "2"}>
-              <AdvancedSettings
-                tabKey="2"
-                tooltipsData={props.tooltipsData}
-                openStepSettings={props.openStepSettings}
-                setOpenStepSettings={props.setOpenStepSettings}
-                stepData={props.stepData}
-                updateLoadArtifact={props.updateStep}
-                activityType={props.activityType}
-                canWrite={props.canWrite}
-                currentTab={currentTab}
-                setIsValid={setIsValid}
-                resetTabs={resetTabs}
-                setHasChanged={setHasAdvancedChanged}
-                setPayload={setAdvancedPayload}
-                createStep={createStep}
-                onCancel={onCancel}
-              />
-            </TabPane>
-          </Tabs>
-        </div> }
+      <div className={styles.tabs}>
+        <Tabs activeKey={currentTab} defaultActiveKey={DEFAULT_TAB} size={"large"} onTabClick={handleTabChange} animated={false} tabBarGutter={10}>
+          <TabPane tab={(
+            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+              id="basicTooltip" style={ {wordBreak: "break-all"} }
+              title={(!isValid && currentTab !== "1") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Basic</MLTooltip>
+          )} key="1" disabled={!isValid && currentTab !== "1"}>
+            {getCreateEditStep(props.activityType)}
+          </TabPane>
+          <TabPane tab={(
+            <MLTooltip getPopupContainer={() => document.getElementById("stepSettings") || document.body}
+              id="advTooltip" style={ {wordBreak: "break-all"} }
+              title={(!isValid && currentTab !== "2") ? ErrorTooltips.disabledTab : null} placement={"bottom"}>Advanced</MLTooltip>
+          )} key="2" disabled={!isValid && currentTab !== "2"} forceRender={true}>
+            <AdvancedSettings
+              tabKey="2"
+              tooltipsData={props.tooltipsData}
+              isEditing={props.isEditing}
+              openStepSettings={props.openStepSettings}
+              setOpenStepSettings={props.setOpenStepSettings}
+              stepData={props.stepData}
+              updateLoadArtifact={props.updateStep}
+              activityType={props.activityType}
+              canWrite={props.canWrite}
+              currentTab={currentTab}
+              setIsValid={setIsValid}
+              resetTabs={resetTabs}
+              setHasChanged={setHasAdvancedChanged}
+              setPayload={setAdvancedPayload}
+              createStep={createStep}
+              onCancel={onCancel}
+              defaultCollections={defaultCollections}
+            />
+          </TabPane>
+        </Tabs>
+      </div>
       {/* Step Details link for Mapping steps */}
       { (props.isEditing && props.activityType === StepType.Mapping) ?
         <div className={styles.stepDetailsLink} onClick={() => handleStepDetails(props.stepData.name)}>

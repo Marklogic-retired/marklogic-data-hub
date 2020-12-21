@@ -45,14 +45,16 @@ const srcTypeOptions = [
 const {TextArea} = Input;
 
 const CreateEditStep: React.FC<Props>  = (props) => {
+  // TODO use steps.config.ts for default values
   const {handleError} = useContext(UserContext);
   const [stepName, setStepName] = useState("");
   const [description, setDescription] = useState("");
 
   const [collections, setCollections] = useState("");
   const [collectionOptions, setCollectionOptions] = useState(["a", "b"]);
-  const [selectedSource, setSelectedSource] = useState("collection");
+  const [selectedSource, setSelectedSource] = useState(props.editStepArtifactObject.selectedSource ? props.editStepArtifactObject.selectedSource : "collection");
   const [srcQuery, setSrcQuery] = useState("");
+  const [timestamp, setTimestamp] = useState("");
 
   //To check submit validity
   const [isStepNameTouched, setStepNameTouched] = useState(false);
@@ -60,13 +62,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   const [isCollectionsTouched, setCollectionsTouched] = useState(false);
   const [isSrcQueryTouched, setSrcQueryTouched] = useState(false);
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
-  const [timestamp, setTimestamp] = useState("");
   const [isTimestampTouched, setTimestampTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const [tobeDisabled, setTobeDisabled] = useState(false);
-  const [changed, setChanged] = useState(false);
 
   const initStep = () => {
     setStepName(props.editStepArtifactObject.name);
@@ -86,18 +86,19 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     resetTouchedValues();
     setIsValid(true);
     setTobeDisabled(true);
+
+    props.setIsValid(true);
   };
 
   useEffect(() => {
-    if (props.currentTab === props.tabKey) {
-      // Edit Step Artifact
-      if (props.isEditing) {
-        initStep();
-      } else { // New Step Artifact
-        reset();
-      }
+    // Edit Step Artifact
+    if (props.isEditing) {
+      initStep();
+    } else { // New Step Artifact
+      reset();
+      props.setIsValid(false);
     }
-  }, [props.currentTab]);
+  }, [props.openStepSettings]);
 
   const reset = () => {
     setStepName("");
@@ -132,8 +133,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-    setChanged(false);
-  }, [changed]);
+  }, [stepName, description, collections, selectedSource, srcQuery, timestamp]);
 
   const hasFormChanged = () => {
     if (!isStepNameTouched
@@ -150,9 +150,9 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   };
 
   const getPayload = () => {
-    let result;
+    let result, sQuery;
     if (selectedSource === "collection") {
-      let sQuery = `cts.collectionQuery(['${collections}'])`;
+      sQuery = collections ? `cts.collectionQuery(['${collections}'])` : props.editStepArtifactObject.sourceQuery;
       result = {
         name: stepName,
         targetEntityType: props.targetEntityType,
@@ -161,12 +161,13 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         sourceQuery: sQuery
       };
     } else {
+      sQuery = srcQuery ? srcQuery : props.editStepArtifactObject.sourceQuery;
       result = {
         name: stepName,
         targetEntityType: props.targetEntityType,
         description: description,
         selectedSource: selectedSource,
-        sourceQuery: srcQuery
+        sourceQuery: sQuery
       };
     }
     if (props.stepType === StepType.Merging) {
@@ -248,9 +249,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       if (data.length > 0) {
         if (stepName) {
           setIsValid(true);
+          props.setIsValid(true);
         }
       } else {
         setIsValid(false);
+        props.setIsValid(false);
       }
     }
   };
@@ -265,9 +268,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (collections || srcQuery) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -295,9 +300,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (stepName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -315,9 +322,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         if (event.target.value.length > 0) {
           if (stepName) {
             setIsValid(true);
+            props.setIsValid(true);
           }
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
@@ -335,7 +344,6 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         }
       }
     }
-    setChanged(true);
   };
 
   const handleSelectedSource = (event) => {
@@ -350,18 +358,21 @@ const CreateEditStep: React.FC<Props>  = (props) => {
       if (event.target.value === "collection") {
         if (stepName && collections) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       } else {
         if (stepName && srcQuery) {
           setIsValid(true);
+          props.setIsValid(true);
         } else {
           setIsValid(false);
+          props.setIsValid(false);
         }
       }
     }
-    setChanged(true);
   };
 
   return (

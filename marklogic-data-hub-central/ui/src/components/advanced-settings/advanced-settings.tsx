@@ -4,7 +4,7 @@ import {Form, Input, Icon, Select} from "antd";
 import styles from "./advanced-settings.module.scss";
 import {AdvancedSettingsTooltips} from "../../config/tooltips.config";
 import {AdvancedSettingsMessages} from "../../config/messages.config";
-import {getStep} from "../../api/steps";
+import StepsConfig from "../../config/steps.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import "./advanced-settings.scss";
 import AdvancedTargetCollections from "./advanced-target-collections";
@@ -15,6 +15,7 @@ const {Option} = Select;
 type Props = {
   tabKey: string;
   tooltipsData: any;
+  isEditing: boolean;
   openStepSettings: boolean;
   setOpenStepSettings: any;
   stepData: any;
@@ -28,24 +29,24 @@ type Props = {
   setPayload: any;
   createStep: any;
   onCancel: any;
+  defaultCollections?: any;
 }
 
 const AdvancedSettings: React.FC<Props> = (props) => {
   const tooltips = Object.assign({}, AdvancedSettingsTooltips, props.tooltipsData);
   const stepType = props.activityType;
-  const invalidJSONMessage = "Invalid JSON";
-
-  const usesSourceDatabase = stepType !== "ingestion";
-  const defaultSourceDatabase = usesSourceDatabase ? "data-hub-STAGING" : "data-hub-FINAL";
+  const invalidJSONMessage = StepsConfig.invalidJSONMessage;
 
   const [isCustomIngestion, setIsCustomIngestion] = useState(false);
   const [stepDefinitionName, setStepDefinitionName] = useState("");
 
+  const usesSourceDatabase = stepType !== "ingestion";
+  const defaultSourceDatabase = usesSourceDatabase ? StepsConfig.stagingDb : StepsConfig.finalDb;
   const [sourceDatabase, setSourceDatabase] = useState(defaultSourceDatabase);
   const [sourceDatabaseTouched, setSourceDatabaseTouched] = useState(false);
 
-  const defaultTargetDatabase = !usesSourceDatabase ? "data-hub-STAGING" : "data-hub-FINAL";
-  const databaseOptions = ["data-hub-STAGING", "data-hub-FINAL"];
+  const defaultTargetDatabase = !usesSourceDatabase ? StepsConfig.stagingDb : StepsConfig.finalDb;
+  const databaseOptions = [StepsConfig.stagingDb, StepsConfig.finalDb];
   const [targetDatabase, setTargetDatabase] = useState(defaultTargetDatabase);
   const [targetDatabaseTouched, setTargetDatabaseTouched] = useState(false);
 
@@ -57,30 +58,31 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [defaultTargetCollections, setDefaultTargetCollections] = useState<any>({});
   const [targetCollections, setTargetCollections] = useState<any>(null);
 
-  const [targetPermissions, setTargetPermissions] = useState("");
-  const validCapabilities = ["read", "update", "insert", "execute"];
+  const defaultTargetPermissions = StepsConfig.defaultTargetPerms;
+  const [targetPermissions, setTargetPermissions] = useState(defaultTargetPermissions);
+  const validCapabilities = StepsConfig.validCapabilities;
   const [targetPermissionsTouched, setTargetPermissionsTouched] = useState(false);
   const [permissionValidationError, setPermissionValidationError] = useState("");
   const [targetPermissionsValid, setTargetPermissionsValid] = useState(true);
 
   const usesTargetFormat = stepType === "mapping";
-  const defaultTargetFormat = "JSON";
+  const defaultTargetFormat = StepsConfig.defaultTargetFormat;
   const targetFormatOptions = ["JSON", "XML"].map(d => <Option data-testid="targetFormatOptions" key={d}>{d}</Option>);
-  const [targetFormat, setTargetFormat] = useState("JSON");
+  const [targetFormat, setTargetFormat] = useState(defaultTargetFormat);
   const [targetFormatTouched, setTargetFormatTouched] = useState(false);
 
-  const defaultprovGranularity = "coarse";
+  const defaultprovGranularity = StepsConfig.defaultProvGran;
   const fineGrainProvAvailable = stepType === "matching" || stepType === "merging";
   const provGranularityOptions = fineGrainProvAvailable ? {"Coarse-grained": "coarse", "Fine-grained": "fine", "Off": "off"} : {"Coarse-grained": "coarse", "Off": "off"};
   const [provGranularity, setProvGranularity] = useState(defaultprovGranularity);
   const [provGranularityTouched, setProvGranularityTouched] = useState(false);
 
-  const defaultValidateEntity = "doNotValidate";
+  const defaultValidateEntity = StepsConfig.defaultValidateEntity;
   const validateEntityOptions = {"Do not validate": "doNotValidate", "Store validation errors in entity headers": "accept", "Skip documents with validation  errors": "reject"};
-  const [validateEntity, setValidateEntity] = useState("doNotValidate");
+  const [validateEntity, setValidateEntity] = useState(defaultValidateEntity);
   const [validateEntityTouched, setValidateEntityTouched] = useState(false);
 
-  const defaultBatchSize = 100;
+  const defaultBatchSize = StepsConfig.defaultBatchSize;
   const [batchSize, setBatchSize] = useState(defaultBatchSize);
   const [batchSizeTouched, setBatchSizeTouched] = useState(false);
 
@@ -100,11 +102,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [customHookValid, setCustomHookValid] = useState(true);
   const [additionalSettings, setAdditionalSettings] = useState("");
 
-  const [changed, setChanged] = useState(false);
-
   const canReadWrite = props.canWrite;
 
-  const initStep = () => {
+  useEffect(() => {
+    getSettings();
+
     setSourceDatabaseTouched(false);
     setTargetDatabaseTouched(false);
     setAddCollTouched(false);
@@ -117,39 +119,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setProcessorsTouched(false);
     setCustomHookTouched(false);
     setTargetPermissionsTouched(false);
-  };
 
-  useEffect(() => {
-    getSettings();
-    initStep();
-
-    return () => {
-      setStepDefinitionName("");
-      setIsCustomIngestion(false);
-
-      setSourceDatabase(defaultSourceDatabase);
-      setTargetDatabase(defaultTargetDatabase);
-      setAdditionalCollections([]);
-      setTargetCollections(null);
-      setTargetPermissions("");
-      setPermissionValidationError("");
-      setTargetFormat(defaultTargetFormat);
-      setProvGranularity(defaultprovGranularity);
-      setValidateEntity(defaultValidateEntity);
-      setBatchSize(defaultBatchSize);
-      setHeaders("{}");
-      setProcessors("[]");
-      setCustomHook("{}");
-      setAdditionalSettings("");
-
-      setProcessorsExpanded(false);
-      setCustomHookExpanded(false);
-
-      setHeadersValid(true);
-      setProcessorsValid(true);
-      setCustomHookValid(true);
-      setTargetPermissionsValid(true);
-    };
   }, [props.openStepSettings]);
 
   const isFormValid = () => {
@@ -178,76 +148,59 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     }
   };
 
-  const createSettings = (settingsObj) => {
-    // Parent handles saving of all tabs
-    if (props.stepData.name) {
-      props.createStep(settingsObj);
-    }
-  };
-
   const getSettings = async () => {
-    if (props.stepData.name) {
-      try {
-        let response = await getStep(props.stepData.name, stepType);
-        if (response.status === 200) {
-          if (stepType === "ingestion" && response.data.stepDefinitionName !== "default-ingestion") {
-            setIsCustomIngestion(true);
-            setStepDefinitionName(response.data.stepDefinitionName);
-          }
-          if (response.data.sourceDatabase) {
-            setSourceDatabase(response.data.sourceDatabase);
-          }
-          if (response.data.collections) {
-            setDefaultCollections(response.data.collections);
-          }
-          setTargetDatabase(response.data.targetDatabase);
-          if (response.data.additionalCollections) {
-            setAdditionalCollections([...response.data.additionalCollections]);
-          }
-          setTargetPermissions(response.data.permissions);
-          setTargetFormat(response.data.targetFormat);
-          setProvGranularity(response.data.provenanceGranularityLevel);
-          setValidateEntity(response.data.validateEntity) ;
-          setBatchSize(response.data.batchSize);
-          if (response.data.headers) {
-            setHeaders(formatJSON(response.data.headers));
-          }
-          if (response.data.processors) {
-            setProcessors(formatJSON(response.data.processors));
-          }
-          if (response.data.customHook) {
-            setCustomHook(formatJSON(response.data.customHook));
-          }
-          if (response.data.additionalSettings) {
-            setAdditionalSettings(formatJSON(response.data.additionalSettings));
-          }
-          if (usesAdvancedTargetCollections) {
-            const targetEntityType = response.data.targetEntityType || response.data.targetEntity;
-            const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURI(targetEntityType)}`;
-            const defaultCollectionsResp = await Axios.get(defaultCollectionsURL);
-            if (defaultCollectionsResp.status === 200) {
-              setDefaultTargetCollections(defaultCollectionsResp.data);
-            }
-            setTargetCollections(response.data.targetCollections || {});
-          }
+    if (props.isEditing) {
+      if (stepType === "ingestion" && props.stepData.stepDefinitionName !== "default-ingestion") {
+        setIsCustomIngestion(true);
+        setStepDefinitionName(props.stepData.stepDefinitionName);
+      }
+      if (props.stepData.sourceDatabase) {
+        setSourceDatabase(props.stepData.sourceDatabase);
+      }
+      if (props.stepData.collections) {
+        setDefaultCollections(props.stepData.collections);
+      }
+      if (props.stepData.sourceDatabase) {
+        setTargetDatabase(props.stepData.targetDatabase);
+      }
+      if (props.stepData.additionalCollections) {
+        setAdditionalCollections([...props.stepData.additionalCollections]);
+      }
+      if (props.stepData.permissions) {
+        setTargetPermissions(props.stepData.permissions);
+      }
+      if (props.stepData.targetFormat) {
+        setTargetFormat(props.stepData.targetFormat);
+      }
+      if (props.stepData.provenanceGranularityLevel) {
+        setProvGranularity(props.stepData.provenanceGranularityLevel);
+      }
+      if (props.stepData.validateEntity) {
+        setValidateEntity(props.stepData.validateEntity);
+      }
+      if (props.stepData.batchSize) {
+        setBatchSize(props.stepData.batchSize);
+      }
+      if (props.stepData.headers) {
+        setHeaders(formatJSON(props.stepData.headers));
+      }
+      if (props.stepData.processors) {
+        setProcessors(formatJSON(props.stepData.processors));
+      }
+      if (props.stepData.customHook) {
+        setCustomHook(formatJSON(props.stepData.customHook));
+      }
+      if (props.stepData.additionalSettings) {
+        setAdditionalSettings(formatJSON(props.stepData.additionalSettings));
+      }
+      if (usesAdvancedTargetCollections) {
+        const targetEntityType = props.stepData.targetEntityType || props.stepData.targetEntity;
+        const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURI(targetEntityType)}`;
+        const defaultCollectionsResp = await Axios.get(defaultCollectionsURL);
+        if (defaultCollectionsResp.status === 200) {
+          setDefaultTargetCollections(defaultCollectionsResp.data);
         }
-      } catch (error) {
-        let message = error.response;
-        console.error("Error while fetching settings artifact", message || error);
-        setSourceDatabase(defaultSourceDatabase);
-        setTargetDatabase(defaultTargetDatabase);
-        setAdditionalCollections([]);
-        setTargetPermissions("");
-        setTargetFormat(defaultTargetFormat);
-        setProvGranularity(defaultprovGranularity);
-        setValidateEntity(defaultValidateEntity);
-        setBatchSize(defaultBatchSize);
-        setHeaders("{}");
-        setProcessors("[]");
-        setCustomHook("{}");
-        setStepDefinitionName("");
-        setIsCustomIngestion(false);
-        setAdditionalSettings("");
+        setTargetCollections(props.stepData.targetCollections || {});
       }
     }
   };
@@ -257,12 +210,18 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     props.onCancel();
   };
 
-  // On change of any form field, update the changed flag for parent
+  // On change of any form field (or on init), update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
-    setChanged(false);
     props.setPayload(getPayload());
-  }, [changed]);
+  }, [batchSize, sourceDatabase, targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, targetPermissions, targetDatabase, validateEntity, provGranularity, headers, processors, customHook, additionalSettings, targetCollections, targetFormat, targetPermissions, isCustomIngestion, stepDefinitionName]);
+
+  // On change of default collections in parent, update default collections if not empty
+  useEffect(() => {
+    if (props.defaultCollections.length > 0) {
+      setDefaultCollections(props.defaultCollections);
+    }
+  }, [props.defaultCollections]);
 
   //Check if Delete Confirmation dialog should be opened or not.
   const hasFormChanged = () => {
@@ -306,8 +265,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     if (event) event.preventDefault();
 
-    let payload = getPayload();
-    createSettings(payload);
+    // Parent handles saving of all tabs
+    props.createStep(getPayload());
+
     props.setOpenStepSettings(false);
     props.resetTabs();
   };
@@ -395,7 +355,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setBatchSize(event.target.value);
       setBatchSizeTouched(true);
     }
-    setChanged(true);
   };
 
   const handleBlur = (event) => {
@@ -422,8 +381,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (event.target.id === "targetPermissions") {
       setTargetPermissionsValid(isPermissionsValid());
     }
-
-    setChanged(true);
   };
 
   const handleSourceDatabase = (value) => {
@@ -433,7 +390,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setSourceDatabaseTouched(true);
       setSourceDatabase(value);
     }
-    setChanged(true);
   };
 
   const handleTargetDatabase = (value) => {
@@ -443,7 +399,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setTargetDatabaseTouched(true);
       setTargetDatabase(value);
     }
-    setChanged(true);
   };
 
   const handleAddColl = (value) => {
@@ -454,7 +409,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       // default collections will come from default settings retrieved. Don't want them to be added to additionalCollections property
       setAdditionalCollections(value.filter((col) => !defaultCollections.includes(col)));
     }
-    setChanged(true);
   };
 
   const handleAdvancedTargetCollections = (value) => {
@@ -464,7 +418,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setAdvancedTargetCollectionsTouched(true);
       setTargetCollections(value);
     }
-    setChanged(true);
   };
 
   const handleTargetFormat = (value) => {
@@ -474,7 +427,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setTargetFormat(value);
       setTargetFormatTouched(true);
     }
-    setChanged(true);
   };
 
   const handleProvGranularity = (value) => {
@@ -484,7 +436,6 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       setProvGranularityTouched(true);
       setProvGranularity(value);
     }
-    setChanged(true);
   };
 
   const handleValidateEntity = (value) => {

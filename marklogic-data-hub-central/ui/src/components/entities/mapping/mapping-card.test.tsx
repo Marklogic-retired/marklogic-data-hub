@@ -161,7 +161,7 @@ describe("Mapping Card component", () => {
   test("Open step settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["writeMapping", "readMapping"]);
-    const {debug, getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
+    const {getByText, getByLabelText, getByTestId, getByPlaceholderText} = render(
       <Router><AuthoritiesContext.Provider value={authorityService}><MappingCard
         {...mappingProps}
         canReadWrite={true}
@@ -174,7 +174,6 @@ describe("Mapping Card component", () => {
       fireEvent.click(getByTestId("Mapping1-edit"));
     });
     expect(getByText("Mapping Step Settings")).toBeInTheDocument();
-    debug;
     expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
