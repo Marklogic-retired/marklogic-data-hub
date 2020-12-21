@@ -44,15 +44,21 @@ describe("Mapping", () => {
     loadPage.saveButton().should("be.enabled");
     loadPage.stepNameInput().type(loadStep);
     loadPage.stepDescriptionInput().type("load order with processors");
-    loadPage.confirmationOptions("Save").click();
+    //verify advanced setting modifications during creation
+    loadPage.switchEditAdvanced().click();
+    // add processor to load step
+    advancedSettingsDialog.setStepProcessor("loadTile/orderCategoryCodeProcessor");
+
+    loadPage.confirmationOptions("Save").click({force: true});
     cy.findByText(loadStep).should("be.visible");
 
     // Open step settings and switch to Advanced tab
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();
 
-    // add processor to load step
-    advancedSettingsDialog.setStepProcessor("loadTile/orderCategoryCodeProcessor");
+    //processor should already be set during creation
+    cy.findByLabelText("processors-expand").trigger("mouseover").click();
+    cy.get("#processors").should("not.be.empty");
 
     //add cutomHook to load step
     advancedSettingsDialog.setCustomHook("loadTile/addPrimaryKeyHook");
@@ -80,12 +86,17 @@ describe("Mapping", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep().click());
-
     createEditMappingDialog.setMappingName(mapStep);
     createEditMappingDialog.setMappingDescription("An order mapping with custom processors");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
-    createEditMappingDialog.saveButton().click();
+
+    //verify advanced setting modifications during creation
+    loadPage.switchEditAdvanced().click();
+    // add processor to map step
+    advancedSettingsDialog.setStepProcessor("curateTile/orderDateProcessor");
+
+    createEditMappingDialog.saveButton().click({force: true});
 
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
@@ -98,8 +109,9 @@ describe("Mapping", () => {
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
 
-    // add processors
-    advancedSettingsDialog.setStepProcessor("curateTile/orderDateProcessor");
+    //processor should already be set during creation
+    cy.findByLabelText("processors-expand").trigger("mouseover").click();
+    cy.get("#processors").should("not.be.empty");
 
     // add customHook to mapping step
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");

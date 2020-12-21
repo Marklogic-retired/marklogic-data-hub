@@ -1,82 +1,7 @@
-// Passed as prop
-const advancedLoad = {
-  tabKey: "2",
-  tooltipsData: {},
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  stepData: {name: "AdvancedLoad"},
-  updateLoadArtifact: jest.fn(),
-  activityType: "ingestion",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: jest.fn(),
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-};
-
-// Passed as prop
-const advancedMapping = {
-  tabKey: "2",
-  tooltipsData: {},
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  stepData: {name: "AdvancedMapping"},
-  updateLoadArtifact: jest.fn(),
-  activityType: "mapping",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: jest.fn(),
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-};
-
-// Passed as prop
-const advancedMatching = {
-  tabKey: "2",
-  tooltipsData: {},
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  openAdvancedSettings: true,
-  setOpenAdvancedSettings: jest.fn(),
-  stepData: {name: "AdvancedMatching"},
-  updateLoadArtifact: jest.fn(),
-  activityType: "matching",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: true,
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-};
-
-const advancedMerging = {
-  tabKey: "2",
-  tooltipsData: {},
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  openAdvancedSettings: true,
-  setOpenAdvancedSettings: jest.fn(),
-  stepData: {name: "AdvancedMerging"},
-  updateLoadArtifact: jest.fn(),
-  activityType: "merging",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: true,
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-};
-
 // Returned from endpoint: /api/steps/ingestion/AdvancedLoad
 const stepLoad = {"data":
     {
-      "collections": ["testCollection"],
+      "collections": ["AdvancedLoad"],
       "additionalCollections": ["addedCollection"],
       "batchSize": 35,
       "permissions": "data-hub-common,read,data-hub-common,update",
@@ -109,7 +34,7 @@ const stepLoad = {"data":
 // Returned from endpoint: /api/steps/mapping/AdvancedMapping
 const stepMapping = {"data":
     {
-      "collections": ["testCollection"],
+      "collections": ["AdvancedMapping"],
       "additionalCollections": ["addedCollection"],
       "batchSize": 35,
       "permissions": "data-hub-common,read,data-hub-common,update",
@@ -142,7 +67,7 @@ const stepMapping = {"data":
 // Returned from endpoint: /api/steps/matching/AdvancedMatching
 const stepMatching = {"data":
         {
-          "collections": ["testCollection"],
+          "collections": ["AdvancedMatching"],
           "additionalCollections": ["addedCollection"],
           "batchSize": 35,
           "permissions": "data-hub-common,read,data-hub-common,update",
@@ -218,10 +143,118 @@ const defaultTargetCollections = {"data":
 "status": 200
 };
 
+// Passed as prop
+const advancedLoad = {
+  tabKey: "2",
+  tooltipsData: {},
+  isEditing: true,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  stepData: stepLoad.data,
+  updateLoadArtifact: jest.fn(),
+  activityType: "ingestion",
+  canWrite: true,
+  currentTab: "2",
+  setIsValid: jest.fn(),
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
+  defaultCollections: [stepLoad.data.name]
+};
+
+// Passed as prop
+const advancedLoadNew = {
+  ...advancedLoad,
+  stepData: {},
+  defaultCollections: []
+};
+
+// Passed as prop
+const advancedMapping = {
+  tabKey: "2",
+  tooltipsData: {},
+  isEditing: true,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  stepData: stepMapping.data,
+  updateLoadArtifact: jest.fn(),
+  activityType: "mapping",
+  canWrite: true,
+  currentTab: "2",
+  setIsValid: jest.fn(),
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
+  defaultCollections: [stepMapping.data.name, "EntityName"]
+};
+
+// Passed as prop
+const advancedMappingNew = {
+  ...advancedMapping,
+  stepData: {},
+  defaultCollections: []
+};
+
+// Passed as prop
+const advancedMatching = {
+  tabKey: "2",
+  tooltipsData: {},
+  isEditing: true,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  openAdvancedSettings: true,
+  setOpenAdvancedSettings: jest.fn(),
+  stepData: stepMatching.data,
+  updateLoadArtifact: jest.fn(),
+  activityType: "matching",
+  canWrite: true,
+  currentTab: "2",
+  setIsValid: true,
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
+  defaultCollections: [stepMatching.data.name]
+};
+
+const advancedMerging = {
+  tabKey: "2",
+  tooltipsData: {},
+  isEditing: true,
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  openAdvancedSettings: true,
+  setOpenAdvancedSettings: jest.fn(),
+  stepData: stepMerging.data,
+  updateLoadArtifact: jest.fn(),
+  activityType: "merging",
+  canWrite: true,
+  currentTab: "2",
+  setIsValid: true,
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
+  defaultCollections: [stepMerging.data.name]
+};
+
 const data = {
   advancedLoad: advancedLoad,
-  customLoad: {...advancedLoad, stepData: {name: "CustomLoad"}},
+  advancedLoadNew: advancedLoadNew,
+  customLoad: {...advancedLoad, stepData: {
+    ...stepLoad.data,
+    name: "CustomLoad",
+    stepDefinitionType: "custom",
+    stepDefinitionName: "custom-step"
+  }},
   advancedMapping: advancedMapping,
+  advancedMappingNew: advancedMappingNew,
   advancedMatching: advancedMatching,
   advancedMerging: advancedMerging,
   stepLoad: stepLoad,

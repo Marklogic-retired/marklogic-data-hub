@@ -283,6 +283,14 @@ const mappings = {"data":
           "sourcedFrom": "PIN"
         }
       },
+      "provenanceGranularityLevel": "coarse",
+      "batchSize": 50,
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "sourceDatabase": "data-hub-STAGING",
+      "targetDatabase": "data-hub-FINAL",
+      "collections": ["Mapping1", "Customer"],
+      "additionalCollections": ["customerCollection"],
+      "validateEntity": false,
       "lastUpdated": "2020-04-24T13:21:00.169198-07:00"
     }
   ]
@@ -302,6 +310,14 @@ const mappings = {"data":
           "sourcedFrom": "PIN"
         }
       },
+      "provenanceGranularityLevel": "coarse",
+      "batchSize": 50,
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "sourceDatabase": "data-hub-STAGING",
+      "targetDatabase": "data-hub-FINAL",
+      "collections": ["Mapping1", "Customer"],
+      "additionalCollections": ["customerCollection"],
+      "validateEntity": false,
       "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
     }
   ]

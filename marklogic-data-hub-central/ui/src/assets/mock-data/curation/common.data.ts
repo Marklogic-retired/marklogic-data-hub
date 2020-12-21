@@ -74,6 +74,21 @@ const loadData = {
       targetFormat: "json",
       outputURIReplacement: "",
       inputFilePath: "/json-test/data-sets/testLoad",
+      provenanceGranularityLevel: "coarse",
+      batchSize: 35,
+      permissions: "data-hub-operator,read,data-hub-operator,update",
+      targetDatabase: "data-hub-STAGING",
+      collections: ["testLoad"],
+      additionalCollections: ["addedCollection"],
+      headers: {
+        "header": true
+      },
+      processors: {
+        "processor": true
+      },
+      customHook: {
+        "hook": true
+      },
       lastUpdated: "2000-01-01T12:00:00.000000-00:00"
     },
     {

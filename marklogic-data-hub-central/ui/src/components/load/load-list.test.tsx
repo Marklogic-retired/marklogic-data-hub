@@ -145,7 +145,7 @@ describe("Load data component", () => {
     expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     // Basic settings values
-    expect(getByText("testLoad")).toBeInTheDocument();
+    expect(getAllByText("testLoad")[0]).toBeInTheDocument();
     expect(getByPlaceholderText("Enter description")).toBeInTheDocument();
     expect(getAllByText("JSON").length === 2);
     expect(getByPlaceholderText("Enter URI Prefix")).toBeInTheDocument();
@@ -155,7 +155,6 @@ describe("Load data component", () => {
     await wait(() => {
       fireEvent.click(getByText("Advanced"));
     });
-    expect(axiosMock.get).toBeCalledWith("/api/steps/ingestion/" + data.loadData.data[0].name);
     expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
     let saveButton = getAllByText("Save"); // Each tab has a Save button
