@@ -138,10 +138,10 @@ return (
   let $primary-type-def := if (fn:exists($primary-type-def)) then $primary-type-def
     else $definitions => map:get(map:keys($definitions)[1])
   let $tdes-disabled := map:contains($primary-type-def, "tdeGenerationDisabled") and
-    not(xs:string(map:get($entity-type-definition, "tdeGenerationDisabled")) = "false")
+    not(xs:string(map:get($primary-type-def, "tdeGenerationDisabled")) = "false")
 
   (: Attempt to generate TDE :)
-  if (local:should-write-tde($tde-uri) and not($tdes-disabled)) then
+  return if (local:should-write-tde($tde-uri) and not($tdes-disabled)) then
     try {
       tde:template-insert(
         $tde-uri,
