@@ -262,7 +262,20 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentFileType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentEntity().should("contain", "Customer");
+  });
 
+  it("verify detail view of the document with encoded uri", () => {
+    browsePage.selectEntity("All Data");
+    browsePage.search("Holland Wells");
+    browsePage.getTotalDocuments().should("be.equal", 1);
+    browsePage.getInstanceViewIcon().click();
+    detailPage.getInstanceView().should("exist");
+    detailPage.getDocumentEntity().should("contain", "Customer");
+    detailPage.getDocumentTimestamp().should("exist");
+    detailPage.getDocumentSource().should("contain", "CustomerSourceName");
+    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentTable().should("exist");
+    detailPage.getDocumentUri().should("contain", "/json/customers/Cust%205.json");
   });
 
   it("verify instance view of the document without pk", () => {
