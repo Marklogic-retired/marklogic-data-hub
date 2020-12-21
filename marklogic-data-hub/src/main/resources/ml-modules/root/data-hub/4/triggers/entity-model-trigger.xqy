@@ -134,7 +134,9 @@ return (
 
   (: Check if TDE generation is disabled. Any value other than false or "false" disables TDE generation. :)
   let $definitions := $entity-def-map => map:get("definitions")
-  let $primary-type-def := $definitions => map:get(map:keys($definitions)[1])
+  let $primary-type-def := $definitions => map:get($entity-title)
+  let $primary-type-def := if (fn:exists($primary-type-def)) then $primary-type-def
+    else $definitions => map:get(map:keys($definitions)[1])
   let $tdes-disabled := map:contains($primary-type-def, "tdeGenerationDisabled") and
     not(xs:string(map:get($entity-type-definition, "tdeGenerationDisabled")) = "false")
 
