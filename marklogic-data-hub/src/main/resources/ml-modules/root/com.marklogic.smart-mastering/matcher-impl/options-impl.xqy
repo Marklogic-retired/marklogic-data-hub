@@ -430,7 +430,14 @@ declare function opt-impl:compile-match-options(
         else
           ()
       let $is-reduce :=  ($is-complex-rule and $rule-set/reduce = fn:true()) or $local-name eq "reduce"
-      let $abs-weight := fn:abs(fn:number($rule-set/(@weight|weight)))
+      let $abs-weight :=
+        fn:abs(
+          (: This is a special case for the legacy zip options :)
+          if ($rule-set/(algorithmRef|@algorithms-ref) = "zip-match" and fn:empty($rule-set/(@weight|weight))) then
+            fn:max($rule-set/zip/(@weight|weight) ! fn:number(.))
+          else
+            fn:number($rule-set/(@weight|weight))
+        )
       let $weight := if ($is-reduce) then -$abs-weight else $abs-weight
       let $rules-count := fn:count($match-rules)
       let $match-queries :=
