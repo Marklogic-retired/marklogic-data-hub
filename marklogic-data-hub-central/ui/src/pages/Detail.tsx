@@ -61,7 +61,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
         return;
       }
       try {
-        const result = await axios(`/api/entitySearch?docUri=${uri}&database=${database}`);
+        let encodedUri = encodeURIComponent(uri);
+        const result = await axios(`/api/entitySearch?docUri=${encodedUri}&database=${database}`);
         if (!result.data) {
           history.push("/error");
         }
