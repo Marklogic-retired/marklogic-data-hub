@@ -58,7 +58,8 @@ task updateVersion {
             "examples/insurance/build.gradle",
             "examples/mapping-example/build.gradle",
             "examples/patient-hub/build.gradle",
-            "examples/smart-mastering-complete/build.gradle"
+            "examples/smart-mastering-complete/build.gradle",
+            "examples/snapshot-testing/build.gradle"
         ]
         String sourceVersion = project.hasProperty('sourceVersion') ? project.property('sourceVersion') : ""
         String targetVersion = project.hasProperty('targetVersion') ? project.property('targetVersion') : ""
