@@ -29,9 +29,11 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
       let $target-entity-type := $compiled-match-options => map:get("targetEntityType")
       let $match-options := $compiled-match-options => map:get("normalizedOptions")
       let $is-json := $compiled-match-options => map:get("dataFormat") = $const:FORMAT-JSON
-      let $property-info := if (fn:exists($target-entity-type)) then
+      let $property-info :=
+        if (fn:exists($target-entity-type)) then
           es-helper:get-entity-property-info($target-entity-type, $full-property-name)
-        else ()
+        else
+          ()
       let $helper-query :=
         if (fn:exists($property-info)) then
           let $namespace := fn:string($property-info => map:get("namespace"))
@@ -221,4 +223,33 @@ declare function helper-impl:NCName-compatible($title as xs:string) {
     $title
   else
     xdmp:encode-for-NCName($title)
+};
+
+
+declare function helper-impl:get-value-query-fn($property-info, $full-property-name as xs:string, $is-json as xs:boolean)
+{
+  let $namespace := fn:string($property-info => map:get("namespace"))
+  let $qname := fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("propertyTitle")))
+  return
+    function($val, $weight) {
+      if (fn:empty($val)) then
+        ()
+      else if ($is-json) then
+        cts:json-property-value-query(fn:local-name-from-QName($qname), $val, (), $weight)
+      else
+        cts:element-value-query($qname, $val ! fn:string(.)[. ne ''], (), $weight)
+    }
+};
+
+declare function helper-impl:get-struct-prop-parent-scope-query-fn($property-info, $property-name)
+{
+  let $namespace := fn:string($property-info => map:get("namespace"))
+  let $property-qname := fn:QName($namespace, helper-impl:NCName-compatible($property-name))
+  return
+    function($queries, $is-json) {
+      if ($is-json) then
+        cts:json-property-scope-query(fn:string($property-qname), cts:and-query($queries))
+      else
+        cts:element-query($property-qname, cts:and-query($queries))
+    }
 };

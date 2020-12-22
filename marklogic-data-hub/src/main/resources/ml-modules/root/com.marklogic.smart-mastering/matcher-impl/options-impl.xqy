@@ -424,71 +424,78 @@ declare function opt-impl:compile-match-options(
           $rule-set/matchRules
         else
           $rule-set
+      let $multi-struct-prop-multi-value-map :=
+        if ($is-complex-rule) then
+          opt-impl:multi-struct-prop-multi-value-map($match-rules, $target-entity-type-def)
+        else
+          ()
       let $is-reduce :=  ($is-complex-rule and $rule-set/reduce = fn:true()) or $local-name eq "reduce"
       let $abs-weight := fn:abs(fn:number($rule-set/(@weight|weight)))
       let $weight := if ($is-reduce) then -$abs-weight else $abs-weight
       let $rules-count := fn:count($match-rules)
       let $match-queries :=
-            for $match-rule in $match-rules
-            let $weight := $weight div $rules-count
-            let $type := if ($is-complex-rule) then
-                fn:string($match-rule/matchType)
+          for $match-rule in $match-rules
+          let $weight := $weight div $rules-count
+          let $type :=
+            if ($is-complex-rule) then
+              fn:string($match-rule/matchType)
+            else
+              $local-name
+          let $full-property-node :=
+              if ($is-complex-rule) then
+                $match-rule/(entityPropertyPath|documentXPath)
               else
-                $local-name
-            let $full-property-node :=
-                if ($is-complex-rule) then
-                  $match-rule/(entityPropertyPath|documentXPath)
-                else
-                  $match-rule/(@property-name|propertyName|((*:all-match|allMatch)/*:property))
-            let $full-property-name := fn:normalize-space(fn:string-join($full-property-node, ", "))
-            let $algorithm-ref := if ($is-complex-rule) then
-                if ($type eq "custom") then
-                  $match-rule/algorithmModulePath || ":" || $match-rule/algorithmFunction
-                else
-                  $type
+                $match-rule/(@property-name|propertyName|((*:all-match|allMatch)/*:property))
+          let $full-property-name := fn:normalize-space(fn:string-join($full-property-node, ", "))
+          let $algorithm-ref :=
+            if ($is-complex-rule) then
+              if ($type eq "custom") then
+                $match-rule/algorithmModulePath || ":" || $match-rule/algorithmFunction
               else
-                $match-rule/(@algorithm-ref|algorithmRef)
-            let $base-values-query :=
-              if ($type = ("add","exact")) then
-                function ($values) {
-                  helper-impl:property-name-to-query($match-options, $full-property-name)($values, $weight)
-                }
-              else if ($type = ("expand","custom",$algorithm-ref)) then
-                let $custom-algorithm := map:get($algorithms, $algorithm-ref)
-                let $algorithm := if (fn:empty($custom-algorithm)) then
-                    algorithms:default-function-lookup($type, 3)
-                  else
-                    $custom-algorithm
-                return
-                  if (fn:exists($algorithm)) then
+                $type
+            else
+              $match-rule/(@algorithm-ref|algorithmRef)
+          let $base-values-query :=
+            if ($type = ("add", "exact")) then
+              function ($values) {
+                helper-impl:property-name-to-query($match-options, $full-property-name)($values, $weight)
+              }
+            else if ($type = ("expand", "custom", $algorithm-ref)) then
+              let $custom-algorithm := map:get($algorithms, $algorithm-ref)
+              let $algorithm := if (fn:empty($custom-algorithm)) then
+                  algorithms:default-function-lookup($type, 3)
+                else
+                  $custom-algorithm
+              return
+                if (fn:exists($algorithm)) then
+                  algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
+                else
+                  util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
+            else if ($type eq "reduce") then
+              let $algorithm := $algorithm-ref ! map:get($algorithms, .)
+              return
+                if (fn:exists($algorithm)) then
                     algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
-                  else
-                    util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
-              else if ($type eq "reduce") then
-                let $algorithm := $algorithm-ref ! map:get($algorithms, .)
-                return
-                  if (fn:exists($algorithm)) then
-                      algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
-                  else
-                      algorithms:standard-reduction-query(?, $match-rule, $match-options)
-              else
-                util-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
-            return map:new((
-              map:entry("propertyName",$full-property-name),
-              map:entry("type",$type),
+                else
+                    algorithms:standard-reduction-query(?, $match-rule, $match-options)
+            else
+              util-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
+          return
+            map:new((
+              map:entry("propertyName", $full-property-name),
+              map:entry("type", $type),
               map:entry("algorithm", $algorithm-ref),
-              map:entry("weight",$weight),
-              map:entry(
-                "valuesToQueryFunction",
-                $base-values-query
-              )
+              map:entry("weight", $weight),
+              map:entry("valuesToQueryFunction", $base-values-query),
+              map:entry("isMultiStructPropMultiValueComponent",
+                fn:exists($multi-struct-prop-multi-value-map) and map:contains($multi-struct-prop-multi-value-map, $full-property-name))
             ))
       order by $weight descending
       return
         map:new((
           map:entry("matchRulesetId", sem:uuid-string()),
-          map:entry("weight",$weight),
-          map:entry("isReduce",$is-reduce),
+          map:entry("weight", $weight),
+          map:entry("isReduce", $is-reduce),
           map:entry("name",
             if ($is-complex-rule and fn:exists($rule-set/name)) then
               fn:string($rule-set/name)
@@ -497,7 +504,8 @@ declare function opt-impl:compile-match-options(
               return
                 map:get($first-match-query, "propertyName") || " - " || map:get($first-match-query, "type")
           ),
-          map:entry("matchQueries", $match-queries)
+          map:entry("matchQueries", $match-queries),
+          map:entry("multiStructPropMultiValueMap", $multi-struct-prop-multi-value-map)
         ))
     let $positive-queries := $queries[fn:not(map:get(., "isReduce"))]
     let $negative-queries := $queries[map:get(., "isReduce")]
@@ -565,6 +573,56 @@ declare function opt-impl:compile-match-options(
         map:put($_cached-compiled-match-options, $cache-id, $compiled-match-options)
       )
     )
+};
+
+(:
+  DHFPROD-5236
+  Returns a map if the match rules have structured paths with a common prefix (first property in path occurs more than once)
+  that is an array. The map is entityPropertyPath -> firstProperty.
+:)
+declare function opt-impl:multi-struct-prop-multi-value-map($match-rules, $entity-def) as map:map?
+{
+  let $ent-paths as xs:string* := $match-rules/entityPropertyPath
+  let $dotted-paths := $ent-paths[fn:contains(., ".")]
+  return
+    if (fn:empty($dotted-paths)) then
+      ()
+    else
+      (: get the first property of dotted paths :)
+      let $first-parts := $dotted-paths ! fn:head(fn:tokenize(., "\."))
+      (: build a map of first property -> count :)
+      let $first-part-count-map := map:map()
+      let $_ :=
+        for $part in $first-parts
+        let $previous := map:get($first-part-count-map, $part)
+        return map:put($first-part-count-map, $part, 1 + (if (fn:exists($previous)) then $previous else 0))
+      (: get the first properties that occur more than once :)
+      let $first-parts-multi := map:keys($first-part-count-map)[map:get($first-part-count-map, .) gt 1]
+
+      (: filter the first properties to those that are type "array" in the entity definition :)
+      let $first-parts-multi :=
+        for $part in $first-parts-multi
+        return
+          if ($entity-def/properties[title eq $part]/datatype eq "array") then
+            $part
+          else
+            ()
+
+      (: return a map of property path -> first property, where first property occurs more than once in the ruleset :)
+      let $map := map:map()
+      let $_ :=
+        for $path in $dotted-paths
+        let $first-part := fn:head(fn:tokenize($path, "\."))
+        return
+          if ($first-part = $first-parts-multi) then
+             map:put($map, $path, $first-part)
+          else
+            ()
+      return
+        if (map:count($map) gt 0) then
+          $map
+        else
+          ()
 };
 
 declare function opt-impl:normalize-thresholds($thresholds as node()*, $match-options as node()) {

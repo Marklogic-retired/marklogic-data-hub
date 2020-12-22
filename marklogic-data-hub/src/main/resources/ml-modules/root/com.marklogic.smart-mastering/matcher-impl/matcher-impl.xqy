@@ -31,6 +31,8 @@ import module namespace opt-impl = "http://marklogic.com/smart-mastering/options
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
+import module namespace es-helper = "http://marklogic.com/smart-mastering/entity-services"
+  at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 
 declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
 
@@ -132,6 +134,7 @@ declare function match-impl:find-document-matches-by-options(
     let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
     let $_trace := xdmp:trace($const:TRACE-MATCH-RESULTS, " is-json: " || $is-json)
     let $compiled-options := opt-impl:compile-match-options($options, $minimum-threshold)
+    let $target-entity-type := map:get($compiled-options, "targetEntityType")
     let $_set-data-format := $compiled-options => map:put("dataFormat", if ($is-json) then $const:FORMAT-JSON else $const:FORMAT-XML)
     let $values-by-property-name := match-impl:values-by-property-name($document, $compiled-options)
     let $query-prov as map:map? :=
@@ -145,22 +148,33 @@ declare function match-impl:find-document-matches-by-options(
       let $not-query-maps := $query-set => map:get("notQueries")
       let $queries :=
         for $query-map in $query-maps
+        let $_trace :=
+          if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+            xdmp:trace($const:TRACE-MATCH-RESULTS, "values-by-property-name: " || xdmp:describe($values-by-property-name, (),()))
+          else
+            ()
+
+
         (: if there are no values from the document for a query, then match-impl:query-map-to-query returns an empty sequence  :)
-        let $queries := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov)
+        let $queries := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
         return if (fn:count($queries) gt 1) then
             (: if a match ruleset has multiple queries, be sure to AND them :)
             helper-impl:group-queries-by-scope($queries, cts:and-query#1)
           else
             $queries
+
+
       let $not-queries :=
         for $not-query-map in $not-query-maps
         (: if there are no values from the document for a query, then match-impl:query-map-to-query returns an empty sequence  :)
-        let $queries := match-impl:query-map-to-query($document, $not-query-map, $values-by-property-name, $cached-queries, ())
+        let $queries := match-impl:query-map-to-query($document, $not-query-map, $values-by-property-name, $cached-queries, (), $target-entity-type)
         return if (fn:count($queries) gt 1) then
         (: if a match ruleset has multiple queries, be sure to AND them :)
           helper-impl:group-queries-by-scope($queries, cts:and-query#1)
         else
           $queries
+
+
       (: We want to be certain that we have values for each of the queries in a min threshold combo :)
       where fn:exists($queries) and fn:count($queries) eq fn:count($query-maps)
       return
@@ -249,7 +263,7 @@ declare function match-impl:find-document-matches-by-options(
             if ($include-results and $estimate gt 0) then
               let $queries-for-scoring :=
                 for $query-map in map:get($compiled-options, "queries")
-                let $query := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov)
+                let $query := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
                 let $_trace :=
                   if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
                     xdmp:trace($const:TRACE-MATCH-RESULTS, "'"|| $query-map => map:get("name") ||"' query:" || xdmp:describe($query,(),()))
@@ -327,15 +341,18 @@ declare function match-impl:query-map-to-query(
   $query-map as map:map,
   $values-by-property-name as map:map,
   $cached-queries as map:map,
-  $query-prov as map:map?
+  $query-prov as map:map?,
+  $target-entity as xs:string?
 )
 {
-  if (map:contains($query-map, "matchRulesetId") and map:contains($cached-queries, $query-map => map:get("matchRulesetId"))) then
+  if (map:contains($query-map, "matchRulesetId") and map:contains($cached-queries, $query-map => map:get("matchRulesetId"))
+      and fn:empty(map:get($query-map, "multiStructPropMultiValueMap"))) then
     map:get($cached-queries, $query-map => map:get("matchRulesetId"))
   else
+    let $multi-struct-prop-multi-value-map := map:get($query-map, "multiStructPropMultiValueMap")
     let $is-reduce := $query-map => map:get("isReduce")
     let $sub-query-maps := map:get($query-map, "matchQueries")
-    let $queries :=
+    let $queries := (
       for $sub-query-map in $sub-query-maps
       let $queries :=
         if ($sub-query-map => map:get("type") = "reduce") then
@@ -343,7 +360,7 @@ declare function match-impl:query-map-to-query(
         else
           let $property-name := fn:string($sub-query-map => map:get("propertyName"))
           let $values := $values-by-property-name => map:get($property-name)
-          where fn:exists($values)
+          where fn:exists($values) and fn:not(map:get($sub-query-map, "isMultiStructPropMultiValueComponent"))
           return
             ($sub-query-map => map:get("valuesToQueryFunction"))($values)
       let $query :=
@@ -355,18 +372,80 @@ declare function match-impl:query-map-to-query(
       return (
         if (fn:exists($query-prov)) then
           for $query-hash in document {$query}//schema-element(cts:query) ! xdmp:md5(document{.})
-          where fn:not(map:contains($query-prov,$query-hash)) or ((map:get($query-prov, $query-hash) => map:get("type")) = "reduce")
+          where fn:not(map:contains($query-prov, $query-hash)) or ((map:get($query-prov, $query-hash) => map:get("type")) = "reduce")
           return map:put($query-prov, $query-hash, $sub-query-map)
         else (),
         $query
+      ),
+
+      match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
       )
-    (: We want to be certain that didn't lose any queries in the match ruleset, since we don't call the function if no values exist :)
-    where fn:exists($queries) and fn:count($queries) eq fn:count($sub-query-maps)
+    where fn:exists($queries)
     return (
-      map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries),
+      (: no caching in the structured properties case (yet) :)
+      if (fn:not(map:contains($query-map, "multiStructPropMultiValueMap"))) then
+        map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
+      else
+        ()
+      ,
       $queries
     )
 
+};
+
+declare function match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity-type as xs:string?)
+  as cts:query*
+{
+  let $multi-struct-prop-multi-value-map := map:get($query-map, "multiStructPropMultiValueMap")
+  return
+    if (fn:empty($multi-struct-prop-multi-value-map) or fn:empty($target-entity-type)) then
+      ()
+    else
+      let $is-json := (xdmp:node-kind($document) = "object" or fn:exists($document/(object-node()|array-node())))
+      let $count := fn:count(map:get($query-map, "matchQueries"))
+      let $count := if ($count eq 0) then 1 else $count
+      let $weight := map:get($query-map, "weight") div $count
+
+      let $rev-map := -$multi-struct-prop-multi-value-map
+
+      let $prop-info-map := map:map()
+      let $_ :=
+        for $prop in (map:keys($rev-map), map:keys($rev-map) ! map:get($rev-map, .))
+        return map:put($prop-info-map, $prop, es-helper:get-entity-property-info($target-entity-type, $prop))
+
+      for $prop in map:keys($rev-map)
+      let $parent-info := map:get($prop-info-map, $prop)
+      let $parent-xpath := $parent-info => map:get("pathExpression")
+      let $parent-namespaces := $parent-info => map:get("namespaces")
+      let $parent-objects := xdmp:unpath($parent-xpath, $parent-namespaces, $document)
+      let $parent-xpath-length := fn:string-length($parent-xpath)
+
+      let $parent-query-fn := helper-impl:get-struct-prop-parent-scope-query-fn($parent-info, $prop)
+
+      let $query :=
+        cts:or-query((
+          for $parent-object in $parent-objects
+
+          let $child-props := map:get($rev-map, $prop)
+          let $child-props-count := fn:count($child-props)
+
+          let $child-queries :=
+            for $child-prop in $child-props
+            let $child-info := map:get($prop-info-map, $child-prop)
+            let $child-xpath := $child-info => map:get("pathExpression")
+            let $child-namespaces := $child-info => map:get("namespaces")
+            let $child-xpath-from-parent := "." || fn:substring($child-xpath, $parent-xpath-length + 1)
+            let $child-prop-vals := xdmp:unpath($child-xpath-from-parent, $child-namespaces, $parent-object)
+            let $child-query-fn := helper-impl:get-value-query-fn($child-info, $child-prop, $is-json)
+            return $child-query-fn($child-prop-vals, $weight)
+
+          return
+            if ($child-props-count eq fn:count($child-queries)) then
+              cts:and-query(($child-queries))
+            else
+              ()
+        ))
+      return $parent-query-fn($query, $is-json)
 };
 
 (:

@@ -1,0 +1,39 @@
+{
+  "info": {
+    "title": "NamespacedCustomer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "NamespacedCustomer": {
+      "namespace": "http://example.org/customer",
+      "namespacePrefix": "exCustomer",
+      "properties": {
+        "shipping": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "billing": {
+          "description": "Example of a single-value structured property",
+          "$ref": "#/definitions/Address"
+        }
+      }
+    },
+    "Address": {
+      "namespace": "http://example.org/address",
+      "namespacePrefix": "exAddress",
+      "properties": {
+        "city": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        },
+        "state": {
+          "datatype": "string",
+          "collation": "http://marklogic.com/collation/codepoint"
+        }
+      }
+    }
+  }
+}
