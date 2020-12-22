@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+  <instance>
+    <info>
+      <title>NamespacedCustomer</title>
+      <version/>
+    </info>
+    <exCustomer:NamespacedCustomer xmlns:exCustomer="http://example.org/customer">
+      <exCustomer:billing>
+        <exAddress:Address xmlns:exAddress="http://example.org/address">
+          <exAddress:city>Miami</exAddress:city>
+          <exAddress:state>Florida</exAddress:state>
+        </exAddress:Address>
+      </exCustomer:billing>
+    </exCustomer:NamespacedCustomer>
+  </instance>
+</envelope>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<envelope xmlns="http://marklogic.com/entity-services">
+    <headers>
+        <sources xmlns="">
+            <name>source 1</name>
+        </sources>
+        <createdOn xmlns="">2020-08-20T05:27:43.360675Z</createdOn>
+        <createdBy xmlns="">admin</createdBy>
+    </headers>
+    <triples/>
+    <instance>
+        <info>
+            <title>NamespacedCustomer</title>
+            <version/>
+        </info>
+        <exCustomer:NamespacedCustomer xmlns:exCustomer="http://example.org/customer">
+            <exCustomer:name>Sargeant Pepper</exCustomer:name>
+            <exCustomer:birthDate>1940-01-01</exCustomer:birthDate>
+            <exCustomer:shipping datatype="array">
+                <exAddress:Address xmlns:exAddress="http://example.org/address">
+                    <exAddress:street>123 Long Drive</exAddress:street>
+                    <exAddress:city>Richland</exAddress:city>
+                    <exAddress:state>Washington</exAddress:state>
+                    <exAddress:zip>
+                        <exZip:Zip xmlns:exZip="http://example.org/zip">
+                            <exZip:fiveDigit>98115</exZip:fiveDigit>
+                            <exZip:plusFour>0001</exZip:plusFour>
+                        </exZip:Zip>
+                    </exAddress:zip>
+                </exAddress:Address>
+            </exCustomer:shipping>
+            <exCustomer:billing>
+                <exAddress:Address xmlns:exAddress="http://example.org/address">
+                    <exAddress:street>Harbor Avenue</exAddress:street>
+                    <exAddress:city>Tyler</exAddress:city>
+                    <exAddress:state>Texas</exAddress:state>
+                    <exAddress:zip>
+                        <exZip:Zip xmlns:exZip="http://example.org/zip">
+                            <exZip:fiveDigit>78731</exZip:fiveDigit>
+                            <exZip:plusFour>1234</exZip:plusFour>
+                        </exZip:Zip>
+                    </exAddress:zip>
+                </exAddress:Address>
+            </exCustomer:billing>
+        </exCustomer:NamespacedCustomer>
+    </instance>
+    <attachments/>
+</envelope>

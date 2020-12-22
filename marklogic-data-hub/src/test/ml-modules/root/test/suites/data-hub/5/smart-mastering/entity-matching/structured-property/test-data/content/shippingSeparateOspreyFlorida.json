@@ -1,0 +1,27 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "Customer",
+        "version": "0.0.1",
+        "baseUri": "http://example.org/"
+      },
+      "Customer": {
+        "shipping": [
+          {
+            "Address": {
+              "city": "Miami",
+              "state": "Florida"
+            }
+          },
+          {
+            "Address": {
+              "city": "Osprey",
+              "state": "Georgia"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

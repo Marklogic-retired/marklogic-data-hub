@@ -1,0 +1,38 @@
+{
+  "info": {
+    "title": "Customer",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "Customer": {
+      "properties": {
+        "customerId": {
+          "datatype": "integer"
+        },
+        "shipping": {
+          "datatype": "array",
+          "items": {
+            "$ref": "#/definitions/Address"
+          }
+        },
+        "billing": {
+          "$ref": "#/definitions/Address"
+        }
+      }
+    },
+    "Address": {
+      "properties": {
+        "street": {
+          "datatype": "string"
+        },
+        "city": {
+          "datatype": "string"
+        },
+        "state": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
