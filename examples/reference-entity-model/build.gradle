@@ -66,3 +66,14 @@ task loadCustomersViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
     transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
     transform_param = "flow-name=CurateCustomerJSON,step=1"
 }
+
+task exportCustomers(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Example of using MLCP via Gradle via a minimally-privileged user to export data"
+	classpath = configurations.mlcp
+	command = "EXPORT"
+	port = 8011
+	username = "common-user"
+	password = testPassword
+	output_file_path = "build/export"
+	collection_filter = "Customer"
+}
