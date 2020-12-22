@@ -32,6 +32,8 @@ available for use within an example project.
 
 1. [smart-mastering-complete](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/smart-mastering-complete) - demonstrates various features of the mastering step
 
+1. [snapshot-testing](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/snapshot-testing) - only used for testing snapshot (non-released) versions of DHF.
+
 ## Data Hub 4
 
 1. [barebones](https://github.com/marklogic/marklogic-data-hub/tree/master/examples/barebones) - an example of the minimum configuration necessary to run a Gradle-based Data Hub

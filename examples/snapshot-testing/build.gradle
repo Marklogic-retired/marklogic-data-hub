@@ -1,0 +1,21 @@
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+      classpath "net.saliman:gradle-properties-plugin:1.5.1"
+        classpath "com.marklogic:ml-data-hub:5.4-SNAPSHOT"
+    }
+}
+
+apply plugin: "net.saliman.properties"
+apply plugin: "com.marklogic.ml-data-hub"
+
+task createHcDeveloper(type: com.marklogic.gradle.task.MarkLogicTask) {
+  description = "Convenience task for adding an HC developer user after DHF has been installed so that HC can be used"
+  doLast {
+    getManageClient().postJson("/manage/v2/users", '{"user-name":"hc-developer", "password": "password", "role":["hub-central-developer"]}')
+  }
+}
