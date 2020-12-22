@@ -49,11 +49,14 @@ describe("Update data load settings component", () => {
     expect(getByText(data.environment.dataHubVersion)).toBeInTheDocument();
     expect(getByText("MarkLogic Version:")).toBeInTheDocument();
     expect(getByText(data.environment.marklogicVersion)).toBeInTheDocument();
-    expect(getByText("Download Configuration Files")).toBeInTheDocument();
+    expect(getByText("Download Hub Central Files")).toBeInTheDocument();
+    expect(getByText("Download Project Files")).toBeInTheDocument();
     expect(getByTestId("clearData")).toBeInTheDocument();
-    expect(getByText("Download a zip file containing flow definitions, step definitions and other user artifacts created or modified by Hub Central.")).toBeInTheDocument();
+    expect(getByText("Download a zip containing files for everything that Hub Central supports creating and updating. Does not include project files that Hub Central does not allow creating or updating, nor does it contain Data Hub Framework project files. Can be used to update an existing local project with updates made in Hub Central.")).toBeInTheDocument();
+    expect(getByText("Download a zip containing files for everything that Hub Central supports creating and updating and all Data Hub Framework project files. Can be used to deploy the project in a local environment or add the project to a version control system.")).toBeInTheDocument();
     expect(getByText("Delete all user data in STAGING, FINAL, and JOBS databases.")).toBeInTheDocument();
-    expect(getByText("Download")).toBeDisabled();
+    expect(getByTestId("downloadProjectFiles")).toBeDisabled();
+    expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
     expect(getByText("Clear")).toBeDisabled();
   });
 
@@ -66,7 +69,8 @@ describe("Update data load settings component", () => {
         setSystemInfoVisible={jest.fn()}
       />
     </AuthoritiesContext.Provider></Router>);
-    expect(getByText("Download")).toBeEnabled();
+    expect(getByTestId("downloadProjectFiles")).toBeEnabled();
+    expect(getByTestId("downloadHubCentralFiles")).toBeEnabled();
     expect(getByText("Clear")).toBeDisabled();
 
     //verify copy icon and tooltip
@@ -82,14 +86,15 @@ describe("Update data load settings component", () => {
     mocks.clearUserDataAPI(axiosMock);
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["clearUserData"]);
-    const {getByText, getByLabelText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+    const {getByText, getByTestId, getByLabelText} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
       <SystemInfo
         systemInfoVisible={true}
         setSystemInfoVisible={jest.fn()}
       />
     </AuthoritiesContext.Provider></Router>);
 
-    expect(getByText("Download")).toBeDisabled();
+    expect(getByTestId("downloadProjectFiles")).toBeDisabled();
+    expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
     expect(getByText("Clear")).toBeEnabled();
 
     //Verify confirmation modal appears when Clear button is clicked
@@ -105,6 +110,4 @@ describe("Update data load settings component", () => {
       return getSubElements(content, node, "Clear All User Data completed successfully");
     })))).toBeInTheDocument();
   });
-
-
 });

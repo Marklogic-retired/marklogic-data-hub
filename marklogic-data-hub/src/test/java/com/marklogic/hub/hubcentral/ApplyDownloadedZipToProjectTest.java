@@ -48,10 +48,10 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
         // Download the zip
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
         AllArtifactsProject project = new AllArtifactsProject(getHubClient());
-        project.writeProjectArtifactsToZipFile();
+        project.writeHubCentralFilesToZipFile();
 
         // Apply the zip and verify
-        new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), project.getZipFile());
+        new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), project.getHubCentralFilesZipFile());
         verifyAllArtifactsBesidesOrderEntityExist();
         verifyEntityBasedArtifactsAreOnlyForPerson();
     }
@@ -78,11 +78,11 @@ public class ApplyDownloadedZipToProjectTest extends AbstractHubCoreTest {
 
         setTestUserRoles("data-hub-developer", "hub-central-downloader");
         AllArtifactsProject project = new AllArtifactsProject(getHubClient());
-        project.writeProjectArtifactsToZipFile();
-        assertEquals(0, project.getZipEntries().size(), "Expecting the zip to be empty because all of the user " +
+        project.writeHubCentralFilesToZipFile();
+        assertEquals(0, project.getHubCentralFilesZipEntries().size(), "Expecting the zip to be empty because all of the user " +
             "artifacts in the project were just deleted");
 
-        new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), project.getZipFile());
+        new HubCentralManager().applyHubCentralZipToProject(getHubConfig().getHubProject(), project.getHubCentralFilesZipFile());
 
         verifyFlowsAndEntitiesAndStepsWereDeletedFromProject();
     }

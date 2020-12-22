@@ -13,11 +13,14 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.HubProjectImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.stream.Stream;
@@ -30,7 +33,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class HubCentralManager extends LoggingObject {
 
-    public void writeProjectArtifactsAsZip(HubClient hubClient, OutputStream outputStream) {
+    public void writeHubCentralFilesAsZip(HubClient hubClient, OutputStream outputStream) {
         ArrayNode artifacts = (ArrayNode) ArtifactService.on(hubClient.getStagingClient()).getArtifactsWithProjectPaths();
 
         final ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
@@ -56,6 +59,50 @@ public class HubCentralManager extends LoggingObject {
         } finally {
             IOUtils.closeQuietly(zipOutputStream);
         }
+    }
+
+    public void writeProjectFilesAsZip(HubClient hubClient, OutputStream outputStream){
+        HubProjectImpl hubProject = new HubProjectImpl();
+        Path projectPath = null;
+        try {
+            projectPath = Files.createTempDirectory("");
+            hubProject.createProject(projectPath.toFile().getAbsolutePath());
+            hubProject.init(new HashMap<>());
+            writeHubCentralFilesToProject(hubProject, hubClient);
+            hubProject.exportProject(outputStream, true);
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to download project files as a zip, cause: " + ex.getMessage(), ex);
+        }
+        finally {
+            IOUtils.closeQuietly(outputStream);
+            FileUtils.deleteQuietly(projectPath.toFile());
+        }
+    }
+
+    private void writeHubCentralFilesToProject(HubProject hubProject, HubClient hubClient){
+        ArrayNode artifacts = (ArrayNode) ArtifactService.on(hubClient.getStagingClient()).getArtifactsWithProjectPaths();
+        final File projectDir = hubProject.getProjectDir().toFile();
+        final ObjectWriter prettyWriter = buildPrettyWriter();
+
+        artifacts.forEach(artifact -> {
+            String path = artifact.get("path").asText();
+            byte[] bytes;
+            try{
+                if (artifact.has("xml")) {
+                    bytes = artifact.get("xml").asText().getBytes();
+                } else {
+                    bytes = prettyWriter.writeValueAsString(artifact.get("json")).getBytes();
+                }
+                File outputFile = new File(projectDir, path);
+                outputFile.getParentFile().mkdirs();
+                try(FileOutputStream fileOut = new FileOutputStream(outputFile)){
+                    FileCopyUtils.copy(bytes, fileOut);
+                }
+            }
+            catch (IOException ex){
+                throw new RuntimeException("Unable to download project files as a zip, cause: " + ex.getMessage(), ex);
+            }
+        });
     }
 
     /**

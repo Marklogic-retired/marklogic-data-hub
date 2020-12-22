@@ -59,7 +59,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -466,6 +469,25 @@ public class HubTestBase extends AbstractHubTest {
             return (ObjectNode) objectMapper.readTree(mgr.getPropertiesAsJson(database));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected void extractZipToProjectDirectory(File project) throws IOException {
+        ZipFile zip = new ZipFile(project);
+        Enumeration<?> entries = zip.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if(!entry.isDirectory()){
+                int entrySize = (int) entry.getSize();
+                byte[] buffer = new byte[entrySize];
+                zip.getInputStream(entry).read(buffer, 0, entrySize);
+
+                File file = new File(getHubProject().getProjectDir().toFile(), entry.getName());
+                file.getParentFile().mkdirs();
+                FileCopyUtils.copy(buffer, file);
+            }
+
+
         }
     }
 }
