@@ -41,6 +41,11 @@
       "privilege-name": "sem:sparql",
       "action": "http://marklogic.com/xdmp/privileges/sem-sparql",
       "kind": "execute"
+    },
+    {
+      "privilege-name": "xdmp:with-namespaces",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-with-namespaces",
+      "kind": "execute"
     }
   ]
 }
