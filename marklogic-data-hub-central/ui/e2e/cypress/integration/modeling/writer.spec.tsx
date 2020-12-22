@@ -87,6 +87,11 @@ describe("Entity Modeling: Writer Role", () => {
 
     // edit property and change type to relationship
     propertyTable.editProperty("buyer-id");
+
+    //check default value for properties PII and multiple
+    propertyModal.getNoRadio("pii").should("be.checked");
+    propertyModal.getNoRadio("multiple").should("be.checked");
+
     propertyModal.getToggleStepsButton().should("not.exist");
     propertyModal.clearPropertyName();
     propertyModal.newPropertyName("user-id");

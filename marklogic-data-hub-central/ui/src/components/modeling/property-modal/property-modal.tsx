@@ -103,9 +103,9 @@ const DEFAULT_DROPDOWN_OPTIONS = [
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
   type: "",
-  identifier: "",
-  multiple: "",
-  pii: "",
+  identifier: "no",
+  multiple: "no",
+  pii: "no",
   facetable: false,
   sortable: false
   //wildcard: false

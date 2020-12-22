@@ -57,9 +57,9 @@ const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
   type: "",
-  identifier: "",
-  multiple: "",
-  pii: "",
+  identifier: "no",
+  multiple: "no",
+  pii: "no",
   facetable: false,
   sortable: false
   //wildcard: false
@@ -482,9 +482,9 @@ const PropertyTable: React.FC<Props> = (props) => {
     const propertyOptions: PropertyOptions = {
       propertyType: propertyType,
       type: record.type,
-      identifier: record.identifier ? "yes" : "",
-      multiple: record.multiple ? "yes" : "",
-      pii: record.pii ? "yes" : "",
+      identifier: record.identifier ? "yes" : "no",
+      multiple: record.multiple ? "yes" : "no",
+      pii: record.pii ? "yes" : "no",
       facetable: record.facetable ? true : false,
       sortable: record.sortable ? true : false
       //wildcard: record.wildcard ? true : false
