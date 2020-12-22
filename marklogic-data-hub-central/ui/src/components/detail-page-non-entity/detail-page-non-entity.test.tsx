@@ -155,6 +155,6 @@ describe("Detail page for non-entity view component", () => {
     expect(getByTestId("download-link")).toBeInTheDocument();
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("download-link"));
-    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=/loadCustomers.json&database=staging"});
+    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FloadCustomers.json&database=staging"});
   });
 });

@@ -112,6 +112,6 @@ describe("Raw data card view component", () => {
     await waitForElement(() => getByText("Download (815 B)"));
     //click on download icon and verify api call.
     fireEvent.click(getByTestId("/Customer/Cust1.json-download-icon"));
-    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=/Customer/Cust1.json&database=final"});
+    expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "responseType": "blob", "url": "/api/record/download?docUri=%2FCustomer%2FCust1.json&database=final"});
   });
 });
