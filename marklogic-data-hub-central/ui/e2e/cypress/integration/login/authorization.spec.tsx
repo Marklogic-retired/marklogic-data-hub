@@ -71,7 +71,8 @@ describe("login", () => {
     tiles.getExploreTile().should("exist");
     projectInfo.getAboutProject().click();
     projectInfo.waitForInfoPageToLoad();
-    projectInfo.getDownloadButton().should("be.disabled");
+    projectInfo.getDownloadProjectButton().should("be.disabled");
+    projectInfo.getDownloadHubCentralFilesButton().should("be.disabled");
     projectInfo.getClearButton().should("be.disabled");
   });
 
@@ -185,7 +186,8 @@ describe("login", () => {
     cy.loginAsTestUserWithRoles("hub-central-downloader").withUI();
     projectInfo.getAboutProject().click();
     projectInfo.waitForInfoPageToLoad();
-    projectInfo.getDownloadButton().click();
+    projectInfo.getDownloadHubCentralFilesButton().click();
+    projectInfo.getDownloadProjectButton().click();
   });
 
   it("should redirect to /tiles/explore when uri is undefined for /detail view bookmark", () => {

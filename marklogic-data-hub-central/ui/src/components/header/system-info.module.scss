@@ -50,7 +50,6 @@
     padding-top: 80px;
     padding-bottom: 100px;
     margin: auto;
-    width: 56vw;
     min-width: 700px;
 
     .download, .clearAll {
@@ -60,9 +59,6 @@
       height: 18em;
       padding: 1px;
       border-color: #44499C;
-    }
-    .clearAll {
-      margin-left: 2em;
     }
 
     .title {
@@ -74,7 +70,7 @@
     p {
       font-size: 14px;
       font-weight: 300;
-      height: 100px;
+      height: 125px;
       text-align: left;
     }
 

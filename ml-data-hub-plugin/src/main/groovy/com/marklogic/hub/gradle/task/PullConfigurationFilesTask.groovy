@@ -17,7 +17,7 @@ class PullConfigurationFilesTask extends HubTask {
             zipFile = File.createTempFile("hub-central-project", ".zip")
             println "Downloading user configuration files to: " + zipFile
             fos = new FileOutputStream(zipFile)
-            hubCentralManager.writeProjectArtifactsAsZip(getHubConfig().newHubClient(), fos)
+            hubCentralManager.writeHubCentralFilesAsZip(getHubConfig().newHubClient(), fos)
         }
         catch (Exception e) {
             throw new GradleException("Unable to download user configuration files; cause: " + e.getMessage(), e)

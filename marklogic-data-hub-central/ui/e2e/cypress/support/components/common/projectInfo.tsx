@@ -4,8 +4,12 @@ class ProjectInfo {
     return cy.get("#service-name");
   }
 
-  getDownloadButton() {
-    return cy.findByLabelText("Download");
+  getDownloadHubCentralFilesButton() {
+    return cy.get("[data-testid=downloadHubCentralFiles]");
+  }
+
+  getDownloadProjectButton() {
+    return cy.get("[data-testid=downloadProjectFiles]");
   }
 
   getClearButton() {
@@ -13,7 +17,7 @@ class ProjectInfo {
   }
 
   waitForInfoPageToLoad() {
-    cy.waitUntil(() => cy.findByText("Download Configuration Files").should("be.visible"));
+    cy.waitUntil(() => cy.findByText("Download Hub Central Files").should("be.visible"));
   }
 }
 

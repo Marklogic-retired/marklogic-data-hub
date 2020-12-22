@@ -5,8 +5,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -17,11 +15,11 @@ import java.util.zip.ZipInputStream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
 
-    private final static String PATH = "/api/environment/downloadProjectFiles";
+    private final static String HUB_CENTRAL_FILES_PATH = "/api/environment/downloadHubCentralFiles";
+    private final static String PROJECT_FILES_PATH = "/api/environment/downloadProjectFiles";
 
     @AfterEach
     void afterEach() {
@@ -34,11 +32,11 @@ public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
 
         loginAsTestUserWithRoles("hub-central-downloader");
 
-        mockMvc.perform(get(PATH).session(mockHttpSession))
+        mockMvc.perform(get(HUB_CENTRAL_FILES_PATH).session(mockHttpSession))
             .andDo(result -> {
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
-                assertEquals("attachment; filename=hub-central-project.zip", response.getHeader("Content-Disposition"));
+                assertEquals("attachment; filename=datahub-hub-central-files.zip", response.getHeader("Content-Disposition"));
 
                 // We trust the zip to be constructed correctly based on DownloadConfigurationFilesTest, so just
                 // doing a quick sanity check here
@@ -53,11 +51,32 @@ public class DownloadProjectFilesMvcTest extends AbstractMvcTest {
                 assertTrue(entryNames.contains("entities/Order.entity.json"));
                 assertTrue(entryNames.contains("entities/Customer.entity.json"));
             });
+        mockMvc.perform(get(PROJECT_FILES_PATH).session(mockHttpSession))
+            .andDo(result -> {
+                MockHttpServletResponse response = result.getResponse();
+                assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, response.getContentType());
+                assertEquals("attachment; filename=datahub-project-files.zip", response.getHeader("Content-Disposition"));
+
+                List<String> entryNames = new ArrayList<>();
+                try (ZipInputStream zipStream = new ZipInputStream(new ByteArrayInputStream(response.getContentAsByteArray()))) {
+                    ZipEntry entry;
+                    while ((entry = zipStream.getNextEntry()) != null) {
+                        entryNames.add(entry.getName());
+                        zipStream.closeEntry();
+                    }
+                }
+                assertTrue(entryNames.contains("entities/Order.entity.json"));
+                assertTrue(entryNames.contains("entities/Customer.entity.json"));
+
+                assertTrue(entryNames.contains("build.gradle"));
+                assertTrue(entryNames.contains("src/main/hub-internal-config/security/roles/data-hub-developer.json"));
+            });
     }
 
     @Test
     void forbiddenUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-user");
-        verifyRequestIsForbidden(get(PATH));
+        verifyRequestIsForbidden(get(HUB_CENTRAL_FILES_PATH));
+        verifyRequestIsForbidden(get(PROJECT_FILES_PATH));
     }
 }

@@ -516,7 +516,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             location.getParentFile().mkdirs();
         }
         try(FileOutputStream out = new FileOutputStream(location)) {
-            writeToStream(out);
+            exportProject(out, false);
         } catch (Exception e) {
             throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
         }
@@ -524,16 +524,24 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     @Override
     public void exportProject(OutputStream outputStream) {
-        writeToStream(outputStream);
+        exportProject(outputStream, false);
     }
 
-    private void writeToStream(OutputStream out) {
+    public void exportProject(OutputStream outputStream, boolean includeGradleLocal){
+        Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src" + File.separator + "main", "step-definitions", "steps", "gradle",
+            "gradlew", "gradlew.bat", "build.gradle", "gradle.properties");
+        if(includeGradleLocal){
+            writeToStream(outputStream, Stream.concat(filesToBeAddedToZip, Stream.of("gradle-local.properties")));
+        }
+        else{
+            writeToStream(outputStream, filesToBeAddedToZip);
+        }
+    }
+    private void writeToStream(OutputStream out, Stream<String> filesToBeAddedToZip) {
         try (ZipOutputStream zout = new ZipOutputStream(out)){
-            Stream.of("entities", "flows", "src" + File.separator + "main", "mappings", "step-definitions", "loadData", "gradle",
-                "gradlew", "gradlew.bat", "build.gradle", "gradle.properties").forEach(file ->{
+            filesToBeAddedToZip.forEach(file ->{
                 File fileToZip = getProjectDir().resolve(file).toFile();
                 if (!fileToZip.exists()) {
-                    // should we add check if some missing files/folders are mandatory and give error info?
                     logger.warn(String.format("%s does not exist during project export.", fileToZip.toString()));
                     return;
                 }

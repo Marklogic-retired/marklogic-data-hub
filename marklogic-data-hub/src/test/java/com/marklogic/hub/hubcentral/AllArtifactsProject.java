@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AllArtifactsProject extends TestObject {
 
     private HubClient hubClient;
-    private Map<String, JsonNode> zipEntries;
-    private File zipFile;
+    private Map<String, JsonNode> hubCentralFilesZipEntries;
+    private File hubCentralFilesZipFile;
 
     public AllArtifactsProject(HubClient hubClient) {
         this.hubClient = hubClient;
@@ -33,13 +33,13 @@ public class AllArtifactsProject extends TestObject {
     /**
      * Writes the zip to a file and reads all the entries into memory.
      */
-    public void writeProjectArtifactsToZipFile() {
-        try {
-            zipFile = new File("build/allArtifactsProject.zip");
-            FileOutputStream fos = new FileOutputStream(zipFile);
-            new HubCentralManager().writeProjectArtifactsAsZip(hubClient, fos);
+    public void writeHubCentralFilesToZipFile() {
+        try{
+            hubCentralFilesZipFile = new File("build/allHubCentralFiles.zip");
+            FileOutputStream fos = new FileOutputStream(hubCentralFilesZipFile);
+            new HubCentralManager().writeHubCentralFilesAsZip(hubClient, fos);
             fos.close();
-            readZipEntries();
+            readZipArtifacts();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -47,7 +47,7 @@ public class AllArtifactsProject extends TestObject {
 
     // The path for the artifacts should not start "/" as it will not be picked up by Windows Winzip tool.
     // The path should also always be relative path and not absolute path
-    public void verifyZipEntries() {
+    public void verifyZipArtifacts(){
         // Verify artifact files
         verifyEntryExists("flows/testFlow.flow.json", "testFlow");
 
@@ -58,19 +58,19 @@ public class AllArtifactsProject extends TestObject {
         // Verify path doesn't start with "/"
         verifyArtifactPathsDontStartWithSlash();
 
-        assertEquals("Order", zipEntries.get("entities/Order.entity.json").get("info").get("title").asText());
+        assertEquals("Order", hubCentralFilesZipEntries.get("entities/Order.entity.json").get("info").get("title").asText());
 
         // Verify PII stuff
         verifyEntryExists("src/main/ml-config/security/protected-paths/01_pii-protected-paths.json",
             "path-expression", "/(es:envelope|envelope)/(es:instance|instance)/Order/orderID");
         verifyEntryExists("src/main/ml-config/security/protected-paths/02_pii-protected-paths.json",
             "path-expression", "/(es:envelope|envelope)/(es:instance|instance)/Order/orderName");
-        assertEquals("pii-reader", zipEntries.get("src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
+        assertEquals("pii-reader", hubCentralFilesZipEntries.get("src/main/ml-config/security/query-rolesets/pii-reader.json").get("role-name").iterator().next().asText());
 
         // Verify search options
         Stream.of("staging", "final").forEach(db -> {
-            assertTrue(zipEntries.containsKey("src/main/entity-config/" + db + "-entity-options.xml"));
-            assertTrue(zipEntries.containsKey("src/main/entity-config/exp-" + db + "-entity-options.xml"));
+            assertTrue(hubCentralFilesZipEntries.containsKey("src/main/entity-config/" + db + "-entity-options.xml"));
+            assertTrue(hubCentralFilesZipEntries.containsKey("src/main/entity-config/exp-" + db + "-entity-options.xml"));
         });
 
         // Verify db props
@@ -81,8 +81,7 @@ public class AllArtifactsProject extends TestObject {
         dbProps = verifyEntryExists("src/main/entity-config/databases/final-database.json", "database-name",
             hubClient.getDbName(DatabaseKind.FINAL));
         assertEquals(expectedPathIndex, dbProps.get("range-path-index").get(0).get("path-expression").asText());
-
-        assertEquals(15, zipEntries.size(), "Expecting the following entries: " +
+        assertEquals(15, hubCentralFilesZipEntries.size(), "Expecting the following entries: " +
             "1 flow; " +
             "2 entity models; " +
             "2 mapping steps; " +
@@ -96,7 +95,7 @@ public class AllArtifactsProject extends TestObject {
     }
 
     private void verifyArtifactPathsDontStartWithSlash() {
-        zipEntries.keySet().forEach( path -> assertFalse(path.startsWith("/"), format("The path %s starts with '/'", path)));
+        hubCentralFilesZipEntries.keySet().forEach(path -> assertFalse(path.startsWith("/"), format("The path %s starts with '/'", path)));
     }
 
     private JsonNode verifyEntryExists(String path, String name) {
@@ -104,7 +103,7 @@ public class AllArtifactsProject extends TestObject {
     }
 
     private JsonNode verifyEntryExists(String path, String namePropertyName, String name) {
-        JsonNode node = zipEntries.get(path);
+        JsonNode node = hubCentralFilesZipEntries.get(path);
         assertNotNull(node, "Did not find entry for path: " + path);
         assertTrue(node.has(namePropertyName),
             format("Could not find name property '%s' in zip entry '%s'; JSON: " + node, namePropertyName, name));
@@ -112,29 +111,35 @@ public class AllArtifactsProject extends TestObject {
         return node;
     }
 
-    private void readZipEntries() throws IOException {
-        zipEntries = new HashMap<>();
+    private void readZipArtifacts() throws IOException {
+        ZipFile zip = new ZipFile(hubCentralFilesZipFile);
+        readZipArtifacts(zip, zip.entries());
+        zip.close();
+    }
 
-        ZipFile zip = new ZipFile(zipFile);
-        Enumeration<?> entries = zip.entries();
+    protected void readZipArtifacts(ZipFile zip, Enumeration<?> entries) throws IOException {
+        hubCentralFilesZipEntries = new HashMap<>();
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
-            int entrySize = (int) entry.getSize();
-            byte[] buffer = new byte[entrySize];
-            zip.getInputStream(entry).read(buffer, 0, entrySize);
-            if (entry.getName().endsWith(".xml")) {
-                // To allow for easily verifying the count, just toss an empty JSON object into zipEntries for XML documents
-                zipEntries.put(entry.getName(), objectMapper.createObjectNode());
-                String xml = new String(buffer);
-                assertTrue(xml.startsWith("<search:options"), "Entries ending in XML are expected to be " +
-                    "XML search options documents; actual content: " + new String(xml));
-                assertContentIsPrettyPrinted(xml);
-            } else {
-                assertContentIsPrettyPrinted(new String(buffer));
-                zipEntries.put(entry.getName(), objectMapper.readTree(buffer));
-            }
+            readArtifactZipEntry(zip, entry);
         }
-        zip.close();
+    }
+
+    protected void readArtifactZipEntry(ZipFile zip, ZipEntry entry) throws IOException {
+        int entrySize = (int) entry.getSize();
+        byte[] buffer = new byte[entrySize];
+        zip.getInputStream(entry).read(buffer, 0, entrySize);
+        if (entry.getName().endsWith(".xml")) {
+            // To allow for easily verifying the count, just toss an empty JSON object into zipEntries for XML documents
+            hubCentralFilesZipEntries.put(entry.getName(), objectMapper.createObjectNode());
+            String xml = new String(buffer);
+            assertTrue(xml.startsWith("<search:options"), "Entries ending in XML are expected to be " +
+                "XML search options documents; actual content: " + new String(xml));
+            assertContentIsPrettyPrinted(xml);
+        } else {
+            assertContentIsPrettyPrinted(new String(buffer));
+            hubCentralFilesZipEntries.put(entry.getName(), objectMapper.readTree(buffer));
+        }
     }
 
     private void assertContentIsPrettyPrinted(String xmlOrJson) {
@@ -143,11 +148,11 @@ public class AllArtifactsProject extends TestObject {
             "submitting into version control; actual content: " + xmlOrJson);
     }
 
-    public Map<String, JsonNode> getZipEntries() {
-        return zipEntries;
+    public Map<String, JsonNode> getHubCentralFilesZipEntries() {
+        return hubCentralFilesZipEntries;
     }
 
-    public File getZipFile() {
-        return zipFile;
+    public File getHubCentralFilesZipFile() {
+        return hubCentralFilesZipFile;
     }
 }
