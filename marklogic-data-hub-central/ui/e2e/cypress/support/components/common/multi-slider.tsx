@@ -23,6 +23,14 @@ class MultiSlider {
   getRulesetSliderRail() {
     return cy.findByTestId("ruleSet-slider-rail");
   }
+
+  sliderTooltipValue(val: string) {
+    cy.get("div[class=\"tooltipValue\"]").should("contain.text", val);
+  }
+
+  sliderTicksHover(sliderName: string, val: string) {
+    cy.findByTestId(`${sliderName}-ticks`).find(`div[style*="left: ${val}%;"]`).trigger("mouseover", {force: true});
+  }
 }
 
 const multiSlider = new MultiSlider();

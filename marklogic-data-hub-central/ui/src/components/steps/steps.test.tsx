@@ -120,7 +120,7 @@ describe("Steps settings component", () => {
     expect(detailsLink.onclick).toHaveBeenCalledTimes(1);
 
     // Default Basic tab
-    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");    
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).not.toHaveClass("ant-tabs-tab-active");
 
     // Switch to Advanced tab, create error, verify other tab disabled

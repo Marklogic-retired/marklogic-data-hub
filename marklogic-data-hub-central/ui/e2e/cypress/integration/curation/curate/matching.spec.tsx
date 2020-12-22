@@ -91,6 +91,13 @@ describe("Matching", () => {
     thresholdModal.saveButton().click();
     multiSlider.getHandleNameAndType("testing", "notify").should("be.visible");
 
+    //Validating the slider tooltip
+    multiSlider.getHandleName("testing").trigger("mouseover", {force: true});
+    multiSlider.sliderTooltipValue("1");
+    multiSlider.sliderTicksHover("threshold-slider", "19.1919");
+    multiSlider.sliderTooltipValue("20");
+
+
     //add ruleset
     matchingStepDetail.addNewRulesetSingle();
     cy.contains("Add Match Ruleset for Single Property");
