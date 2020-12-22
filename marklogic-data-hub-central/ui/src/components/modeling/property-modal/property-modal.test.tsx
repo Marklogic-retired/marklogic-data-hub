@@ -35,9 +35,9 @@ const DEFAULT_STRUCTURED_TYPE_OPTIONS: StructuredTypeOptions = {
 const DEFAULT_SELECTED_PROPERTY_OPTIONS: PropertyOptions = {
   propertyType: PropertyType.Basic,
   type: "",
-  identifier: "",
-  multiple: "",
-  pii: "",
+  identifier: "no",
+  multiple: "no",
+  pii: "no",
   sortable: false,
   facetable: false,
   wildcard: false
@@ -106,6 +106,10 @@ describe("Property Modal Component", () => {
     userEvent.click(getByPlaceholderText("Select the property type"));
     userEvent.click(getByText("string"));
 
+    // Verify that the default values for Identifier, Multiple and PII properties is "no".
+    expect(screen.getByLabelText("identifier-no")).toBeChecked();
+    expect(screen.getByLabelText("multiple-no")).toBeChecked();
+
     const identifierRadio = screen.getByLabelText("identifier-yes");
     fireEvent.change(identifierRadio, {target: {value: "yes"}});
     expect(identifierRadio["value"]).toBe("yes");
@@ -115,6 +119,7 @@ describe("Property Modal Component", () => {
     expect(multipleRadio["value"]).toBe("yes");
 
     const piiRadio = screen.getByLabelText("pii-no");
+    expect(piiRadio).toBeChecked();
     fireEvent.change(piiRadio, {target: {value: "no"}});
     expect(piiRadio["value"]).toBe("no");
 
@@ -410,7 +415,7 @@ describe("Property Modal Component", () => {
       propertyType: PropertyType.Basic,
       type: "integer",
       identifier: "yes",
-      multiple: "",
+      multiple: "no",
       pii: "yes",
       sortable: false,
       facetable: false,
@@ -456,6 +461,8 @@ describe("Property Modal Component", () => {
     expect(getByText("Order-Map")).toBeInTheDocument();
 
     expect(getByText("Edit Property")).toBeInTheDocument();
+
+    expect(screen.getByLabelText("multiple-no")).toBeChecked(); //default value
 
     const multipleRadio = screen.getByLabelText("multiple-yes");
     expect(multipleRadio["value"]).toBe("yes");
@@ -712,7 +719,7 @@ describe("Property Modal Component", () => {
       propertyType: PropertyType.Basic,
       type: "integer",
       identifier: "yes",
-      multiple: "",
+      multiple: "no",
       pii: "yes",
       sortable: false,
       facetable: false
