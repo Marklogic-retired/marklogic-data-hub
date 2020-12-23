@@ -243,10 +243,15 @@ void postFailureFlexcodeScanAndReport(def vulnerabilities){
     email = email + ',Kavitha.Sivagnanam@marklogic.com'
 
     def body=''
-    vulnerabilities.each { msg -> body=body+msg + '<p>' }
-    body = body + '<p>scan report is attached.'
-
-    sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>  High vulneribilities: <p> $body",false," pipeline FAILED in ${STAGE_NAME} ", 'inventoriesRprt.report.json'
+    if(vulnerabilities && vulnerabilities.size() != 0) {
+        vulnerabilities.each { msg -> body = body + msg + '<p>' }
+        body = 'There are high vulneribilities: <p> ' + body + '<p>scan report is attached.'
+//      sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h3> $body",false," pipeline FAILED in ${STAGE_NAME} ",'inventoriesRprt.report.json'
+        sendMail email, "</h3> $body", false, " high vulnerabilities in stage ${STAGE_NAME} ",'inventoriesRprt.report.json'
+    }
+    else {
+        sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h3> ",false," pipeline FAILED in ${STAGE_NAME} "
+    }
 }
 
 def flexcodeScanAndReport(){
@@ -270,8 +275,9 @@ def flexcodeScanAndReport(){
     def vulnerabilities = []
     slurper.inventoryItems.each { key, value ->
         key.vulnerabilities.each { key1, value1 ->
-            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL'){
-                def msg = " item:$key.itemNumber inventory name:$key.name; volnarability name:$key1.vulnerabilityName; with Severity V2:$key1.vulnerabilityCvssV2Severity; with Severity V3:$key1.vulnerabilityCvssV3Severity; "
+            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL' || key1.vulnerabilityCvssV2Severity == 'HIGH'){
+                def itnumb = ((key.itemNumber as Integer) - 1)
+                def msg = " item:$itnumb; inventory name:$key.name; volnarability name:$key1.vulnerabilityName; with Severity V2:$key1.vulnerabilityCvssV2Severity; with Severity V3:$key1.vulnerabilityCvssV3Severity; "
                 vulnerabilities.add(msg)
             }
         }}
@@ -744,8 +750,10 @@ pipeline{
                 agent {label 'dhfLinuxAgent'}
                 steps{
                     script{
-//                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {sh 'exit 123'}
-                        if ( (high_vulnerabilities = flexcodeScanAndReport()) != 0) {postFailureFlexcodeScanAndReport(high_vulnerabilities)}
+
+                        high_vulnerabilities = fiexcodeScanAndReport()
+//                        if (high_vulnerabilities.size() != 0) {sh 'exit 123'}
+                        if (high_vulnerabilities.size() != 0) {postFailureFlexcodeScanAndReport(high_vulnerabilities)}
                     }
                 }
                 post{
