@@ -4,7 +4,6 @@ import Steps from "./steps";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import data from "../../assets/mock-data/curation/advanced-settings.data";
-import {AdvancedSettingsMessages} from "../../config/messages.config";
 import StepsConfig from "../../config/steps.config";
 import {ErrorTooltips} from "../../config/tooltips.config";
 
@@ -137,7 +136,9 @@ describe("Steps settings component", () => {
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "bad-value"}});
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("bad-value");
     fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
-    expect(getByTestId("validationError")).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+
+    //TODO: Test with reference rather than hardcoded string.
+    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
 
     expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-disabled");
     fireEvent.mouseOver(getByText("Basic"));

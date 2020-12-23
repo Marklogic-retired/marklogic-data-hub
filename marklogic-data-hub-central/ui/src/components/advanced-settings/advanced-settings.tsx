@@ -62,7 +62,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [targetPermissions, setTargetPermissions] = useState(defaultTargetPermissions);
   const validCapabilities = StepsConfig.validCapabilities;
   const [targetPermissionsTouched, setTargetPermissionsTouched] = useState(false);
-  const [permissionValidationError, setPermissionValidationError] = useState("");
+  const [permissionValidationError, setPermissionValidationError] = useState<any>(null);
   const [targetPermissionsValid, setTargetPermissionsValid] = useState(true);
 
   const usesTargetFormat = stepType === "mapping";
