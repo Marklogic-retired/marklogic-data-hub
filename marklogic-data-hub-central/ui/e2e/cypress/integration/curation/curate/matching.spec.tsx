@@ -66,7 +66,7 @@ describe("Matching", () => {
 
     //open matching step details
     curatePage.openStepDetails(matchStep);
-    cy.contains("The Match step defines criteria for determining whether the values from entiies match, and the action to take based on how close of a match they are.");
+    cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
     matchingStepDetail.showThresholdTextMore().should("not.be.visible");
     matchingStepDetail.showThresholdTextLess().should("be.visible");
     matchingStepDetail.showRulesetTextMore().should("not.be.visible");

@@ -5,7 +5,6 @@ import data from "../../assets/mock-data/curation/common.data";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
 import loadData from "../../assets/mock-data/curation/ingestion.data";
-import {AdvancedSettingsMessages} from "../../config/messages.config";
 import {MemoryRouter} from "react-router-dom";
 import {AuthoritiesService, AuthoritiesContext} from "../../util/authorities";
 import {validateTableRow} from "../../util/test-utils";
@@ -178,17 +177,23 @@ describe("Load data component", () => {
     fireEvent.change(targetPermissions, {target: {value: "role1"}}); // BAD permissions
     expect(targetPermissions).toHaveValue("role1");
     fireEvent.blur(targetPermissions);
-    expect(getByTestId("validationError")).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+
+    //TODO: Test with reference rather than hardcoded string.
+    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
 
     fireEvent.change(targetPermissions, {target: {value: "role1,reader"}}); // BAD permissions
     expect(targetPermissions).toHaveValue("role1,reader");
     fireEvent.blur(targetPermissions);
-    expect(getByTestId("validationError")).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.invalidCapabilities);
+
+    //TODO: Test with reference rather than hardcoded string.
+    expect(getByTestId("validationError")).toHaveTextContent("The string contains invalid capabilities. Capabilities must be read, insert, update, or execute.");
 
     fireEvent.change(targetPermissions, {target: {value: " "}}); // BAD permissions
     expect(targetPermissions).toHaveValue(" ");
     fireEvent.blur(targetPermissions);
-    expect(getByTestId("validationError")).toHaveTextContent(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
+
+    //TODO: Test with reference rather than hardcoded string.
+    expect(getByTestId("validationError")).toHaveTextContent("The format of the string is incorrect. The required format is role,capability,role,capability,....");
 
     fireEvent.change(targetPermissions, {target: {value: "role1,read"}}); // GOOD permissions
     expect(targetPermissions).toHaveValue("role1,read");

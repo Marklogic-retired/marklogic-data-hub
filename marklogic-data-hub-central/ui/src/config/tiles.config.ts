@@ -17,7 +17,7 @@ interface TileItem {
 }
 
 const tiles: Record<TileId, TileItem>  = {
-    load: { 
+    load: {
         title: 'Load',
         iconType: 'custom',
         icon: 'loadIcon',
@@ -28,7 +28,7 @@ const tiles: Record<TileId, TileItem>  = {
         controls: ['close'],
         intro: 'Create and configure steps that ingest raw data from multiple sources.',
     },
-    model: { 
+    model: {
         title: 'Model',
         iconType: 'custom',
         icon: 'modelIcon',
@@ -39,7 +39,7 @@ const tiles: Record<TileId, TileItem>  = {
         controls: ['close'],
         intro: 'Define the entity models that describe and standardize your data. You need these entity models to curate your data.',
     },
-    curate: { 
+    curate: {
         title: 'Curate',
         iconType: 'custom',
         icon: 'curateIcon',
@@ -48,9 +48,9 @@ const tiles: Record<TileId, TileItem>  = {
         border: '#BFBFBF',
         controlColor: '#777',
         controls: ['close'],
-        intro: 'Create and configure steps that curate and refine your data. In the Mapping step, you associate a field in your raw data model with each property in your entity model. When you run a Mapping step, these associations are applied to your data.',
+        intro: 'Create and configure steps that curate and refine your data. The Mapping step associates a field in your raw data with a property in your entity model. The Matching step identifies possible duplicate documents. The Merging step combines identified duplicates or performs other actions.',
     },
-    run: { 
+    run: {
         title: 'Run',
         iconType: 'custom',
         icon: 'runIcon',
@@ -61,9 +61,9 @@ const tiles: Record<TileId, TileItem>  = {
         controls: ['close'],
         intro: 'Add your step to a flow and run it.',
     },
-    explore: { 
+    explore: {
         title: 'Explore',
-        iconType: 'custom', 
+        iconType: 'custom',
         icon: 'exploreIcon',
         color: '#376F63',
         bgColor: '#F4F6F8',
