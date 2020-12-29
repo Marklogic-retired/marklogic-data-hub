@@ -62,7 +62,12 @@ public class MasterTest extends AbstractHubCoreTest {
         makeInputFilePathsAbsoluteInFlow("myNewFlow");
 
         runAsDataHubOperator();
-        runFlow(new FlowInputs("myNewFlow", "1", "2"));
+        RunFlowResponse flowResponse = runFlow(new FlowInputs("myNewFlow", "1", "2"));
+        for(RunStepResponse stepResponse:flowResponse.getStepResponses().values()) {
+            if (stepResponse != null) {
+                assertTrue(stepResponse.isSuccess(), stepResponse.getStepName() + " job failed with " + stepResponse.getStepOutput());
+            }
+        }
         JsonNode matchResp = masteringManager.match("/person-1.json", "myNewFlow", "3", Boolean.TRUE, new ObjectMapper().createObjectNode()).get("results");
         assertEquals(7, matchResp.get("total").asInt(), "There should 7 match results");
         assertEquals(7, matchResp.get("result").size(), "There should 7 match results");

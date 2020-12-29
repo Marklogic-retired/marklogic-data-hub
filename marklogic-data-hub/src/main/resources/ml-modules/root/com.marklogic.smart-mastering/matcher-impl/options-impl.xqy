@@ -355,20 +355,20 @@ declare function opt-impl:compile-match-options(
  : @return map:map with compiled information about match options
  :)
 declare function opt-impl:compile-match-options(
-  $match-options as item() (: as node()|json:object :),
+  $original-match-options as item() (: as node()|json:object :),
   $original-minimum-threshold as xs:double?,
   $only-warn-on-error as xs:boolean
 ) {
-  let $match-options := if ($match-options instance of json:object) then
-      xdmp:to-json($match-options)/object-node()
-    else
-      $match-options
-  let $match-options := if (fn:exists($match-options/(*:options|matchOptions))) then
-      $match-options/(*:options|matchOptions)
-    else
-      $match-options
-  let $cache-id :=
-      xdmp:md5(xdmp:describe($match-options, (), ())) || "|min-threshold:" || $original-minimum-threshold
+    let $match-options := if ($original-match-options instance of json:object) then
+        xdmp:to-json($original-match-options)/object-node()
+      else
+        $original-match-options
+    let $match-options := if (fn:exists($match-options/(*:options|matchOptions))) then
+        $match-options/(*:options|matchOptions)
+      else
+        $match-options
+  let $options-id := xdmp:md5(xdmp:describe($match-options, (), ()))
+  let $cache-id := $options-id || "|min-threshold:" || $original-minimum-threshold
   return
   if (map:contains($_cached-compiled-match-options, $cache-id)) then
     map:get($_cached-compiled-match-options, $cache-id)
@@ -526,6 +526,7 @@ declare function opt-impl:compile-match-options(
         if (fn:exists($match-options/(dataFormat|matcher:data-format))) then
           map:entry("dataFormat", fn:string($match-options/(dataFormat|matcher:data-format)))
         else (),
+        map:entry("optionsId", $options-id),
         map:entry("normalizedOptions", $match-options),
         map:entry("minimumThreshold", $minimum-threshold),
         (: Ensure we're using the full IRI in the compiled options :)
@@ -585,7 +586,7 @@ declare function opt-impl:multi-struct-prop-multi-value-map($match-rules, $entit
   let $ent-paths as xs:string* := $match-rules/entityPropertyPath
   let $dotted-paths := $ent-paths[fn:contains(., ".")]
   return
-    if (fn:empty($dotted-paths)) then
+    if (fn:count($dotted-paths) le 1) then
       ()
     else
       (: get the first property of dotted paths :)

@@ -21,14 +21,15 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
 {
   let $compiled-match-options := match-opt-impl:compile-match-options($match-options, ())
   let $match-options := $compiled-match-options => map:get("normalizedOptions")
-  let $key := xdmp:md5(xdmp:describe($match-options, (), ())) || "|" || $full-property-name
+  let $options-id := $compiled-match-options => map:get("optionsId")
+  let $key := $options-id || "|" || $full-property-name
   return
     if (map:contains($_cached-property-name-to-queries, $key)) then
       map:get($_cached-property-name-to-queries, $key)
     else
       let $target-entity-type := $compiled-match-options => map:get("targetEntityType")
       let $match-options := $compiled-match-options => map:get("normalizedOptions")
-      let $is-json := $compiled-match-options => map:get("dataFormat") = $const:FORMAT-JSON
+      let $is-json-fun := function () {$compiled-match-options => map:get("dataFormat") = $const:FORMAT-JSON}
       let $property-info :=
         if (fn:exists($target-entity-type)) then
           es-helper:get-entity-property-info($target-entity-type, $full-property-name)
@@ -63,7 +64,7 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
                 return
                   $scope-query(
                       cts:range-query($index-reference, "=", $cast-values, ("score-function=linear"), $weight),
-                      $is-json
+                      $is-json-fun()
                   )
               }
             else
@@ -71,7 +72,7 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
               return
                 function($val, $weight) {
                   $scope-query(
-                      if ($is-json) then
+                      if ($is-json-fun()) then
                         cts:json-property-value-query(
                           fn:local-name-from-QName($qname),
                           $val,
@@ -85,7 +86,7 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
                             (),
                             $weight
                         ),
-                      $is-json
+                      $is-json-fun()
                   )
                 }
           else
@@ -105,7 +106,7 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
                 let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
                 return
                   function($val, $weight) {
-                    if ($is-json) then
+                    if ($is-json-fun()) then
                       cts:json-property-value-query(
                         fn:string($qname),
                         $val,

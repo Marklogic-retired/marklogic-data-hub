@@ -38,6 +38,9 @@ declare namespace matcher = "http://marklogic.com/smart-mastering/matcher";
 
 declare option xdmp:mapping "false";
 
+declare variable $match-trace-is-enabled as xs:boolean := xdmp:trace-enabled($const:TRACE-MATCH-RESULTS);
+declare variable $performance-trace-is-enabled as xs:boolean := xdmp:trace-enabled($const:TRACE-PERFORMANCE);
+
 declare variable $QUERIES_WITH_WEIGHT := (
     xs:QName("cts:element-attribute-pair-geospatial-query"),xs:QName("cts:element-attribute-range-query"),
     xs:QName("cts:element-attribute-value-query"),xs:QName("cts:element-attribute-word-query"),xs:QName("cts:element-child-geospatial-query"),
@@ -149,7 +152,7 @@ declare function match-impl:find-document-matches-by-options(
       let $queries :=
         for $query-map in $query-maps
         let $_trace :=
-          if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+          if ($match-trace-is-enabled) then
             xdmp:trace($const:TRACE-MATCH-RESULTS, "values-by-property-name: " || xdmp:describe($values-by-property-name, (),()))
           else
             ()
@@ -244,7 +247,7 @@ declare function match-impl:find-document-matches-by-options(
       element match-query {
         $match-query
       }
-    let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+    let $_trace := if ($match-trace-is-enabled) then
             xdmp:trace($const:TRACE-MATCH-RESULTS, "match-query cts.doc('"||$document-uri||"'):" || xdmp:describe($match-query, (),()))
         else ()
     return
@@ -254,7 +257,9 @@ declare function match-impl:find-document-matches-by-options(
       else
         let $estimate := xdmp:estimate(cts:search(fn:collection(), $match-query, "unfiltered"))
         return (
-          xdmp:trace($const:TRACE-MATCH-RESULTS, "Estimated " || $estimate || " doc(s) found for cts.doc('"|| $document-uri ||"') in " || xdmp:database-name(xdmp:database())),
+          if ($match-trace-is-enabled) then
+            xdmp:trace($const:TRACE-MATCH-RESULTS, "Estimated " || $estimate || " doc(s) found for cts.doc('"|| $document-uri ||"') in " || xdmp:database-name(xdmp:database()))
+          else (),
           element results {
             attribute total { $estimate },
             attribute page-length { $page-length },
@@ -265,7 +270,7 @@ declare function match-impl:find-document-matches-by-options(
                 for $query-map in map:get($compiled-options, "queries")
                 let $query := match-impl:query-map-to-query($document, $query-map, $values-by-property-name, $cached-queries, $query-prov, $target-entity-type)
                 let $_trace :=
-                  if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+                  if ($match-trace-is-enabled) then
                     xdmp:trace($const:TRACE-MATCH-RESULTS, "'"|| $query-map => map:get("name") ||"' query:" || xdmp:describe($query,(),()))
                   else ()
                 (: query may not exist if there weren't values passed, etc. :)
@@ -282,7 +287,7 @@ declare function match-impl:find-document-matches-by-options(
                           $query
                   )
               let $_trace :=
-                if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+                if ($match-trace-is-enabled) then
                   xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('"|| $document-uri ||"') property values:" || xdmp:to-json-string($values-by-property-name))
                 else ()
               return
@@ -298,7 +303,7 @@ declare function match-impl:find-document-matches-by-options(
                     $query-prov
                   )
             else (),
-            if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
+            if ($performance-trace-is-enabled) then
               xdmp:trace($const:TRACE-PERFORMANCE, "match-impl:find-document-matches-by-options: " || (xdmp:elapsed-time() - $start-elapsed))
             else ()
           }
@@ -345,10 +350,9 @@ declare function match-impl:query-map-to-query(
   $target-entity as xs:string?
 )
 {
-  if (map:contains($query-map, "matchRulesetId") and map:contains($cached-queries, $query-map => map:get("matchRulesetId"))
-      and fn:empty(map:get($query-map, "multiStructPropMultiValueMap"))) then
+  if (map:contains($query-map, "matchRulesetId") and map:contains($cached-queries, $query-map => map:get("matchRulesetId"))) then (
     map:get($cached-queries, $query-map => map:get("matchRulesetId"))
-  else
+  ) else (
     let $multi-struct-prop-multi-value-map := map:get($query-map, "multiStructPropMultiValueMap")
     let $is-reduce := $query-map => map:get("isReduce")
     let $sub-query-maps := map:get($query-map, "matchQueries")
@@ -377,19 +381,16 @@ declare function match-impl:query-map-to-query(
         else (),
         $query
       ),
-
       match-impl:multi-struct-prop-multi-value-queries($query-map, $document, $target-entity)
       )
-    where fn:exists($queries)
     return (
       (: no caching in the structured properties case (yet) :)
-      if (fn:not(map:contains($query-map, "multiStructPropMultiValueMap"))) then
+      if (fn:empty(map:get($query-map, "multiStructPropMultiValueMap"))) then
         map:put($cached-queries, $query-map => map:get("matchRulesetId"), $queries)
-      else
-        ()
+      else ()
       ,
       $queries
-    )
+    ))
 
 };
 
@@ -464,7 +465,7 @@ declare function match-impl:values-by-property-name(
     for $property-name in map:keys($property-names-to-values)
     let $values := map:get($property-names-to-values, $property-name)($document)
     let $_trace :=
-      if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+      if ($match-trace-is-enabled) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "Values for cts.doc(" || xdmp:node-uri($document) || ") " || $property-name || ": " || xdmp:describe($values, (), ()))
       else ()
     where fn:exists($values)
@@ -518,7 +519,7 @@ declare function match-impl:search(
     let $query := $query-map => map:get("query")
     let $contains := cts:contains($result,$query)
     let $_trace :=
-      if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+      if ($match-trace-is-enabled) then
         let $weight := $query-map => map:get("weight")
         let $name := $query-map => map:get("name")
         return (
@@ -532,7 +533,7 @@ declare function match-impl:search(
       fn:sum(
           $matching-query-maps ! map:get(., "weight")
       )
-  let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+  let $_trace := if ($match-trace-is-enabled) then
         xdmp:trace($const:TRACE-MATCH-RESULTS, "cts.doc('" || $uri || "') score: " || $score || " minimum-threshold: " || $min-threshold)
     else ()
   where $score ge $min-threshold
@@ -560,7 +561,7 @@ declare function match-impl:search(
             cts:or-query(cts:and-query-queries($ruleset-query))
           else
             $ruleset-query
-          let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
+          let $_trace := if ($match-trace-is-enabled) then
               xdmp:trace($const:TRACE-MATCH-RESULTS, "Walking document with query: " || xdmp:describe($walk-query,(),()))
             else ()
           return <match weight="{$ruleset-weight}">
@@ -572,7 +573,7 @@ declare function match-impl:search(
                 let $query-hash := xdmp:md5(document {$query})
                 let $node-name := fn:string(fn:head((fn:node-name($cts:node), fn:node-name($cts:node/..))))
                 let $query-map := map:get($query-prov, $query-hash)
-                let $_trace := if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then (
+                let $_trace := if ($match-trace-is-enabled) then (
                   xdmp:trace($const:TRACE-MATCH-RESULTS, "Walking document and matched query: " || xdmp:describe($query,(),())),
                   if (fn:empty($query-map)) then
                     xdmp:trace($const:TRACE-MATCH-RESULTS, "Query hash '" || $query-hash || "' not found in provenance. All provenance: " || xdmp:to-json-string($query-prov))

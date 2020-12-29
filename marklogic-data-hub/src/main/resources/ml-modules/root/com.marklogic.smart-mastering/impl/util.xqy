@@ -30,6 +30,8 @@ import module namespace es-helper = "http://marklogic.com/smart-mastering/entity
 import module namespace httputils="http://marklogic.com/data-hub/http-utils"
 at "/data-hub/5/impl/http-utils.xqy";
 
+declare namespace es = "http://marklogic.com/entity-services";
+
 declare variable $write-objects-by-uri as map:map := map:map();
 
 declare function util-impl:add-all-write-objects(
@@ -137,12 +139,22 @@ declare function util-impl:properties-to-values-functions(
     let $document-xpath-rule := fn:head(($property-definition[@path|path], $rules[documentXPath eq $property-name]))
     let $function :=
       if (fn:exists($entity-property-info)) then
-        let $xpath := $entity-property-info => map:get("pathExpression")
-        let $namespaces := $entity-property-info => map:get("namespaces")
-        return
-          function($document) {
-            xdmp:unpath($xpath, $namespaces, $document)
-          }
+        (: optimization for top-level properties :)
+        if (fn:contains($property-name, ".")) then
+          let $xpath := fn:substring-after($entity-property-info => map:get("pathExpression"), "/(es:envelope|envelope)/(es:instance|instance)/")
+          let $namespaces := $entity-property-info => map:get("namespaces")
+          return
+            function($document) {
+              xdmp:unpath($xpath, $namespaces, $document/(es:envelope|envelope)/(es:instance|instance))
+            }
+        else
+          let $property-title := $entity-property-info => map:get("propertyTitle")
+          let $namespace := $entity-property-info => map:get("namespace")
+          let $qname := fn:QName(fn:string($namespace), fn:string($property-title))
+          return
+            function($document) {
+              $document/(es:envelope|envelope)/(es:instance|instance)/*/*[fn:node-name(.) eq $qname]
+            }
       else if (fn:exists($document-xpath-rule)) then
         let $xpath := fn:head(($document-xpath-rule/(@path|path),$property-name))
         let $namespaces := fn:head(($document-xpath-rule/namespaces ! xdmp:from-json(.), $xpath-namespaces))
@@ -151,10 +163,11 @@ declare function util-impl:properties-to-values-functions(
             xdmp:unpath($xpath, $namespaces, $document)
           }
       else if (fn:exists($property-definition)) then
-        function($document) {
           let $qname := fn:QName(fn:string($property-definition/(@namespace|namespace)), fn:string($property-definition/(@localname|localname)))
-          return $document/*:envelope/*:instance//*[fn:node-name(.) eq $qname]
-        }
+          return
+            function($document) {
+              $document/(es:envelope|envelope)/(es:instance|instance)//*[fn:node-name(.) eq $qname]
+            }
       else
         util-impl:handle-option-messages("error", "Property information for '" || $property-name || "'" || (if (fn:exists($entity-type-iri)) then " entity <"||$entity-type-iri ||">" else "") || " not found!", $message-output)
     return
@@ -165,9 +178,9 @@ declare function util-impl:properties-to-values-functions(
 declare function util-impl:handle-option-messages($type as xs:string, $message as xs:string, $messages-output as map:map?)
   as empty-sequence()
 {
-  if (fn:exists($messages-output)) then
+  if (fn:exists($messages-output)) then (
     map:put($messages-output, $type, (map:get($messages-output, $type),$message))
-  else if ($type eq "error") then
+  ) else if ($type eq "error") then
     httputils:throw-bad-request((), $message)
   else
     xdmp:log($message, $type)
