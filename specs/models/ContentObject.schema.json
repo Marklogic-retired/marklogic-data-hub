@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://marklogic.com/data-hub/ContentObject.schema.json",
+  "title": "ContentObject",
+  "description": "Defines the object that is passed, either by itself or within an array, to a step module for processing and is then used for writing documents",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string",
+      "description": "The identifier for this content object. Will be a real URI value unless sourceQueryIsScript in the step, in which case it can be any value."
+    },
+    "value": {
+      "type": "object",
+      "description": "The document to be processed"
+    },
+    "context": {
+      "type": "object",
+      "description": "Defines properties that will affect how a document is written",
+      "properties" : {
+        "collections": {
+          "type": "array",
+          "description": "Defines the collections that the document will be written to. Currently not populated by default when passed to a step module.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "originalCollections": {
+          "type": "array",
+          "description": "Defines the collections that currently exist on the document",
+          "items": {
+            "type": "string"
+          }
+        },
+        "permissions": {
+          "type": "array",
+          "description": "Defines the permissions that will be included when this document is written",
+          "items": {
+            "type": "object",
+            "properties": {
+              "roleId": {
+                "type": "string",
+                "description": "MarkLogic-defined ID of the role associated with this permissions"
+              },
+              "capability": {
+                "type": "string",
+                "description": "Either read, update, insert, or execute"
+              }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Defines the metadata keys and values that will be included when the document is persisted"
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "description": "Defines changes to entity properties by a step",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^.*$": {
+          "type": "object",
+          "description": "The property name is the URI of the source document",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^.*$": {
+              "type": "object",
+              "description": "The property name is the property name or XPath expression in the source document containing the altered value",
+              "properties": {
+                "destination": {
+                  "type": "string",
+                  "description": "Property name or XPath expression for the altered value"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Value of the altered property"
+                }
+              }
+            }
+          }
+        } 
+      }
+    }
+  }
+}
