@@ -521,41 +521,39 @@ class Flow {
    * @param flowStep
    */
   writeProvenanceData(jobId, flowName, stepDefinition, flowStep) {
-    const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
-    const stepName = flowStep.name || flowStep.stepDefinitionName;
-    /* Failure to write may have caused there to be nothing written, so checking the completed items length.
-    This approach, rather than clearing the writeQueue on a write error, will allow fullOutput to still return what
-    was attempted to be written to the database. This could be helpful in the future for debugging.
-     */
-    if (this.globalContext.completedItems.length) {
-      let prov = this.datahub.prov;
+    const prov = this.datahub.prov;
+    if (this.globalContext.completedItems.length && prov.granularityLevel() !== prov.OFF_LEVEL) {
+      const stepDefTypeLowerCase = (stepDefinition.type) ? stepDefinition.type.toLowerCase(): stepDefinition.type;
+      const stepName = flowStep.name || flowStep.stepDefinitionName;
+
       for (let content of this.writeQueue) {
-        let previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
-        let info = {
-          derivedFrom: previousUris,
-          influencedBy: stepName,
-          status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
-          metadata: {}
-        };
         // We may want to hide some documents from provenance. e.g., we don't need provenance of mastering PROV documents
         if (content.provenance !== false) {
-          let provResult;
-          if (prov.granularityLevel() === prov.FINE_LEVEL && flowStep.stepDefinitionName === "entity-services-mapping") {
-            xdmp.trace(this.datahub.consts.TRACE_RUN_STEP, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. So, coarse grained provenance data will be generated.`);
+          const previousUris = this.datahub.hubUtils.normalizeToArray(content.previousUri || content.uri);
+          const info = {
+            derivedFrom: previousUris,
+            influencedBy: stepName,
+            status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
+            metadata: {}
+          };
+          
+          const isFineGranularity = prov.granularityLevel() === prov.FINE_LEVEL;
+          const isMappingStep = flowStep.stepDefinitionName === "entity-services-mapping";
+          
+          if (isFineGranularity && isMappingStep) {
+            xdmp.trace(this.datahub.consts.TRACE_RUN_STEP, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
           }
-          if (prov.granularityLevel() === prov.FINE_LEVEL && content.provenance && flowStep.stepDefinitionName !== "entity-services-mapping") {
-            provResult = this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info);
-          } else {
-            provResult = prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
-          }
+          
+          const provResult = isFineGranularity && !isMappingStep && content.provenance ? 
+            this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) : 
+            prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
+
           if (provResult instanceof Error) {
-            flowInstance.datahub.debug.log({message: provResult.message, type: 'error'});
+            this.datahub.debug.log({message: provResult.message, type: 'error'});
           }
         }
       }
-      if (prov.granularityLevel() !== prov.OFF_LEVEL) {
-        this.datahub.prov.commit();
-      }
+      this.datahub.prov.commit();
     }
   }
 

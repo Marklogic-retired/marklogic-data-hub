@@ -1,0 +1,7 @@
+{
+  "local-name" : "clear-jobs-database",
+  "document-uri" : "/test/data-hub-test-helper.xqy",
+  "namespace": "http://marklogic.com/data-hub/test",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "admin" ]
+}

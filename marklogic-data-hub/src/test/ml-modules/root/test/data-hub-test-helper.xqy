@@ -141,9 +141,17 @@ declare function reset-hub() as empty-sequence()
   clear-jobs-database()
 };
 
+(:
+Clearing via forest-clear can lead to intermittent failures, so just deleting the 
+two known collections. 
+:)
 declare function clear-jobs-database()
 {
-  invoke-in-db(function() {xdmp:collection-delete("Jobs")}, "data-hub-JOBS")
+  invoke-in-db(function() {
+    xdmp:collection-delete("Jobs"),
+    xdmp:collection-delete("http://marklogic.com/provenance-services/record")
+    }, "data-hub-JOBS"
+  )
 };
 
 declare function reset-staging-and-final-databases()
@@ -166,6 +174,11 @@ declare function get-first-batch-document()
 declare function get-modules-document($uri as xs:string)
 {
   invoke-in-db(function() {fn:doc($uri)}, "data-hub-MODULES")
+};
+
+declare function get-first-prov-document()
+{
+  invoke-in-db(function() {fn:collection("http://marklogic.com/provenance-services/record")[1]}, "data-hub-JOBS")
 };
 
 declare function invoke-in-db($function, $database as xs:string)
