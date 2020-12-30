@@ -611,7 +611,7 @@ declare function proc-impl:build-match-summary(
   return (
     $match-summary,
     if (xdmp:trace-enabled($const:TRACE-MATCH-RESULTS)) then
-      xdmp:trace($const:TRACE-MATCH-RESULTS, "match-summary:["||xdmp:request()||"] " || xdmp:describe(xdmp:to-json($match-summary),(),()))
+      xdmp:trace($const:TRACE-MATCH-RESULTS, "match-summary:["||xdmp:request()||"] " || xdmp:to-json-string($match-summary))
     else (),
     if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
       xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:build-match-summary:["||xdmp:request()||"] " || (xdmp:elapsed-time() - $start-elapsed))
@@ -825,7 +825,7 @@ declare function proc-impl:build-content-objects-from-match-summary(
   return (
     $results-array,
     if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-      xdmp:trace($const:TRACE-MERGE-RESULTS, "proc-impl:build-content-objects-from-match-summary result:["||xdmp:request()||"] " || xdmp:describe(xdmp:to-json($results-array),(),()))
+      xdmp:trace($const:TRACE-MERGE-RESULTS, "proc-impl:build-content-objects-from-match-summary result:["||xdmp:request()||"] " || xdmp:to-json-string($results-array))
     else (),
     if (xdmp:trace-enabled($const:TRACE-PERFORMANCE)) then
       xdmp:trace($const:TRACE-PERFORMANCE, "proc-impl:build-content-objects-from-match-summary:["||xdmp:request()||"] " || (xdmp:elapsed-time() - $start-elapsed))

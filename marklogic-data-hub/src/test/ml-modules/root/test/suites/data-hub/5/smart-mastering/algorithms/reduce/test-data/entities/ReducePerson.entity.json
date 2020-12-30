@@ -1,0 +1,22 @@
+{
+  "info": {
+    "title": "ReducePerson",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "ReducePerson": {
+      "properties": {
+        "firstName": {
+          "datatype": "string"
+        },
+        "lastName": {
+          "datatype": "string"
+        },
+        "street": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

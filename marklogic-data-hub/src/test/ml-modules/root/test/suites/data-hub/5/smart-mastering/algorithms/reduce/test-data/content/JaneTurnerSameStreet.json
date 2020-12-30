@@ -1,0 +1,14 @@
+{
+  "envelope": {
+    "instance": {
+      "info": {
+        "title": "ReducePerson"
+      },
+      "ReducePerson": {
+        "firstName": "Jane",
+        "lastName": "Turner",
+        "street": "123 Main St"
+      }
+    }
+  }
+}

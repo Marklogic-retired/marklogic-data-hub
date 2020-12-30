@@ -143,7 +143,7 @@ declare function helper-impl:property-name-to-qname($match-options as item(), $f
       let $qname :=
         if (fn:exists($property-info)) then
           let $namespace := fn:string($property-info => map:get("namespace"))
-          return fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("entityTitle")))
+          return fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("propertyTitle")))
         else
           let $property-def := $match-options/(*:property-defs|propertyDefs)/*:property[(name|@name) = $full-property-name]
           return
