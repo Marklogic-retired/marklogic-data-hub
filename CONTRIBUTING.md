@@ -37,7 +37,7 @@ You need:
 
 - MarkLogic Server (see [Version Compatibility](https://docs.marklogic.com/datahub/refs/version-compatibility.html) for the correct version)
 - Java JDK 9, 10 or 11
-- Gradle 5.x or later
+- Gradle 6.4 (6.4.x and higher may work, but 6.4 is preferred)
 
 ### Testing changes to the Data Hub library
 
