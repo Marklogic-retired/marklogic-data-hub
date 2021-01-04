@@ -4,14 +4,14 @@ persisted by a step.
 ## How to install
 
 To install via Gradle, start with a clean MarkLogic instance - i.e. without an existing Data hub installation. 
-Then, initialize the project:
+Then, initialize the project (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i hubInit
     
 Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
 password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
 
-Then deploy the application:
+Then deploy the application (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i mlDeploy
 
