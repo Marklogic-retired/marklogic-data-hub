@@ -9,7 +9,7 @@ Hub Central.
 To try this project out, start with a clean DHS or MarkLogic instance - i.e. without an existing Data hub installation.
 Then, install the project's application via Gradle. 
 
-First, initialize the project:
+First, initialize the project (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i hubInit
     
@@ -17,7 +17,7 @@ Then modify the gradle-local.properties file and either un-comment the mlUsernam
 password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
 If you are deploying to DHS, you likely should modify gradle-dhs.properties instead.  
 
-Then deploy the application:
+Then deploy the application (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i mlDeploy
 

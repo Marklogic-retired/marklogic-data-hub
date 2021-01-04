@@ -5,7 +5,12 @@ in an example project directory.
 
 Many of the Data Hub 5 example projects can be tested against a snapshot version of the Data Hub Gradle plugin; this is 
 typically done when testing these projects locally against the develop branch. A snapshot version will be used when the
-Gradle property "testing" has a value of "true". 
+Gradle property "testing" has a value of "true". The easiest way to apply this is when you initialize a project, include
+the "testing" property on the command line - e.g.
+
+    ./gradlew -Ptesting=true hubInit
+
+After initializing the project, you may want to add "testing=true" to the gradle.properties file so that you do not need to include it as a command line property. 
 
 If you are trying to use a snapshot version of the Gradle plugin and get an error about not being able to find the 
 plugin - e.g. "Could not find com.marklogic:ml-data-hub:5.4-SNAPSHOT" - then run the following Gradle task from the root

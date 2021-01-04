@@ -2,28 +2,18 @@ This project provides examples of various mastering features in DHF.
 
 ## How to install
 
-To try this project out using QuickStart, start with a clean MarkLogic instance - i.e. without an existing Data hub installation.
-Then, you can either install this project's application via QuickStart or via Gradle.
+As of 5.4.0, this project has been converted so that it can be used with Hub Central. Thus, it cannot be installed via QuickStart - it must be installed via Gradle. 
 
-### Install via QuickStart
-
-To install via QuickStart, simply start QuickStart and browse to this project folder. Use QuickStart to initialize
-this project and then deploy the application.
-
-### Install via Gradle
-
-To install via Gradle, first initialize the project:
+To install via Gradle, first initialize the project (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i hubInit
     
 Then modify the gradle-local.properties file and either un-comment the mlUsername and mlPassword properties and set the
 password for your admin user, or set the properties to a different MarkLogic user that is able to deploy applications. 
 
-Then deploy the application:
+Then deploy the application (include -Ptesting=true if you are trying to use a snapshot version of DHF):
 
     ./gradlew -i mlDeploy
-
-Next, start up QuickStart and browse to this project folder and login to QuickStart. 
 
 ## How to run the flow
 
