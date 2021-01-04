@@ -2,16 +2,19 @@ package com.marklogic.hub.hubcentral;
 
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.HubClient;
+import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
@@ -26,6 +29,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
     private File zipProjectFile;
     private AllArtifactsProject project;
     private List<ZipEntry> artifactZipEntries;
+    private Properties gradleProps = new Properties();
 
     @Test
     void forbiddenUser() {
@@ -100,6 +104,10 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
 
         while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry) entries.nextElement();
+            if("gradle.properties".equals(entry.getName())){
+                InputStream input = zip.getInputStream(entry);
+                gradleProps.load(input);
+            }
             if(Stream.of(artifactDirs).anyMatch(entry.getName()::startsWith) && !entry.isDirectory()){
                 artifactZipEntries.add(entry);
             }
@@ -107,10 +115,13 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
                 zipProjectEntries.add(entry.getName());
             }
         }
-
     }
 
     public void verifyZipProject(){
+        assertEquals(HubConfig.DEFAULT_STAGING_NAME, gradleProps.getProperty("mlStagingDbName"));
+        assertEquals(String.valueOf(HubConfig.DEFAULT_FINAL_PORT), gradleProps.getProperty("mlFinalPort"));
+        assertEquals(HubConfig.DEFAULT_JOB_NAME, gradleProps.getProperty("mlJobAppserverName"));
+
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/custom/"));
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/ingestion/"));
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/mapping/"));
