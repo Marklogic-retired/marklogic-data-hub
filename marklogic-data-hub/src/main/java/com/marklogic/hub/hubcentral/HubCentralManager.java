@@ -13,6 +13,7 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.HubProject;
 import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -67,7 +68,8 @@ public class HubCentralManager extends LoggingObject {
         try {
             projectPath = Files.createTempDirectory("");
             hubProject.createProject(projectPath.toFile().getAbsolutePath());
-            hubProject.init(new HashMap<>());
+            HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
+            hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
             hubProject.exportProject(outputStream, true);
         } catch (IOException ex) {
