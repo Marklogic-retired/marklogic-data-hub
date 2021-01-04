@@ -2,44 +2,48 @@
   "$schema": "http://json-schema.org/schema#",
   "$id": "http://marklogic.com/data-hub/ContentObject.schema.json",
   "title": "ContentObject",
-  "description": "Defines the object that is passed, either by itself or within an array, to a step module for processing and is then used for writing documents",
+  "description": "Defines the object that is passed, either by itself or within a sequence, to a step module for processing; the step module then outputs a content object that is used to insert a document",
   "type": "object",
   "properties": {
     "uri": {
       "type": "string",
-      "description": "The identifier for this content object. Will be a real URI value unless sourceQueryIsScript in the step, in which case it can be any value."
+      "description": "The identifier for this content object; will be a document URI unless sourceQueryIsScript=true in the step, in which case it can be any value"
     },
     "value": {
       "type": "object",
       "description": "The document to be processed"
     },
+    "$delete": {
+      "type": "boolean",
+      "description": "If true, then the documented identified by the 'uri' property will be deleted and no document will be inserted"
+    },
     "context": {
       "type": "object",
-      "description": "Defines properties that will affect how a document is written",
+      "description": "Defines properties that affect how a document is inserted",
       "properties" : {
         "collections": {
           "type": "array",
-          "description": "Defines the collections that the document will be written to. Currently not populated by default when passed to a step module.",
+          "description": "The collections to be included when the document is inserted; not populated when passed to a step module; intended to be populated by a step module",
           "items": {
             "type": "string"
           }
         },
         "originalCollections": {
           "type": "array",
-          "description": "Defines the collections that currently exist on the document",
+          "description": "The collections that exist on the document",
           "items": {
             "type": "string"
           }
         },
         "permissions": {
           "type": "array",
-          "description": "Defines the permissions that will be included when this document is written",
+          "description": "The permissions to be included when the document is inserted",
           "items": {
             "type": "object",
             "properties": {
               "roleId": {
                 "type": "string",
-                "description": "MarkLogic-defined ID of the role associated with this permissions"
+                "description": "MarkLogic-defined ID of the role associated with this permission"
               },
               "capability": {
                 "type": "string",
@@ -50,7 +54,7 @@
         },
         "metadata": {
           "type": "object",
-          "description": "Defines the metadata keys and values that will be included when the document is persisted"
+          "description": "The metadata keys and values to be included when the document is inserted"
         }
       }
     },
