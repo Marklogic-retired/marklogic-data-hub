@@ -157,6 +157,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         name: stepName,
         targetEntityType: props.targetEntityType,
         description: description,
+        collection: collections,
         selectedSource: selectedSource,
         sourceQuery: sQuery
       };

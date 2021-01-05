@@ -220,6 +220,19 @@ describe("Create Edit Step Dialog component", () => {
 
     expect(getByText("Save")).toBeEnabled();
     expect(getByText("Cancel")).toBeEnabled();
+
+    fireEvent.click(getByLabelText("Collection"));
+
+    fireEvent.click(getByText("Save"));
+    expect(data.editMerging.createStepArtifact).toBeCalledWith({
+      name: "mergeCustomers",
+      targetEntityType: "Customer",
+      description: "merge customer description",
+      collection: "matchCustomers",
+      selectedSource: "collection",
+      sourceQuery: "cts.collectionQuery(['matchCustomers'])",
+      timestamp: "/envelope/headers/createdOn"
+    });
   });
 
 });
