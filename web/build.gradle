@@ -217,7 +217,7 @@ task stopBootrun {
 e2eUI.finalizedBy stopBootrun
 
 // Need to ensure the UI files are built and included in the war file
-if (gradle.startParameter.taskNames*.toLowerCase().contains("bootwar"))
+if ((gradle.startParameter.taskNames*.toLowerCase().contains("bootwar")) || (gradle.startParameter.taskNames*.toLowerCase().contains("build")))
 {
   processResources.dependsOn copyIndexHtml
 }
