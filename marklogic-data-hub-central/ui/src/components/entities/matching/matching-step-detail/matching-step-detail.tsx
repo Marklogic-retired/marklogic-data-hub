@@ -58,16 +58,20 @@ const MatchingStepDetail: React.FC = () => {
   useEffect(() => {
     if (Object.keys(curationOptions.activeStep.stepArtifact).length !== 0) {
       const matchingStepArtifact: MatchingStep = curationOptions.activeStep.stepArtifact;
-      if (matchingStepArtifact.matchRulesets.length > 0) {
-        toggleMoreRulesetText(false);
-      } else {
-        toggleMoreRulesetText(true);
-      }
+      if (matchingStepArtifact.matchRulesets) {
+        if (matchingStepArtifact.matchRulesets.length > 0) {
+          toggleMoreRulesetText(false);
+        } else {
+          toggleMoreRulesetText(true);
+        }
 
-      if (matchingStepArtifact.thresholds.length > 0) {
-        toggleMoreThresholdText(false);
-      } else {
-        toggleMoreThresholdText(true);
+      }
+      if (matchingStepArtifact.thresholds) {
+        if (matchingStepArtifact.thresholds.length > 0) {
+          toggleMoreThresholdText(false);
+        } else {
+          toggleMoreThresholdText(true);
+        }
       }
 
       setMatchingStep(matchingStepArtifact);
@@ -84,7 +88,7 @@ const MatchingStepDetail: React.FC = () => {
     setMatchingActivity(matchActivity);
   };
 
-  const matchRuleSetOptions = matchingStep.matchRulesets.map((i) => {
+  const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
     const matchRuleOptionsObject = {
       props: [{
         prop: i.name.split(" -")[0],
@@ -95,7 +99,7 @@ const MatchingStepDetail: React.FC = () => {
     return matchRuleOptionsObject;
   });
 
-  const matchThresholdOptions = matchingStep.thresholds.map((i) => {
+  const matchThresholdOptions = matchingStep.thresholds && matchingStep.thresholds.map((i) => {
     const matchThresholdOptionsObject = {
       props: [{
         prop: i.thresholdName,
@@ -271,7 +275,7 @@ const MatchingStepDetail: React.FC = () => {
               >Add</MLButton>
             </div>
           </div>
-          <MultiSlider options={matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"threshold"}/>
+          <MultiSlider options={matchingStep.thresholds && matchingStep.thresholds.length ? matchThresholdOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"threshold"}/>
         </div>
 
         <div className={styles.stepNumberContainer}>
@@ -305,7 +309,7 @@ const MatchingStepDetail: React.FC = () => {
               </MLDropdown>
             </div>
           </div>
-          <MultiSlider options={matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
+          <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
         </div>
 
         <div className={styles.matchCombinationsContainer}>

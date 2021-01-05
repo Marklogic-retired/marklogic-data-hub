@@ -406,7 +406,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       updateStep.matchRulesets[props.editRuleset["index"]] = matchRuleset;
     } else {
       // add match step
-      updateStep.matchRulesets.push(matchRuleset);
+      if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
     }
 
     await updateMatchingArtifact(updateStep);
