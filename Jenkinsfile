@@ -751,7 +751,7 @@ pipeline{
                 steps{
                     script{
 
-                        high_vulnerabilities = fiexcodeScanAndReport()
+                        high_vulnerabilities = flexcodeScanAndReport()
 //                        if (high_vulnerabilities.size() != 0) {sh 'exit 123'}
                         if (high_vulnerabilities.size() != 0) {postFailureFlexcodeScanAndReport(high_vulnerabilities)}
                     }
