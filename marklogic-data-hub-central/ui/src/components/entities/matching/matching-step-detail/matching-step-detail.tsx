@@ -220,7 +220,6 @@ const MatchingStepDetail: React.FC = () => {
   const renderRulesetMenu = (
     <MLMenu mode="vertical">
       <MLMenu.MLItem aria-label="single-ruleset-menu" onClick={() => addNewSingleRuleset()}>Add ruleset for a single property</MLMenu.MLItem>
-      <MLMenu.MLItem aria-label="multiple-ruleset-menu"  >Add ruleset for multiple properties</MLMenu.MLItem>
     </MLMenu>
   );
 
