@@ -6,6 +6,5 @@ include ':ml-data-hub-plugin'
 include ':web'
 include ':marklogic-data-hub-central'
 include ':marklogic-data-hub-spark-connector'
-include ':performance-tests'
 
 project(':ml-data-hub-plugin').name = 'ml-data-hub'
