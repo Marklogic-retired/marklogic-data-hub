@@ -17,8 +17,6 @@
 package com.marklogic.hub.scaffolding;
 
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.error.ScaffoldingValidationException;
-import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
 import com.marklogic.hub.scaffold.Scaffolding;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,91 +64,5 @@ public class ScaffoldingTest extends AbstractHubCoreTest {
             Paths.get(getHubProject().getProjectDir().toString(), "mappings", "my-fun-test"),
             mappingDir);
     }
-
-
-    @Test
-    public void createXqyRestExtension() {
-        String entityName = "my-fun-test";
-        String extensionName = "myExtension";
-        FlowType flowType = FlowType.HARMONIZE;
-        CodeFormat pluginCodeFormat = CodeFormat.XQUERY;
-        try {
-            scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
-        } catch (ScaffoldingValidationException e) {
-            fail(e.getMessage());
-        }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
-        assertTrue(restDir.toFile().exists());
-        Path restServicesDir = restDir.resolve("services");
-        assertTrue(restServicesDir.toFile().exists());
-        Path restExtensionFile = restServicesDir.resolve(extensionName + "." + pluginCodeFormat);
-        assertTrue(restExtensionFile.toFile().exists());
-        Path restExtensionMetadataDir = restServicesDir.resolve("metadata");
-        assertTrue(restExtensionMetadataDir.toFile().exists());
-        Path restExtensionMetadataFile = restExtensionMetadataDir.resolve(extensionName + ".xml");
-        assertTrue(restExtensionMetadataFile.toFile().exists());
-    }
-
-    @Test
-    public void createSjsRestExtension() {
-        String entityName = "my-fun-test";
-        String extensionName = "myExtension";
-        FlowType flowType = FlowType.INPUT;
-        CodeFormat pluginCodeFormat = CodeFormat.JAVASCRIPT;
-        try {
-            scaffolding.createRestExtension(entityName, extensionName, flowType, pluginCodeFormat);
-        } catch (ScaffoldingValidationException e) {
-            fail(e.getMessage());
-        }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
-        assertTrue(restDir.toFile().exists());
-        Path restServicesDir = restDir.resolve("services");
-        assertTrue(restServicesDir.toFile().exists());
-        Path restExtensionFile = restServicesDir.resolve(extensionName + "." + pluginCodeFormat);
-        assertTrue(restExtensionFile.toFile().exists());
-        Path restExtensionMetadataDir = restServicesDir.resolve("metadata");
-        assertTrue(restExtensionMetadataDir.toFile().exists());
-        Path restExtensionMetadataFile = restExtensionMetadataDir.resolve(extensionName + ".xml");
-        assertTrue(restExtensionMetadataFile.toFile().exists());
-    }
-
-    @Test
-    public void createXqyRestTransform() {
-        String entityName = "my-fun-test";
-        String transformName = "myTransform";
-        FlowType flowType = FlowType.HARMONIZE;
-        CodeFormat pluginCodeFormat = CodeFormat.XQUERY;
-        try {
-            scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
-        } catch (ScaffoldingValidationException e) {
-            fail(e.getMessage());
-        }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
-        assertTrue(restDir.toFile().exists());
-        Path restTransformDir = restDir.resolve("transforms");
-        assertTrue(restTransformDir.toFile().exists());
-        Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginCodeFormat);
-        assertTrue(restTransformFile.toFile().exists());
-    }
-
-    @Test
-    public void createSjsRestTransform() {
-        String entityName = "my-fun-test";
-        String transformName = "myTransform";
-        FlowType flowType = FlowType.HARMONIZE;
-        CodeFormat pluginCodeFormat = CodeFormat.JAVASCRIPT;
-        try {
-            scaffolding.createRestTransform(entityName, transformName, flowType, pluginCodeFormat);
-        } catch (ScaffoldingValidationException e) {
-            fail(e.getMessage());
-        }
-        Path restDir = Paths.get(pluginDir.toString(), "entities", entityName, flowType.toString(), "REST").toAbsolutePath().normalize();
-        assertTrue(restDir.toFile().exists());
-        Path restTransformDir = restDir.resolve("transforms");
-        assertTrue(restTransformDir.toFile().exists());
-        Path restTransformFile = restTransformDir.resolve(transformName + "." + pluginCodeFormat);
-        assertTrue(restTransformFile.toFile().exists());
-    }
-
 }
 
