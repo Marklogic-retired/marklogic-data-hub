@@ -54,6 +54,7 @@ const Header:React.FC<Props> = (props) => {
   };
 
   const handleSystemInfoDisplay = () => {
+    toggleUserDropdown(false);
     axios.get("/api/environment/systemInfo")
       .then(res => {
         setSystemInfoVisible(true);
