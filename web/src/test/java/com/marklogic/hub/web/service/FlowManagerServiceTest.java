@@ -54,6 +54,11 @@ class FlowManagerServiceTest extends AbstractWebTest {
         ":\"cts.collectionQuery([])\",\"sourceCollection\":\"\",\"targetEntity\":\"\",\"sourceDatabase\":\"\",\"targetDatabase\":\"data-hub-STAGING\"}," +
         "\"stepDefinitionType\":\"INGESTION\",\"stepDefinitionName\":\"firstIngest\",\"selectedSource\":\"\"}";
 
+    /**
+     * In 5.4.0, only custom and ingestion steps can be created via Gradle. But QS still supports creating "custom mapping"
+     * and "custom mastering" steps, even though those are still just "custom steps". So we can't remove the scaffolding
+     * support for those steps until DHF 6. 
+     */
     private String customMappingStep = "{\"id\":\"firstMapping-mapping\", \"name\":\"firstMapping\", \"stepDefinitionName\":\"firstMapping\", " +
         "\"stepDefinitionType\":\"MAPPING\", \"description\":\"\", \"options\":{\"mappingKey\":\"mappingVal\", \"additionalCollections\":[], " +
         "\"sourceQuery\":\"cts.collectionQuery([\\\"test-ingest\\\"])\", \"targetEntity\":\"User\", \"sourceDatabase\":\"data-hub-STAGING\"," +

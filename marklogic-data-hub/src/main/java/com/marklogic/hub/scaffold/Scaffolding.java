@@ -17,7 +17,6 @@
 package com.marklogic.hub.scaffold;
 
 import com.marklogic.hub.HubProject;
-import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.CodeFormat;
 import com.marklogic.hub.legacy.flow.DataFormat;
 import com.marklogic.hub.legacy.flow.FlowType;
@@ -33,16 +32,6 @@ import java.nio.file.Path;
  * @see HubProject for the initialization of the project itself to disk
  */
 public interface Scaffolding {
-
-    /**
-     * Creates and returns a Scaffolding object
-     * @param projectDir - the path to the project as a string
-     * @param databaseClient - the database client that will be used to connect
-     * @return Scaffolding object with project directory and database set
-     */
-    //static Scaffolding create(String projectDir, DatabaseClient databaseClient) {
-        //return new ScaffoldingImpl(projectDir, databaseClient);
-    //}
 
     /**
      * Returns the directory of the flow
@@ -138,26 +127,4 @@ public interface Scaffolding {
      * @param entityName - name of the entity
      */
     void updateLegacyEntity(String entityName);
-
-    /**
-     * Creates a rest extension on disk to be deployed to server
-     * @param entityName - the entity which the flow is attached
-     * @param extensionName - the name of the extension as a string
-     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
-     */
-    void createRestExtension(String entityName, String extensionName,
-                             FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
-
-    /**
-     * Creates a rest transform on disk to be deployed to server
-     * @param entityName - the entity which the flow is attached
-     * @param transformName - the name of the transform as a string
-     * @param flowType - the type of flow as TypeFlow, eg: harmonize or ingest
-     * @param codeFormat - the format of the code as CodeFormat enum
-     * @throws ScaffoldingValidationException - thrown if the extension fails to pass validation
-     */
-    void createRestTransform(String entityName, String transformName,
-                             FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException;
 }

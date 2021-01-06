@@ -30,7 +30,6 @@ import com.marklogic.hub.StepDefinitionManager;
 import com.marklogic.hub.dataservices.ArtifactService;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.error.DataHubProjectException;
-import com.marklogic.hub.error.ScaffoldingValidationException;
 import com.marklogic.hub.legacy.flow.*;
 import com.marklogic.hub.scaffold.Scaffolding;
 import com.marklogic.hub.step.StepDefinition;
@@ -39,8 +38,6 @@ import com.marklogic.hub.util.FileUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -373,33 +370,6 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         }
     }
 
-    @Override public void createRestExtension(String entityName, String extensionName,
-                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
-        logger.info(extensionName);
-
-        if(!new ScaffoldingValidator(hubConfig.getHubProject()).isUniqueRestServiceExtension(extensionName)) {
-            throw new ScaffoldingValidationException("A rest service extension with the same name as " + extensionName + " already exists.");
-        }
-        String scaffoldRestServicesPath = "scaffolding/rest/services/";
-        String fileContent = getFileContent(scaffoldRestServicesPath + codeFormat + "/template." + codeFormat, extensionName);
-        File dstFile = createEmptyRestExtensionFile(entityName, extensionName, flowType, codeFormat);
-        writeToFile(fileContent, dstFile);
-        writeMetadataForFile(dstFile, scaffoldRestServicesPath + "metadata/template.xml", extensionName);
-    }
-
-    @Override public void createRestTransform(String entityName, String transformName,
-                                              FlowType flowType, CodeFormat codeFormat) throws ScaffoldingValidationException {
-        logger.info(transformName);
-        if(!new ScaffoldingValidator(hubConfig.getHubProject()).isUniqueRestTransform(transformName)) {
-            throw new ScaffoldingValidationException("A rest transform with the same name as " + transformName + " already exists.");
-        }
-        String scaffoldRestTransformsPath = "scaffolding/rest/transforms/";
-        String fileContent = getFileContent(scaffoldRestTransformsPath + codeFormat + "/template." + codeFormat, transformName);
-        File dstFile = createEmptyRestTransformFile(entityName, transformName, flowType, codeFormat);
-        writeToFile(fileContent, dstFile);
-        writeMetadataForFile(dstFile, scaffoldRestTransformsPath + "metadata/template.xml", transformName);
-    }
-
     private void writeToFile(String fileContent, File dstFile) {
         FileWriter fw = null;
         BufferedWriter bw = null;
@@ -427,56 +397,6 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
                 }
             }
         }
-    }
-
-    private File createEmptyRestExtensionFile(String entityName, String extensionName,
-                                              FlowType flowType, CodeFormat codeFormat) {
-        Path restDir = getRestDirectory(entityName, flowType);
-        return createEmptyFile(restDir, "services", extensionName + "." + codeFormat);
-    }
-
-    private File createEmptyRestTransformFile(String entityName, String transformName,
-                                              FlowType flowType, CodeFormat codeFormat) {
-        Path restDir = getRestDirectory(entityName, flowType);
-        return createEmptyFile(restDir, "transforms", transformName + "." + codeFormat);
-    }
-
-    private File createEmptyFile(Path directory, String subDirectoryName, String fileName) {
-        Path fileDirectory = directory;
-        if(subDirectoryName != null) {
-            fileDirectory = directory.resolve(subDirectoryName);
-        }
-        fileDirectory.toFile().mkdirs();
-        File file = fileDirectory.resolve(fileName).toFile();
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return file;
-    }
-
-
-    private Path getRestDirectory(String entityName, FlowType flowType) {
-        return getLegacyFlowDir(entityName, "REST", flowType);
-    }
-
-    private void writeMetadataForFile(File file, String metadataTemplatePath, String metadataName) {
-        String fileContent = getFileContent(metadataTemplatePath, metadataName);
-        File metadataFile = createEmptyMetadataForFile(file, metadataName);
-        writeToFile(fileContent, metadataFile);
-    }
-
-    private File createEmptyMetadataForFile(File file, String metadataName) {
-        File metadataDir = new File(file.getParentFile(), "metadata");
-        metadataDir.mkdir();
-        File metadataFile = new File(metadataDir, metadataName + ".xml");
-        try {
-            metadataFile.createNewFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return metadataFile;
     }
 
     private String getFileContent(String srcFile, String placeholder) {
@@ -527,13 +447,5 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
             ResourceServices.ServiceResult res = resultItr.next();
             return res.getContent(new StringHandle()).get().replaceAll("\n", "\r\n");
         }
-
-    }
-
-    private Versions getVersions() {
-        if (this.versions == null) {
-            this.versions = new Versions(this.hubConfig);
-        }
-        return this.versions;
     }
 }
