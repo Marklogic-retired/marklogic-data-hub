@@ -7,7 +7,6 @@ commitMessage="";
 def prResponse="";
 def prNumber;
 def props;
-def high_vulnerabilities;
 githubAPIUrl="https://api.github.com/repos/marklogic/marklogic-data-hub"
 def loadProperties() {
     node {
@@ -232,7 +231,8 @@ def runCypressE2e(){
     }
 }
 
-void postFailureFlexcodeScanAndReport(def vulnerabilities){
+def flexcodeScanAndReport(){
+
     def email=''
     if(env.CHANGE_AUTHOR){
         def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
@@ -241,50 +241,38 @@ void postFailureFlexcodeScanAndReport(def vulnerabilities){
     else { email=Email }
 
     email = email + ',Kavitha.Sivagnanam@marklogic.com'
-
-    def body=''
-    if(vulnerabilities && vulnerabilities.size() != 0) {
-        vulnerabilities.each { msg -> body = body + msg + '<p>' }
-        body = 'There are high vulneribilities: <p> ' + body + '<p>scan report is attached.'
-//      sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h3> $body",false," pipeline FAILED in ${STAGE_NAME} ",'inventoriesRprt.report.json'
-        sendMail email, "</h3> $body", false, " high vulnerabilities in stage ${STAGE_NAME} ",'inventoriesRprt.report.json'
-    }
-    else {
-        sendMail email,"<h3>Pipeline FAILED in stage ${STAGE_NAME} <a href=${BUILD_URL}/console> Check Console Output Here</a></h3> ",false," pipeline FAILED in ${STAGE_NAME} "
-    }
-}
-
-def flexcodeScanAndReport(){
-
     def palamida_url="http://palamida-2.marklogic.com:8888"
-    def inventoriesRprt=''
-
+    def emailbody = ''
     cleanWs deleteDirs: true, patterns: [[pattern: 'data-hub/**', type: 'EXCLUDE']]
 
     withCredentials([string(credentialsId: 'palamida_jwt', variable: 'jwt')]) {
 
         StartScan(baseUrl: palamida_url, projectName: 'ml-dhf', token: jwt)
 
-        inventoriesRprt = sh(returnStdout: true, script: '''curl -X GET ''' + palamida_url + '''/codeinsight/api/project/inventory/21 -H "Authorization: Bearer $jwt" ''')
+        emailbody = sh(returnStdout: true, script: '''
+
+         report_json="marklogic-data-hub-report.json"
+         report_p1="marklogic-data-hub-report-p1.json"
+
+         curl -X GET ''' + palamida_url + '''/codeinsight/api/project/inventory/21 -H "Authorization: Bearer $jwt" > $report_json
+
+         jq '[[.inventoryItems | .[] | select(.vulnerabilities != null) | select(.vulnerabilities[].vulnerabilityCvssV3Severity == "CRITICAL" or .vulnerabilities[].vulnerabilityCvssV2Severity == "HIGH")] | unique | .[] | del(.vulnerabilities[] | select(.vulnerabilityCvssV3Severity != "CRITICAL" and .vulnerabilityCvssV2Severity != "HIGH"))]' $report_json>$report_p1
+
+         if [ "$(cat $report_p1)" != '[]' ]
+         then
+          cat $report_p1 | jq '.[] | {(.name): (.vulnerabilities+.filePaths)}' | sed '1d;$d;/vulnerabilityId/d;/vulnerabilityDescription/d;/vulnerabilityCvssV.Score/d;/vulnerabilitySource/d;/^{/d;/^}/d' | sed '1s/^/******** HIGH VULNERABILITIES: \\n\\n/;'
+         else
+          echo ''
+         fi
+
+        ''')
     }
 
-    writeFile(file: 'inventoriesRprt.report.json', text: inventoriesRprt)
+    if(emailbody.trim() != ''){
+     emailext mimeType: 'text/plain', body: emailbody.trim(), subject: 'FlexCode report', to: email
+    }
 
-    def slurper = new JsonSlurperClassic().parseText(inventoriesRprt.toString().trim())
-
-    def vulnerabilities = []
-    slurper.inventoryItems.each { key, value ->
-        key.vulnerabilities.each { key1, value1 ->
-            if(key1.vulnerabilityCvssV3Severity == 'CRITICAL' || key1.vulnerabilityCvssV2Severity == 'HIGH'){
-                def itnumb = ((key.itemNumber as Integer) - 1)
-                def msg = " item:$itnumb; inventory name:$key.name; volnarability name:$key1.vulnerabilityName; with Severity V2:$key1.vulnerabilityCvssV2Severity; with Severity V3:$key1.vulnerabilityCvssV3Severity; "
-                vulnerabilities.add(msg)
-            }
-        }}
-
-    archiveArtifacts artifacts: 'inventoriesRprt.report.json'
-
-    return vulnerabilities
+    archiveArtifacts artifacts: '*.json'
 
 }
 
@@ -737,29 +725,20 @@ pipeline{
 
             parallel {
 
-            stage('publishAnddhs') {
-                agent { label 'dhfLinuxAgent' }
-                steps {
-                    sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
-                    build job: 'DHF-Publish-RPM', propagate: false, wait: false
-                    build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
-                }
-            }
-
-            stage('FlexCodeScan'){
-                agent {label 'dhfLinuxAgent'}
-                steps{
-                    script{
-
-                        high_vulnerabilities = flexcodeScanAndReport()
-//                        if (high_vulnerabilities.size() != 0) {sh 'exit 123'}
-                        if (high_vulnerabilities.size() != 0) {postFailureFlexcodeScanAndReport(high_vulnerabilities)}
+                stage('publishAnddhs') {
+                    agent { label 'dhfLinuxAgent' }
+                    steps {
+                        sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;./gradlew clean;cp ~/.gradle/gradle.properties $GRADLE_USER_HOME;chmod 777  $GRADLE_USER_HOME/gradle.properties;./gradlew build -x test -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --parallel;./gradlew publish -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ --rerun-tasks'
+                        build job: 'DHF-Publish-RPM', propagate: false, wait: false
+                        build job: 'DatahubService/Run-Tests-dhs', propagate: false, wait: false
                     }
                 }
-                post{
-                    failure { postFailureFlexcodeScanAndReport(high_vulnerabilities) }
+
+                stage('FlexCodeScan') {
+                    agent { label 'dhfLinuxAgent' }
+                    steps { flexcodeScanAndReport() }
                 }
-            }
+
         }}
 
 		stage('rh7-singlenode'){
