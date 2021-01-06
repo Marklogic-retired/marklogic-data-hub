@@ -370,7 +370,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
             // remove transforms using amped channel
             TransformExtensionsManager transformExtensionsManager = configMgr.newTransformExtensionsManager();
-            JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle()).get();
+            JsonNode transformsList = transformExtensionsManager.listTransforms(new JacksonHandle(), false).get();
             transformsList.findValuesAsText("name").forEach(
                 x -> {
                     if (!(dataHubTransforms.contains(x) || x.startsWith("ml"))) {
@@ -381,7 +381,7 @@ public class DataHubImpl implements DataHub, InitializingBean {
 
             // remove resource extensions
             ResourceExtensionsManager resourceExtensionsManager = configMgr.newResourceExtensionsManager();
-            JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle()).get();
+            JsonNode resourceExtensions = resourceExtensionsManager.listServices(new JacksonHandle(), false).get();
             if (resourceNamesToNotDelete == null) {
                 resourceNamesToNotDelete = new ArrayList<>(); // makes the boolean logic below simpler
             }
