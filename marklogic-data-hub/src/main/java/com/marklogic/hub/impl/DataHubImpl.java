@@ -180,7 +180,8 @@ public class DataHubImpl implements DataHub, InitializingBean {
                 srf = constructServerManager(hubConfig).getAsXml();
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                    throw new DataHubSecurityNotInstalledException();
+                    throw new RuntimeException("Unable to determine if Data Hub is already installed due to " +
+                        "unauthorized user; please verify the username and password (mlUsername and mlPassword if using Gradle)");
                 }
             }
 

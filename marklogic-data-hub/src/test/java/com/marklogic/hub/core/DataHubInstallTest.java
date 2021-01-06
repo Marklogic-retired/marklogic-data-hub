@@ -22,6 +22,8 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.DataHub;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.impl.DataHubImpl;
+import com.marklogic.hub.impl.HubConfigImpl;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
@@ -41,6 +43,14 @@ public class DataHubInstallTest extends AbstractHubCoreTest {
 
     @Autowired
     DataHub dataHub;
+
+    @Test
+    void unauthorizedUserTriesToInstall() {
+        HubConfig hubConfig = new HubConfigImpl(getHubConfig().getHost(), "invalid", "invalid");
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> new DataHubImpl(hubConfig).isInstalled());
+        assertTrue(ex.getMessage().startsWith("Unable to determine if Data Hub is already installed due to unauthorized user"),
+            "Expecting error that identifies why the isInstalled check failed; message: " + ex.getMessage());
+    }
 
     @Test
     public void testInstallHubModules() {
