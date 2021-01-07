@@ -386,7 +386,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setPropertyTypeErrorMessage(propertyErrorMessage);
   };
 
-  const onPropertySelect = (value: string) => {
+  const onPropertySelect = (value: string | undefined) => {
     setPropertyTypeErrorMessage("");
     setIsPropertyTypeTouched(true);
     setSelectedProperty(value);

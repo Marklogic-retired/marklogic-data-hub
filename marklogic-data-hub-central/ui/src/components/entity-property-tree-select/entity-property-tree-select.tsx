@@ -11,7 +11,7 @@ type Props = {
   propertyDropdownOptions: Property[],
   entityDefinitionsArray: Definition[],
   value: string | undefined,
-  onValueSelected: (value: string) => void;
+  onValueSelected: (value: string | undefined) => void;
 };
 
 const {MLTreeNode} = MLTreeSelect;
@@ -23,6 +23,10 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
 
 
 const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
+
+  const onChange = (value) => {
+    props.onValueSelected(value);
+  };
 
   const renderBasicPropertyTitle = (property: Property) => {
     return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon}/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
@@ -87,7 +91,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
       className={styles.matchTypeSelect}
       placeholder="Select property"
       size="default"
-      onSelect={props.onValueSelected}
+      onChange={onChange}
       value={props.value}
       treeNodeLabelProp={props.value}
       dropdownStyle={{zIndex: "1000"}}
