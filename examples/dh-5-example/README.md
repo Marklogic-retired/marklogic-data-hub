@@ -7,8 +7,16 @@ Then, you can either install this project's application via QuickStart or via Gr
 
 ### Install via QuickStart
 
-To install via QuickStart, simply start QuickStart and browse to this project folder. Use QuickStart to initialize
+To install via QuickStart, start QuickStart and browse to this project folder. Use QuickStart to initialize
 this project and then deploy the application.
+
+In order for the built-in ingestion steps to work, you must unzip the input.zip file in this project, either manually or via Gradle. 
+If you choose to use Gradle, just run the following task:
+
+    ./gradlew extractZip
+
+If you choose to manually unzip the file, verify that after unzipping, an ./input/orders directory exists in the project directory.
+
 
 ### Install via Gradle
 
