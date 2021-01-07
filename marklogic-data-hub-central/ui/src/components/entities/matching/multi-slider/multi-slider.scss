@@ -80,6 +80,21 @@
         border-radius: 50%;
     }
 
+    .handleDisabledOther{
+        position: absolute;
+        margin-left: -15px;
+        margin-top: -10px;
+        z-index: 2;
+        width: 25px;
+        height: 25px;
+        text-align: center;
+        cursor: not-allowed !important;
+        border-radius: 50%;
+        border: solid 3px #8b94c6;
+        pointer-events: none;
+        background-color: #fff;
+    }
+
     .tooltipContainer {
 
         position: absolute;

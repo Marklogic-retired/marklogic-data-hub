@@ -282,21 +282,13 @@ const MergingStepDetail: React.FC = () => {
           };
           priorityOrderStrategyOptions.push(priorityOrderLengthObject);
         }
-        // let timeStampObject = {
-        //   props: [{
-        //     prop: "Timestamp",
-        //     type: "",
-        //   }],
-        //   value: 0,
-        // };
-        //priorityOrderStrategyOptions.push(timeStampObject);
       }
     }
     return <>
       <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
-      <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging}/>
+      <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
       </div>
     </>;
   };
