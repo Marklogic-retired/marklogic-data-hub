@@ -14,6 +14,8 @@ const MultiSlider = (props) => {
   const [tickValue, setTickValue] = useState<any>(0);
 
 
+
+
   function Handle({handle: {id, value, percent},
     options: options,
     getHandleProps,
@@ -46,7 +48,7 @@ const MultiSlider = (props) => {
             </div>
           }
         </div>
-        <MLTooltip title={disabled ? multiSliderTooltips.timeStamp : ""} placement="bottom">
+        {options[0].prop === "Timestamp" ? <MLTooltip title={disabled ? multiSliderTooltips.timeStamp : ""} placement="bottom">
           {disabled ? <div className={"handleDisabledParent"}><div
             className={"handleDisabled"}
             data-testid={`${options[0].prop}-active`}
@@ -65,7 +67,26 @@ const MultiSlider = (props) => {
             {...getHandleProps(id)}
           >
           </div> }
-        </MLTooltip>
+        </MLTooltip>:<div>
+          {disabled ? <div
+            className={"handleDisabledOther"}
+            data-testid={`${options[0].prop}-active`}
+            style={{
+              left: `${percent}%`,
+            }}
+            {...getHandleProps(id)}
+          >
+          </div> : <div
+            className={"handle"}
+            onMouseOver={() => onHover()}
+            data-testid={`${options[0].prop}-active`}
+            style={{
+              left: `${percent}%`,
+            }}
+            {...getHandleProps(id)}
+          >
+          </div> }
+        </div>}
       </>
     );
   }
@@ -145,6 +166,7 @@ const MultiSlider = (props) => {
   };
 
 
+
   return (
     <div className={"multiSlider"} onMouseLeave={onMouseLeave}>
       <Slider
@@ -169,7 +191,7 @@ const MultiSlider = (props) => {
                       handle={handle}
                       options={options[index].props}
                       getHandleProps={getHandleProps}
-                      disabled={props.stepType === "merging" && options[index].props[0].prop === "Timestamp" && options[index].props[0].type === "" ? true : false}
+                      disabled={(props.stepType === "merging" && options[index].props[0].prop === "Timestamp" && options[index].props[0].type === "") || props.mergeStepViewOnly === true ? true : false}
                     />
                   );
                 }
