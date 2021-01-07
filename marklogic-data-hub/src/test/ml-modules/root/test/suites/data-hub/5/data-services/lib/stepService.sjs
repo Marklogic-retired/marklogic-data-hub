@@ -3,7 +3,11 @@ function invoke(module, args) {
 }
 
 function saveStep(stepDefinitionType, info) {
-  return invoke("saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info)});
+  return invoke("saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: true});
+}
+
+function updateStep(stepDefinitionType, info) {
+  return invoke("saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: false, throwErrorIfStepIsPresent: false});
 }
 
 function createDefaultMappingStep(name) {
@@ -38,5 +42,6 @@ module.exports = {
   createDefaultMappingStep,
   getStep,
   deleteStep,
-  saveStep
+  saveStep,
+  updateStep
 };

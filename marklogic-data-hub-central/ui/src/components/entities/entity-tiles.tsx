@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from "react";
 import {useLocation} from "react-router-dom";
-import {Collapse, Menu} from "antd";
+import {Collapse, Menu, Modal} from "antd";
 import axios from "axios";
-import {createStep, getSteps, getStep, deleteStep} from "../../api/steps";
+import {createStep, updateStep, getSteps, getStep, deleteStep} from "../../api/steps";
 import styles from "./entity-tiles.module.scss";
 import MappingCard from "./mapping/mapping-card";
 import MatchingCard from "./matching/matching-card";
@@ -27,6 +27,7 @@ const EntityTiles = (props) => {
   const {Panel} = Collapse;
   const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile]  = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [openStep, setOpenStep] = useState("");
 
   useEffect(() => {
     getMappingArtifacts();
@@ -132,25 +133,29 @@ const EntityTiles = (props) => {
       let response = await createStep(mapping.name, "mapping", mapping);
       if (response.status === 200) {
         updateIsLoadingFlag();
+        setOpenStep(mapping.name);
         return {code: response.status};
       } else {
         return {code: response.status};
       }
     } catch (error) {
-      let message = error;
-      let code = error.response.data.code;
-      let details = error.response.data.details;
+      let message = error.response.data.message;
       console.error("Error creating mapping", message);
-      let err={code: code,
-        message: details};
-      return err;
+      message.indexOf(mapping.name) > -1 ? Modal.error({
+        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create mapping step. A mapping step with the name <b>{mapping.name}</b> already exists.</p></div>,
+        okText: <div aria-label="OK">OK</div>
+      }) : Modal.error({
+        content: message
+      });
+
     }
   };
 
   const updateMappingArtifact = async (mapping) => {
     try {
-      let response = await createStep(mapping.name, "mapping", mapping);
+      let response = await updateStep(mapping.name, "mapping", mapping);
       if (response.status === 200) {
+        updateIsLoadingFlag();
         return true;
       } else {
         return false;
@@ -192,13 +197,32 @@ const EntityTiles = (props) => {
 
   const createMatchingArtifact = async (matchingObj) => {
     try {
-      let response = await axios.post(`/api/steps/matching/${matchingObj.name}`, matchingObj);
+      let response = await axios.post("/api/steps/matching", matchingObj);
       if (response.status === 200) {
         updateIsLoadingFlag();
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error("Error While creating the matching artifact!", message);
+      console.error("Error while creating the matching artifact!", message);
+      message.indexOf(matchingObj.name) > -1 ? Modal.error({
+        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create matching step. A matching step with the name <b>{matchingObj.name}</b> already exists.</p></div>,
+        okText: <div aria-label="OK">OK</div>
+      }) : Modal.error({
+        content: message
+      });
+    }
+  };
+
+  const updateMatchingArtifact = async (matchingObj) => {
+    try {
+      let response = await axios.put(`/api/steps/matching/${matchingObj.name}`, matchingObj);
+      if (response.status === 200) {
+        updateIsLoadingFlag();
+      }
+    } catch (error) {
+      let message = error;
+      console.error("Error updating matching", message);
+      return false;
     }
   };
 
@@ -230,13 +254,32 @@ const EntityTiles = (props) => {
 
   const createMergingArtifact = async (mergingObj) => {
     try {
-      let response = await axios.post(`/api/steps/merging/${mergingObj.name}`, mergingObj);
+      let response = await axios.post("/api/steps/merging", mergingObj);
       if (response.status === 200) {
         updateIsLoadingFlag();
       }
     } catch (error) {
       let message = error.response.data.message;
-      console.error("Error While creating the matching artifact!", message);
+      console.error("Error while creating the merging artifact!", message);
+      message.indexOf(mergingObj.name) > -1 ? Modal.error({
+        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create merging step. A merging step with the name <b>{mergingObj.name}</b> already exists.</p></div>,
+        okText: <div aria-label="OK">OK</div>
+      }) : Modal.error({
+        content: message
+      });
+    }
+  };
+
+  const updateMergingArtifact = async (mergingObj) => {
+    try {
+      let response = await axios.put(`/api/steps/merging/${mergingObj.name}`, mergingObj);
+      if (response.status === 200) {
+        updateIsLoadingFlag();
+      }
+    } catch (error) {
+      let message = error;
+      console.error("Error updating merging", message);
+      return false;
     }
   };
 
@@ -272,6 +315,7 @@ const EntityTiles = (props) => {
           updateMappingArtifact={updateMappingArtifact}
           canReadWrite={canWriteMapping}
           canReadOnly={canReadMapping}
+          openStep={openStep}
           entityModel={props.entityModels[entityType]}
           canWriteFlow={props.canWriteFlow}
           addStepToFlow={props.addStepToFlow}
@@ -286,6 +330,7 @@ const EntityTiles = (props) => {
           entityName={entityType}
           deleteMatchingArtifact={deleteMatchingArtifact}
           createMatchingArtifact={createMatchingArtifact}
+          updateMatchingArtifact={updateMatchingArtifact}
           canReadMatchMerge={props.canReadMatchMerge}
           canWriteMatchMerge={props.canWriteMatchMerge}
           entityModel={props.entityModels[entityType]}
@@ -306,6 +351,7 @@ const EntityTiles = (props) => {
           canWriteMatchMerge={props.canWriteMatchMerge}
           deleteMergingArtifact={deleteMergingArtifact}
           createMergingArtifact={createMergingArtifact}
+          updateMergingArtifact={updateMergingArtifact}
           addStepToFlow={props.addStepToFlow}
           addStepToNew={props.addStepToNew}
           canWriteFlow={props.canWriteFlow}

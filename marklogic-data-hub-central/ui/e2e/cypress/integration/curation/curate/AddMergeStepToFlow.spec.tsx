@@ -40,6 +40,17 @@ describe("Add Merge step to a flow", () => {
     createEditStepDialog.setTimestampInput().type("/envelop/headers/createdOn");
     createEditStepDialog.saveButton("merging").click();
     curatePage.verifyStepNameIsVisible(mergeStep);
+    //Verify merge step with duplicate name cannot be created
+    cy.waitUntil(() => curatePage.addNewStep()).click();
+    createEditStepDialog.stepNameInput().type(mergeStep);
+    createEditStepDialog.stepDescriptionInput().type("merge order step example");
+    createEditStepDialog.setSourceRadio("Query");
+    createEditStepDialog.setQueryInput("test");
+    createEditStepDialog.saveButton("merging").click();
+    loadPage.duplicateStepErrorMessage();
+    loadPage.confirmationOptions("OK").click();
+    loadPage.duplicateStepErrorMessageClosed();
+
     //Add the step to new flow
     curatePage.addToNewFlow("Customer", mergeStep);
     cy.findByText("New Flow").should("be.visible");

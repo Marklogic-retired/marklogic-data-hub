@@ -52,8 +52,13 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
         installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-mapping-writer");
 
-        postJson(PATH + "/firstStep", newDefaultMappingStep("firstStep")).andExpect(status().isOk());
-        postJson(PATH + "/secondStep", newDefaultMappingStep("secondStep")).andExpect(status().isOk());
+        postJson(PATH, newDefaultMappingStep("firstStep")).andExpect(status().isOk());
+        postJson(PATH, newDefaultMappingStep("firstStep"))
+            .andDo(result -> {
+                assertTrue(result.getResolvedException() instanceof FailedRequestException);
+                assertTrue(result.getResolvedException().getMessage().contains("A step of type 'mapping' with the name 'firstStep' already exists"));
+            });
+        postJson(PATH, newDefaultMappingStep("secondStep")).andExpect(status().isOk());
 
         getJson(PATH).andExpect(status().isOk())
             .andDo(result -> {
@@ -106,7 +111,7 @@ public class MappingStepControllerTest extends AbstractStepControllerTest {
     @Test
     void forbiddenWriteUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-mapping-reader");
-        mockMvc.perform(post(PATH + "/{artifactName}", "TestCustomerMapping")
+        mockMvc.perform(post(PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.valueToTree(MappingStepControllerTest.newDefaultMappingStep("TestCustomerMapping")).toString())
             .session(mockHttpSession))

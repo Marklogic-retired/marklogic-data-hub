@@ -14,6 +14,7 @@ interface Props {
   canReadWrite: boolean;
   canReadOnly: boolean;
   createLoadArtifact: any;
+  updateLoadArtifact: any;
   stepData: any;
   currentTab: string;
   setIsValid: any;
@@ -197,7 +198,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     setIsValid(true);
     props.setIsValid(true);
 
-    props.createLoadArtifact(getPayload());
+    if (!props.isEditing) {
+      props.createLoadArtifact(getPayload());
+    } else {
+      props.updateLoadArtifact(getPayload());
+    }
     props.setOpenStepSettings(false);
     props.resetTabs();
   };

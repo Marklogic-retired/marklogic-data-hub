@@ -14,12 +14,12 @@ function getDoc(mappingName, uri){
 }
 
 function overwriteStep(stepDefinitionType, info) {
-  return fn.head(xdmp.invoke("/data-hub/5/data-services/step/saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: true}));
+  return fn.head(xdmp.invoke("/data-hub/5/data-services/step/saveStep.sjs", {stepDefinitionType, stepProperties: xdmp.toJSON(info), overwrite: true, throwErrorIfStepIsPresent: false}));
 }
 
 const resp =[];
 stepService.createDefaultMappingStep("testMapping");
-stepService.saveStep("mapping", {"name": "testMapping", "sourceDatabase": "data-hub-FINAL", "sourceQuery": "cts.collectionQuery('raw-content')"});
+stepService.updateStep("mapping", {"name": "testMapping", "sourceDatabase": "data-hub-FINAL", "sourceQuery": "cts.collectionQuery('raw-content')"});
 
 resp.concat([
   test.assertEqual(1, getUris("testMapping",1).length),

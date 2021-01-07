@@ -25,6 +25,7 @@ interface Props {
   canWriteMatchMerge: boolean;
   deleteMergingArtifact: (mergeName) => void;
   createMergingArtifact: (mergingObj) => void;
+  updateMergingArtifact: (mergingObj) => void;
   addStepToFlow: any;
   addStepToNew: any;
   canWriteFlow: any;
@@ -83,9 +84,10 @@ const MergingCard: React.FC<Props> = (props) => {
     props.createMergingArtifact(payload);
   };
 
-  const updateMergingArtifact = (payload) => {
+  const updateMergingArtifact = async (payload) => {
     // Update local form state
     setEditStepArtifact(payload);
+    props.updateMergingArtifact(payload);
   };
 
   const deleteStepClicked = (name) => {

@@ -3,6 +3,7 @@ package com.marklogic.hub.central.controllers.steps;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.client.FailedRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -50,8 +51,13 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void getIngestionSteps() throws Exception {
-        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"));
-        postJson(PATH + "/secondStep", newDefaultIngestionStep("secondStep"));
+        postJson(PATH, newDefaultIngestionStep("firstStep"));
+        postJson(PATH, newDefaultIngestionStep("firstStep"))
+            .andDo(result -> {
+                assertTrue(result.getResolvedException() instanceof FailedRequestException);
+                assertTrue(result.getResolvedException().getMessage().contains("A step of type 'ingestion' with the name 'firstStep' already exists"));
+            });
+        postJson(PATH, newDefaultIngestionStep("secondStep"));
 
         getJson(PATH)
             .andExpect(status().isOk())
@@ -65,7 +71,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void permittedReadUser() throws Exception {
-        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"));
+        postJson(PATH, newDefaultIngestionStep("firstStep"));
 
         loginAsTestUserWithRoles("hub-central-load-reader");
 
@@ -78,7 +84,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void forbiddenReadUser() throws Exception {
-        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"));
+        postJson(PATH, newDefaultIngestionStep("firstStep"));
 
         setTestUserRoles("hub-central-user");
 
@@ -92,7 +98,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
     @Test
     void forbiddenWriteUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-load-reader");
-        postJson(PATH + "/firstStep", newDefaultIngestionStep("firstStep"))
+        postJson(PATH, newDefaultIngestionStep("firstStep"))
                 .andDo(result -> {
                     assertTrue(result.getResolvedException() instanceof AccessDeniedException);
                 });

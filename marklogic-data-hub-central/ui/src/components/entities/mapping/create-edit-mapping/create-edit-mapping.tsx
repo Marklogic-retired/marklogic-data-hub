@@ -14,6 +14,7 @@ interface Props {
   canReadWrite: boolean;
   canReadOnly: boolean;
   createMappingArtifact: any;
+  updateMappingArtifact: any;
   stepData: any;
   targetEntityType: any;
   sourceDatabase: any;
@@ -169,7 +170,11 @@ const CreateEditMapping: React.FC<Props> = (props) => {
 
     props.setOpenStepSettings(false);
     props.resetTabs();
-    await props.createMappingArtifact(getPayload());
+    if (!props.isEditing) {
+      await props.createMappingArtifact(getPayload());
+    } else {
+      await props.updateMappingArtifact(getPayload());
+    }
   };
 
   const handleSearch = async (value: any) => {

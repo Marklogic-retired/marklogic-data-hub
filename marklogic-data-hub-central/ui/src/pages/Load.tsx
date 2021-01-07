@@ -7,7 +7,7 @@ import LoadList from "../components/load/load-list";
 import LoadCard from "../components/load/load-card";
 import {UserContext} from "../util/user-context";
 import axios from "axios";
-import {createStep, getSteps, deleteStep} from "../api/steps";
+import {createStep, updateStep, getSteps, deleteStep} from "../api/steps";
 import {AuthoritiesContext} from "../util/authorities";
 import tiles from "../config/tiles.config";
 import {LoadingContext} from "../util/loading-context";
@@ -69,6 +69,29 @@ const Load: React.FC = () => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error creating load step", message);
+      setLoading(false);
+      message.indexOf(ingestionStep.name) > -1 ? Modal.error({
+        content: <div className={styles.errorModal}><p aria-label="duplicate-step-error">Unable to create load step. A load step with the name <b>{ingestionStep.name}</b> already exists.</p></div>,
+        okText: <div aria-label="OK">OK</div>
+      }) : Modal.error({
+        content: message
+      });
+    }
+
+  };
+
+  // UPDATE/PUT load step
+  const updateLoadArtifact = async (ingestionStep) => {
+    try {
+      setLoading(true);
+      let response = await updateStep(ingestionStep.name, "ingestion", ingestionStep);
+      if (response.status === 200) {
+        setLoading(false);
+        setPage(loadingOptions.start);
+      }
+    } catch (error) {
+      let message = error.response.data.message;
+      console.error("Error updating load step", message);
       setLoading(false);
       handleError(error);
     }
@@ -168,6 +191,7 @@ const Load: React.FC = () => {
       flows={flows}
       deleteLoadArtifact={deleteLoadArtifact}
       createLoadArtifact={createLoadArtifact}
+      updateLoadArtifact={updateLoadArtifact}
       canReadWrite={canReadWrite}
       canReadOnly={canReadOnly}
       canWriteFlow={canWriteFlow}
@@ -181,6 +205,7 @@ const Load: React.FC = () => {
         flows={flows}
         deleteLoadArtifact={deleteLoadArtifact}
         createLoadArtifact={createLoadArtifact}
+        updateLoadArtifact={updateLoadArtifact}
         canReadWrite={canReadWrite}
         canReadOnly={canReadOnly}
         canWriteFlow={canWriteFlow}

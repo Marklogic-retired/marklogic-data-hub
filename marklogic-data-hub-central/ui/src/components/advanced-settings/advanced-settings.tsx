@@ -19,7 +19,7 @@ type Props = {
   openStepSettings: boolean;
   setOpenStepSettings: any;
   stepData: any;
-  updateLoadArtifact: any;
+  updateStep: any;
   activityType: any;
   canWrite: boolean;
   currentTab: string;
@@ -266,7 +266,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (event) event.preventDefault();
 
     // Parent handles saving of all tabs
-    props.createStep(getPayload());
+    if (!props.isEditing) {
+      props.createStep(getPayload());
+    } else {
+      props.updateStep(getPayload());
+    }
 
     props.setOpenStepSettings(false);
     props.resetTabs();

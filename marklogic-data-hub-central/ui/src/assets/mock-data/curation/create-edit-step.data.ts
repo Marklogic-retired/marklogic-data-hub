@@ -35,6 +35,7 @@ const editMerging = {
   canReadOnly: true,
   toggleModal: jest.fn(),
   createStepArtifact: jest.fn(),
+  updateStepArtifact: jest.fn(),
   currentTab: "1",
   setIsValid: jest.fn(),
   resetTabs: jest.fn(),

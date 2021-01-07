@@ -1,7 +1,11 @@
 import axios from "axios";
 
 export const createStep = async (name, type, settings) => {
-  return await axios.post(`/api/steps/${type}/${name}`, settings);
+  return await axios.post(`/api/steps/${type}`, settings);
+};
+
+export const updateStep = async (name, type, settings) => {
+  return await axios.put(`/api/steps/${type}/${name}`, settings);
 };
 
 export const getStep = async (name, type) => {

@@ -24,6 +24,7 @@ const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
 var stepDefinitionType;
 var stepProperties;
 var overwrite;
+var throwErrorIfStepIsPresent;
 
 stepDefinitionType = stepDefinitionType.toLowerCase();
 
@@ -51,6 +52,10 @@ let existingStep = fn.head(cts.search(cts.andQuery([
   cts.jsonPropertyValueQuery("stepDefinitionType", stepDefinitionType, "case-insensitive"),
   cts.jsonPropertyValueQuery("name", stepName)
 ])));
+
+if(existingStep && throwErrorIfStepIsPresent){
+  httpUtils.throwBadRequest("A step of type '" + stepDefinitionType + "' with the name '" +  stepName +  "' already exists");
+}
 
 if (existingStep) {
   let updatedStep;

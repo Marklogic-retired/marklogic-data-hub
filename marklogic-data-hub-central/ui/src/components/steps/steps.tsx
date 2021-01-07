@@ -97,15 +97,22 @@ const Steps: React.FC<Props> = (props) => {
     setCurrentTab(key);
   };
 
-  const createStep = async (payload) => {
-    // Save payloads from both tabs, ensure name property is set
+  const getStepPayload = (payload) => {
+    // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
-    await props.createStep(Object.assign(props.stepData, basicPayload, advancedPayload, payload, {name: name}));
+    return Object.assign(props.stepData, basicPayload, advancedPayload, payload, {name: name});
+  };
+
+  const createStep = async (payload) => {
+    await props.createStep(getStepPayload(payload));
     setHasBasicChanged(false);
     setHasAdvancedChanged(false);
-    if (props.activityType === StepType.Mapping && !props.isEditing) {
-      props.openStepDetails(name);
-    }
+  };
+
+  const updateStep = async (payload) => {
+    await props.updateStep(getStepPayload(payload));
+    setHasBasicChanged(false);
+    setHasAdvancedChanged(false);
   };
 
   const createEditDefaults = {
@@ -126,6 +133,7 @@ const Steps: React.FC<Props> = (props) => {
     {...createEditDefaults}
     isEditing={props.isEditing}
     createLoadArtifact={createStep}
+    updateLoadArtifact={updateStep}
     stepData={props.stepData}
   />);
 
@@ -133,6 +141,7 @@ const Steps: React.FC<Props> = (props) => {
     {...createEditDefaults}
     isEditing={props.isEditing}
     createMappingArtifact={createStep}
+    updateMappingArtifact={updateStep}
     stepData={props.stepData}
     targetEntityType={props.targetEntityType}
     sourceDatabase={props.sourceDatabase}
@@ -145,6 +154,7 @@ const Steps: React.FC<Props> = (props) => {
     stepType={StepType.Matching}
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
+    updateStepArtifact={updateStep}
   />);
 
   const createEditMerging = (<CreateEditStep
@@ -154,6 +164,7 @@ const Steps: React.FC<Props> = (props) => {
     stepType={StepType.Merging}
     targetEntityType={props.targetEntityType}
     createStepArtifact={createStep}
+    updateStepArtifact={updateStep}
   />);
 
   const viewCustom = (<ViewCustom
@@ -236,7 +247,7 @@ const Steps: React.FC<Props> = (props) => {
               openStepSettings={props.openStepSettings}
               setOpenStepSettings={props.setOpenStepSettings}
               stepData={props.stepData}
-              updateLoadArtifact={props.updateStep}
+              updateStep={updateStep}
               activityType={props.activityType}
               canWrite={props.canWrite}
               currentTab={currentTab}

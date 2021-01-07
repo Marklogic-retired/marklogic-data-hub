@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.marklogic.client.FailedRequestException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -50,8 +51,12 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
         installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
-        postJson(PATH + "/firstStep", newDefaultMergingStep("firstStep"));
-        postJson(PATH + "/secondStep", newDefaultMergingStep("secondStep"));
+        postJson(PATH, newDefaultMergingStep("firstStep"));
+        postJson(PATH, newDefaultMergingStep("firstStep")).andDo(result -> {
+            assertTrue(result.getResolvedException() instanceof FailedRequestException);
+            assertTrue(result.getResolvedException().getMessage().contains("A step of type 'merging' with the name 'firstStep' already exists"));
+        });
+        postJson(PATH, newDefaultMergingStep("secondStep"));
 
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
 
@@ -75,7 +80,7 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
     void permittedReadUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
-        postJson(PATH + "/firstStep", newDefaultMergingStep("firstStep"));
+        postJson(PATH, newDefaultMergingStep("firstStep"));
 
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
 
@@ -103,7 +108,7 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
     @Test
     void forbiddenWriteUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
-        postJson(PATH + "/firstStep", newDefaultMergingStep("firstStep"))
+        postJson(PATH, newDefaultMergingStep("firstStep"))
             .andDo(result -> {
                 assertTrue(result.getResolvedException() instanceof AccessDeniedException);
             });

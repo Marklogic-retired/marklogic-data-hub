@@ -90,7 +90,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         // Create an ingestion step to add to the flow
         final String ingestionStepDefinitionType = "ingestion";
         IngestionStepControllerTest.IngestionStep ingestionInfo = IngestionStepControllerTest.newDefaultIngestionStep("myIngester");
-        StepService.on(getHubClient().getStagingClient()).saveStep(ingestionStepDefinitionType, objectMapper.valueToTree(ingestionInfo), false);
+        StepService.on(getHubClient().getStagingClient()).saveStep(ingestionStepDefinitionType, objectMapper.valueToTree(ingestionInfo), false, true);
 
         // Add the ingestion step to the flow
         postJson(flowPath + "/steps", new FlowController.AddStepInfo(ingestionInfo.name, ingestionStepDefinitionType))
@@ -99,7 +99,7 @@ public class FlowControllerTest extends AbstractMvcTest {
         // Create a mapping step to add to the flow
         final String mappingStepDefinitionType = "mapping";
         MappingStepControllerTest.MappingStep mappingInfo = MappingStepControllerTest.newDefaultMappingStep("myMapper");
-        StepService.on(getHubClient().getStagingClient()).saveStep(mappingStepDefinitionType, objectMapper.valueToTree(mappingInfo), false);
+        StepService.on(getHubClient().getStagingClient()).saveStep(mappingStepDefinitionType, objectMapper.valueToTree(mappingInfo), false, true);
 
         // Add the mapping step to the flow
         postJson(flowPath + "/steps", new FlowController.AddStepInfo(mappingInfo.name, mappingStepDefinitionType))

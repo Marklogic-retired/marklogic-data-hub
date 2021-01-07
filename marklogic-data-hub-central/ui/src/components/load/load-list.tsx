@@ -21,6 +21,7 @@ interface Props {
   canWriteFlow: any;
   deleteLoadArtifact: any;
   createLoadArtifact: any;
+  updateLoadArtifact: any;
   canReadWrite: any;
   canReadOnly: any;
   addStepToFlow: any;
@@ -82,6 +83,7 @@ const LoadList: React.FC<Props> = (props) => {
   const updateLoadArtifact = (payload) => {
     // Update local form state
     setStepData(prevState => ({...prevState, ...payload}));
+    props.updateLoadArtifact(payload);
   };
 
   const showDeleteConfirm = (name) => {
