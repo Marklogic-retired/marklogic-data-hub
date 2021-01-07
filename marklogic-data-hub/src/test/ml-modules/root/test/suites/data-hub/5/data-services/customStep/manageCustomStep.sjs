@@ -23,8 +23,9 @@ let info = {
 
 
 stepService.saveStep(stepDefinitionType, info);
+//This will fail due to an incorrect stepDefinitionType
 try{
-  stepService.saveStep(stepDefinitionType, Object.assign({}, info, {name:"anotherCustom", stepDefinitionType:"anotherCustom"}))
+  stepService.saveStep("anotherCustom", Object.assign({}, info, {name:"anotherCustom"}))
 }
 catch(ex) {
   assertions.concat(test)

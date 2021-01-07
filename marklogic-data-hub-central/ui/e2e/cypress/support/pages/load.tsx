@@ -243,6 +243,14 @@ class LoadPage {
     return cy.findByTestId(`${stepName}-save-settings`);
   }
 
+  duplicateStepErrorMessage() {
+    return cy.findByLabelText("duplicate-step-error");
+  }
+
+  duplicateStepErrorMessageClosed() {
+    return cy.findByLabelText("duplicate-step-error").should("not.be.visible");
+  }
+
   //Load tile card view page objects
   editStepInCardView(stepName: string) {
     return cy.findByTestId(`${stepName}-edit`);

@@ -18,6 +18,7 @@ type Props = {
   canReadWrite: boolean;
   canReadOnly: boolean;
   createStepArtifact: (stepArtifact: any) => void;
+  updateStepArtifact: (stepArtifact: any) => void;
   currentTab: string;
   setIsValid: any;
   resetTabs: any;
@@ -201,7 +202,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
 
     setIsValid(true);
 
-    props.createStepArtifact(getPayload());
+    if (!props.isEditing) {
+      props.createStepArtifact(getPayload());
+    } else {
+      props.updateStepArtifact(getPayload());
+    }
     props.setOpenStepSettings(false);
     props.resetTabs();
   };

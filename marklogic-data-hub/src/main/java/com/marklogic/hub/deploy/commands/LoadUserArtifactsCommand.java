@@ -307,8 +307,8 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                     final String stepName = step.get("name").asText();
                     logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
                     //We want the contents of file in the project to overwrite the step if it's already present. Hence
-                    //steps are deployed with 'overwrite' flag set to true.
-                    stepService.saveStep(stepType, step, true);
+                    //steps are deployed with 'overwrite' flag set to true and 'throwErrorIfStepIsPresent' set to false.
+                    stepService.saveStep(stepType, step, true, false);
                 }
             }
         }

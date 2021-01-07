@@ -14,6 +14,11 @@
             "name": "overwrite",
             "datatype": "boolean"
         }
+        ,
+        {
+            "name": "throwErrorIfStepIsPresent",
+            "datatype": "boolean"
+        }
     ],
     "return": {
         "desc": "Return the created/updated step document",

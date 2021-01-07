@@ -26,7 +26,7 @@ public abstract class AbstractStepControllerTest extends AbstractMvcTest {
         final String stepName = initialStepProperties.get("name").asText();
         final String stepPath = stepTypePath + "/" + stepName;
         // The UI expects ok instead of "created", so going with that for now
-        postJson(stepPath, initialStepProperties.toString()).andExpect(status().isOk());
+        postJson(stepTypePath, initialStepProperties.toString()).andExpect(status().isOk());
 
         // Get the step and verify it
         getJson(stepPath).andExpect(status().isOk())
@@ -40,7 +40,7 @@ public abstract class AbstractStepControllerTest extends AbstractMvcTest {
         // Update the step and verify it
         ObjectNode props = objectMapper.createObjectNode();
         props.put("anyPropertyCanBeSet", "toAnyValue");
-        postJson(stepPath, props.toString()).andExpect(status().isOk());
+        putJson(stepPath, props.toString()).andExpect(status().isOk());
         getJson(stepPath).andExpect(status().isOk())
             .andDo(result -> {
                 JsonNode actualStep = parseJsonResponse(result);

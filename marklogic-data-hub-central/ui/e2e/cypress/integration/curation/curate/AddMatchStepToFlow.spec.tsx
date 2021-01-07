@@ -39,6 +39,17 @@ describe("Add Matching step to a flow", () => {
     createEditStepDialog.setQueryInput(`cts.collectionQuery(['${matchStep}'])`);
     createEditStepDialog.saveButton("matching").click();
     curatePage.verifyStepNameIsVisible(matchStep);
+
+    //Verify match step with duplicate name cannot be created
+    cy.waitUntil(() => curatePage.addNewStep()).click();
+    createEditStepDialog.stepNameInput().type(matchStep);
+    createEditStepDialog.setSourceRadio("Query");
+    createEditStepDialog.setQueryInput("test");
+    createEditStepDialog.saveButton("matching").click();
+    loadPage.duplicateStepErrorMessage();
+    loadPage.confirmationOptions("OK").click();
+    loadPage.duplicateStepErrorMessageClosed();
+
     //Add the step to new flow
     curatePage.addToNewFlow("Customer", matchStep);
     cy.findByText("New Flow").should("be.visible");

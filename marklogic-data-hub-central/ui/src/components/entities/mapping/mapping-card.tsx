@@ -31,6 +31,7 @@ interface Props {
     entityModel: any;
     addStepToFlow: any;
     addStepToNew: any;
+    openStep: any;
   }
 
 const MappingCard: React.FC<Props> = (props) => {
@@ -92,6 +93,13 @@ const MappingCard: React.FC<Props> = (props) => {
     setSourceData([]);
   }, [props.data]);
 
+  useEffect(() => {
+    //open step details when create step is called successfully
+    if (props.openStep) {
+      openStepDetails(props.openStep);
+    }
+  }, [props.openStep]);
+
   const OpenAddNew = () => {
     setIsEditing(false);
     setOpenStepSettings(true);
@@ -110,9 +118,10 @@ const MappingCard: React.FC<Props> = (props) => {
     await props.createMappingArtifact(payload);
   };
 
-  const updateMappingArtifact = (payload) => {
+  const updateMappingArtifact = async (payload) => {
     // Update local form state
     setMapData(prevState => ({...prevState, ...payload}));
+    await props.updateMappingArtifact(payload);
   };
 
   const handleCardDelete = (name) => {

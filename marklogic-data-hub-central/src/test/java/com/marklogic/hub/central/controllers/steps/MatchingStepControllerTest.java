@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.marklogic.client.FailedRequestException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -50,8 +51,12 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
         installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
-        postJson(PATH + "/firstStep", newDefaultMatchingStep("firstStep"));
-        postJson(PATH + "/secondStep", newDefaultMatchingStep("secondStep"));
+        postJson(PATH, newDefaultMatchingStep("firstStep"));
+        postJson(PATH, newDefaultMatchingStep("firstStep")).andDo(result -> {
+            assertTrue(result.getResolvedException() instanceof FailedRequestException);
+            assertTrue(result.getResolvedException().getMessage().contains("A step of type 'matching' with the name 'firstStep' already exists"));
+        });
+        postJson(PATH, newDefaultMatchingStep("secondStep"));
 
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
 
@@ -75,7 +80,7 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
     void permittedReadUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
-        postJson(PATH + "/firstStep", newDefaultMatchingStep("firstStep"));
+        postJson(PATH, newDefaultMatchingStep("firstStep"));
 
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
 
@@ -104,7 +109,7 @@ public class MatchingStepControllerTest extends AbstractStepControllerTest {
     @Test
     void forbiddenWriteUser() throws Exception {
         loginAsTestUserWithRoles("hub-central-match-merge-reader");
-        postJson(PATH + "/firstStep", newDefaultMatchingStep("firstStep"))
+        postJson(PATH, newDefaultMatchingStep("firstStep"))
             .andDo(result -> {
                 assertTrue(result.getResolvedException() instanceof AccessDeniedException);
             });

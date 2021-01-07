@@ -38,7 +38,7 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
         info.put("sourceType", "employee");
         info.put("outputURIPrefix", "");
 
-        StepService.on(getHubClient().getStagingClient()).saveStep("ingestion", info, false);
+        StepService.on(getHubClient().getStagingClient()).saveStep("ingestion", info, false, true);
 
         // Add it to the existing echoFlow, which is assumed to have one step
         FlowService.on(getHubClient().getStagingClient()).addStepToFlow("echoFlow", "sources-test", "ingestion");
@@ -71,7 +71,7 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
         info.put("targetFormat", "json");
         info.put("outputURIPrefix", "");
 
-        StepService.on(getHubClient().getStagingClient()).saveStep("ingestion", info, false);
+        StepService.on(getHubClient().getStagingClient()).saveStep("ingestion", info, false, true);
 
         // Add it to the existing echoFlow, which is assumed to have one step
         FlowService.on(getHubClient().getStagingClient()).addStepToFlow("echoFlow", "sources-test", "ingestion");

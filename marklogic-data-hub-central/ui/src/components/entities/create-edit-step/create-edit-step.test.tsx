@@ -224,7 +224,7 @@ describe("Create Edit Step Dialog component", () => {
     fireEvent.click(getByLabelText("Collection"));
 
     fireEvent.click(getByText("Save"));
-    expect(data.editMerging.createStepArtifact).toBeCalledWith({
+    expect(data.editMerging.updateStepArtifact).toBeCalledWith({
       name: "mergeCustomers",
       targetEntityType: "Customer",
       description: "merge customer description",

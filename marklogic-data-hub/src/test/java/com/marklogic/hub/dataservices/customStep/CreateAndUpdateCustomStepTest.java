@@ -17,7 +17,7 @@ public class CreateAndUpdateCustomStepTest extends AbstractHubCoreTest {
         info.put("name", "myCustomStep");
         info.put("stepDefinitionName", "customStepDef");
         info.put("customProp", "value");
-        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, false);
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, false, true);
 
         JsonNode myCustomStep = StepService.on(getHubClient().getStagingClient()).getStep("custom", "myCustomStep");
         assertNotNull(myCustomStep);
@@ -27,14 +27,14 @@ public class CreateAndUpdateCustomStepTest extends AbstractHubCoreTest {
         info.remove("customProp");
 
         //We aren't overwriting, so "customProp" is still present
-        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, false);
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, false, false);
         myCustomStep = StepService.on(getHubClient().getStagingClient()).getStep("custom", "myCustomStep");
         assertNotNull(myCustomStep);
         assertEquals("myCustomStep", myCustomStep.get("name").asText());
         assertEquals("value", myCustomStep.get("customProp").asText());
 
         //We are overwriting, so "customProp" is not present
-        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, true);
+        StepService.on(getHubClient().getStagingClient()).saveStep("custom", info, true, false);
         myCustomStep = StepService.on(getHubClient().getStagingClient()).getStep("custom", "myCustomStep");
         assertNotNull(myCustomStep);
         assertEquals("myCustomStep", myCustomStep.get("name").asText());

@@ -60,11 +60,20 @@ describe("Mapping", () => {
     cy.findByLabelText("processors-expand").trigger("mouseover").click();
     cy.get("#processors").should("not.be.empty");
 
-    //add cutomHook to load step
+    //add customHook to load step
     advancedSettingsDialog.setCustomHook("loadTile/addPrimaryKeyHook");
 
     advancedSettingsDialog.saveSettings(loadStep).click();
     advancedSettingsDialog.saveSettings(loadStep).should("not.be.visible");
+
+    //verify load step with duplicate name cannot be created
+    loadPage.addNewButton("card").click();
+    loadPage.saveButton().should("be.enabled");
+    loadPage.stepNameInput().type(loadStep);
+    loadPage.confirmationOptions("Save").click({force: true});
+    loadPage.duplicateStepErrorMessage();
+    loadPage.confirmationOptions("OK").click();
+    loadPage.duplicateStepErrorMessageClosed();
 
     // add step to new flow
     loadPage.addStepToNewFlow(loadStep);
@@ -118,6 +127,18 @@ describe("Mapping", () => {
 
     advancedSettingsDialog.saveSettings(mapStep).click();
     advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+
+    //verify mapping step with duplicate name cannot be created
+    cy.waitUntil(() => curatePage.addNewStep().click());
+    createEditMappingDialog.setMappingName(mapStep);
+    createEditMappingDialog.setSourceRadio("Query");
+    createEditMappingDialog.setQueryInput("test");
+    createEditMappingDialog.saveButton().click({force: true});
+    //error message should be displayed instead of step details auto open
+    cy.findByLabelText(`${mapStep}-details-header`).should("not.be.visible");
+    loadPage.duplicateStepErrorMessage();
+    loadPage.confirmationOptions("OK").click();
+    loadPage.duplicateStepErrorMessageClosed();
 
     // map source to entity
     curatePage.openSourceToEntityMap("Order", mapStep);

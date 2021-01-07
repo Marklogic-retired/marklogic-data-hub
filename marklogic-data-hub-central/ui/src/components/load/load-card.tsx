@@ -19,6 +19,7 @@ interface Props {
     flows: any;
     deleteLoadArtifact: any;
     createLoadArtifact: any;
+    updateLoadArtifact: any;
     canReadOnly: any;
     canReadWrite: any;
     canWriteFlow: any;
@@ -71,6 +72,7 @@ const LoadCard: React.FC<Props> = (props) => {
   const updateLoadArtifact = (payload) => {
     // Update local form state
     setStepData(prevState => ({...prevState, ...payload}));
+    props.updateLoadArtifact(payload);
   };
 
   // Custom CSS for source Format

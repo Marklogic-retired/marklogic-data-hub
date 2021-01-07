@@ -43,7 +43,7 @@ assertions = assertions
 info.outputURIPrefix = '/prefix/';
 delete info.outputURIReplacement;
 info.stepDefinitionName = 'custom-ingestion';
-serviceResponse = stepService.saveStep(stepDefinitionType, info);
+serviceResponse = stepService.updateStep(stepDefinitionType, info);
 
 delete expectedStep.outputURIReplacement;
 expectedStep.outputURIPrefix = '/prefix/';

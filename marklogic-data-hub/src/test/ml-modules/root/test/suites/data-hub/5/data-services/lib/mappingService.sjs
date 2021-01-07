@@ -12,7 +12,7 @@ const DocumentForTestingUtils = {
     // required by mapping.sjs' getArtifactNode().  Going this route instead.
     const stepService = require("./stepService.sjs");
     stepService.createDefaultMappingStep(DocumentForTestingUtils.STEP_NAME);
-    stepService.saveStep('mapping',{
+    stepService.updateStep('mapping',{
       name: DocumentForTestingUtils.STEP_NAME,
       sourceDatabase: DocumentForTestingUtils.DATABASE_NAME,
       sourceQuery: 'cts.collectionQuery("raw-content")'

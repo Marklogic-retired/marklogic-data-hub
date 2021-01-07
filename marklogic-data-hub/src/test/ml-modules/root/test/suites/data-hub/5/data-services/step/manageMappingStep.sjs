@@ -79,7 +79,7 @@ expectedStep.description = propertiesToAssign.description;
 expectedStep.additionalCollections = propertiesToAssign.additionalCollections;
 expectedStep.version = propertiesToAssign.version;
 
-serviceResponse = stepService.saveStep(stepDefinitionType, propertiesToAssign);
+serviceResponse = stepService.updateStep(stepDefinitionType, propertiesToAssign);
 
 assertions.push(
   test.assertEqual("CustomerID", serviceResponse.properties.customerID.sourcedFrom)

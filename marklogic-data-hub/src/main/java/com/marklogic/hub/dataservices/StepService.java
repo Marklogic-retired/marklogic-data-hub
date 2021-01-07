@@ -83,18 +83,19 @@ public interface StepService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite) {
+            public com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite, Boolean throwErrorIfStepIsPresent) {
                 return saveStep(
-                    this.req_saveStep.on(this.dbClient), stepDefinitionType, stepProperties, overwrite
+                    this.req_saveStep.on(this.dbClient), stepDefinitionType, stepProperties, overwrite, throwErrorIfStepIsPresent
                     );
             }
-            private com.fasterxml.jackson.databind.JsonNode saveStep(BaseProxy.DBFunctionRequest request, String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite) {
+            private com.fasterxml.jackson.databind.JsonNode saveStep(BaseProxy.DBFunctionRequest request, String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite, Boolean throwErrorIfStepIsPresent) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
                           BaseProxy.atomicParam("stepDefinitionType", false, BaseProxy.StringType.fromString(stepDefinitionType)),
                           BaseProxy.documentParam("stepProperties", false, BaseProxy.JsonDocumentType.fromJsonNode(stepProperties)),
-                          BaseProxy.atomicParam("overwrite", false, BaseProxy.BooleanType.fromBoolean(overwrite))
+                          BaseProxy.atomicParam("overwrite", false, BaseProxy.BooleanType.fromBoolean(overwrite)),
+                          BaseProxy.atomicParam("throwErrorIfStepIsPresent", false, BaseProxy.BooleanType.fromBoolean(throwErrorIfStepIsPresent))
                           ).responseSingle(false, Format.JSON)
                 );
             }
@@ -147,9 +148,10 @@ public interface StepService {
    * @param stepDefinitionType	provides input
    * @param stepProperties	provides input
    * @param overwrite	provides input
+   * @param throwErrorIfStepIsPresent	provides input
    * @return	Return the created/updated step document
    */
-    com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite);
+    com.fasterxml.jackson.databind.JsonNode saveStep(String stepDefinitionType, com.fasterxml.jackson.databind.JsonNode stepProperties, Boolean overwrite, Boolean throwErrorIfStepIsPresent);
 
   /**
    * Invokes the deleteStep operation on the database server
