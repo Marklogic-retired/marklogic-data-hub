@@ -200,6 +200,11 @@ const Run = (props) => {
         {pathname: "/tiles/explore",
           state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId}
         });
+    } else if (stepType === "merging") {
+      history.push({
+        pathname: "/tiles/explore",
+        state: {entityName: entityName, targetDatabase: targetDatabase, jobId: jobId, Collection: "sm-"+entityName+"-merged"}
+      });
     }
     Modal.destroyAll();
   };
@@ -235,7 +240,7 @@ const Run = (props) => {
       okText: "Close",
       mask: false,
       width: 650,
-      content: stepType.toLowerCase() === "mapping" && entityName ?
+      content: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ?
         <div data-testid="explorer-link" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
           <span className={styles.exploreIcon}></span>
           <span className={styles.exploreText}>Explore Curated Data</span>
@@ -281,7 +286,7 @@ const Run = (props) => {
       icon: <Icon type="exclamation-circle" theme="filled"/>,
       content: (
         <div id="error-list">
-          {(stepType.toLowerCase() === "mapping" && entityName) ?
+          {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
             <div onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
               <span className={styles.exploreIcon}></span>
               <span className={styles.exploreText}>Explore Curated Data</span>
