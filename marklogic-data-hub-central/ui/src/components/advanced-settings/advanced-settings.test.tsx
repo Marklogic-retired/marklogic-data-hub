@@ -59,10 +59,10 @@ describe("Advanced step settings", () => {
 
   });
 
-  /* Custom ingestion step should be same as default-ingestion except "step definition name" field should be present */
+  /* Custom ingestion should be same as default-ingestion except "step definition name" field should be present */
   test("Verify settings for Custom Load step", async () => {
     const {getByText, getAllByText, queryByText} = render(
-      <AdvancedSettings {...data.customLoad} />
+      <AdvancedSettings {...data.advancedCustomLoad} />
     );
 
     expect(queryByText("Source Database")).not.toBeInTheDocument();
@@ -72,7 +72,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Target Collections")).toBeInTheDocument();
     expect(getByText("Please add target collections")).toBeInTheDocument();
     expect(getByText("Default Collections")).toBeInTheDocument();
-    expect(getAllByText(data.customLoad.stepData.collections[0]).length > 0);
+    expect(getAllByText(data.advancedCustomLoad.stepData.collections[0]).length > 0);
 
     expect(getByText("Step Definition Name")).toBeInTheDocument();
 

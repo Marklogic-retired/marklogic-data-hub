@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import MergingCard from "./merging-card";
 
-import {mergingStep} from "../../../assets/mock-data/curation/merging";
+import {mergingStep} from "../../../assets/mock-data/curation/merging.data";
 import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
 import {SecurityTooltips} from "../../../config/tooltips.config";
 

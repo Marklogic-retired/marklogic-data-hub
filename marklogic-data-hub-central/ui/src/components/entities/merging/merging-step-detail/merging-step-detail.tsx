@@ -41,7 +41,9 @@ const DEFAULT_MERGING_STEP: MergingStep = {
   targetEntityType: "",
   targetFormat: "",
   mergeStrategies: [],
-  mergeRules: []
+  mergeRules: [],
+  processors: {},
+  customHook: {}
 };
 
 const MergingStepDetail: React.FC = () => {

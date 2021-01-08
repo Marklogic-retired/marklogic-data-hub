@@ -3,7 +3,7 @@ import {fireEvent, render, wait, cleanup, screen} from "@testing-library/react";
 import Steps from "./steps";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
-import data from "../../assets/mock-data/curation/advanced-settings.data";
+import data from "../../assets/mock-data/curation/steps.data";
 import StepsConfig from "../../config/steps.config";
 import {ErrorTooltips} from "../../config/tooltips.config";
 
@@ -20,36 +20,9 @@ describe("Steps settings component", () => {
     cleanup();
   });
 
-  const stepLoad = data.stepLoad.data;
-  const stepMapping = data.stepMapping.data;
-  const stepMatching = data.stepMatching.data;
-  const stepMerging = data.stepMerging.data;
-  const stepCustom = {...data.stepLoad.data, stepDefinitionName: "custom-ingestion", name: "CustomLoad"};
-
-  const stepsProps = {
-    isEditing: true,
-    createStep: jest.fn(),
-    updateStep: jest.fn(),
-    stepData: {},
-    sourceDatabase: "",
-    canReadWrite: true,
-    canReadOnly: true,
-    tooltipsData: {},
-    openStepSettings: true,
-    setOpenStepSettings: jest.fn(),
-    activityType: "",
-    canWrite: true,
-    openStepDetails: jest.fn()
-  };
-
-  const stepsPropsNew = {
-    ...stepsProps,
-    isEditing: false
-  };
-
   test("Verify rendering of Load step, tab switching, discard dialog on cancel, saving", async () => {
     const {baseElement, getByText, getByLabelText, getAllByLabelText, getByPlaceholderText} = render(
-      <Steps {...stepsProps} activityType="ingestion" stepData={stepLoad} />
+      <Steps {...data.editLoad} />
     );
 
     expect(getByText("Loading Step Settings")).toBeInTheDocument();
@@ -112,7 +85,7 @@ describe("Steps settings component", () => {
 
   test("Verify rendering of Mapping step, tab disabling on form error, discard changes dialog on close", async () => {
     const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Steps {...stepsProps} activityType="mapping" targetEntityName="entityName" stepData={stepMapping} />
+      <Steps {...data.editMapping} />
     );
 
     expect(getByText("Mapping Step Settings")).toBeInTheDocument();
@@ -175,7 +148,7 @@ describe("Steps settings component", () => {
 
   test("Verify rendering of Matching step", async () => {
     const {getByText, getByLabelText} = render(
-      <Steps {...stepsProps} activityType="matching" stepData={stepMatching} />
+      <Steps {...data.editMatching} />
     );
 
     expect(getByText("Matching Step Settings")).toBeInTheDocument();
@@ -184,7 +157,7 @@ describe("Steps settings component", () => {
 
   test("Verify rendering of Merging step", async () => {
     const {getByText, getByLabelText} = render(
-      <Steps {...stepsProps} activityType="merging" stepData={stepMerging} />
+      <Steps {...data.editMerging} />
     );
 
     expect(getByText("Merging Step Settings")).toBeInTheDocument();
@@ -193,7 +166,7 @@ describe("Steps settings component", () => {
 
   test("Verify rendering of Custom step", async () => {
     const {getByText, getByLabelText} = render(
-      <Steps {...stepsProps} activityType="custom" stepData={stepCustom} />
+      <Steps {...data.editCustom} />
     );
 
     expect(getByText("Custom Step Settings")).toBeInTheDocument();
@@ -205,7 +178,7 @@ describe("Steps settings component", () => {
     const testColl = "testCollection";
     const testEntity = "entityName";
     const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Steps {...stepsPropsNew} activityType="mapping" targetEntityName={testEntity} />
+      <Steps {...data.newMapping} />
     );
 
     expect(getByText("New Mapping Step")).toBeInTheDocument();
@@ -258,7 +231,7 @@ describe("Steps settings component", () => {
     const testName = "stepName";
     // New non-mapping steps have the following default collections: Step Name
     const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Steps {...stepsPropsNew} activityType="ingestion" />
+      <Steps {...data.newLoad} />
     );
 
     expect(getByText("New Loading Step")).toBeInTheDocument();

@@ -1,7 +1,7 @@
 import React from "react";
 import {render, fireEvent, cleanup, wait} from "@testing-library/react";
 import CreateEditStep from "./create-edit-step";
-import data from "../../../assets/mock-data/curation/create-edit-step-props";
+import data from "../../../assets/mock-data/curation/create-edit-step.data";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
 import {SecurityTooltips} from "../../../config/tooltips.config";

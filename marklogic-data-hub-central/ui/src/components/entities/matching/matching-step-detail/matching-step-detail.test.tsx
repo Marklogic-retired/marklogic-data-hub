@@ -6,7 +6,7 @@ import MatchingStepDetail from "./matching-step-detail";
 import {CurationContext} from "../../../../util/curation-context";
 import {customerMatchingStep, customerMatchingStepEmpty} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMatchingArtifact, calculateMatchingActivity} from "../../../../api/matching";
-import {matchingActivity} from "../../../../assets/mock-data/curation/matching";
+import {matchingActivity} from "../../../../assets/mock-data/curation/matching.data";
 
 jest.mock("../../../../api/matching");
 

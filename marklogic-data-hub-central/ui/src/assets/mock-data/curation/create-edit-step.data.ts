@@ -1,4 +1,4 @@
-import {mergingStep} from "./merging";
+import {mergingStep} from "./merging.data";
 import {StepType} from "../../../types/curation-types";
 
 const newMerging = {

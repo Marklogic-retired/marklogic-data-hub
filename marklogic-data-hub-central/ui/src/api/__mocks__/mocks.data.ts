@@ -1,6 +1,6 @@
 import loadData from "../../assets/mock-data/curation/ingestion.data";
 import curateData from "../../assets/mock-data/curation/flows.data";
-import advancedData from "../../assets/mock-data/curation/advanced-settings.data";
+import stepsData from "../../assets/mock-data/curation/steps.data";
 import commonData from "../../assets/mock-data/curation/common.data";
 import systemInfoData from "../../assets/mock-data/system-info.data";
 
@@ -259,21 +259,21 @@ const advancedAPI = (axiosMock) => {
   axiosMock.post["mockImplementationOnce"](jest.fn(() =>
     Promise.resolve({status: 200, data: {}})));
   return axiosMock.get["mockImplementation"]((url) => {
-    const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURI(advancedData.stepMerging.data.targetEntityType)}`;
+    const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURI(stepsData.stepMerging.targetEntityType)}`;
     switch (url) {
     case "/api/steps/ingestion/AdvancedLoad":
-      return Promise.resolve(advancedData.stepLoad);
+      return Promise.resolve({status: 200, data: stepsData.stepLoad});
       //Settings for a custom ingestion step
     case "/api/steps/ingestion/CustomLoad":
-      return Promise.resolve({data: {...advancedData.stepLoad.data, stepDefinitionName: "custom-ingestion", name: "CustomLoad"}, status: 200});
+      return Promise.resolve({data: {...stepsData.stepLoad, stepDefinitionName: "custom-ingestion", name: "CustomLoad"}, status: 200});
     case "/api/steps/mapping/AdvancedMapping":
-      return Promise.resolve(advancedData.stepMapping);
+      return Promise.resolve(stepsData.stepMapping);
     case "/api/steps/matching/AdvancedMatching":
-      return Promise.resolve(advancedData.stepMatching);
+      return Promise.resolve(stepsData.stepMatching);
     case "/api/steps/merging/AdvancedMerging":
-      return Promise.resolve(advancedData.stepMerging);
+      return Promise.resolve(stepsData.stepMerging);
     case defaultCollectionsURL:
-      return Promise.resolve(advancedData.defaultTargetCollections);
+      return Promise.resolve(stepsData.defaultTargetCollections);
     default:
       return Promise.reject(new Error("not found"));
     }

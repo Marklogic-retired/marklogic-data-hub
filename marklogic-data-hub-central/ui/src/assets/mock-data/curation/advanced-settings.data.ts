@@ -1,267 +1,76 @@
-// Returned from endpoint: /api/steps/ingestion/AdvancedLoad
-const stepLoad = {"data":
-    {
-      "collections": ["AdvancedLoad"],
-      "additionalCollections": ["addedCollection"],
-      "batchSize": 35,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "name": "AdvancedLoad",
-      "description": "",
-      "sourceFormat": "json",
-      "targetFormat": "json",
-      "outputURIPrefix": "",
-      "stepDefinitionName": "default-ingestion",
-      "stepDefinitionType": "ingestion",
-      "stepId": "AdvancedLoad-ingestion",
-      "sourceDatabase": null,
-      "targetDatabase": "data-hub-STAGING",
-      "outputFormat": "json",
-      "provenanceGranularityLevel": "coarse",
-      "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
-      "headers": {
-        "header": true
-      },
-      "processors": {
-        "processor": true
-      },
-      "customHook": {
-        "hook": true
-      }
-    },
-"status": 200
+import steps from "./steps.data";
+
+// Shared properties across Advanced props
+const advancedProps = {
+  tabKey: "2",
+  tooltipsData: {},
+  openStepSettings: true,
+  setOpenStepSettings: jest.fn(),
+  updateLoadArtifact: jest.fn(),
+  canWrite: true,
+  canReadWrite: true,
+  canReadOnly: true,
+  currentTab: "2",
+  setIsValid: jest.fn(),
+  resetTabs: jest.fn(),
+  setHasChanged: jest.fn(),
+  setPayload: jest.fn(),
+  createStep: jest.fn(),
+  onCancel: jest.fn(),
 };
 
-// Returned from endpoint: /api/steps/mapping/AdvancedMapping
-const stepMapping = {"data":
-    {
-      "collections": ["AdvancedMapping"],
-      "additionalCollections": ["addedCollection"],
-      "batchSize": 35,
-      "permissions": "data-hub-common,read,data-hub-common,update",
-      "name": "AdvancedMapping",
-      "targetEntityType": "http://example.org/Address-0.0.1/Test",
-      "description": "",
-      "selectedSource": "collection",
-      "sourceQuery": "cts.collectionQuery(['test'])",
-      "stepDefinitionName": "entity-services-mapping",
-      "stepDefinitionType": "mapping",
-      "stepId": "AdvancedMapping-mapping",
-      "sourceDatabase": "data-hub-STAGING",
-      "targetDatabase": "data-hub-FINAL",
-      "validateEntity": "doNotValidate",
-      "provenanceGranularityLevel": "coarse",
-      "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
-      "headers": {
-        "header": true
-      },
-      "processors": {
-        "processor": true
-      },
-      "customHook": {
-        "hook": true
-      }
-    },
-"status": 200
-};
-
-// Returned from endpoint: /api/steps/matching/AdvancedMatching
-const stepMatching = {"data":
-        {
-          "collections": ["AdvancedMatching"],
-          "additionalCollections": ["addedCollection"],
-          "batchSize": 35,
-          "permissions": "data-hub-common,read,data-hub-common,update",
-          "name": "AdvancedMatching",
-          "targetEntityType": "http://example.org/Address-0.0.1/Test",
-          "description": "",
-          "selectedSource": "collection",
-          "sourceQuery": "cts.collectionQuery(['test'])",
-          "stepDefinitionName": "default-matching",
-          "stepDefinitionType": "matching",
-          "stepId": "AdvancedMatching-matching",
-          "sourceDatabase": "data-hub-FINAL",
-          "targetDatabase": "data-hub-FINAL",
-          "provenanceGranularityLevel": "coarse",
-          "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
-          "headers": {
-            "header": true
-          },
-          "processors": {
-            "processor": true
-          },
-          "customHook": {
-            "hook": true
-          }
-        },
-"status": 200
-};
-
-// Returned from endpoint: /api/steps/merging/AdvancedMerging
-const stepMerging = {"data":
-        {
-          "batchSize": 35,
-          "permissions": "data-hub-common,read,data-hub-common,update",
-          "name": "AdvancedMerging",
-          "targetEntityType": "http://example.org/Address-0.0.1/Test",
-          "targetCollections": {
-            "onMerge": {"add": ["merged"]},
-            "onNoMatch": {"add": ["noMatch"]},
-            "onArchive": {"add": ["archived"]},
-            "onNotification": {"add": ["notification"]}
-          },
-          "description": "",
-          "selectedSource": "collection",
-          "sourceQuery": "cts.collectionQuery(['test'])",
-          "stepDefinitionName": "default-merging",
-          "stepDefinitionType": "merging",
-          "stepId": "AdvancedMerging-merging",
-          "sourceDatabase": "data-hub-FINAL",
-          "targetDatabase": "data-hub-FINAL",
-          "provenanceGranularityLevel": "coarse",
-          "lastUpdated": "2020-01-01T00:00:00.000001-07:00",
-          "headers": {
-            "header": true
-          },
-          "processors": {
-            "processor": true
-          },
-          "customHook": {
-            "hook": true
-          }
-        },
-"status": 200
-};
-
-// Returned from endpoint: /api/steps/merging/defaultCollections/${encodeURI(targetEntityType)}
-const defaultTargetCollections = {"data":
-    {
-      "onMerge": ["sm-Test-merged", "sm-Test-mastered"],
-      "onNoMatch": ["sm-Test-mastered"],
-      "onArchive": ["sm-Test-archived"],
-      "onNotification": ["sm-Test-notification"]
-    },
-"status": 200
-};
-
-// Passed as prop
+// Advanced Props
 const advancedLoad = {
-  tabKey: "2",
-  tooltipsData: {},
+  ...advancedProps,
   isEditing: true,
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  stepData: stepLoad.data,
-  updateLoadArtifact: jest.fn(),
+  stepData: steps.stepLoad,
   activityType: "ingestion",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: jest.fn(),
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-  onCancel: jest.fn(),
-  defaultCollections: [stepLoad.data.name]
+  defaultCollections: [steps.stepLoad.name]
 };
 
-// Passed as prop
-const advancedLoadNew = {
-  ...advancedLoad,
-  stepData: {},
-  defaultCollections: []
-};
-
-// Passed as prop
 const advancedMapping = {
-  tabKey: "2",
-  tooltipsData: {},
+  ...advancedProps,
   isEditing: true,
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
-  stepData: stepMapping.data,
-  updateLoadArtifact: jest.fn(),
+  stepData: steps.stepMapping,
   activityType: "mapping",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: jest.fn(),
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-  onCancel: jest.fn(),
-  defaultCollections: [stepMapping.data.name, "EntityName"]
+  defaultCollections: [steps.stepMapping.name, "EntityName"],
+  openStepDetails: jest.fn()
 };
 
-// Passed as prop
-const advancedMappingNew = {
-  ...advancedMapping,
-  stepData: {},
-  defaultCollections: []
-};
-
-// Passed as prop
 const advancedMatching = {
-  tabKey: "2",
-  tooltipsData: {},
+  ...advancedProps,
   isEditing: true,
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
+  stepData: steps.stepMatching,
   openAdvancedSettings: true,
   setOpenAdvancedSettings: jest.fn(),
-  stepData: stepMatching.data,
-  updateLoadArtifact: jest.fn(),
   activityType: "matching",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: true,
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-  onCancel: jest.fn(),
-  defaultCollections: [stepMatching.data.name]
+  defaultCollections: [steps.stepMatching.name]
 };
 
 const advancedMerging = {
-  tabKey: "2",
-  tooltipsData: {},
+  ...advancedProps,
   isEditing: true,
-  openStepSettings: true,
-  setOpenStepSettings: jest.fn(),
+  stepData: steps.stepMerging,
   openAdvancedSettings: true,
   setOpenAdvancedSettings: jest.fn(),
-  stepData: stepMerging.data,
-  updateLoadArtifact: jest.fn(),
   activityType: "merging",
-  canWrite: true,
-  currentTab: "2",
-  setIsValid: true,
-  resetTabs: jest.fn(),
-  setHasChanged: jest.fn(),
-  setPayload: jest.fn(),
-  createStep: jest.fn(),
-  onCancel: jest.fn(),
-  defaultCollections: [stepMerging.data.name]
+  defaultCollections: [steps.stepMerging.name]
 };
 
 const data = {
   advancedLoad: advancedLoad,
-  advancedLoadNew: advancedLoadNew,
-  customLoad: {...advancedLoad, stepData: {
-    ...stepLoad.data,
-    name: "CustomLoad",
-    stepDefinitionType: "custom",
-    stepDefinitionName: "custom-step"
-  }},
   advancedMapping: advancedMapping,
-  advancedMappingNew: advancedMappingNew,
   advancedMatching: advancedMatching,
   advancedMerging: advancedMerging,
-  stepLoad: stepLoad,
-  stepMapping: stepMapping,
-  stepMatching: stepMatching,
-  stepMerging: stepMerging,
-  defaultTargetCollections: defaultTargetCollections,
+  advancedCustomLoad: {...advancedLoad,
+    stepData: {
+      ...steps.stepLoad,
+      name: "CustomLoad",
+      stepDefinitionType: "custom",
+      stepDefinitionName: "custom-step",
+      stepId: "CustomLoad-ingestion",
+    }
+  }
 };
 
 export default data;

@@ -41,7 +41,9 @@ export interface MatchingStep {
   targetEntityType: string,
   targetFormat: string,
   matchRulesets: any[],
-  thresholds: any[]
+  thresholds: any[],
+  processors: any,
+  customHook: any
 }
 
 export interface MatchRuleset {
@@ -91,6 +93,8 @@ export interface MergingStep {
   },
   mergeStrategies: any[],
   mergeRules: any[],
+  processors: any,
+  customHook: any
 }
 
 export const defaultPriorityOption = {

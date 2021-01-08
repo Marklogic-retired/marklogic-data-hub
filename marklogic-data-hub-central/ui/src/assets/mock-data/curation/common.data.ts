@@ -408,16 +408,6 @@ const editMap = {
   onCancel: jest.fn(),
 };
 
-const advancedSettings = {
-  activityType: "mapping",
-  canWrite: true,
-  openAdvancedSettings: true,
-  stepData: {
-    name: "testAdvancedSettings"
-  },
-  setOpenAdvancedSettings: jest.fn()
-};
-
 const dropDownWithSearch = {
   setDisplaySelectList: jest.fn(),
   setDisplayMenu: jest.fn(),
@@ -606,7 +596,6 @@ const data = {
   mapProps: mapProps,
   newMap: newMap,
   editMap: editMap,
-  advancedSettings: advancedSettings,
   dropDownWithSearch: dropDownWithSearch,
   xmlSourceData: xmlSourceData,
   testJSONResponse: testJSONResponse,

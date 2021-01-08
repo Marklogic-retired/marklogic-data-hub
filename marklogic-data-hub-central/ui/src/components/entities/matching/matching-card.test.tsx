@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 
 import MatchingCard from "./matching-card";
 
-import {matchingStep} from "../../../assets/mock-data/curation/matching";
+import {matchingStep} from "../../../assets/mock-data/curation/matching.data";
 import {customerEntityDef} from "../../../assets/mock-data/curation/entity-definitions-mock";
 import {MatchingStep} from "../../../types/curation-types";
 import {SecurityTooltips} from "../../../config/tooltips.config";
