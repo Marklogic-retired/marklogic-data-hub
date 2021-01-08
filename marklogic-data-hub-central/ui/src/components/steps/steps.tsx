@@ -178,7 +178,12 @@ const Steps: React.FC<Props> = (props) => {
   const getTitle = () => {
     let activity;
     switch (props.activityType) {
-    case "ingestion": activity = "Loading";
+    case "ingestion":
+      if (props.stepData.stepDefinitionName && props.stepData.stepDefinitionName !== "default-ingestion") {
+        activity = "Custom";
+      } else {
+        activity = "Loading";
+      }
       break;
     case StepType.Mapping: activity = "Mapping";
       break;

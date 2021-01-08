@@ -1,7 +1,7 @@
-import {matchingStep} from "./matching";
+import {matchingStep} from "./matching.data";
 import {customerEntityDef} from "./entity-definitions-mock";
 import {definitionsParser} from "../../../util/data-conversion";
-import {mergingStep} from "./merging";
+import {mergingStep} from "./merging.data";
 
 const customerEntityDefsArray = definitionsParser(customerEntityDef.definitions);
 

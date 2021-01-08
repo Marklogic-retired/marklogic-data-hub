@@ -33,7 +33,9 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
   targetEntityType: "",
   targetFormat: "",
   matchRulesets: [],
-  thresholds: []
+  thresholds: [],
+  processors: {},
+  customHook: {}
 };
 
 const MatchingStepDetail: React.FC = () => {
