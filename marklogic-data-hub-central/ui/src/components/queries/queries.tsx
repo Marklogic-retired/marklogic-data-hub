@@ -183,6 +183,10 @@ const Query: React.FC<Props> = (props) => {
   }, [searchOptions.entityTypeIds]);
 
   useEffect(() => {
+    props.setQueries(savedQueries);
+  }, [savedQueries]);
+
+  useEffect(() => {
     if (savedQueries && savedQueries.length > 0) {
       for (let key of savedQueries) {
         if (key.savedQuery.name === currentQueryName) {

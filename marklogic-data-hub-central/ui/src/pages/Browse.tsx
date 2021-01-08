@@ -344,7 +344,7 @@ const Browse: React.FC<Props> = ({location}) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView}/>
+        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView}/>
         <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} />
       </>
     );
@@ -421,7 +421,7 @@ const Browse: React.FC<Props> = ({location}) => {
                     </div> : ""}
                   </div>
                 </div>
-                <Query queries={queries}
+                <Query queries={queries || []}
                   setQueries={setQueries}
                   isSavedQueryUser={isSavedQueryUser}
                   columns={columns}

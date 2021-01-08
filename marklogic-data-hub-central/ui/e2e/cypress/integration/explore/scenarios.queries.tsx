@@ -508,6 +508,9 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSelectedQueryDescription().should("contain", "");
     browsePage.getResetQueryButton().should("be.visible");
 
+    browsePage.getSaveQueriesDropdown().click();
+    browsePage.getQueryOption("edited-query").should("not.be.visible");
+
     cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json")).click();
     browsePage.waitForSpinnerToDisappear();
 

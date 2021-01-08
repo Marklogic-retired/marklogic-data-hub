@@ -507,13 +507,17 @@ class BrowsePage {
 
   selectQuery(query: string) {
     this.getSaveQueriesDropdown().click();
-    cy.get(`[data-cy="query-option-${query}"]`).click();
+    this.getQueryOption(query).click();
     this.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
   }
 
   getSelectedQueryDescription() {
     return cy.get("#selected-query-description").invoke("text");
+  }
+
+  getQueryOption(query: string) {
+    return cy.get(`[data-cy="query-option-${query}"]`);
   }
 
   // Switching queries confirmation buttons
