@@ -51,7 +51,7 @@ interface ISearchContextInterface {
   setEntity: (option: string) => void;
   setNextEntity: (option: string) => void;
   setEntityClearQuery: (option: string) => void;
-  setLatestJobFacet: (vals: string, entityName: string, targetDatabase?: string) => void;
+  setLatestJobFacet: (vals: string, entityName: string, targetDatabase?: string, collectionVals?: string) => void;
   clearFacet: (constraint: string, val: string) => void;
   clearAllFacets: () => void;
   clearDateFacet: () => void;
@@ -254,9 +254,12 @@ const SearchProvider: React.FC<{ children: any }> = ({children}) => {
   };
 
   //The "targetDatabase" parameter is temporary optional. Passing the database from the model view needs to be handleled in the separate story DHFPROD-6152.
-  const setLatestJobFacet = (vals: string, entityName: string, targetDatabase?: string) => {
+  const setLatestJobFacet = (vals: string, entityName: string, targetDatabase?: string, collectionValues?: string) => {
     let facets = {};
     facets = {createdByJob: {dataType: "string", stringValues: [vals]}};
+    if (collectionValues) {
+      facets["Collection"] = {dataType: "string", stringValues: [collectionValues]};
+    }
     setSearchOptions({
       ...searchOptions,
       start: 1,

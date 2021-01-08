@@ -58,22 +58,16 @@ describe("Run Tile tests", () => {
     tiles.closeRunMessage();
     runPage.runStep("merge-xml-person").click();
     cy.verifyStepRunResult("success", "Merging", "merge-xml-person");
-    tiles.closeRunMessage();
 
-    //Verify detail page renders with expected content
-    toolbar.getExploreToolbarIcon().click();
-    cy.waitUntil(() => browsePage.getExploreButton()).click();
-    browsePage.selectEntity("Person");
-    browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getTotalDocuments().should("be.greaterThan", 14);
-    browsePage.getHubPropertiesExpanded();
-    browsePage.clickMoreLink("collection");
-    browsePage.getFacetItemCheckbox("collection", "sm-Person-merged").click();
-    browsePage.getGreySelectedFacets("sm-Person-merged").should("exist");
-    browsePage.getFacetApplyButton().click();
+    //Navigate to explorer tile using the explorer link
+    runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+
+    //Verify detail page renders with expected content
+    browsePage.getSelectedEntity().should("contain", "Person");
     browsePage.getTotalDocuments().should("be", 2);
+    browsePage.getSelectedFacet("sm-Person-merged").should("exist");
     browsePage.getSourceViewIcon().first().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();

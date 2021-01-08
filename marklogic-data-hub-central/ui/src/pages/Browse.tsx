@@ -173,6 +173,13 @@ const Browse: React.FC<Props> = ({location}) => {
     } else if (location.state
       && location.state.hasOwnProperty("entityName")
       && location.state.hasOwnProperty("targetDatabase")
+      && location.state.hasOwnProperty("jobId")
+      && location.state.hasOwnProperty("Collection")) {
+      setCardView(false);
+      setLatestJobFacet(location.state["jobId"], location.state["entityName"], location.state["targetDatabase"], location.state["Collection"]);
+    } else if (location.state
+      && location.state.hasOwnProperty("entityName")
+      && location.state.hasOwnProperty("targetDatabase")
       && location.state.hasOwnProperty("jobId")) {
       setCardView(false);
       setLatestJobFacet(location.state["jobId"], location.state["entityName"], location.state["targetDatabase"]);
