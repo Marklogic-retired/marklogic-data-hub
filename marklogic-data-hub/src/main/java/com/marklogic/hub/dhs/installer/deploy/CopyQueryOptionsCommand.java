@@ -4,7 +4,7 @@ import com.marklogic.appdeployer.command.AbstractCommand;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.hub.HubConfig;
-import com.marklogic.hub.deploy.commands.LoadUserModulesCommand;
+import com.marklogic.hub.deploy.commands.DeployQueryOptionsCommand;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +24,8 @@ public class CopyQueryOptionsCommand extends AbstractCommand {
         this.serverNames = serverNames;
         this.jobDatabaseName = jobDatabaseName;
 
-        // Need to run this after the contents of ml-modules-final is loaded
-        setExecuteSortOrder(new LoadUserModulesCommand().getExecuteSortOrder() + 1);
+        // Need to run this after the contents of ml-modules-final and search query options are loaded
+        setExecuteSortOrder(new DeployQueryOptionsCommand(hubConfig).getExecuteSortOrder() + 1);
     }
 
     @Override

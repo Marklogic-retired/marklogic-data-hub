@@ -100,13 +100,14 @@ public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
         assertTrue(commands.get(index++) instanceof LoadHubModulesCommand);
         assertTrue(commands.get(index++) instanceof UpdateDhsModulesPermissionsCommand);
         assertTrue(commands.get(index++) instanceof DeployAmpsCommand);
+        assertTrue(commands.get(index++) instanceof DeployQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof GenerateFunctionMetadataCommand);
         assertTrue(commands.get(index++) instanceof CopyQueryOptionsCommand);
         assertTrue(commands.get(index++) instanceof DeployTriggersCommand);
         assertTrue(commands.get(index++) instanceof DeployHubTriggersCommand);
         assertTrue(commands.get(index++) instanceof LoadHubArtifactsCommand);
         assertTrue(commands.get(index++) instanceof CreateGranularPrivilegesCommand);
-        assertEquals(14, commands.size());
+        assertEquals(15, commands.size());
 
         DeployRolesCommand deployRolesCommand = (DeployRolesCommand) commands.get(1);
         ResourceFilenameFilter filter = (ResourceFilenameFilter) deployRolesCommand.getResourceFilenameFilter();
@@ -117,13 +118,13 @@ public class InstallIntoDhsCommandTest extends AbstractHubCoreTest {
         assertFalse(filter.accept(dir, "flow-operator-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
         assertFalse(filter.accept(dir, "data-hub-admin-role.json"), "The DHF 'legacy' roles should not be deployed as they grant too many privileges for a DHS user");
 
-        CreateGranularPrivilegesCommand createGranularPrivilegesCommand = (CreateGranularPrivilegesCommand) commands.get(13);
+        CreateGranularPrivilegesCommand createGranularPrivilegesCommand = (CreateGranularPrivilegesCommand) commands.get(14);
         List<String> names = createGranularPrivilegesCommand.getGroupNames();
         assertEquals("Evaluator", names.get(0));
         assertEquals("Curator", names.get(1));
         assertEquals(2, names.size());
 
-        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = (GenerateFunctionMetadataCommand) commands.get(8);
+        GenerateFunctionMetadataCommand generateFunctionMetadataCommand = (GenerateFunctionMetadataCommand) commands.get(9);
         assertTrue(generateFunctionMetadataCommand.isCatchExceptionsForUserModules(), "Per DHFPROD-5496, this command " +
             "should be configured to catch exceptions from user modules, as we don't want those to cause errors when " +
             "installing DHF into DHS. The expectation is that the user will fix their errors later and then run e.g. " +

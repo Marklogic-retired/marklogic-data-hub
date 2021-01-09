@@ -64,6 +64,9 @@ public class TestAppInstaller {
             logger.info("Finished installing test app on hosts: " + Arrays.asList(hosts));
         } finally {
             ctx.close();
+            // LoadUserModulesCommand may cause hanging because its thread pool is not shutdown;
+            // will investigate in 5.5.0, doing system.exit for now
+            System.exit(0);
         }
     }
 

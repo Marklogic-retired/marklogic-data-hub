@@ -80,11 +80,11 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         HashMap<Enum, Boolean> deployed = entityManager.deployQueryOptions();
 
-        assertEquals(0, deployed.size());
-        assertFalse(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertFalse(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
-        assertNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
+        assertEquals(2, deployed.size());
+        assertTrue(Paths.get(dir.toString(), HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertTrue(Paths.get(dir.toString(), HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE).toFile().exists());
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_STAGING_NAME + "/rest-api/options/" + HubConfig.STAGING_ENTITY_QUERY_OPTIONS_FILE));
+        assertNotNull(getModulesFile("/Default/" + HubConfig.DEFAULT_FINAL_NAME + "/rest-api/options/" + HubConfig.FINAL_ENTITY_QUERY_OPTIONS_FILE));
     }
 
     @Test
@@ -173,8 +173,8 @@ public class EntityManagerTest extends AbstractHubCoreTest {
 
         entityManager.saveQueryOptions();
 
-        assertFalse(finalDbOptions.exists());
-        assertFalse(stagingDbOptions.exists());
+        assertTrue(finalDbOptions.exists());
+        assertTrue(stagingDbOptions.exists());
     }
 
     @Test
