@@ -91,6 +91,7 @@ public class InstallIntoDhsCommand extends AbstractInstallerCommand {
 
         commands.add(new LoadHubModulesCommand(hubConfig));
         commands.add(new LoadHubArtifactsCommand(hubConfig));
+        commands.add(new DeployQueryOptionsCommand(hubConfig));
 
         // DHS is known to be compatible with entity-services-based mapping. Setting this field avoids the need to make
         // another DatabaseClient, which the Versions class will do.
