@@ -97,7 +97,7 @@ const Browse: React.FC<Props> = ({location}) => {
         data: {
           query: {
             searchText: searchOptions.query,
-            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds :  allEntities,
+            entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
             selectedFacets: searchOptions.selectedFacets,
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
@@ -144,11 +144,12 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
-    if (entities.length && (!searchOptions.nextEntityType ||
+    if ((entities.length || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined)) &&
+      (!searchOptions.nextEntityType ||
         (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
         (searchOptions.nextEntityType === "All Data" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView) ||
         (!["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType)
-    )) {
+      )) {
       getSearchResults(entities);
     }
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
@@ -277,7 +278,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
-  const setDatabasePreferences = (option:string) => {
+  const setDatabasePreferences = (option: string) => {
     setDatabase(option);
     let userPreferences = getUserPreferences(user.name);
     if (userPreferences) {
@@ -380,7 +381,7 @@ const Browse: React.FC<Props> = ({location}) => {
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef}>
-                <SearchBar entities={entities} cardView={cardView}/>
+                <SearchBar entities={entities} cardView={cardView} />
                 <SearchSummary
                   total={totalDocuments}
                   start={searchOptions.start}

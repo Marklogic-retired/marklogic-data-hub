@@ -8,7 +8,6 @@ import {formatCardUri} from "../../util/conversionFunctions";
 import sourceFormatOptions from "../../config/formats.config";
 import ReactHtmlParser from "react-html-parser";
 import {FileOutlined} from "@ant-design/icons";
-import {OverflowTooltip} from "../overflow-tooltip/overflow-tooltip";
 import {MLTooltip, MLPopover} from "@marklogic/design-system";
 import {CardViewDateConverter} from "../../util/date-conversion";
 import {Link} from "react-router-dom";
@@ -72,7 +71,7 @@ const RecordCardView = (props) => {
 
   const displayRecordSources = (item) => {
     let sources = item.hubMetadata?.sources.map((record) => {
-      return record.name;
+      return record.datahubSourceName;
     }).join(", ");
     return sources;
   };
@@ -92,13 +91,13 @@ const RecordCardView = (props) => {
         </div>
         <div className={styles.colValue}>
           {item.hubMetadata?.sources?.length > 0 ? <span className={styles.valText} data-testid={item.uri + "-sources"}>
-            <OverflowTooltip title={displayRecordSources(item)} placement={"bottom"} content={displayRecordSources(item).substring(0, 28)} width={"200px"} />
+            <MLTooltip title={displayRecordSources(item)} placement="bottom" width={"200px"}>{displayRecordSources(item).substring(0, 28)}</MLTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByFlow ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByFlow"}>
-            <OverflowTooltip title={item.hubMetadata?.lastProcessedByFlow} placement={"bottom"} content={item.hubMetadata?.lastProcessedByFlow} width={"200px"} />
+            <MLTooltip title={item.hubMetadata?.lastProcessedByFlow} placement="bottom" width={"200px"}>{item.hubMetadata?.lastProcessedByFlow}</MLTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedByStep ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedByStep"}>
-            <OverflowTooltip title={item.hubMetadata.lastProcessedByStep} placement={"bottom"} content={item.hubMetadata.lastProcessedByStep} width={"200px"} />
+            <MLTooltip title={item.hubMetadata.lastProcessedByStep} placement="bottom" width={"200px"}>{item.hubMetadata.lastProcessedByStep}</MLTooltip>
           </span> : emptyField}
           {item.hubMetadata?.lastProcessedDateTime ? <span className={styles.valText} data-testid={item.uri + "-lastProcessedDateTime"}>
             {CardViewDateConverter(item.hubMetadata?.lastProcessedDateTime)}
