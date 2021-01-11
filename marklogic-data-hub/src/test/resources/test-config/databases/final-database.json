@@ -101,6 +101,27 @@
       "collation": "http://marklogic.com/collation/codepoint",
       "range-value-positions": false,
       "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "int",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/MasteringTestEntity/customerId",
+      "collation": "",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/MasteringTestEntity/name",
+      "collation": "http://marklogic.com/collation//S2",
+      "range-value-positions": false,
+      "invalid-values": "reject"
+    },
+    {
+      "scalar-type": "string",
+      "path-expression": "/(es:envelope|envelope)/(es:instance|instance)/MasteringTestEntity/nicknames",
+      "collation": "http://marklogic.com/collation//S2",
+      "range-value-positions": false,
+      "invalid-values": "reject"
     }
   ]
 }

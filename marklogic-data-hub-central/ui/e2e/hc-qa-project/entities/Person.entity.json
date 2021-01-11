@@ -19,13 +19,15 @@
         },
         "fname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true,
           "sortable": true
         },
         "lname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true,
           "sortable": true
         },
