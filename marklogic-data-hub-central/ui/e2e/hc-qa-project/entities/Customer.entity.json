@@ -20,13 +20,15 @@
         },
         "name": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true,
           "sortable": true
         },
         "email": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "pin": {

@@ -70,7 +70,6 @@ function defaultArtifact(artifactName) {
   const defaultPermissions = 'data-hub-common,read,data-hub-common,update';
   let artifact = {
     batchSize: 100,
-    threadCount: 1,
     sourceDatabase: dataHub.config.FINALDATABASE,
     targetDatabase: dataHub.config.FINALDATABASE,
     targetEntity: "Change this to a valid entity type name; e.g. Customer",

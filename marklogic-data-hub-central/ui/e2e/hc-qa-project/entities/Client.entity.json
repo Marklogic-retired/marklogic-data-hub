@@ -11,32 +11,36 @@
       "properties": {
         "firstname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "lastname": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "email": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "postal": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "phone": {
           "datatype": "string",
-          "collation": "http://marklogic.com/collation/codepoint",
+          "description": "This has a case-insensitive collation for the match queries that use range indexes",
+          "collation": "http://marklogic.com/collation//S2",
           "facetable": true
         },
         "pin": {
           "datatype": "int",
-          "collation": "http://marklogic.com/collation/codepoint",
           "facetable": true
         },
         "updated": {

@@ -14,6 +14,8 @@ import module namespace es-helper = "http://marklogic.com/smart-mastering/entity
   at "/com.marklogic.smart-mastering/sm-entity-services.xqy";
 import module namespace match-opt-impl = "http://marklogic.com/smart-mastering/options-impl"
   at "/com.marklogic.smart-mastering/matcher-impl/options-impl.xqy";
+import module namespace httputils="http://marklogic.com/data-hub/http-utils"
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare variable $_cached-property-name-to-queries as map:map := map:map();
 
@@ -35,8 +37,23 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
           es-helper:get-entity-property-info($target-entity-type, $full-property-name)
         else
           ()
+      let $property-def := $match-options/(*:property-defs|propertyDefs)/*:property[(name|@name) = $full-property-name]
+      let $index-reference-info := $property-def/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference|indexReferences)
+      let $index-references := ($property-info ! map:get(., "indexReference"), $index-reference-info ! cts:reference-parse(.))
       let $helper-query :=
-        if (fn:exists($property-info)) then
+        (: Prioritize optimizations that reference range indexes :)
+        if (fn:exists($index-references)) then
+            let $scalar-type := fn:distinct-values($index-references ! cts:reference-scalar-type(.))
+            return
+              if (fn:count($scalar-type) eq 1) then
+                function($val, $weight) {
+                  let $cast-values := $val ! fn:data(element val { attribute xsi:type {"xs:"||$scalar-type}, fn:string(.)})
+                  return
+                    cts:range-query($index-references, "=", $cast-values, ("score-function=linear"), $weight)
+                }
+              else
+                httputils:throw-bad-request((), ("Attempted to used mixed scalar types for range indexed match query", $full-property-name, $index-references))
+        else if (fn:exists($property-info)) then
           let $namespace := fn:string($property-info => map:get("namespace"))
           let $parent-property-qnames := fn:reverse(fn:map-pairs(
               function($namespace, $property-title) {
@@ -54,73 +71,47 @@ declare function helper-impl:property-name-to-query($match-options as item(), $f
                 else
                   fn:fold-left(function($query, $parent-property-qname) {cts:element-query($parent-property-qname, $query) }, $query, $parent-property-qnames)
             }
-          let $index-reference := $property-info => map:get("indexReference")
+          let $qname := fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("propertyTitle")))
           return
-            (: TODO Due to case sensitivity, we can't reliably use the range index for strings. :)
-            if (fn:exists($index-reference) and fn:not(cts:reference-scalar-type($index-reference) = "string")) then
-              let $scalar-type := cts:reference-scalar-type($index-reference)
-              return function($val, $weight) {
-                let $cast-values := $val ! fn:data(element val { attribute xsi:type {"xs:"||$scalar-type}, fn:string(.)})
-                return
-                  $scope-query(
-                      cts:range-query($index-reference, "=", $cast-values, ("score-function=linear"), $weight),
-                      $is-json-fun()
-                  )
-              }
-            else
-              let $qname := fn:QName($namespace, helper-impl:NCName-compatible($property-info => map:get("propertyTitle")))
-              return
-                function($val, $weight) {
-                  $scope-query(
-                      if ($is-json-fun()) then
-                        cts:json-property-value-query(
-                          fn:local-name-from-QName($qname),
-                          $val,
-                          (),
-                          $weight
-                        )
-                      else
-                        cts:element-value-query(
-                            $qname,
-                            $val ! fn:string(.)[. ne ''],
-                            (),
-                            $weight
-                        ),
-                      $is-json-fun()
-                  )
-                }
-          else
-            let $property-def := $match-options/(*:property-defs|propertyDefs)/*:property[(name|@name) = $full-property-name]
-            let $index-reference-info := $property-def/(cts:json-property-reference|cts:element-reference|cts:path-reference|cts:field-reference|indexReferences)
-            where fn:exists($property-def)
-            return
-              if (fn:exists($index-reference-info)) then
-                let $references := $index-reference-info ! cts:reference-parse(.)
-                let $scalar-type := cts:reference-scalar-type(fn:head($references))
-                return function($val, $weight) {
-                  let $cast-values := $val ! fn:data(element val { attribute xsi:type {"xs:"||$scalar-type}, fn:string(.)})
-                  return
-                    cts:range-query($references, "=", $cast-values, ("score-function=linear"), $weight)
-                }
-              else
-                let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
-                return
-                  function($val, $weight) {
-                    if ($is-json-fun()) then
-                      cts:json-property-value-query(
-                        fn:string($qname),
-                        $val,
-                        ("case-insensitive"),
+            function($val, $weight) {
+              $scope-query(
+                  if ($is-json-fun()) then
+                    cts:json-property-value-query(
+                      fn:local-name-from-QName($qname),
+                      $val,
+                      (),
+                      $weight
+                    )
+                  else
+                    cts:element-value-query(
+                        $qname,
+                        $val ! fn:string(.)[. ne ''],
+                        (),
                         $weight
-                      )
-                    else
-                      cts:element-value-query(
-                          $qname,
-                          $val ! fn:string(.)[. ne ''],
-                          ("case-insensitive"),
-                          $weight
-                      )
-                  }
+                    ),
+                  $is-json-fun()
+              )
+            }
+        else if (fn:exists($property-def)) then
+          let $qname := fn:QName(fn:string($property-def/(@namespace|namespace)), fn:string($property-def/(@localname|localname)))
+          return
+            function($val, $weight) {
+              if ($is-json-fun()) then
+                cts:json-property-value-query(
+                  fn:string($qname),
+                  $val,
+                  ("case-insensitive"),
+                  $weight
+                )
+              else
+                cts:element-value-query(
+                    $qname,
+                    $val ! fn:string(.)[. ne ''],
+                    ("case-insensitive"),
+                    $weight
+                )
+            }
+        else ()
       return (
         map:put($_cached-property-name-to-queries, $key, $helper-query),
         $helper-query,

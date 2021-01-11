@@ -5,7 +5,7 @@
   "version": 1,
   "modulePath": "/data-hub/5/builtins/steps/mastering/default/merging.sjs",
   "retryLimit" : 0,
-  "batchSize" : 100,
+  "batchSize" : 1,
   "threadCount" : 4,
   "options": {
     "acceptsBatch": false,

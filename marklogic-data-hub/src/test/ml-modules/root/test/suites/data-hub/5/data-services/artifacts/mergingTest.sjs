@@ -8,7 +8,7 @@ function updateMergingConfig(artifactName) {
     return [
         test.assertEqual(artifactName, result.name),
         test.assertEqual("TestEntity-hasConfig", result.targetEntityType),
-        test.assertEqual(100, result.batchSize)
+        test.assertEqual(1, result.batchSize)
     ];
 }
 

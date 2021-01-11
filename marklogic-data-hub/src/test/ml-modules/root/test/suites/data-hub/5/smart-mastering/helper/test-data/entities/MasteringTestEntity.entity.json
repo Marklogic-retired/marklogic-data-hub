@@ -1,0 +1,39 @@
+{
+  "info": {
+    "title": "MasteringTestEntity",
+    "version": "0.0.1",
+    "baseUri": "http://example.org/"
+  },
+  "definitions": {
+    "MasteringTestEntity": {
+      "required": [
+        "name"
+      ],
+      "primaryKey": "customerId",
+      "properties": {
+        "customerId": {
+          "datatype": "int",
+          "description": "This will be be used to test detecting sortable indexes for matching in the entity type definition.",
+          "sortable": true
+        },
+        "name": {
+          "datatype": "string",
+          "description": "This will be be used to test detecting facetable indexes for matching in the entity type definition.",
+          "facetable": true,
+          "collation": "http://marklogic.com/collation//S2"
+        },
+        "nicknames": {
+          "datatype": "array",
+          "description": "This will have an index that is manually added and referenced in the match options.",
+          "items": {
+            "datatype": "string"
+          }
+        },
+        "status": {
+          "description": "This will test the generated query of a property without an index.",
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}
