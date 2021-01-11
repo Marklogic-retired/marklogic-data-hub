@@ -256,6 +256,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        ...(matchType === "reduce" && {reduce: true}),
         matchRules: [matchRule]
       };
 
