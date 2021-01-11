@@ -75,10 +75,22 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(),
             "The job should have failed because step 2 references an invalid path");
 
-        String stepOutput = response.getStepResponses().get("2").getStepOutput().get(0);
+        final RunStepResponse stepResponse = response.getStepResponses().get("2");
+        String stepOutput = stepResponse.getStepOutput().get(0);
         assertTrue(stepOutput.contains("XDMP-MODNOTFOUND"), "The step output should have a single entry with an " +
             "error message indicating that the module was not found and thus XDMP-MODNOTFOUND should be present; " +
             "actual step output: " + stepOutput);
+
+        assertEquals(2, stepResponse.getTotalEvents(), "The two customers should have been processed");
+        assertEquals(0, stepResponse.getSuccessfulEvents(), "Both customers should have failed processing");
+        assertEquals(2, stepResponse.getFailedEvents(), "Both customers should have failed processing");
+        assertEquals(0, stepResponse.getSuccessfulBatches());
+        assertEquals(1, stepResponse.getFailedBatches());
+
+        JSONDocumentManager mgr = getHubClient().getFinalClient().newJSONDocumentManager();
+        Stream.of(CUSTOMER1_URI, CUSTOMER2_URI).forEach(uri -> {
+            assertNull(mgr.exists(uri), "The doc written by the custom step should not have been written, due to the processor failure");
+        });
     }
 
     @Test

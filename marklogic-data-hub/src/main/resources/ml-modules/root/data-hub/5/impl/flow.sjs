@@ -395,22 +395,27 @@ class Flow {
     }
     flowInstance.globalContext.uri = null;
 
+    let stepProcessorFailed = false;
     try {
       this.applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
     } catch (e) {
       // If a processor throws an error, we don't know if it was specific to a particular item or not. So we assume that
       // all items failed; this is analogous to the behavior of acceptsBatch=true
+      flowInstance.globalContext.completedItems = [];
+      stepProcessorFailed = true;
       this.handleStepError(flowInstance, e, items);
     }
 
-    // Add everything to the writeQueue
-    contentArray.forEach(content => {
-      if (content.uri) {
-        this.writeQueue.push(content);
-      } else {
-        this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(content)}' to the write queue due to missing uri.`});
-      }
-    });
+    // Assumption is that if a processor failed, none of the content objects processed by the step module should be written
+    if (!stepProcessorFailed) {
+      contentArray.forEach(contentObject => {
+        if (contentObject.uri) {
+          this.writeQueue.push(contentObject);
+        } else {
+          this.datahub.debug.log({ type: 'error', message: `Couldn't add '${xdmp.toJsonString(contentObject)}' to the write queue due to missing uri.`});
+        }
+      });
+    }
 
     if (hook && !hook.runBefore) {
       hookOperation();
