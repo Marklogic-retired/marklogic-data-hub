@@ -256,11 +256,8 @@ public class FlowRunnerImpl implements FlowRunner {
             stepsMap.remove(jobId);
             isJobCancelled.set(true);
         }
-        else {
-            throw new RuntimeException("Job not running");
-        }
 
-        if (jobId.equals(runningJobId)) {
+        if (jobId != null && jobId.equals(runningJobId)) {
             if (stepRunner != null) {
                 stepRunner.stop();
             }
