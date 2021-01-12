@@ -52,8 +52,8 @@ describe("Update data load settings component", () => {
     expect(getByText("Download Hub Central Files")).toBeInTheDocument();
     expect(getByText("Download Project Files")).toBeInTheDocument();
     expect(getByTestId("clearData")).toBeInTheDocument();
-    expect(getByText("Download a zip containing files for everything that Hub Central supports creating and updating. Does not include project files that Hub Central does not allow creating or updating, nor does it contain Data Hub Framework project files. Can be used to update an existing local project with updates made in Hub Central.")).toBeInTheDocument();
-    expect(getByText("Download a zip containing files for everything that Hub Central supports creating and updating and all Data Hub Framework project files. Can be used to deploy the project in a local environment or add the project to a version control system.")).toBeInTheDocument();
+    expect(getByText("Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.")).toBeInTheDocument();
+    expect(getByText("Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.")).toBeInTheDocument();
     expect(getByText("Delete all user data in STAGING, FINAL, and JOBS databases.")).toBeInTheDocument();
     expect(getByTestId("downloadProjectFiles")).toBeDisabled();
     expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();

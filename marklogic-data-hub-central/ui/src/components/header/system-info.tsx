@@ -156,7 +156,7 @@ const SystemInfo = (props) => {
               <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
-                  <p>Download a zip containing files for everything that Hub Central supports creating and updating. Does not include project files that Hub Central does not allow creating or updating, nor does it contain Data Hub Framework project files. Can be used to update an existing local project with updates made in Hub Central.</p>
+                  <p>Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.</p>
                   <div className={styles.buttonContainer}>
                     <MLButton
                       type="primary"
@@ -172,7 +172,7 @@ const SystemInfo = (props) => {
               <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
-                  <p>Download a zip containing files for everything that Hub Central supports creating and updating and all Data Hub Framework project files. Can be used to deploy the project in a local environment or add the project to a version control system.</p>
+                  <p>Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.</p>
                   <div className={styles.buttonContainer}>
                     <MLButton
                       type="primary"
