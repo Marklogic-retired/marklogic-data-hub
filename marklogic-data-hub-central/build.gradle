@@ -207,7 +207,6 @@ ext {
     shouldBuildUiFiles = taskNames.contains("build") || taskNames.contains("buildrpm") || taskNames.contains("bootwar")
 }
 if (shouldBuildUiFiles) {
-    println "Building UI!"
     tasks.processResources.dependsOn(buildUi, copyUiFiles)
 }
 
