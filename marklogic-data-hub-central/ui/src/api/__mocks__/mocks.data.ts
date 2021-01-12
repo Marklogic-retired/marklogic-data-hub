@@ -280,7 +280,9 @@ const advancedAPI = (axiosMock) => {
   axiosMock.post["mockImplementationOnce"](jest.fn(() =>
     Promise.resolve({status: 200, data: {}})));
   return axiosMock.get["mockImplementation"]((url) => {
-    const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURI(stepsData.stepMerging.targetEntityType)}`;
+    const targetEntityType = String(stepsData.stepMerging.targetEntityType);
+    const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
+    const defaultCollectionsURL = `/api/steps/merging/defaultCollections/${encodeURIComponent(targetEntityTitle)}`;
     switch (url) {
     case "/api/steps/ingestion/AdvancedLoad":
       return Promise.resolve({status: 200, data: stepsData.stepLoad});

@@ -380,7 +380,7 @@ const EntityTiles = (props) => {
         { Object.keys(props.entityModels).sort().map((entityType, index) => (
           <Panel header={<span data-testid={entityType}>{entityType}</span>} key={entityModels[entityType].entityTypeId}>
             <div className={styles.switchMapMaster}>
-              <Menu mode="horizontal" defaultSelectedKeys={["map-" + entityType]}>
+              <Menu mode="horizontal" defaultSelectedKeys={["map-" + entityType]} selectedKeys={viewData}>
                 {canReadMapping ? <Menu.Item data-testid={`${entityType}-Map`} key={`map-${entityType}`} onClick={() => updateView(index, "map", entityType)}>
                             Map
                 </Menu.Item>: null}

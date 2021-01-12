@@ -397,7 +397,8 @@ const MergingCard: React.FC<Props> = (props) => {
         setOpenStepSettings={setOpenStepSettings}
         updateStep={updateMergingArtifact}
         activityType={StepType.Merging}
-        targetEntityType={props.entityName}
+        targetEntityType={props.entityModel.entityTypeId}
+        targetEntityName={props.entityModel.entityName}
       />
       {renderAddConfirmation}
     </div>
