@@ -100,7 +100,6 @@ describe("Matching", () => {
 
     //add ruleset
     matchingStepDetail.addNewRulesetSingle();
-    cy.contains("Add Match Ruleset for Single Property");
     rulesetSingleModal.selectPropertyToMatch("customerId");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
@@ -117,7 +116,6 @@ describe("Matching", () => {
 
     //add another ruleset
     matchingStepDetail.addNewRulesetSingle();
-    cy.contains("Add Match Ruleset for Single Property");
     rulesetSingleModal.selectPropertyToMatch("email");
     rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();

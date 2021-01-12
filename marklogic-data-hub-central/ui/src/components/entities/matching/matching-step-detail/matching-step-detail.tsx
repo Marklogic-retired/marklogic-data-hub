@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Modal, Row, Col, Card} from "antd";
 import {useHistory} from "react-router-dom";
-import {DownOutlined} from "@ant-design/icons";
-import {MLPageHeader, MLButton, MLDropdown, MLMenu} from "@marklogic/design-system";
+import {MLPageHeader, MLButton} from "@marklogic/design-system";
 import styles from "./matching-step-detail.module.scss";
 
 import RulesetSingleModal from "../ruleset-single-modal/ruleset-single-modal";
@@ -219,12 +218,6 @@ const MatchingStepDetail: React.FC = () => {
     </Modal>
   );
 
-  const renderRulesetMenu = (
-    <MLMenu mode="vertical">
-      <MLMenu.MLItem aria-label="single-ruleset-menu" onClick={() => addNewSingleRuleset()}>Add ruleset for a single property</MLMenu.MLItem>
-    </MLMenu>
-  );
-
   const getRulesetName = (rulesetComb) => {
     let matchRules = rulesetComb.matchRules;
     let rulesetName = rulesetComb.rulesetName;
@@ -297,17 +290,9 @@ const MatchingStepDetail: React.FC = () => {
             </div>
 
             <div className={styles.addButtonContainer}>
-              <MLDropdown
-                overlay={renderRulesetMenu}
-                trigger={[
-                  "click"
-                ]}
-              >
-                <MLButton aria-label="add-ruleset" size="default" type="primary">
-                  Add{" "}
-                  <DownOutlined />
-                </MLButton>
-              </MLDropdown>
+              <MLButton aria-label="add-ruleset" size="default" type="primary" onClick={() => addNewSingleRuleset()}>
+                Add{" "}
+              </MLButton>
             </div>
           </div>
           <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
