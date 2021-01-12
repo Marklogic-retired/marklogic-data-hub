@@ -358,7 +358,7 @@ describe("Default ingestion ", () => {
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
     loadPage.stepDescriptionInput().type("cyTestDesc");
-    loadPage.selectSourceFormat("Delimited Text");
+    loadPage.selectSourceFormat("Delimited Text (CSV, TSV, etc.)");
     loadPage.selectTargetFormat("XML");
     loadPage.uriPrefixInput().type("/e2eCSV/");
     loadPage.saveButton().click();
@@ -384,8 +384,8 @@ describe("Default ingestion ", () => {
     loadPage.addNewButton("card").click();
     loadPage.stepNameInput().type(stepName);
     loadPage.stepDescriptionInput().type("cyTestDesc");
-    loadPage.selectSourceFormat("BINARY");
-    loadPage.selectTargetFormat("BINARY");
+    loadPage.selectSourceFormat("BINARY (.gif, .jpg, .pdf, .doc, .docx, etc.)");
+    loadPage.selectTargetFormat("BINARY (.gif, .jpg, .pdf, .doc, .docx, etc.)");
     loadPage.uriPrefixInput().type("/e2eBinary/");
     loadPage.saveButton().click();
     cy.findByText(stepName).should("be.visible");
