@@ -22,7 +22,6 @@ class MatchingStepDetail {
 
   addNewRulesetSingle() {
     cy.findByLabelText("add-ruleset").click();
-    cy.waitUntil(() => cy.findByLabelText("single-ruleset-menu").trigger("mouseover")).click();
   }
 
   getSliderDeleteText() {

@@ -61,7 +61,6 @@ describe("Matching Step Detail view component", () => {
     expect(getByText("household")).toBeInTheDocument();
 
     userEvent.click(getByLabelText("add-ruleset"));
-    userEvent.click(getByLabelText("single-ruleset-menu"));
     //Verify ruleset options are rendered on the slider
     expect(getByText("name")).toBeInTheDocument();
     expect(getByText("lastName")).toBeInTheDocument();
