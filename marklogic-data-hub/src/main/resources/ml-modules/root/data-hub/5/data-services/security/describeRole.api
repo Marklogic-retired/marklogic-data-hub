@@ -1,0 +1,14 @@
+{
+  "functionName" : "describeRole",
+  "desc" : "Returns the roles, privileges, default permissions, and default collections for the given role",
+  "params" : [ {
+    "name" : "roleName",
+    "datatype" : "string",
+    "desc" : "Name of the MarkLogic role to describe"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "JSON object containing the role description data"
+  }
+}

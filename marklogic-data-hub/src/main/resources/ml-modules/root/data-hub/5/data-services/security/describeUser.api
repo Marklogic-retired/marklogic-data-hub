@@ -1,0 +1,14 @@
+{
+  "functionName" : "describeUser",
+  "desc" : "Returns the roles, privileges, default permissions, and default collections for the given username",
+  "params" : [ {
+    "name" : "username",
+    "datatype" : "string",
+    "desc" : "Name of the MarkLogic user to describe"
+  } ],
+  "return" : {
+    "datatype" : "jsonDocument",
+    "$javaClass" : "com.fasterxml.jackson.databind.JsonNode",
+    "desc" : "JSON object containing the user description data"
+  }
+}

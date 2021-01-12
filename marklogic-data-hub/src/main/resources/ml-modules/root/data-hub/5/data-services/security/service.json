@@ -1,0 +1,4 @@
+{
+  "endpointDirectory" : "/data-hub/5/data-services/security/",
+  "$javaClass" : "com.marklogic.hub.dataservices.SecurityService"
+}

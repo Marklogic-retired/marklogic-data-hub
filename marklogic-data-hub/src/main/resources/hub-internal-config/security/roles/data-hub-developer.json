@@ -14,7 +14,8 @@
     "data-hub-match-merge-writer",
     "data-hub-module-writer",
     "data-hub-step-definition-writer",
-    "data-hub-saved-query-user"
+    "data-hub-saved-query-user",
+    "data-hub-user-reader"
   ],
   "privilege": [
     {

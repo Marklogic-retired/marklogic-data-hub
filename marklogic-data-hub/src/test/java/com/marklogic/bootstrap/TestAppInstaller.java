@@ -19,7 +19,9 @@ import com.marklogic.hub.test.HubConfigObjectFactory;
 import com.marklogic.hub.test.HubCoreTestConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
+import com.marklogic.mgmt.api.security.Permission;
 import com.marklogic.mgmt.api.security.Privilege;
+import com.marklogic.mgmt.api.security.Role;
 import com.marklogic.mgmt.api.security.User;
 import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
@@ -227,6 +229,25 @@ class InstallerThread extends LoggingObject implements Runnable {
         User dataHubTestUser = new User(api, "test-data-hub-user");
         dataHubTestUser.setDescription("Each JUnit test is free to change the roles on this to test whatever it wants to test");
         dataHubTestUser.save();
+
+        Role describeTestRole = new Role(api, "test-describe-role");
+        describeTestRole.addRole("data-hub-common");
+        describeTestRole.setDescription("Has default perms/colls so it can be used for testing the Describe feature");
+        describeTestRole.addPermission(new Permission("data-hub-common", "read"));
+        describeTestRole.addPermission(new Permission("qconsole-user", "update"));
+        describeTestRole.addCollection("test-describe-role-collection");
+        describeTestRole.addCollection("test-shared-collection");
+        describeTestRole.save();
+
+        User describeTestUser = new User(api, "test-describe-user");
+        describeTestUser.addRole("test-describe-role");
+        describeTestUser.setDescription("Has default perms/colls so it can be used for testing the Describe feature");
+        describeTestUser.setPassword("password");
+        describeTestUser.addPermission(new Permission("data-hub-common", "read"));
+        describeTestUser.addPermission(new Permission("data-hub-common-writer", "update"));
+        describeTestUser.addCollection("test-describe-user-collection");
+        describeTestUser.addCollection("test-shared-collection");
+        describeTestUser.save();
 
         addStatusPrivilegeToDataHubDeveloper(hubConfig);
 
