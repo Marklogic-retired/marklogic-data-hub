@@ -31,11 +31,14 @@ import com.marklogic.hub.DatabaseKind
 import com.marklogic.hub.gradle.task.ApplyProjectZipTask
 import com.marklogic.hub.gradle.task.DeleteLegacyMappingsTask
 import com.marklogic.hub.gradle.task.ConvertForHubCentralTask
+import com.marklogic.hub.gradle.task.DescribeRoleTask
+import com.marklogic.hub.gradle.task.DescribeUserTask
 import com.marklogic.hub.gradle.task.FixCreatedByStepTask
 import com.marklogic.hub.ApplicationConfig
 import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
+import com.marklogic.hub.gradle.task.PrintInheritableRolesTask
 import com.marklogic.hub.gradle.task.PullConfigurationFilesTask
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
@@ -96,8 +99,14 @@ class DataHubPlugin implements Plugin<Project> {
         project.task("hubVersion", group: setupGroup, type: HubVersionTask,
             description: "Prints the versions of Data Hub and MarkLogic associated with the value of mlHost, and also prints the version of " +
                 "Data Hub associated with this Gradle task")
+        project.task("hubDescribeRole", group: setupGroup, type: DescribeRoleTask,
+            description: "Describes a MarkLogic role identified by -Prole=(name of role)")
+        project.task("hubDescribeUser", group: setupGroup, type: DescribeUserTask,
+            description: "Describes a MarkLogic user identified by -Puser=(name of user)")
         project.task("hubExportProject", group: setupGroup, type: ExportProjectTask,
             description: "Exports the contents of the hub project directory")
+        project.task("hubPrintInheritableRoles", group: setupGroup, type: PrintInheritableRolesTask,
+            description: "Print the roles that can be inherited in a custom role created by a user with the data-hub-security-admin role")
 
         String deployGroup = "Data Hub Deploy"
         project.task("hubDeployAsSecurityAdmin", group: deployGroup, type: DeployAsSecurityAdminTask,

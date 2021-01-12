@@ -149,7 +149,7 @@ public interface MasteringService {
     }
 
   /**
-   * Invokes the calculateMergingActivity operation on the database server
+   * Calculates tangential information about a merging step to provide configuration insights. Returns a list of source names that apply to the target Entity Type.
    *
    * @param stepName	provides input
    * @return	as output

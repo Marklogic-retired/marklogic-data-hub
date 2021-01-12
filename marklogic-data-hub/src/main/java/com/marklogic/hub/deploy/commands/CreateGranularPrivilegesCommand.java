@@ -83,9 +83,10 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         "data-hub-saved-query-user",
         "data-hub-step-definition-reader",
         "data-hub-step-definition-writer",
+        "data-hub-temporal-user",
+        "data-hub-user-reader",
         "pii-reader",
-        "redaction-user",
-        "data-hub-temporal-user"
+        "redaction-user"
     );
 
 

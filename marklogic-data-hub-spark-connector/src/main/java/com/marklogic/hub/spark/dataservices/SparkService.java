@@ -161,8 +161,8 @@ public interface SparkService {
   /**
    * Determines the schema and set of partitions based on the user's inputs
    *
-   * @param inputs	JSON object defining the inputs for the export query; supports view, schema, sqlCondition, and partitionCount
-   * @return	JSON object containing a 'schema' object and a 'partitions' 
+   * @param inputs	JSON object defining the inputs for the rows to be read
+   * @return	JSON object containing a 'schema' object, 'partitions' array, and a 'parameterizedPlan' object
    */
     com.fasterxml.jackson.databind.JsonNode initializeRead(com.fasterxml.jackson.databind.JsonNode inputs);
 

@@ -161,7 +161,8 @@ public class CreateGranularPrivilegesTest extends AbstractHubCoreTest {
 
         final Map<String, Privilege> granularPrivileges = command.buildGranularPrivileges(getHubClient().getManageClient());
         granularPrivileges.values().forEach(priv -> {
-            assertTrue(existingPrivileges.resourceExists(priv.getPrivilegeName()));
+            assertTrue(existingPrivileges.resourceExists(priv.getPrivilegeName()),
+                "Expected to find privilege, but does not exist: " + priv.getPrivilegeName());
         });
 
         try {

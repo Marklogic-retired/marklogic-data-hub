@@ -453,6 +453,10 @@ public class HubTestBase extends AbstractHubTest {
      */
     protected void verifyTestUserIsForbiddenTo(Runnable r, String reason) {
         runAsTestUser();
+        verifyUserIsForbiddenTo(r, reason);
+    }
+
+    protected void verifyUserIsForbiddenTo(Runnable r, String reason) {
         try {
             r.run();
             fail("Expected a failure because the user was forbidden to perform the given action");
