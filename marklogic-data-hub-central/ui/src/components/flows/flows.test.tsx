@@ -213,4 +213,24 @@ describe("Flows component", () => {
 
   });
 
+  it("links for steps lead to correct path", async () => {
+    const {getByLabelText} = render(
+      <Router history={history}><Flows
+        {...flowsProps}
+        canReadFlow={true}
+        canWriteFlow={true}
+        hasOperatorRole={true}
+      /></Router>
+    );
+
+    let i : number;
+
+    userEvent.click(getByLabelText("icon: right"));
+    for (i = 1; i < data.flows.data[0].steps.length + 1; ++i) {
+      const pathname = `http://localhost/tiles/${data.flows.data[0].steps[i-1]["stepDefinitionType"] === "ingestion" ? "load": "curate"}`;
+      expect(getByLabelText(`${flowName}-${i}-cardlink`).firstChild.href).toBe(pathname);
+    }
+
+  });
+
 });

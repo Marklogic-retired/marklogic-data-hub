@@ -194,8 +194,9 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         setAdditionalSettings(formatJSON(props.stepData.additionalSettings));
       }
       if (usesAdvancedTargetCollections) {
-        const targetEntityType = props.stepData.targetEntityType || props.stepData.targetEntity;
-        const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURI(targetEntityType)}`;
+        const targetEntityType = String(props.stepData.targetEntityType || props.stepData.targetEntity);
+        const targetEntityTitle = targetEntityType.substring(targetEntityType.lastIndexOf("/") + 1);
+        const defaultCollectionsURL = `/api/steps/${stepType}/defaultCollections/${encodeURIComponent(targetEntityTitle)}`;
         const defaultCollectionsResp = await Axios.get(defaultCollectionsURL);
         if (defaultCollectionsResp.status === 200) {
           setDefaultTargetCollections(defaultCollectionsResp.data);

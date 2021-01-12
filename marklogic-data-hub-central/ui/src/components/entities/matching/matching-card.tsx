@@ -391,7 +391,8 @@ const MatchingCard: React.FC<Props> = (props) => {
         setOpenStepSettings={setOpenStepSettings}
         updateStep={updateMatchingArtifact}
         activityType={StepType.Matching}
-        targetEntityType={props.entityName}
+        targetEntityType={props.entityModel.entityTypeId}
+        targetEntityName={props.entityModel.entityName}
       />
       {renderAddConfirmation}
     </div>

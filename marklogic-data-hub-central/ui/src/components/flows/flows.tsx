@@ -175,6 +175,8 @@ const Flows: React.FC<Props> = (props) => {
   const authorityByStepType = {
     ingestion: authorityService.canReadLoad(),
     mapping: authorityService.canReadMapping(),
+    matching: authorityService.canReadMatchMerge(),
+    merging: authorityService.canReadMatchMerge(),
     custom: authorityService.canReadCustom()
   };
 
@@ -658,14 +660,22 @@ const Flows: React.FC<Props> = (props) => {
                   <div className={styles.format} style={sourceFormatStyle(sourceFormat)} >{sourceFormatOptions[sourceFormat].label}</div>
                   : null }
                 <div className={styles.name}>{step.stepName}</div>
-                <div className={styles.cardLinks} style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType]  ? "block" : "none"}}>
-                  <Link id={"tiles-step-view-"+viewStepId} to={
-                    {pathname: `/tiles/${stepDefinitionType === "ingestion" ? "load": "curate"}`,
+                <div className={styles.cardLinks}
+                  style={{display: showLinks === viewStepId && step.stepId && authorityByStepType[stepDefinitionType]  ? "block" : "none"}}
+                  aria-label={viewStepId + "-cardlink"}
+                >
+                  <Link id={"tiles-step-view-"+viewStepId}
+                    to={{
+                      pathname: `/tiles/${stepDefinitionType === "ingestion" ? "load": "curate"}`,
                       state: {
                         stepToView: step.stepId,
                         stepDefinitionType: stepDefinitionType,
                         targetEntityType: step.targetEntityType
-                      }}}><div className={styles.cardLink} data-testid={`${viewStepId}-viewStep`}>View {stepDefinitionTypeTitle} steps</div></Link>
+                      }
+                    }}
+                  >
+                    <div className={styles.cardLink} data-testid={`${viewStepId}-viewStep`}>View {stepDefinitionTypeTitle} steps</div>
+                  </Link>
                 </div>
               </div>
               <div className = {styles.uploadError}>
