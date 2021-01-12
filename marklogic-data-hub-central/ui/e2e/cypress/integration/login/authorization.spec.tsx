@@ -136,7 +136,7 @@ describe("login", () => {
     curatePage.verifyTabs(entityTypeId, "be.visible", "not.exist");
     curatePage.addNewStepDisabled().should("be.visible");
     curatePage.editStep(mapStepName).click();
-    curatePage.verifyStepNameIsVisible(mapStepName);
+    curatePage.verifyStepNameIsVisibleEdit(mapStepName);
     curatePage.saveEdit().should("be.disabled");
     curatePage.cancelEdit().click();
     curatePage.deleteDisabled().should("exist");
