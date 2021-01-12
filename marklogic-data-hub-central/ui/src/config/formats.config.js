@@ -12,14 +12,14 @@ const sourceFormatOptions = {
 const srcOptions = {
     'XML': 'xml',
     'JSON': 'json',
-    'Delimited Text': 'csv',
-    'BINARY': 'binary',
+    'Delimited Text (CSV, TSV, etc.)': 'csv',
+    'BINARY (.gif, .jpg, .pdf, .doc, .docx, etc.)': 'binary',
     'TEXT' : 'text'
   };
 const tgtOptions = {
     'XML': 'xml',
     'JSON': 'json',
-    'BINARY': 'binary',
+    'BINARY (.gif, .jpg, .pdf, .doc, .docx, etc.)': 'binary',
     'TEXT' : 'text'
 };
 
