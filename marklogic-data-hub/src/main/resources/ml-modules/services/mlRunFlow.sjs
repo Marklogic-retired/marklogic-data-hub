@@ -16,12 +16,12 @@
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+
 /**
  * DO NOT USE THIS; it is deprecated as of DHF 5.3.0.
  *
- * Use the processUris.sjs DS endpoint in StepRunnerService instead.
+ * Use the processBatch.sjs DS endpoint in StepRunnerService instead.
  */
-
 
 function get(context, params) {
   return post(context, params, null);
