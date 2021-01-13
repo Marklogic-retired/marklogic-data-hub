@@ -14,7 +14,7 @@ Smoke test to ensure task runs as expected for users with and without "hub-centr
 are GetProjectFilesAsZipTest and ApplyDownloadedZipToProjectTest
  */
 @Stepwise
-class PullConfigurationFilesTaskTest extends BaseTest {
+class PullChangesTaskTest extends BaseTest {
 
     @Shared
     File flowFile, entityFile
@@ -29,7 +29,7 @@ class PullConfigurationFilesTaskTest extends BaseTest {
         clearDatabases(HubConfig.DEFAULT_STAGING_NAME, HubConfig.DEFAULT_FINAL_NAME, HubConfig.DEFAULT_JOB_NAME);
         runTask('hubDeployUserArtifacts')
     }
-    
+
     def "running with user having hub-central-downloader role"() {
         long flowModifiedTime = flowFile.lastModified()
         long entitiesModifiedTime = entityFile.lastModified()
@@ -39,10 +39,10 @@ class PullConfigurationFilesTaskTest extends BaseTest {
         propertiesFile << """mlUsername=test-data-hub-developer"""
 
         when:
-        def result = runTask('hubPullConfigurationFiles')
+        def result = runTask('hubPullChanges')
 
         then:
-        result.task(":hubPullConfigurationFiles").outcome == SUCCESS
+        result.task(":hubPullChanges").outcome == SUCCESS
         //The task has written these files and they are not old
         flowModifiedTime < flowFile.lastModified()
         entitiesModifiedTime < entityFile.lastModified()
@@ -55,9 +55,9 @@ class PullConfigurationFilesTaskTest extends BaseTest {
         propertiesFile << """mlUsername=test-data-hub-operator"""
 
         when:
-        def result = runFailTask('hubPullConfigurationFiles')
+        def result = runFailTask('hubPullChanges')
 
         then:
-        result.task(":hubPullConfigurationFiles").outcome == FAILED
+        result.task(":hubPullChanges").outcome == FAILED
     }
 }

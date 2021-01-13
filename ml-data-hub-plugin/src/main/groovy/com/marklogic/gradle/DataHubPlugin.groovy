@@ -39,7 +39,7 @@ import com.marklogic.hub.deploy.commands.*
 import com.marklogic.hub.deploy.util.ModuleWatchingConsumer
 import com.marklogic.hub.gradle.task.PreviewFixCreatedByStepTask
 import com.marklogic.hub.gradle.task.PrintInheritableRolesTask
-import com.marklogic.hub.gradle.task.PullConfigurationFilesTask
+import com.marklogic.hub.gradle.task.PullChangesTask
 import com.marklogic.hub.impl.*
 import com.marklogic.hub.legacy.impl.LegacyFlowManagerImpl
 import com.marklogic.mgmt.ManageClient
@@ -138,9 +138,9 @@ class DataHubPlugin implements Plugin<Project> {
                 "all user files that can be managed with Hub Central, which are: entity models, entity model-based files, flows, and steps. " +
                 "The contents of the project zip, specified via -Pfile=/path/to/hub-central-project.zip, " +
                 "will then be extracted into the project directory.")
-        project.task("hubPullConfigurationFiles", group: developGroup, type: PullConfigurationFilesTask,
-            description: "Download user configuration files from a Hub Central instance and apply them to this project. " +
-                "This consists of downloading the user configuration files (entity models, entity model-based files, flows, and steps) as a zip, " +
+        project.task("hubPullChanges", group: developGroup, type: PullChangesTask,
+            description: "Download project updates made via a Hub Central instance and apply them to this project. " +
+                "This consists of downloading user configuration files (entity models, entity model-based files, flows, and steps) as a zip, " +
                 "deleting all such user configuration files in the project directory, "+
                 "and finally extracting the contents of the downloaded zip into the project directory.")
         project.task("hubClearUserData", type: ClearUserDataTask, group: developGroup,
