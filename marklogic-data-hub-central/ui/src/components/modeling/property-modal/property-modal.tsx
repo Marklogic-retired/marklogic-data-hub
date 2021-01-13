@@ -292,7 +292,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
-        toggleShowConfigurationOptions(true);
+        toggleShowConfigurationOptions(props.structuredTypeOptions.isStructured ? false : true);
         break;
       default:
         newSelectedPropertyOptions.propertyType = PropertyType.Basic;
@@ -302,7 +302,7 @@ const PropertyModal: React.FC<Props> = (props) => {
         } else {
           setRadioValues(ALL_RADIO_DISPLAY_VALUES);
         }
-        toggleShowConfigurationOptions(true);
+        toggleShowConfigurationOptions(props.structuredTypeOptions.isStructured ? false : true);
         break;
       }
 

@@ -273,7 +273,7 @@ describe("Property Modal Component", () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const {getByPlaceholderText, getByText, getByLabelText} =  render(
+    const {getByPlaceholderText, getByText, getByLabelText, queryByLabelText} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -306,7 +306,8 @@ describe("Property Modal Component", () => {
     const piiRadio = screen.getByLabelText("pii-yes");
     fireEvent.change(piiRadio, {target: {value: "yes"}});
     expect(piiRadio["value"]).toBe("yes");
-
+    expect(queryByLabelText("Sort")).toBeNull();
+    expect(queryByLabelText("Facet")).toBeNull();
     // const wildcardCheckbox = screen.getByLabelText('Wildcard Search')
     // fireEvent.change(wildcardCheckbox, { target: { checked: true } });
     // expect(wildcardCheckbox).toBeChecked();
@@ -323,7 +324,7 @@ describe("Property Modal Component", () => {
     let entityDefninitionsArray = definitionsParser(entityType?.model.definitions);
     let addMock = jest.fn();
 
-    const {getByPlaceholderText, getByText, getByLabelText} =  render(
+    const {getByPlaceholderText, getByText, getByLabelText, queryByLabelText} =  render(
       <ModelingContext.Provider value={entityNamesArray}>
         <PropertyModal
           entityName={entityType?.entityName}
@@ -361,6 +362,8 @@ describe("Property Modal Component", () => {
     fireEvent.change(piiRadio, {target: {value: "yes"}});
     expect(piiRadio["value"]).toBe("yes");
 
+    expect(queryByLabelText("Sort")).toBeNull();
+    expect(queryByLabelText("Facet")).toBeNull();
     userEvent.click(getByLabelText("property-modal-submit"));
     expect(addMock).toHaveBeenCalledTimes(1);
     expect(mockGetSystemInfo).toBeCalledTimes(1);
