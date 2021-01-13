@@ -6,7 +6,7 @@ import org.apache.commons.io.IOUtils
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 
-class PullConfigurationFilesTask extends HubTask {
+class PullChangesTask extends HubTask {
 
     @TaskAction
     void pullConfigurationFiles() {
