@@ -82,22 +82,29 @@ task copyModulesForConnectorFromCoreProject(type: Copy) {
 processResources.dependsOn copyModulesForConnectorFromCoreProject
 
 shadowJar {
-    classifier "all"
+    classifier "needs-to-be-fixed"
     // Relocate packages of classes that the ML Java Client needs; it can't use the versions provided by Spark
     relocate('okio', 'marklogic.okio')
 
-    // Relocating this package from Jackson. Relocating all of com.fasterxml.jackson results in the Scala
-    // JacksonParser class not working, as it receives the wrong version of JsonFactory via our JsonRowParser class.
-    // Fortunately, only relocating this package avoids that error and still results in the correct Jackson classes
-    // being used by the ML Java Client and by Spark itself.
-    relocate('com.fasterxml.jackson.databind', 'marklogic.com.fasterxml.jackson.databind')
+    relocate('com.fasterxml.jackson', 'marklogic.com.fasterxml.jackson')
 }
-build.dependsOn shadowJar
 
+build.dependsOn shadowJar
+//The relocated JsonRowParser class is being replaced with the original version so that it still uses the Spark version
+// of Jackson as opposed to the ML version of Jackson.
+task fixShadowJar(type: Jar, dependsOn: "shadowJar") {
+    classifier "all"
+    from (zipTree(shadowJar.archiveFile)) {
+        exclude "com/marklogic/hub/spark/sql/sources/v2/reader/JsonRowParser.class"
+    }
+    from ("build/classes/java/main/") {
+        include "com/marklogic/hub/spark/sql/sources/v2/reader/JsonRowParser.class"
+    }
+}
 task copyConnectorToSparkTestProject(type: Copy) {
     description = "Build and copy the connector shadowJar to a gitignored directory in spark-test-project"
     from "build/libs"
     into "spark-test-project/lib"
     include "*-all.jar"
 }
-copyConnectorToSparkTestProject.dependsOn shadowJar
+copyConnectorToSparkTestProject.dependsOn fixShadowJar
