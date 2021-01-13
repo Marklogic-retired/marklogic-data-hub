@@ -72,8 +72,8 @@ describe("Run Tile tests", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     cy.contains("uri: /com.marklogic.smart-mastering/merged/").should("be.visible");
-    cy.contains("123 Bates St").scrollIntoView().should("be.visible");
-    cy.contains("456 Bates St").should("be.visible");
+    cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
+    cy.contains("123 Wilson Rd").should("be.visible");
   });
 
 });
