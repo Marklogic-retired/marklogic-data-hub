@@ -1,6 +1,6 @@
 {
-    "functionName": "processUris",
-    "desc": "Replacement for the mlRunFlow REST extension; processes the given URIs against the given flow and step",
+    "functionName": "processBatch",
+    "desc": "Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step",
     "params": [
         {
             "name": "inputs",

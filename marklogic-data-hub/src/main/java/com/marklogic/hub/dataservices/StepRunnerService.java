@@ -50,36 +50,21 @@ public interface StepRunnerService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_processUris;
             private BaseProxy.DBFunctionRequest req_runSteps;
+            private BaseProxy.DBFunctionRequest req_processBatch;
 
             private StepRunnerServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepRunner/", servDecl);
 
-                this.req_processUris = this.baseProxy.request(
-                    "processUris.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_runSteps = this.baseProxy.request(
                     "runSteps.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
+                this.req_processBatch = this.baseProxy.request(
+                    "processBatch.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
             }
             @Override
             public SessionState newSessionState() {
               return baseProxy.newSessionState();
-            }
-
-            @Override
-            public com.fasterxml.jackson.databind.JsonNode processUris(com.fasterxml.jackson.databind.JsonNode inputs) {
-                return processUris(
-                    this.req_processUris.on(this.dbClient), inputs
-                    );
-            }
-            private com.fasterxml.jackson.databind.JsonNode processUris(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode inputs) {
-              return BaseProxy.JsonDocumentType.toJsonNode(
-                request
-                      .withParams(
-                          BaseProxy.documentParam("inputs", false, BaseProxy.JsonDocumentType.fromJsonNode(inputs))
-                          ).responseSingle(false, Format.JSON)
-                );
             }
 
             @Override
@@ -98,6 +83,21 @@ public interface StepRunnerService {
                           ).responseMultiple(true, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode processBatch(com.fasterxml.jackson.databind.JsonNode inputs) {
+                return processBatch(
+                    this.req_processBatch.on(this.dbClient), inputs
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode processBatch(BaseProxy.DBFunctionRequest request, com.fasterxml.jackson.databind.JsonNode inputs) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.documentParam("inputs", false, BaseProxy.JsonDocumentType.fromJsonNode(inputs))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new StepRunnerServiceImpl(db, serviceDeclaration);
@@ -111,14 +111,6 @@ public interface StepRunnerService {
     SessionState newSessionState();
 
   /**
-   * Replacement for the mlRunFlow REST extension; processes the given URIs against the given flow and step
-   *
-   * @param inputs	provides input
-   * @return	as output
-   */
-    com.fasterxml.jackson.databind.JsonNode processUris(com.fasterxml.jackson.databind.JsonNode inputs);
-
-  /**
    * This is intended to be used by Bulk IO, but a functionName is required to generate a Java interface
    *
    * @param endpointState	provides input
@@ -127,5 +119,13 @@ public interface StepRunnerService {
    * @return	as output
    */
     Stream<Reader> runSteps(Reader endpointState, SessionState session, Reader workUnit);
+
+  /**
+   * Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step
+   *
+   * @param inputs	provides input
+   * @return	as output
+   */
+    com.fasterxml.jackson.databind.JsonNode processBatch(com.fasterxml.jackson.databind.JsonNode inputs);
 
 }

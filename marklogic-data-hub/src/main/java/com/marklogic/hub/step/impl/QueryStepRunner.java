@@ -366,7 +366,7 @@ public class QueryStepRunner implements StepRunner {
             .withJobId(runStepResponse.getJobId())
             .onUrisReady((QueryBatch batch) -> {
                 try {
-                    // Create the inputs for the processUris DS
+                    // Create the inputs for the processBatch DS
                     ObjectNode inputs = objectMapper.createObjectNode();
                     inputs.put("flowName", flow.getName());
                     inputs.put("stepNumber", step);
@@ -379,7 +379,7 @@ public class QueryStepRunner implements StepRunner {
 
                     // Invoke the DS endpoint. A StepRunnerService is created based on the DatabaseClient associated
                     // with the batch to help distribute load, per DHFPROD-1172.
-                    JsonNode jsonResponse = StepRunnerService.on(batch.getClient()).processUris(inputs);
+                    JsonNode jsonResponse = StepRunnerService.on(batch.getClient()).processBatch(inputs);
                     ResponseHolder response = objectMapper.readerFor(ResponseHolder.class).readValue(jsonResponse);
 
                     stepMetrics.getFailedEvents().addAndGet(response.errorCount);
@@ -409,7 +409,7 @@ public class QueryStepRunner implements StepRunner {
                     // Prior to DHFPROD-5997 / 5.4.0, if the count of errors and total count of events were both zero,
                     // then the batch was considered to have failed. I don't think this could have possibly happened though
                     // prior to 5997. Now that 5997 can filter out items after they've been collected, failed batches is
-                    // only incremented if there are actually errors (which seems intuitive too). 
+                    // only incremented if there are actually errors (which seems intuitive too).
                     if (response.errorCount < 1) {
                         stepMetrics.getSuccessfulBatches().addAndGet(1);
                     } else {
