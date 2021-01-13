@@ -48,45 +48,31 @@ const MultiSlider = (props) => {
             </div>
           }
         </div>
-        {options[0].prop === "Timestamp" ? <MLTooltip title={disabled ? multiSliderTooltips.timeStamp : ""} placement="bottom">
-          {disabled ? <div className={"handleDisabledParent"}><div
-            className={"handleDisabled"}
-            data-testid={`${options[0].prop}-active`}
-            style={{
-              left: `${percent}%`,
-            }}
-            {...getHandleProps(id)}
-          >
-          </div></div> : <div
-            className={"handle"}
-            onMouseOver={() => onHover()}
-            data-testid={`${options[0].prop}-active`}
-            style={{
-              left: `${percent}%`,
-            }}
-            {...getHandleProps(id)}
-          >
-          </div> }
-        </MLTooltip>:<div>
-          {disabled ? <div
-            className={"handleDisabledOther"}
-            data-testid={`${options[0].prop}-active`}
-            style={{
-              left: `${percent}%`,
-            }}
-            {...getHandleProps(id)}
-          >
-          </div> : <div
-            className={"handle"}
-            onMouseOver={() => onHover()}
-            data-testid={`${options[0].prop}-active`}
-            style={{
-              left: `${percent}%`,
-            }}
-            {...getHandleProps(id)}
-          >
-          </div> }
-        </div>}
+        {<MLTooltip title={disabled ? options[0].prop === "Timestamp"? multiSliderTooltips.timeStamp : multiSliderTooltips.viewOnlyTooltip : ""} placement="bottom">
+          {disabled ?
+            <div className={"handleDisabledParent"}  style={{
+              left: `${percent}%`
+            }}>
+              <div
+                className={"handleDisabled"}
+                data-testid={`${options[0].prop}-active`}
+                style={{
+                  left: `${percent}%`,
+                }}
+                {...getHandleProps(id)}
+              >
+              </div>
+            </div> : <div
+              className={"handle"}
+              onMouseOver={() => onHover()}
+              data-testid={`${options[0].prop}-active`}
+              style={{
+                left: `${percent}%`,
+              }}
+              {...getHandleProps(id)}
+            >
+            </div> }
+        </MLTooltip>}
       </>
     );
   }

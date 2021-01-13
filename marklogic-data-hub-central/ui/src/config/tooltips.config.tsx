@@ -104,10 +104,10 @@ const CommonStepTooltips = {
   targetDatabase: 'The database where to store the processed data.',
   targetFormat: 'The format of the records in the target database.',
   targetPermissions: (
-    <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format 
-      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where 
+    <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
+      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
       <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
-      <span style={{fontFamily: "monospace"}}> insert</span>, 
+      <span style={{fontFamily: "monospace"}}> insert</span>,
       <span style={{fontFamily: "monospace"}}> update</span>, or
       <span style={{fontFamily: "monospace"}}> execute</span>.</span>
       ),
@@ -420,7 +420,8 @@ const ErrorTooltips = {
 /* --- SLIDER --- */
 const multiSliderTooltips = {
   priorityOrder: 'The length weights and source weights plotted on a continuum from low to high. Each weight indicates the importance of the length or source when merging documents.',
-  timeStamp: 'Timestamp cannot be moved or deleted.'
+  timeStamp: 'Timestamp cannot be moved or deleted.',
+  viewOnlyTooltip: 'Click the strategy name to change the priority order.'
 };
 
 /* ===== CONSTANTS TO BE DEPRECATED ===== */
@@ -440,8 +441,8 @@ const AdvancedSettingsTooltips = {
   targetFormat: 'The format of the records in the target database.',
   additionalCollections: 'The collection tags to add to the default tags assigned to the processed record.',
   targetPermissions: (
-    <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format 
-      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where 
+    <span>A comma-delimited string that defines permissions required to access the processed record. The string must be in the format
+      <span style={{fontFamily: "monospace"}}> role,capability,role,capability,...</span>, where
       <i> capability</i> can be <span style={{fontFamily: "monospace"}}>read</span>,
       <span style={{fontFamily: "monospace"}}> insert</span>,
       <span style={{fontFamily: "monospace"}}> update</span>, or

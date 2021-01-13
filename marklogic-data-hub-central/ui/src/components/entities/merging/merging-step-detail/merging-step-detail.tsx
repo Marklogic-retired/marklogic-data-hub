@@ -288,7 +288,9 @@ const MergingStepDetail: React.FC = () => {
       <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
-      <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
+      <div style={{opacity: "60%"}}>
+        <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
+      </div>
       </div>
     </>;
   };
