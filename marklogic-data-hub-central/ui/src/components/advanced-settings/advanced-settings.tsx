@@ -41,7 +41,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [stepDefinitionName, setStepDefinitionName] = useState("");
 
   const usesSourceDatabase = stepType !== "ingestion";
-  const defaultSourceDatabase = usesSourceDatabase ? StepsConfig.stagingDb : StepsConfig.finalDb;
+  const defaultSourceDatabase = usesSourceDatabase && stepType === "mapping" ? StepsConfig.stagingDb : StepsConfig.finalDb;
   const [sourceDatabase, setSourceDatabase] = useState(defaultSourceDatabase);
   const [sourceDatabaseTouched, setSourceDatabaseTouched] = useState(false);
 
