@@ -89,7 +89,7 @@ shadowJar {
     relocate('com.fasterxml.jackson', 'marklogic.com.fasterxml.jackson')
 }
 
-build.dependsOn shadowJar
+
 //The relocated JsonRowParser class is being replaced with the original version so that it still uses the Spark version
 // of Jackson as opposed to the ML version of Jackson.
 task fixShadowJar(type: Jar, dependsOn: "shadowJar") {
@@ -108,3 +108,5 @@ task copyConnectorToSparkTestProject(type: Copy) {
     include "*-all.jar"
 }
 copyConnectorToSparkTestProject.dependsOn fixShadowJar
+
+build.dependsOn fixShadowJar
