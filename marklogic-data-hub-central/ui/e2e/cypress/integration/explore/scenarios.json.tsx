@@ -212,7 +212,7 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getClearGreyFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should("be.equal", 14);
-    browsePage.getClearAllButton().should("exist");
+    browsePage.getClearAllFacetsButton().should("exist");
     browsePage.getFacetSearchSelectionCount("collection").should("contain", "1");
     browsePage.clickClearFacetSearchSelection("Person");
   });
@@ -649,14 +649,14 @@ describe("Verify numeric/date facet can be applied", () => {
     browsePage.getGreyRangeFacet(2273).should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getRangeFacet(2273).should("exist");
-    browsePage.getClearAllButton().should("exist");
+    browsePage.getClearAllFacetsButton().should("exist");
     browsePage.changeNumericSlider("3024");
     browsePage.getGreyRangeFacet(3024).should("exist");
     browsePage.getFacetApplyButton().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getRangeFacet(3024).should("exist");
-    browsePage.getClearAllButton().should("exist");
-    browsePage.getClearAllButton().click();
+    browsePage.getClearAllFacetsButton().should("exist");
+    browsePage.getClearAllFacetsButton().click();
     //Verify clearing date range facet clears corresponding selected facet
     browsePage.selectDateRange();
     browsePage.getFacetApplyButton().click();
@@ -760,7 +760,7 @@ describe("scenarios for final/staging databases for zero state and explore pages
     browsePage.getFacetItemCheckbox("firstname", "Barbi").should("be.checked");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
-    browsePage.getClearAllButton().click();
+    browsePage.getClearAllFacetsButton().click();
 
     //apply numeric search for the documents deployed to staging
     browsePage.waitForSpinnerToDisappear();
@@ -768,15 +768,61 @@ describe("scenarios for final/staging databases for zero state and explore pages
     browsePage.getGreyRangeFacet(7000).should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getRangeFacet(7000).should("exist");
-    browsePage.getClearAllButton().should("exist");
+    browsePage.getClearAllFacetsButton().should("exist");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 3);
-    browsePage.getClearAllButton().click();
+    browsePage.getClearAllFacetsButton().click();
 
     //apply string search for the documents deployed to staging
     browsePage.waitForSpinnerToDisappear();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("be.equal", 1);
+  });
+});
+
+
+describe("verify sidebar footer functionality ", () => {
+
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
+
+  it("Verify functionality of clear and apply facet buttons", () => {
+    //verify no facets selected case.
+    browsePage.selectEntity("Customer");
+    browsePage.getClearAllFacetsButton().should("be.disabled");
+    browsePage.getApplyFacetsButton().should("be.disabled");
+
+    //verify selecting facets case.
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").click();
+    browsePage.getGreySelectedFacets("Adams Cole").should("exist");
+    browsePage.getClearAllFacetsButton().should("not.be.disabled");
+    browsePage.getApplyFacetsButton().should("not.be.disabled");
+
+    //verify facets applied case.
+    browsePage.getApplyFacetsButton().click();
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").should("be.checked");
+    browsePage.getAppliedFacets("Adams Cole").should("exist");
+    browsePage.getClearAllFacetsButton().should("not.be.disabled");
+    browsePage.getApplyFacetsButton().should("be.disabled");
+
+    // verify selecting additional facets case.
+    browsePage.getFacetItemCheckbox("email", "adamscole@nutralab.com").click();
+    browsePage.getGreySelectedFacets("adamscole@nutralab.com").should("exist");
+    browsePage.getClearAllFacetsButton().should("not.be.disabled");
+    browsePage.getApplyFacetsButton().should("not.be.disabled");
+
+    browsePage.getClearAllFacetsButton().click();
+    browsePage.getAppliedFacets("Adams Cole").should("not.exist");
+    browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
+    browsePage.getClearAllFacetsButton().should("be.disabled");
+    browsePage.getApplyFacetsButton().should("be.disabled");
   });
 });

@@ -7,28 +7,36 @@
 }
 
 .facetButton {
+  color: #5B69AF;
+  border: 1px solid #5B69AF;;
   margin: 0 2px 2px 0;
 }
 
 .dateFacet {
+  color: #5B69AF;
+  border: 1px solid #5B69AF;;
   margin: 2px 2px 2px 0;
 }
 
 .facetGreyButton {
   margin: 0 6px 2px 0;
-  background-color: #cccccc;
-  color: black;
+  background-color: white;
+  color: #777777;
+  border: 1px dashed #777777;
 }
 
 .facetGreyButton:hover {
   background-color: #cccccc;
 }
 
-.checkIcon{
-  color: #5B69AF;
+.checkIcon {
+  color: #5b69af;
   margin-right: 6px;
+  margin-left: 6px;
+  cursor: pointer;
 }
 
 .closeIcon {
-  color: #5B69AF;
+  color: #5b69af;
+  cursor: pointer;
 }

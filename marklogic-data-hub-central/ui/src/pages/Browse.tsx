@@ -22,6 +22,7 @@ import ResultsTabularView from "../components/results-tabular-view/results-tabul
 import {QueryOptions} from "../types/query-types";
 import {MLTooltip, MLSpin, MLRadio} from "@marklogic/design-system";
 import RecordCardView from "../components/record-view/record-view";
+import SidebarFooter from "../components/sidebar-footer/sidebar-footer";
 
 
 interface Props extends RouteComponentProps<any> {
@@ -373,7 +374,9 @@ const Browse: React.FC<Props> = ({location}) => {
             facetRender={updateSelectedFacets}
             checkFacetRender={updateCheckedFacets}
             setDatabasePreferences={setDatabasePreferences}
+            greyFacets={greyFacets}
           />
+          <SidebarFooter />
         </Sider>
         <Content className={styles.content}>
 

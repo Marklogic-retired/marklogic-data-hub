@@ -57,7 +57,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getClearGreyFacets().should("exist");
     browsePage.getFacetApplyButton().click();
     browsePage.getTotalDocuments().should("be.equal", 5);
-    browsePage.getClearAllButton().should("exist");
+    browsePage.getClearAllFacetsButton().should("exist");
     browsePage.getFacetSearchSelectionCount("collection").should("contain", "1");
     browsePage.clickClearFacetSearchSelection("mapCustomersXML");
   });

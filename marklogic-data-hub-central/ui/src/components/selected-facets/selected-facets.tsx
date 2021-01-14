@@ -21,7 +21,6 @@ interface Props {
 
 const SelectedFacets: React.FC<Props> = (props) => {
   const {
-    clearAllFacets,
     clearFacet,
     searchOptions,
     clearDateFacet,
@@ -84,18 +83,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
       className={styles.clearContainer}
       style={ (Object.entries(searchOptions.selectedFacets).length === 0 && Object.entries(greyedOptions.selectedFacets).length === 0) ? {"visibility": "hidden"} : {"visibility": "visible"}}
     >
-      { (props.selectedFacets.length > 0) &&
-        <MLButton
-          size="small"
-          className={styles.clearAllBtn}
-          onClick={() => clearAllFacets()}
-          data-cy="clear-all-button"
-          data-testid="clear-all-button"
-        >
-            Clear All
-          <Icon type="close"/>
-        </MLButton>
-      }
       { props.selectedFacets.map((item, index) => {
         let facetName = item.displayName ? item.displayName : item.constraint;
         if (facetName === "createdOnRange") {
@@ -244,7 +231,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
         );
       })}
       {props.greyFacets.length > 0 &&
-        <MLTooltip title={"Apply all facets"}>
+        <MLTooltip title={"Apply facets"}>
           <FontAwesomeIcon
             icon={faCheckSquare}
             onClick={() => applyFacet()}
@@ -256,7 +243,7 @@ const SelectedFacets: React.FC<Props> = (props) => {
         </MLTooltip>
       }
       {props.greyFacets.length > 0 &&
-        <MLTooltip title={"Discard all facets"}>
+        <MLTooltip title={"Clear unapplied facets"}>
           <FontAwesomeIcon
             icon={faWindowClose}
             onClick={clearGreyFacets}
