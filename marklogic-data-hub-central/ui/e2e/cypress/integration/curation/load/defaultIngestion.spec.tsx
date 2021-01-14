@@ -2,6 +2,7 @@ import {Application} from "../../../support/application.config";
 import {tiles, toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
+import browsePage from "../../../support/pages/browse";
 
 describe("Default ingestion ", () => {
 
@@ -426,7 +427,15 @@ describe("Default ingestion ", () => {
     runPage.runStep(stepName).click();
     cy.uploadFile("input/test-1.xml");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
-    tiles.closeRunMessage();
+
+    //Verify step name appears as a collection facet in explorer
+    runPage.explorerLink().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+
+    browsePage.getTotalDocuments().should("be", 1);
+    browsePage.getFacet("collection").should("exist");
+    browsePage.getFacetItemCheckbox("collection", stepName).should("be.visible");
   });
 
 });
