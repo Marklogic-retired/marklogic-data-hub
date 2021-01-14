@@ -16,12 +16,17 @@
 package com.marklogic.hub.deploy.commands;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.marklogic.appdeployer.command.CommandContext;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.ScaffoldingImpl;
+import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -151,5 +156,52 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("manage-user").iterator().next());
         assertEquals(DocumentMetadataHandle.Capability.UPDATE, perms.get("manage-admin").iterator().next());
         assertNull(perms.get("data-hub-mapping-reader"));
+    }
+
+    @Test
+    public void validateArtifactNames() throws Exception {
+        runAsDataHubDeveloper();
+        HubConfigImpl hubConfig = getHubConfig();
+        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
+        CommandContext commandContext = new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), hubConfig.getAdminManager());
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode node = mapper.createObjectNode();
+        node.put("name", "my Artifact");
+        node.put("type", "mapping");
+
+        String errorMessage = "Invalid name: 'my Artifact'; it must start with a letter and can contain letters, numbers, hyphens and underscores only.";
+        Path stepDefDir = hubConfig.getStepDefinitionPath(StepDefinition.StepDefinitionType.MAPPING).resolve("myArtifact");
+        stepDefDir.toFile().mkdirs();
+        File stepDefFile = stepDefDir.resolve("myArtifact.step.json").toFile();
+        stepDefFile.createNewFile();
+        ObjectWriter writer = mapper.writer();
+        writer.writeValue(stepDefFile, node);
+
+        FailedRequestException ex = assertThrows(FailedRequestException.class,
+            () -> loadUserArtifactsCommand.execute(commandContext));
+
+        assertEquals(errorMessage, ex.getServerMessage());
+
+        node.remove("type");
+        stepDefFile.delete();
+
+        File flowFile = hubConfig.getFlowsDir().resolve("myArtifact.flow.json").toFile();
+        flowFile.createNewFile();
+        writer.writeValue(flowFile, node);
+
+        ex = assertThrows(FailedRequestException.class,
+            () -> loadUserArtifactsCommand.execute(commandContext));
+        assertEquals(errorMessage, ex.getServerMessage());
+
+        flowFile.delete();
+        Path ingestionStepDir = hubConfig.getHubProjectDir().resolve("steps").resolve("ingestion");
+        ingestionStepDir.toFile().mkdirs();
+        File ingestionStepFile = ingestionStepDir.resolve("myArtifact.step.json").toFile();
+        ingestionStepFile.createNewFile();
+        writer.writeValue(ingestionStepFile, node);
+
+        ex = assertThrows(FailedRequestException.class,
+            () -> loadUserArtifactsCommand.execute(commandContext));
+        assertEquals(errorMessage, ex.getServerMessage());
     }
 }

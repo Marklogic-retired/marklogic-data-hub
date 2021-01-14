@@ -176,12 +176,21 @@ function setArtifact(artifactType, artifactName, artifact) {
 }
 
 function validateArtifact(artifactType, artifactName, artifact) {
+  if(!validateArtifactName(artifactName)){
+    let message = `Invalid name: '${artifactName}'; it must start with a letter and can contain letters, numbers, hyphens and underscores only.`
+    httpUtils.throwBadRequest(message);
+  }
   const artifactLibrary = getArtifactTypeLibrary(artifactType);
   const validatedArtifact = artifactLibrary.validateArtifact(artifact, artifactName);
   if (validatedArtifact instanceof Error) {
     httpUtils.throwBadRequest(validatedArtifact.message);
   }
-    return validatedArtifact;
+  return validatedArtifact;
+}
+
+function validateArtifactName(artifactName){
+  const pattern = /^[a-zA-Z][a-zA-Z0-9\-_]*$/;
+  return pattern.test(artifactName);
 }
 
 function getArtifactNode(artifactType, artifactName, artifactVersion = 'latest') {
@@ -326,5 +335,6 @@ module.exports = {
     setArtifact,
     validateArtifact,
     getFullFlow,
-    convertStepReferenceToInlineStep
+    convertStepReferenceToInlineStep,
+    validateArtifactName
 };
