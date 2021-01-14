@@ -3,7 +3,7 @@
   "threadCount" : 1,
   "sourceDatabase" : "data-hub-FINAL",
   "targetDatabase" : "data-hub-FINAL",
-  "targetEntityType" : "Person",
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
   "sourceQuery" : "cts.collectionQuery('mapPersonXML')",
   "collections" : [ "match-xml-person" ],
   "permissions" : "data-hub-common,read,data-hub-common,update",
