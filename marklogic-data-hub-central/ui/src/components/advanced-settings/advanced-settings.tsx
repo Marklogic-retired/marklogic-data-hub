@@ -214,7 +214,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [batchSize, sourceDatabase, targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, targetPermissions, targetDatabase, validateEntity, provGranularity, headers, processors, customHook, additionalSettings, targetCollections, targetFormat, targetPermissions, isCustomIngestion, stepDefinitionName]);
+  }, [batchSize, sourceDatabase, targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, targetPermissions, targetDatabase, validateEntity, provGranularity, headers, processors, customHook, additionalSettings, targetCollections, targetFormat, targetPermissions, isCustomIngestion, stepDefinitionName, defaultCollections]);
 
   // On change of default collections in parent, update default collections if not empty
   useEffect(() => {
