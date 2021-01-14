@@ -3,7 +3,7 @@
   "stepDefinitionName" : "default-merging",
   "stepDefinitionType" : "MERGING",
   "sourceQuery" : "cts.collectionQuery('matched-customers')",
-  "targetEntityType" : "Customer",
+  "targetEntityType" : "http://example.org/Customer-0.0.1/Customer",
   "sourceDatabase" : "data-hub-FINAL",
   "collections" : [ "merged-customer", "merge-customers" ],
   "targetFormat" : "json",

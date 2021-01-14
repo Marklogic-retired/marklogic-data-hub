@@ -11,7 +11,7 @@
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
   "stepId" : "match-person-matching",
-  "targetEntityType" : "Person",
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
   "matchRulesets" : [ {
     "name" : "lname - Exact",
     "weight" : 10,

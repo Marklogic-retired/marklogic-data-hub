@@ -151,11 +151,12 @@ function expectedCollectionEvents(entityType, existingMergeOptions) {
 }
 
 function getCollectionSettings(collectionsSettings, entityType) {
-  let content = getCollectionSetting(collectionsSettings, "content", ["sm-" + entityType + "-mastered"]);
-  let merged = getCollectionSetting(collectionsSettings, "merged", ["sm-" + entityType + "-merged"]);
-  let archived = getCollectionSetting(collectionsSettings, "archived", ["sm-" + entityType + "-archived"]);
-  let notification = getCollectionSetting(collectionsSettings, "notification", ["sm-" + entityType + "-notification"]);
-  let auditing = getCollectionSetting(collectionsSettings, "auditing", ["sm-" + entityType + "-auditing"]);
+  const entityTypeTitle = entityType.substring(entityType.lastIndexOf("/") + 1);
+  const content = getCollectionSetting(collectionsSettings, "content", ["sm-" + entityTypeTitle + "-mastered"]);
+  const merged = getCollectionSetting(collectionsSettings, "merged", ["sm-" + entityTypeTitle + "-merged"]);
+  const archived = getCollectionSetting(collectionsSettings, "archived", ["sm-" + entityTypeTitle + "-archived"]);
+  const notification = getCollectionSetting(collectionsSettings, "notification", ["sm-" + entityTypeTitle + "-notification"]);
+  const auditing = getCollectionSetting(collectionsSettings, "auditing", ["sm-" + entityTypeTitle + "-auditing"]);
   return {
     content,
     merged,

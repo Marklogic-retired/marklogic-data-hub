@@ -11,7 +11,7 @@
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
   "stepId" : "merge-person-merging",
-  "targetEntityType" : "Person",
+  "targetEntityType" : "http://example.org/Person-0.0.1/Person",
   "mergeStrategies" : [ {
     "strategyName" : "retain-single-value",
     "maxValues" : 1,
