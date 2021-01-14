@@ -448,12 +448,7 @@ declare function opt-impl:compile-match-options(
               fn:string($match-rule/matchType)
             else
               $local-name
-          let $full-property-node :=
-              if ($is-complex-rule) then
-                $match-rule/(entityPropertyPath|documentXPath)
-              else
-                $match-rule/(@property-name|propertyName|((*:all-match|allMatch)/*:property))
-          let $full-property-name := fn:normalize-space(fn:string-join($full-property-node, ", "))
+          let $full-property-name := opt-impl:full-property-name-from-rule($match-rule, $is-complex-rule)
           let $algorithm-ref :=
             if ($is-complex-rule) then
               if ($type eq "custom") then
@@ -581,6 +576,19 @@ declare function opt-impl:compile-match-options(
         map:put($_cached-compiled-match-options, $cache-id, $compiled-match-options)
       )
     )
+};
+
+declare function opt-impl:full-property-name-from-rule($match-rule as node(), $is-complex-rule as xs:boolean) {
+  let $full-property-node :=
+      if ($is-complex-rule) then
+        $match-rule/(entityPropertyPath|documentXPath)
+      else
+        (
+          $match-rule/(@property-name|propertyName),
+          (: account for legacy reduce rules that can specify multiple properties :)
+          $match-rule/(*:all-match|allMatch)/*:property
+        )
+  return fn:normalize-space(fn:string-join($full-property-node, ", "))
 };
 
 (:
