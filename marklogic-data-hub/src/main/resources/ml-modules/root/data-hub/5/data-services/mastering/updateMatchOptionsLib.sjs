@@ -231,7 +231,7 @@ function threshold(thr, actions) {
   return t
 };
 
-// returns a weight between 0 and 16
+// returns a weight between 0 and 100
 function adjustWeight(weight, maxWeight) {
   let w = Number(weight);
 
@@ -239,9 +239,9 @@ function adjustWeight(weight, maxWeight) {
   // For add or expand, make the minimum score 0
   if (w < 0) w = 0;
 
-  // adjust weight if the max value in the options is greater than 16
-  if (maxWeight > 16) {
-    w = (w / (maxWeight / 16));
+  // adjust weight if the max value in the options is greater than 100
+  if (maxWeight > 100) {
+    w = (w / (maxWeight / 100));
   }
   return w
 };

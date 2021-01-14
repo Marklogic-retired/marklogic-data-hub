@@ -122,7 +122,7 @@ const normNegInput =
       "reduce": [
         {
           "propertyName": "name",
-          "weight": "-20"
+          "weight": "-125"
         }
       ]
     }
@@ -147,7 +147,7 @@ const normPosInput =
       "reduce": [
         {
           "propertyName": "name",
-          "weight": "-20"
+          "weight": "-125"
         }
       ]
     }
@@ -168,7 +168,7 @@ const normExpected =
       },
       {
         "name": "name - Reduce",
-        "weight": 16,
+        "weight": 100,
         "reduce": true,
         "matchRules": [
           {
@@ -424,7 +424,7 @@ const largeExpected =
         "action": "merge",
         "score": 12
       }
-    ] 
+    ]
   };
 
 [
