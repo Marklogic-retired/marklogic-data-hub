@@ -1,18 +1,18 @@
 .sideBarContainer {
   overflow-y: auto;
-  max-height: 100vh;
-  background-color: #F1F2F5;
+  background-color: #f1f2f5;
+  height: 90%;
 }
 
 .sideBarFacets {
-  background-color: #F1F2F5;
+  background-color: #f1f2f5;
   width: 100%;
   height: 100%;
   padding: 0 0 0 5px;
 }
 
 .toggleIcon {
-    font-size: 14px !important;
+  font-size: 14px !important;
 }
 
 .title {
@@ -69,10 +69,10 @@
   margin: 2px 2px 2px 0;
 }
 
-.infoIcon{
+.infoIcon {
   font-size: 12px;
   margin-left: 6px;
-  color: #A9A9A9;
+  color: #a9a9a9;
   position: relative;
   top: -1px;
 }

@@ -28,6 +28,7 @@ interface Props {
   facetRender: (facets: any) => void;
   checkFacetRender: (facets: any) => void;
   setDatabasePreferences: (option: string) => void;
+  greyFacets: any;
 }
 
 const Sidebar: React.FC<Props> = (props) => {

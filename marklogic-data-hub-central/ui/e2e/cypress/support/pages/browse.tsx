@@ -196,8 +196,12 @@ class BrowsePage {
     return cy.get("svg[data-icon=\"check-square\"]");
   }
 
-  getClearAllButton() {
-    return cy.get("[data-cy=clear-all-button]", {timeout: 10000});
+  getClearAllFacetsButton() {
+    return cy.get("[aria-label=clear-facets-button]", {timeout: 3000});
+  }
+
+  getApplyFacetsButton() {
+    return cy.get("[aria-label=apply-facets-button]", {timeout: 3000});
   }
 
   getGreyRangeFacet(lowerBound: number) {
@@ -361,7 +365,7 @@ class BrowsePage {
   }
 
   getColumnSelectorApply() {
-    return cy.get("button span").contains("Apply");
+    return cy.get("[data-testid=column-selector-popover] button").contains("Apply");
   }
 
   getColumnSelectorCancel() {
