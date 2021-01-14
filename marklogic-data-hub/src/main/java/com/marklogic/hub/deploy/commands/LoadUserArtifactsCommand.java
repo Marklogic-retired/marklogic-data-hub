@@ -337,14 +337,14 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             for (File typeDir : stepDefsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepDefType = typeDir.getName();
                 for (File defDir : typeDir.listFiles(File::isDirectory)) {
-                    final String stepDefName = defDir.getName();
-                    File stepDefFile = new File(defDir, stepDefName + ".step.json");
+                    File stepDefFile = new File(defDir, defDir.getName() + ".step.json");
                     if (stepDefFile.exists()) {
                         JsonNode stepDef = readArtifact(stepDefFile);
                         if (!stepDef.has("name")) {
                             throw new RuntimeException("Unable to load step definition from file: " + stepDefFile +
                                 "; no 'name' property was found");
                         }
+                        final String stepDefName = stepDef.get("name").asText();
                         logger.info(format("Loading step definition with type '%s' and name '%s'", stepDefType, stepDefName));
                         service.setArtifact("stepDefinition", stepDefName, stepDef);
                     } else {
