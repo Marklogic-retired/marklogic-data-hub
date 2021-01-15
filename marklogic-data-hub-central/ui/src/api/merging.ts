@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const updateMergingArtifact = async (merging) => {
   try {
-    let response = await axios.post(`/api/steps/merging/${merging.name}`, merging);
+    let response = await axios.put(`/api/steps/merging/${merging.name}`, merging);
     if (response.status === 200) {
       return true;
     } else {
