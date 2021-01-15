@@ -858,4 +858,12 @@ describe("Verify Add Step function", () => {
 
   });
 
+  test("Verify a missing step error is handled with a modal displaying error message", async () => {
+    mocks.runMissingStep(axiosMock);
+    const {getByText} = await render(<MemoryRouter>
+      <AuthoritiesContext.Provider value={ mockOpRolesService }><Run/></AuthoritiesContext.Provider>
+    </MemoryRouter>);
+    await(waitForElement(() => getByText("Error message")));
+  });
+
 });
