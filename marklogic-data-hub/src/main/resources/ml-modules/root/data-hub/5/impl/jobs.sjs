@@ -25,7 +25,7 @@ class Jobs {
       this.hubutils = datahub.hubUtils;
     } else {
       const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-      this.hubutils = new HubUtils(config);
+      this.hubutils = new HubUtils();
     }
   }
 

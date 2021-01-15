@@ -21,14 +21,10 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const sem = require("/MarkLogic/semantics.xqy");
 
 class FlowUtils {
-  constructor(config = null) {
-    if (!config) {
-      config = require("/com.marklogic.hub/config.sjs");
-    }
-    this.config = config;
+
+  constructor() {
     this.consts = consts;
   }
-
 
   /**
    : parse out invalid elements from json conversion, such as comments and PI
@@ -197,9 +193,7 @@ class FlowUtils {
           if (attachments instanceof XMLDocument || this.isXmlNode(attachments)) {
             nb.addNode(attachments);
           } else {
-            let config = json.config('custom');
-            let cx = (config, 'attribute-names' , ('subKey' , 'boolKey' , 'empty'));
-            let xmlAttachments = json.transformFromJson(attachments, config);
+            let xmlAttachments = json.transformFromJson(attachments, json.config('custom'));
             if(xmlAttachments instanceof Sequence){
                 for(let xmlNode of xmlAttachments){
                   nb.addNode(xmlNode);
@@ -711,18 +705,8 @@ class FlowUtils {
   }
 
   parseText(text, outputFormat){
-    try {
-      let options = "format-json";
-      if(outputFormat === datahub.flow.consts.XML) {
-        options = "format-xml";
-      }
-      return fn.head(xdmp.unquote(instance, null, options));
-    }
-    catch (e) {
-      let errMsg = 'The input text document is not a valid ' + outputFormat + ' .';
-      datahub.debug.log({message: errMsg, type: 'error'});
-      throw Error(errMsg);
-    }
+    let options = outputFormat == consts.XML ? "format-xml" : "format-json";
+    return fn.head(xdmp.unquote(text, null, options));
   }
 
   isNonStringIterable(obj) {

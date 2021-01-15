@@ -14,23 +14,10 @@
   limitations under the License.
 */
 'use strict';
-const cachedModules = {};
-const consts = require("/data-hub/5/impl/consts.sjs");
 
 class HubUtils {
 
-  constructor(config = null) {
-    if(!config) {
-      config = require("/com.marklogic.hub/config.sjs");
-    }
-    this.config = config;
-    this.ampersandRegex = new RegExp('&', 'g');
-    this.aposRegex = new RegExp('\'', 'g');
-    this.quoteRegex = new RegExp('"', 'g');
-  }
-
-  getConfig() {
-    return this.config;
+  constructor() {
   }
 
   writeDocument(docUri, content, permissions, collections, database) {
@@ -173,13 +160,6 @@ class HubUtils {
   return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str;
  }
 
- retrieveModuleLibrary(moduleLibraryURI) {
-   if (!cachedModules[moduleLibraryURI]) {
-     cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
-   }
-   return cachedModules[moduleLibraryURI];
- }
-
   normalizeToSequence(value) {
    if (value instanceof Sequence) {
      return value;
@@ -225,23 +205,6 @@ class HubUtils {
     } catch (e) {
       throw Error("Unable to parse permissions: " + permissionsString + "; it must fit the pattern of role1,capability1,role2,capability2,etc; cause: " + e.stack);
     }
-  }
-
-  // this function can be used to create xquery/xpath templates that are safe from injection attacks
-  xquerySanitizer(strings, ...values) {
-    const parts = [];
-    let counter = 0;
-    for (const string of strings) {
-      parts.push(string);
-      if (values[counter] != undefined) {
-        parts.push(
-          String(values[counter++])
-            .replace(this.ampersandRegex, '&amp;')
-            .replace(this.aposRegex, '&apos;')
-            .replace(this.quoteRegex, '&quot;'));
-      }
-    }
-    return parts.join('');
   }
 
   /**

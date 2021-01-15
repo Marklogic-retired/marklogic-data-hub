@@ -46,7 +46,7 @@ class Flow {
     }
     this.datahub = datahub;
     this.stepDefinition = new StepDefinition(config, datahub);
-    this.flowUtils = new FlowUtils(config);
+    this.flowUtils = new FlowUtils();
     this.consts = datahub.consts;
     this.artifactsCore =  require('/data-hub/5/artifacts/core.sjs');
     this.writeQueue = [];
