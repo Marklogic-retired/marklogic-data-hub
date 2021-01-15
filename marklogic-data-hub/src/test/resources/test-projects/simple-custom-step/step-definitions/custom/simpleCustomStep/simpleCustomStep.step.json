@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "simpleCustomStep-step",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/custom-modules/custom/simpleCustomStep/simpleCustomStep.sjs"
+}

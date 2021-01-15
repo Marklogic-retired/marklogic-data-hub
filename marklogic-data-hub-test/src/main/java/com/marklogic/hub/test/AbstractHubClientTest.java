@@ -3,6 +3,8 @@ package com.marklogic.hub.test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.MarkLogicIOException;
+import com.marklogic.client.datamovement.DataMovementManager;
+import com.marklogic.client.datamovement.WriteBatcher;
 import com.marklogic.client.io.*;
 import com.marklogic.hub.HubClient;
 import com.marklogic.mgmt.api.API;
@@ -11,6 +13,7 @@ import org.w3c.dom.Document;
 
 import java.net.ConnectException;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 /**
  * Abstract base class tests that only depend on a HubClient and not a HubProject.
@@ -206,4 +209,25 @@ public abstract class AbstractHubClientTest extends TestObject {
             new BytesHandle(content.getBytes()).withFormat(Format.JSON));
     }
 
+    /**
+     * Convenience method for doing something with a WriteBatcher.
+     *
+     * @param client
+     * @param consumer
+     */
+    protected void doWithWriteBatcher(DatabaseClient client, Consumer<WriteBatcher> consumer) {
+        long start = System.currentTimeMillis();
+        DataMovementManager mgr = client.newDataMovementManager();
+        WriteBatcher writeBatcher = mgr.newWriteBatcher()
+            // Reasonable values for good performance
+            .withThreadCount(16).withBatchSize(200);
+        mgr.startJob(writeBatcher);
+
+        consumer.accept(writeBatcher);
+
+        writeBatcher.flushAndWait();
+        writeBatcher.awaitCompletion();
+        mgr.stopJob(writeBatcher);
+        logger.info("Time spent running WriteBatcher: " + (System.currentTimeMillis() - start));
+    }
 }

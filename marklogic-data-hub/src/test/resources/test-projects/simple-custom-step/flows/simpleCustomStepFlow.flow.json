@@ -1,0 +1,16 @@
+{
+  "name": "simpleCustomStepFlow",
+  "steps": {
+    "1": {
+      "name": "simpleCustomStep",
+      "stepDefinitionName": "simpleCustomStep-step",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('Customer')",
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      }
+    }
+  }
+}
