@@ -1,0 +1,11 @@
+{
+  "role-name": "data-hub-spawn-user",
+  "description": "Permits using xdmp.spawn",
+  "privilege": [
+    {
+      "privilege-name": "xdmp:spawn",
+      "action": "http://marklogic.com/xdmp/privileges/xdmp-spawn",
+      "kind": "execute"
+    }
+  ]
+}

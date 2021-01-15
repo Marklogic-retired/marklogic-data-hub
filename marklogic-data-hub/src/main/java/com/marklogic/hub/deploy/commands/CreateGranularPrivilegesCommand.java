@@ -10,6 +10,7 @@ import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
 import com.marklogic.hub.MarkLogicVersion;
 import com.marklogic.mgmt.ManageClient;
+import com.marklogic.mgmt.ManageConfig;
 import com.marklogic.mgmt.api.API;
 import com.marklogic.mgmt.api.configuration.Configuration;
 import com.marklogic.mgmt.api.configuration.Configurations;
@@ -81,12 +82,22 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         "data-hub-module-writer",
         "data-hub-odbc-user",
         "data-hub-saved-query-user",
+        "data-hub-spawn-user",
         "data-hub-step-definition-reader",
         "data-hub-step-definition-writer",
         "data-hub-temporal-user",
         "data-hub-user-reader",
         "pii-reader",
-        "redaction-user"
+        "redaction-user",
+
+        // Added in 5.4.0 to allow for pre-5.2 customers to create custom roles that can access documents that have
+        // permissions with these roles
+        "rest-reader",
+        "rest-writer",
+
+        // Added in 5.4.0 to allow for custom roles to use DLS
+        "dls-user",
+        "dls-admin"
     );
 
 
@@ -121,8 +132,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
         if (new MarkLogicVersion(hubConfig.getManageClient()).isVersionCompatibleWith520Roles()) {
             Map<String, Privilege> granularPrivileges = buildGranularPrivileges(context.getManageClient());
             saveGranularPrivileges(context.getManageClient(), granularPrivileges);
-        }
-        else {
+        } else {
             logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
         }
     }
@@ -140,8 +150,7 @@ public class CreateGranularPrivilegesCommand extends LoggingObject implements Co
             granularPrivileges.values().forEach(privilege -> {
                 mgr.deleteAtPath("/manage/v2/privileges/" + privilege.getPrivilegeName() + "?kind=execute");
             });
-        }
-        else {
+        } else {
             logger.info("Not running, as version of MarkLogic does not support the granular privileges in Data Hub roles");
         }
     }
