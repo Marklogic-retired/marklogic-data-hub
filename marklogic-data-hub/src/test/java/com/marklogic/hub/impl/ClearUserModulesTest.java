@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +26,11 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
      * This test now uses clearUserModules() from the parent class so that the marklogic-unit-test REST extension
      * is intentionally not deleted.
      */
+    @BeforeEach
+    public void clean() {
+        clearUserModules();
+    }
+
     @Test
     void testClearUserModules() {
         assumeTrue(isVersionCompatibleWith520Roles());
