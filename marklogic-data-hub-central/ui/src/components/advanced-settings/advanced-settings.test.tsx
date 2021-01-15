@@ -19,7 +19,8 @@ describe("Advanced step settings", () => {
     cleanup();
   });
 
-  test("Verify settings for Load", async () => {
+  // NOTE: Detailed tests of create new settings functionality are in steps/steps.test
+  test("Verify edit advanced settings for Load", async () => {
     const {getByText, getAllByText, queryByText} = render(
       <AdvancedSettings {...data.advancedLoad} />
     );
@@ -60,7 +61,7 @@ describe("Advanced step settings", () => {
   });
 
   /* Custom ingestion should be same as default-ingestion except "step definition name" field should be present */
-  test("Verify settings for Custom Load step", async () => {
+  test("Verify advanced settings for Custom Load step", async () => {
     const {getByText, getAllByText, queryByText} = render(
       <AdvancedSettings {...data.advancedCustomLoad} />
     );
@@ -96,7 +97,7 @@ describe("Advanced step settings", () => {
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
   });
 
-  test("Verify settings for Mapping", async () => {
+  test("Verify edit advanced settings for Mapping", async () => {
     const {getByText, getAllByText} = render(
       <AdvancedSettings {...data.advancedMapping} />
     );
@@ -113,9 +114,6 @@ describe("Advanced step settings", () => {
 
     expect(getByText("Target Permissions")).toBeInTheDocument();
 
-    expect(getByText("Header Content")).toBeInTheDocument();
-    expect(getByText("{ \"header\": true }")).toBeInTheDocument();
-
     expect(getByText("Batch Size")).toBeInTheDocument();
 
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
@@ -123,6 +121,9 @@ describe("Advanced step settings", () => {
 
     expect(getByText("Entity Validation")).toBeInTheDocument();
     expect(getByText("Do not validate")).toBeInTheDocument();
+
+    expect(getByText("Header Content")).toBeInTheDocument();
+    expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
     expect(getByText("Processors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
@@ -135,7 +136,7 @@ describe("Advanced step settings", () => {
 
   });
 
-  test("Verify settings for Matching", async () => {
+  test("Verify edit advanced settings for Matching", async () => {
     const {getByText, getAllByText} = render(
       <AdvancedSettings {...data.advancedMatching} />
     );
@@ -154,7 +155,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Batch Size")).toBeInTheDocument();
 
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Fine-grained")).toBeInTheDocument();
 
     expect(getByText("Processors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
@@ -167,7 +168,7 @@ describe("Advanced step settings", () => {
 
   });
 
-  test("Verify settings for Merging", async () => {
+  test("Verify edit advanced settings for Merging", async () => {
     const {queryByText, getByLabelText, getByTestId, getByText, getAllByText} = render(
       <AdvancedSettings {...data.advancedMerging} />
     );
@@ -226,7 +227,7 @@ describe("Advanced step settings", () => {
     expect(getByText("Batch Size")).toBeInTheDocument();
 
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Fine-grained")).toBeInTheDocument();
 
     expect(getByText("Processors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
@@ -374,7 +375,7 @@ describe("Advanced step settings", () => {
 
   });
 
-  test("Verify read only users cannot edit settings", async () => {
+  test("Verify read-only users cannot edit settings", async () => {
     let getByText, getByPlaceholderText;
     await act(async () => {
       const renderResults = render(
