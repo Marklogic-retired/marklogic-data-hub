@@ -17,11 +17,14 @@ const AdvancedSettingsMessages = {
 };
 
 const ConfirmYesNoMessages = {
-        'discardChanges' : 'Discard changes?',
-        'saveChanges' : 'Save changes?'
+    'discardChanges' : 'Discard changes?',
+    'saveChanges' : 'Save changes?'
 };
+
+const MissingPagePermission = "You do not have permission to view this page.";
 
 export {
     AdvancedSettingsMessages,
-    ConfirmYesNoMessages
+    ConfirmYesNoMessages,
+    MissingPagePermission
 };

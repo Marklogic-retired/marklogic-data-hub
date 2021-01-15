@@ -11,6 +11,7 @@ import {createStep, updateStep, getSteps, deleteStep} from "../api/steps";
 import {AuthoritiesContext} from "../util/authorities";
 import tiles from "../config/tiles.config";
 import {LoadingContext} from "../util/loading-context";
+import {MissingPagePermission} from "../config/messages.config";
 
 export type ViewType =  "card" | "list";
 
@@ -36,6 +37,7 @@ const Load: React.FC = () => {
   const canReadOnly = authorityService.canReadLoad();
   const canReadWrite = authorityService.canWriteLoad();
   const canWriteFlow = authorityService.canWriteFlow();
+  const canAccessLoad = authorityService.canAccessLoad();
 
   // Set context for switching views
   const handleViewSelection = (view) => {
@@ -218,7 +220,7 @@ const Load: React.FC = () => {
 
   return (
     <div>
-      {canReadWrite || canReadOnly ?
+      {canAccessLoad ?
         <div className={styles.loadContainer}>
           <div className={styles.intro}>
             <p>{tiles.load.intro}</p>
@@ -227,7 +229,11 @@ const Load: React.FC = () => {
             </div>
           </div>
           {output}
-        </div> : ""
+        </div>
+        :
+        <div className={styles.loadContainer}>
+          <p>{MissingPagePermission}</p>
+        </div>
       }
     </div>
   );

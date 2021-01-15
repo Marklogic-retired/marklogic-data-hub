@@ -20,6 +20,12 @@ export interface IAuthoritiesContextInterface {
     isSavedQueryUser: () => boolean;
     canRunStep: () => boolean;
     canClearUserData: () => boolean;
+
+    // for accessing tiles
+    canAccessLoad: () => boolean;
+    canAccessModel: () => boolean;
+    canAccessCurate: () => boolean;
+    canAccessRun: () => boolean;
 }
 
 /**
@@ -86,6 +92,23 @@ export class AuthoritiesService implements IAuthoritiesContextInterface {
     };
     public canClearUserData:() => boolean = () => {
       return this.authorities.includes("clearUserData");
+    };
+
+    /* can see Load tile */
+    public canAccessLoad: () => boolean = () => {
+      return this.canReadLoad() || this.canWriteLoad();
+    };
+    /* can see Model tile */
+    public canAccessModel: () => boolean = () => {
+      return this.canReadEntityModel();
+    };
+    /* can see Curate tile */
+    public canAccessCurate: () => boolean = () => {
+      return this.canReadMapping() || this.canReadMatchMerge() || this.canReadCustom();
+    };
+    /* can see Run tile */
+    public canAccessRun: () => boolean = () => {
+      return this.canReadFlow();
     };
 }
 

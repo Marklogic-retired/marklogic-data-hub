@@ -6,6 +6,7 @@ import {UserContext} from "../util/user-context";
 import axios from "axios";
 import EntityTiles from "../components/entities/entity-tiles";
 import tiles from "../config/tiles.config";
+import {MissingPagePermission} from "../config/messages.config";
 
 const Curate: React.FC = () => {
 
@@ -27,6 +28,7 @@ const Curate: React.FC = () => {
   const canWriteMatchMerge = authorityService.canWriteMatchMerge();
   const canWriteFlow = authorityService.canWriteFlow();
   const canReadCustom = authorityService.canReadCustom();
+  const canAccessCurate = authorityService.canAccessCurate();
 
   const getEntityModels = async () => {
     try {
@@ -100,26 +102,32 @@ const Curate: React.FC = () => {
     }
   };
 
-
   return (
     <div className={styles.curateContainer}>
-      <div className={styles.intro}>
-        <p>{tiles.curate.intro}</p>
-      </div>
-      <EntityTiles
-        flows={flows}
-        canReadMatchMerge={canReadMatchMerge}
-        canWriteMatchMerge={canWriteMatchMerge}
-        canWriteMapping={canWriteMapping}
-        canReadMapping={canReadMapping}
-        canReadCustom={canReadCustom}
-        canWriteCustom={false}
-        entityModels={entityModels}
-        getEntityModels={getEntityModels}
-        canWriteFlow={canWriteFlow}
-        addStepToFlow={addStepToFlow}
-        addStepToNew={addStepToNew}
-      />
+      {
+        canAccessCurate ?
+          [
+            <div className={styles.intro}>
+              <p>{tiles.curate.intro}</p>
+            </div>,
+            <EntityTiles
+              flows={flows}
+              canReadMatchMerge={canReadMatchMerge}
+              canWriteMatchMerge={canWriteMatchMerge}
+              canWriteMapping={canWriteMapping}
+              canReadMapping={canReadMapping}
+              canReadCustom={canReadCustom}
+              canWriteCustom={false}
+              entityModels={entityModels}
+              getEntityModels={getEntityModels}
+              canWriteFlow={canWriteFlow}
+              addStepToFlow={addStepToFlow}
+              addStepToNew={addStepToNew}
+            />
+          ]
+          :
+          <p>{MissingPagePermission}</p>
+      }
     </div>
   );
 

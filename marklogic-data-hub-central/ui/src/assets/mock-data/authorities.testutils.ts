@@ -58,6 +58,18 @@ class DeveloperRolesService implements IAuthoritiesContextInterface {
     public canClearUserData:() => boolean = () => {
       return true;
     };
+    public canAccessLoad: () => boolean = () => {
+      return true;
+    };
+    public canAccessModel: () => boolean = () => {
+      return true;
+    };
+    public canAccessCurate: () => boolean = () => {
+      return true;
+    };
+    public canAccessRun: () => boolean = () => {
+      return true;
+    };
 }
 
 // Roles service for data-hub-operator
@@ -118,6 +130,18 @@ class OperatorRolesService implements IAuthoritiesContextInterface {
     public canClearUserData:() => boolean = () => {
       return false;
     };
+    public canAccessLoad: () => boolean = () => {
+      return true;
+    };
+    public canAccessModel: () => boolean = () => {
+      return true;
+    };
+    public canAccessCurate: () => boolean = () => {
+      return true;
+    };
+    public canAccessRun: () => boolean = () => {
+      return true;
+    };
 }
 
 class HCUserRolesService implements IAuthoritiesContextInterface {
@@ -175,6 +199,18 @@ class HCUserRolesService implements IAuthoritiesContextInterface {
       return false;
     };
     public canClearUserData:() => boolean = () => {
+      return false;
+    };
+    public canAccessLoad: () => boolean = () => {
+      return false;
+    };
+    public canAccessModel: () => boolean = () => {
+      return false;
+    };
+    public canAccessCurate: () => boolean = () => {
+      return false;
+    };
+    public canAccessRun: () => boolean = () => {
       return false;
     };
 }
