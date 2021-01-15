@@ -1,11 +1,12 @@
 import React from "react";
-import {render, cleanup, fireEvent, waitForElement} from "@testing-library/react";
+import {render, cleanup, fireEvent, waitForElement, wait} from "@testing-library/react";
 import SystemInfo from "./system-info";
 import {AuthoritiesContext, AuthoritiesService} from "../../util/authorities";
 import {BrowserRouter as Router} from "react-router-dom";
 import data from "../../assets/mock-data/system-info.data";
 import axiosMock from "axios";
 import mocks from "../../api/__mocks__/mocks.data";
+import {SecurityTooltips} from "../../config/tooltips.config";
 
 jest.mock("axios");
 
@@ -109,5 +110,27 @@ describe("Update data load settings component", () => {
     expect(await(waitForElement(() => getByText((content, node) => {
       return getSubElements(content, node, "Clear All User Data completed successfully");
     })))).toBeInTheDocument();
+  });
+
+  test("Verify user with incorrect permissions sees security permissions tooltip and buttons are disabled", () => {
+    const authorityService = new AuthoritiesService();
+    const {getByText, getByTestId} = render(<Router><AuthoritiesContext.Provider value={authorityService}>
+      <SystemInfo
+        systemInfoVisible={true}
+        setSystemInfoVisible={jest.fn()}
+      />
+    </AuthoritiesContext.Provider></Router>);
+
+    fireEvent.mouseOver(getByTestId("downloadHubCentralFiles"));
+    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    expect(getByTestId("downloadHubCentralFiles")).toBeDisabled();
+
+    fireEvent.mouseOver(getByTestId("downloadProjectFiles"));
+    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    expect(getByTestId("downloadProjectFiles")).toBeDisabled();
+
+    fireEvent.mouseOver(getByTestId("clearUserData"));
+    wait(() => expect(getByText(SecurityTooltips.missingPermission)).toBeInTheDocument());
+    expect(getByTestId("clearUserData")).toBeDisabled();
   });
 });

@@ -6,6 +6,7 @@ import {UserContext} from "../../util/user-context";
 import {AuthoritiesContext} from "../../util/authorities";
 import Axios from "axios";
 import {MLButton, MLSpin, MLTooltip} from "@marklogic/design-system";
+import {SecurityTooltips} from "../../config/tooltips.config";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faExclamationTriangle, faCopy} from "@fortawesome/free-solid-svg-icons";
 
@@ -153,55 +154,104 @@ const SystemInfo = (props) => {
           <div className={styles.cards}>
             <Row gutter={16} type="flex" >
 
-              <Col>
+              { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
                   <p>Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.</p>
-                  <div className={styles.buttonContainer}>
-                    <MLButton
-                      type="primary"
-                      aria-label="Download"
-                      data-testid="downloadHubCentralFiles"
-                      disabled = {! authorityService.canDownloadProjectFiles()}
-                      onClick={downloadHubCentralFiles}
-                    >Download</MLButton>
-                  </div>
+                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                    <div className={styles.disabledButtonContainer}>
+                      <MLButton
+                        aria-label="Download"
+                        data-testid="downloadHubCentralFiles"
+                        disabled
+                      >Download</MLButton>
+                    </div>
+                  </MLTooltip>
                 </Card>
-              </Col>
+              </Col>:
+                <Col>
+                  <Card size="small" className={styles.download} >
+                    <div className={styles.title}>Download Hub Central Files</div>
+                    <p>Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.</p>
+                    <div className={styles.buttonContainer}>
+                      <MLButton
+                        type="primary"
+                        aria-label="Download"
+                        data-testid="downloadHubCentralFiles"
+                        onClick={downloadHubCentralFiles}
+                      >Download</MLButton>
+                    </div>
+                  </Card>
+                </Col>
+              }
 
-              <Col>
+              { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
                   <p>Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.</p>
-                  <div className={styles.buttonContainer}>
-                    <MLButton
-                      type="primary"
-                      aria-label="Download"
-                      data-testid="downloadProjectFiles"
-                      disabled = {! authorityService.canDownloadProjectFiles()}
-                      onClick={downloadProjectFiles}
-                    >Download</MLButton>
-                  </div>
+                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                    <div className={styles.disabledButtonContainer}>
+                      <MLButton
+                        aria-label="Download"
+                        data-testid="downloadProjectFiles"
+                        disabled
+                      >Download</MLButton>
+                    </div>
+                  </MLTooltip>
                 </Card>
-              </Col>
+              </Col>:
+                <Col>
+                  <Card size="small" className={styles.download} >
+                    <div className={styles.title}>Download Project Files</div>
+                    <p>Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.</p>
+                    <div className={styles.buttonContainer}>
+                      <MLButton
+                        type="primary"
+                        aria-label="Download"
+                        data-testid="downloadProjectFiles"
+                        onClick={downloadProjectFiles}
+                      >Download</MLButton>
+                    </div>
+                  </Card>
+                </Col>
+              }
 
-              <Col>
+              { !authorityService.canClearUserData() ? <Col>
                 <Card size="small" className={styles.clearAll}>
                   {isLoading === true ? <div className={styles.spinRunning}>
                     <MLSpin size={"large"} />
                   </div>: ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
                   <p>Delete all user data in STAGING, FINAL, and JOBS databases.</p>
-                  <div className={styles.buttonContainer}>
-                    <MLButton
-                      type="primary"
-                      aria-label="Clear"
-                      disabled = {! authorityService.canClearUserData()}
-                      onClick={handleClearData}
-                    >Clear</MLButton>
-                  </div>
+                  <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
+                    <div className={styles.disabledButtonContainer}>
+                      <MLButton
+                        aria-label="Clear"
+                        data-testid="clearUserData"
+                        disabled
+                      >Clear</MLButton>
+                    </div>
+                  </MLTooltip>
                 </Card>
-              </Col>
+              </Col>:
+                <Col>
+                  <Card size="small" className={styles.clearAll}>
+                    {isLoading === true ? <div className={styles.spinRunning}>
+                      <MLSpin size={"large"} />
+                    </div>: ""}
+                    <div className={styles.title} data-testid="clearData">Clear All User Data</div>
+                    <p>Delete all user data in STAGING, FINAL, and JOBS databases.</p>
+                    <div className={styles.buttonContainer}>
+                      <MLButton
+                        type="primary"
+                        aria-label="Clear"
+                        data-testid="clearUserData"
+                        onClick={handleClearData}
+                      >Clear</MLButton>
+                    </div>
+                  </Card>
+                </Col>
+              }
 
             </Row>
           </div>

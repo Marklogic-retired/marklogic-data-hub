@@ -84,6 +84,15 @@
       }
     }
 
+    .disabledButtonContainer {
+      width: 100%;
+      text-align: center;
+      button {
+        width: 120px;
+        font-weight: 500;
+      }
+    }
+
   }
 .spinRunning {
     position: absolute;
