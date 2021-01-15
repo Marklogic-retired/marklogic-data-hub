@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,17 +23,26 @@ import static org.springframework.test.util.AssertionErrors.fail;
 
 class ClearUserModulesTest extends AbstractHubCoreTest {
 
+    /**
+     * This test now uses clearUserModules() from the parent class so that the marklogic-unit-test REST extension
+     * is intentionally not deleted.
+     */
     @Test
     void testClearUserModules() {
         assumeTrue(isVersionCompatibleWith520Roles());
+        clearUserModules();
+
         ModuleCounts beforeClearingModules = new ModuleCounts();
         beforeClearingModules.setModuleCounts();
 
         installProjectWithEachTypeOfModule();
 
+        ModuleCounts afterProjectInstalled = new ModuleCounts();
+        afterProjectInstalled.setModuleCounts();
+
         try {
             runAsDataHubOperator();
-            new DataHubImpl(getHubConfig()).clearUserModules();
+            clearUserModules();
             fail("'data-hub-operator' should not be able delete user modules");
         } catch (RuntimeException e) {
             assertTrue(e.getMessage().contains("User is not allowed to delete /config/query"));
@@ -47,7 +58,7 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
         checkIfCustomModulesArePresent();
 
         runAsDataHubDeveloper();
-        new DataHubImpl(getHubConfig()).clearUserModules();
+        clearUserModules();
 
         ModuleCounts afterClearingModulesAsDeveloper = new ModuleCounts();
         afterClearingModulesAsDeveloper.setModuleCounts();
@@ -64,7 +75,10 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
         checkIfCustomModulesAreAbsent();
 
         //Only function metadata that should remain is that of ootb core.sjs
-        assertEquals(2, Integer.parseInt(getHubClient().getModulesClient().newServerEval().javascript("cts.estimate(cts.collectionQuery('http://marklogic.com/entity-services/function-metadata'))").evalAs(String.class)));
+        assertEquals(2, Integer.parseInt(getHubClient().getModulesClient().newServerEval()
+            .javascript("cts.estimate(cts.collectionQuery('http://marklogic.com/entity-services/function-metadata'))")
+            .evalAs(String.class))
+        );
     }
 
     private void installProjectWithEachTypeOfModule(){

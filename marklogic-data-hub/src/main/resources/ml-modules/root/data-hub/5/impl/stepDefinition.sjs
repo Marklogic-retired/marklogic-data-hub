@@ -17,20 +17,15 @@
 
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 
+const cachedModules = {};
+
 class StepDefinition {
 
   constructor(config = null, datahub = null) {
-    if(!config) {
-      config = require("/com.marklogic.hub/config.sjs");
-    }
-    this.config = config;
     if (!datahub) {
-      const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-      this.hubUtils = new HubUtils(config);
       const Perf = require("/data-hub/5/impl/perf.sjs");
       this.performance = new Perf(config);
     } else {
-      this.hubUtils = datahub.hubUtils;
       this.performance = datahub.performance;
     }
   }
@@ -59,7 +54,7 @@ class StepDefinition {
   makeFunction(flow, funcName, moduleUri) {
     let stepModule;
     try {
-      stepModule = this.hubUtils.retrieveModuleLibrary(moduleUri);
+      stepModule = this.retrieveModuleLibrary(moduleUri);
     } catch (e) {
       if(e.stack && e.stack.includes("XDMP-MODNOTFOUND")){
         httpUtils.throwBadRequest(`Unable to access module: ${moduleUri}. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module`);
@@ -70,8 +65,14 @@ class StepDefinition {
       return this.performance.instrumentStep(stepModule, stepModule[funcName], flow.globalContext.jobId, flow.globalContext.batchId, flow.globalContext.flow.name, moduleUri, flow.globalContext.uri);
     }
     return stepModule[funcName];
-  };
+  }
 
+  retrieveModuleLibrary(moduleLibraryURI) {
+    if (!cachedModules[moduleLibraryURI]) {
+      cachedModules[moduleLibraryURI] = require(moduleLibraryURI);
+    }
+    return cachedModules[moduleLibraryURI];
+  } 
 }
 
 module.exports = StepDefinition;

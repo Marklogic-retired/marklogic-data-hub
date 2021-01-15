@@ -39,7 +39,7 @@ class DataHub {
 
     this.debug = new Debug(config);
     this.performance = new Perf(config, this);
-    this.hubUtils = new HubUtils(config, this);
+    this.hubUtils = new HubUtils();
     this.flow = new Flow(config, null, this);
     this.jobs = new Jobs.Jobs(config, this);
     this.prov = new Prov.Provenance(Object.assign({}, config, {autoCommit: false}), this);
@@ -47,9 +47,6 @@ class DataHub {
     if (this.performance.performanceMetricsOn()) {
       this.performance.instrumentDataHub(this);
     }
-  }
-  getConfig() {
-    return this.hubUtils.getConfig();
   }
 
 }
