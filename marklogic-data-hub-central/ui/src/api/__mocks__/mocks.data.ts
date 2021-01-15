@@ -196,6 +196,27 @@ const runAddStepAPI = (axiosMock) => {
   });
 };
 
+// For testing display of a flow missing a step (DHFPROD-6369)
+const runMissingStep = (axiosMock) => {
+  axiosMock.get["mockImplementation"]((url) => {
+    switch (url) {
+    case "/api/flows":
+      return Promise.reject({
+        "response": {
+          "data": {
+            "code": 400,
+            "message": "Error message"
+          }
+        }
+      });
+    case "/api/steps":
+      return Promise.resolve(curateData.steps);
+    default:
+      return Promise.reject(new Error("not found"));
+    }
+  });
+};
+
 const runErrorsAPI = (axiosMock) => {
   return axiosMock.get["mockImplementation"]((url) => {
     switch (url) {
@@ -321,6 +342,7 @@ const mocks = {
   curateAPI: curateAPI,
   runAPI: runAPI,
   runAddStepAPI: runAddStepAPI,
+  runMissingStep: runMissingStep,
   runCrudAPI: runCrudAPI,
   runErrorsAPI: runErrorsAPI,
   runFailedAPI: runFailedAPI,

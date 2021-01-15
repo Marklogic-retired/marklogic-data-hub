@@ -85,8 +85,12 @@ const Run = (props) => {
         setFlows(response.data);
       }
     } catch (error) {
-      console.error("Error getting flows", error);
-      handleError(error);
+      console.error("Error getting flows", error.response);
+      if (error.response.data && error.response.data.message) {
+        Modal.error({
+          content: error.response.data.message
+        });
+      }
     }
   };
 
@@ -97,9 +101,7 @@ const Run = (props) => {
         setSteps(response.data);
       }
     } catch (error) {
-      console.error("********* ERROR", error);
-      let message = error.response.data.message;
-      console.error("Error getting steps", message);
+      console.error("Error getting steps", error);
     }
   };
 
