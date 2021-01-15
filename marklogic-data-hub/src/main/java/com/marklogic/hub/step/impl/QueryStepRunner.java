@@ -271,12 +271,7 @@ public class QueryStepRunner implements StepRunner {
     public RunStepResponse run(Collection<String> uris) {
         runningThread = null;
         RunStepResponse runStepResponse = StepRunnerUtil.createStepResponse(flow, step, jobId);
-        try {
-            StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
-        }
-        catch (Exception e){
-            throw e;
-        }
+        StepRunnerUtil.initializeStepRun(jobDocManager, runStepResponse, flow, step, jobId);
         return this.runHarmonizer(runStepResponse,uris);
     }
 
@@ -292,37 +287,21 @@ public class QueryStepRunner implements StepRunner {
             listener.onStatusChange(this.jobId, 0, JobStatus.RUNNING_PREFIX + step, 0, 0,  "running collector");
         });
 
-        final DiskQueue<String> uris ;
-        try {
-            if(! isStopped.get()) {
-                uris = collector.run(this.flow.getName(), step, options);
-            }
-            else {
-                uris = null;
-            }
-        }
-        catch (Exception e) {
-            throw e;
-        }
-        return uris;
+        return !isStopped.get() ? collector.run(this.flow.getName(), step, options) : null;
     }
 
     private RunStepResponse runHarmonizer(RunStepResponse runStepResponse, Collection<String> uris) {
         StepMetrics stepMetrics = new StepMetrics();
+        final int urisCount = uris != null ? uris.size() : 0;
 
         stepStatusListeners.forEach((StepStatusListener listener) -> {
             listener.onStatusChange(runStepResponse.getJobId(), 0, JobStatus.RUNNING_PREFIX + step, 0,0, "starting step execution");
         });
 
-        if (uris == null || uris.size() == 0) {
-            JsonNode jobDoc = null;
-            final String stepStatus;
-            if(isStopped.get()) {
-                stepStatus = JobStatus.CANCELED_PREFIX + step;
-            }
-            else {
-                stepStatus = JobStatus.COMPLETED_PREFIX + step;
-            }
+        if (urisCount == 0) {
+            final String stepStatus = isStopped.get() ?
+                JobStatus.CANCELED_PREFIX + step :
+                JobStatus.COMPLETED_PREFIX + step;
 
             stepStatusListeners.forEach((StepStatusListener listener) -> {
                 listener.onStatusChange(runStepResponse.getJobId(), 100, stepStatus, 0, 0,
@@ -332,17 +311,12 @@ public class QueryStepRunner implements StepRunner {
             runStepResponse.setCounts(0,0,0,0,0);
             runStepResponse.withStatus(stepStatus);
 
-            try {
-                jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
-            }
-            catch (Exception e) {
-                throw e;
-            }
+            JsonNode jobDoc = jobDocManager.postJobs(jobId, stepStatus, flow.getName(), step, stepStatus.contains(JobStatus.COMPLETED_PREFIX) ? step : null, runStepResponse);
             try {
                 return StepRunnerUtil.getResponse(jobDoc, step);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
+                logger.warn("Unexpected error getting step response: " + ex.getMessage(), ex);
                 return runStepResponse;
             }
         }
@@ -355,7 +329,7 @@ public class QueryStepRunner implements StepRunner {
 
         final ObjectMapper objectMapper = new ObjectMapper();
 
-        double batchCount = Math.ceil((double) uris.size() / (double) batchSize);
+        double batchCount = Math.ceil((double) urisCount / (double) batchSize);
 
         HashMap<String, JobTicket> ticketWrapper = new HashMap<>();
 
@@ -488,7 +462,7 @@ public class QueryStepRunner implements StepRunner {
 
             dataMovementManager.stopJob(queryBatcher);
 
-            runStepResponse.setCounts(uris.size(),stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
+            runStepResponse.setCounts(urisCount, stepMetrics.getSuccessfulEventsCount(), stepMetrics.getFailedEventsCount(), stepMetrics.getSuccessfulBatchesCount(), stepMetrics.getFailedBatchesCount());
             runStepResponse.withStatus(stepStatus);
             if (errorMessages.size() > 0) {
                 runStepResponse.withStepOutput(errorMessages);
