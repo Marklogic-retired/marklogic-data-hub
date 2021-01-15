@@ -328,11 +328,12 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         >
           <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange}  name={"maxValues"}>
             <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} ></Input></Radio>
+            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} ></Input>
+              <MLTooltip title={MergeRuleTooltips.maxValues}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+              </MLTooltip>
+            </Radio>
           </Radio.Group>
-          <MLTooltip title={MergeRuleTooltips.maxValues}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
         </Form.Item>
         <Form.Item
           colon={false}
@@ -341,11 +342,12 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         >
           <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange}  name={"maxSources"}>
             <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}></Input></Radio>
+            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}></Input>
+              <MLTooltip title={MergeRuleTooltips.maxSources}>
+                <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+              </MLTooltip>
+            </Radio>
           </Radio.Group>
-          <MLTooltip title={MergeRuleTooltips.maxSources}>
-            <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
-          </MLTooltip>
         </Form.Item>
         {!isCustomStrategy && <div className={styles.priorityOrderContainer} data-testid={"prioritySlider"}>
           <div><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
