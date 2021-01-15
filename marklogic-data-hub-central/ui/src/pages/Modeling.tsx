@@ -16,6 +16,7 @@ import {AuthoritiesContext} from "../util/authorities";
 import {EntityModified} from "../types/modeling-types";
 import {ConfirmationType} from "../types/common-types";
 import tiles from "../config/tiles.config";
+import {MissingPagePermission} from "../config/messages.config";
 
 const Modeling: React.FC = () => {
   const {handleError} = useContext(UserContext);
@@ -36,6 +37,7 @@ const Modeling: React.FC = () => {
   const authorityService = useContext(AuthoritiesContext);
   const canReadEntityModel = authorityService.canReadEntityModel();
   const canWriteEntityModel = authorityService.canWriteEntityModel();
+  const canAccessModel = authorityService.canAccessModel();
 
   useEffect(() => {
     if (canReadEntityModel) {
@@ -159,7 +161,7 @@ const Modeling: React.FC = () => {
     Revert All
   </MLButton>;
 
-  if (canReadEntityModel) {
+  if (canAccessModel) {
     return (
       <div className={styles.modelContainer}>
         <div className={styles.intro}>
@@ -229,7 +231,13 @@ const Modeling: React.FC = () => {
         />
       </div>
     );
-  } else return null;
+  } else {
+    return (
+      <div className={styles.modelContainer}>
+        <p>{MissingPagePermission}</p>
+      </div>
+    );
+  }
 };
 
 export default Modeling;

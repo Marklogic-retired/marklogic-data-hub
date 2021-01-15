@@ -8,6 +8,7 @@ import {UserContext} from "../util/user-context";
 import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
+import {MissingPagePermission} from "../config/messages.config";
 
 const {Panel} = Collapse;
 
@@ -41,6 +42,7 @@ const Run = (props) => {
   const canReadFlow = authorityService.canReadFlow();
   const canWriteFlow = authorityService.canWriteFlow();
   const hasOperatorRole = authorityService.canRunStep();
+  const canAccessRun = authorityService.canAccessRun();
 
   //For handling flows expand and collapse within Run tile
   const [newFlowName, setNewFlowName] = useState("");
@@ -427,28 +429,35 @@ const Run = (props) => {
   return (
     <div>
       <div className={styles.runContainer}>
-        <div className={styles.intro}>
-          <p>{tiles.run.intro}</p>
-        </div>
-        <Flows
-          flows={flows}
-          steps={steps}
-          deleteFlow={deleteFlow}
-          createFlow={createFlow}
-          updateFlow={updateFlow}
-          runStep={runStep}
-          deleteStep={deleteStep}
-          canReadFlow={canReadFlow}
-          canWriteFlow={canWriteFlow}
-          hasOperatorRole={hasOperatorRole}
-          running={running}
-          uploadError={uploadError}
-          newStepToFlowOptions={props.newStepToFlowOptions}
-          addStepToFlow={addStepToFlow}
-          flowsDefaultActiveKey={flowsDefaultActiveKey}
-          showStepRunResponse={showStepRunResponse}
-          runEnded={runEnded}
-        />
+        {
+          canAccessRun ?
+            [
+              <div className={styles.intro}>
+                <p>{tiles.run.intro}</p>
+              </div>,
+              <Flows
+                flows={flows}
+                steps={steps}
+                deleteFlow={deleteFlow}
+                createFlow={createFlow}
+                updateFlow={updateFlow}
+                runStep={runStep}
+                deleteStep={deleteStep}
+                canReadFlow={canReadFlow}
+                canWriteFlow={canWriteFlow}
+                hasOperatorRole={hasOperatorRole}
+                running={running}
+                uploadError={uploadError}
+                newStepToFlowOptions={props.newStepToFlowOptions}
+                addStepToFlow={addStepToFlow}
+                flowsDefaultActiveKey={flowsDefaultActiveKey}
+                showStepRunResponse={showStepRunResponse}
+                runEnded={runEnded}
+              />
+            ]
+            :
+            <p>{MissingPagePermission}</p>
+        }
       </div>
     </div>
   );

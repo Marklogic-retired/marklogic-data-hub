@@ -7,6 +7,7 @@ import mocks from "../api/__mocks__/mocks.data";
 import Curate from "./Curate";
 import {MemoryRouter} from "react-router-dom";
 import tiles from "../config/tiles.config";
+import {MissingPagePermission} from "../config/messages.config";
 
 jest.mock("axios");
 
@@ -83,5 +84,15 @@ describe("Curate component", () => {
     fireEvent.click(getByTestId("Mapping1-delete"));
     fireEvent.click(getByText("Yes"));
     expect(axiosMock.delete).toHaveBeenNthCalledWith(1, "/api/steps/mapping/Mapping1");
+  });
+
+  test("Verify user with no authorities cannot access page", async () => {
+    const authorityService = new AuthoritiesService();
+    const {getByText, queryByText} = await render(<MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Curate/></AuthoritiesContext.Provider></MemoryRouter>);
+
+    expect(await(waitForElement(() => getByText(MissingPagePermission)))).toBeInTheDocument();
+
+    // entities should not be visible
+    expect(queryByText("Customer")).not.toBeInTheDocument();
   });
 });
