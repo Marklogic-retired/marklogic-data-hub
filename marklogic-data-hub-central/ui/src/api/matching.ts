@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const updateMatchingArtifact = async (matching) => {
   try {
-    let response = await axios.post(`/api/steps/matching/${matching.name}`, matching);
+    let response = await axios.put(`/api/steps/matching/${matching.name}`, matching);
     if (response.status === 200) {
       return true;
     } else {
