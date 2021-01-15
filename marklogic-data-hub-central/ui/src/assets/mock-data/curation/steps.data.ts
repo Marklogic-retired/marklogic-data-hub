@@ -4,7 +4,6 @@ const stepData = {
   additionalCollections: ["addedCollection"],
   batchSize: 35,
   permissions: "data-hub-common,read,data-hub-common,update",
-  provenanceGranularityLevel: "coarse",
   lastUpdated: "2020-01-01T00:00:00.000001-07:00",
   processors: {
     "processor": true
@@ -21,6 +20,7 @@ const stepLoad = {
   collections: ["AdvancedLoad"],
   sourceFormat: "json",
   targetFormat: "json",
+  provenanceGranularityLevel: "coarse",
   outputURIPrefix: "",
   stepDefinitionName: "default-ingestion",
   stepDefinitionType: "ingestion",
@@ -35,6 +35,7 @@ const stepMapping = {
   ...stepData,
   name: "AdvancedMapping",
   collections: ["AdvancedMapping"],
+  provenanceGranularityLevel: "coarse",
   targetEntityType: "http://example.org/EntityName-0.0.1/EntityName",
   selectedSource: "collection",
   sourceQuery: "cts.collectionQuery(['test'])",
@@ -54,6 +55,7 @@ const stepMatching = {
   ...stepData,
   name: "AdvancedMatching",
   collections: ["AdvancedMatching"],
+  provenanceGranularityLevel: "fine",
   targetEntityType: "http://example.org/Address-0.0.1/Test",
   selectedSource: "collection",
   sourceQuery: "cts.collectionQuery(['test'])",
@@ -67,6 +69,7 @@ const stepMatching = {
 const stepMerging = {
   ...stepData,
   name: "AdvancedMerging",
+  provenanceGranularityLevel: "fine",
   targetEntityType: "http://example.org/Address-0.0.1/Test",
   targetCollections: {
     onMerge: {"add": ["merged"]},
@@ -86,6 +89,7 @@ const stepMerging = {
 const stepCustom = {
   ...stepData,
   name: "CustomLoad",
+  provenanceGranularityLevel: "coarse",
   stepDefinitionType: "custom",
   stepDefinitionName: "custom-step",
   stepId: "CustomLoad-ingestion"
@@ -163,6 +167,20 @@ const newMapping = {
   defaultCollections: []
 };
 
+const newMatching = {
+  ...editMatching,
+  isEditing: false,
+  stepData: {},
+  defaultCollections: []
+};
+
+const newMerging = {
+  ...editMerging,
+  isEditing: false,
+  stepData: {},
+  defaultCollections: []
+};
+
 const data = {
   stepLoad: stepLoad,
   stepMapping: stepMapping,
@@ -176,6 +194,8 @@ const data = {
   editCustom: editCustom,
   newLoad: newLoad,
   newMapping: newMapping,
+  newMatching: newMatching,
+  newMerging: newMerging,
   defaultTargetCollections: defaultTargetCollections
 };
 

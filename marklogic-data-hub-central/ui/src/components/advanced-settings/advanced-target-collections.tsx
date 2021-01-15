@@ -131,12 +131,14 @@ const AdvancedTargetCollections = (props) => {
     return () => {};
   }, [props.targetCollections, props.defaultTargetCollections, eventEditModes, refresh]);
 
-  return <Table
-    rowKey="event"
-    dataSource={rowDataset}
-    columns={defaultTargetCollectionHeaders}
-    pagination={false}
-  />;
+  return <div aria-label="advanced-target-collections">
+    <Table
+      rowKey="event"
+      dataSource={rowDataset}
+      columns={defaultTargetCollectionHeaders}
+      pagination={false}
+    />
+  </div>;
 };
 
 export default AdvancedTargetCollections;

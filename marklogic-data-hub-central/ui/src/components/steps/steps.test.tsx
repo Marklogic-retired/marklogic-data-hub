@@ -20,7 +20,7 @@ describe("Steps settings component", () => {
     cleanup();
   });
 
-  test("Verify rendering of Load step, tab switching, discard dialog on cancel, saving", async () => {
+  test("Verify rendering of edit Load step, tab switching, discard dialog on cancel, saving", async () => {
     const {baseElement, getByText, getByLabelText, getAllByLabelText, getByPlaceholderText} = render(
       <Steps {...data.editLoad} />
     );
@@ -83,7 +83,7 @@ describe("Steps settings component", () => {
 
   });
 
-  test("Verify rendering of Mapping step, tab disabling on form error, discard changes dialog on close", async () => {
+  test("Verify rendering of edit Mapping step, tab disabling on form error, discard changes dialog on close", async () => {
     const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
       <Steps {...data.editMapping} />
     );
@@ -146,7 +146,7 @@ describe("Steps settings component", () => {
 
   });
 
-  test("Verify rendering of Matching step", async () => {
+  test("Verify rendering of edit Matching step", async () => {
     const {getByText, getByLabelText} = render(
       <Steps {...data.editMatching} />
     );
@@ -155,7 +155,7 @@ describe("Steps settings component", () => {
     expect(getByLabelText("Close")).toBeInTheDocument();
   });
 
-  test("Verify rendering of Merging step", async () => {
+  test("Verify rendering of edit Merging step", async () => {
     const {getByText, getByLabelText} = render(
       <Steps {...data.editMerging} />
     );
@@ -171,6 +171,52 @@ describe("Steps settings component", () => {
 
     expect(getByText("Custom Step Settings")).toBeInTheDocument();
     expect(getByLabelText("Close")).toBeInTheDocument();
+  });
+
+  test("Verify rendering of new Load step", async () => {
+    const testName = "stepName";
+    // New non-mapping steps have the following default collections: Step Name
+    const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
+      <Steps {...data.newLoad} />
+    );
+
+    expect(getByText("New Loading Step")).toBeInTheDocument();
+    expect(getByLabelText("Close")).toBeInTheDocument();
+
+    // Advanced tab disabled since Basic tab has empty required fields
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+
+    // Enter required name
+    const nameField = getByPlaceholderText("Enter name");
+    expect(nameField).toBeInTheDocument();
+    fireEvent.change(nameField, {target: {value: testName}});
+    expect(nameField).toHaveValue(testName);
+
+    // Switch to enabled Advanced tab, check default collections
+    await wait(() => {
+      fireEvent.click(getByText("Advanced"));
+    });
+    expect(getByTestId("defaultCollections-" + testName)).toBeInTheDocument();
+
+    // Check other defaults
+    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getByText(StepsConfig.stagingDb)).toBeInTheDocument();
+    expect(getByText("Target Collections")).toBeInTheDocument();
+    const targetColl = document.querySelector((".formItemTargetCollections .ant-select-search__field"))!;
+    expect(targetColl).toBeEmpty();
+    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
+    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
+    expect(getByLabelText("headers-textarea")).toBeEmpty();
+    // Open text areas that are closed by default
+    fireEvent.click(getByText("Processors"));
+    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Custom Hook"));
+    expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
 
   test("Verify rendering of new Mapping step", async () => {
@@ -227,14 +273,14 @@ describe("Steps settings component", () => {
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
 
-  test("Verify rendering of new non-Mapping step", async () => {
+  test("Verify rendering of new Matching step", async () => {
     const testName = "stepName";
-    // New non-mapping steps have the following default collections: Step Name
-    const {getByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
-      <Steps {...data.newLoad} />
+    const testColl = "testCollection";
+    const {getByText, getAllByText, getByLabelText, getByPlaceholderText, getByTestId} = render(
+      <Steps {...data.newMatching} />
     );
 
-    expect(getByText("New Loading Step")).toBeInTheDocument();
+    expect(getByText("New Matching Step")).toBeInTheDocument();
     expect(getByLabelText("Close")).toBeInTheDocument();
 
     // Advanced tab disabled since Basic tab has empty required fields
@@ -247,25 +293,73 @@ describe("Steps settings component", () => {
     fireEvent.change(nameField, {target: {value: testName}});
     expect(nameField).toHaveValue(testName);
 
+    // Enter required source collection
+    const collInput = document.querySelector(("#collList .ant-input"))!;
+    fireEvent.change(collInput, {target: {value: testColl}});
+    expect(collInput).toHaveValue(testColl);
+
     // Switch to enabled Advanced tab, check default collections
-    await wait(() => {
-      fireEvent.click(getByText("Advanced"));
-    });
+    fireEvent.click(getByText("Advanced"));
     expect(getByTestId("defaultCollections-" + testName)).toBeInTheDocument();
 
     // Check other defaults
+    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getAllByText(StepsConfig.finalDb)[0]).toBeInTheDocument();
     expect(getByText("Target Database")).toBeInTheDocument();
-    expect(getByText(StepsConfig.stagingDb)).toBeInTheDocument();
-    expect(getByText("Target Collections")).toBeInTheDocument();
-    const targetColl = document.querySelector((".formItemTargetCollections .ant-select-search__field"))!;
-    expect(targetColl).toBeEmpty();
+    expect(getAllByText(StepsConfig.finalDb)[1]).toBeInTheDocument();
     expect(getByText("Target Permissions")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
     expect(getByText("Coarse-grained")).toBeInTheDocument();
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
-    expect(getByLabelText("headers-textarea")).toBeEmpty();
+    // Open text areas that are closed by default
+    fireEvent.click(getByText("Processors"));
+    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Custom Hook"));
+    expect(getByLabelText("customHook-textarea")).toBeEmpty();
+  });
+
+  test("Verify rendering of new Merging step", async () => {
+    const testName = "stepName";
+    const testColl = "testCollection";
+    const {getByText, getAllByText, getByLabelText, getByPlaceholderText} = render(
+      <Steps {...data.newMerging} />
+    );
+
+    expect(getByText("New Merging Step")).toBeInTheDocument();
+    expect(getByLabelText("Close")).toBeInTheDocument();
+
+    // Advanced tab disabled since Basic tab has empty required fields
+    expect(getByText("Basic").closest("div")).toHaveClass("ant-tabs-tab-active");
+    expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-disabled");
+
+    // Enter required name
+    const nameField = getByPlaceholderText("Enter name");
+    expect(nameField).toBeInTheDocument();
+    fireEvent.change(nameField, {target: {value: testName}});
+    expect(nameField).toHaveValue(testName);
+
+    // Enter required source collection
+    const collInput = document.querySelector(("#collList .ant-input"))!;
+    fireEvent.change(collInput, {target: {value: testColl}});
+    expect(collInput).toHaveValue(testColl);
+
+    // Switch to enabled Advanced tab, check default collections
+    fireEvent.click(getByText("Advanced"));
+
+    // Check other defaults
+    expect(getByText("Source Database")).toBeInTheDocument();
+    expect(getAllByText(StepsConfig.finalDb)[0]).toBeInTheDocument();
+    expect(getByText("Target Database")).toBeInTheDocument();
+    expect(getAllByText(StepsConfig.finalDb)[1]).toBeInTheDocument();
+    expect(getByLabelText("advanced-target-collections")).toBeInTheDocument();
+    expect(getByText("Target Permissions")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter target permissions")).toHaveValue(StepsConfig.defaultTargetPerms);
+    expect(getByText("Provenance Granularity")).toBeInTheDocument();
+    expect(getByText("Coarse-grained")).toBeInTheDocument();
+    expect(getByText("Batch Size")).toBeInTheDocument();
+    expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
     fireEvent.click(getByText("Processors"));
     expect(getByLabelText("processors-textarea")).toBeEmpty();
