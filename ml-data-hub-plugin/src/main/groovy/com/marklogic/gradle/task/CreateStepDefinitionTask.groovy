@@ -55,8 +55,8 @@ class CreateStepDefinitionTask extends HubTask {
         }
 
         Scaffolding scaffolding = getScaffolding()
-        scaffolding.createCustomModule(stepDefName, stepDefType, format)
         stepDefinition.setModulePath("/custom-modules/" + stepDefType.toLowerCase() + "/" + stepDefName + "/main.sjs")
         stepDefinitionManager.saveStepDefinition(stepDefinition)
+        scaffolding.createCustomModule(stepDefName, stepDefType, format)
     }
 }

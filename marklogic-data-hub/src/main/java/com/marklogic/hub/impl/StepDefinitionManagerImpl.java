@@ -74,7 +74,7 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
             if (autoIncrement) {
                 stepDefinition.incrementVersion();
             }
-
+            getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
             Path dir = resolvePath(getHubProject().getStepDefinitionPath(stepDefinition.getType()), stepDefinition.getName());
             if (!dir.toFile().exists()) {
                 dir.toFile().mkdirs();
@@ -89,7 +89,6 @@ public class StepDefinitionManagerImpl extends LoggingObject implements StepDefi
         } catch (IOException e) {
             throw new DataHubProjectException("Could not write Step to disk for project.");
         }
-        getArtifactService().setArtifact("stepDefinition", stepDefinition.getName(), JSONUtils.convertArtifactToJson(stepDefinition));
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.marklogic.gradle.task
 
 
 import org.gradle.testkit.runner.UnexpectedBuildFailure
+import org.gradle.testkit.runner.UnexpectedBuildSuccess
+
+import java.nio.file.Paths
 
 import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
@@ -45,6 +48,25 @@ class CreateStepTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildFailure)
         result.task(":hubCreateStep").outcome == SUCCESS
+    }
+
+    def "create step with invalid name"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepName=my^Step
+                stepType=ingestion
+            }
+        """
+
+        when:
+        def failedResult = runFailTask('hubCreateStep')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        failedResult.output.contains("Invalid name: 'my^Step';")
+        failedResult.task(":hubCreateStep").outcome == FAILED
+        !Paths.get(testProjectDir.root.toString(), "steps", "ingestion", "my^Step.step.json").toFile().exists()
     }
 
     def "missing name"() {
