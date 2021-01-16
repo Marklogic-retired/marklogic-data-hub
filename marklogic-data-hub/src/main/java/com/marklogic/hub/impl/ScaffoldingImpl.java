@@ -128,25 +128,21 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         }
 
         if (stepDefName != null && stepDefinitionManager.getStepDefinition(stepDefName, StepDefinitionType.getStepDefinitionType(stepType)) == null) {
-            stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
+            try{
+                stepDefinition = StepDefinition.create(stepDefName, StepDefinitionType.getStepDefinitionType(stepType));
+                stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
+                stepDefinitionManager.saveStepDefinition(stepDefinition);
+            }
+            catch(Exception e){
+                throw new RuntimeException("Unable to write step definition to database; cause: " + e.getMessage(), e);
+            }
             createCustomModule(stepDefName, stepType);
-            stepDefinition.setModulePath("/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs");
-            stepDefinitionManager.saveStepDefinition(stepDefinition);
             messageBuilder.append(String.format("Created step definition '%s' of type '%s'.\n", stepName, stepType));
             messageBuilder.append("The module file for the step definition is available at "
                 + "/custom-modules/" + stepType.toLowerCase() + "/" + stepDefName + "/main.sjs" + ". \n");
             messageBuilder.append("It is recommended to run './gradlew -i mlWatch' so that as you modify the module, it will be automatically loaded into your application's modules database.\n");
         }
-        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. The step has been deployed to staging and final databases.");
         DatabaseClient stagingClient = hubConfig.newHubClient().getStagingClient();
-        try {
-            if(stepDefinition != null) {
-                ArtifactService artifactService = ArtifactService.on(stagingClient);
-                artifactService.setArtifact("stepDefinition", stepDefName, objectMapper.valueToTree(stepDefinition));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to write step definition to database; cause: " + e.getMessage(), e);
-        }
 
         try {
             StepService stepService = StepService.on(stagingClient);
@@ -155,7 +151,7 @@ public class ScaffoldingImpl extends LoggingObject implements Scaffolding {
         } catch (Exception e) {
             throw new RuntimeException("Unable to write step to database; cause: " + e.getMessage(), e);
         }
-
+        messageBuilder.append("Created step '" + stepName + "' of type '" + stepType + "' with default properties. The step has been deployed to staging and final databases.");
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(stepFile, step);
             return Pair.of(stepFile, messageBuilder.toString());

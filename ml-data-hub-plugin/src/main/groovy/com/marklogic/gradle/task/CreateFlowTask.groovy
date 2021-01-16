@@ -5,6 +5,7 @@ import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.hub.FlowManager
 import com.marklogic.hub.dataservices.ArtifactService
 import com.marklogic.hub.impl.FlowManagerImpl
+import org.apache.commons.io.FileUtils
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 import org.springframework.util.FileCopyUtils
@@ -28,10 +29,6 @@ class CreateFlowTask extends HubTask {
         def file;
         if (withInlineSteps) {
             file = getScaffolding().createDefaultFlow(flowName)
-            println "Created new flow at: " + file.getAbsolutePath()
-            println "IMPORTANT: The flow contains step templates with " +
-                "example values, such as 'inputFilePath' and 'entity-name'. The flow will not run as is. " +
-                "You MUST customize the steps for your project before running the flow."
         } else {
             // Not using FlowImpl because that generates at least one property - version - which doesn't do anything and
             // thus will confuse the user. User only needs a few things to get started here.
@@ -42,7 +39,6 @@ class CreateFlowTask extends HubTask {
                 '}\n'
             file = ((FlowManagerImpl)flowManager).getFileForLocalFlow(flowName)
             FileCopyUtils.copy(json.getBytes(), file)
-            println "Created new flow at: " + file.getAbsolutePath()
         }
         ObjectMapper mapper = new ObjectMapper()
         try{
@@ -51,7 +47,14 @@ class CreateFlowTask extends HubTask {
             println "The flow '" + flowName + "' has been written to staging and final databases."
         }
         catch (Exception e){
-            println "Unable to write flow to database;cause: " + e.getMessage()
+            FileUtils.deleteQuietly(file);
+            throw new GradleException("Unable to write flow to database;cause: " + e.getMessage())
+        }
+        println "Created new flow at: " + file.getAbsolutePath()
+        if(withInlineSteps){
+            println "IMPORTANT: The flow contains step templates with " +
+                "example values, such as 'inputFilePath' and 'entity-name'. The flow will not run as is. " +
+                "You MUST customize the steps for your project before running the flow."
         }
     }
 }

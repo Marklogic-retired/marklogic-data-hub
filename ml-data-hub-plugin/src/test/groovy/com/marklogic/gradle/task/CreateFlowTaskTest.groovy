@@ -92,6 +92,43 @@ class CreateFlowTaskTest extends BaseTest {
         stagingClient.newServerEval().javascript("fn.head(cts.doc(\"/flows/myTestFlow.flow.json\"))").eval().hasNext()
     }
 
+    def "create flow with invalid name"() {
+        given:
+        propertiesFile << """
+            ext {
+                flowName=my^Flow
+            }
+        """
+
+        when:
+        def failedResult = runFailTask('hubCreateFlow')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        failedResult.output.contains("Invalid name: 'my^Flow';")
+        failedResult.task(":hubCreateFlow").outcome == FAILED
+        !Paths.get(testProjectDir.root.toString(), "flows", "my^Flow.flow.json").toFile().exists()
+    }
+
+    def "create flow with inline steps and invalid name"() {
+        given:
+        propertiesFile << """
+            ext {
+                flowName=my^Flow
+                withInlineSteps=true
+            }
+        """
+
+        when:
+        def failedResult = runFailTask('hubCreateFlow')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        failedResult.output.contains("Invalid name: 'my^Flow';")
+        failedResult.task(":hubCreateFlow").outcome == FAILED
+        !Paths.get(testProjectDir.root.toString(), "flows", "my^Flow.flow.json").toFile().exists()
+    }
+
     def "create flow with existing name"() {
         given:
         propertiesFile << """

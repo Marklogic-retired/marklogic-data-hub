@@ -112,23 +112,23 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         result.task(":hubCreateStepDefinition").outcome == FAILED
     }
 
-    def "create step with invalid format"() {
+    def "create step def with invalid name"() {
         given:
         propertiesFile << """
             ext {
-                stepDefName=my-step
-                stepDefType=custom
-                format=java
+                stepDefName=my^StepDef
+                stepDefType=ingestion
             }
         """
 
         when:
-        def result = runFailTask('hubCreateStepDefinition')
+        def failedResult = runFailTask('hubCreateStepDefinition')
 
         then:
         notThrown(UnexpectedBuildSuccess)
-        result.output.contains("format must have a value of either 'sjs' or 'xqy'")
-        result.task(":hubCreateStepDefinition").outcome == FAILED
+        failedResult.output.contains("Invalid name: 'my^StepDef';")
+        failedResult.task(":hubCreateStepDefinition").outcome == FAILED
+        !Paths.get(testProjectDir.root.toString(), "step-definitions", "my^StepDef.flow.json").toFile().exists()
     }
 
     def "duplicate step definition exists"() {
@@ -148,6 +148,25 @@ class CreateStepDefinitionTaskTest extends BaseTest {
         then:
         notThrown(UnexpectedBuildSuccess)
         result.output.contains("A step definition already exists with the name 'my-step' and type 'custom'")
+        result.task(":hubCreateStepDefinition").outcome == FAILED
+    }
+
+    def "create step with invalid format"() {
+        given:
+        propertiesFile << """
+            ext {
+                stepDefName=my-invalid-step
+                stepDefType=custom
+                format=java
+            }
+        """
+
+        when:
+        def result = runFailTask('hubCreateStepDefinition')
+
+        then:
+        notThrown(UnexpectedBuildSuccess)
+        result.output.contains("format must have a value of either 'sjs' or 'xqy'")
         result.task(":hubCreateStepDefinition").outcome == FAILED
     }
 }
