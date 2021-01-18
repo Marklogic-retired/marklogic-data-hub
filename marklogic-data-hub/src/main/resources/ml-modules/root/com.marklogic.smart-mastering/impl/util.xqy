@@ -170,6 +170,7 @@ declare function util-impl:properties-to-values-functions(
             }
       else
         util-impl:handle-option-messages("error", "Property information for '" || $property-name || "'" || (if (fn:exists($entity-type-iri)) then " entity <"||$entity-type-iri ||">" else "") || " not found!", $message-output)
+    let $property-name := fn:head(($document-xpath-rule/(@path|path) ! fn:string(.),$property-name))
     return
       map:entry($property-name, $function)
   )
@@ -203,4 +204,56 @@ declare function util-impl:get-entity-type-information($options as node()?) {
     map:entry("targetEntityType", $target-entity-type)
       => map:with("targetEntityTypeDefinition", $target-entity-type-def)
       => map:with("targetEntityTypeIRI", $target-entity-type-iri)
+};
+
+(:
+ : @param $node as node()
+ : @param $is-hub-central-format as xs:boolean
+ : @param $is-function-javascript as xs:boolean
+ : @param $conversion-to-json-function as xs:boolean
+ : @param $conversion-to-xml-function as xs:boolean
+ : @return item()
+ :)
+declare function util-impl:convert-node-for-function(
+  $node as node()?,
+  $is-hub-central-format as xs:boolean,
+  $is-function-javascript as xs:boolean,
+  $conversion-to-json-function as function(item()) as item()*,
+  $conversion-to-xml-function as function(item()) as item()*
+) as item()? {
+  if (fn:empty($node)) then
+    ()
+  else if ($is-hub-central-format) then
+    if ($is-function-javascript) then
+      xdmp:from-json($node)
+    else
+      $node
+  else
+    if ($is-function-javascript) then
+      typeswitch($node)
+      case element() return
+        $conversion-to-json-function($node)
+      case object-node() return
+        xdmp:from-json($node)
+      default return
+        ()
+    else
+      typeswitch($node)
+        case element() return
+          $node
+        case object-node() return
+          $conversion-to-xml-function(xdmp:from-json($node))
+        default return
+          ()
+};
+
+(:
+ : Determines if a function is JavaScript
+ : @param $fun as xdmp:function
+ : @return xs:boolean
+ :)
+declare function util-impl:function-is-javascript(
+  $fun as xdmp:function?
+) as xs:boolean {
+  fn:exists($fun) and fn:ends-with(xdmp:function-module($fun), "js")
 };

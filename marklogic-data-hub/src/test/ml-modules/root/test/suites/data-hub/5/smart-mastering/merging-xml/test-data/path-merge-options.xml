@@ -40,5 +40,7 @@
     </merge>
     <merge property-name="deep" algorithm-ref="combine" max-values="1">
     </merge>
+    <merge property-name="endswithns" algorithm-ref="standard" >
+    </merge>
   </merging>
 </options>

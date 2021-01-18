@@ -1590,6 +1590,7 @@ declare function merge-impl:build-final-headers(
   let $default-merge-rule-info := $compiled-merge-options => map:get("defaultMergeRuleInfo")
   let $header-merge-rules-info := ($compiled-merge-options => map:get("mergeRulesInfo"))[map:contains(., "path")][fn:matches(map:get(., "path"),"^/[\w]*:?envelope/[\w]*:?headers/")]
   let $top-level-properties := fn:distinct-values(($docs/*:envelope/*:headers/node()[fn:not(fn:local-name-from-QName(fn:node-name(.)) = ("id","merges","sources"))] ! (fn:node-name(.))))
+  let $is-hub-central-format := $compiled-merge-options => map:get("isHubCentralFormat")
   return (
     $ns-map,
     for $top-level-property in $top-level-properties
@@ -1597,9 +1598,11 @@ declare function merge-impl:build-final-headers(
     let $path-regex := "^/[\w]*:?envelope/[\w]*:?headers/[\w]*:?" || $local-name
     where fn:empty($header-merge-rules-info[fn:matches(map:get(., "path"),$path-regex)])
     return
-    let $property-spec := $default-merge-rule-info => map:get("mergeRule")
+    let $merge-rule := $default-merge-rule-info => map:get("mergeRule")
     let $algorithm-name := $default-merge-rule-info => map:get("mergeAlgorithmName")
     let $algorithm := $default-merge-rule-info => map:get("mergeAlgorithm")
+    let $is-javascript := util-impl:function-is-javascript($algorithm)
+    let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
     let $algorithm-info :=
       object-node {
         "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
@@ -1634,13 +1637,13 @@ declare function merge-impl:build-final-headers(
                   $algorithm,
                   $top-level-property,
                   $raw-values,
-                  $property-spec
+                  $merge-rule
                 )
               else
                 merge-impl:standard(
                   $top-level-property,
                   $raw-values,
-                  $property-spec
+                  $merge-rule
                 )
             )
           )
@@ -1648,12 +1651,14 @@ declare function merge-impl:build-final-headers(
     for $header-merge-rule-info in $header-merge-rules-info
     let $algorithm-name := fn:string($header-merge-rule-info => map:get("mergeAlgorithmName"))
     let $algorithm := $header-merge-rule-info => map:get("mergeAlgorithm")
+    let $is-javascript := util-impl:function-is-javascript($algorithm)
     let $algorithm-info :=
       object-node {
         "name": fn:head(($algorithm-name[fn:exists($algorithm)], "standard")),
         "optionsReference": $merge-options-ref
       }
     let $merge-rule := $header-merge-rule-info => map:get("mergeRule")
+    let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
     let $raw-values := merge-impl:get-raw-values($docs, $header-merge-rule-info, $sources-by-document-uri)
     return
       if (fn:exists($raw-values)) then
@@ -1700,6 +1705,7 @@ declare function merge-impl:build-final-triples(
   $sources
 ) as sem:triple*
 {
+  let $is-hub-central-format := $compiled-merge-options => map:get("isHubCentralFormat")
   let $merge-options := $compiled-merge-options => map:get("mergeOptionsNode")
   let $triple-merge := fn:head($merge-options/(merging:triple-merge|tripleMerge))
   let $algorithm :=
@@ -1709,24 +1715,9 @@ declare function merge-impl:build-final-triples(
       fn:string($triple-merge/(@at|at)),
       merge-impl:default-function-lookup(?, 4)
     )
-  let $is-javascript := fn:ends-with(xdmp:function-module($algorithm), "js")
-  let $triple-merge :=
-    if ($is-javascript) then
-      typeswitch($triple-merge)
-      case element() return
-        merge-impl:propertyspec-to-json($triple-merge)
-      case object-node() return
-        xdmp:from-json($triple-merge)
-      default return
-        ()
-    else
-      typeswitch($triple-merge)
-        case element() return
-          $triple-merge
-        case object-node() return
-          merge-impl:propertyspec-to-xml(xdmp:from-json($triple-merge), xs:QName('merging:triple-merge'))
-        default return
-          ()
+  let $is-javascript := util-impl:function-is-javascript($algorithm)
+  let $merge-options := util-impl:convert-node-for-function($merge-options, $is-hub-central-format, $is-javascript, merge-impl:options-to-json#1, merge-impl:options-from-json#1)
+  let $triple-merge := util-impl:convert-node-for-function($triple-merge, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName('merging:triple-merge')))
   return
       xdmp:apply(
         $algorithm,
@@ -1873,17 +1864,31 @@ declare function merge-impl:build-final-properties(
   )
 };
 
+(:~
+ : Executes the appropriate function for a merge rule.
+ : @param $merge-rule-info as map:map from the compiled merge options with relevant information about a merge  rule
+ : @param $docs  as document-node()* the documents that are being
+ : @param $namespaces-map as map:map  namespace prefixes mapped to their full URI
+ : @param $sources-by-document-uri as map:map  maps document URIs to object-node()* with relevant source information (i.e., name, dateTime, documentUri)
+ : @param $merge-options-ref as xs:string  A string identifier for merge options primarily used for provenance
+ : @return as map:map* . First map is the mapping from namespace prefixes
+ :         to namespace URIs, as configured on the property-defs element. The
+ :         rest of the maps are final header values.
+ :)
 declare function merge-impl:get-merge-values(
   $merge-rule-info as map:map,
   $docs as document-node()*,
   $namespaces-map as map:map,
   $sources-by-document-uri as map:map,
   $merge-options-ref as xs:string
-) {
+) as map:map* {
   let $property-name := $merge-rule-info => map:get("propertyName")
-  let $merge-spec := $merge-rule-info => map:get("mergeRule")
   let $path := $merge-rule-info => map:get("path")
   let $algorithm := $merge-rule-info => map:get("mergeAlgorithm")
+  let $is-javascript := util-impl:function-is-javascript($algorithm)
+  let $merge-rule := $merge-rule-info => map:get("mergeRule")
+  let $is-hub-central-format := fn:exists($merge-rule/(entityPropertyPath|documentXPath))
+  let $merge-rule := util-impl:convert-node-for-function($merge-rule, $is-hub-central-format, $is-javascript, merge-impl:propertyspec-to-json#1, merge-impl:propertyspec-to-xml(?, xs:QName("merging:merge")))
   let $algorithm-name := $merge-rule-info => map:get("mergeAlgorithmName")
   let $algorithm-info :=
     object-node {
@@ -1901,7 +1906,6 @@ declare function merge-impl:get-merge-values(
     )
   where fn:exists($instance-props)
   return
-    let $prop-qname := fn:head($instance-props) ! fn:node-name(.)
     let $wrapped-properties :=
       for $doc at $pos in $docs
       let $generate-id := fn:generate-id($doc)
@@ -1909,28 +1913,29 @@ declare function merge-impl:get-merge-values(
       let $prop-qname := fn:node-name($prop-value)
       let $lineage-uris := merge-impl:node-uri($doc)
       let $prop-sources := $lineage-uris ! map:get($sources-by-document-uri, .)
-      let $ns-map := fn:head(($merge-spec/namespaces ! xdmp:from-json(.),$namespaces-map))
+      let $ns-map := fn:head(($merge-rule-info => map:get("namespaces"),$namespaces-map))
       return
         merge-impl:wrap-revision-info($prop-qname, $prop-value, $prop-sources, $path, $ns-map)
           => prop-def:with-algorithm-info($algorithm-info)
           => prop-def:with-retain-array(fn:exists($instance-props/parent::array-node()))
+    let $prop-qname := fn:head($wrapped-properties) ! map:get(., "name")
     let $merged-values :=
       if (fn:exists($algorithm)) then
         merge-impl:execute-algorithm(
             $algorithm,
             $prop-qname,
             $wrapped-properties,
-            $merge-spec
+            $merge-rule
         )
       else
         merge-impl:standard(
             $prop-qname,
             $wrapped-properties,
-            $merge-spec
+            $merge-rule
         )
     return (
       if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-        xdmp:trace($const:TRACE-MERGE-RESULTS, 'Processing merge rule: ' || $property-name || '&#10;merge rule details: '|| xdmp:to-json-string($merge-spec) || '&#10;merge values details: ' || xdmp:to-json-string($merged-values))
+        xdmp:trace($const:TRACE-MERGE-RESULTS, 'Processing merge rule: ' || $property-name || '&#10;merge rule details: '|| xdmp:to-json-string($merge-rule) || '&#10;merge values details: ' || xdmp:to-json-string($merged-values))
       else (),
       $merged-values
     )
@@ -2048,27 +2053,12 @@ declare function merge-impl:execute-algorithm(
   $algorithm as xdmp:function,
   $property-name as xs:QName,
   $properties as map:map*,
-  $property-spec as node()?
+  $property-spec as item()?
 )
 {
   xdmp:trace($const:TRACE-MERGE-RESULTS,  "Calling function at '" || xdmp:function-module($algorithm) || "' " || xdmp:describe($algorithm, (),())),
-  let $is-javascript := fn:ends-with(xdmp:function-module($algorithm), "js")
+  let $is-javascript := util-impl:function-is-javascript($algorithm)
   let $properties := if ($is-javascript) then json:to-array($properties) else $properties
-  let $property-spec :=
-    if ($is-javascript) then
-      if ($property-spec instance of element(merging:merge)) then
-        merge-impl:propertyspec-to-json($property-spec)
-      else if ($property-spec instance of object-node()) then
-        xdmp:from-json($property-spec)
-      else
-        $property-spec
-    else
-      if ($property-spec instance of element(merging:merge)) then
-        $property-spec
-      else if ($property-spec instance of object-node() or $property-spec instance of json:object) then
-        merge-impl:propertyspec-to-xml($property-spec, xs:QName("merging:merge"))
-      else
-        $property-spec
   let $results := xdmp:apply($algorithm, $property-name, $properties, $property-spec)
   return merge-impl:normalize-javascript-results($results)
 };
