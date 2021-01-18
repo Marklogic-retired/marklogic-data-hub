@@ -188,13 +188,6 @@ describe("Load Card component", () => {
       </MemoryRouter>
     );
 
-    //Verify cards get sorted by last updated
-    let loadCards: any = document.querySelectorAll(".ant-col");
-    expect(loadCards[0]).toHaveTextContent("Add New");
-    expect(loadCards[1]).toHaveTextContent("testLoadXML");
-    expect(loadCards[2]).toHaveTextContent("testLoad123");
-    expect(loadCards[3]).toHaveTextContent("testLoad");
-
     //Check if the card is rendered properly
     expect(getByText("Add New")).toBeInTheDocument();
     expect(getByText("testLoadXML")).toBeInTheDocument();

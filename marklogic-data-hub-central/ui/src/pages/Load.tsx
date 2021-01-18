@@ -8,6 +8,7 @@ import LoadCard from "../components/load/load-card";
 import {UserContext} from "../util/user-context";
 import axios from "axios";
 import {createStep, updateStep, getSteps, deleteStep} from "../api/steps";
+import {sortStepsByUpdated} from "../util/conversionFunctions";
 import {AuthoritiesContext} from "../util/authorities";
 import tiles from "../config/tiles.config";
 import {LoadingContext} from "../util/loading-context";
@@ -189,7 +190,7 @@ const Load: React.FC = () => {
 
   if (view === "card") {
     output = <LoadCard
-      data={loadArtifacts}
+      data={sortStepsByUpdated(loadArtifacts)}
       flows={flows}
       deleteLoadArtifact={deleteLoadArtifact}
       createLoadArtifact={createLoadArtifact}

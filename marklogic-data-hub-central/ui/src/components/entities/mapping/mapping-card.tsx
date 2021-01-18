@@ -3,7 +3,7 @@ import styles from "./mapping-card.module.scss";
 import {Card, Icon, Dropdown, Row, Col, Modal, Select, Menu} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from "../../../util/conversionFunctions";
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import SourceToEntityMap from "./source-entity-map/source-to-entity-map";
 import {getUris, getDoc} from "../../../util/search-service";
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
@@ -50,7 +50,6 @@ const MappingCard: React.FC<Props> = (props) => {
   const [flowName, setFlowName] = useState("");
   const [showLinks, setShowLinks] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [sortedMapping, setSortedMappings] = useState(props.data);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
   const [selectVisible, setSelectVisible] = useState(false);
   const [addRun, setAddRun] = useState(false);
@@ -86,12 +85,6 @@ const MappingCard: React.FC<Props> = (props) => {
 
   //To navigate to bench view with parameters
   let history = useHistory();
-
-  useEffect(() => {
-    let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
-    setSortedMappings(sortedArray);
-    setSourceData([]);
-  }, [props.data]);
 
   useEffect(() => {
     //open step details when create step is called successfully
@@ -700,7 +693,7 @@ const MappingCard: React.FC<Props> = (props) => {
             <br/>
             <p className={styles.addNewContent}>Add New</p>
           </Card></MLTooltip>
-        </Col>}{sortedMapping && sortedMapping.length > 0 ? sortedMapping.map((elem, index) => (
+        </Col>}{props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col key={index}>
             <div
               data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
