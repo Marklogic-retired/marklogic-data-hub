@@ -1,4 +1,4 @@
-import React, {CSSProperties, useState, useEffect} from "react";
+import React, {CSSProperties, useState} from "react";
 import styles from "./load-card.module.scss";
 import {useHistory} from "react-router-dom";
 import {Card, Icon, Row, Col, Modal, Select, Dropdown, Menu} from "antd";
@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCog} from "@fortawesome/free-solid-svg-icons";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import sourceFormatOptions from "../../config/formats.config";
-import {convertDateFromISO, sortStepsByUpdated} from "../../util/conversionFunctions";
+import {convertDateFromISO} from "../../util/conversionFunctions";
 import Steps from "../steps/steps";
 import {AdvLoadTooltips, SecurityTooltips} from "../../config/tooltips.config";
 import {Link} from "react-router-dom";
@@ -33,7 +33,6 @@ const LoadCard: React.FC<Props> = (props) => {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
   const [loadArtifactName, setLoadArtifactName] = useState("");
-  const [sortedLoads, setSortedLoads] = useState(props.data);
   const [flowName, setFlowName] = useState("");
   const [showLinks, setShowLinks] = useState("");
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
@@ -43,11 +42,6 @@ const LoadCard: React.FC<Props> = (props) => {
   const [isEditing, setIsEditing] = useState(false);
   const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
-
-  useEffect(() => {
-    let sortedArray = props.data.length > 1 ? sortStepsByUpdated(props.data) : props.data;
-    setSortedLoads(sortedArray);
-  }, [props.data]);
 
   //To navigate to bench view with parameters
   let history = useHistory();
@@ -289,7 +283,7 @@ const LoadCard: React.FC<Props> = (props) => {
             <br />
             <p className={styles.addNewContentDisabled}>Add New</p>
           </Card></MLTooltip>
-        </Col>}{ sortedLoads && sortedLoads.length > 0 ? sortedLoads.map((elem, index) => (
+        </Col>}{ props.data && props.data.length > 0 ? props.data.map((elem, index) => (
           <Col key={index}>
             <div
               onMouseOver={(e) => handleMouseOver(e, elem.name)}

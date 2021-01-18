@@ -1,4 +1,4 @@
-import React, {useState, useContext, useEffect} from "react";
+import React, {useState, useContext} from "react";
 import {Link, useHistory} from "react-router-dom";
 import {Card, Icon, Row, Col, Select, Dropdown, Menu, Modal} from "antd";
 import {MLTooltip} from "@marklogic/design-system";
@@ -10,7 +10,7 @@ import styles from "./merging-card.module.scss";
 import ConfirmationModal from "../../confirmation-modal/confirmation-modal";
 
 import {CurationContext} from "../../../util/curation-context";
-import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery, sortStepsByUpdated} from "../../../util/conversionFunctions";
+import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {AdvMapTooltips, SecurityTooltips} from "../../../config/tooltips.config";
 import {ConfirmationType} from "../../../types/common-types";
 import {MergingStep, StepType} from "../../../types/curation-types";
@@ -44,7 +44,6 @@ const MergingCard: React.FC<Props> = (props) => {
   const [confirmType, setConfirmType] = useState<ConfirmationType>(ConfirmationType.AddStepToFlow);
   const [showConfirmModal, toggleConfirmModal] = useState(false);
   const [confirmBoldTextArray, setConfirmBoldTextArray] = useState<string[]>([]);
-  const [sortedMergingSteps, setSortedMergingSteps] = useState(props.mergingStepsArray);
   const tooltipOverlayStyle={maxWidth: "200"};
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
@@ -52,11 +51,6 @@ const MergingCard: React.FC<Props> = (props) => {
   const [mergingArtifactName, setMergingArtifactName] = useState("");
   const [flowName, setFlowName] = useState("");
   const [addRun, setAddRun] = useState(false);
-
-  useEffect(() => {
-    let sortedArray = props.mergingStepsArray.length > 1 ? sortStepsByUpdated(props.mergingStepsArray) : props.mergingStepsArray;
-    setSortedMergingSteps(sortedArray);
-  }, [props.mergingStepsArray]);
 
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -310,8 +304,8 @@ const MergingCard: React.FC<Props> = (props) => {
             <p className={styles.addNewContent}>Add New</p>
           </Card></MLTooltip>
         </Col>}
-        {sortedMergingSteps && sortedMergingSteps.length > 0 ? (
-          sortedMergingSteps.map((step, index) => (
+        {props.mergingStepsArray && props.mergingStepsArray.length > 0 ? (
+          props.mergingStepsArray.map((step, index) => (
             <Col key={index}>
               <div
                 data-testid={`${props.entityName}-${step.name}-step`}

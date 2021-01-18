@@ -3,6 +3,7 @@ import {useLocation} from "react-router-dom";
 import {Collapse, Menu, Modal} from "antd";
 import axios from "axios";
 import {createStep, updateStep, getSteps, getStep, deleteStep} from "../../api/steps";
+import {sortStepsByUpdated} from "../../util/conversionFunctions";
 import styles from "./entity-tiles.module.scss";
 import MappingCard from "./mapping/mapping-card";
 import MatchingCard from "./matching/matching-card";
@@ -306,7 +307,7 @@ const EntityTiles = (props) => {
     let output;
     if (viewData[index] === "map-" + entityType) {
       output = <div className={styles.cardView}>
-        <MappingCard data={mappingCardData ? mappingCardData.artifacts : []}
+        <MappingCard data={mappingCardData ? sortStepsByUpdated(mappingCardData.artifacts) : []}
           flows={props.flows}
           entityTypeTitle={entityType}
           getMappingArtifactByMapName={getMappingArtifactByMapName}
@@ -325,7 +326,7 @@ const EntityTiles = (props) => {
     } else if (viewData[index] === "match-" + entityType) {
       output = <div className={styles.cardView}>
         <MatchingCard
-          matchingStepsArray={ matchingCardData ? matchingCardData.artifacts : []}
+          matchingStepsArray={ matchingCardData ? sortStepsByUpdated(matchingCardData.artifacts) : []}
           flows={props.flows}
           entityName={entityType}
           deleteMatchingArtifact={deleteMatchingArtifact}
@@ -343,7 +344,7 @@ const EntityTiles = (props) => {
     } else if (viewData[index] === "merge-" + entityType) {
       output = <div className={styles.cardView}>
         <MergingCard
-          mergingStepsArray={ mergingCardData ? mergingCardData.artifacts : []}
+          mergingStepsArray={ mergingCardData ? sortStepsByUpdated(mergingCardData.artifacts) : []}
           flows={props.flows}
           entityName={entityType}
           entityModel={props.entityModels[entityType]}
@@ -360,7 +361,7 @@ const EntityTiles = (props) => {
     } else if (viewData[index] === "custom-" + entityType) {
       output = <div className={styles.cardView}>
         <div className={styles.customEntityTitle} aria-label={"customEntityTitle"}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
-        <CustomCard data={ customCardData ? customCardData.artifacts : []}
+        <CustomCard data={ customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
           canReadOnly={props.canReadCustom}
           canReadWrite = {props.canWriteCustom}/>
       </div>;

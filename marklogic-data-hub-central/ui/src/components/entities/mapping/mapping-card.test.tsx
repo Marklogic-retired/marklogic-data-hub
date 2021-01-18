@@ -244,12 +244,6 @@ describe("Mapping Card component", () => {
     expect(getByText("Mapping2")).toBeInTheDocument();
     expect(getByText("Last Updated: 10/01/2020 2:38AM")).toBeInTheDocument();
 
-    // Verify cards get sorted by last updated
-    let mapCards: any = document.querySelectorAll(".ant-col");
-    expect(mapCards[0]).toHaveTextContent("Add New");
-    expect(mapCards[1]).toHaveTextContent("Mapping2");
-    expect(mapCards[2]).toHaveTextContent("Mapping1");
-
     // Hover for options
     fireEvent.mouseOver(getByText("Mapping2"));
     expect(getByTestId("Mapping2-toNewFlow")).toBeInTheDocument(); // 'Add to a new Flow'
