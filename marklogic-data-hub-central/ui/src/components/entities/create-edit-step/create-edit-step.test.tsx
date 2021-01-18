@@ -85,7 +85,7 @@ describe("Create Edit Step Dialog component", () => {
     expect(getByText("Name is required")).toBeInTheDocument();
 
     //proper error message shows when field contains special characters
-    fireEvent.change(nameInput, {target: {value: "testCreateStep@#~"}});
+    fireEvent.change(nameInput, {target: {value: "test Create Step"}});
     expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
 
     //reset name field

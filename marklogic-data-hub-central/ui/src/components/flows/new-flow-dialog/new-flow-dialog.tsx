@@ -67,7 +67,7 @@ const NewFlowDialog = (props) => {
   };
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
-    if (!flowName) {
+    if (!flowName || invalidChars) {
       // missing name
       setFlowNameTouched(true);
       event.preventDefault();
@@ -102,7 +102,7 @@ const NewFlowDialog = (props) => {
         setFlowName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && (/[~`!#$%^&*+=\\[\]\\';,/{}@()|\\":<>?]/g.test(event.target.value) || !event.target.value[0].match(/[a-z]/i))) {
+        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
           setInvalidChars(true);
         } else {
           setInvalidChars(false);
