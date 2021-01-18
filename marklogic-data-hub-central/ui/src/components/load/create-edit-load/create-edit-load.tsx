@@ -186,7 +186,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
   };
 
   const handleSubmit = (event: { preventDefault: () => void; }) => {
-    if (!stepName) {
+    if (!stepName || invalidChars) {
       // missing name
       setStepNameTouched(true);
       event.preventDefault();
@@ -217,7 +217,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
         setStepName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && (/[~`!#$%^&*+=\\[\]\\';,/{}@()|\\":<>?]/g.test(event.target.value) || !event.target.value[0].match(/[a-z]/i))) {
+        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
           setInvalidChars(true);
         } else {
           setInvalidChars(false);

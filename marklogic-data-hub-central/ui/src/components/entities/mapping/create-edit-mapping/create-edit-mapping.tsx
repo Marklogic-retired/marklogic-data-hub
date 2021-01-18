@@ -157,7 +157,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       // missing query
       setSrcQueryTouched(true);
     }
-    if (!mapName || (!collections && selectedSource === "collection") || (!srcQuery && selectedSource !== "collection")) {
+    if (!mapName || invalidChars || (!collections && selectedSource === "collection") || (!srcQuery && selectedSource !== "collection")) {
       // if missing flags are set, do not submit handle
       event.preventDefault();
       return;
@@ -239,7 +239,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         setMapName(event.target.value);
 
         //check value does not contain special chars and leads with a letter
-        if (event.target.value !== "" && (/[~`!#$%^&*+=\\[\]\\';,/{}@()|\\":<>?]/g.test(event.target.value) || !event.target.value[0].match(/[a-z]/i))) {
+        if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
           setInvalidChars(true);
         } else {
           setInvalidChars(false);
