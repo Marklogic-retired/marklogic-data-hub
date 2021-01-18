@@ -97,14 +97,14 @@ const Steps: React.FC<Props> = (props) => {
     setCurrentTab(key);
   };
 
-  const getStepPayload = (payload) => {
+  const getStepPayload = (payload, newStepFlag?: boolean) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
-    return Object.assign(props.stepData, basicPayload, advancedPayload, payload, {name: name});
+    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name});
   };
 
   const createStep = async (payload) => {
-    await props.createStep(getStepPayload(payload));
+    await props.createStep(getStepPayload(payload, true));
     setHasBasicChanged(false);
     setHasAdvancedChanged(false);
   };
