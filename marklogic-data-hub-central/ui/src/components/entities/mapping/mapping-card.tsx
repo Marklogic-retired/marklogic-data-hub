@@ -220,7 +220,7 @@ const MappingCard: React.FC<Props> = (props) => {
         setSourceData([]);
         setSourceData([...sDta]);
         if (typeof(srcDocResp.data) === "string") {
-          let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId, props.data[index].name);
+          let mData = await props.getMappingArtifactByMapName(props.entityModel.entityTypeId, stepName);
           updateMappingWithNamespaces(mData);
         }
       }
