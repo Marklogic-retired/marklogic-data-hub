@@ -39,10 +39,10 @@ assertions = assertions.concat([
         xdmp.apply(qsPropertyNamesToValuesFunctions.name, namespacedDocument),
         'QuickStart "name" function should return expected values.'
     ),
-    test.assertTrue(qsPropertyNamesToValuesFunctionsKeys.includes('nicknames'), 'QuickStart property names to values functions should have an entry for "nicknames".'),
+    test.assertTrue(qsPropertyNamesToValuesFunctionsKeys.includes('/es:envelope/es:instance/exc:NamespacedCustomer/exc:nicknames'), 'QuickStart property names to values functions should have an entry for "nicknames".'),
     test.assertEqual(
         namespacedDocument.xpath('/*:envelope/*:instance/*:NamespacedCustomer/*:nicknames'),
-        xdmp.apply(qsPropertyNamesToValuesFunctions.nicknames, namespacedDocument),
+        xdmp.apply(qsPropertyNamesToValuesFunctions['/es:envelope/es:instance/exc:NamespacedCustomer/exc:nicknames'], namespacedDocument),
         'QuickStart "nicknames" function should return expected values.'
     ),
     test.assertEqual(
