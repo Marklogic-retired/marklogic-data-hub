@@ -102,7 +102,7 @@ describe("New/edit load step configuration", () => {
     expect(queryByText("Source Type")).not.toBeInTheDocument();
   });
 
-  test("Verify name is required for form submission and error messaging appears", async () => {
+  test("Verify name is required for form submission and error messaging appears as needed", async () => {
     const {queryByText, getByText, getByPlaceholderText} =
     render(<BrowserRouter><CreateEditLoad {...loadProps} isEditing={false} /></BrowserRouter>);
     const nameInput = getByPlaceholderText("Enter name");
@@ -116,13 +116,25 @@ describe("New/edit load step configuration", () => {
     // message should appear when save button is clicked
     expect(queryByText("Name is required")).toBeInTheDocument();
 
-    // enter in a name and verify message disappears
-    fireEvent.change(nameInput, {target: {value: "testLoadStep"}});
-    await wait(() => {
-      expect(nameInput).toHaveValue("testLoadStep");
-    });
+    //error message should appear when name field does not lead with a letter
+    fireEvent.change(nameInput, {target: {value: "123testLoadStep"}});
+    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
 
-    expect(queryByText("Name is required")).toBeNull();
+    //reset name field
+    fireEvent.change(nameInput, {target: {value: ""}});
+    expect(getByText("Name is required")).toBeInTheDocument();
+
+    //error message should appear when name field contains special characters
+    fireEvent.change(nameInput, {target: {value: "testLoadStep$&*"}});
+    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
+
+    //enter in a valid name and verify error message disappears (test hyphen and underscores are allowed)
+    fireEvent.change(nameInput, {target: {value: "test_Load_Step--"}});
+
+    await wait(() => {
+      expect(queryByText("Name is required")).toBeNull();
+      expect(queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeNull();
+    });
   });
 
 });

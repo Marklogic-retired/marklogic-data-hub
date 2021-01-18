@@ -15,6 +15,7 @@ const NewFlowDialog = (props) => {
 
   const [, setIsLoading] = useState(false);
   const [tobeDisabled, setTobeDisabled] = useState(false);
+  const [invalidChars, setInvalidChars] = useState(false);
 
   let history = useHistory();
   useEffect(() => {
@@ -99,6 +100,14 @@ const NewFlowDialog = (props) => {
       } else {
         setFlowNameTouched(true);
         setFlowName(event.target.value);
+
+        //check value does not contain special chars and leads with a letter
+        if (event.target.value !== "" && (/[~`!#$%^&*+=\\[\]\\';,/{}@()|\\":<>?]/g.test(event.target.value) || !event.target.value[0].match(/[a-z]/i))) {
+          setInvalidChars(true);
+        } else {
+          setInvalidChars(false);
+        }
+
       }
     }
     if (event.target.id === "name" && event.target.value.length === 0) {
@@ -137,9 +146,10 @@ const NewFlowDialog = (props) => {
         <Form.Item label={<span>
           Name:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;
         </span>} labelAlign="left"
-        validateStatus={(flowName || !isFlowNameTouched) ? "" : "error"}
-        help={(flowName || !isFlowNameTouched) ? "" : "Name is required"}>
-          { tobeDisabled?<MLTooltip title={NewFlowTooltips.nameField} placement={"bottom"}> <Input
+        validateStatus={(flowName || !isFlowNameTouched) ? (invalidChars ? "error" : "") : "error"}
+        help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (flowName || !isFlowNameTouched) ? "" : "Name is required"}
+        >
+          { tobeDisabled?<MLTooltip title={NewFlowTooltips.nameField} placement={"bottom"} > <Input
             id="name"
             placeholder="Enter name"
             value={flowName}
