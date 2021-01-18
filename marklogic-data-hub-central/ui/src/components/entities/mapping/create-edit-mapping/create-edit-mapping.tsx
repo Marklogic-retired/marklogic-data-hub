@@ -45,7 +45,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   const [isSelectedSourceTouched, setSelectedSourceTouched] = useState(false);
 
   const [isValid, setIsValid] = useState(false); // eslint-disable-line @typescript-eslint/no-unused-vars
-  const [isNameDuplicate, setIsNameDuplicate] = useState(false);
+  const [invalidChars, setInvalidChars] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // eslint-disable-line @typescript-eslint/no-unused-vars
 
   const [tobeDisabled, setTobeDisabled] = useState(false);
@@ -237,11 +237,17 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       } else {
         setMapNameTouched(true);
         setMapName(event.target.value);
+
+        //check value does not contain special chars and leads with a letter
+        if (event.target.value !== "" && (/[~`!#$%^&*+=\\[\]\\';,/{}@()|\\":<>?]/g.test(event.target.value) || !event.target.value[0].match(/[a-z]/i))) {
+          setInvalidChars(true);
+        } else {
+          setInvalidChars(false);
+        }
         if (event.target.value.length > 0) {
           if (collections|| srcQuery) {
             setIsValid(true);
             props.setIsValid(true);
-            setIsNameDuplicate(false);
           }
         } else {
           setIsValid(false);
@@ -409,8 +415,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
           Name:&nbsp;<span className={styles.asterisk}>*</span>
           &nbsp;
         </span>} labelAlign="left"
-        validateStatus={(mapName || !isMapNameTouched) ? (!isNameDuplicate ? "" : "error") : "error"}
-        help={(mapName || !isMapNameTouched) ? (isNameDuplicate ? errorMessage :"") : "Name is required"}
+        validateStatus={(mapName || !isMapNameTouched) ? (invalidChars ? "error" : "") : "error"}
+        help={invalidChars ? "Names must start with a letter and can contain letters, numbers, hyphens, and underscores only." : (mapName || !isMapNameTouched) ? "" : "Name is required"}
         >
           { tobeDisabled?<MLTooltip title={NewMapTooltips.nameField} placement={"bottom"}> <Input
             id="name"

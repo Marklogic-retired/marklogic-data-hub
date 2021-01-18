@@ -428,7 +428,7 @@ const multiSliderTooltips = {
 
 /* TO BE DEPRECATED. Please use FlowTooltips. */
 const NewFlowTooltips = {
-  name: 'The name of this flow configuration. This cannot be changed after the flow is created.',
+  name: 'The name of this flow configuration. This cannot be changed after the flow is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   nameField: 'The flow name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the flow is created.',
   description: 'A description of this flow configuration.'
 };
@@ -465,7 +465,7 @@ const AdvancedSettingsTooltips = {
 
 /* TO BE DEPRECATED. Please use LoadingStepTooltips. */
 const NewLoadTooltips = {
-  name: 'The name of this loading step configuration. This cannot be changed after the step is created.',
+  name: 'The name of this loading step configuration. This cannot be changed after the step is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   nameField: 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
   description: 'A description of this loading step configuration.',
   files: 'Click *Upload* to select the source files. The total size of the files must be 100MB or less.',
@@ -488,7 +488,7 @@ const AdvLoadTooltips = {
 
 /* TO BE DEPRECATED. Please use MappingStepTooltips. */
 const NewMapTooltips = {
-  name: 'The name of this mapping step configuration. This cannot be changed after the step is created.',
+  name: 'The name of this mapping step configuration. This cannot be changed after the step is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   nameField: 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
   description: 'A description of this mapping step configuration.',
   sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.',
@@ -517,7 +517,7 @@ const NewMatchTooltips = {
   collation: 'The URI for a collation, which specifies the order for sorting strings.',
   namespace: 'The namespace of the module that contains the function.',  /* intended dupe: match-merge */
   function: 'The function to run if this action definition is selected.',
-  name: 'The name of this matching step configuration. This cannot be changed after the step is created.',
+  name: 'The name of this matching step configuration. This cannot be changed after the step is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   nameField: 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
   uri: 'The path to the module that contains the function.',  /* intended dupe: match-merge */
   distanceThreshold: 'The threshold below which the phonetic difference (distance) between two strings is considered insignificant; i.e., the strings are similar to each other.',
@@ -540,7 +540,7 @@ const MatchingStepDetailText = {
 /* TO BE DEPRECATED. Please use MergingStepTooltips. */
 const NewMergeTooltips = {
   timestampPath: 'The path to a timestamp field within the record. This field is used to determine which values to include in the merged property, based on their recency.',
-  name: 'The name of this merging step configuration. This cannot be changed after the step is created.',
+  name: 'The name of this merging step configuration. This cannot be changed after the step is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   description: 'A description of this merging step configuration.',
 
   /* TO BE DEPRECATED. Please use SecurityTooltips.missingPermission. */
@@ -576,7 +576,7 @@ const MergeStrategyTooltips = {
 
 /* TO BE DEPRECATED. Please use CustomStepTooltips. */
 const NewCustomTooltips = {
-  name: 'The name of this custom step configuration. This cannot be changed after the step is created.',
+  name: 'The name of this custom step configuration. This cannot be changed after the step is created. Names must start with a letter and contain letters, numbers, hyphens, and underscores only.',
   nameField: 'The step name is used as part of filenames, as a collection name, and as metadata in logs. It cannot be changed after the step is created.',
   description: 'A description of this custom step configuration.',
   sourceQuery: 'The collection or CTS query that selects the source data to process in this configuration.'

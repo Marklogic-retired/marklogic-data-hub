@@ -154,8 +154,8 @@ describe("Create/Edit Mapping Step artifact component", () => {
 
   });
 
-  test("Verify Save button requires all mandatory fields", async () => {
-    const {getByText, getByPlaceholderText} = render(<CreateEditMapping {...data.newMap} />);
+  test("Verify Save button requires all mandatory fields and error messaging appears as needed", async () => {
+    const {getByText, queryByText, getByPlaceholderText} = render(<CreateEditMapping {...data.newMap} />);
     const nameInput = getByPlaceholderText("Enter name");
     const collInput = document.querySelector(("#collList .ant-input"));
 
@@ -166,9 +166,31 @@ describe("Create/Edit Mapping Step artifact component", () => {
     expect(getByText("Name is required")).toBeInTheDocument();
     expect(getByText("Collection or Query is required")).toBeInTheDocument();
 
-    // enter name only
-    fireEvent.change(nameInput, {target: {value: "testCreateMap"}});
-    expect(nameInput).toHaveValue("testCreateMap");
+    //verify validation on name field
+
+    //proper error message shows when field does not lead with a letter
+    fireEvent.change(nameInput, {target: {value: "123testCreateMap"}});
+    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
+
+    //reset name field
+    fireEvent.change(nameInput, {target: {value: ""}});
+    expect(getByText("Name is required")).toBeInTheDocument();
+
+    //proper error message shows when field contains special characters
+    fireEvent.change(nameInput, {target: {value: "testCreateStep^()+="}});
+    expect(getByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeInTheDocument();
+
+    //reset name field
+    fireEvent.change(nameInput, {target: {value: ""}});
+    expect(getByText("Name is required")).toBeInTheDocument();
+
+    //enter in a valid name and verify error message disappears (test hyphen and underscores are allowed)
+    fireEvent.change(nameInput, {target: {value: "test_Create-Step-"}});
+
+    await wait(() => {
+      expect(queryByText("Name is required")).toBeNull();
+      expect(queryByText("Names must start with a letter and can contain letters, numbers, hyphens, and underscores only.")).toBeNull();
+    });
 
     fireEvent.click(getByText("Save"));
 
