@@ -124,8 +124,6 @@ const ModalStatus: React.FC<Props> = (props) => {
       } catch (error) {
         if (error.response) {
           handleError(error);
-        } else {
-          history.push("/noresponse");
         }
       } finally {
         setSessionTime(SESSION_WARNING_COUNTDOWN);
