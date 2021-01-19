@@ -68,7 +68,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [isColumnSelectorTouched, setColumnSelectorTouched] = useState(false);
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView);
+  const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
 
   const getEntityModel = async () => {
     try {
@@ -353,7 +353,7 @@ const Browse: React.FC<Props> = ({location}) => {
   if (searchOptions.zeroState) {
     return (
       <>
-        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView}/>
+        <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView} cardView={cardView}/>
         <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} />
       </>
     );
@@ -445,6 +445,7 @@ const Browse: React.FC<Props> = ({location}) => {
                   entityDefArray={entityDefArray}
                   database={searchOptions.database}
                   setCardView={setCardView}
+                  cardView={cardView}
                 />
               </div>
               <div className={styles.viewContainer} >
