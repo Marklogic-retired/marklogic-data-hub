@@ -456,8 +456,8 @@ duplicates are considered to have the same local name, namespace URI, and collat
 declare private function hent:remove-duplicate-range-indexes($database-config as item())
 {
   let $indexes := map:get($database-config, "range-element-index")
-  return
-    if (fn:exists($indexes)) then
+  where (fn:exists($indexes))
+  return 
       let $index-map := map:map()
       let $_ :=
         for $index in json:array-values($indexes)
@@ -474,9 +474,6 @@ declare private function hent:remove-duplicate-range-indexes($database-config as
       let $deduplicated-indexes := json:array()
       let $_ := map:keys($index-map) ! json:array-push($deduplicated-indexes, map:get($index-map, .))
       let $_ := map:put($database-config, "range-element-index", $deduplicated-indexes)
-      return ()
-    else
-      let $_ := map:put($database-config, "range-element-index", json:array())
       return ()
 };
 

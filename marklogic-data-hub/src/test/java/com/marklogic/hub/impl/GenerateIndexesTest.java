@@ -36,7 +36,14 @@ public class GenerateIndexesTest extends AbstractHubCoreTest {
         final String namespace = null;
         givenAnEntityWithTitleProperty("Book", namespace, false);
         whenTheIndexesAreBuilt();
-        thenAnEmptyRangeIndexArrayExists();
+        assertFalse(indexes.has("range-element-index"), "DHFPROD-2615 added logic for an empty array to be included " +
+            "when no element range indexes existed; however, this was and is inconsistent with how rangeIndex and " +
+            "pathRangeIndex work, where no empty array is created if those properties are not specified. To be " +
+            "consistent and to avoid indexes from being surprisingly removed, an empty array should not be added to " +
+            "the file; range-element-index should not exist, just like range-path-index does not exist. How the OBE " +
+            "indexes are removed is up to the developer; given that indexes are often added in a development " +
+            "environment, a common technique is to reset the entire ML instance to remove OBE resources and then " +
+            "redeploy the application");
     }
 
     private void givenAnEntityWithTitleProperty(String entityName, String namespace, boolean includeRangeIndex) {
@@ -83,12 +90,5 @@ public class GenerateIndexesTest extends AbstractHubCoreTest {
         } else {
             assertEquals(namespace, index.get("namespace-uri").asText());
         }
-    }
-
-    private void thenAnEmptyRangeIndexArrayExists() {
-        ArrayNode rangeIndexes = (ArrayNode) indexes.get("range-element-index");
-        assertEquals(0, rangeIndexes.size(),
-            "An empty array is needed here so that if indexes were previously defined for entity properties, and then" +
-                "they are removed, the empty array ensures that they are removed from the database. ");
     }
 }
