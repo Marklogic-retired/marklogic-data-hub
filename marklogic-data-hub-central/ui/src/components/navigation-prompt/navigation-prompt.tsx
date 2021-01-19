@@ -16,8 +16,8 @@ const NavigationPrompt: React.FC = () => {
   }, [modelingOptions.isModified]);
 
   const onUnload = (e) => {
-    e.preventDefault();
     if (hasUnsavedChanges.current) {
+      e.preventDefault();
       return e.returnValue = "message";
     }
   };
