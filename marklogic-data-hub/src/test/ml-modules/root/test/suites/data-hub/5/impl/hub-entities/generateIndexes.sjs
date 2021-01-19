@@ -145,7 +145,7 @@ function differentPropertyNames() {
 }
 
 function generateIndexConfigForFacetableProperties() {
-  const indexes = generateRangeIndexConfig([
+  const indexes = hent.dumpIndexes([
     {
       "info": {
         "title": "Book"
@@ -170,13 +170,16 @@ function generateIndexConfigForFacetableProperties() {
         }
       }
     }
-  ]);
+  ]).toObject();
 
+  const pathIndexes = indexes["range-path-index"];
   return [
-    test.assertEqual(3, indexes.length),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", indexes[0]["path-expression"]),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", indexes[1]["path-expression"]),
-    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", indexes[2]["path-expression"])
+    test.assertFalse(indexes.hasOwnProperty("range-element-index"), "Since no range element indexes were generated, " + 
+      ", there should not be a range-element-index property, as an empty array can remove existing indexes"),
+    test.assertEqual(3, pathIndexes.length),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/title", pathIndexes[0]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/authors", pathIndexes[1]["path-expression"]),
+    test.assertEqual("/(es:envelope|envelope)/(es:instance|instance)/Book/rating", pathIndexes[2]["path-expression"])
   ];
 }
 
