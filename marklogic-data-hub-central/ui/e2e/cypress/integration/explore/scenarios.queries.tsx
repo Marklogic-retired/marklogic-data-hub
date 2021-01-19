@@ -571,7 +571,7 @@ describe("manage queries modal scenarios on zero sate page, developer role", () 
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery().first().click();
     queryComponent.getDeleteQueryYesButton().click({force: true});
-    browsePage.getManageQueryCloseIcon().click();
+    // browsePage.getManageQueryCloseIcon().click();
     queryComponent.getManageQueryModal().should("not.be.visible");
   });
 

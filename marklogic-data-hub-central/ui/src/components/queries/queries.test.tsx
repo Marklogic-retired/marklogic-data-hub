@@ -69,4 +69,17 @@ describe("Queries Component", () => {
     expect(queryByTitle("reset-changes")).not.toBeInTheDocument();
   });
 
+  test("Verify query list and reset changes icon don't exist", () => {
+    const {queryByTestId, queryByTitle} = render(<Query
+      queries={getQueriesResponse}
+      setQueries={jest.fn()}
+      isSavedQueryUser={false}
+      selectedFacets={[{constraint: "Collection", facet: "Person", displayName: ""}]}
+      greyFacets={[{constraint: "Collection", facet: "Order", displayName: ""}]}
+      setColumnSelectorTouched={jest.fn()}
+      cardView={true}
+    />);
+    expect(queryByTestId("dropdown-list")).toBeNull();
+    expect(queryByTitle("reset-changes")).toBeNull();
+  });
 });

@@ -92,6 +92,7 @@ const SaveQueriesDropdown: React.FC<Props> = (props) => {
         })()
         }
         getPopupContainer={() => document.getElementById("dropdownList") || document.body}
+        data-testid="dropdown-list"
       >
         {options}
       </Select>
