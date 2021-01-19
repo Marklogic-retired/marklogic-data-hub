@@ -88,8 +88,8 @@ const MappingCard: React.FC<Props> = (props) => {
 
   useEffect(() => {
     //open step details when create step is called successfully
-    if (props.openStep) {
-      openStepDetails(props.openStep);
+    if (props.openStep !== "") {
+      openStepDetails(props.openStep?.name);
     }
   }, [props.openStep]);
 
@@ -560,7 +560,15 @@ const MappingCard: React.FC<Props> = (props) => {
   const openStepDetails = (name) => {
     // need step's name and array index to option mapping details
     let index = (props.data.findIndex(el => el.name === name) !== -1 ? props.data.findIndex(el => el.name === name) : 0);
-    openSourceToEntityMapping(name, index);
+    if (props.openStep) {
+      if (props.entityModel.entityTypeId === props.openStep.entityType) {
+        openSourceToEntityMapping(name, index);
+      } else {
+        return;
+      }
+    } else {
+      openSourceToEntityMapping(name, index);
+    }
   };
 
   function handleSelect(obj) {

@@ -38,6 +38,7 @@ describe("Mapping Card component", () => {
     flows: data.flows.data,
     entityTypeTitle: entityModel.entityName,
     entityModel: entityModel,
+    openStep: {},
     deleteMappingArtifact: jest.fn(() => {}),
     getMappingArtifactByMapName: () => {},
     createMappingArtifact: () => {},

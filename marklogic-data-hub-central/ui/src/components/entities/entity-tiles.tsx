@@ -28,7 +28,7 @@ const EntityTiles = (props) => {
   const {Panel} = Collapse;
   const [requiresNoEntityTypeTile, setRequiresNoEntityTypeTile]  = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [openStep, setOpenStep] = useState("");
+  const [openStep, setOpenStep] = useState({});
 
   useEffect(() => {
     getMappingArtifacts();
@@ -134,7 +134,7 @@ const EntityTiles = (props) => {
       let response = await createStep(mapping.name, "mapping", mapping);
       if (response.status === 200) {
         updateIsLoadingFlag();
-        setOpenStep(mapping.name);
+        setOpenStep({name: mapping.name, entityType: mapping.targetEntityType});
         return {code: response.status};
       } else {
         return {code: response.status};
@@ -372,7 +372,10 @@ const EntityTiles = (props) => {
   };
 
   // need special onChange for direct links to entity steps
-  const handleCollapseChange = (keys) => Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
+  const handleCollapseChange = (keys) => {
+    Array.isArray(keys) ? setActiveEntityTypes(keys):setActiveEntityTypes([keys]);
+    setOpenStep("");
+  };
 
   return (
     <div id="entityTilesContainer" className={styles.entityTilesContainer}>
