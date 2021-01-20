@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
 import {Form, Input, Icon, Radio, AutoComplete} from "antd";
 import styles from "./create-edit-mapping.module.scss";
-import {NewMapTooltips} from "../../../../config/tooltips.config";
+import "./create-edit-mapping.scss";
+import {NewMapTooltips, CommonStepTooltips} from "../../../../config/tooltips.config";
 import {UserContext} from "../../../../util/user-context";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import axios from "axios";
@@ -461,6 +462,10 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         validateStatus={isSourceQueryValid() ? "" : "error"}
         help={isSourceQueryValid() ? "" : "Collection or Query is required"}
         >
+          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+          </MLTooltip>
+
           <Radio.Group
             id="srcType"
             options={srcTypeOptions}
@@ -469,6 +474,13 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
+
+          <MLTooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
+          </MLTooltip>
+
+
+
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             //mode="tags"
@@ -484,18 +496,14 @@ const CreateEditMapping: React.FC<Props> = (props) => {
           >
             {/* {collectionsList} */}
           </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}
-          <MLTooltip title={NewMapTooltips.sourceQuery} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
-          </MLTooltip></span></div> : <span><TextArea
+          </span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter source query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMapTooltips.sourceQuery} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
-          </MLTooltip></span>}
+          ></TextArea></span>}
         </Form.Item>
 
         <Form.Item className={styles.submitButtonsForm}>

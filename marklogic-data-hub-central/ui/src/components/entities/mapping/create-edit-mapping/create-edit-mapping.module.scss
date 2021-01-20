@@ -30,21 +30,25 @@
     font-size: 12px;
     color: #7F86B5;
 }
-.questionCircleTextArea {
-    font-size: 12px;
-    color: #7F86B5;
-    margin-bottom: 22px;
-}
+
 .disabledCursor{
     cursor: not-allowed;
 }
-.questionCircleColl {
+
+.questionCircleCollection {
     font-size: 12px;
     color: #7F86B5;
-    float: right;
-    position: relative;
-    z-index: 100;
-    margin-top: -25px;
+    margin-left: 92px;
+    margin-top: 14px;
+    position: absolute;
+}
+
+.questionCircleQuery {
+    font-size: 12px;
+    color: #7F86B5;
+    margin-left: -10px;
+    margin-top: 14px;
+    position: absolute;
 }
 
 .searchIcon {

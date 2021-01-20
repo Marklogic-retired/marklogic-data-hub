@@ -2,8 +2,9 @@ import React, {useState, useEffect, useContext} from "react";
 import {Form, Input, Icon, Radio, AutoComplete} from "antd";
 import axios from "axios";
 import styles from "./create-edit-step.module.scss";
+import "./create-edit-step.scss";
 import {UserContext} from "../../../util/user-context";
-import {NewMatchTooltips, NewMergeTooltips} from "../../../config/tooltips.config";
+import {NewMatchTooltips, NewMergeTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 import {MLButton, MLTooltip} from "@marklogic/design-system";
 import {StepType} from "../../../types/curation-types";
 
@@ -451,6 +452,10 @@ const CreateEditStep: React.FC<Props>  = (props) => {
         validateStatus={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "error"}
         help={((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection") || (!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) ? "" : "Collection or Query is required"}
         >
+          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+          </MLTooltip>
+
           <Radio.Group
             id="srcType"
             options={srcTypeOptions}
@@ -459,6 +464,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             disabled={!props.canReadWrite}
           >
           </Radio.Group>
+
+          <MLTooltip title={CommonStepTooltips.radioQuery} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
+          </MLTooltip>
+
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
             //mode="tags"
@@ -473,18 +483,14 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleTypeaheadChange}
           >
             {/* {collectionsList} */}
-          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}<MLTooltip title={NewMatchTooltips.sourceQuery} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircleColl} theme="filled" />
-          </MLTooltip></span></div> : <span><TextArea
+          </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}</span></div> : <span><TextArea
             id="srcQuery"
             placeholder="Enter source query"
             value={srcQuery}
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
-          ></TextArea>&nbsp;&nbsp;<MLTooltip title={NewMatchTooltips.sourceQuery} placement={"right"}>
-            <Icon type="question-circle" className={styles.questionCircleTextArea} theme="filled" />
-          </MLTooltip></span>}
+          ></TextArea></span>}
         </Form.Item>
         {props.stepType === StepType.Merging ?
           <Form.Item label={<span>
