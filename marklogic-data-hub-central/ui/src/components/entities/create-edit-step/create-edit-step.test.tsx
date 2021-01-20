@@ -4,7 +4,7 @@ import CreateEditStep from "./create-edit-step";
 import data from "../../../assets/mock-data/curation/create-edit-step.data";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../../assets/mock-data/explore/facet-props";
-import {SecurityTooltips} from "../../../config/tooltips.config";
+import {SecurityTooltips, CommonStepTooltips} from "../../../config/tooltips.config";
 
 jest.mock("axios");
 describe("Create Edit Step Dialog component", () => {
@@ -263,4 +263,13 @@ describe("Create Edit Step Dialog component", () => {
     });
   });
 
+  test("Verify collection and query tooltips appear when hovered", () => {
+    const {getByText, getByTestId} = render(<CreateEditStep {...data.editMerging} />);
+
+    fireEvent.mouseOver(getByTestId("collectionTooltip"));
+    wait(() => expect(getByText(CommonStepTooltips.radioCollection)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByTestId("queryTooltip"));
+    wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
+  });
 });

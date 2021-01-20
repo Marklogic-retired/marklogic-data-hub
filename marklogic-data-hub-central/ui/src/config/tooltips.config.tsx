@@ -119,7 +119,9 @@ const CommonStepTooltips = {
   processors: 'Custom modules that perform additional processes after the core step processes are completed and before the results are saved.',
   customHook: 'A custom module that performs additional processes in its own transaction before or after the core step transaction. Results are saved within a transaction.',
   options: 'Key-value pairs to pass as parameters to the custom module.',
-  customModuleURI: 'The path to your custom step module.'
+  customModuleURI: 'The path to your custom step module.',
+  radioQuery: 'The CTS query that selects the source data to process in this configuration.',
+  radioCollection: 'A single collection that selects the source data to process in this configuration.'
 };
 
 /* Note: Some of the following are intentionally duplicated in other *Placeholders constants. */

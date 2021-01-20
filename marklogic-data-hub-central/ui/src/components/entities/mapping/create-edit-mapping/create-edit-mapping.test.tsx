@@ -4,7 +4,7 @@ import CreateEditMapping from "./create-edit-mapping";
 import data from "../../../../assets/mock-data/curation/common.data";
 import axiosMock from "axios";
 import {stringSearchResponse} from "../../../../assets/mock-data/explore/facet-props";
-import {NewMapTooltips} from "../../../../config/tooltips.config";
+import {NewMapTooltips, CommonStepTooltips} from "../../../../config/tooltips.config";
 
 jest.mock("axios");
 describe("Create/Edit Mapping Step artifact component", () => {
@@ -253,5 +253,14 @@ describe("Create/Edit Mapping Step artifact component", () => {
     expect(getByText("Cancel")).toBeEnabled();
   });
 
+  test("Verify collection and query tooltips appear when hovered", () => {
+    const {getByText, getByTestId} = render(<CreateEditMapping {...data.editMap} />);
+
+    fireEvent.mouseOver(getByTestId("collectionTooltip"));
+    wait(() => expect(getByText(CommonStepTooltips.radioCollection)).toBeInTheDocument());
+
+    fireEvent.mouseOver(getByTestId("queryTooltip"));
+    wait(() => expect(getByText(CommonStepTooltips.radioQuery)).toBeInTheDocument());
+  });
 
 });
