@@ -326,7 +326,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
               data-testid={text + "-save-icon"}
               className={!modelingOptions.isModified || !isEntityModified(text) ? styles.iconSaveReadOnly : styles.iconSave}
               onClick={(event) => {
-                if (!props.canWriteEntityModel && props.canReadEntityModel || !isEntityModified(text)) {
+                if ((!props.canWriteEntityModel && props.canReadEntityModel) || !isEntityModified(text)) {
                   return event.preventDefault();
                 } else {
                   confirmSaveEntity(text);
@@ -345,7 +345,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                 className={(!props.canWriteEntityModel && props.canReadEntityModel) || !modelingOptions.isModified || !isEntityModified(text) ? styles.iconRevertReadOnly : styles.iconRevert}
                 icon={faUndo}
                 onClick={(event) => {
-                  if (!props.canWriteEntityModel && props.canReadEntityModel || !isEntityModified(text)) {
+                  if ((!props.canWriteEntityModel && props.canReadEntityModel) || !isEntityModified(text)) {
                     return event.preventDefault();
                   } else {
                     confirmRevertEntity(text);

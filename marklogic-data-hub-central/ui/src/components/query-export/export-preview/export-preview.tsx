@@ -2,8 +2,8 @@ import React from "react";
 import {MLTooltip} from "@marklogic/design-system";
 
 export const getExportPreview = (response) => {
-  const tableColumns: Object[] = new Array();
-  const tableData: Object[] = new Array();
+  const tableColumns: Object[] = [];
+  const tableData: Object[] = [];
   if (response) {
     response.split("\n").forEach((row, index) => {
       if (index === 0) {

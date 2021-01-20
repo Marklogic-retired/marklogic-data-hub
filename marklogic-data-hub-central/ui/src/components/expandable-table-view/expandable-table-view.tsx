@@ -27,10 +27,10 @@ const ExpandableTableView: React.FC<Props> = (props) => {
     // primaryKey = props.item.primaryKey.propertyPath;
   }
 
-  let data = new Array();
+  let data : any[] = [];
   let counter = 0;
   const parseJson = (obj: Object) => {
-    let parsedData = new Array();
+    let parsedData : any[] = [];
     for (let i in obj) {
       if (obj[i] !== null && typeof (obj[i]) === "object") {
         parsedData.push({

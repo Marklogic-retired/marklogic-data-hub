@@ -282,7 +282,7 @@ const Flows: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    acceptedFiles.map(file => {
+    acceptedFiles.forEach(file => {
       setFileList(prevState => [...prevState, file]);
     });
   }, [acceptedFiles]);

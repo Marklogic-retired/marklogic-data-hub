@@ -260,7 +260,7 @@ const MappingCard: React.FC<Props> = (props) => {
       defaultNamespace = valObject.filter((ns) => val === "@xmlns")[0] || defaultNamespace;
       let count = valObject.length;
       if (count === 1) {
-        valObject.map(el => {
+        valObject.forEach(el => {
           let nsObj = getNamespaceObject(val, el);
           if (el === "@xmlns" || el === `@xmlns:${currentPrefix}`) {
             if (objWithNmspace === "") {
@@ -276,7 +276,7 @@ const MappingCard: React.FC<Props> = (props) => {
           setNamespaces({...nmspaces, ...nsObj.obj});
         });
       } else if (count > 1) {
-        valObject.map(el => {
+        valObject.forEach(el => {
           let nsObj = getNamespaceObject(val, el);
           nmspaces = {...nmspaces, ...nsObj.obj};
           setNamespaces({...nmspaces, ...nsObj.obj});
@@ -355,7 +355,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
   // construct infinitely nested source Data
   const generateNestedDataSource = (respData, nestedDoc: Array<any>, parentNamespace = namespaceString, defaultNamespace = "") => {
-    Object.keys(respData).map(key => {
+    Object.keys(respData).forEach(key => {
       let val = respData[key];
       let currentDefaultNamespace = defaultNamespace;
       if (val !== null && val !== "") {
@@ -487,7 +487,7 @@ const MappingCard: React.FC<Props> = (props) => {
 
   const extractNestedEntityData = (entProps, nestedEntityData: Array<any>, parentKey = "") => {
 
-    Object.keys(entProps).map(key => {
+    Object.keys(entProps).forEach(key => {
       let val = entProps[key];
 
       if (val.hasOwnProperty("subProperties")) {

@@ -35,7 +35,7 @@ const Curate: React.FC = () => {
       let response = await axios.get(`/api/models/primaryEntityTypes`);
       if (response.status === 200) {
         let models:any = {};
-        response.data.map(model => {
+        response.data.forEach(model => {
           // model has an entityTypeId property, perhaps that should be used instead of entityName?
           models[model.entityName] = model;
         });
@@ -107,10 +107,11 @@ const Curate: React.FC = () => {
       {
         canAccessCurate ?
           [
-            <div className={styles.intro}>
+            <div className={styles.intro} key={"curate-intro"}>
               <p>{tiles.curate.intro}</p>
             </div>,
             <EntityTiles
+              key={"curate-entity-tiles"}
               flows={flows}
               canReadMatchMerge={canReadMatchMerge}
               canWriteMatchMerge={canWriteMatchMerge}

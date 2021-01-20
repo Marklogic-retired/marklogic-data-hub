@@ -37,7 +37,7 @@ const ColumnSelector: React.FC<Props> = (props) => {
   const [checkedKeys, setCheckedKeys] = useState<any[]>(selectedPropertyKeys);
 
   let primaryKey = treeColumns.find((prop => { return prop.title === props.primaryKey; }));
-  const dataList = new Array();
+  const dataList : any[] = [];
 
   useEffect(() => {
     allProperties = treeConverter(props.entityPropertyDefinitions);

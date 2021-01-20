@@ -120,7 +120,7 @@ const Sidebar: React.FC<Props> = (props) => {
             setDateRangeValue("select time");
             let datatype = searchOptions.selectedFacets[constraint].dataType;
             if (datatype === "xs:string" || datatype === "string") {
-              searchOptions.selectedFacets[constraint]["stringValues"].map(facet => {
+              searchOptions.selectedFacets[constraint]["stringValues"].forEach(facet => {
                 selectedFacets.push({constraint, facet, displayName});
               });
             } else if (integers.includes(datatype) || decimals.includes(datatype)) {

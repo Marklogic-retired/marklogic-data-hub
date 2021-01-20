@@ -120,7 +120,7 @@ export const facetParser = (facets: any) => {
 };
 
 export const getKeys = function (obj: Object) {
-  let keys = new Array();
+  let keys : any[] = [];
   const parser = (obj: Object) => {
     for (let i in obj) {
       if (obj[i].hasOwnProperty("key")) {
@@ -136,7 +136,7 @@ export const getKeys = function (obj: Object) {
 };
 
 export const getChildKeys = function (obj: Object) {
-  let keys = new Array();
+  let keys : any[] = [];
   const parser = (obj: Object) => {
     for (let i in obj) {
       if (obj[i].hasOwnProperty("children")) {
@@ -178,7 +178,7 @@ export function getObject(object, k) {
 }
 
 export const toStringArray = (obj) => {
-  let arr = new Array();
+  let arr : any[] = [];
   const toArray = (obj) => {
     for (let i = 0; i < obj.length; i++) {
       if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
@@ -409,7 +409,7 @@ export const definitionsParser = (definitions: any): Definition[] => {
 };
 
 export const getTableProperties = (object: Array<Object>) => {
-  let labels = new Array();
+  let labels : any[] = [];
   const getProperties = (obj) => {
     for (let i = 0; i < obj.length; i++) {
       if (obj[i] !== null && (obj[i]).hasOwnProperty("properties")) {
@@ -424,7 +424,7 @@ export const getTableProperties = (object: Array<Object>) => {
 };
 
 export const getSelectedTableProperties = (object: Array<Object>, keys: Array<String>) => {
-  let labels = new Array();
+  let labels : any[] = [];
   const getProperties = (obj) => {
     for (let i = 0; i < obj.length; i++) {
       if (obj[i] !== null && (obj[i]).hasOwnProperty("children")) {
@@ -440,11 +440,11 @@ export const getSelectedTableProperties = (object: Array<Object>, keys: Array<St
 
 //constructs array of entity parameter name objects with zero dash keys.
 export const treeConverter = function (obj: Object) {
-  let keys = new Array();
+  let keys : any[] = [];
   let deep = 0;
   keys.push(0);
   const parser = (obj: Object, counter) => {
-    let parsedTitle = new Array();
+    let parsedTitle : any[] = [];
     for (let i in obj) {
       if (obj[i].hasOwnProperty("properties")) {
         deep = counter;
@@ -473,7 +473,7 @@ export const treeConverter = function (obj: Object) {
 };
 
 export const getCheckedKeys = (entityPropertyDefinitions: any[], selectedPropertyDefinitions: any[]) => {
-  let keys = new Array();
+  let keys : any[] = [];
   const parser = (selectedPropertyDefinitions: any[]) => {
     selectedPropertyDefinitions.filter(item => {
       if (item.hasOwnProperty("properties")) {

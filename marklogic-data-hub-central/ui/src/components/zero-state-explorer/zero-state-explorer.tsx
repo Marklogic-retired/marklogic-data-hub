@@ -115,7 +115,7 @@ const ZeroStateExplorer = (props) => {
           </Col>
           <Col span={6} >
             <div className={styles.image}>
-              <img className={styles.graphic} src={graphic} />
+              <img className={styles.graphic} src={graphic} alt={""}/>
             </div>
           </Col>
         </Row>

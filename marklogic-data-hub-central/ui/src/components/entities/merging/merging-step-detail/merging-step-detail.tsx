@@ -59,8 +59,8 @@ const MergingStepDetail: React.FC = () => {
   const [currentMergeObj, setCurrentMergeObj] = useState<any>({});
   const [deleteModalVisibility, setDeleteModalVisibility] = useState(false);
   const [sourceNames, setSourceNames] = useState<string[]>([]);
-  const mergeStrategiesData = new Array();
-  const mergeRulesData = new Array();
+  const mergeStrategiesData : any = [];
+  const mergeRulesData : any = [];
   let commonStrategyNames:any = [];
 
   useEffect(() => {
@@ -214,7 +214,7 @@ const MergingStepDetail: React.FC = () => {
   }
 
 
-  mergingStep && mergingStep.mergeStrategies.length > 0 && mergingStep.mergeStrategies.map((i) => {
+  mergingStep && mergingStep.mergeStrategies.length > 0 && mergingStep.mergeStrategies.forEach((i) => {
     mergeStrategiesData.push(
       {
         strategyName: i["strategyName"],
@@ -234,7 +234,7 @@ const MergingStepDetail: React.FC = () => {
   });
 
 
-  mergingStep && mergingStep.mergeRules.length > 0 && mergingStep.mergeRules.map((i) => {
+  mergingStep && mergingStep.mergeRules.length > 0 && mergingStep.mergeRules.forEach((i) => {
     mergeRulesData.push(
       {
         property: i["entityPropertyPath"],
