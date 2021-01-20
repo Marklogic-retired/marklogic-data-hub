@@ -414,7 +414,7 @@ const SecurityMessages = {
 
 /* --- ERROR --- */
 const ErrorTooltips = {
-  disabledTab: 'You must correct the errors in \nthe current tab before switching.'
+  disabledTab: 'You must correct any errors and provide all required information in the current tab before switching.'
 };
 
 /* --- SLIDER --- */
