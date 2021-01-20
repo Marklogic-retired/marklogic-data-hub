@@ -103,7 +103,7 @@ const DropDownWithSearch = (props) => {
         value={null}
         onChange={props.onItemSelect}
       >
-        {props.srcData.map((element, index) => <Select.Option data-testid = {element.value + "-option"} style={optionsStyle(index)} key={element.key}>{formatDropdownText(element.value, index)}{<MLTooltip title = "Multiple"><img data-testid = {element.value + "-optionIcon"} src= {element.struct ? arrayIcon : "" }/></MLTooltip>}</Select.Option>)}
+        {props.srcData.map((element, index) => <Select.Option data-testid = {element.value + "-option"} style={optionsStyle(index)} key={element.key}>{formatDropdownText(element.value, index)}{<MLTooltip title = "Multiple"><img data-testid = {element.value + "-optionIcon"} src= {element.struct ? arrayIcon : "" } alt={""}/></MLTooltip>}</Select.Option>)}
       </Select>  }
     </div>
   );

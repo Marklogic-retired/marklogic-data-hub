@@ -134,12 +134,12 @@ const QueryModal = (props) => {
   const displayExportModal = (id) => {
     setRecordID(id);
     let query;
-    queries.map((selectedQuery) => {
+    queries.forEach((selectedQuery) => {
       if (selectedQuery["savedQuery"]["id"] === id) {
         query = selectedQuery;
       }
     });
-    let arrayProperties = new Array();
+    let arrayProperties : any[] = [];
     props.entityDefArray && props.entityDefArray.forEach(entity => {
       if (entity.name === query.savedQuery.query.entityTypeIds[0]) {
         entity.properties && entity.properties.forEach(prop => {
@@ -247,7 +247,7 @@ const QueryModal = (props) => {
   }
 
   const updateTableData = () => {
-    let data = new Array();
+    let data : any[] = [];
     queries && queries.length > 0 && queries.forEach(query => {
       data.push(
         {

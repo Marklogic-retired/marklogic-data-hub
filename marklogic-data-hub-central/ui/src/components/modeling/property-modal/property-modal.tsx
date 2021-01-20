@@ -502,8 +502,17 @@ const PropertyModal: React.FC<Props> = (props) => {
         MORE_NUMBER_TYPES,
         MORE_DATE_TYPES
       ]);
-    } else if (props.editPropertyOptions.isEdit && props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured
-      || modelingOptions.entityTypeNamesArray.length > 1 && structuredDefinitions.length > 0 && !props.structuredTypeOptions.isStructured
+    } else if (
+      (
+        props.editPropertyOptions.isEdit
+        && (props.editPropertyOptions.propertyOptions.propertyType === PropertyType.Structured)
+      )
+      ||
+      (
+        (modelingOptions.entityTypeNamesArray.length > 1)
+        && (structuredDefinitions.length > 0)
+        && !props.structuredTypeOptions.isStructured
+      )
     ) {
       let structuredDropdown = createStructuredDropdown(structuredDefinitions);
       let relatedEntityDropdown = createRelatedEntityDropdown();

@@ -76,9 +76,9 @@ const SourceToEntityMap = (props) => {
   //Documentation links for using Xpath expressions
   const xPathDocLinks = <div className={styles.xpathDoc}><span id="doc">Documentation:</span>
     <div><ul className={styles.docLinksUl}>
-      <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" className={styles.docLink}>XPath Expressions</a></li>
-      <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" className={styles.docLink}>Extraction Functions</a></li>
-      <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" className={styles.docLink}>Mapping Functions</a></li>
+      <li><a href="https://www.w3.org/TR/xpath/all/" target="_blank" rel="noopener noreferrer" className={styles.docLink}>XPath Expressions</a></li>
+      <li><a href="https://docs.marklogic.com/guide/app-dev/TDE#id_99178" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Extraction Functions</a></li>
+      <li><a href="https://docs.marklogic.com/datahub/flows/dhf-mapping-functions.html" target="_blank" rel="noopener noreferrer" className={styles.docLink}>Mapping Functions</a></li>
     </ul></div>
   </div>;
 
@@ -180,7 +180,7 @@ const SourceToEntityMap = (props) => {
   //Set the collapse/Expand options for Source table, when mapping opens up.
   const initializeSourceExpandKeys = () => {
     let initialKeysToExpand:any = [];
-    props.sourceData.map(obj => {
+    props.sourceData.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.rowKey);
       }
@@ -193,7 +193,7 @@ const SourceToEntityMap = (props) => {
   //Set the collapse/Expand options for Entity table, when mapping opens up.
   const initializeEntityExpandKeys = () => {
     let initialKeysToExpand:any = [];
-    props.entityTypeProperties.map(obj => {
+    props.entityTypeProperties.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         initialKeysToExpand.push(obj.key);
       }
@@ -265,7 +265,7 @@ const SourceToEntityMap = (props) => {
       initializeMapExpForUI(props.mapData.properties);
       setMapExp({...mapExpUI});
       updateSourceContext({...mapExpUI}, props.entityTypeProperties);
-      setSourceContext({... tempSourceContext});
+      setSourceContext({...tempSourceContext});
     }
   };
 
@@ -314,7 +314,7 @@ const SourceToEntityMap = (props) => {
 
   //Refresh the UI mapExp from the the one saved in the database
   const initializeMapExpForUI  = (mapExp, parentKey = "") => {
-    Object.keys(mapExp).map(key => {
+    Object.keys(mapExp).forEach(key => {
       let val = mapExp[key];
       if (val.hasOwnProperty("properties")) {
         parentKey = parentKey ? parentKey + "/" + key : key;
@@ -348,7 +348,7 @@ const SourceToEntityMap = (props) => {
   };
 
   const getTgtEntityTypesInMap = (mapExp, parentKey = "") => {
-    Object.keys(mapExp).map(key => {
+    Object.keys(mapExp).forEach(key => {
       let val = mapExp[key];
       if (val.constructor.name === "Object") {
         if (val.hasOwnProperty("properties")) {
@@ -497,7 +497,7 @@ const SourceToEntityMap = (props) => {
     let res;
     if (record.hasOwnProperty("children")) {
       res = "-"+record[index];
-      record["children"].map(obj => {
+      record["children"].forEach(obj => {
         res = res + getPropValueFromDataIndex(obj, index);
       });
       return res;
@@ -521,7 +521,7 @@ const SourceToEntityMap = (props) => {
 
   //Get the expandKeys for the tables based on teh applied filter
   const getKeysToExpandForFilter = (dataArr, rowKey, searchText, allKeysToExpand:any = [], parentRowKey = 0) => {
-    dataArr.map(obj => {
+    dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
 
         if (((rowKey === "rowKey" ? obj.key : obj.name) + JSON.stringify(obj["children"])).toLowerCase().indexOf(searchText.toLowerCase()) !== -1) {
@@ -954,7 +954,7 @@ const SourceToEntityMap = (props) => {
 
   const saveMapping =  async (mapObject) => {
     let obj = {};
-    Object.keys(mapObject).map(key => {
+    Object.keys(mapObject).forEach(key => {
       convertMapExpToMapArt(obj, key, {"sourcedFrom": mapObject[key]});
     });
     await getTgtEntityTypesInMap(obj);
@@ -965,7 +965,7 @@ const SourceToEntityMap = (props) => {
     let mapSavedResult = await props.updateMappingArtifact(dataPayload);
     tempSourceContext = {};
     updateSourceContext(mapObject, props.entityTypeProperties);
-    setSourceContext({... tempSourceContext});
+    setSourceContext({...tempSourceContext});
     if (mapSavedResult) {
       setErrorInSaving("noError");
     } else {
@@ -1069,7 +1069,7 @@ const SourceToEntityMap = (props) => {
 
   const getKeysToExpandFromTable = (dataArr, rowKey, allKeysToExpand:any = []) => {
 
-    dataArr.map(obj => {
+    dataArr.forEach(obj => {
       if (obj.hasOwnProperty("children")) {
         allKeysToExpand.push(obj[rowKey]);
         if ((rowKey === "key" && !expandedEntityFlag) || (rowKey === "rowKey" && !expandedSourceFlag)) {

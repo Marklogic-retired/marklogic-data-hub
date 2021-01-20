@@ -29,7 +29,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   };
 
   const renderBasicPropertyTitle = (property: Property) => {
-    return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon}/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
+    return property.multiple ? <span aria-label={`${property.name}-option`}>{property.name} <img className={styles.arrayImage} src={arrayIcon} alt=""/></span> : <span aria-label={`${property.name}-option`}>{property.name}</span>;
   };
 
   const renderStrucuturedPropertyOption = (property: Property, entityPropertyName: string) => {
@@ -43,7 +43,7 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
           {property.name}
           &nbsp;
           <FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/>
-          {property.multiple && <img className={styles.arrayImage} src={arrayIcon}/>}
+          {property.multiple && <img className={styles.arrayImage} src={arrayIcon} alt=""/>}
         </span>
       );
 

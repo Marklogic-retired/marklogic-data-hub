@@ -124,7 +124,7 @@ const ResultsTabularView = (props) => {
           ...setSortOptions(item),
           render: (value) => {
             if (Array.isArray(value)) {
-              let values = new Array();
+              let values : any[] = [];
               value.forEach(item => {
                 let val = item === null ? "null" : item === "" ? "\"\"" : item;
                 if (val !== undefined) {
@@ -351,7 +351,7 @@ const ResultsTabularView = (props) => {
 
     let nestedData: any[] = [];
     const parseJson = (obj: Object) => {
-      let parsedData = new Array();
+      let parsedData : any[] = [];
       for (let i in obj) {
         if (obj[i] !== null && typeof (obj[i]) === "object") {
           parsedData.push({

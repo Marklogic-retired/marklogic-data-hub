@@ -67,7 +67,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
   const [radioValuesOptionClicked, setRadioValuesOptionClicked] = useState(1);
 
   const titleLegend = <div className={styles.titleLegend}>
-    <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon}/> Multiple</div>
+    <div data-testid="multipleIconLegend" className={styles.legendText}><img className={styles.arrayImage} src={arrayIcon} alt={""}/> Multiple</div>
     <div data-testid="structuredIconLegend" className={styles.legendText}><FontAwesomeIcon className={styles.structuredIcon} icon={faLayerGroup}/> Structured</div>
   </div>;
 

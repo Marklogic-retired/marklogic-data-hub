@@ -156,7 +156,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const generateSourcesData = (sourceData) => {
-    let parsedData = new Array();
+    let parsedData : any[] = [];
     if (sourceData.length) {
       sourceData.forEach((obj, index) => {
         if (obj.constructor.name === "Object") {
@@ -190,7 +190,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const generateHistoryData = (historyData) => {
-    let parsedData = new Array();
+    let parsedData : any[] = [];
 
     if (historyData.length === 0) {
       parsedData.push({

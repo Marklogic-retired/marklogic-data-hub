@@ -434,10 +434,11 @@ const Run = (props) => {
         {
           canAccessRun ?
             [
-              <div className={styles.intro}>
+              <div className={styles.intro} key={"run-intro"}>
                 <p>{tiles.run.intro}</p>
               </div>,
               <Flows
+                key={"run-flows-list"}
                 flows={flows}
                 steps={steps}
                 deleteFlow={deleteFlow}

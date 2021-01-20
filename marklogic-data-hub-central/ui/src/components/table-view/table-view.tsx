@@ -12,14 +12,14 @@ interface Props {
 const TableView: React.FC<Props> = (props) => {
   const [expanded, setExpanded] = useState(false);
 
-  let data = new Array();
+  let data : any[] = [];
   let counter = 0;
   let expandRow: number[] = [];
   let currRow: number[] = [];
 
 
   const parseJson = (obj: Object) => {
-    let parsedData = new Array();
+    let parsedData : any[] = [];
     for (let i in obj) {
       if (props.location && JSON.stringify(props.location) === JSON.stringify(obj[i])) {
         expandRow = currRow.concat(expandRow);

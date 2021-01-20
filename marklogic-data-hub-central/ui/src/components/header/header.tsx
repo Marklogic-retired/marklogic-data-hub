@@ -176,7 +176,7 @@ const Header:React.FC<Props> = (props) => {
         <Menu.Item>
           <MLTooltip title="Help" overlayClassName={styles.infoTooltip}>
             <div className={styles.helpIconContainer}>
-              <a id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank"
+              <a id="help-link" aria-label="help-link" className={styles.helpIconLink} href={getVersionLink()} target="_blank" rel="noopener noreferrer"
                 tabIndex={1} ref={helpLinkRef} onKeyDown={helpLinkKeyDownHandler} onMouseDown={helpLinkClickHandler}>
                 <Icon type="question-circle" className={styles.helpIcon}/>
               </a>
@@ -218,7 +218,7 @@ const Header:React.FC<Props> = (props) => {
         <Menu.Item>
           <MLTooltip title="Help">
             <div className={styles.helpIconContainer}>
-              <a id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" tabIndex={1} className={styles.helpIconLink}>
+              <a id="help-link" href="https://docs.marklogic.com/datahub/" target="_blank" rel="noopener noreferrer" tabIndex={1} className={styles.helpIconLink}>
                 <Icon type="question-circle" className={styles.helpIcon}/>
               </a>
             </div>
