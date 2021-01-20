@@ -90,8 +90,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
     if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
       let editRuleset = props.editRuleset;
-
-      setSelectedProperty(editRuleset.name);
+      setSelectedProperty(editRuleset.name.split(" ")[0]);
       setMatchType(editRuleset["matchRules"][0]["matchType"]);
 
       if (editRuleset["matchRules"][0]["matchType"] === "custom") {
