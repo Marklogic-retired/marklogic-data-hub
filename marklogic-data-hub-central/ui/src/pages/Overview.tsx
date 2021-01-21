@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./Overview.module.scss";
 import {useHistory} from "react-router-dom";
+import overviewConfig from "../config/overview.config";
 
 interface Props {
     enabled: any;
@@ -19,6 +20,16 @@ const Overview: React.FC<Props> = (props) => {
         }
       });
     }
+  };
+
+  const openDocumentation = (e, type) => {
+    if (e) e.stopPropagation(); // Stop click from also opening tile
+    window.open(overviewConfig.documentationLinks[type], "_blank");
+  };
+
+  const openVideo = (e, type) => {
+    if (e) e.stopPropagation(); // Stop click from also opening tile
+    window.open(overviewConfig.videoLinks[type], "_blank");
   };
 
   const getClassNames = (id) => {
@@ -130,6 +141,12 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="load-icon"></span>Load
             </div>
             <div className={styles.body}>Create and configure steps that define how data should be loaded.
+              <div className={styles.docLink}>
+                <span onClick={(e) => { openDocumentation(e, "load"); }}>Documentation</span>
+              </div>
+              <div className={styles.vidLink}>
+                <span onClick={(e) => { openVideo(e, "load"); }}>Video Tutorial</span>
+              </div>
               { props.enabled && !props.enabled.includes("load") &&
                             <div className={styles.permissions}>*additional permissions required</div> }
             </div>
@@ -145,6 +162,12 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="model-icon"></span>Model
             </div>
             <div className={styles.body}>Define the entity models that describe and standardize your data.
+              <div className={styles.docLink}>
+                <span onClick={(e) => { openDocumentation(e, "model"); }}>Documentation</span>
+              </div>
+              <div className={styles.vidLink}>
+                <span onClick={(e) => { openVideo(e, "model"); }}>Video Tutorial</span>
+              </div>
               { props.enabled && !props.enabled.includes("model") &&
                             <div className={styles.permissions}>*additional permissions required</div> }
             </div>
@@ -160,6 +183,12 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="curate-icon"></span>Curate
             </div>
             <div className={styles.body}>Create and configure steps that curate and refine your data.
+              <div className={styles.docLink}>
+                <span onClick={(e) => { openDocumentation(e, "curate"); }}>Documentation</span>
+              </div>
+              <div className={styles.vidLink}>
+                <span onClick={(e) => { openVideo(e, "curate"); }}>Video Tutorial</span>
+              </div>
               { props.enabled && !props.enabled.includes("curate") &&
                             <div className={styles.permissions}>*additional permissions required</div> }
             </div>
@@ -175,6 +204,12 @@ const Overview: React.FC<Props> = (props) => {
                 <span className={styles.icon} aria-label="run-icon"></span>Run
               </div>
               <div className={styles.body}>Add your step to a flow and run it.
+                <div className={styles.docLink}>
+                  <span onClick={(e) => { openDocumentation(e, "run"); }}>Documentation</span>
+                </div>
+                <div className={styles.vidLink}>
+                  <span onClick={(e) => { openVideo(e, "run"); }}>Video Tutorial</span>
+                </div>
                 { props.enabled && !props.enabled.includes("run") &&
                                 <div className={styles.permissionsRun}>*additional permissions required</div> }
               </div>
@@ -190,6 +225,12 @@ const Overview: React.FC<Props> = (props) => {
               <span className={styles.icon} aria-label="explore-icon"></span>
               <div className={styles.subtitle}>Explore</div>
               <div className={styles.body}>Search, filter, and export your curated data.
+                <div className={styles.docLink}>
+                  <span onClick={(e) => { openDocumentation(e, "explore"); }}>Documentation</span>
+                </div>
+                <div className={styles.vidLink}>
+                  <span onClick={(e) => { openVideo(e, "explore"); }}>Video Tutorial</span>
+                </div>
                 { props.enabled && !props.enabled.includes("explore") &&
                                 <div className={styles.permissionsExplore}>*additional permissions required</div> }
               </div>

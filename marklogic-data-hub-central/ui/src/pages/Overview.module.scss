@@ -40,7 +40,25 @@
                 font-size: 16pt;
             }
             .body {
-                padding: 0px 20px 10px 44px;
+                padding: 0px 20px 15px 44px;
+                .docLink, .vidLink {
+                    font-size: 13px;
+                    span {
+                        color: #5B69AF;
+                        cursor: pointer;
+                    }
+                    :before {
+                        content:"•";
+                        color: #333;
+                        padding-right: 5px;
+                    }
+                }
+                .docLink {
+                    padding-top: 10px;
+                }
+                .vidLink {
+                    padding-top: 3px;
+                }
             }
             i {
                 position: relative;
@@ -107,10 +125,10 @@
                 font-weight: 600;
             }
             .permissionsRun {
-                padding-top: 98px;
+                padding-top: 28px;
             }
             .permissionsExplore {
-                padding-top: 110px;
+                padding-top: 40px;
             }
 
             .cardLoad {
