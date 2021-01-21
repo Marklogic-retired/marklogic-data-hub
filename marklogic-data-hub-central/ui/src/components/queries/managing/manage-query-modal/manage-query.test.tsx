@@ -2,6 +2,9 @@ import React from "react";
 import {fireEvent, render, waitForElement} from "@testing-library/react";
 import ManageQuery from "./manage-query";
 import axiosMock from "axios";
+import {Router} from "react-router";
+import {createMemoryHistory} from "history";
+const history = createMemoryHistory();
 
 jest.mock("axios");
 
@@ -30,13 +33,13 @@ describe("Query Modal Component", () => {
   };
 
   test("Verify modal is not visible", () => {
-    const {queryByTestId} = render(<ManageQuery />);
+    const {queryByTestId} = render(<Router history={history}><ManageQuery /></Router>);
     expect(queryByTestId("manage-queries-modal")).toBeNull();
   });
 
   test("Verify export, edit, delete buttons are visible", async () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({response: {status: 200, data: query}})));
-    const {getByTestId} = render(<ManageQuery {...defaultProps} canExportQuery={true} isSavedQueryUser={true} />);
+    const {getByTestId} = render(<Router history={history}><ManageQuery {...defaultProps} canExportQuery={true} isSavedQueryUser={true} /></Router>);
 
     expect(axiosMock).toHaveBeenCalledWith({"method": "GET", "url": "/api/entitySearch/savedQueries"});
     expect(getByTestId("manage-queries-modal")).toBeInTheDocument();
@@ -49,20 +52,20 @@ describe("Query Modal Component", () => {
   });
 
   test("Verify export, edit, delete buttons are not visible", () => {
-    const {queryByTestId} = render(<ManageQuery {...defaultProps} />);
+    const {queryByTestId} = render(<Router history={history}><ManageQuery {...defaultProps} /></Router>);
     expect(queryByTestId("export")).toBeNull();
     expect(queryByTestId("delete")).toBeNull();
     expect(queryByTestId("edit")).toBeNull();
   });
 
   test("Verify link column does not exist", () => {
-    const {queryByTestId} = render(<ManageQuery {...defaultProps} isSavedQueryUser={true} />);
+    const {queryByTestId} = render(<Router history={history}><ManageQuery {...defaultProps} isSavedQueryUser={true} /></Router>);
     expect(queryByTestId("link")).toBeNull();
   });
 
   test("Verify confirmation modal message for deleting a query", async () => {
     axiosMock.get["mockImplementationOnce"](jest.fn(() => Promise.resolve({status: 200, data: query})));
-    const {getByTestId, getByText} = render(<ManageQuery {...defaultProps} isSavedQueryUser={true} />);
+    const {getByTestId, getByText} = render(<Router history={history}><ManageQuery {...defaultProps} isSavedQueryUser={true} /></Router>);
 
     waitForElement(() => {
       expect(getByTestId("delete")).toBeInTheDocument();

@@ -637,6 +637,11 @@ describe("manage queries modal scenarios on detail page", () => {
     browsePage.waitForTableToLoad();
   });
 
+  after(() => {
+    //clearing all the saved queries
+    cy.deleteSavedQueries();
+  });
+
   it("verify manage queries modal visibility and removing query scenario on the detail page", () => {
     //create a query
     browsePage.selectEntity("Person");
@@ -719,5 +724,46 @@ describe("manage queries modal scenarios on detail page", () => {
     queryComponent.getDeleteQuery().first().click();
     queryComponent.getDeleteQueryYesButton().click({force: true});
     cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+  });
+
+  it("verify applying previously saved query scenario on the detail page", () => {
+    //create a query
+    browsePage.selectEntity("Person");
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveModalIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveQueryName().should("be.visible");
+    browsePage.getSaveQueryName().type("person-query");
+    browsePage.getSaveQueryButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //open record instance view for a document of a different entity
+    browsePage.selectEntity("Customer");
+    browsePage.getSelectedEntity().should("contain", "Customer");
+    cy.get("#instance").first().click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+
+    //verify the manage queries modal button is visible
+    browsePage.getManageQueriesButton().should("be.visible");
+
+    //open manage queries modal dialog and apply previosly saved query
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+    queryComponent.getQueryByName("person-query").first().click();
+    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+
+    //verify the applied query details on Browse page
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getTotalDocuments().should("not.be.equal", 0);
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").should("be.checked");
+    browsePage.getAppliedFacets("Alice").should("exist");
+    browsePage.getSelectedQuery().should("contain", "person-query");
   });
 });
