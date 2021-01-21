@@ -3,7 +3,8 @@ const environment = {
   "dataHubVersion": "5.3",
   "marklogicVersion": "10.0",
   "sessionTimeout": "300",
-  "sessionToken": "mySessionToken"
+  "sessionToken": "mySessionToken",
+  "pendoKey": "#TestKeyForPendoValidation"
 };
 
 const data = {

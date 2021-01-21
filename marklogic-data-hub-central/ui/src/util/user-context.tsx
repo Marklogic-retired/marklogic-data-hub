@@ -21,6 +21,8 @@ const defaultUserData = {
   maxSessionTime: MAX_SESSION_TIME
 };
 
+let CryptoJS = require("crypto-js");
+
 export const UserContext = React.createContext<IUserContextInterface>({
   user: defaultUserData,
   loginAuthenticated: () => {},
@@ -106,6 +108,25 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem("serviceName", session.data.serviceName);
     localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
     monitorSession();
+
+    if (session.data.pendoKey && window.usePendo && window.pendo) {
+      window.usePendo(session.data.pendoKey);
+      window.pendo.initialize({
+        excludeAllText: true,
+        excludeTitle: true
+      });
+      window.pendo.identify({
+        visitor: {
+          id: CryptoJS.SHA256(session.data.serviceName + username).toString(CryptoJS.enc.Hex),
+          authorities: authResponse.authorities || []
+        },
+        account: {
+          id: session.data.serviceName,
+          dataHubVersion: session.data.dataHubVersion,
+          marklogicVersion: session.data.marklogicVersion
+        }
+      });
+    }
 
     const authorities: string[] =  authResponse.authorities || [];
     authoritiesService.setAuthorities(authorities);

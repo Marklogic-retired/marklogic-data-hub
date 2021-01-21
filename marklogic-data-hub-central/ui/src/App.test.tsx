@@ -10,6 +10,7 @@ import tiles from "./config/tiles.config";
 import App from "./App";
 import axiosMock from "axios";
 import mocks from "./api/__mocks__/mocks.data";
+import systemInfoData from "./assets/mock-data/system-info.data";
 import UserProvider, {UserContext} from "./util/user-context";
 import {userAuthenticated} from "./assets/mock-data/user-context-mock";
 import {StompContext} from "./util/stomp";
@@ -85,4 +86,40 @@ describe("App component", () => {
     );
   });
 
+  test("Pendo token retrieved properly upon login", async () => {
+    mocks.systemInfoAPI(axiosMock);
+    // mock window object
+    Object.defineProperty(window, "pendo", {
+      value: {
+        // have initialize and identify functions to return a value, so it appears we just authenticated
+        initialize: jest.fn(() => null),
+        identify: jest.fn(() => null)
+      },
+      writable: true
+    });
+
+    Object.defineProperty(window, "usePendo", {
+      value: jest.fn(() => null),
+      writable: true
+    });
+    // App defaults to pathname "/" which renders Login page. So setting the path to /tiles when App is rendered
+    history.push("/tiles");
+    const {getByLabelText} = render(<Router history={history}>
+      <StompContext.Provider value={defaultStompContext}>
+        <AuthoritiesContext.Provider value={mockDevRolesService}>
+          <UserProvider><App/></UserProvider>
+        </AuthoritiesContext.Provider>
+      </StompContext.Provider>
+    </Router>);
+    // Defaults to overview
+    await expect(getByLabelText("overview")).toBeInTheDocument();
+
+    // check environment for pendo token upon login
+    expect(window.usePendo).toHaveBeenCalledWith(systemInfoData.environment.pendoKey);
+    expect(window.pendo.initialize).toHaveBeenCalledWith({
+      excludeAllText: true,
+      excludeTitle: true
+    });
+    expect(window.pendo.identify).toHaveBeenCalledTimes(1);
+  });
 });

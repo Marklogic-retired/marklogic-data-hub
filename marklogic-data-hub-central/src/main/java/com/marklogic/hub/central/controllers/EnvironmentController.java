@@ -86,6 +86,7 @@ public class EnvironmentController extends BaseController {
         info.dataHubVersion = versionInfo.getHubVersion();
         info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
+        info.pendoKey = "dummy-key-f7d836d7-2afa-40a6-44e4-f32f58cb35a";
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         Object hubCentralSessionToken = session.getAttribute("hubCentralSessionToken");
         if (hubCentralSessionToken != null) {
@@ -101,6 +102,7 @@ public class EnvironmentController extends BaseController {
         public String host;
         public String sessionTimeout;
         public String sessionToken;
+        public String pendoKey;
     }
 }
 
