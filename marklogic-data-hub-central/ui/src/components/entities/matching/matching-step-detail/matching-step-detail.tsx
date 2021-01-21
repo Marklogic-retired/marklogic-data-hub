@@ -303,19 +303,19 @@ const MatchingStepDetail: React.FC = () => {
 
           {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
             <Row gutter={[24, 24]} type="flex">
-              {matchingActivity?.thresholdActions.map((combinationsObject, i, combArr) => {
-                return <Col span={8} >
+              {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
+                return <Col span={8} key={`${combinationsObject["name"]}-${i}`}>
                   <div className={styles.matchCombinationsColsContainer}>
                     <Card bordered={false} className={styles.matchCombinationsCardStyle}>
                       <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
                         <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
 
-                        {combinationsObject.minimumMatchContributions.map(minMatchArray => {
-                          return <div>{minMatchArray.map((obj, index, arr) => {
+                        {combinationsObject.minimumMatchContributions?.map((minMatchArray, index) => {
+                          return <div key={`${minMatchArray[0]["rulsetName"]}-${index}`}>{minMatchArray.map((obj, index, arr) => {
                             if (arr.length - 1 === index) {
-                              return <span aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
+                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
                             } else {
-                              return <span aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>;
+                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>;
                             }
                           })}</div>;
 
