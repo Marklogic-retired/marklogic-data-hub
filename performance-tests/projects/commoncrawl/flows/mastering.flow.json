@@ -1,0 +1,13 @@
+{
+  "name" : "mastering",
+  "batchSize" : 100,
+  "threadCount" : 4,
+  "steps" : {
+    "1" : {
+      "stepId" : "matching-matching"
+    },
+    "2" : {
+      "stepId" : "merging-merging"
+    }
+  }
+}

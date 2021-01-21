@@ -1,0 +1,98 @@
+buildscript {
+	repositories {
+		mavenLocal()
+		maven { url "https://plugins.gradle.org/m2/" }
+		jcenter()
+	}
+	dependencies {
+		if (project.hasProperty("testing")) {
+			classpath "com.marklogic:ml-data-hub:5.4-SNAPSHOT"
+
+		} else {
+			classpath "com.marklogic:ml-data-hub:5.3.0"
+		}
+	}
+}
+plugins {
+	id "net.saliman.properties" version "1.5.1"
+}
+
+apply plugin: "com.marklogic.ml-data-hub"
+
+configurations {
+	mlcp
+}
+
+
+task clearStagingDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlStagingDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+
+task clearFinalDatabase(type: com.marklogic.gradle.task.databases.ClearDatabaseTask) {
+  doFirst {
+    project.ext.database = project.properties.mlFinalDbName
+    project.ext.confirm = "true"
+  }
+  outputs.upToDateWhen { false }
+}
+
+repositories {
+    jcenter()
+    maven { url "http://developer.marklogic.com/maven2/" }
+}
+dependencies {
+    mlcp "com.marklogic:mlcp:10.0.5"
+    mlcp files("lib")
+}
+
+task loadWebViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load Commoncrawl web documents via MLCP"
+    classpath = configurations.mlcp
+    port = 8010
+    output_collections = "WebPage,load,input"
+    input_file_path = "/project/archive1/common/DHS/commoncrawl/0"
+    input_file_type = "delimited_json"
+    input_compressed = "true"
+    input_compression_codec = "gzip"
+    output_uri_prefix = "/webpage"
+    output_uri_suffix = ".json"
+    output_permissions = "rest-reader,read,rest-writer,update"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+    transform_param = "flow-name=default-ingestion"
+}
+
+task loadIpViaMlcp(type: com.marklogic.gradle.task.MlcpTask) {
+    description = "Load IPLocation documents via MLCP"
+    classpath = configurations.mlcp
+    port = 8010
+    output_collections = "IPLocation,load,input"
+    input_file_path = "/project/archive1/common/DHS/iplocations"
+    input_file_type = "delimited_text"
+    input_compressed = "true"
+    input_compression_codec = "gzip"
+    output_uri_prefix = "/iplocation/"
+    output_uri_suffix = ".json"
+    output_permissions = "rest-reader,read,rest-writer,update"
+    transform_module = "/data-hub/5/transforms/mlcp-flow-transform.sjs"
+    transform_namespace = "http://marklogic.com/data-hub/mlcp-flow-transform"
+    transform_param = "flow-name=default-ingestion"
+}
+
+task runMapping (type: com.marklogic.gradle.task.RunFlowTask) {
+    description = "Run mapping step"
+    flowName = "mapping"
+    showOptions = "true"                    
+}
+
+task runMastering (type: com.marklogic.gradle.task.RunFlowTask) {
+    description = "Run mastering steps"
+    flowName = "mastering"
+    showOptions = "true"
+    steps = ["1", "2"]
+}
+

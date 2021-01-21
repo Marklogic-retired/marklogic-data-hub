@@ -1,0 +1,46 @@
+{
+  "info" : {
+    "title" : "Location",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/cc/"
+  },
+  "definitions" : {
+    "Location" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "ip_from" : {
+          "datatype" : "unsignedLong",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "ip_to" : {
+          "datatype" : "unsignedLong",
+          "facetable" : true
+        },
+        "country_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "region_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "city" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "latitude" : {
+          "datatype" : "float"
+        },
+        "longitude" : {
+          "datatype" : "float"
+        }
+      }
+    }
+  }
+}

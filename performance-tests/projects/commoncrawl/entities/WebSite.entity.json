@@ -1,0 +1,136 @@
+{
+  "info" : {
+    "title" : "WebSite",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/cc/"
+  },
+  "definitions" : {
+    "WebSite" : {
+      "required" : [ "uri", "id", "type" ],
+      "pii" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "uri" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "anyURI"
+          }
+        },
+        "id" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "type" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "server" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "location" : {
+          "$ref" : "#/definitions/Location"
+        },
+        "host" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "metadata" : {
+          "$ref" : "#/definitions/Metadata"
+        },
+        "twitter" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "fb" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "og" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        },
+        "references" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "anyURI",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          },
+          "facetable" : true
+        },
+        "timestamp" : {
+          "datatype" : "dateTime",
+          "facetable" : true
+        },
+        "google" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint",
+          "facetable" : true
+        }
+      }
+    },
+    "Metadata" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "fetchTimeMs" : {
+          "datatype" : "long"
+        },
+        "charset_detected" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "languages" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        }
+      }
+    },
+    "Location" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "elementRangeIndex" : [ "ip_from", "ip_to", "country_name", "region_name", "city" ],
+      "rangeIndex" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "ip_from" : {
+          "datatype" : "unsignedLong",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "ip_to" : {
+          "datatype" : "unsignedLong"
+        },
+        "country_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "region_name" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "city" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "latitude" : {
+          "datatype" : "float"
+        },
+        "longitude" : {
+          "datatype" : "float"
+        }
+      }
+    }
+  }
+}

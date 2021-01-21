@@ -1,0 +1,7 @@
+{ 
+ "monitoring":{
+  "general": {
+   "enabled": true
+   },
+  "custom": true}
+}
