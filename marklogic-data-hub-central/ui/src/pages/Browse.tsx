@@ -165,7 +165,20 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
-    if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
+    if (location.state && location.state.hasOwnProperty("savedQuery")) {
+      let savedQuery = location.state["savedQuery"];
+      let options: QueryOptions = {
+        searchText: savedQuery["query"]["searchText"],
+        entityTypeIds: savedQuery["query"]["entityTypeIds"],
+        selectedFacets: savedQuery["query"]["selectedFacets"],
+        selectedQuery: savedQuery["name"],
+        propertiesToDisplay: savedQuery.propertiesToDisplay,
+        zeroState: false,
+        sortOrder: savedQuery.sortOrder,
+        database: searchOptions.database,
+      };
+      applySaveQuery(options);
+    } else if (location.state && location.state.hasOwnProperty("zeroState") && !location.state["zeroState"]) {
       setPageWithEntity(location.state["entity"],
         location.state["pageNumber"],
         location.state["start"],

@@ -13,6 +13,7 @@ import {getSavedQueryPreview} from "../../../../api/queries";
 import ExportQueryModal from "../../../query-export/query-export-modal/query-export-modal";
 import {getExportPreview} from "../../../query-export/export-preview/export-preview";
 import {QueryOptions} from "../../../../types/query-types";
+import {useHistory, useLocation} from "react-router-dom";
 
 const QueryModal = (props) => {
   const {
@@ -35,6 +36,8 @@ const QueryModal = (props) => {
   const [queries, setQueries] = useState<any>([]);
   const [currentQueryDescription, setCurrentQueryDescription] = useState("");
   const [currentQueryName, setCurrentQueryName] = useState("");
+  const history: any = useHistory();
+  const location: any = useLocation();
 
   useEffect(() => {
     getQueries();
@@ -111,23 +114,35 @@ const QueryModal = (props) => {
   };
 
   const onApply = (e) => {
-
-    queries && queries.length > 0 && queries.forEach(query => {
-      if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
-        let options: QueryOptions = {
-          searchText: query["savedQuery"]["query"]["searchText"],
-          entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
-          selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
-          selectedQuery: query["savedQuery"]["name"],
-          propertiesToDisplay: query.savedQuery.propertiesToDisplay,
-          zeroState: false,
-          sortOrder: query.savedQuery.sortOrder,
-          database: searchOptions.database,
-        };
-        applySaveQuery(options);
-        setCurrentQueryDescription(query["savedQuery"]["description"]);
-      }
-    });
+    if (location && location.hasOwnProperty("pathname") && location.pathname === "/tiles/explore/detail") {
+      queries && queries.length > 0 && queries.forEach(query => {
+        if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
+          history.push({
+            pathname: "/tiles/explore",
+            state: {
+              savedQuery: query["savedQuery"]
+            }
+          });
+        }
+      });
+    } else {
+      queries && queries.length > 0 && queries.forEach(query => {
+        if (e.currentTarget.dataset.id === query["savedQuery"]["name"]) {
+          let options: QueryOptions = {
+            searchText: query["savedQuery"]["query"]["searchText"],
+            entityTypeIds: query["savedQuery"]["query"]["entityTypeIds"],
+            selectedFacets: query["savedQuery"]["query"]["selectedFacets"],
+            selectedQuery: query["savedQuery"]["name"],
+            propertiesToDisplay: query.savedQuery.propertiesToDisplay,
+            zeroState: false,
+            sortOrder: query.savedQuery.sortOrder,
+            database: searchOptions.database,
+          };
+          applySaveQuery(options);
+          setCurrentQueryDescription(query["savedQuery"]["description"]);
+        }
+      });
+    }
     props.setManageQueryModal(false);
   };
 
@@ -157,7 +172,7 @@ const QueryModal = (props) => {
     setExportModalVisibility(true);
   };
 
-  const columns : any = [
+  const columns: any = [
     {
       title: "Name",
       dataIndex: "name",
