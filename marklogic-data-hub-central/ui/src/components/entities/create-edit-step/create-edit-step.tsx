@@ -132,11 +132,11 @@ const CreateEditStep: React.FC<Props>  = (props) => {
     props.onCancel();
   };
 
-  // On change of any form field, update the changed flag for parent
-  useEffect(() => {
+  /* sends payload to steps.tsx */
+  const sendPayload = () => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [stepName, description, collections, selectedSource, srcQuery, timestamp]);
+  };
 
   const hasFormChanged = () => {
     if (!isStepNameTouched
@@ -414,6 +414,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           /></MLTooltip>:<Input
             id="name"
             placeholder="Enter name"
@@ -421,6 +422,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           />}&nbsp;&nbsp;
           { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -441,6 +443,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;
           { props.stepType === StepType.Matching ? <MLTooltip title={NewMatchTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -487,6 +490,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onSearch={handleSearch}
             onFocus= {handleFocus}
             onChange={handleTypeaheadChange}
+            onBlur={sendPayload}
           >
             {/* {collectionsList} */}
           </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}</span></div> : <span><TextArea
@@ -496,6 +500,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           ></TextArea></span>}
         </Form.Item>
         {props.stepType === StepType.Merging ?
@@ -511,6 +516,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
               onChange={handleChange}
               disabled={props.canReadOnly && !props.canReadWrite}
               className={styles.input}
+              onBlur={sendPayload}
             />&nbsp;&nbsp;
             <MLTooltip title={NewMergeTooltips.timestampPath} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -523,7 +529,7 @@ const CreateEditStep: React.FC<Props>  = (props) => {
               &nbsp;&nbsp;
             {!props.canReadWrite?<MLTooltip title={NewMergeTooltips.missingPermission} placement={"bottomRight"}><span className={styles.disabledCursor}>
               <MLButton className={styles.disabledSaveButton} type="primary" htmlType="submit" disabled={true} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton></span></MLTooltip>
-              :<MLButton type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit}>Save</MLButton>}
+              :<MLButton type="primary" htmlType="submit" disabled={false} data-testid={`${props.stepType}-dialog-save`} onClick={handleSubmit} onFocus={sendPayload}>Save</MLButton>}
           </div>
         </Form.Item>
       </Form>

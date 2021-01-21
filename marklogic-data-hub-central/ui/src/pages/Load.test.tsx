@@ -28,7 +28,7 @@ describe("Load component", () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readIngestion"]);
 
-    const {debug, baseElement, getByText, getByPlaceholderText, getByLabelText, getByTestId, queryByTestId, queryByTitle} = render(
+    const {baseElement, getByText, getByPlaceholderText, getByLabelText, getByTestId, queryByTestId, queryByTitle} = render(
       <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><Load/></AuthoritiesContext.Provider></MemoryRouter>
     );
 
@@ -63,7 +63,7 @@ describe("Load component", () => {
     });
     expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
-    debug();
+
     expect(await(waitForElement(() => getByText("Target Database")))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
     fireEvent.click(getByText("Processors"));
@@ -154,8 +154,10 @@ describe("Load component", () => {
     expect(queryAllByText("Invalid JSON").length === 2);
     fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 1);
+    getByLabelText("customHook-textarea").focus();
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 0);
+    getByLabelText("customHook-textarea").blur();
 
     expect(getByTestId("testLoad-save-settings")).not.toBeDisabled();
     fireEvent.click(getByTestId("testLoad-cancel-settings"));

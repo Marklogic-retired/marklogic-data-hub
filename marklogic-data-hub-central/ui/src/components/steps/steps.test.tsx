@@ -44,9 +44,10 @@ describe("Steps settings component", () => {
     // Other Advanced settings details tested in advanced-settings.test.tsx
 
     // Change form content
+    getByPlaceholderText("Please enter target permissions").focus();
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-common,read"}});
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read");
-    fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
+    getByPlaceholderText("Please enter target permissions").blur();
 
     // Switch to Basic tab and cancel
     await wait(() => {
@@ -118,9 +119,10 @@ describe("Steps settings component", () => {
     wait(() => expect(screen.getByText(ErrorTooltips.disabledTab)).toBeInTheDocument());
 
     // Fix error, verify other tab enabled
+    getByPlaceholderText("Please enter target permissions").focus();
     fireEvent.change(getByPlaceholderText("Please enter target permissions"), {target: {value: "data-hub-common,read"}});
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("data-hub-common,read");
-    fireEvent.blur(getByPlaceholderText("Please enter target permissions"));
+    getByPlaceholderText("Please enter target permissions").blur();
     expect(getByTestId("validationError")).toHaveTextContent("");
 
     expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-disabled");
@@ -190,8 +192,10 @@ describe("Steps settings component", () => {
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
     expect(nameField).toBeInTheDocument();
+    nameField.focus();
     fireEvent.change(nameField, {target: {value: testName}});
     expect(nameField).toHaveValue(testName);
+    nameField.blur();
 
     // Switch to enabled Advanced tab, check default collections
     await wait(() => {
@@ -237,8 +241,10 @@ describe("Steps settings component", () => {
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
     expect(nameField).toBeInTheDocument();
+    nameField.focus();
     fireEvent.change(nameField, {target: {value: testName}});
     expect(nameField).toHaveValue(testName);
+    nameField.blur();
 
     // Enter required source collection
     const collInput = document.querySelector(("#collList .ant-input"))!;
@@ -290,8 +296,10 @@ describe("Steps settings component", () => {
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
     expect(nameField).toBeInTheDocument();
+    nameField.focus();
     fireEvent.change(nameField, {target: {value: testName}});
     expect(nameField).toHaveValue(testName);
+    nameField.blur();
 
     // Enter required source collection
     const collInput = document.querySelector(("#collList .ant-input"))!;
@@ -337,8 +345,10 @@ describe("Steps settings component", () => {
     // Enter required name
     const nameField = getByPlaceholderText("Enter name");
     expect(nameField).toBeInTheDocument();
+    nameField.focus();
     fireEvent.change(nameField, {target: {value: testName}});
     expect(nameField).toHaveValue(testName);
+    nameField.blur();
 
     // Enter required source collection
     const collInput = document.querySelector(("#collList .ant-input"))!;
