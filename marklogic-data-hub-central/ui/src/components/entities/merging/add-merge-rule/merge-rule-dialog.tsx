@@ -249,8 +249,8 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const hasPropertySpecificFormValuesChanged = () => {
     if (!dropdownOptionTouched
-        && !maxSourcesRuleInputTouched
-        && !maxValueRuleInputTouched
+        && (!maxSourcesRuleInputTouched || maxSourcesRuleInput.length === 0)
+        && !maxValueRuleInputTouched || maxValueRuleInput.length === 0
     ) {
       return false;
     } else {
@@ -344,6 +344,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       } else {
         setMaxValueRuleInputTouched(true);
         setMaxValueRuleInput(event.target.value);
+        setRadioValuesOptionClicked(2);
       }
     } else if (event.target.id === "maxSourcesRuleInput") {
       if (event.target.value === " ") {
@@ -351,6 +352,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
       } else {
         setMaxSourcesRuleInputTouched(true);
         setMaxSourcesRuleInput(event.target.value);
+        setRadioSourcesOptionClicked(2);
       }
     } else if (event.target.name === "maxValues") {
       setRadioValuesOptionClicked(event.target.value);
@@ -637,7 +639,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               >
                 <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange} name="maxValues">
                   <Radio value={1} > All</Radio>
-                  <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} className={styles.maxInput} ></Input></Radio>
+                  <Radio value={2} ><Input id="maxValuesRuleInput" value={maxValueRuleInput} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange} className={styles.maxInput} ></Input></Radio>
                 </Radio.Group>
                 <MLTooltip title={MergeRuleTooltips.maxValues}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -650,7 +652,7 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
               >
                 <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange} name="maxSources">
                   <Radio value={1} > All</Radio>
-                  <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} className={styles.maxInput}></Input></Radio>
+                  <Radio value={2} ><Input id="maxSourcesRuleInput"  value={maxSourcesRuleInput} onChange={handleChange} placeholder={"Enter max sources"} onClick={handleChange} className={styles.maxInput}></Input></Radio>
                 </Radio.Group>
                 <MLTooltip title={MergeRuleTooltips.maxSources}>
                   <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
