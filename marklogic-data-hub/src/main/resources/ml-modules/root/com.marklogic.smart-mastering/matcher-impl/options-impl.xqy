@@ -147,7 +147,11 @@ declare function opt-impl:save-options(
 (: Convert JSON match options to XML :)
 declare function opt-impl:options-from-json($options-json)
 {
-  let $options-root := $options-json/options
+  let $options-root :=
+    if (fn:exists($options-json/options)) then
+      $options-json/options
+    else
+      $options-json
   return
     element matcher:options {
       if (fn:exists($options-root/targetEntity)) then
@@ -470,7 +474,9 @@ declare function opt-impl:compile-match-options(
                   $custom-algorithm
               return
                 if (fn:exists($algorithm)) then
-                  algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
+                  let $converted-match-rule := opt-impl:convert-match-rule-for-custom-module($match-rule, $match-options, $custom-algorithm)
+                  let $converted-match-options := opt-impl:convert-options-for-custom-module($match-options, $custom-algorithm)
+                  return algorithms:execute-algorithm($algorithm, ?, $converted-match-rule, $converted-match-options)
                 else
                   util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
             else if ($type eq "reduce") then
@@ -576,6 +582,40 @@ declare function opt-impl:compile-match-options(
         map:put($_cached-compiled-match-options, $cache-id, $compiled-match-options)
       )
     )
+};
+
+declare function opt-impl:convert-match-rule-for-custom-module($match-rule, $match-options, $custom-algorithm)
+{
+  if (fn:empty($custom-algorithm)) then
+    $match-rule
+  else
+    let $module := xdmp:function-module($custom-algorithm)
+    let $is-xquery := fn:ends-with($module, ".xqy")
+    let $is-custom-algorithm := fn:not(fn:starts-with($module, "/com.marklogic."))
+    let $is-options-json := fn:not($match-options instance of element())
+    let $is-hc-unconverted-json := $is-options-json and fn:empty($match-options/matchRulesets)
+    return
+      if ($is-xquery and $is-custom-algorithm and $is-options-json and $is-hc-unconverted-json) then
+        json:transform-from-json(object-node { "expand": $match-rule }, $opt-impl:options-json-config)
+      else
+        $match-rule
+};
+
+declare function opt-impl:convert-options-for-custom-module($match-options, $custom-algorithm)
+{
+  if (fn:empty($custom-algorithm)) then
+    $match-options
+  else
+    let $module := xdmp:function-module($custom-algorithm)
+    let $is-xquery := fn:ends-with($module, ".xqy")
+    let $is-custom-algorithm := fn:not(fn:starts-with($module, "/com.marklogic."))
+    let $is-options-json := fn:not($match-options instance of element())
+    let $is-hc-unconverted-json := $is-options-json and fn:empty($match-options/matchRulesets)
+    return
+      if ($is-xquery and $is-custom-algorithm and $is-options-json and $is-hc-unconverted-json) then
+        opt-impl:options-from-json($match-options)
+      else
+        $match-options
 };
 
 declare function opt-impl:full-property-name-from-rule($match-rule as node(), $is-complex-rule as xs:boolean) {
