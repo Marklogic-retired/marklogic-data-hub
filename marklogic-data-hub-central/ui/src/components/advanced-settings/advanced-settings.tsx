@@ -677,31 +677,35 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             </MLTooltip>
           </div>
         </Form.Item>
-        { usesHeaders ? <>
-          <div className={styles.textareaTooltip}>
-            <MLTooltip title={tooltips.headers} placement={"right"}>
-              <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
-            </MLTooltip>
-          </div>
-          <Form.Item
-            label={<span>Header Content</span>}
-            labelAlign="left"
-            className={styles.formItem}
-          >
-            <TextArea
-              id="headers"
-              placeholder="Please enter header content"
-              value={headers}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={!canReadWrite}
-              className={styles.textarea}
-              rows={6}
-              aria-label="headers-textarea"
-              style={!headersValid ? {border: "solid 1px #C00"} : {}}
-            />
-            { !headersValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
-          </Form.Item></> : null }
+        { usesHeaders ?
+          <>
+            <Form.Item
+              label={<span>Header Content</span>}
+              labelAlign="left"
+              className={styles.formItem}
+            >
+              <TextArea
+                id="headers"
+                placeholder="Please enter header content"
+                value={headers}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={!canReadWrite}
+                className={styles.textarea}
+                rows={6}
+                aria-label="headers-textarea"
+                style={!headersValid ? {border: "solid 1px #C00"} : {}}
+              />
+              { !headersValid ? <div className={styles.invalid}>{invalidJSONMessage}</div> : null }
+              <div className={styles.textareaTooltip}>
+                <MLTooltip title={tooltips.headers} placement={"right"}>
+                  <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
+                </MLTooltip>
+              </div>
+            </Form.Item>
+          </>
+          : null
+        }
         <Form.Item
           label={<span>
             <Icon
