@@ -106,7 +106,13 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [mapName, description, collections, selectedSource, srcQuery]);
+  }, [mapName, description]);
+
+  useEffect(() => {
+    props.setHasChanged(hasFormChanged());
+    props.setPayload(getPayload());
+    propagateSrcValidity();
+  }, [selectedSource, collections, srcQuery]);
 
   const hasFormChanged = () => {
     if (!isMapNameTouched
@@ -371,23 +377,30 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     }
   };
 
-  const isSourceQueryValid = () => {
+  const propagateSrcValidity = () => {
     if ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection")) {
       // Touched
       if (props.currentTab === props.tabKey) {
         props.setIsValid(true);
       }
-      return true;
     } else if ((!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
       // Untouched
       if (props.currentTab === props.tabKey) {
         props.setIsValid(false);
       }
-      return true;
     } else {
       if (props.currentTab === props.tabKey) {
         props.setIsValid(false);
       }
+    }
+  };
+
+  const isSourceQueryValid = () => {
+    if ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection")) {
+      return true;
+    } else if ((!isSelectedSourceTouched && !isCollectionsTouched && !isSrcQueryTouched)) {
+      return true;
+    } else {
       return false;
     }
   };
