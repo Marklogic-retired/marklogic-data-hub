@@ -155,7 +155,7 @@ describe("Create Edit Step Dialog component", () => {
         fireEvent.change(collInput, {target: {value: "ada"}});
       }
     });
-    let url = "/api/entitySearch/facet-values?database=staging";
+    let url = "/api/entitySearch/facet-values?database=final";
     let payload = {
       "referenceType": "collection",
       "entityTypeId": " ",
@@ -199,7 +199,7 @@ describe("Create Edit Step Dialog component", () => {
         fireEvent.change(collInput, {target: {value: "ada"}});
       }
     });
-    let url = "/api/entitySearch/facet-values?database=staging";
+    let url = "/api/entitySearch/facet-values?database=final";
     let payload = {
       "referenceType": "collection",
       "entityTypeId": " ",
