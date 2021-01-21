@@ -102,17 +102,17 @@ const CreateEditMapping: React.FC<Props> = (props) => {
     props.onCancel();
   };
 
-  // On change of any form field, update the changed flag and payload for parent
-  useEffect(() => {
+  /* sends payload to steps.tsx */
+  const sendPayload = () => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [mapName, description]);
+  };
 
-  useEffect(() => {
+  const sendPayloadSrcValidity = () => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
     propagateSrcValidity();
-  }, [selectedSource, collections, srcQuery]);
+  };
 
   const hasFormChanged = () => {
     if (!isMapNameTouched
@@ -230,9 +230,11 @@ const CreateEditMapping: React.FC<Props> = (props) => {
       if (data.length > 0) {
         if (mapName) {
           setIsValid(true);
+          props.setIsValid(true);
         }
       } else {
         setIsValid(false);
+        props.setIsValid(false);
       }
     }
   };
@@ -299,29 +301,6 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         }
       }
     }
-    if (event.target.id === "collList") {
-      if (event.target.value === " ") {
-        setCollectionsTouched(false);
-      } else {
-        setCollectionsTouched(true);
-        setCollections(event.target.value);
-        if (props.stepData && props.stepData.collection) {
-          if (props.stepData.collection === event.target.value) {
-
-            setCollectionsTouched(false);
-          }
-        }
-        if (event.target.value.length > 0) {
-          if (mapName) {
-            setIsValid(true);
-            props.setIsValid(true);
-          }
-        } else {
-          setIsValid(false);
-          props.setIsValid(false);
-        }
-      }
-    }
   };
   /* // Handling multiple collections in a select tags list - Deprecated
   const handleCollList = (value) => {
@@ -348,6 +327,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   */
 
   const handleSelectedSource = (event) => {
+    sendPayloadSrcValidity();
     if (event.target.value === " ") {
       setSelectedSourceTouched(false);
     } else {
@@ -439,6 +419,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           /></MLTooltip>:<Input
             id="name"
             placeholder="Enter name"
@@ -446,6 +427,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           />}&nbsp;&nbsp;
           <MLTooltip title={NewMapTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -462,6 +444,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;
           <MLTooltip title={NewMapTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -505,6 +488,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onSearch={handleSearch}
             onFocus= {handleFocus}
             onChange={handleTypeaheadChange}
+            onBlur={sendPayloadSrcValidity}
           >
             {/* {collectionsList} */}
           </AutoComplete>&nbsp;&nbsp;{props.canReadWrite ? <Icon className={styles.searchIcon} type="search" theme="outlined"/> : ""}
@@ -515,6 +499,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={!props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayloadSrcValidity}
           ></TextArea></span>}
         </Form.Item>
 
@@ -535,6 +520,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
               disabled={false}
               data-testid="mapping-dialog-save"
               onClick={handleSubmit}
+              onFocus={sendPayload}
             >Save</MLButton>}
           </div>
         </Form.Item>

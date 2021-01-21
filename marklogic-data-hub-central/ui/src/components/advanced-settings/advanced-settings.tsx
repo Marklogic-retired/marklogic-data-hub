@@ -211,11 +211,17 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     props.onCancel();
   };
 
+  /* sends payload to steps.tsx */
+  const sendPayload = () => {
+    props.setHasChanged(hasFormChanged());
+    props.setPayload(getPayload());
+  };
+
   // On change of any form field (or on init), update the changed flag for parent
   useEffect(() => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [batchSize, sourceDatabase, targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, targetPermissions, targetDatabase, validateEntity, provGranularity, headers, processors, customHook, additionalSettings, targetCollections, targetFormat, targetPermissions, isCustomIngestion, stepDefinitionName, defaultCollections]);
+  }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections]);
 
   // On change of default collections in parent, update default collections if not empty
   useEffect(() => {
@@ -386,6 +392,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     if (event.target.id === "targetPermissions") {
       setTargetPermissionsValid(isPermissionsValid());
     }
+    sendPayload();
   };
 
   const handleSourceDatabase = (value) => {
@@ -489,6 +496,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="sourceDatabase-select"
+            onBlur={sendPayload}
           >
             {sourceDbOptions}
           </Select>
@@ -511,6 +519,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="targetDatabase-select"
+            onBlur={sendPayload}
           >
             {targetDbOptions}
           </Select>
@@ -551,6 +560,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               onChange={handleAddColl}
               className={styles.inputWithTooltip}
               aria-label="additionalColl-select"
+              onBlur={sendPayload}
             >
               {additionalCollections.map((col) => {
                 return <Option value={col} key={col} label={col}>{col}</Option>;
@@ -605,6 +615,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="targetFormat-select"
+            onBlur={sendPayload}
           >
             {targetFormatOptions}
           </Select>
@@ -627,6 +638,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="provGranularity-select"
+            onBlur={sendPayload}
           >
             {provGranOpts}
           </Select>
@@ -649,6 +661,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             disabled={!canReadWrite}
             className={styles.inputWithTooltip}
             aria-label="validateEntity-select"
+            onBlur={sendPayload}
           >
             {valEntityOpts}
           </Select>
@@ -670,6 +683,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={!canReadWrite}
             className={styles.inputBatchSize}
+            onBlur={sendPayload}
           />
           <div className={styles.inputTooltip}>
             <MLTooltip title={tooltips.batchSize} placement={"right"}>
@@ -787,6 +801,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             className={styles.textarea}
             rows={6}
             aria-label="options-textarea"
+            onBlur={sendPayload}
           />
           <div className={styles.selectTooltip}>
             <MLTooltip title={props.tooltipsData.additionalSettings} placement={"right"}>
@@ -802,7 +817,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
               <span className={styles.disabledCursor}>
                 <MLButton id={"saveButton"} className={styles.saveButton} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={true}>Save</MLButton>
               </span>
-            </MLTooltip>:<MLButton id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false}>Save</MLButton>}
+            </MLTooltip>:<MLButton id={"saveButton"} data-testid={`${props.stepData.name}-save-settings`} type="primary" htmlType="submit" onClick={handleSubmit} disabled={false} onFocus={sendPayload}>Save</MLButton>}
           </div>
         </Form.Item>
       </Form>

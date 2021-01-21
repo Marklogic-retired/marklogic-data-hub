@@ -132,11 +132,11 @@ const CreateEditLoad: React.FC<Props> = (props) => {
     props.onCancel();
   };
 
-  // On change of any form field, update the changed flag and payload for parent
-  useEffect(() => {
+  /* sends payload to steps.tsx */
+  const sendPayload = () => {
     props.setHasChanged(hasFormChanged());
     props.setPayload(getPayload());
-  }, [stepName, description, srcFormat, tgtFormat, sourceName, sourceType, outputUriPrefix, fieldSeparator, otherSeparator]);
+  };
 
   const hasFormChanged = () => {
     if (!isStepNameTouched
@@ -431,6 +431,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           /></MLTooltip>:<Input
             id="name"
             placeholder="Enter name"
@@ -438,6 +439,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={tobeDisabled}
             className={styles.input}
+            onBlur={sendPayload}
           />}
         &nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.name} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -453,6 +455,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.description} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
@@ -469,6 +472,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleSrcFormat}
             disabled={props.canReadOnly && !props.canReadWrite}
             style={{width: "95%"}}
+            onBlur={sendPayload}
           >
             {soptions}
           </Select>
@@ -488,6 +492,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleFieldSeparator}
             style={{width: 120}}
             disabled={props.canReadOnly && !props.canReadWrite}
+            onBlur={sendPayload}
           >
             {fsoptions}
           </Select></span>
@@ -498,6 +503,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleOtherSeparator}
             style={{width: 75}}
             disabled={props.canReadOnly && !props.canReadWrite}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip></span> : <span>&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.fieldSeparator} placement={"right"}>
@@ -513,7 +519,8 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             value={tgtFormat}
             onChange={handleTgtFormat}
             disabled={props.canReadOnly && !props.canReadWrite}
-            style={{width: "95%"}}>
+            style={{width: "95%"}}
+            onBlur={sendPayload}>
             {toptions}
           </Select>&nbsp;&nbsp;
           <MLTooltip title={NewLoadTooltips.targetFormat} placement={"right"}>
@@ -530,6 +537,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceName} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
@@ -544,6 +552,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleChange}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;<MLTooltip title={NewLoadTooltips.sourceType} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
           </MLTooltip>
@@ -558,6 +567,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
             onChange={handleOutputUriPrefix}
             disabled={props.canReadOnly && !props.canReadWrite}
             className={styles.input}
+            onBlur={sendPayload}
           />&nbsp;&nbsp;
           <MLTooltip title={NewLoadTooltips.outputURIPrefix} placement={"right"}>
             <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
@@ -582,6 +592,7 @@ const CreateEditLoad: React.FC<Props> = (props) => {
                 htmlType="submit"
                 disabled={false}
                 onClick={handleSubmit}
+                onFocus={sendPayload}
               >Save</MLButton>}
           </div>
         </Form.Item>
