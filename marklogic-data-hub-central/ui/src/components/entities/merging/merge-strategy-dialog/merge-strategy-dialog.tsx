@@ -63,10 +63,12 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
     if (event.target.id === "maxSourcesStrategyInput") {
       setMaxSources(event.target.value);
       setMaxSourcesTouched(true);
+      setRadioSourcesOptionClicked(2);
     }
     if (event.target.id === "maxValuesStrategyInput") {
       setMaxValues(event.target.value);
       setMaxValuesTouched(true);
+      setRadioValuesOptionClicked(2);
     }
     if (event.target.name === "maxSources") {
       setRadioSourcesOptionClicked(event.target.value);
@@ -148,8 +150,8 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
   const hasFormChanged = () => {
     if (!dropdownOptionTouched
         && !strategyNameTouched
-        && !maxValuesTouched
-        && !maxSourcesTouched
+        && (!maxValuesTouched || maxValues.length === 0)
+        && (!maxSourcesTouched || maxSources.length === 0)
     ) {
       return false;
     } else {
@@ -254,14 +256,6 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
             };
             priorityOrderStrategyOptions.push(priorityOrderLengthObject);
           }
-          // let timeStampObject = {
-          //   props: [{
-          //     prop: "Timestamp",
-          //     type: "",
-          //   }],
-          //   value: 0,
-          // };
-          //priorityOrderStrategyOptions.push(timeStampObject);
           setPriorityOrderOptions(priorityOrderStrategyOptions);
           setIsCustomStrategy(false);
         } else {
@@ -328,7 +322,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         >
           <Radio.Group  value={radioValuesOptionClicked} onChange={handleChange}  name={"maxValues"}>
             <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} ></Input>
+            <Radio value={2} ><Input id="maxValuesStrategyInput" value={maxValues} placeholder={"Enter max values"} onChange={handleChange} onClick={handleChange}></Input>
               <MLTooltip title={MergeRuleTooltips.maxValues}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
@@ -342,7 +336,7 @@ const MergeStrategyDialog: React.FC<Props> = (props) => {
         >
           <Radio.Group  value={radioSourcesOptionClicked} onChange={handleChange}  name={"maxSources"}>
             <Radio value={1} > All</Radio>
-            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} placeholder={"Enter max sources"}></Input>
+            <Radio value={2} ><Input id="maxSourcesStrategyInput" value={maxSources} onChange={handleChange} onClick={handleChange} placeholder={"Enter max sources"}></Input>
               <MLTooltip title={MergeRuleTooltips.maxSources}>
                 <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
               </MLTooltip>
