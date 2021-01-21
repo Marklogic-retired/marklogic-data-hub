@@ -4,6 +4,7 @@ import {createMemoryHistory} from "history";
 import userEvent from "@testing-library/user-event";
 import {render, fireEvent} from "@testing-library/react";
 import Overview from "./Overview";
+import overviewConfig from "../config/overview.config";
 
 describe("Overview component", () => {
 
@@ -43,7 +44,6 @@ describe("Overview component", () => {
     });
     // NO cards have permissions warning
     expect(queryAllByText("*additional permissions required")).toHaveLength(0);
-
   });
 
   it("Verify disabled cards are not clickable and have appropriate styling/content", async () => {
@@ -144,6 +144,39 @@ describe("Overview component", () => {
       });
     });
 
+  });
+
+  it("Verify Documentation and Video Tutorial links", async () => {
+
+    const history = createMemoryHistory();
+    history.push("/tiles"); // initial state
+
+    let enabled = ["load", "model", "curate", "run", "explore"];
+    const {getAllByText} = render(<Router history={history}><Overview enabled={enabled}/></Router>);
+
+    // Mock method for opening links
+    const mockedWindowOpen = jest.fn();
+    const originalOpen = window.open;
+    window.open = mockedWindowOpen;
+
+    // Check Documentation links
+    const documentationLinks = getAllByText("Documentation");
+    expect(documentationLinks.length === enabled.length); // All cards should have Documentation links
+    documentationLinks.forEach((docLink, i) => {
+      fireEvent.click(docLink);
+      expect(mockedWindowOpen).toBeCalledWith(overviewConfig.documentationLinks[enabled[i]], "_blank");
+    });
+
+    // Check Video Tutorial links
+    const videoLinks = getAllByText("Video Tutorial");
+    expect(videoLinks.length === enabled.length); // All cards should have Video Tutorial links
+    videoLinks.forEach((vidLink, i) => {
+      fireEvent.click(vidLink);
+      expect(mockedWindowOpen).toBeCalledWith(overviewConfig.videoLinks[enabled[i]], "_blank");
+    });
+
+    // Reset mocked method
+    window.open = originalOpen;
   });
 
 });
