@@ -1,0 +1,61 @@
+{
+  "name" : "matching",
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
+  "stepUpdate" : false,
+  "sourceQuery" : "cts.collectionQuery([\"MapWat\"])",
+  "acceptsBatch" : true,
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "matching", "WebSite" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "WebSite",
+  "stepId" : "matching-matching",
+  "matchRulesets" : [ {
+    "name" : "host - Exact",
+    "weight" : 10,
+    "matchRules" : [ {
+      "entityPropertyPath" : "host",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "twitter - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "twitter",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "og - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "og",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "fb - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "fb",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  }, {
+    "name" : "google - Exact",
+    "weight" : 8,
+    "matchRules" : [ {
+      "entityPropertyPath" : "google",
+      "matchType" : "exact",
+      "options" : { }
+    } ]
+  } ],
+  "thresholds" : [ {
+    "thresholdName" : "merge",
+    "action" : "merge",
+    "score" : 18
+  } ]
+}

@@ -1,0 +1,10 @@
+{
+  "name" : "mapping",
+  "batchSize" : 100,
+  "threadCount" : 32,
+  "steps" : {
+    "1" : {
+      "stepId" : "MapWat-mapping"
+    }
+  }
+}

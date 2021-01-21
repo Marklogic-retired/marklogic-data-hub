@@ -1,0 +1,30 @@
+{
+  "info" : {
+    "title" : "Metadata",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/cc/"
+  },
+  "definitions" : {
+    "Metadata" : {
+      "required" : [ ],
+      "pii" : [ ],
+      "wordLexicon" : [ ],
+      "properties" : {
+        "fetchTimeMs" : {
+          "datatype" : "long"
+        },
+        "charset_detected" : {
+          "datatype" : "string",
+          "collation" : "http://marklogic.com/collation/codepoint"
+        },
+        "languages" : {
+          "datatype" : "array",
+          "items" : {
+            "datatype" : "string",
+            "collation" : "http://marklogic.com/collation/codepoint"
+          }
+        }
+      }
+    }
+  }
+}

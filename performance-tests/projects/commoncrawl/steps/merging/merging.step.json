@@ -1,0 +1,68 @@
+{
+  "name" : "merging",
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "stepUpdate" : false,
+  "sourceQuery" : "cts.collectionQuery([\"datahubMasteringMatchSummary-WebSite\"])",
+  "acceptsBatch" : false,
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "merging", "WebSite" ],
+  "permissions" : "data-hub-operator,read,data-hub-operator,update",
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "WebSite",
+  "stepId" : "merging-merging",
+  "mergeStrategies" : [ ],
+  "mergeRules" : [ {
+    "entityPropertyPath" : "id",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "server",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "host",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "fb",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "date",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "og",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "twitter",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  }, {
+    "entityPropertyPath" : "google",
+    "maxValues" : 1,
+    "priorityOrder" : {
+      "sources" : [ ]
+    }
+  } ],
+  "lastUpdatedLocation" : {
+    "documentXPath" : "//timestamp"
+  }
+}
