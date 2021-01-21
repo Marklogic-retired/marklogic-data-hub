@@ -214,7 +214,13 @@ const CreateEditStep: React.FC<Props>  = (props) => {
   };
 
   const handleSearch = async (value: any) => {
-    let database = props.editStepArtifactObject["targetDatabase"] === "data-hub-FINAL" ? "final" : "staging";
+    let database: string = "";
+    if (!props.isEditing && props.stepType === StepType.Matching || props.stepType === StepType.Merging) {
+      database = "final";
+    } else if (props.isEditing) {
+      database = props.editStepArtifactObject["sourceDatabase"] === "data-hub-FINAL" ? "final" : "staging";
+    }
+
     if (value && value.length > 2) {
       try {
         let data = {
