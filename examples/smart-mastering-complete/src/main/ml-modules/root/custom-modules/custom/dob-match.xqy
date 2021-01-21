@@ -14,14 +14,12 @@ Example of a simple DOB matching algorithm that expands the query by bumping eac
 :)
 declare function algorithms:dob-match(
   $expand-values as xs:string*,
-  $expand-xml as node(),
-  $options-xml as node()
+  $expand-xml as element(matcher:expand),
+  $options-xml as element(matcher:options)
 ) as cts:query*
 {
-  let $property-name := $expand-xml/entityPropertyPath
-
-  (: A custom match action is no longer being passed the weight, so it's hardcoded here. DHFPROD-6324 captures the issue. :)
-  let $weight := 10
+  let $property-name := $expand-xml/@property-name
+  let $weight := $expand-xml/@weight
 
   for $value in $expand-values
   where $value castable as xs:date

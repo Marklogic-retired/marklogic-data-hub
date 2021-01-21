@@ -21,6 +21,11 @@ at "/com.marklogic.smart-mastering/matcher.xqy";
 import module namespace lib = "http://marklogic.com/smart-mastering/test" at "lib/lib.xqy";
 import module namespace test = "http://marklogic.com/test" at "/test/test-helper.xqy";
 
+declare variable $module-permissions := (
+  xdmp:permission("rest-extension-user", 'execute'), xdmp:default-permissions(),
+  xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")
+);
+
 declare option xdmp:mapping "false";
 
 matcher:save-options($lib:NAMESPACED-MATCH-OPTIONS-NAME, test:get-test-file("namespaced-match-options.xml")),
@@ -36,3 +41,6 @@ return
     xdmp:default-permissions(),
     $const:CONTENT-COLL
   )
+
+,
+test:load-test-file("custom-xqy-matching-algo-dob.xqy", xdmp:modules-database(), "/custom-xqy-matching-algo-dob.xqy", $module-permissions)

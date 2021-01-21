@@ -1,0 +1,22 @@
+{
+  "envelope": {
+    "headers": {},
+    "triples": [
+    ],
+    "instance": {
+      "info": {
+        "title": "Person",
+        "version": "0.0.1",
+        "baseUri": "http://marklogic.com/",
+        "description": "A person entity"
+      },
+      "Person": {
+        "FirstName": "Shep",
+        "LastName": "Carpenter",
+        "DateOfBirth": "1909-07-04",
+        "Address": "1909 Carpenter St"
+      }
+    },
+    "attachments": {}
+  }
+}
