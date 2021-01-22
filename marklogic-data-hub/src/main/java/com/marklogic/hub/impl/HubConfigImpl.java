@@ -1506,28 +1506,6 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
     protected void initializePropertyConsumerMap() {
         super.initializePropertyConsumerMap();
 
-        // These "convenience" properties set applied first so that the property values can still be overridden via the
-        // property keys specific to them
-        getPropertyConsumerMap().put("hubDhs", prop -> {
-            if (Boolean.parseBoolean(prop)) {
-                configureForDhs();
-                isProvisionedEnvironment = true;
-                appConfig.setAppServicesPort(8010);
-                appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
-                appConfig.setAppServicesSslContext(null);
-                appConfig.setAppServicesSslHostnameVerifier(null);
-                appConfig.setAppServicesTrustManager(null);
-            }
-        });
-
-        getPropertyConsumerMap().put("hubSsl", prop -> {
-            if (Boolean.parseBoolean(prop)) {
-                configureSimpleSsl();
-                appConfig.setSimpleSslConfig();
-                appConfig.setAppServicesSimpleSslConfig();
-            }
-        });
-
         getPropertyConsumerMap().put("mlHost", prop -> setHost(prop));
         getPropertyConsumerMap().put("mlIsProvisionedEnvironment", prop -> isProvisionedEnvironment = Boolean.parseBoolean(prop));
 
@@ -1564,6 +1542,30 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
         getPropertyConsumerMap().put("mlJobPermissions", prop -> jobPermissions = prop);
         getPropertyConsumerMap().put("mlMappingPermissions", prop -> mappingPermissions = prop);
         getPropertyConsumerMap().put("mlStepDefinitionPermissions", prop -> stepDefinitionPermissions = prop);
+
+        // Apply hubDhs/hubSsl last so that they take precedence over their associated properties.
+        // Must remove each first (they were added by the parent class) so that they end up at the end of the
+        // LinkedHashMap.
+        getPropertyConsumerMap().remove("hubDhs");
+        getPropertyConsumerMap().put("hubDhs", prop -> {
+            if (Boolean.parseBoolean(prop)) {
+                configureForDhs();
+                isProvisionedEnvironment = true;
+                appConfig.setAppServicesPort(8010);
+                appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
+                flowDeveloperRoleName = "flowDeveloper";
+                flowOperatorRoleName = "flowOperator";
+            }
+        });
+
+        getPropertyConsumerMap().remove("hubSsl");
+        getPropertyConsumerMap().put("hubSsl", prop -> {
+            if (Boolean.parseBoolean(prop)) {
+                configureSimpleSsl();
+                appConfig.setSimpleSslConfig();
+                appConfig.setAppServicesSimpleSslConfig();
+            }
+        });
     }
 
     /**

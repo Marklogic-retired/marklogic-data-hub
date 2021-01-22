@@ -88,6 +88,43 @@ public class HubConfigImplTest {
         verifySslIsUsed(config);
     }
 
+    /**
+     * Verifies that hubSsl takes precedence over all the properties associated with it. This then
+     * assumes that hubSsl is applied after all the associated properties.
+     */
+    @Test
+    void hubSslOverridesAssociatedProperties() {
+        Properties props = new Properties();
+        props.setProperty("mlFinalSimpleSsl", "false");
+        props.setProperty("mlStagingSimpleSsl", "false");
+        props.setProperty("mlJobSimpleSsl", "false");
+        props.setProperty("mlManageScheme", "http");
+        props.setProperty("mlManageSimpleSsl", "false");
+        props.setProperty("mlSimpleSsl", "false");
+        props.setProperty("mlAppServicesSimpleSsl", "false");
+
+        HubConfigImpl config = HubConfigImpl.withProperties(props);
+        assertFalse(config.getFinalSimpleSsl());
+        assertFalse(config.getStagingSimpleSsl());
+        assertFalse(config.getJobSimpleSsl());
+        assertEquals("http", config.getManageConfig().getScheme());
+        assertFalse(config.getManageConfig().isConfigureSimpleSsl());
+        assertNull(config.getAppConfig().getRestSslContext());
+        assertNull(config.getAppConfig().getAppServicesSslContext());
+
+        props.setProperty("hubSsl", "true");
+
+        // Verify hubSsl now overrides all associated properties
+        config = HubConfigImpl.withProperties(props);
+        assertTrue(config.getFinalSimpleSsl());
+        assertTrue(config.getStagingSimpleSsl());
+        assertTrue(config.getJobSimpleSsl());
+        assertEquals("https", config.getManageConfig().getScheme());
+        assertTrue(config.getManageConfig().isConfigureSimpleSsl());
+        assertNotNull(config.getAppConfig().getRestSslContext());
+        assertNotNull(config.getAppConfig().getAppServicesSslContext());
+    }
+
     @Test
     void hubDhsIsTrue() {
         verifyDhsConfigIsntSet(HubConfigImpl.withProperties(new Properties()));
@@ -110,6 +147,50 @@ public class HubConfigImplTest {
         verifyDhsConfigIsSet(config);
     }
 
+    /**
+     * Verifies that hubDhs takes precedence over all the properties associated with it. This then
+     * assumes that hubDhs is applied after all the associated properties.
+     */
+    @Test
+    void hubDhsOverridesAssociatedProperties() {
+        Properties props = new Properties();
+        props.setProperty("mlIsHostLoadBalancer", "false");
+        props.setProperty("mlFinalAuthMethod", "digest");
+        props.setProperty("mlStagingAuthMethod", "digest");
+        props.setProperty("mlJobAuthMethod", "digest");
+        props.setProperty("mlIsProvisionedEnvironment", "false");
+        props.setProperty("mlAppServicesPort", "8000");
+        props.setProperty("mlAppServicesAuthentication", "digest");
+        props.setProperty("mlFlowDeveloperRole", "flow-developer-role");
+        props.setProperty("mlFlowOperatorRole", "flow-operator-role");
+
+        HubConfigImpl config = HubConfigImpl.withProperties(props);
+        assertFalse(config.getIsHostLoadBalancer());
+        assertEquals("digest", config.getFinalAuthMethod());
+        assertEquals("digest", config.getStagingAuthMethod());
+        assertEquals("digest", config.getJobAuthMethod());
+        assertFalse(config.getIsProvisionedEnvironment());
+        assertEquals(8000, config.getAppConfig().getAppServicesPort());
+        assertEquals(SecurityContextType.DIGEST,
+            config.getAppConfig().getAppServicesSecurityContextType());
+        assertEquals("flow-developer-role", config.getFlowDeveloperRoleName());
+        assertEquals("flow-operator-role", config.getFlowOperatorRoleName());
+
+        props.setProperty("hubDhs", "true");
+
+        // Verify hubDhs now overrides all associated properties
+        config = HubConfigImpl.withProperties(props);
+        assertTrue(config.getIsHostLoadBalancer());
+        assertEquals("basic", config.getFinalAuthMethod());
+        assertEquals("basic", config.getStagingAuthMethod());
+        assertEquals("basic", config.getJobAuthMethod());
+        assertTrue(config.getIsProvisionedEnvironment());
+        assertEquals(8010, config.getAppConfig().getAppServicesPort());
+        assertEquals(SecurityContextType.BASIC,
+            config.getAppConfig().getAppServicesSecurityContextType());
+        assertEquals("flowDeveloper", config.getFlowDeveloperRoleName());
+        assertEquals("flowOperator", config.getFlowOperatorRoleName());
+    }
     /**
      * Verifies that when mlHost is processed when refreshing a HubConfigImpl, the underlying AppConfig object is
      * updated as well.
