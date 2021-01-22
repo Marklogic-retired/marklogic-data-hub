@@ -100,7 +100,8 @@ const Steps: React.FC<Props> = (props) => {
   const getStepPayload = (payload, newStepFlag?: boolean) => {
     // Combine current payload from saved payloads from both tabs, ensure name prop exists
     let name = basicPayload["name"] ? basicPayload["name"] : props.stepData.name;
-    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name});
+    let targetFormat = props.activityType === "ingestion" ? basicPayload["targetFormat"] : advancedPayload["targetFormat"];
+    return Object.assign(newStepFlag ? {} : props.stepData, basicPayload, advancedPayload, payload, {name: name}, {targetFormat: targetFormat});
   };
 
   const createStep = async (payload) => {

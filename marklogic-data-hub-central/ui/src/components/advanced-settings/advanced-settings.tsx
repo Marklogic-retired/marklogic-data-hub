@@ -160,7 +160,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (props.stepData.collections) {
         setDefaultCollections(props.stepData.collections);
       }
-      if (props.stepData.sourceDatabase) {
+      if (props.stepData.targetDatabase) {
         setTargetDatabase(props.stepData.targetDatabase);
       }
       if (props.stepData.additionalCollections) {
