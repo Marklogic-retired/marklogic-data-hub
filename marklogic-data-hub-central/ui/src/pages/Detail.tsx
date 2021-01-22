@@ -14,6 +14,9 @@ import {faThList, faCode} from "@fortawesome/free-solid-svg-icons";
 import {MLTooltip} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../services/user-preferences";
 import DetailPageNonEntity from "../components/detail-page-non-entity/detail-page-non-entity";
+import {SearchContext} from "../util/search-context";
+import {fetchQueries} from "../api/queries";
+import {AuthoritiesContext} from "../util/authorities";
 
 
 interface Props extends RouteComponentProps<any> { }
@@ -21,7 +24,7 @@ interface Props extends RouteComponentProps<any> { }
 const {Content} = Layout;
 
 const Detail: React.FC<Props> = ({history, location}) => {
-
+  const {setSavedQueries} = useContext(SearchContext);
   const {user, handleError} = useContext(UserContext);
   const [parentPagePreferences, setParentPagePreferences] = useState({});
   const getPreferences = () => {
@@ -33,8 +36,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const detailPagePreferences = getPreferences(); //Fetching preferences first to be used later everywhere in the component
-  const uri = location.state && location.state["uri"] ? location.state["uri"]: detailPagePreferences["uri"];
-  const database = location.state && location.state["database"] ? location.state["database"]: detailPagePreferences["database"];
+  const uri = location.state && location.state["uri"] ? location.state["uri"] : detailPagePreferences["uri"];
+  const database = location.state && location.state["database"] ? location.state["database"] : detailPagePreferences["database"];
   const pkValue = location.state && location.state["primaryKey"] ? location.state["primaryKey"] : detailPagePreferences["primaryKey"];
   const [entityInstance, setEntityInstance] = useState({});
   const [selected, setSelected] = useState("");
@@ -50,6 +53,20 @@ const Detail: React.FC<Props> = ({history, location}) => {
   const [historyData, setHistoryData] = useState<any[]>([]);
 
   const componentIsMounted = useRef(true);
+  const authorityService = useContext(AuthoritiesContext);
+
+  const getSaveQueries = async () => {
+    try {
+      if (authorityService.isSavedQueryUser()) {
+        const response = await fetchQueries();
+        if (response.data) {
+          setSavedQueries(response.data);
+        }
+      }
+    } catch (error) {
+      handleError(error);
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -104,6 +121,8 @@ const Detail: React.FC<Props> = ({history, location}) => {
           setIsLoading(false);
         }
 
+        getSaveQueries();
+
       } catch (error) {
         handleError(error);
       }
@@ -156,7 +175,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const generateSourcesData = (sourceData) => {
-    let parsedData : any[] = [];
+    let parsedData: any[] = [];
     if (sourceData.length) {
       sourceData.forEach((obj, index) => {
         if (obj.constructor.name === "Object") {
@@ -190,7 +209,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
   };
 
   const generateHistoryData = (historyData) => {
-    let parsedData : any[] = [];
+    let parsedData: any[] = [];
 
     if (historyData.length === 0) {
       parsedData.push({
@@ -297,9 +316,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
       zeroState: false,
       entity: location.state && location.state.hasOwnProperty("entity") ? location.state["entity"] : parentPagePreferences["entity"],
       pageNumber: location.state && location.state.hasOwnProperty("pageNumber") ? location.state["pageNumber"] : parentPagePreferences["pageNumber"],
-      start: location.state && location.state.hasOwnProperty("start")? location.state["start"] : parentPagePreferences["start"],
+      start: location.state && location.state.hasOwnProperty("start") ? location.state["start"] : parentPagePreferences["start"],
       searchFacets: location.state && location.state.hasOwnProperty("searchFacets") ? location.state["searchFacets"] : parentPagePreferences["searchFacets"],
-      query: location.state && location.state.hasOwnProperty("query")? location.state["query"] : parentPagePreferences["query"],
+      query: location.state && location.state.hasOwnProperty("query") ? location.state["query"] : parentPagePreferences["query"],
       tableView: location.state && location.state.hasOwnProperty("tableView") ? location.state["tableView"] : parentPagePreferences["tableView"],
       sortOrder: location.state && location.state.hasOwnProperty("sortOrder") ? location.state["sortOrder"] : parentPagePreferences["sortOrder"],
       sources: location.state && location.state.hasOwnProperty("sources") ? location.state["sources"] : parentPagePreferences["sources"],
@@ -317,7 +336,7 @@ const Detail: React.FC<Props> = ({history, location}) => {
       entityInstanceDocument ?
         <Layout>
           <Content className={styles.detailContent}>
-            <div id="back-button" style={{marginLeft: "-23px"}}  onClick={() => history.push(selectedSearchOptions)}>
+            <div id="back-button" style={{marginLeft: "-23px"}} onClick={() => history.push(selectedSearchOptions)}>
               <PageHeader
                 title={<span className={styles.title}>Back to results</span>}
                 data-cy="back-button"
@@ -332,14 +351,14 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 <Menu id="subMenu" onClick={(event) => handleClick(event)} mode="horizontal" selectedKeys={[selected]}>
                   <Menu.Item key="instance" id="instance" data-cy="instance-view">
                     <MLTooltip title={"Show the processed data"}>
-                      <FontAwesomeIcon  icon={faThList} size="lg" />
+                      <FontAwesomeIcon icon={faThList} size="lg" />
                       <span className={styles.subMenu}>Instance</span>
                     </MLTooltip>
                   </Menu.Item>
                   <Menu.Item key="full" id="full" data-cy="source-view">
                     <MLTooltip title={"Show the complete " + contentType.toUpperCase()} >
                       {contentType.toUpperCase() === "XML" ?
-                        <FontAwesomeIcon  icon={faCode} size="lg" />
+                        <FontAwesomeIcon icon={faCode} size="lg" />
                         :
                         <span className={styles.jsonIcon}></span>
                       }
@@ -356,9 +375,9 @@ const Detail: React.FC<Props> = ({history, location}) => {
                 </div>
                   :
                   contentType === "json" ?
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
+                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (data && <pre data-testid="json-container">{jsonFormatter(data)}</pre>)
                     :
-                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"]: {}} isEntityInstance={entityInstanceDocument}/>) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
+                    selected === "instance" ? (entityInstance && <TableView document={isEntityInstance ? entityInstance : {}} contentType={contentType} location={location.state ? location.state["id"] : {}} isEntityInstance={entityInstanceDocument} />) : (xml && <pre data-testid="xml-container">{xmlFormatter(xml)}</pre>)
               }
             </div>
           </Content>
