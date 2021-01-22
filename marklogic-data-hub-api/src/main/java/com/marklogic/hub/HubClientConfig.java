@@ -273,10 +273,6 @@ public class HubClientConfig {
         finalAuthMethod = "basic";
         stagingAuthMethod = "basic";
         jobAuthMethod = "basic";
-        // A connection to DHS may be from behind the load balancer and thus does not require SSL
-        // If SSL is needed, use configureSimpleSsl
-        manageConfig.setScheme("http");
-        manageConfig.setConfigureSimpleSsl(false);
     }
 
     public void configureSimpleSsl() {
@@ -293,20 +289,6 @@ public class HubClientConfig {
      */
     protected void initializePropertyConsumerMap() {
         propertyConsumerMap = new LinkedHashMap<>();
-
-        // These "convenience" properties set applied first so that the property values can still be overridden via the
-        // property keys specific to them
-        propertyConsumerMap.put("hubDhs", prop -> {
-            if (Boolean.parseBoolean(prop)) {
-                configureForDhs();
-            }
-        });
-
-        propertyConsumerMap.put("hubSsl", prop -> {
-            if (Boolean.parseBoolean(prop)) {
-                configureSimpleSsl();
-            }
-        });
 
         propertyConsumerMap.put("mlUsername", prop -> username = prop);
         propertyConsumerMap.put("mlPassword", prop -> password = prop);
@@ -351,6 +333,18 @@ public class HubClientConfig {
         propertyConsumerMap.put("mlFinalSchemasDbName", prop -> finalSchemasDbName = prop);
 
         propertyConsumerMap.put("mlModulePermissions", prop -> modulePermissions = prop);
+
+        propertyConsumerMap.put("hubDhs", prop -> {
+            if (Boolean.parseBoolean(prop)) {
+                configureForDhs();
+            }
+        });
+
+        propertyConsumerMap.put("hubSsl", prop -> {
+            if (Boolean.parseBoolean(prop)) {
+                configureSimpleSsl();
+            }
+        });
     }
 
     /**
