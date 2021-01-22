@@ -671,6 +671,12 @@ describe("manage queries modal scenarios on detail page", () => {
     //verify the manage queries modal button is visible
     browsePage.getManageQueriesButton().should("be.visible");
 
+    //reload page and verify the manage queries modal button persist
+    cy.reload();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getManageQueriesButton().should("be.visible");
+
     //open manage queries modal dialog and remove previosly saved query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");

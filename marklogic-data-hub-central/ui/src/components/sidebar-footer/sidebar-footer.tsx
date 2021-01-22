@@ -29,7 +29,7 @@ const SidebarFooter: React.FC = () => {
 
   return (
     <div>
-      <MLDivider style={{"background-color": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
+      <MLDivider style={{"backgroundColor": "#CCCCCC", "height": "1px", "opacity": "0.5", "margin": "10px 0px 0px 0px"}} />
       <div className={styles.facetFooter}>
         <MLButton className={styles.button} aria-label="clear-facets-button" disabled={Object.keys(searchOptions.selectedFacets).length === 0 && Object.keys(greyedOptions.selectedFacets).length === 0} onClick={() => clearAllFacets()}>Clear All Facets</MLButton>
         <MLButton className={styles.button} aria-label="apply-facets-button" disabled={Object.keys(greyedOptions.selectedFacets).length === 0} onClick={() => applyFacets()} type="primary" >Apply Facets</MLButton>
