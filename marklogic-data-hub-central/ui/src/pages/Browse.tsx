@@ -145,6 +145,9 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
+    if (searchOptions.nextEntityType !== "All Data") {
+      setCardView(false);
+    }
     if ((entities.length || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined)) &&
       (!searchOptions.nextEntityType ||
         (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
