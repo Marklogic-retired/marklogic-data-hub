@@ -265,6 +265,7 @@ class DataHubPlugin implements Plugin<Project> {
         loadHubArtifactsCommand = ctx.getBean(LoadHubArtifactsCommand.class)
         loadUserModulesCommand = ctx.getBean(LoadUserModulesCommand.class)
         loadUserArtifactsCommand = ctx.getBean(LoadUserArtifactsCommand.class)
+        generateFunctionMetadataCommand = ctx.getBean(GenerateFunctionMetadataCommand.class)
         mappingManager = ctx.getBean(MappingManagerImpl.class)
         masteringManager = ctx.getBean(MasteringManagerImpl.class)
         stepManager = ctx.getBean(StepDefinitionManagerImpl.class)

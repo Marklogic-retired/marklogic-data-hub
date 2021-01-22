@@ -24,12 +24,17 @@ public class ModuleWatchingConsumer extends LoggingObject implements Consumer<Se
 
     @Override
     public void accept(Set<Resource> resources) {
-        if (generateFunctionMetadataCommand != null && commandContext != null && shouldFunctionMetadataBeGenerated(resources)) {
-            try {
-                logger.info("Generating function metadata for modules containing mapping functions");
-                generateFunctionMetadataCommand.execute(commandContext);
-            } catch (Exception ex) {
-                logger.error("Unable to generate function metadata, cause: " + ex.getMessage());
+        if (shouldFunctionMetadataBeGenerated(resources)) {
+            if (generateFunctionMetadataCommand == null || commandContext == null) {
+                logger.warn("Unable to generate function metadata for modules containing mapping functions; no command or command context found");
+            } else {
+                try {
+                    logger.info("Generating function metadata for modules containing mapping functions");
+                    generateFunctionMetadataCommand.execute(commandContext);
+                } catch (Exception ex) {
+                    logger.error("Unable to generate function metadata, cause: " + ex.getMessage());
+                }
+
             }
         }
     }
