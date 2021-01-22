@@ -74,8 +74,14 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
   if (options.targetEntity) {
     delete options.targetEntity;
   }
-  const optionsRoot = (options.mergeOptions || options.matchOptions || options);
-  setCollectionDefaults(optionsRoot, targetEntityType);
+  // ensure target entity type gets passed along in both matching/merging options to mastering step
+  if (options.mergeOptions) {
+    options.mergeOptions.targetEntityType = targetEntityType;
+  }
+  if (options.matchOptions) {
+    options.matchOptions.targetEntityType = targetEntityType;
+  }
+  setCollectionDefaults(options, targetEntityType);
 
   let targetCollections = {};
   ['onMerge', 'onNoMatch', 'onArchive', 'onNotification'].forEach((eventName) => {
@@ -89,7 +95,7 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
     options.targetCollections = Object.assign(targetCollections, targetCollections);
   }
 
-  const collections = optionsRoot.collections;
+  const collections = (options.matchOptions || options.mergeOptions || options).collections;
   const contentCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.content), masteringConsts['CONTENT-COLL']));
   const archivedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.archived), masteringConsts['ARCHIVED-COLL']));
   const mergedCollection = fn.head(masteringCollections.getCollections(Sequence.from(collections.merged), masteringConsts['MERGED-COLL']));
@@ -127,7 +133,8 @@ function checkOptions(content, options, filteredContent = [], reqOptProperties =
   return { archivedCollection, contentCollection, mergedCollection, notificationCollection, auditingCollection };
 }
 
-function setCollectionDefaults(collectionsParent, targetEntityType) {
+function setCollectionDefaults(options, targetEntityType) {
+  const collectionsParent = (options.matchOptions || options.mergeOptions || options);
   // provide default empty array values for collections to simplify later logic
   collectionsParent.collections = Object.assign({"content": [], "archived": [], "merged": [], "notification": [], "auditing": []},collectionsParent.collections);
   if (targetEntityType) {
@@ -135,6 +142,9 @@ function setCollectionDefaults(collectionsParent, targetEntityType) {
       collectionsParent.targetEntityType = targetEntityType;
     }
     collectionsParent.collections = getCollectionSettings(collectionsParent.collections, targetEntityType);
+    if (options.mergeOptions && options.mergeOptions !== collectionsParent) {
+      options.mergeOptions.collections = collectionsParent.collections;
+    }
   }
 }
 

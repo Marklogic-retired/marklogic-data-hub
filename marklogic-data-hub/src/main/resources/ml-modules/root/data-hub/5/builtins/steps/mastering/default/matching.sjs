@@ -35,7 +35,7 @@ function filterContentAlreadyProcessed(content, summaryCollection, collectionInf
   const jobIdQuery = cts.fieldWordQuery('datahubCreatedByJob', jobID);
   let auditingNotificationsInSourceQuery = false;
   for (let item of content) {
-    const collections = item.context ? item.context.collections || [] : [];
+    const collections = item.context ? item.context.originalCollections || [] : [];
     const auditingOrNotificationDoc = collections.includes(collectionInfo.notificationCollection) || collections.includes(collectionInfo.auditingCollection);
     if (!(cts.exists(cts.andQuery([collectionQuery,jobIdQuery,cts.jsonPropertyValueQuery('uris', item.uri, 'exact')])) ||
         auditingOrNotificationDoc

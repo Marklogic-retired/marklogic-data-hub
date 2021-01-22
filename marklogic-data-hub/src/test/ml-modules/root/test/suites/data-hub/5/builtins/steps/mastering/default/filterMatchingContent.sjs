@@ -5,9 +5,9 @@ const test = require("/test/test-helper.xqy");
 
 const collectionInfo = lib.checkOptions(null, { targetEntity: 'Customer', mergeOptions: {}, matchOptions: {} });
 const content = Sequence.from([
-    { uri: 'doc1', context: {collections: [collectionInfo.auditingCollection, collectionInfo.contentCollection]}},
-    { uri: 'doc2', context: {collections: [collectionInfo.contentCollection, collectionInfo.notificationCollection]}},
-    { uri: 'doc3', context: {collections: [collectionInfo.contentCollection, collectionInfo.archivedCollection]}}
+    { uri: 'doc1', context: {originalCollections: [collectionInfo.auditingCollection, collectionInfo.contentCollection]}},
+    { uri: 'doc2', context: {originalCollections: [collectionInfo.contentCollection, collectionInfo.notificationCollection]}},
+    { uri: 'doc3', context: {originalCollections: [collectionInfo.contentCollection, collectionInfo.archivedCollection]}}
 ]);
 const filteredContent = matching.filterContentAlreadyProcessed(content, 'summaryCollection', collectionInfo).toArray();
 

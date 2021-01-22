@@ -123,7 +123,7 @@ declare function util-impl:properties-to-values-functions(
       map:map()
   let $distinct-properties :=
     fn:distinct-values((
-      $property-definitions/*:property/(@name|name) ! fn:string(.),
+      $property-definitions/(*:property|*:properties)/(@name|name) ! fn:string(.),
       if ($return-all-properties) then
         map:keys($entity-property-info)
       else (
@@ -135,7 +135,7 @@ declare function util-impl:properties-to-values-functions(
   return map:new(
     for $property-name in $distinct-properties
     let $entity-property-info := $entity-property-info => map:get($property-name)
-    let $property-definition := $property-definitions/*:property[(@name|name) = $property-name]
+    let $property-definition := $property-definitions/(*:property|properties)[(@name|name) = $property-name]
     let $document-xpath-rule := fn:head(($property-definition[@path|path], $rules[documentXPath eq $property-name]))
     let $function :=
       if (fn:exists($entity-property-info)) then

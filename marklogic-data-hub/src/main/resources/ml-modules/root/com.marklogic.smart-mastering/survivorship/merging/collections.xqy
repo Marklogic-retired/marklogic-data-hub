@@ -115,7 +115,7 @@ declare function collection-impl:execute-algorithm(
       )
     )
   let $algorithm := $algorithm-map => map:get($event-name)
-  return
+  let $results :=
     if (fn:ends-with(xdmp:function-module($algorithm), "sjs")) then
       let $collections-by-uri := xdmp:to-json($collections-by-uri)/object-node()
       let $event-options := merge-impl:collection-event-to-json($event-options)
@@ -132,6 +132,13 @@ declare function collection-impl:execute-algorithm(
             ()
     else
       xdmp:apply($algorithm, $event-name, $collections-by-uri, $event-options)
+  return (
+    $results,
+    if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+      xdmp:trace($const:TRACE-MERGE-RESULTS, "Collections for event '" || $event-name || "': " || xdmp:to-json-string($results))
+    else ()
+  )
+
 };
 
 declare function collection-impl:on-merge($collections-by-uri as map:map, $event-options as node()?) {

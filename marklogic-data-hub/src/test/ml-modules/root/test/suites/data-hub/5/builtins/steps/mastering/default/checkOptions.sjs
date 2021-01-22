@@ -39,6 +39,20 @@ xdmp.invokeFunction(
       Sequence.from(currentDocs[0].context.originalCollections),
       Sequence.from(filteredDocs[0].context.collections),
       'Original collections should be carried forward.'));
+    let optionsWithTargetEntity = { targetEntity: "TestTargetEntityCarryOver", mergeOptions: {}, matchOptions: {} };
+    lib.checkOptions(null, optionsWithTargetEntity, null);
+    assertions.push(test.assertEqual(
+        "TestTargetEntityCarryOver",
+        optionsWithTargetEntity.targetEntityType,
+        "targetEntity should be moved to the new standard targetEntityType."));
+      assertions.push(test.assertEqual(
+          "TestTargetEntityCarryOver",
+          optionsWithTargetEntity.matchOptions.targetEntityType,
+          "Child matchOptions should now have targetEntityType set since that gets passed to the lower-level matching function."));
+      assertions.push(test.assertEqual(
+          "TestTargetEntityCarryOver",
+          optionsWithTargetEntity.mergeOptions.targetEntityType,
+          "Child mergeOptions should now have targetEntityType set since that gets passed to the lower-level merging function."));
   },
   {update: 'true', commit: 'auto'}
 );
