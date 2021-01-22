@@ -679,4 +679,45 @@ describe("manage queries modal scenarios on detail page", () => {
     browsePage.waitForSpinnerToDisappear();
     browsePage.getTotalDocuments().should("not.be.equal", 0);
   });
+
+  it("verify query selection from All Data view page, doesn't stay on card view", () => {
+    //create a query first
+    browsePage.selectEntity("Person");
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getSelectedFacets().should("exist");
+    browsePage.getFacetApplyButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveModalIcon().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSaveQueryName().should("be.visible");
+    browsePage.getSaveQueryName().type("person-query-test");
+    browsePage.getSaveQueryButton().click();
+    browsePage.waitForSpinnerToDisappear();
+
+    //Switch to "All Data"
+    browsePage.selectEntity("All Data");
+    browsePage.getSelectedEntity().should("contain", "All Data");
+
+    //Open the manage query modal to apply the recently created query
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+    queryComponent.getQueryByName("person-query-test").click();
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+
+    //check table rows
+    browsePage.getTableRows().should("have.length", 1);
+    //check table columns
+    browsePage.getTableColumns().should("have.length", 6);
+    //Check query facet is applied
+    browsePage.getSelectedFacet("Alice").should("exist");
+
+    //open manage queries modal dialog and remove previously saved query
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+    queryComponent.getDeleteQuery().first().click();
+    queryComponent.getDeleteQueryYesButton().click({force: true});
+    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+  });
 });
