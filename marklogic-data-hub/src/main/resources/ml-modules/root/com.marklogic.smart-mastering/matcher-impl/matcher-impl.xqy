@@ -220,6 +220,11 @@ declare function match-impl:find-document-matches-by-options(
       $document-uri,
       blocks-impl:get-blocks(fn:base-uri($document))/node()
     )
+    let $_trace :=
+      if ($match-trace-is-enabled) then
+        xdmp:trace($const:TRACE-MATCH-RESULTS, "Excluding the following URIs from matching with cts.doc('"|| $document-uri ||"'): " || xdmp:to-json-string($excluded-uris))
+      else
+        ()
     let $match-base-query := cts:and-query((
           $compiled-options => map:get("baseContentQuery"),
           $minimum-threshold-combinations-query

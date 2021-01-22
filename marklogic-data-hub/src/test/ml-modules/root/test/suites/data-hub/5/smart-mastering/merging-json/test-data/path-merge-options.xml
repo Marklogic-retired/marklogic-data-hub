@@ -10,7 +10,7 @@
     <m:property path="/envelope/headers/custom/this/has/a/deep/path" name="deep"/>
   </m:property-defs>
   <algorithms>
-    <algorithm name="combine" function="combine" namespace="http://marklogic.com/smart-mastering/merging" at="/combine-json.xqy" />
+    <algorithm name="combine" function="combine" namespace="http://marklogic.com/smart-mastering/merging" at="/test/suites/data-hub/5/smart-mastering/merging-json/test-data/combine-json.xqy" />
   </algorithms>
   <merging>
     <merge property-name="ssn">

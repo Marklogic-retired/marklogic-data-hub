@@ -25,7 +25,7 @@
       "stepDefinitionName": "default-mapping",
       "stepDefinitionType": "MAPPING",
       "options": {
-        "collections" : [ "mapping", "mdm-content" ],
+        "collections" : [ "mapping" ],
         "sourceDatabase": "data-hub-STAGING",
         "targetDatabase": "data-hub-FINAL",
         "mapping": {

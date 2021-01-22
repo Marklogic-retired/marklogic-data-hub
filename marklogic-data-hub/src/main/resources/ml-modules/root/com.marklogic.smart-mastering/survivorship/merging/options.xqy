@@ -184,7 +184,8 @@ declare function merge-impl:options-to-json($options-xml as element(merging:opti
                       object-node {
                         "name": $alg/@name/fn:string(),
                         "function": $alg/@function/fn:string(),
-                        "at": let $at := $alg/@at/fn:string() return if (fn:exists($at)) then $at else ""
+                        "at": let $at := $alg/@at/fn:string() return if (fn:exists($at)) then $at else "",
+                        "namespace": let $ns := $alg/@namespace/fn:string() return if (fn:exists($ns)) then $ns else ""
                       }
                   }),
                 if (fn:exists($options-xml/merging:algorithms/merging:std-algorithm)) then
@@ -628,7 +629,7 @@ declare function merge-impl:compile-merge-options(
       map:get($_cached-compiled-merge-options, $cache-id)
     else
       let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
-          xdmp:trace($const:TRACE-MERGE-RESULTS, "compiling merge options: " || xdmp:describe($merge-options, (), ()))
+          xdmp:trace($const:TRACE-MERGE-RESULTS, "compiling merge options: " || xdmp:to-json-string($merge-options))
         else
           ()
     let $message-output :=
@@ -810,7 +811,7 @@ declare function merge-impl:build-merge-rules-info(
     for $merge-rule in $merge-rules
     let $merge-rule := merge-impl:expand-merge-rule($merge-options, $merge-rule)
     let $property-name := fn:string(fn:head($merge-rule/(@property-name|propertyName|entityPropertyPath|documentXPath)))
-    let $property-def := $property-defs/(*:property|properties)[(@name|name) = $property-name]
+    let $property-def := $property-defs/(*:property|*:properties)[(@name|name) = $property-name]
     let $path := fn:head((
         $merge-rule/documentXPath,
         $property-def/(@path|path),
@@ -826,7 +827,7 @@ declare function merge-impl:build-merge-rules-info(
     let $algorithm-name := if (fn:exists($merge-rule/mergeModuleFunction[fn:normalize-space(.)])) then
                               fn:string($merge-rule/mergeModulePath) || ":" || fn:string($merge-rule/mergeModuleFunction)
                           else
-                              fn:string(fn:head($merge-rule/(@algorithm-ref|algorithmRef)))
+                              fn:string(fn:head(($merge-rule/(@algorithm-ref|algorithmRef),"standard")))
     let $merge-algorithm := $merge-algorithms => map:get($algorithm-name)
     return (
       xdmp:trace($const:TRACE-MERGE-RESULTS, "Explicit merge for property: " || $property-name),

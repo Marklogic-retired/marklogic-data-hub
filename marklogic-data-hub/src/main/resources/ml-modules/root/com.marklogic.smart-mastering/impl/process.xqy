@@ -363,7 +363,7 @@ declare function proc-impl:build-match-summary(
   tel:increment(),
   let $start-elapsed := xdmp:elapsed-time()
   let $compiled-matching-options := match-opt-impl:compile-match-options($match-options, ())
-  let $match-options-node := $compiled-matching-options => map:get("matchOptionsNode")
+  let $match-options-node := $compiled-matching-options => map:get("normalizedOptions")
   let $archived-collection := coll:archived-collections($match-options-node)
   let $normalized-input :=
     if ($input instance of xs:string*) then
@@ -633,6 +633,8 @@ declare function proc-impl:process-match-and-merge-with-options(
   (: increment usage count :)
   tel:increment(),
   let $start-elapsed := xdmp:elapsed-time()
+  let $compiled-match-options := match-opt-impl:compile-match-options($matching-options, ())
+  let $matching-options := $compiled-match-options => map:get("normalizedOptions")
   let $archived-collection := coll:archived-collections($matching-options)
   let $normalized-input :=
     if ($input instance of xs:string*) then

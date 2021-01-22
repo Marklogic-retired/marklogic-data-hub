@@ -49,13 +49,14 @@ for (let prop of actual.options.propertyDefs.properties) {
 for (let alg of actual.options.algorithms.custom) {
   if (alg.name === 'name') {
     assertions.push(
-      test.assertEqual('name', alg.function),
-      test.assertEqual('', alg.at)
+      test.assertEqual('quickStartMergeProperties', alg.function),
+      test.assertEqual('/test/suites/data-hub/5/smart-mastering/merging/test-data/javascriptMergingFunctions.sjs', alg.at)
     );
   } else if (alg.name === 'customThing') {
     assertions.push(
       test.assertEqual('customThing', alg.function),
-      test.assertEqual('/custom-merge-xqy.xqy', alg.at)
+      test.assertEqual('/test/suites/data-hub/5/smart-mastering/merging-json/test-data/custom-merge-xqy.xqy', alg.at),
+      test.assertEqual('http://marklogic.com/smart-mastering/merging', alg.namespace)
     );
   } else {
     test.fail('Unexpected algorithm: ' + alg.name)

@@ -12,13 +12,19 @@ declare function coll:get-collections($spec as item()*, $default as xs:string?)
   as xs:string*
 {
   let $coll-names := $spec ! fn:string()[. ne '']
-  return
+  let $collections :=
     if ($spec instance of element()* and fn:exists($spec/@none)) then
       ()
     else if (fn:exists($coll-names)) then
       $coll-names
     else
       $default
+  return (
+    $collections,
+    if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
+      xdmp:trace($const:TRACE-MERGE-RESULTS, $default || " set collections: " || xdmp:to-json-string($collections))
+    else ()
+  )
 };
 
 declare function coll:content-collections($options as node()?)

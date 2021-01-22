@@ -10,8 +10,8 @@
     <property path="/es:envelope/es:headers/custom/this/has:a/deep/path" name="deep"/>
   </property-defs>
   <algorithms>
-    <algorithm name="name" function="name" namespace="" at="" />
-    <algorithm name="customThing" function="customThing" namespace="http://marklogic.com/smart-mastering/merging" at="/custom-merge-xqy.xqy" />
+    <algorithm name="name" function="quickStartMergeProperties" namespace="" at="/test/suites/data-hub/5/smart-mastering/merging/test-data/javascriptMergingFunctions.sjs" />
+    <algorithm name="customThing" function="customThing" namespace="http://marklogic.com/smart-mastering/merging" at="/test/suites/data-hub/5/smart-mastering/merging-json/test-data/custom-merge-xqy.xqy" />
     <std-algorithm xmlns:es="http://marklogic.com/entity-services" xmlns:sm="http://marklogic.com/smart-mastering">
       <!-- provide the path to the timestamp element to use for sorting -->
       <!-- when merging the values are sorted in recency order from newest
@@ -21,7 +21,7 @@
     </std-algorithm>
   </algorithms>
   <merging>
-    <merge property-name="ssn" algorithm-ref="user-defined">
+    <merge property-name="ssn" algorithm-ref="customThing">
       <source-ref document-uri="docA" />
     </merge>
     <merge property-name="name"  max-values="1">

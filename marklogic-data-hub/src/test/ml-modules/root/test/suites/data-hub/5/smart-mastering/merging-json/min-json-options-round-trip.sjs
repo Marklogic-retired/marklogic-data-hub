@@ -39,7 +39,8 @@ const small =
               {
                 "name": "customThing",
                 "function": "customThing",
-                "at": "/custom-merge-xqy.xqy"
+                "at": "/test/suites/data-hub/5/smart-mastering/merging-json/test-data/custom-merge-xqy.xqy",
+                "namespace": ""
               }
             ],
             "collections": {

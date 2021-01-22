@@ -69,7 +69,7 @@ export default function (qaProjectDir) {
       await browsePage.closeCollection();
 
       await browsePage.clickFacetName('http://marklogic.com/data-hub/step-definition');
-      await expect(await browsePage.resultsUriCount()).toBe(8);
+      await expect(await browsePage.resultsUriCount()).toBe(9);
       await browsePage.closeCollection();
     });
 

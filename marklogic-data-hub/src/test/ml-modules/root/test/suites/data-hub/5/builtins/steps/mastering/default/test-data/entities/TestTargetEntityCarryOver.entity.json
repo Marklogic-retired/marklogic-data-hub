@@ -1,0 +1,11 @@
+{
+  "info": {
+    "title": "TestTargetEntityCarryOver",
+    "version": "0.0.1",
+    "baseUri": "http://marklogic.com/example/",
+    "description": "This is a very simple entity to test that the targetEntity in QuickStart options are passed to matchOptions and mergeOptions."
+  },
+  "definitions": {
+    "TestTargetEntityCarryOver": {}
+  }
+}

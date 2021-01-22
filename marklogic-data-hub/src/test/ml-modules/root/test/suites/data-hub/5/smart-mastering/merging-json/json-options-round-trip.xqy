@@ -38,18 +38,18 @@ declare variable $strategy-options := test:get-test-file("merge-options-with-str
  : JSON.
  :)
 let $actual := merging:get-options("json-options", $const:FORMAT-JSON)
-return test:assert-true(fn:deep-equal($options, $actual)),
+return test:assert-true(fn:deep-equal($options, $actual), "Expected: " || xdmp:to-json-string($options)  || ", Got: " || xdmp:to-json-string($actual)),
 
 let $expected := test:get-test-file("merge-options.json")/node()
 let $actual := merging:get-options($lib:OPTIONS-NAME-COMPLETE, $const:FORMAT-JSON)
-return test:assert-true(fn:deep-equal($options, $actual)),
+return test:assert-true(fn:deep-equal($options, $actual), "Expected: " || xdmp:to-json-string($options)  || ", Got: " || xdmp:to-json-string($actual)),
 
 (: For some reason, the below test needed to convert the JSON to string to determine
  : that they are equal. See https://github.com/marklogic-community/marklogic-unit-test/issues/44
  :)
 let $expected := test:get-test-file("merge-options-with-strategies.json")/node()
 let $actual := merging:get-options($lib:OPTIONS-NAME-STRATEGIES, $const:FORMAT-JSON)
-return test:assert-true(fn:deep-equal($expected, $actual)),
+return test:assert-true(fn:deep-equal($expected, $actual), "Expected: " || xdmp:to-json-string($options)  || ", Got: " || xdmp:to-json-string($actual)),
 
 xdmp:document-delete('/com.marklogic.smart-mastering/options/merging/json-options.xml'),
 xdmp:document-delete('/com.marklogic.smart-mastering/options/merging/json-options-with-strategy.xml')

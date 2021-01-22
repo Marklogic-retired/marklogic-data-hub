@@ -7,7 +7,7 @@
     <property namespace="" localname="CustomThing" name="customThing"/>
   </property-defs>
   <algorithms>
-    <algorithm name="customThing" function="customThing" namespace="" at="/custom-merge-sjs.sjs" />
+    <algorithm name="customThing" function="customThing" namespace="" at="/test/suites/data-hub/5/smart-mastering/merging-json/test-data/custom-merge-sjs.sjs" />
   </algorithms>
   <merging>
     <merge property-name="ssn">
