@@ -27,22 +27,22 @@ describe("Run Tile tests", () => {
     runPage.newFlowModal().should("be.visible");
     runPage.setFlowName(flowName);
     loadPage.confirmationOptions("Save").click();
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("loadPersonXML");
     runPage.verifyStepInFlow("Load", "loadPersonXML");
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("mapPersonXML");
     runPage.verifyStepInFlow("Map", "mapPersonXML");
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("match-xml-person");
     runPage.verifyStepInFlow("Match", "match-xml-person");
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("merge-xml-person");
     runPage.verifyStepInFlow("Merge", "merge-xml-person");
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("master-person");
     runPage.verifyStepInFlow("Master", "master-person");
-    runPage.addStep(flowName).click();
+    runPage.addStep(flowName);
     runPage.addStepToFlow("generate-dictionary");
     //Verify scrolling, last step should still be visible in the flow panel
     runPage.verifyStepInFlow("Custom", "generate-dictionary");

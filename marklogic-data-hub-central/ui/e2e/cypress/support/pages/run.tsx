@@ -34,7 +34,7 @@ class RunPage {
   }
 
   addStep(stepName: string) {
-    return cy.findByLabelText(`addStep-${stepName}`);
+    return cy.findByLabelText(`addStep-${stepName}`).click({force: true});
   }
 
   addStepToFlow(stepName: string) {
