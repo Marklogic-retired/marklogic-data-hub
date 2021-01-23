@@ -7,6 +7,12 @@
 .ant-table-filter-icon.ant-dropdown-trigger.ant-table-filter-selected{
     background: #394494; 
 }
+ 
+#dropdownList.ant-select.ant-select-open{
+    z-index: 10000;
+    margin-block-start: 300px;
+    position: relative;
+ }
 
 .datatype-string::before {
     content: '"';
