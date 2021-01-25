@@ -10,11 +10,13 @@ import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.OS;
 import scala.collection.immutable.HashMap;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class ReadArraysAndMapsTest extends AbstractSparkReadTest {
 
@@ -30,6 +32,9 @@ public class ReadArraysAndMapsTest extends AbstractSparkReadTest {
 
     @Test
     void arrayOfStrings() {
+        assumeTrue(OS.LINUX.isCurrentOs(), "Running this test on Windows and mac result in SEGFAULT when trying to get partition's row count\n" +
+            "       (readLib.sjs's getRowCountForPartition() method. Once server bug https://bugtrack.marklogic.com/55743\n" +
+            "       is fixed, the test should run fine on all platforms.");
         loadSimpleCustomers(1);
 
         StructType sparkSchema = new StructType(new StructField[]{

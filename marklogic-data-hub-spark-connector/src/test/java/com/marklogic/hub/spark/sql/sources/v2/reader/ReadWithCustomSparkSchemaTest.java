@@ -6,7 +6,9 @@ import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
+import static org.junit.jupiter.api.Assumptions.*;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.OS;
 import scala.collection.immutable.HashMap;
 
 import java.util.List;
@@ -15,8 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ReadWithCustomSparkSchemaTest extends AbstractSparkReadTest {
 
+
     @Test
     void validCustomSparkSchema() {
+        assumeTrue(OS.LINUX.isCurrentOs(), "Running this test on Windows and mac result in SEGFAULT when trying to get partition's row count\n" +
+            "     (reaadLib.sjs's getRowCountForPartition() method. Once server bug https://bugtrack.marklogic.com/55743\n" +
+            "     is fixed, the test should run fine on all platforms");
         setupTenSimpleCustomers();
 
         Options options = newOptions()
