@@ -475,9 +475,6 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         validateStatus={isSourceQueryValid() ? "" : "error"}
         help={isSourceQueryValid() ? "" : "Collection or Query is required"}
         >
-          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
-            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
-          </MLTooltip>
 
           <Radio.Group
             id="srcType"
@@ -492,7 +489,9 @@ const CreateEditMapping: React.FC<Props> = (props) => {
             <Icon type="question-circle" className={styles.questionCircleQuery} theme="filled" data-testid="queryTooltip"/>
           </MLTooltip>
 
-
+          <MLTooltip title={CommonStepTooltips.radioCollection} placement={"top"}>
+            <Icon type="question-circle" className={styles.questionCircleCollection} theme="filled" data-testid="collectionTooltip"/>
+          </MLTooltip>
 
           {selectedSource === "collection" ? <div ><span className={styles.srcCollectionInput}><AutoComplete
             id="collList"
