@@ -27,7 +27,7 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     //verify the query data for final database on explore page
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    cy.contains("Showing 1-2 of 2 results", {timeout: 5000});
+    cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "ColeAdams");
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
@@ -40,7 +40,7 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     browsePage.search("Adams");
     cy.get(".ant-input-search-button").click();
     cy.waitForAsyncRequest();
-    cy.contains("Showing 1-2 of 2 results", {timeout: 5000});
+    cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "Adams");
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
@@ -63,7 +63,7 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     browsePage.search("Adams");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
-    cy.contains("Showing 1-2 of 2 results", {timeout: 5000});
+    cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
 
     //Verifying non-entity detail page for JSON document
     browsePage.clearSearchText();

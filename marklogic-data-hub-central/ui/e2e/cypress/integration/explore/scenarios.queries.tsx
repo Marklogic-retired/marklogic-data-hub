@@ -459,6 +459,7 @@ describe("save/manage queries scenarios, developer role", () => {
 
 
   it("Check grey facets does not persist when clear query icon is clicked", () => {
+    browsePage.selectEntity("All Entities");
     browsePage.getFacetItemCheckbox("collection", "Person").click();
     browsePage.getFacetItemCheckbox("collection", "Person").should("be.checked");
     browsePage.getGreySelectedFacets("Person").should("exist");
@@ -682,6 +683,7 @@ describe("manage queries modal scenarios on detail page", () => {
     detailPage.clickBackButton();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
+    cy.wait(1000);
     browsePage.getTotalDocuments().should("not.be.equal", 0);
   });
 
