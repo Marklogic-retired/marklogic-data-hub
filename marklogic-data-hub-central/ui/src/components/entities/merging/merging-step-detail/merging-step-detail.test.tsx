@@ -74,7 +74,7 @@ describe("Merging Step Detail view component", () => {
     expect(timestampHandle).toHaveClass("handleDisabled");
     expect(getByLabelText("Timestamp")).toBeInTheDocument();
     userEvent.hover(timestampHandle);
-    expect((await(waitForElement(() => getByText(multiSliderTooltips.timeStamp))))).toBeInTheDocument();
+    expect((await(waitForElement(() => getByText(multiSliderTooltips.viewOnlyTooltip))))).toBeInTheDocument();
 
     //Verify merge rules table is rendered with data
     // Check table column headers are rendered

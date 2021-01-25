@@ -48,7 +48,7 @@ const MultiSlider = (props) => {
             </div>
           }
         </div>
-        {<MLTooltip title={disabled ? options[0].prop === "Timestamp"? multiSliderTooltips.timeStamp : multiSliderTooltips.viewOnlyTooltip : ""} placement="bottom">
+        {<MLTooltip title={ (props.mergeStepViewOnly !== true && disabled) ?  multiSliderTooltips.timeStamp : ""} placement="bottom">
           {disabled ?
             <div className={"handleDisabledParent"}  style={{
               left: `${percent}%`
