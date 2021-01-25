@@ -3,6 +3,7 @@ import Axios from "axios";
 import {useHistory} from "react-router-dom";
 import {MLPageHeader, MLButton} from "@marklogic/design-system";
 import styles from "./merging-step-detail.module.scss";
+import "./merging-step-detail.scss";
 import NumberIcon from "../../../number-icon/number-icon";
 import {MLTable, MLTooltip} from "@marklogic/design-system";
 import {CurationContext} from "../../../../util/curation-context";
@@ -288,9 +289,9 @@ const MergingStepDetail: React.FC = () => {
       <div className={styles.priorityOrderContainer}><p className={styles.priorityText}>Priority Order<MLTooltip title={multiSliderTooltips.priorityOrder} placement="right">
         <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
       </MLTooltip></p>
-      <div style={{opacity: "60%"}}>
+      <div id="strategyText"><MLTooltip title={multiSliderTooltips.viewOnlyTooltip}><div style={{opacity: "60%"}}>
         <MultiSlider options={priorityOrderStrategyOptions} handleSlider={handleSlider} handleEdit={handleEdit} handleDelete={handleDelete} stepType={StepType.Merging} mergeStepViewOnly={true}/>
-      </div>
+      </div></MLTooltip></div>
       </div>
     </>;
   };
