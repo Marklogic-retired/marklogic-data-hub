@@ -144,7 +144,17 @@ const Query: React.FC<Props> = (props) => {
 
   const isSaveQueryChanged = () => {
     if (currentQuery && currentQuery.hasOwnProperty("savedQuery") && currentQuery.savedQuery.hasOwnProperty("query")) {
-      if (((JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
+      if (currentQuery.savedQuery.name !== searchOptions.selectedQuery) {
+        for (let key of savedQueries) {
+          if (key.savedQuery.name === searchOptions.selectedQuery) {
+            setCurrentQuery(key);
+            setCurrentQueryName(key.savedQuery.name);
+            setCurrentQueryDescription(key.savedQuery.description);
+          }
+        }
+      }
+      if ((
+        (JSON.stringify(currentQuery.savedQuery.query.selectedFacets) !== JSON.stringify(searchOptions.selectedFacets)) ||
         (currentQuery.savedQuery.query.searchText !== searchOptions.query) ||
         (JSON.stringify(currentQuery.savedQuery.sortOrder) !== JSON.stringify(searchOptions.sortOrder)) ||
         (JSON.stringify(currentQuery.savedQuery.propertiesToDisplay) !== JSON.stringify(searchOptions.selectedTableProperties)) ||
