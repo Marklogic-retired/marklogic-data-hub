@@ -45,7 +45,7 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
 
         // And run the flow
         FlowInputs inputs = new FlowInputs("echoFlow", "2");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
 
         FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
         RunFlowResponse response = flowRunner.runFlow(inputs);
@@ -78,7 +78,7 @@ public class IngestWithSourceNameAndSourceTypeTest extends AbstractHubCoreTest {
 
         // And run the flow
         FlowInputs inputs = new FlowInputs("echoFlow", "2");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
 
         FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
         RunFlowResponse response = flowRunner.runFlow(inputs);

@@ -13,6 +13,7 @@ import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.*;
 import com.marklogic.hub.deploy.commands.*;
+import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
@@ -461,5 +462,25 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
     protected JsonNode findFirstBatchDocument(String jobId) {
         String query = format("collection('Batch')[/batch/jobId = '%s']", jobId);
         return getHubClient().getJobsClient().newServerEval().xquery(query).eval(new JacksonHandle()).get();
+    }
+
+    public void deployAsDeveloper(HubConfigImpl hubConfig){
+        boolean isProvisioned = hubConfig.getIsProvisionedEnvironment();
+        try{
+            new DhsDeployer().deployAsDeveloper(hubConfig);
+        }
+        finally {
+            hubConfig.setIsProvisionedEnvironment(isProvisioned);
+        }
+    }
+
+    public void deployAsSecurityAdmin(HubConfigImpl hubConfig){
+        boolean isProvisioned = hubConfig.getIsProvisionedEnvironment();
+        try{
+            new DhsDeployer().deployAsSecurityAdmin(hubConfig);
+        }
+        finally {
+            hubConfig.setIsProvisionedEnvironment(isProvisioned);
+        }
     }
 }

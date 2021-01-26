@@ -180,7 +180,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
         logger.info("Deploying the security-admin-related resources should not fail since there aren't any such " +
             "resources to deploy. This ensures that deploying amps doesn't cause an error when there are no amps to " +
             "deploy.");
-        new DhsDeployer().deployAsSecurityAdmin(getHubConfig());
+        deployAsSecurityAdmin(getHubConfig());
     }
 
     private void writeAmpFileToProjectAndDeploy(String dbName, String ... roleNames) {
@@ -214,7 +214,7 @@ public class DeployUserAmpsTest extends AbstractHubCoreTest {
     }
 
     private void deployProject() {
-        new DhsDeployer().deployAsSecurityAdmin(getHubConfig());
+        deployAsSecurityAdmin(getHubConfig());
     }
 
     private EvalResultIterator fetchPiiData(){

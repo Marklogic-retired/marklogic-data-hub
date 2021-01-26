@@ -5,14 +5,19 @@ import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.admin.TransformExtensionsManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.client.io.QueryOptionsListHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.marklogic.hub.DatabaseKind;
+import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,19 +33,19 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
      */
     @BeforeEach
     public void clean() {
+        assumeTrue(isVersionCompatibleWith520Roles());
+        runAsAdmin();
+        //Some other tests seem to have written custom modules to 'hub-core-module' collection and that causes issues in this test. Hence removing
+        //those modules first.
+        runInDatabase("cts:uris((),(), cts:directory-query('/custom-modules/', 'infinity'))! xdmp:document-delete(.)", HubConfig.DEFAULT_MODULES_DB_NAME);
         clearUserModules();
     }
 
     @Test
     void testClearUserModules() {
-        assumeTrue(isVersionCompatibleWith520Roles());
-        clearUserModules();
-
         ModuleCounts beforeClearingModules = new ModuleCounts();
         beforeClearingModules.setModuleCounts();
-
         installProjectWithEachTypeOfModule();
-
         ModuleCounts afterProjectInstalled = new ModuleCounts();
         afterProjectInstalled.setModuleCounts();
 
@@ -52,6 +57,7 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
             assertTrue(e.getMessage().contains("User is not allowed to delete /config/query"));
         }
 
+        runAsDataHubDeveloper();
         ModuleCounts afterClearingModulesAsOperator = new ModuleCounts();
         afterClearingModulesAsOperator.setModuleCounts();
 
@@ -60,8 +66,6 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
         assertEquals(beforeClearingModules.resourceExtensionCount + 1, afterClearingModulesAsOperator.resourceExtensionCount);
         assertEquals(beforeClearingModules.hubCoreModuleCount, afterClearingModulesAsOperator.hubCoreModuleCount);
         checkIfCustomModulesArePresent();
-
-        runAsDataHubDeveloper();
         clearUserModules();
 
         ModuleCounts afterClearingModulesAsDeveloper = new ModuleCounts();

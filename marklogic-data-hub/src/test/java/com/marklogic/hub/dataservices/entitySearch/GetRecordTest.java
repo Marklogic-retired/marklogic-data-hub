@@ -89,7 +89,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         String path = "test-projects/provenance-test/data/customers";
 
         FlowInputs inputs = new FlowInputs("inline");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
         FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
         RunFlowResponse flowResponse = flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
@@ -111,7 +111,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertEquals(getHubConfig().getMlUsername(), history.get(1).get("user").asText());
 
         inputs.setFlowName("referenced");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
         flowRunner = new FlowRunnerImpl(getHubClient());
         flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
@@ -135,7 +135,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         String path = "test-projects/provenance-test/data/customers";
 
         FlowInputs inputs = new FlowInputs("inline", "1");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
         FlowRunner flowRunner = new FlowRunnerImpl(getHubClient());
         flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();
@@ -149,7 +149,7 @@ public class GetRecordTest extends AbstractHubCoreTest {
         assertEquals(getHubConfig().getMlUsername(), history.get(0).get("user").asText());
 
         inputs.setFlowName("referenced");
-        inputs.setInputFilePath(getClass().getClassLoader().getResource(path).getPath());
+        inputs.setInputFilePath(readFileFromClasspath(path).getAbsolutePath());
         flowRunner = new FlowRunnerImpl(getHubClient());
         flowRunner.runFlow(inputs);
         flowRunner.awaitCompletion();

@@ -19,6 +19,7 @@ package com.marklogic.hub.web.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.datamovement.JobTicket;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
@@ -137,8 +138,11 @@ public class LegacyFlowManagerServiceTest extends AbstractWebTest {
     @Test
     public void getFlowMlcpOptionsFromFile() throws Exception {
         Map<String, Object> options = fm.getFlowMlcpOptionsFromFile("test-entity", "test-flow");
-        String expected = "{\"input_file_path\":\"" + getHubProject().getProjectDirString() + "\"}";
-        String actual = new ObjectMapper().writeValueAsString(options);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode node = objectMapper.createObjectNode();
+        node.put("input_file_path", getHubProject().getProjectDirString());
+        String expected = node.toString();
+        String actual = objectMapper.writeValueAsString(options);
         JSONAssert.assertEquals("Options differ; expected: " + expected + "; actual: " + actual, expected, actual, true);
     }
 

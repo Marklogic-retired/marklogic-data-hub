@@ -136,7 +136,7 @@ public class AllArtifactsProject extends TestObject {
             assertTrue(xml.startsWith("<search:options"), "Entries ending in XML are expected to be " +
                 "XML search options documents; actual content: " + new String(xml));
             assertContentIsPrettyPrinted(xml);
-        } else {
+        } else if (entry.getName().endsWith(".json")){
             assertContentIsPrettyPrinted(new String(buffer));
             hubCentralFilesZipEntries.put(entry.getName(), objectMapper.readTree(buffer));
         }

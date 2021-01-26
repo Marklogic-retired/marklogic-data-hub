@@ -43,7 +43,7 @@ public class DeployEntityIndexesTest extends AbstractHubCoreTest {
         verifyNoPathRangeIndexesExist();
 
         // And deploy as a data-hub-developer
-        new DhsDeployer().deployAsDeveloper(getHubConfig());
+        deployAsDeveloper(getHubConfig());
         verifyPathRangeIndexExists();
     }
 

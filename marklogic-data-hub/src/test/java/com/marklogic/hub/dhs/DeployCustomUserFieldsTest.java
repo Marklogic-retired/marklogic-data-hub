@@ -44,7 +44,7 @@ public class DeployCustomUserFieldsTest extends AbstractHubCoreTest {
         final int initialPathIndexCount = db.getRangePathIndex().size();
 
         // Deploy as a data-hub-developer
-        new DhsDeployer().deployAsDeveloper(getHubConfig());
+        deployAsDeveloper(getHubConfig());
 
         // Verify that the existing DH fields/indexes still exist, and we have the user fields/indexes too (1 of each)
         db = readFinalDatabase();
