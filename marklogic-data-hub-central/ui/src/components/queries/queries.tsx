@@ -582,7 +582,7 @@ const Query: React.FC<Props> = (props) => {
             className={currentQueryDescription.length > 50 ? styles.longDescription : styles.description}>
             <MLTooltip title={currentQueryDescription}>
               {
-                searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
+                searchOptions.selectedQuery === "select a query" ? "" : searchOptions.selectedQuery && searchOptions.selectedQuery !== "select a query" &&
                   currentQueryDescription.length > 50 ? currentQueryDescription.substring(0, 50).concat("...") : currentQueryDescription
               }
             </MLTooltip>
