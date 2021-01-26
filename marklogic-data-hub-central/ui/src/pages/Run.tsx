@@ -9,6 +9,7 @@ import {useHistory} from "react-router-dom";
 import tiles from "../config/tiles.config";
 import {getFromPath} from "../util/json-utils";
 import {MissingPagePermission} from "../config/messages.config";
+import {MLButton} from "@marklogic/design-system";
 
 const {Panel} = Collapse;
 
@@ -242,16 +243,21 @@ const Run = (props) => {
       title: <div><p style={{fontWeight: 400}}>The {stepType.toLowerCase()} step <strong>{stepName}</strong> completed successfully</p></div>,
       icon: <Icon type="check-circle" theme="filled"/>,
       okText: "Close",
+      okType: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ? "default" : stepType.toLowerCase() === "ingestion" ? "default" : "primary",
       mask: false,
       width: 650,
       content: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ?
-        <div data-testid="explorer-link" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
-          <span className={styles.exploreIcon}></span>
-          <span className={styles.exploreText}>Explore Curated Data</span>
-        </div> : stepType.toLowerCase() === "ingestion" ?
-          <div data-testid="explorer-link" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+        <div className={styles.exploreDataContainer}>
+          <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
             <span className={styles.exploreIcon}></span>
-            <span className={styles.exploreText}>Explore Loaded Data</span>
+            <span className={styles.exploreText}>Explore Curated Data</span>
+          </MLButton>
+        </div> : stepType.toLowerCase() === "ingestion" ?
+          <div className={styles.exploreDataContainer}>
+            <MLButton data-testid="explorer-link" size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+              <span className={styles.exploreIcon}></span>
+              <span className={styles.exploreText}>Explore Loaded Data</span>
+            </MLButton>
           </div> : ""
     });
   }
@@ -291,14 +297,16 @@ const Run = (props) => {
       content: (
         <div id="error-list">
           {((stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName) ?
-            <div onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
-              <span className={styles.exploreIcon}></span>
-              <span className={styles.exploreText}>Explore Curated Data</span>
-            </div> : stepType.toLowerCase() === "ingestion" ?
-              <div onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+            <div className={styles.exploreDataContainer}>
+              <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreCuratedData}>
                 <span className={styles.exploreIcon}></span>
-                <span className={styles.exploreText}>Explore Loaded Data</span>
-              </div> : ""}
+                <span className={styles.exploreText}>Explore Curated Data</span>
+              </MLButton></div> : stepType.toLowerCase() === "ingestion" ?
+              <div className={styles.exploreDataContainer}>
+                <MLButton size="large" type="primary" onClick={() => goToExplorer(entityName, targetDatabase, jobId, stepType)} className={styles.exploreLoadedData}>
+                  <span className={styles.exploreIcon}></span>
+                  <span className={styles.exploreText}>Explore Loaded Data</span>
+                </MLButton></div> : ""}
           <p className={styles.errorSummary}>{getErrorsSummary(response)}</p>
           <Collapse defaultActiveKey={["0"]} bordered={false}>
             {errors.map((e, i) => {
@@ -310,6 +318,7 @@ const Run = (props) => {
         </div>
       ),
       okText: "Close",
+      okType: (stepType.toLowerCase() === "mapping" || stepType.toLowerCase() === "merging") && entityName ? "default" : stepType.toLowerCase() === "ingestion" ? "default" : "primary",
       mask: false,
       width: 800
     });
