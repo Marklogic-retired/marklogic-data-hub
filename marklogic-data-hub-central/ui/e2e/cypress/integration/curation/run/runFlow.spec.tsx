@@ -63,14 +63,16 @@ describe("Run Tile tests", () => {
     runPage.explorerLink().click();
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
+    browsePage.waitForTableToLoad();
 
     //Verify detail page renders with expected content
     browsePage.getSelectedEntity().should("contain", "Person");
-    browsePage.getTotalDocuments().should("be", 2);
+    browsePage.getTotalDocuments().should("eq", 1);
     browsePage.getSelectedFacet("sm-Person-merged").should("exist");
     browsePage.getSourceViewIcon().first().click();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
+
     cy.contains("uri: /com.marklogic.smart-mastering/merged/").should("be.visible");
     cy.contains("123 Wilson St").scrollIntoView().should("be.visible");
     cy.contains("123 Wilson Rd").should("be.visible");

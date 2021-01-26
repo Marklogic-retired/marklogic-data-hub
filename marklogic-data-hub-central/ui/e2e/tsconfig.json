@@ -10,7 +10,7 @@
     ],
     "jsx": "react",
     "experimentalDecorators": true,
-    "types": ["cypress", "@types/testing-library__cypress"]
+    "types": ["cypress", "@types/testing-library__cypress", "cypress-file-upload"]
   },
   "compileOnSave": false
 }

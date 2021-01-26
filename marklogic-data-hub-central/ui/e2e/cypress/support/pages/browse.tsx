@@ -18,6 +18,10 @@ class BrowsePage {
     cy.waitUntil(() => this.getTableRows().should("have.length.gt", 0));
   }
 
+  waitForCardToLoad() {
+    cy.waitUntil(() => this.getCard().should("have.length.gt", 0));
+  }
+
   selectEntity(entity: string) {
     this.waitForSpinnerToDisappear();
     cy.get("#entity-select").click();
@@ -313,6 +317,10 @@ class BrowsePage {
 
   getTableRows() {
     return cy.get(".ant-table-row");
+  }
+
+  getCard() {
+    return cy.get(".ant-card-body");
   }
 
   getTableViewInstanceIcon() {
