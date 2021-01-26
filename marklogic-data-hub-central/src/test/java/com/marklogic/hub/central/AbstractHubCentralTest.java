@@ -157,16 +157,8 @@ public abstract class AbstractHubCentralTest extends AbstractHubTest {
         DocumentMetadataHandle metadata = new DocumentMetadataHandle();
         metadata.getCollections().addAll(collections);
         addDefaultPermissions(metadata);
-        FileHandle handle = new FileHandle(getFileFromClasspath(resource));
+        FileHandle handle = new FileHandle(readFileFromClasspath(resource));
         getHubClient().getStagingClient().newDocumentManager().write(uri, metadata, handle);
-    }
-
-    protected File getFileFromClasspath(String resourceName) {
-        try {
-            return new ClassPathResource(resourceName).getFile();
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to find file on classpath: " + resourceName, e);
-        }
     }
 
     /**

@@ -19,6 +19,7 @@ package com.marklogic.hub.web.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.document.DocumentRecord;
 import com.marklogic.client.document.GenericDocumentManager;
 import com.marklogic.client.io.DocumentMetadataHandle;
@@ -60,7 +61,11 @@ class EntitiesControllerTest extends AbstractWebTest {
     @Test
     public void getInputFlowOptions() throws Exception {
         Map<String, Object> options = ec.getInputFlowOptions("test-entity", "flow-name");
-        JSONAssert.assertEquals("{ \"input_file_path\":\"" + hubConfig.getHubProject().getProjectDirString() + "\"}", new ObjectMapper().writeValueAsString(options), true);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode node = objectMapper.createObjectNode();
+        node.put("input_file_path", getHubProject().getProjectDirString());
+        String expected = node.toString();
+        JSONAssert.assertEquals(expected, objectMapper.writeValueAsString(options), true);
     }
 
     @Test

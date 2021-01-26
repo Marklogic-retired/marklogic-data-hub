@@ -35,6 +35,14 @@ public abstract class TestObject extends LoggingObject {
         }
     }
 
+    protected File readFileFromClasspath(String path) {
+        try {
+            return new ClassPathResource(path).getFile();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     protected String readStringFromClasspath(String path) {
         try {
             return new String(FileCopyUtils.copyToByteArray(readInputStreamFromClasspath(path)));

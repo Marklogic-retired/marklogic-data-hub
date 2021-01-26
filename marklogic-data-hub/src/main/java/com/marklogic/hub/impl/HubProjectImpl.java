@@ -528,7 +528,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
     }
 
     public void exportProject(OutputStream outputStream, boolean includeGradleLocal){
-        Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src" + File.separator + "main", "step-definitions", "steps", "gradle",
+        Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src/main", "step-definitions", "steps", "gradle",
             "gradlew", "gradlew.bat", "build.gradle", "gradle.properties");
         if(includeGradleLocal){
             writeToStream(outputStream, Stream.concat(filesToBeAddedToZip, Stream.of("gradle-local.properties")));
@@ -547,8 +547,8 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
                 }
                 try {
                     if (fileToZip.isDirectory()) {
-                        zout.putNextEntry(new ZipEntry(file + File.separator));
-                        zipSubDirectory(file + File.separator, fileToZip, zout);
+                        zout.putNextEntry(new ZipEntry(file + "/"));
+                        zipSubDirectory(file + "/", fileToZip, zout);
                     } else {
                         zipSubDirectory("", fileToZip, zout);
                     }
@@ -573,7 +573,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
         if(files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    String path = basePath + file.getName() + File.separator;
+                    String path = basePath + file.getName() + "/";
                     zout.putNextEntry(new ZipEntry(path));
                     zipSubDirectory(path, file, zout);
                 } else {

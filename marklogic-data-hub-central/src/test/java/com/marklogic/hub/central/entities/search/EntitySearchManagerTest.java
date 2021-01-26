@@ -164,7 +164,7 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         }
 
         new EntityManagerImpl(getHubConfig()).saveDbIndexes();
-        new DhsDeployer().deployAsDeveloper(getHubConfig());
+        deployAsDeveloper(getHubConfig());
 
         ReferenceModelProject project = new ReferenceModelProject(getHubClient());
         final String customerNamespace = "urn:customerNamespace";
