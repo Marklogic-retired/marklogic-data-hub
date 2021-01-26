@@ -399,7 +399,7 @@ describe("Default ingestion ", () => {
     cy.verifyStepAddedToFlow("Load", stepName);
 
     runPage.runStep(stepName).click();
-    cy.uploadFile("input/test-1.zip");
+    cy.get("#fileUpload").attachFile("input/test-1.zip");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
   });
@@ -433,7 +433,8 @@ describe("Default ingestion ", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
 
-    browsePage.getTotalDocuments().should("be", 1);
+    browsePage.waitForCardToLoad();
+    browsePage.getTotalDocuments().should("eq", 1);
     browsePage.getFacet("collection").should("exist");
     browsePage.getFacetItemCheckbox("collection", stepName).should("be.visible");
   });
