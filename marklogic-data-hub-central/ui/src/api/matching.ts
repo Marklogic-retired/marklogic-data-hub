@@ -10,7 +10,7 @@ export const updateMatchingArtifact = async (matching) => {
     }
   } catch (error) {
     let message = error;
-    console.error("Error while updating the mapping!", message);
+    console.error("Error while updating the matching step!", message);
     return false;
   }
 };

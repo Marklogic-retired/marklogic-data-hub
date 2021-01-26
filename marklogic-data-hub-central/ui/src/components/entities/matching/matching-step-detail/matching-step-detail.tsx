@@ -76,7 +76,6 @@ const MatchingStepDetail: React.FC = () => {
       }
 
       setMatchingStep(matchingStepArtifact);
-
       handleMatchingActivity(matchingStepArtifact.name);
 
     } else {
