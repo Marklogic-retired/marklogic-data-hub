@@ -399,8 +399,9 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   };
 
   const updateStepArtifact = async (matchRuleset: MatchRuleset) => {
-    let updateStep: MatchingStep = curationOptions.activeStep.stepArtifact;
-
+    // avoid triggering update of active step prior to persisting the database
+    let updateStep: MatchingStep = {...curationOptions.activeStep.stepArtifact};
+    updateStep.matchRulesets = [...updateStep.matchRulesets];
     if (Object.keys(props.editRuleset).length !== 0) {
       // edit match step
       updateStep.matchRulesets[props.editRuleset["index"]] = matchRuleset;
@@ -408,9 +409,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       // add match step
       if (updateStep.matchRulesets) { updateStep.matchRulesets.push(matchRuleset); }
     }
-
-    await updateMatchingArtifact(updateStep);
-    updateActiveStepArtifact(updateStep);
+    let success = await updateMatchingArtifact(updateStep);
+    if (success) {
+      updateActiveStepArtifact(updateStep);
+    }
   };
 
   const hasFormChanged = () => {
