@@ -25,6 +25,9 @@ const MultiSlider = (props) => {
     const onHover = () => {
       setTickValue(value);
     };
+    const onMouseLeave = () => {
+      setTickValue(0);
+    };
 
     return (
       <>
@@ -64,7 +67,8 @@ const MultiSlider = (props) => {
               </div>
             </div> : <div
               className={"handle"}
-              onMouseOver={() => onHover()}
+              onMouseMove={() => onHover()}
+              onMouseLeave = {() => onMouseLeave()}
               data-testid={`${options[0].prop}-active`}
               style={{
                 left: `${percent}%`,

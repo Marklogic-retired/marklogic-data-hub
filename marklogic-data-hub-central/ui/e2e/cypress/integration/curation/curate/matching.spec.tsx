@@ -92,7 +92,7 @@ describe("Matching", () => {
     multiSlider.getHandleNameAndType("testing", "notify").should("be.visible");
 
     //Validating the slider tooltip
-    multiSlider.getHandleName("testing").trigger("mouseover", {force: true});
+    multiSlider.getHandleName("testing").trigger("mousemove", {force: true});
     multiSlider.sliderTooltipValue("1");
     multiSlider.sliderTicksHover("threshold-slider", "19.1919");
     multiSlider.sliderTooltipValue("20");
