@@ -654,7 +654,7 @@ describe("manage queries modal scenarios on detail page", () => {
     browsePage.getSaveModalIcon().click();
     browsePage.waitForSpinnerToDisappear();
     browsePage.getSaveQueryName().should("be.visible");
-    browsePage.getSaveQueryName().type("person-query");
+    browsePage.getSaveQueryName().type("person-query-detail");
     browsePage.getSaveQueryButton().click();
     browsePage.waitForSpinnerToDisappear();
 
