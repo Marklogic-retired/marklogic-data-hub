@@ -466,6 +466,13 @@ declare function opt-impl:compile-match-options(
               function ($values) {
                 helper-impl:property-name-to-query($match-options, $full-property-name)($values, $weight)
               }
+            else if ($type eq "reduce") then
+              let $algorithm := $algorithm-ref ! map:get($algorithms, .)
+              return
+                if (fn:exists($algorithm)) then
+                    algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
+                else
+                    algorithms:standard-reduction-query(?, $match-rule, $match-options)
             else if ($type = ("expand", "custom", $algorithm-ref)) then
               let $custom-algorithm := map:get($algorithms, $algorithm-ref)
               let $algorithm := if (fn:empty($custom-algorithm)) then
@@ -479,13 +486,6 @@ declare function opt-impl:compile-match-options(
                   return algorithms:execute-algorithm($algorithm, ?, $converted-match-rule, $converted-match-options)
                 else
                   util-impl:handle-option-messages("error", "Function for the match query not found:" || fn:string($algorithm-ref), $message-output)
-            else if ($type eq "reduce") then
-              let $algorithm := $algorithm-ref ! map:get($algorithms, .)
-              return
-                if (fn:exists($algorithm)) then
-                    algorithms:execute-algorithm($algorithm, ?, $match-rule, $match-options)
-                else
-                    algorithms:standard-reduction-query(?, $match-rule, $match-options)
             else
               util-impl:handle-option-messages("error", "An invalid match type was specified: "|| xdmp:describe($match-rule, (), ()), $message-output)
           return
