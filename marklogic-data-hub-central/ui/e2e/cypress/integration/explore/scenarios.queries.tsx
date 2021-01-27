@@ -512,6 +512,7 @@ describe("manage queries modal scenarios, developer role", () => {
     browsePage.getSaveQueriesDropdown().click();
     browsePage.getQueryOption("edited-query").should("not.be.visible");
     browsePage.waitForSpinnerToDisappear();
+    browsePage.selectEntity("Person");
     cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click();
     browsePage.waitForSpinnerToDisappear();
 
@@ -677,7 +678,7 @@ describe("manage queries modal scenarios on detail page", () => {
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
     cy.waitUntil(() => browsePage.getManageQueriesButton().should("have.length.gt", 0));
-    browsePage.getManageQueriesButton().should("be.visible");
+    cy.waitUntil(() => browsePage.getManageQueriesButton().should("be.visible"), {timeout: 10000});
 
     //open manage queries modal dialog and remove previosly saved query
     browsePage.getManageQueriesModalOpened();
