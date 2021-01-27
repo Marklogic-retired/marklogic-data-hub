@@ -179,6 +179,10 @@ const Query: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
+    setCurrentQuery({});
+  }, [searchOptions.database]);
+
+  useEffect(() => {
     if (props.queries.length > 0) {
       for (let key of props.queries) {
         if (key.savedQuery.name === currentQueryName) {

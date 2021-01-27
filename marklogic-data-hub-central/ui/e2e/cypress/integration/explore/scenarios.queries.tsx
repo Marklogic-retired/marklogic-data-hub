@@ -471,6 +471,25 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getGreySelectedFacets("Person").should("not.exist");
   });
 
+  it("Verify selected query when switching database", () => {
+    //apply saved query
+    browsePage.selectQuery("person-query");
+    browsePage.getSelectedQuery().should("contain", "person-query");
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getFacetItemCheckbox("lname", "Bates").should("be.checked");
+    //switch the database
+    browsePage.getStagingDatabaseButton().click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getSaveQueriesDropdown().should("be.visible");
+    browsePage.getSelectedQuery().should("contain", "select a query");
+    browsePage.getFacetItemCheckbox("lname", "Bates").should("not.be.checked");
+    browsePage.getEditQueryModalIcon().should("not.be.visible");
+    browsePage.getResetQueryButton().should("be.visible");
+    browsePage.getSaveACopyModalIcon().should("not.be.visible");
+  });
+
 });
 
 
