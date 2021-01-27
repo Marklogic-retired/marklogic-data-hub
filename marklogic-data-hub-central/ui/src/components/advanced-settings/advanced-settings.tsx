@@ -91,10 +91,10 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   const [headersTouched, setHeadersTouched] = useState(false);
   const [headersValid, setHeadersValid] = useState(true);
 
-  const [processors, setProcessors] = useState("");
-  const [processorsTouched, setProcessorsTouched] = useState(false);
-  const [processorsExpanded, setProcessorsExpanded] = useState(false);
-  const [processorsValid, setProcessorsValid] = useState(true);
+  const [interceptors, setInterceptors] = useState("");
+  const [interceptorsTouched, setInterceptorsTouched] = useState(false);
+  const [interceptorsExpanded, setInterceptorsExpanded] = useState(false);
+  const [interceptorsValid, setInterceptorsValid] = useState(true);
 
   const [customHook, setCustomHook] = useState("");
   const [customHookTouched, setCustomHookTouched] = useState(false);
@@ -116,14 +116,14 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     setValidateEntityTouched(false);
     setBatchSizeTouched(false);
     setHeadersTouched(false);
-    setProcessorsTouched(false);
+    setInterceptorsTouched(false);
     setCustomHookTouched(false);
     setTargetPermissionsTouched(false);
 
   }, [props.openStepSettings]);
 
   const isFormValid = () => {
-    return headersValid && processorsValid && customHookValid && targetPermissionsValid;
+    return headersValid && interceptorsValid && customHookValid && targetPermissionsValid;
   };
 
   // Convert JSON from JavaScript object to formatted string
@@ -184,8 +184,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       if (props.stepData.headers) {
         setHeaders(formatJSON(props.stepData.headers));
       }
-      if (props.stepData.processors) {
-        setProcessors(formatJSON(props.stepData.processors));
+      if (props.stepData.interceptors) {
+        setInterceptors(formatJSON(props.stepData.interceptors));
       }
       if (props.stepData.customHook) {
         setCustomHook(formatJSON(props.stepData.customHook));
@@ -242,7 +242,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
         && !provGranularityTouched
         && !validateEntityTouched
         && !batchSizeTouched
-        && !processorsTouched
+        && !interceptorsTouched
         && !customHookTouched
     ) {
       return false;
@@ -260,7 +260,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       targetFormat: targetFormat,
       permissions: targetPermissions,
       headers: isEmptyString(headers) ? {} : parseJSON(headers),
-      processors: isEmptyString(processors) ? [] : parseJSON(processors),
+      interceptors: isEmptyString(interceptors) ? [] : parseJSON(interceptors),
       provenanceGranularityLevel: provGranularity,
       validateEntity: validateEntity,
       batchSize: batchSize,
@@ -346,11 +346,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       }
     }
 
-    if (event.target.id === "processors") {
-      setProcessors(event.target.value);
-      setProcessorsTouched(true);
-      if (!processorsValid && isValidJSON(event.target.value)) {
-        setProcessorsValid(true);
+    if (event.target.id === "interceptors") {
+      setInterceptors(event.target.value);
+      setInterceptorsTouched(true);
+      if (!interceptorsValid && isValidJSON(event.target.value)) {
+        setInterceptorsValid(true);
       }
     }
 
@@ -374,8 +374,8 @@ const AdvancedSettings: React.FC<Props> = (props) => {
       props.setIsValid(isValidJSON(event.target.value));
     }
 
-    if (event.target.id === "processors") {
-      setProcessorsValid(isValidJSON(event.target.value));
+    if (event.target.id === "interceptors") {
+      setInterceptorsValid(isValidJSON(event.target.value));
       props.setIsValid(isValidJSON(event.target.value));
     }
 
@@ -725,34 +725,34 @@ const AdvancedSettings: React.FC<Props> = (props) => {
             <Icon
               type="right"
               className={styles.rightArrow}
-              onClick={() => setProcessorsExpanded(!processorsExpanded)}
-              rotate={processorsExpanded ? 90 : 0}
+              onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}
+              rotate={interceptorsExpanded ? 90 : 0}
             />
-            <span aria-label="processors-expand" className={styles.expandLabel} onClick={() => setProcessorsExpanded(!processorsExpanded)}>Processors</span>
+            <span aria-label="interceptors-expand" className={styles.expandLabel} onClick={() => setInterceptorsExpanded(!interceptorsExpanded)}>Interceptors</span>
           </span>}
           labelAlign="left"
           className={styles.formItem}
           colon={false}
         />
-        { processorsExpanded ? <div className={styles.expandContainer}>
+        { interceptorsExpanded ? <div className={styles.expandContainer}>
           <div className={styles.textareaExpandTooltip}>
-            <MLTooltip title={tooltips.processors} placement={"right"}>
+            <MLTooltip title={tooltips.interceptors} placement={"right"}>
               <Icon type="question-circle" className={styles.questionCircle} theme="filled"/>
             </MLTooltip>
           </div>
           <TextArea
-            id="processors"
-            placeholder="Please enter processor content"
-            value={processors}
+            id="interceptors"
+            placeholder="Please enter interceptor content"
+            value={interceptors}
             onChange={handleChange}
             onBlur={handleBlur}
             disabled={!canReadWrite}
             className={styles.textareaExpand}
             rows={6}
-            aria-label="processors-textarea"
-            style={!processorsValid ? {border: "solid 1px #C00"} : {}}
+            aria-label="interceptors-textarea"
+            style={!interceptorsValid ? {border: "solid 1px #C00"} : {}}
           />
-          { !processorsValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
+          { !interceptorsValid ? <div className={styles.invalidExpand}>{invalidJSONMessage}</div> : null }
         </div> : ""}
         <Form.Item
           label={<span>

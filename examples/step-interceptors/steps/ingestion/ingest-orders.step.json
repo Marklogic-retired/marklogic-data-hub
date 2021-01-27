@@ -1,0 +1,13 @@
+{
+  "name" : "ingest-orders",
+  "stepDefinitionName" : "default-ingestion",
+  "stepDefinitionType" : "INGESTION",
+  "collections" : [ "order-input", "ingest-orders" ],
+  "permissions" : "data-hub-common,read,data-hub-common,update",
+  "targetDatabase" : "data-hub-STAGING",
+  "targetFormat" : "json",
+  "inputFilePath" : "data",
+  "outputURIReplacement" : ".*data*.,'/order/'",
+  "sourceFormat" : "json",
+  "stepId" : "ingest-orders-ingestion"
+}

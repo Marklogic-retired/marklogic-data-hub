@@ -66,8 +66,8 @@ describe("Load component", () => {
 
     expect(await(waitForElement(() => getByText("Target Database")))).toBeInTheDocument();
     expect(getByLabelText("headers-textarea")).toBeDisabled();
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).toBeDisabled();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).toBeDisabled();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeDisabled();
     expect(getByTestId("testLoad-save-settings")).toBeDisabled();
@@ -128,15 +128,15 @@ describe("Load component", () => {
     expect(getByText("Basic").closest("div")).not.toHaveClass("ant-tabs-tab-active");
     expect(getByText("Advanced").closest("div")).toHaveClass("ant-tabs-tab-active");
     expect(getByLabelText("headers-textarea")).not.toBeDisabled();
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).not.toBeDisabled();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).not.toBeDisabled();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).not.toBeDisabled();
 
     // No JSON (empty field)
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: ""}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
@@ -144,7 +144,7 @@ describe("Load component", () => {
     // Invalid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 1);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 2);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 3);
@@ -152,7 +152,7 @@ describe("Load component", () => {
     // Valid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 2);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 1);
     getByLabelText("customHook-textarea").focus();
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"goodJSON\": true}"}});

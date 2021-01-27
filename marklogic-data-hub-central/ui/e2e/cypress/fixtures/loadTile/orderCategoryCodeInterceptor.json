@@ -1,6 +1,6 @@
 [
   {
-    "path": "/custom-modules/step-processors/addOrderCategoryCode.sjs",
+    "path": "/custom-modules/step-interceptors/addOrderCategoryCode.sjs",
     "when": "beforeContentPersisted",
     "vars": {
       "categoryCode": "A"

@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
+public class RunStepWithInterceptorsTest extends AbstractHubCoreTest {
 
     private final static String CUSTOMER1_URI = "/echo/customer1.json";
     private final static String CUSTOMER2_URI = "/echo/customer2.json";
@@ -31,36 +31,36 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
     @Test
     void overrideUriViaIngestionStep() {
-        makeInputFilePathsAbsoluteInFlow("stepProcessors");
+        makeInputFilePathsAbsoluteInFlow("stepInterceptors");
 
         runAsDataHubOperator();
-        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "4"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepInterceptors", "4"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         final String expectedUri = "/overridden/1.json";
         JSONDocumentManager mgr = getHubClient().getStagingClient().newJSONDocumentManager();
-        assertNotNull(mgr.exists(expectedUri), "The URI should have been overridden by the step processor");
+        assertNotNull(mgr.exists(expectedUri), "The URI should have been overridden by the step interceptor");
 
         JsonNode doc = mgr.read(expectedUri, new JacksonHandle()).get();
         assertEquals("1", doc.get("envelope").get("instance").get("CustomerID").asText());
     }
 
     @Test
-    void twoProcessorsOnAStep() {
-        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "1"));
+    void twoInterceptorsOnAStep() {
+        RunFlowResponse response = runFlow(new FlowInputs("stepInterceptors", "1"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         JSONDocumentManager mgr = getHubClient().getFinalClient().newJSONDocumentManager();
         Stream.of(CUSTOMER1_URI, CUSTOMER2_URI).forEach(uri -> {
             JsonNode customer = mgr.read(uri, new JacksonHandle()).get();
             assertEquals("world", customer.get("envelope").get("headers").get("hello").asText(),
-                "The hello header should have been added by the addHeaders.sjs processor");
+                "The hello header should have been added by the addHeaders.sjs interceptor");
         });
 
         DocumentMetadataHandle.DocumentPermissions perms = mgr.readMetadata(CUSTOMER1_URI, new DocumentMetadataHandle()).getPermissions();
         assertEquals(2, perms.get("data-hub-operator").size());
         assertEquals(DocumentMetadataHandle.Capability.READ, perms.get("qconsole-user").iterator().next(),
-            "The addPermissions.sjs processor should have added qconsole-user/read to the first document since it " +
+            "The addPermissions.sjs interceptor should have added qconsole-user/read to the first document since it " +
                 "has a name of 'Jane'");
 
         perms = mgr.readMetadata(CUSTOMER2_URI, new DocumentMetadataHandle()).getPermissions();
@@ -70,8 +70,8 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void missingProcessorModule() {
-        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "2"));
+    void missingInterceptorModule() {
+        RunFlowResponse response = runFlow(new FlowInputs("stepInterceptors", "2"));
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(),
             "The job should have failed because step 2 references an invalid path");
 
@@ -89,29 +89,29 @@ public class RunStepWithProcessorsTest extends AbstractHubCoreTest {
 
         JSONDocumentManager mgr = getHubClient().getFinalClient().newJSONDocumentManager();
         Stream.of(CUSTOMER1_URI, CUSTOMER2_URI).forEach(uri -> {
-            assertNull(mgr.exists(uri), "The doc written by the custom step should not have been written, due to the processor failure");
+            assertNull(mgr.exists(uri), "The doc written by the custom step should not have been written, due to the interceptor failure");
         });
     }
 
     @Test
     void missingWhen() {
-        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "3"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepInterceptors", "3"));
         assertEquals(JobStatus.FINISHED.toString(), response.getJobStatus());
 
         JSONDocumentManager mgr = getHubClient().getFinalClient().newJSONDocumentManager();
         Stream.of(CUSTOMER1_URI, CUSTOMER2_URI).forEach(uri -> {
             JsonNode customer = mgr.read(uri, new JacksonHandle()).get();
             assertFalse(customer.get("envelope").get("headers").has("hello"),
-                "Because the processor doesn't have a 'when' property, the processor will be ignored (as opposed to throwing an error).");
+                "Because the interceptor doesn't have a 'when' property, the interceptor will be ignored (as opposed to throwing an error).");
         });
     }
 
     @Test
     void stopOnErrorIsTrue() {
-        RunFlowResponse response = runFlow(new FlowInputs("stepProcessors", "5", "1"));
+        RunFlowResponse response = runFlow(new FlowInputs("stepInterceptors", "5", "1"));
 
         assertEquals(JobStatus.STOP_ON_ERROR.toString(), response.getJobStatus(), "The job should have stopped after " +
-            "running step 5, as the processor for that step throws an error, and the flow has stopOnError=true");
+            "running step 5, as the interceptor for that step throws an error, and the flow has stopOnError=true");
 
         Map<String, RunStepResponse> stepResponses = response.getStepResponses();
         assertEquals(1, stepResponses.keySet().size(), "Should only have a step response for step 5, which is the one " +

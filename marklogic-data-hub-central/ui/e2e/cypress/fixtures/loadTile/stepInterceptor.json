@@ -1,6 +1,6 @@
 [
   {
-    "path": "/custom-modules/step-processors/addHeaders.sjs",
+    "path": "/custom-modules/step-interceptors/addHeaders.sjs",
     "when": "beforeContentPersisted",
     "vars": {
       "exampleVariable": "testValue"

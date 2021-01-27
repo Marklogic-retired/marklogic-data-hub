@@ -19,7 +19,7 @@ export const matchingStep = {
       "targetFormat": "JSON",
       "permissions": "data-hub-common,read,data-hub-common-writer,update",
       "provenanceGranularityLevel": "fine",
-      "processors": [],
+      "interceptors": [],
       "customHook": {},
       "matchRulesets": [
         {
@@ -113,7 +113,7 @@ export const matchingStep = {
       "targetFormat": "JSON",
       "permissions": "data-hub-common,read,data-hub-common-writer,update",
       "provenanceGranularityLevel": "fine",
-      "processors": [],
+      "interceptors": [],
       "customHook": {},
       "matchRulesets": [],
       "thresholds": []

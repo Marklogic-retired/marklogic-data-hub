@@ -1,0 +1,35 @@
+{
+  "name" : "map-orders",
+  "stepDefinitionName" : "entity-services-mapping",
+  "stepDefinitionType" : "MAPPING",
+  "interceptors" : [ {
+    "path" : "/custom-modules/step-interceptors/addHeaders.sjs",
+    "when" : "beforeContentPersisted",
+    "vars" : {
+      "exampleVariable" : "testValue"
+    }
+  }, {
+    "path" : "/org.example/addPermissions.sjs",
+    "when" : "beforeContentPersisted"
+  } ],
+  "sourceQuery" : "cts.collectionQuery('order-input')",
+  "sourceDatabase" : "data-hub-STAGING",
+  "collections" : [ "Order", "map-orders" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "http://marklogic.com/Order-0.0.1/Order",
+  "properties" : {
+    "ShipCity" : {
+      "sourcedFrom" : "ShipCity"
+    },
+    "ShipAddress" : {
+      "sourcedFrom" : "ShipAddress"
+    },
+    "OrderID" : {
+      "sourcedFrom" : "OrderID"
+    }
+  },
+  "namespaces" : { },
+  "selectedSource" : "query",
+  "stepId" : "map-orders-mapping"
+}

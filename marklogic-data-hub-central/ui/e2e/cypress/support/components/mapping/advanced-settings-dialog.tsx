@@ -65,7 +65,7 @@ class AdvancedSettingsDialog {
 
   /**
    * Textarea that takes a file path in fixtures and pastes the {} in the text area
-   * @param fixturePath - file path to stepProcessor json config file
+   * @param fixturePath
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
   setHeaderContent(fixturePath: string) {
@@ -77,33 +77,33 @@ class AdvancedSettingsDialog {
   }
 
 
-  toggleProcessors() {
-    cy.findByLabelText("processors-expand").trigger("mouseover").click();
+  toggleInterceptors() {
+    cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
   }
 
-  getProcessors() {
-    return cy.get("#processors");
+  getInterceptors() {
+    return cy.get("#interceptors");
   }
 
   /**
-   * Set processors
-   * @param processor
+   * Set interceptors
+   * @param interceptor
    * @example [] as valid JSON string
    */
-  setProcessors(processor: string) {
-    cy.get("#processors").type(processor);
+  setInterceptors(interceptor: string) {
+    cy.get("#interceptors").type(interceptor);
   }
 
   /**
    * Textarea that takes a file path in fixtures and pastes the json array object [] in the text area
-   * @param fixturePath - file path to stepProcessor json config file
+   * @param fixturePath - file path to stepInterceptor json config file
    * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
    */
-  setStepProcessor(fixturePath: string) {
-    cy.findByLabelText("processors-expand").trigger("mouseover").click();
-    if (fixturePath === "") { return cy.get("#processors").clear(); } else {
+  setStepInterceptor(fixturePath: string) {
+    cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
+    if (fixturePath === "") { return cy.get("#interceptors").clear(); } else {
       cy.fixture(fixturePath).then(content => {
-        cy.get("#processors").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
+        cy.get("#interceptors").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
       });
     }
   }
