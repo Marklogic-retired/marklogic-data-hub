@@ -129,8 +129,8 @@ else {
   if (isEmptyString(stepProperties.headers)){
     stepProperties.headers = {};
   }
-  if (isEmptyString(stepProperties.processors)){
-    stepProperties.processors = [];
+  if (isEmptyString(stepProperties.interceptors)){
+    stepProperties.interceptors = [];
   }
 
   Artifacts.setArtifact(stepDefinitionType, stepName, stepProperties);

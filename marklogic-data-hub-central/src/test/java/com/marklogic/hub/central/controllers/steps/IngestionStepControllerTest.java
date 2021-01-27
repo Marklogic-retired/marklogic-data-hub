@@ -2,7 +2,6 @@ package com.marklogic.hub.central.controllers.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.marklogic.client.FailedRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         public String description;
         public String sourceFormat;
         public String targetFormat;
-        public ArrayNode processors;
+        public ArrayNode interceptors;
         public ArrayNode collections;
     }
 
@@ -35,7 +34,7 @@ public class IngestionStepControllerTest extends AbstractStepControllerTest {
         step.sourceFormat = "json";
         step.targetFormat = "json";
         step.collections = objectMapper.createArrayNode().add("test");
-        step.processors = objectMapper.createArrayNode();
+        step.interceptors = objectMapper.createArrayNode();
         return step;
     }
 

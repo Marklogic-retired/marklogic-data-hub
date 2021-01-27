@@ -43,7 +43,7 @@ const DEFAULT_MERGING_STEP: MergingStep = {
   targetFormat: "",
   mergeStrategies: [],
   mergeRules: [],
-  processors: {},
+  interceptors: {},
   customHook: {}
 };
 

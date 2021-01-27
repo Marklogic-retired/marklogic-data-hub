@@ -5,8 +5,8 @@ const stepData = {
   batchSize: 35,
   permissions: "data-hub-common,read,data-hub-common,update",
   lastUpdated: "2020-01-01T00:00:00.000001-07:00",
-  processors: {
-    "processor": true
+  interceptors: {
+    "interceptor": true
   },
   customHook: {
     "hook": true

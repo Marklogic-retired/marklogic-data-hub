@@ -24,9 +24,9 @@ let info = {
     user: "admin",
     runBefore: false
   },
-  processors: [
+  interceptors: [
     {
-      path: "/some/processor.sjs",
+      path: "/some/interceptor.sjs",
       vars: {
         some: "value"
       },
@@ -61,9 +61,9 @@ assertions.push(
   test.assertEqual("world", flowStep.customHook.parameters.hello),
   test.assertEqual("admin", flowStep.customHook.user),
   test.assertEqual(false, flowStep.customHook.runBefore),
-  test.assertEqual("/some/processor.sjs", flowStep.processors[0].path),
-  test.assertEqual("beforeContentPersisted", flowStep.processors[0].when),
-  test.assertEqual("value", flowStep.processors[0].vars.some),
+  test.assertEqual("/some/interceptor.sjs", flowStep.interceptors[0].path),
+  test.assertEqual("beforeContentPersisted", flowStep.interceptors[0].when),
+  test.assertEqual("value", flowStep.interceptors[0].vars.some),
   test.assertEqual(52, flowStep.batchSize),
   test.assertEqual(7, flowStep.threadCount),
 

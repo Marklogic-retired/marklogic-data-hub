@@ -76,11 +76,11 @@ describe("Default ingestion ", () => {
     cy.findByTestId(`${stepName}-save-settings`).should("be.disabled"); // Errors disable save button
     loadPage.setHeaderContent("loadTile/headerContent");
     //Verify JSON error
-    cy.findByText("Processors").click();
-    cy.get("#processors").clear().type("[\"test\": \"fail\"]").tab();
+    cy.findByText("Interceptors").click();
+    cy.get("#interceptors").clear().type("[\"test\": \"fail\"]").tab();
     loadPage.jsonValidateError().should("be.visible");
-    cy.findByText("Processors").click(); //closing the processor text area
-    loadPage.setStepProcessor("loadTile/stepProcessor");
+    cy.findByText("Interceptors").click(); //closing the interceptor text area
+    loadPage.setStepInterceptor("loadTile/stepInterceptor");
     //Verify JSON error
     cy.findByText("Custom Hook").click();
     cy.get("#customHook").clear().type("{test}", {parseSpecialCharSequences: false}).tab();
@@ -238,11 +238,11 @@ describe("Default ingestion ", () => {
     loadPage.jsonValidateError().should("be.visible");
     loadPage.setHeaderContent("loadTile/headerContent");
     //Verify JSON error
-    cy.findByText("Processors").click();
-    cy.get("#processors").clear().type("[\"test\": \"fail\"]").tab();
+    cy.findByText("Interceptors").click();
+    cy.get("#interceptors").clear().type("[\"test\": \"fail\"]").tab();
     loadPage.jsonValidateError().should("be.visible");
-    cy.findByText("Processors").click(); //closing the processor text area
-    loadPage.setStepProcessor("");
+    cy.findByText("Interceptors").click(); //closing the interceptor text area
+    loadPage.setStepInterceptor("");
     //Verify JSON error
     cy.findByText("Custom Hook").click();
     cy.get("#customHook").clear().type("{test}", {parseSpecialCharSequences: false}).tab();

@@ -395,19 +395,19 @@ class Flow {
     }
     flowInstance.globalContext.uri = null;
 
-    let stepProcessorFailed = false;
+    let stepInterceptorFailed = false;
     try {
-      this.applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
+      this.applyInterceptorsBeforeContentPersisted(flowStep, contentArray, combinedOptions);
     } catch (e) {
-      // If a processor throws an error, we don't know if it was specific to a particular item or not. So we assume that
+      // If an interceptor throws an error, we don't know if it was specific to a particular item or not. So we assume that
       // all items failed; this is analogous to the behavior of acceptsBatch=true
       flowInstance.globalContext.completedItems = [];
-      stepProcessorFailed = true;
+      stepInterceptorFailed = true;
       this.handleStepError(flowInstance, e, items);
     }
 
-    // Assumption is that if a processor failed, none of the content objects processed by the step module should be written
-    if (!stepProcessorFailed) {
+    // Assumption is that if an interceptor failed, none of the content objects processed by the step module should be written
+    if (!stepInterceptorFailed) {
       contentArray.forEach(contentObject => {
         if (contentObject.uri) {
           this.writeQueue.push(contentObject);
@@ -423,21 +423,21 @@ class Flow {
   }
 
   /**
-   * Applies processors to the given content array. Processors can make any changes they wish to the items in the
-   * content array, including adding and removing items, but the array itself cannot be changed - i.e. a processor may
+   * Applies interceptors to the given content array. Interceptors can make any changes they wish to the items in the
+   * content array, including adding and removing items, but the array itself cannot be changed - i.e. an interceptor may
    * not return a new instance of an array.
    *
    * @param flowStep
    * @param contentArray
    * @param combinedOptions
    */
-  applyProcessorsBeforeContentPersisted(flowStep, contentArray, combinedOptions) {
-    if (flowStep.processors) {
-      flowStep.processors.filter((processor => "beforeContentPersisted" == processor.when)).forEach(processor => {
-        const vars = Object.assign({}, processor.vars);
+  applyInterceptorsBeforeContentPersisted(flowStep, contentArray, combinedOptions) {
+    if (flowStep.interceptors) {
+      flowStep.interceptors.filter((interceptor => "beforeContentPersisted" == interceptor.when)).forEach(interceptor => {
+        const vars = Object.assign({}, interceptor.vars);
         vars.contentArray = contentArray;
         vars.options = combinedOptions;
-        xdmp.invoke(processor.path, vars);
+        xdmp.invoke(interceptor.path, vars);
       });
     }
   }
@@ -541,16 +541,16 @@ class Flow {
             status: (stepDefTypeLowerCase === 'ingestion') ? 'created' : 'updated',
             metadata: {}
           };
-          
+
           const isFineGranularity = prov.granularityLevel() === prov.FINE_LEVEL;
           const isMappingStep = flowStep.stepDefinitionName === "entity-services-mapping";
-          
+
           if (isFineGranularity && isMappingStep) {
             xdmp.trace(this.datahub.consts.TRACE_RUN_STEP, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
           }
-          
-          const provResult = isFineGranularity && !isMappingStep && content.provenance ? 
-            this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) : 
+
+          const provResult = isFineGranularity && !isMappingStep && content.provenance ?
+            this.buildFineProvenanceData(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content, info) :
             prov.createStepRecord(jobId, flowName, stepName, flowStep.stepDefinitionName, stepDefTypeLowerCase, content.uri, info);
 
           if (provResult instanceof Error) {

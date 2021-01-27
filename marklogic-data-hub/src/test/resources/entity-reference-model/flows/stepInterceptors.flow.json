@@ -1,5 +1,5 @@
 {
-  "name": "stepProcessors",
+  "name": "stepInterceptors",
   "stopOnError": true,
   "steps": {
     "1": {
@@ -10,29 +10,29 @@
         "sourceQuery": "cts.collectionQuery('customer-input')",
         "permissions": "data-hub-common,read,data-hub-common,update"
       },
-      "processors": [
+      "interceptors": [
         {
-          "path": "/custom-modules/step-processors/addHeaders.sjs",
+          "path": "/custom-modules/step-interceptors/addHeaders.sjs",
           "when": "beforeContentPersisted",
           "vars": {
             "headerValueToAdd": "world"
           }
         },
         {
-          "path": "/custom-modules/step-processors/addPermissions.sjs",
+          "path": "/custom-modules/step-interceptors/addPermissions.sjs",
           "when": "beforeContentPersisted"
         }
       ]
     },
     "2": {
-      "name": "missingProcessorModule",
+      "name": "missingInterceptorModule",
       "stepDefinitionName": "echo-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
         "sourceQuery": "cts.collectionQuery('customer-input')",
         "permissions": "data-hub-common,read,data-hub-common,update"
       },
-      "processors": [
+      "interceptors": [
         {
           "path": "/missing/module.sjs",
           "when": "beforeContentPersisted"
@@ -47,9 +47,9 @@
         "sourceQuery": "cts.collectionQuery('customer-input')",
         "permissions": "data-hub-common,read,data-hub-common,update"
       },
-      "processors": [
+      "interceptors": [
         {
-          "path": "/custom-modules/step-processors/addHeaders.sjs",
+          "path": "/custom-modules/step-interceptors/addHeaders.sjs",
           "vars": {
             "headerValueToAdd": "world"
           }
@@ -68,23 +68,23 @@
         "inputFilePath": "data/customers",
         "inputFileType": "json"
       },
-      "processors": [
+      "interceptors": [
         {
-          "path": "/custom-modules/step-processors/onIngest.sjs",
+          "path": "/custom-modules/step-interceptors/onIngest.sjs",
           "when": "beforeContentPersisted"
         }
       ]
     },
     "5": {
-      "name": "processorModuleThrowsError",
+      "name": "interceptorModuleThrowsError",
       "stepDefinitionName": "echo-step",
       "stepDefinitionType": "CUSTOM",
       "options": {
         "sourceQuery": "cts.collectionQuery('customer-input')"
       },
-      "processors": [
+      "interceptors": [
         {
-          "path": "/custom-modules/step-processors/moduleThrowsError.sjs",
+          "path": "/custom-modules/step-interceptors/moduleThrowsError.sjs",
           "when": "beforeContentPersisted"
         }
       ]

@@ -62,8 +62,8 @@ const loadSettings = {"data":
       "headers": {
         "header": true
       },
-      "processors": {
-        "processor": true
+      "interceptors": {
+        "interceptor": true
       },
       "customHook": {
         "hook": true

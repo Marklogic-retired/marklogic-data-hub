@@ -49,11 +49,11 @@ describe("Advanced step settings", () => {
     expect(getByText("Header Content")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Processors"));
-    expect(getByText("{ \"processor\": true }")).toBeInTheDocument();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByText("{ \"interceptor\": true }")).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
@@ -87,11 +87,11 @@ describe("Advanced step settings", () => {
     expect(getByText("Header Content")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Processors"));
-    expect(getByText("{ \"processor\": true }")).toBeInTheDocument();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByText("{ \"interceptor\": true }")).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
@@ -125,11 +125,11 @@ describe("Advanced step settings", () => {
     expect(getByText("Header Content")).toBeInTheDocument();
     expect(getByText("{ \"header\": true }")).toBeInTheDocument();
 
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Processors"));
-    expect(getByText("{ \"processor\": true }")).toBeInTheDocument();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByText("{ \"interceptor\": true }")).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
@@ -157,11 +157,11 @@ describe("Advanced step settings", () => {
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();
 
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Processors"));
-    expect((await(waitForElement(() => getByText("{ \"processor\": true }"))))).toBeInTheDocument();
+    fireEvent.click(getByText("Interceptors"));
+    expect((await(waitForElement(() => getByText("{ \"interceptor\": true }"))))).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
@@ -229,11 +229,11 @@ describe("Advanced step settings", () => {
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
     expect(getByText("Fine-grained")).toBeInTheDocument();
 
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
-    fireEvent.click(getByText("Processors"));
-    expect(getByText("{ \"processor\": true }")).toBeInTheDocument();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByText("{ \"interceptor\": true }")).toBeInTheDocument();
 
     fireEvent.click(getByText("Custom Hook"));
     expect(getByText("{ \"hook\": true }")).toBeInTheDocument();
@@ -321,9 +321,9 @@ describe("Advanced step settings", () => {
     expect(testFormatOptions.map(li => li.textContent).toString()).toEqual("JSON,XML");
     fireEvent.select(testFormatOptions[1]);
 
-    fireEvent.click(getByText("Processors"));
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "processors-changed"}});
-    expect(getByLabelText("processors-textarea")).toHaveValue("processors-changed");
+    fireEvent.click(getByText("Interceptors"));
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "interceptors-changed"}});
+    expect(getByLabelText("interceptors-textarea")).toHaveValue("interceptors-changed");
 
     fireEvent.click(getByText("Custom Hook"));
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "hook-changed"}});
@@ -343,7 +343,7 @@ describe("Advanced step settings", () => {
     });
 
     // Expand all textarea inputs
-    fireEvent.click(getByText("Processors"));
+    fireEvent.click(getByText("Interceptors"));
     fireEvent.click(getByText("Custom Hook"));
 
     // No errors at start
@@ -352,7 +352,7 @@ describe("Advanced step settings", () => {
     // No JSON (empty field)
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: ""}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: ""}});
     expect(queryAllByText("Invalid JSON").length === 0);
@@ -360,7 +360,7 @@ describe("Advanced step settings", () => {
     // Invalid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 1);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 2);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"badJSON\": \"noClosingBracket\""}});
     expect(queryAllByText("Invalid JSON").length === 3);
@@ -368,7 +368,7 @@ describe("Advanced step settings", () => {
     // Valid JSON
     fireEvent.change(getByLabelText("headers-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 2);
-    fireEvent.change(getByLabelText("processors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
+    fireEvent.change(getByLabelText("interceptors-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 1);
     fireEvent.change(getByLabelText("customHook-textarea"), {target: {value: "{\"goodJSON\": true}"}});
     expect(queryAllByText("Invalid JSON").length === 0);
@@ -395,8 +395,8 @@ describe("Advanced step settings", () => {
     expect(document.querySelector("#provGranularity")).toHaveClass("ant-select-disabled");
     expect(document.querySelector("#validateEntity")).toHaveClass("ant-select-disabled");
 
-    fireEvent.click(getByText("Processors"));
-    expect(document.querySelector("#processors")).toHaveClass("ant-input-disabled");
+    fireEvent.click(getByText("Interceptors"));
+    expect(document.querySelector("#interceptors")).toHaveClass("ant-input-disabled");
 
     fireEvent.click(getByText("Custom Hook"));
     expect(document.querySelector("#customHook")).toHaveClass("ant-input-disabled");
@@ -409,11 +409,11 @@ describe("Advanced step settings", () => {
     const {getByText, getAllByLabelText} = render(
       <AdvancedSettings {...data.advancedMapping} />
     );
-    fireEvent.click(getByText("Processors"));
+    fireEvent.click(getByText("Interceptors"));
     fireEvent.click(getByText("Custom Hook"));
     let tipIcons  = getAllByLabelText("icon: question-circle");
     const tips = ["sourceDatabase", "targetDatabase", "additionalCollections", "targetPermissions",
-      "targetFormat", "provGranularity", "validateEntity", "batchSize", "headers", "processors", "customHook"];
+      "targetFormat", "provGranularity", "validateEntity", "batchSize", "headers", "interceptors", "customHook"];
     tips.forEach(async (tip, i) => {
       fireEvent.mouseOver(tipIcons[i]);
       await waitForElement(() => getByText(AdvancedSettingsTooltips[tip]));

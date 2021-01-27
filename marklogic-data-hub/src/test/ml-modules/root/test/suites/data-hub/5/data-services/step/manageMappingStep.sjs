@@ -24,16 +24,16 @@ let info = {
   targetEntityType: "http://example.org/Customer-0.0.1/Customer",
   headers:"",
   customHook:"",
-  processors: ""
+  interceptors: ""
 };
 
 // Create a step and verify the response
 let serviceResponse = stepService.saveStep(stepDefinitionType, info);
 
-//Remove 'headers', 'customHook' and 'processors' from 'info' before assigning to 'expectedStep' as they are json objects
+//Remove 'headers', 'customHook' and 'interceptors' from 'info' before assigning to 'expectedStep' as they are json objects
 delete info.headers;
 delete info.customHook;
-delete info.processors;
+delete info.interceptors;
 
 // Will use this for assertions on service responses
 let expectedStep = Object.assign({}, info);
@@ -48,7 +48,7 @@ expectedStep.targetFormat = "json";
 assertions.push(
   test.assertEqual("{}", JSON.stringify(serviceResponse.headers)),
   test.assertEqual("{}", JSON.stringify(serviceResponse.customHook)),
-  test.assertEqual("[]", JSON.stringify(serviceResponse.processors))
+  test.assertEqual("[]", JSON.stringify(serviceResponse.interceptors))
 );
 
 hubJsTest.verifyJson(expectedStep, serviceResponse, assertions);
@@ -91,7 +91,7 @@ hubJsTest.verifyJson(expectedStep, stepService.getStep(stepDefinitionType, stepN
 assertions.push(
   test.assertEqual("{}", JSON.stringify(serviceResponse.headers)),
   test.assertEqual("{}", JSON.stringify(serviceResponse.customHook)),
-  test.assertEqual("[]", JSON.stringify(serviceResponse.processors))
+  test.assertEqual("[]", JSON.stringify(serviceResponse.interceptors))
 );
 
 // Create a flow and add the step to it

@@ -205,14 +205,14 @@ class LoadPage {
 
   /**
      * Textarea that takes a file path in fixtures and pastes the json array object [] in the text area
-     * @param fixturePath - file path to stepProcessor json config file
+     * @param fixturePath - file path to stepInterceptor json config file
      * @see https://docs.cypress.io/api/commands/type.html#Key-Combinations
      */
-  setStepProcessor(fixturePath: string) {
-    cy.findByText("Processors").click();
-    if (fixturePath === "") { return cy.get("#processors").clear(); } else {
+  setStepInterceptor(fixturePath: string) {
+    cy.findByText("Interceptors").click();
+    if (fixturePath === "") { return cy.get("#interceptors").clear(); } else {
       cy.fixture(fixturePath).then(content => {
-        cy.get("#processors").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
+        cy.get("#interceptors").clear().type(JSON.stringify(content), {parseSpecialCharSequences: false});
       });
     }
   }

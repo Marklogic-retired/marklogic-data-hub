@@ -33,7 +33,7 @@ describe("Mapping", () => {
     cy.deleteFlows("orderFlow", "orderCustomHeaderFlow");
   });
 
-  it("can create load step with processors & custom hook, can create mapping step with processors & custom hook, can create new flow, run both steps, and verify processors & custom hooks", () => {
+  it("can create load step with interceptors & custom hook, can create mapping step with interceptors & custom hook, can create new flow, run both steps, and verify interceptors & custom hooks", () => {
     const flowName = "orderFlow";
     const loadStep = "loadOrder";
     const mapStep = "mapOrder";
@@ -43,11 +43,11 @@ describe("Mapping", () => {
     loadPage.addNewButton("card").click();
     loadPage.saveButton().should("be.enabled");
     loadPage.stepNameInput().type(loadStep);
-    loadPage.stepDescriptionInput().type("load order with processors");
+    loadPage.stepDescriptionInput().type("load order with interceptors");
     //verify advanced setting modifications during creation
     loadPage.switchEditAdvanced().click();
-    // add processor to load step
-    advancedSettingsDialog.setStepProcessor("loadTile/orderCategoryCodeProcessor");
+    // add interceptor to load step
+    advancedSettingsDialog.setStepInterceptor("loadTile/orderCategoryCodeInterceptor");
 
     loadPage.confirmationOptions("Save").click({force: true});
     cy.findByText(loadStep).should("be.visible");
@@ -56,9 +56,9 @@ describe("Mapping", () => {
     loadPage.editStepInCardView(loadStep).click({force: true});
     loadPage.switchEditAdvanced().click();
 
-    //processor should already be set during creation
-    cy.findByLabelText("processors-expand").trigger("mouseover").click();
-    cy.get("#processors").should("not.be.empty");
+    //interceptor should already be set during creation
+    cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
+    cy.get("#interceptors").should("not.be.empty");
 
     //add customHook to load step
     advancedSettingsDialog.setCustomHook("loadTile/addPrimaryKeyHook");
@@ -96,14 +96,14 @@ describe("Mapping", () => {
     curatePage.toggleEntityTypeId("Order");
     cy.waitUntil(() => curatePage.addNewStep().click());
     createEditMappingDialog.setMappingName(mapStep);
-    createEditMappingDialog.setMappingDescription("An order mapping with custom processors");
+    createEditMappingDialog.setMappingDescription("An order mapping with custom interceptors");
     createEditMappingDialog.setSourceRadio("Query");
     createEditMappingDialog.setQueryInput(`cts.collectionQuery(['${loadStep}'])`);
 
     //verify advanced setting modifications during creation
     loadPage.switchEditAdvanced().click();
-    // add processor to map step
-    advancedSettingsDialog.setStepProcessor("curateTile/orderDateProcessor");
+    // add interceptor to map step
+    advancedSettingsDialog.setStepInterceptor("curateTile/orderDateInterceptor");
 
     createEditMappingDialog.saveButton().click({force: true});
 
@@ -118,9 +118,9 @@ describe("Mapping", () => {
     cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
     curatePage.switchEditAdvanced().click();
 
-    //processor should already be set during creation
-    cy.findByLabelText("processors-expand").trigger("mouseover").click();
-    cy.get("#processors").should("not.be.empty");
+    //interceptor should already be set during creation
+    cy.findByLabelText("interceptors-expand").trigger("mouseover").click();
+    cy.get("#interceptors").should("not.be.empty");
 
     // add customHook to mapping step
     advancedSettingsDialog.setCustomHook("curateTile/customUriHook");

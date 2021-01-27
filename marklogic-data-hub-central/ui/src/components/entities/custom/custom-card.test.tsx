@@ -103,7 +103,7 @@ describe("Custom Card component", () => {
     expect(getByPlaceholderText("Please enter target permissions")).toHaveValue("role1,read,role2,update");
     expect(getByPlaceholderText("Please enter target permissions")).toBeDisabled();
     expect(getByText("Provenance Granularity")).toBeInTheDocument();
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
     expect(getByText("Additional Settings")).toBeInTheDocument();
 

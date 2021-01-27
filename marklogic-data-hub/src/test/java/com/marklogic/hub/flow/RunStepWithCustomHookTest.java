@@ -36,7 +36,7 @@ public class RunStepWithCustomHookTest extends AbstractHubCoreTest {
      * Note that because the hook operation gets the content objects as they were before the step module was executed,
      * the URI of the document inserted by the hook is still based on the URI of the input, not on the content object
      * returned by the step module. That's likely not expected behavior, but that's why custom hooks are being replaced
-     * by step processors.
+     * by step interceptors.
      */
     @Test
     void afterHook() {

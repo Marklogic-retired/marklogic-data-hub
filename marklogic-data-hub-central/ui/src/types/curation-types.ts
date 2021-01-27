@@ -42,7 +42,7 @@ export interface MatchingStep {
   targetFormat: string,
   matchRulesets: any[],
   thresholds: any[],
-  processors: any,
+  interceptors: any,
   customHook: any
 }
 
@@ -93,7 +93,7 @@ export interface MergingStep {
   },
   mergeStrategies: any[],
   mergeRules: any[],
-  processors: any,
+  interceptors: any,
   customHook: any
 }
 

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "when",
     "vars"
 })
-public class Processor {
+public class Interceptor {
 
     /**
      * Path to a module in the modules database that will be invoked via xdmp.invoke
@@ -27,11 +27,11 @@ public class Processor {
     @JsonPropertyDescription("Path to a module in the modules database that will be invoked via xdmp.invoke")
     private String path;
     /**
-     * When the processor should be invoked. Only 'beforeContentPersisted' is supported.
+     * When the interceptor should be invoked. Only 'beforeContentPersisted' is supported.
      * 
      */
     @JsonProperty("when")
-    @JsonPropertyDescription("When the processor should be invoked. Only 'beforeContentPersisted' is supported.")
+    @JsonPropertyDescription("When the interceptor should be invoked. Only 'beforeContentPersisted' is supported.")
     private String when;
     /**
      * Any properties defined in this object are passed to the invoked module
@@ -62,7 +62,7 @@ public class Processor {
     }
 
     /**
-     * When the processor should be invoked. Only 'beforeContentPersisted' is supported.
+     * When the interceptor should be invoked. Only 'beforeContentPersisted' is supported.
      * 
      */
     @JsonProperty("when")
@@ -71,7 +71,7 @@ public class Processor {
     }
 
     /**
-     * When the processor should be invoked. Only 'beforeContentPersisted' is supported.
+     * When the interceptor should be invoked. Only 'beforeContentPersisted' is supported.
      * 
      */
     @JsonProperty("when")
@@ -110,7 +110,7 @@ public class Processor {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(Processor.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(Interceptor.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("path");
         sb.append('=');
         sb.append(((this.path == null)?"<null>":this.path));
@@ -150,10 +150,10 @@ public class Processor {
         if (other == this) {
             return true;
         }
-        if ((other instanceof Processor) == false) {
+        if ((other instanceof Interceptor) == false) {
             return false;
         }
-        Processor rhs = ((Processor) other);
+        Interceptor rhs = ((Interceptor) other);
         return (((((this.path == rhs.path)||((this.path!= null)&&this.path.equals(rhs.path)))&&((this.vars == rhs.vars)||((this.vars!= null)&&this.vars.equals(rhs.vars))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.when == rhs.when)||((this.when!= null)&&this.when.equals(rhs.when))));
     }
 

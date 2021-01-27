@@ -69,7 +69,7 @@
                   "type": "object",
                   "$ref": "./CustomHook.schema.json"
                 },
-                "processors": {
+                "interceptors": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -80,7 +80,7 @@
                       },
                       "when": {
                         "type": "string",
-                        "description": "When the processor should be invoked. Only 'beforeContentPersisted' is supported."
+                        "description": "When the interceptor should be invoked. Only 'beforeContentPersisted' is supported."
                       },
                       "vars": {
                         "type": "object",

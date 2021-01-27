@@ -210,7 +210,7 @@ describe("Mapping Card component", () => {
     expect(getByText("Entity Validation")).toBeInTheDocument();
     expect(getByText("Please select Entity Validation")).toBeInTheDocument();
     expect(getByText("Header Content")).toBeInTheDocument();
-    expect(getByText("Processors")).toBeInTheDocument();
+    expect(getByText("Interceptors")).toBeInTheDocument();
     expect(getByText("Custom Hook")).toBeInTheDocument();
 
     await wait(() => {

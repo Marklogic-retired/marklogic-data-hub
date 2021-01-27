@@ -217,8 +217,8 @@ describe("Steps settings component", () => {
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     expect(getByLabelText("headers-textarea")).toBeEmpty();
     // Open text areas that are closed by default
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).toBeEmpty();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
@@ -273,8 +273,8 @@ describe("Steps settings component", () => {
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     expect(getByLabelText("headers-textarea")).toBeEmpty();
     // Open text areas that are closed by default
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).toBeEmpty();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
@@ -322,8 +322,8 @@ describe("Steps settings component", () => {
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).toBeEmpty();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });
@@ -371,8 +371,8 @@ describe("Steps settings component", () => {
     expect(getByText("Batch Size")).toBeInTheDocument();
     expect(getByPlaceholderText("Please enter batch size")).toHaveValue(StepsConfig.defaultBatchSize.toString());
     // Open text areas that are closed by default
-    fireEvent.click(getByText("Processors"));
-    expect(getByLabelText("processors-textarea")).toBeEmpty();
+    fireEvent.click(getByText("Interceptors"));
+    expect(getByLabelText("interceptors-textarea")).toBeEmpty();
     fireEvent.click(getByText("Custom Hook"));
     expect(getByLabelText("customHook-textarea")).toBeEmpty();
   });

@@ -33,7 +33,7 @@ const DEFAULT_MATCHING_STEP: MatchingStep = {
   targetFormat: "",
   matchRulesets: [],
   thresholds: [],
-  processors: {},
+  interceptors: {},
   customHook: {}
 };
 

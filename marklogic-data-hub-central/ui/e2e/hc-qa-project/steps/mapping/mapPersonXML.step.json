@@ -21,7 +21,7 @@
   "provenanceGranularityLevel": "coarse",
   "lastUpdated": "2020-09-02T07:29:11.951684Z",
   "headers": { },
-  "processors": [ ],
+  "interceptors": [ ],
   "customHook": { },
   "namespaces": {
     "entity-services": "http://marklogic.com/entity-services"
