@@ -11,7 +11,6 @@ public abstract class Util {
         Properties props = new Properties();
         // Assume DHS usage by default; the options map can override these
         props.setProperty("hubdhs", "true");
-        props.setProperty("hubssl", "true");
         options.keySet().forEach(key -> props.setProperty(key, options.get(key)));
 
         HubClientConfig hubClientConfig = new HubClientConfig();
@@ -19,5 +18,5 @@ public abstract class Util {
         hubClientConfig.applyProperties(props);
         return hubClientConfig;
     }
-    
+
 }

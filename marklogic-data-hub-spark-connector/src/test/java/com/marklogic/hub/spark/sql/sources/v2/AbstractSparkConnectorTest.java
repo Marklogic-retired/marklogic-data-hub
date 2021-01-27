@@ -78,7 +78,6 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         testProperties = new Properties();
         String mlHost = "localhost";
         String hubDhs = "false";
-        String hubSsl = "false";
         boolean isDhs = false;
         //Can override if we want to run tests on DHS
         if (System.getProperty("mlHost") != null) {
@@ -89,13 +88,11 @@ public abstract class AbstractSparkConnectorTest extends AbstractHubClientTest {
         }
         if (isDhs) {
             hubDhs = "true";
-            hubSsl = "true";
         }
         testProperties.setProperty("mlHost", mlHost);
         testProperties.setProperty("mlUsername", username);
         testProperties.setProperty("mlPassword", password);
-        testProperties.setProperty("hubDHS", hubDhs);
-        testProperties.setProperty("hubSsl", hubSsl);
+        testProperties.setProperty("hubDhs", hubDhs);
         hubClient = new HubClientImpl(new HubClientConfig(testProperties));
         return hubClient;
     }
