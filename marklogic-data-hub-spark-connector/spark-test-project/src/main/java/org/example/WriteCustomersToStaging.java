@@ -50,7 +50,6 @@ public class WriteCustomersToStaging extends ExampleSupport {
             .option("collections", "sparkCustomer,sparkData")
             .option("permissions", "data-hub-common,read,data-hub-common,update")
             .option("hubDhs", "false")
-            .option("hubSsl", "false")
             .save();
     }
 }

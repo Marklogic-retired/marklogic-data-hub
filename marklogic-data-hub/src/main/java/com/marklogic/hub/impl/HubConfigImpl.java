@@ -1545,27 +1545,54 @@ public class HubConfigImpl extends HubClientConfig implements HubConfig
 
         // Apply hubDhs/hubSsl last so that they take precedence over their associated properties.
         // Must remove each first (they were added by the parent class) so that they end up at the end of the
-        // LinkedHashMap.
+        // LinkedHashMap. Also need to process hubDhs first so that hubSsl=false can be used to disable SSL settings
+        // when talking to a DHS instance behind the load balancer. Finally, no support is needed for "false" as a
+        // value, as that simply means the default values should be used.
         getPropertyConsumerMap().remove("hubDhs");
         getPropertyConsumerMap().put("hubDhs", prop -> {
             if (Boolean.parseBoolean(prop)) {
                 configureForDhs();
-                isProvisionedEnvironment = true;
-                appConfig.setAppServicesPort(8010);
-                appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
-                flowDeveloperRoleName = "flowDeveloper";
-                flowOperatorRoleName = "flowOperator";
             }
         });
 
         getPropertyConsumerMap().remove("hubSsl");
         getPropertyConsumerMap().put("hubSsl", prop -> {
             if (Boolean.parseBoolean(prop)) {
-                configureSimpleSsl();
-                appConfig.setSimpleSslConfig();
-                appConfig.setAppServicesSimpleSslConfig();
+                enableSimpleSsl();
+            } else if (!Boolean.parseBoolean(prop)) {
+                disableSimpleSsl();
             }
         });
+    }
+
+    @Override
+    public void configureForDhs() {
+        super.configureForDhs();
+        isProvisionedEnvironment = true;
+        appConfig.setAppServicesPort(8010);
+        appConfig.setAppServicesSecurityContextType(SecurityContextType.BASIC);
+        flowDeveloperRoleName = "flowDeveloper";
+        flowOperatorRoleName = "flowOperator";
+    }
+
+    @Override
+    public void enableSimpleSsl() {
+        super.enableSimpleSsl();
+        appConfig.setSimpleSslConfig();
+        appConfig.setAppServicesSimpleSslConfig();
+    }
+
+    @Override
+    public void disableSimpleSsl() {
+        super.disableSimpleSsl();
+
+        // TODO Really need "disable" methods in AppConfig
+        appConfig.setRestSslContext(null);
+        appConfig.setRestSslHostnameVerifier(null);
+        appConfig.setRestTrustManager(null);
+        appConfig.setAppServicesSslContext(null);
+        appConfig.setAppServicesSslHostnameVerifier(null);
+        appConfig.setAppServicesTrustManager(null);
     }
 
     /**

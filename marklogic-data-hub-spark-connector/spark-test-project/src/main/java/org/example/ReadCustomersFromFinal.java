@@ -25,7 +25,6 @@ public class ReadCustomersFromFinal extends ExampleSupport {
             .option("mlUsername", username)
             .option("mlPassword", password)
             .option("hubDhs", "false")
-            .option("hubSsl", "false")
 
             // Query properties
             .option("view", "Customer")

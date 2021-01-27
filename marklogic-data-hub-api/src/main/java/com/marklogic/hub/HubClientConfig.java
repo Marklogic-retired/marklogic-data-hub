@@ -268,19 +268,37 @@ public class HubClientConfig {
         modulePermissions = "data-hub-module-reader,read,data-hub-module-reader,execute,data-hub-module-writer,update,rest-extension-user,execute";
     }
 
+    /**
+     * Configures properties for DHS, and also configures properties for SSL.
+     */
     public void configureForDhs() {
         isHostLoadBalancer = true;
         finalAuthMethod = "basic";
         stagingAuthMethod = "basic";
         jobAuthMethod = "basic";
+        enableSimpleSsl();
     }
 
-    public void configureSimpleSsl() {
+    /**
+     * Configures properties for making SSL connections to the staging, final, job, and Manage app servers.
+     */
+    public void enableSimpleSsl() {
         finalSimpleSsl = true;
         stagingSimpleSsl = true;
         jobSimpleSsl = true;
         manageConfig.setScheme("https");
         manageConfig.setConfigureSimpleSsl(true);
+    }
+
+    /**
+     * Reverts back to the default property values, undoing what enableSimpleSsl() does.
+     */
+    public void disableSimpleSsl() {
+        finalSimpleSsl = false;
+        stagingSimpleSsl = false;
+        jobSimpleSsl = false;
+        manageConfig.setScheme("http");
+        manageConfig.setConfigureSimpleSsl(false);
     }
 
     /**
@@ -342,7 +360,9 @@ public class HubClientConfig {
 
         propertyConsumerMap.put("hubSsl", prop -> {
             if (Boolean.parseBoolean(prop)) {
-                configureSimpleSsl();
+                enableSimpleSsl();
+            } else if (!Boolean.parseBoolean(prop)) {
+                disableSimpleSsl();
             }
         });
     }

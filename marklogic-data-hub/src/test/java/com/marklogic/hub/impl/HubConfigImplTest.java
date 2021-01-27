@@ -72,7 +72,11 @@ public class HubConfigImplTest {
 
         Properties props = new Properties();
         props.setProperty("hubSsl", "true");
-        verifySslIsUsed(HubConfigImpl.withProperties(props));
+
+        HubConfigImpl config = HubConfigImpl.withProperties(props);
+        verifySslIsUsed(config);
+        verifyDhsConfigIsntSet(config);
+
     }
 
     @Test
@@ -86,6 +90,7 @@ public class HubConfigImplTest {
         config = new HubConfigImpl();
         config.loadConfigurationFromProperties(props, false);
         verifySslIsUsed(config);
+        verifyDhsConfigIsntSet(config);
     }
 
     /**
@@ -104,34 +109,29 @@ public class HubConfigImplTest {
         props.setProperty("mlAppServicesSimpleSsl", "false");
 
         HubConfigImpl config = HubConfigImpl.withProperties(props);
-        assertFalse(config.getFinalSimpleSsl());
-        assertFalse(config.getStagingSimpleSsl());
-        assertFalse(config.getJobSimpleSsl());
-        assertEquals("http", config.getManageConfig().getScheme());
-        assertFalse(config.getManageConfig().isConfigureSimpleSsl());
-        assertNull(config.getAppConfig().getRestSslContext());
-        assertNull(config.getAppConfig().getAppServicesSslContext());
+        verifySslIsntUsed(config);
+        verifyDhsConfigIsntSet(config);
 
         props.setProperty("hubSsl", "true");
-
         // Verify hubSsl now overrides all associated properties
         config = HubConfigImpl.withProperties(props);
-        assertTrue(config.getFinalSimpleSsl());
-        assertTrue(config.getStagingSimpleSsl());
-        assertTrue(config.getJobSimpleSsl());
-        assertEquals("https", config.getManageConfig().getScheme());
-        assertTrue(config.getManageConfig().isConfigureSimpleSsl());
-        assertNotNull(config.getAppConfig().getRestSslContext());
-        assertNotNull(config.getAppConfig().getAppServicesSslContext());
+        verifySslIsUsed(config);
+        verifyDhsConfigIsntSet(config);
     }
 
     @Test
     void hubDhsIsTrue() {
-        verifyDhsConfigIsntSet(HubConfigImpl.withProperties(new Properties()));
+        HubConfigImpl config = HubConfigImpl.withProperties(new Properties());
+        verifyDhsConfigIsntSet(config);
+        verifySslIsntUsed(config);
 
         Properties props = new Properties();
         props.setProperty("hubDhs", "true");
-        verifyDhsConfigIsSet(HubConfigImpl.withProperties(props));
+
+        config = HubConfigImpl.withProperties(props);
+        verifyDhsConfigIsSet(config);
+        // Since DHS requires SSL, then setting hubDhs=true should default to SSL being used too
+        verifySslIsUsed(config);
     }
 
     @Test
@@ -139,12 +139,14 @@ public class HubConfigImplTest {
         HubConfigImpl config = new HubConfigImpl();
         config.loadConfigurationFromProperties(null, false);
         verifyDhsConfigIsntSet(config);
+        verifySslIsntUsed(config);
 
         Properties props = new Properties();
         props.setProperty("hubDhs", "true");
         config = new HubConfigImpl();
         config.loadConfigurationFromProperties(props, false);
         verifyDhsConfigIsSet(config);
+        verifySslIsUsed(config);
     }
 
     /**
@@ -165,32 +167,31 @@ public class HubConfigImplTest {
         props.setProperty("mlFlowOperatorRole", "flow-operator-role");
 
         HubConfigImpl config = HubConfigImpl.withProperties(props);
-        assertFalse(config.getIsHostLoadBalancer());
-        assertEquals("digest", config.getFinalAuthMethod());
-        assertEquals("digest", config.getStagingAuthMethod());
-        assertEquals("digest", config.getJobAuthMethod());
-        assertFalse(config.getIsProvisionedEnvironment());
-        assertEquals(8000, config.getAppConfig().getAppServicesPort());
-        assertEquals(SecurityContextType.DIGEST,
-            config.getAppConfig().getAppServicesSecurityContextType());
-        assertEquals("flow-developer-role", config.getFlowDeveloperRoleName());
-        assertEquals("flow-operator-role", config.getFlowOperatorRoleName());
+        verifyDhsConfigIsntSet(config);
+        verifySslIsntUsed(config);
 
         props.setProperty("hubDhs", "true");
-
         // Verify hubDhs now overrides all associated properties
         config = HubConfigImpl.withProperties(props);
-        assertTrue(config.getIsHostLoadBalancer());
-        assertEquals("basic", config.getFinalAuthMethod());
-        assertEquals("basic", config.getStagingAuthMethod());
-        assertEquals("basic", config.getJobAuthMethod());
-        assertTrue(config.getIsProvisionedEnvironment());
-        assertEquals(8010, config.getAppConfig().getAppServicesPort());
-        assertEquals(SecurityContextType.BASIC,
-            config.getAppConfig().getAppServicesSecurityContextType());
-        assertEquals("flowDeveloper", config.getFlowDeveloperRoleName());
-        assertEquals("flowOperator", config.getFlowOperatorRoleName());
+        verifyDhsConfigIsSet(config);
+        verifySslIsUsed(config);
     }
+
+    @Test
+    void hubDhsIsTrueAndHubSslIsFalse() {
+        HubConfigImpl config = HubConfigImpl.withProperties(new Properties());
+        verifyDhsConfigIsntSet(config);
+        verifySslIsntUsed(config);
+
+        Properties props = new Properties();
+        props.setProperty("hubDhs", "true");
+        props.setProperty("hubSsl", "false");
+
+        config = HubConfigImpl.withProperties(props);
+        verifyDhsConfigIsSet(config);
+        verifySslIsntUsed(config);
+    }
+
     /**
      * Verifies that when mlHost is processed when refreshing a HubConfigImpl, the underlying AppConfig object is
      * updated as well.
@@ -317,6 +318,8 @@ public class HubConfigImplTest {
         assertEquals("basic", config.getAuthMethod(DatabaseKind.FINAL));
         assertEquals("basic", config.getAuthMethod(DatabaseKind.STAGING));
         assertEquals("basic", config.getAuthMethod(DatabaseKind.JOB));
+        assertEquals("flowDeveloper", config.getFlowDeveloperRoleName());
+        assertEquals("flowOperator", config.getFlowOperatorRoleName());
     }
 
     private void verifyDhsConfigIsntSet(HubConfigImpl config) {
@@ -327,6 +330,8 @@ public class HubConfigImplTest {
         assertEquals("digest", config.getAuthMethod(DatabaseKind.FINAL));
         assertEquals("digest", config.getAuthMethod(DatabaseKind.STAGING));
         assertEquals("digest", config.getAuthMethod(DatabaseKind.JOB));
+        assertEquals("flow-developer-role", config.getFlowDeveloperRoleName());
+        assertEquals("flow-operator-role", config.getFlowOperatorRoleName());
     }
 
     @Test

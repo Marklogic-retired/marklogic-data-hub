@@ -56,7 +56,6 @@ public class StreamingWriteCustomersToStaging extends ExampleSupport {
             .option("collections", "sparkCustomer,streamingTest")
             .option("permissions", "data-hub-common,read,data-hub-common,update")
             .option("hubDhs", "false")
-            .option("hubSsl", "false")
             .option("batchSize", "3")
             .option("checkpointLocation", "build/checkpoints/" + System.currentTimeMillis())
             .start();
