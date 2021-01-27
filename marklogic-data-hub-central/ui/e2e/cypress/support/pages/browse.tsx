@@ -500,7 +500,7 @@ class BrowsePage {
   }
 
   getManageQueriesModalOpened() {
-    cy.get("#manage-queries-button").click();
+    this.getManageQueriesButton().scrollIntoView().click({force: true});
     this.waitForTableToLoad();
   }
 

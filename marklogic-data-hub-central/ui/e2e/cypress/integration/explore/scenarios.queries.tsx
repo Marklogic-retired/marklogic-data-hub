@@ -511,8 +511,8 @@ describe("manage queries modal scenarios, developer role", () => {
 
     browsePage.getSaveQueriesDropdown().click();
     browsePage.getQueryOption("edited-query").should("not.be.visible");
-
-    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json")).click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitUntil(() => browsePage.getDetailInstanceViewIcon("/json/persons/last-name-dob-custom1.json"), {timeout: 10000}).click();
     browsePage.waitForSpinnerToDisappear();
 
     //Navigate to detail page and verify if manage query modal opens up.
@@ -676,12 +676,14 @@ describe("manage queries modal scenarios on detail page", () => {
     cy.reload();
     cy.waitForAsyncRequest();
     browsePage.waitForSpinnerToDisappear();
+    cy.waitUntil(() => browsePage.getManageQueriesButton().should("have.length.gt", 0));
     browsePage.getManageQueriesButton().should("be.visible");
 
     //open manage queries modal dialog and remove previosly saved query
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");
     queryComponent.getDeleteQuery().first().click();
+    cy.waitUntil(() => queryComponent.getDeleteQueryYesButton().should("have.length.gt", 0));
     queryComponent.getDeleteQueryYesButton().click({force: true});
     cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
 
