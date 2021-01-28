@@ -157,7 +157,7 @@ const SystemInfo = (props) => {
               { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Hub Central Files</div>
-                  <p>Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.</p>
+                  <p>Download a zip file containing only artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can apply these files to an existing local project.</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -172,7 +172,7 @@ const SystemInfo = (props) => {
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Hub Central Files</div>
-                    <p>Download updates made to the project via Hub Central so that they can be applied to an existing local project. The updates include only those files that can be created and updated via Hub Central.</p>
+                    <p>Download a zip file containing only artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can apply these files to an existing local project.</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
@@ -188,7 +188,7 @@ const SystemInfo = (props) => {
               { !authorityService.canDownloadProjectFiles() ? <Col>
                 <Card size="small" className={styles.download} >
                   <div className={styles.title}>Download Project Files</div>
-                  <p>Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.</p>
+                  <p>Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -203,7 +203,7 @@ const SystemInfo = (props) => {
                 <Col>
                   <Card size="small" className={styles.download} >
                     <div className={styles.title}>Download Project Files</div>
-                    <p>Download a zip containing a complete set of files such that a project can be deployed locally or checked into version control. In addition to the files that can be created and updated via Hub Central, the zip also contains all Data Hub project files as well.</p>
+                    <p>Download a zip file containing all Data Hub project files (project configurations) and artifacts (models, steps, step definitions, flows, and modules) that were created or modified through Hub Central. You can use these files to set up the project locally and check them into a version control system.</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
@@ -222,7 +222,7 @@ const SystemInfo = (props) => {
                     <MLSpin size={"large"} />
                   </div>: ""}
                   <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                  <p>Delete all user data in STAGING, FINAL, and JOBS databases.</p>
+                  <p>Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.</p>
                   <MLTooltip title={SecurityTooltips.missingPermission} placement="bottom">
                     <div className={styles.disabledButtonContainer}>
                       <MLButton
@@ -240,7 +240,7 @@ const SystemInfo = (props) => {
                       <MLSpin size={"large"} />
                     </div>: ""}
                     <div className={styles.title} data-testid="clearData">Clear All User Data</div>
-                    <p>Delete all user data in STAGING, FINAL, and JOBS databases.</p>
+                    <p>Delete all user data in the STAGING, FINAL, and JOBS databases. Project files and artifacts remain.</p>
                     <div className={styles.buttonContainer}>
                       <MLButton
                         type="primary"
