@@ -109,13 +109,13 @@ const UserProvider: React.FC<{ children: any }> = ({children}) => {
     localStorage.setItem("hubCentralSessionToken", session.data.sessionToken);
     monitorSession();
 
-    if (session.data.pendoKey && window.usePendo && window.pendo) {
-      window.usePendo(session.data.pendoKey);
-      window.pendo.initialize({
+    if (session.data.pendoKey) {
+      window.usePendo && window.usePendo(session.data.pendoKey);
+      window.pendo && window.pendo.initialize({
         excludeAllText: true,
         excludeTitle: true
       });
-      window.pendo.identify({
+      window.pendo && window.pendo.identify({
         visitor: {
           id: CryptoJS.SHA256(session.data.serviceName + username).toString(CryptoJS.enc.Hex),
           authorities: authResponse.authorities || []
