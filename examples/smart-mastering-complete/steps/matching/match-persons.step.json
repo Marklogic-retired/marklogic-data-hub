@@ -73,7 +73,7 @@
     "weight" : 5,
     "reduce" : true,
     "matchRules" : [ {
-      "entityPropertyPath" : [ "Address" ],
+      "entityPropertyPath" : "Address",
       "matchType" : "exact",
       "options" : { }
     } ]

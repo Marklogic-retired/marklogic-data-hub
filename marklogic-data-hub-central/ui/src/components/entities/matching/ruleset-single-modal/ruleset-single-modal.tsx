@@ -91,18 +91,24 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     if (Object.keys(props.editRuleset).length !== 0 && props.isVisible) {
       let editRuleset = props.editRuleset;
       setSelectedProperty(editRuleset.name.split(" ")[0]);
-      setMatchType(editRuleset["matchRules"][0]["matchType"]);
+      let matchType = editRuleset["matchRules"][0]["matchType"];
+      // reduce is applied to an entire ruleset.
+      if (editRuleset.reduce) {
+        setMatchType("reduce");
+      } else {
+        setMatchType(matchType);
+      }
 
-      if (editRuleset["matchRules"][0]["matchType"] === "custom") {
+      if (matchType === "custom") {
         setUriValue(editRuleset["matchRules"][0]["algorithmModulePath"]);
         setFunctionValue(editRuleset["matchRules"][0]["algorithmModuleFunction"]);
         setNamespaceValue(editRuleset["matchRules"][0]["algorithmModuleNamespace"]);
 
-      } else if (editRuleset["matchRules"][0]["matchType"] === "doubleMetaphone") {
+      } else if (matchType === "doubleMetaphone") {
         setDictionaryValue(editRuleset["matchRules"][0]["options"]["dictionaryURI"]);
         setDistanceThresholdValue(editRuleset["matchRules"][0]["options"]["distanceThreshold"]);
 
-      } else if (editRuleset["matchRules"][0]["matchType"] === "synonym") {
+      } else if (matchType === "synonym") {
         setThesaurusValue(editRuleset["matchRules"][0]["options"]["thesaurusURI"]);
         setFilterValue(editRuleset["matchRules"][0]["options"]["filter"]);
 
@@ -248,7 +254,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
       let matchRule: MatchRule = {
         entityPropertyPath: propertyName,
-        matchType: matchType,
+        // the reduce logic is applied to the entire ruleset
+        matchType: matchType === "reduce" ? "exact" : matchType,
         options: {}
       };
 

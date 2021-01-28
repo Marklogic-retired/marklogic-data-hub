@@ -201,6 +201,48 @@ describe("Matching Ruleset Single Modal component", () => {
     });
   });
 
+  it("can select Reduce ruleset type and click save", async () => {
+    mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
+    const toggleModalMock = jest.fn();
+
+    const {queryByText, getByText} =  render(
+      <CurationContext.Provider value={customerMatchingStep}>
+        <RulesetSingleModal
+          isVisible={true}
+          toggleModal={toggleModalMock}
+          editRuleset={{}}
+        />
+      </CurationContext.Provider>
+    );
+
+    expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    userEvent.click(screen.getByText("Select property"));
+    userEvent.click(screen.getByText("nicknames"));
+
+    userEvent.click(screen.getByText("Select match type"));
+    userEvent.click(screen.getByText("Reduce"));
+
+    userEvent.click(getByText("Save"));
+    await wait(() => {
+      const expectedMatchStep = {...customerMatchingStep.curationOptions.activeStep.stepArtifact};
+      expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets, {
+        name: "nicknames - Reduce",
+        reduce: true,
+        weight: 0,
+        matchRules: [
+          {
+            entityPropertyPath: "nicknames",
+            matchType: "exact",
+            options: {}
+          }
+        ]
+      }];
+      expect(mockMatchingUpdate).toHaveBeenCalledWith(expectedMatchStep);
+      expect(customerMatchingStep.updateActiveStepArtifact).toHaveBeenCalledTimes(1);
+      expect(toggleModalMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
   it("can do input validation", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
