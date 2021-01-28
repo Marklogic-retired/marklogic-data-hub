@@ -522,7 +522,7 @@ describe("manage queries modal scenarios, developer role", () => {
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     browsePage.getManageQueriesModalOpened();
     queryComponent.getManageQueryModal().should("be.visible");

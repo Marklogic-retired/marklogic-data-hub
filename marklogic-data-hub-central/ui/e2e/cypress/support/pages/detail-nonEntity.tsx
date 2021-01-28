@@ -16,8 +16,8 @@ class DetailPageNonEntity {
     return cy.findByTestId("sources-table");
   }
 
-  getDocumentFileType() {
-    return cy.get("[data-cy=document-filetype]");
+  getDocumentRecordType() {
+    return cy.get("[data-cy=document-recordtype]");
   }
 
   getDocumentTable() {

@@ -28,8 +28,8 @@ class DetailPage {
     return cy.get("[data-cy=document-source]");
   }
 
-  getDocumentFileType() {
-    return cy.get("[data-cy=document-filetype]");
+  getDocumentRecordType() {
+    return cy.get("[data-cy=document-recordtype]");
   }
 
   getDocumentTable() {

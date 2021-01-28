@@ -36,7 +36,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
       browsePage.getDocumentSnippet(i).should("exist");
       browsePage.getDocumentCreatedOn(i).should("exist");
       browsePage.getDocumentSources(i).should("exist");
-      browsePage.getDocumentFileType(i).should("exist");
+      browsePage.getDocumentRecordType(i).should("exist");
     });
 
     facets.forEach(function (item) {
@@ -94,8 +94,8 @@ describe("xml scenario for snippet view on browse documents page", () => {
     browsePage.getDocumentSnippet(0).should("exist");
     browsePage.getDocumentCreatedOn(0).should("exist");
     browsePage.getDocumentSources(0).should("exist");
-    browsePage.getDocumentFileType(0).should("exist");
-    browsePage.getDocumentFileType(0).should("be.equal", "xml");
+    browsePage.getDocumentRecordType(0).should("exist");
+    browsePage.getDocumentRecordType(0).should("be.equal", "xml");
   });
 
   it("verify instance view of the document", () => {
@@ -107,7 +107,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     detailPage.getDocumentID().should("contain", "0");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "xml");
+    detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
   });
 
@@ -158,7 +158,7 @@ describe("xml scenario for table on browse documents page", () => {
     detailPage.getDocumentID().should("contain", "203");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "xml");
+    detailPage.getDocumentRecordType().should("contain", "xml");
     detailPage.getDocumentTable().should("exist");
   });
 

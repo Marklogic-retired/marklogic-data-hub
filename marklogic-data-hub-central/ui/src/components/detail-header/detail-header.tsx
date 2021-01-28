@@ -13,7 +13,7 @@ interface Props {
 
 const DetailHeader: React.FC<Props> = (props) => {
   const {Text} = Typography;
-  const fileType = props.contentType;
+  const recordType = props.contentType;
   let envelope: any = {};
   let esEnvelope: any = {};
   let title: string = "";
@@ -28,7 +28,7 @@ const DetailHeader: React.FC<Props> = (props) => {
     }).join(", ");
   }
 
-  if (fileType === "json") {
+  if (recordType === "json") {
     if (props.document.envelope) {
       envelope = props.document.envelope;
       if (envelope && envelope.instance) {
@@ -58,7 +58,7 @@ const DetailHeader: React.FC<Props> = (props) => {
         }
       }
     }
-  } else if (fileType === "xml") {
+  } else if (recordType === "xml") {
     if (props.document.envelope) {
       envelope = props.document.envelope;
       if (envelope && envelope.instance) {
@@ -140,10 +140,10 @@ const DetailHeader: React.FC<Props> = (props) => {
         {sources &&
           <Text className={styles.meta} data-cy="document-source"><Text type="secondary">Sources: </Text>{sources}</Text>
         }
-        {fileType &&
+        {recordType &&
           <Text className={styles.meta}>
-            <Text type="secondary">File Type: </Text>
-            <Text className={styles.type} data-cy="document-filetype">{fileType}</Text>
+            <Text type="secondary">Record Type: </Text>
+            <Text className={styles.type} data-cy="document-recordtype">{recordType}</Text>
           </Text>
         }
       </div>

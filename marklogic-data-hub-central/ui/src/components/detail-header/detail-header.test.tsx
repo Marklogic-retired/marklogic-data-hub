@@ -29,7 +29,7 @@ describe("Detail component", () => {
       expect(wrapper.exists("[data-cy=\"document-title\"]")).toBe(true);
       expect(wrapper.exists("[data-cy=\"document-timestamp\"]")).toBe(true);
       expect(wrapper.exists("[data-cy=\"document-source\"]")).toBe(true);
-      expect(wrapper.exists("[data-cy=\"document-filetype\"]")).toBe(true);
+      expect(wrapper.exists("[data-cy=\"document-recordtype\"]")).toBe(true);
     });
     test("primaryKey renders", () => {
       expect(wrapper.exists("[data-cy=\"document-id\"]")).toBe(true);
@@ -59,7 +59,7 @@ describe("Detail component", () => {
       expect(wrapper.exists("[data-cy=\"document-title\"]")).toBe(true);
       expect(wrapper.exists("[data-cy=\"document-timestamp\"]")).toBe(true);
       expect(wrapper.exists("[data-cy=\"document-source\"]")).toBe(true);
-      expect(wrapper.exists("[data-cy=\"document-filetype\"]")).toBe(true);
+      expect(wrapper.exists("[data-cy=\"document-recordtype\"]")).toBe(true);
     });
     test("uri renders", () => {
       expect(wrapper.exists("[data-cy=\"document-uri\"]")).toBe(true);
