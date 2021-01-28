@@ -86,8 +86,8 @@ class BrowsePage {
     return this.getDocument(index).find("[data-cy=sources]").invoke("text");
   }
 
-  getDocumentFileType(index: number) {
-    return this.getDocument(index).find("[data-cy=file-type]").invoke("text");
+  getDocumentRecordType(index: number) {
+    return this.getDocument(index).find("[data-cy=record-type]").invoke("text");
   }
 
   getDocumentById(index: number) {

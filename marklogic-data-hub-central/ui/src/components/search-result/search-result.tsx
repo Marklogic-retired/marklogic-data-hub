@@ -28,7 +28,7 @@ const SearchResult: React.FC<Props> = (props) => {
   let primaryKeyValue: any = "-";
   let createdOnVal: string = "";
   let sourcesVal: string = "";
-  let fileTypeVal: string = props.item.format;
+  let recordTypeVal: string = props.item.format;
 
   useEffect(() => {
     toggleShow(false);
@@ -109,8 +109,8 @@ const SearchResult: React.FC<Props> = (props) => {
             entityInstance: props.item.entityInstance,
             targetDatabase: searchOptions.database
           }}} id={"source"} data-cy="source" >
-            <MLTooltip title={"Show the complete " + fileTypeVal.toUpperCase()} placement="topRight">
-              {fileTypeVal.toUpperCase() === "XML" ?
+            <MLTooltip title={"Show the complete " + recordTypeVal.toUpperCase()} placement="topRight">
+              {recordTypeVal.toUpperCase() === "XML" ?
                 <FontAwesomeIcon  icon={faCode} size="sm" data-testid="source-icon"/>
                 :
                 <span className={styles.jsonIcon} data-testid="source-icon"></span>
@@ -138,10 +138,10 @@ const SearchResult: React.FC<Props> = (props) => {
             <span className={styles.metaValue} data-cy="sources" data-testid={"sources"}>{sourcesVal}</span>
           </div>
         )}
-        {fileTypeVal && (
+        {recordTypeVal && (
           <div className={styles.metaItem}>
-            <span className={styles.metaLabel}>File Type</span>
-            <span className={styles.format} data-cy="file-type" data-testid={"file-type"}>{fileTypeVal}</span>
+            <span className={styles.metaLabel}>Record Type</span>
+            <span className={styles.format} data-cy="record-type" data-testid={"record-type"}>{recordTypeVal}</span>
           </div>
         )}
       </div>

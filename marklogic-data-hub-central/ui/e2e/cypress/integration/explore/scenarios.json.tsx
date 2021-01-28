@@ -125,7 +125,7 @@ describe("json scenario for snippet on browse documents page", () => {
       browsePage.getDocumentPKeyValue(i).should("exist");
       browsePage.getDocumentSnippet(i).should("exist");
       browsePage.getDocumentCreatedOn(i).should("exist");
-      browsePage.getDocumentFileType(i).should("exist");
+      browsePage.getDocumentRecordType(i).should("exist");
     });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should("exist");
@@ -167,7 +167,7 @@ describe("json scenario for snippet on browse documents page", () => {
       browsePage.getDocumentPKeyValue(i).should("exist");
       browsePage.getDocumentSnippet(i).should("exist");
       browsePage.getDocumentCreatedOn(i).should("exist");
-      browsePage.getDocumentFileType(i).should("exist");
+      browsePage.getDocumentRecordType(i).should("exist");
     });
     facets.forEach(function (item) {
       browsePage.getFacet(item).should("exist");
@@ -248,7 +248,7 @@ describe("json scenario for snippet on browse documents page", () => {
     browsePage.getDocumentSnippet(0).should("exist");
     browsePage.getDocumentCreatedOn(0).should("exist");
     browsePage.getDocumentSources(0).should("exist");
-    browsePage.getDocumentFileType(0).should("exist");
+    browsePage.getDocumentRecordType(0).should("exist");
   });
 
   it("verify instance view of the document with pk", () => {
@@ -259,7 +259,7 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentID().should("contain", "104");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentEntity().should("contain", "Customer");
   });
@@ -273,7 +273,7 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentEntity().should("contain", "Customer");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentUri().should("contain", "/json/customers/Cust%205.json");
   });
@@ -286,7 +286,7 @@ describe("json scenario for snippet on browse documents page", () => {
     detailPage.getDocumentEntity().should("contain", "Person");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
   });
@@ -336,7 +336,7 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getTotalDocuments().should("be.greaterThan", 25);
     browsePage.getColumnTitle(2).should("contain", "Identifier");
     browsePage.getColumnTitle(3).should("contain", "Entity Type");
-    browsePage.getColumnTitle(4).should("contain", "File Type");
+    browsePage.getColumnTitle(4).should("contain", "Record Type");
     browsePage.getColumnTitle(5).should("contain", "Created");
 
     facets.forEach(function (item) {
@@ -385,7 +385,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentUri().should("contain", "/json/persons/last-name-dob-custom1.json");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "PersonSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
     //Verify navigating back from detail view should persist search options
     detailPage.clickBackButton();
@@ -408,7 +408,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentID().should("contain", "10248");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "OrdersSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
     detailPage.getDocumentTable().should("exist");
   });
 
@@ -450,7 +450,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentEntity().should("contain", "Customer");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
 
     //Refresh the browser page at Detail view.
     cy.reload();
@@ -460,7 +460,7 @@ describe("json scenario for table on browse documents page", () => {
     detailPage.getDocumentEntity().should("contain", "Customer");
     detailPage.getDocumentTimestamp().should("exist");
     detailPage.getDocumentSource().should("contain", "CustomerSourceName");
-    detailPage.getDocumentFileType().should("contain", "json");
+    detailPage.getDocumentRecordType().should("contain", "json");
 
     detailPage.clickBackButton(); //Click on Back button to navigate back to the browse table view.
 

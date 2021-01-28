@@ -45,7 +45,7 @@ describe("Search Result view component", () => {
     expect(getByTestId("entity-name")).toBeInTheDocument();
     expect(getByTestId("primary-key")).toBeInTheDocument();
     expect(getByTestId("created-on")).toBeInTheDocument();
-    expect(getByTestId("file-type")).toBeInTheDocument();
+    expect(getByTestId("record-type")).toBeInTheDocument();
     expect(getByTestId("sources")).toBeInTheDocument();
 
     fireEvent.mouseOver(getByTestId("source-icon"));

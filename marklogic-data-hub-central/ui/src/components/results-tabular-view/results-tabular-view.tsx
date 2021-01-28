@@ -41,9 +41,9 @@ const DEFAULT_ALL_ENTITIES_HEADER = [
     width: 150
   },
   {
-    title: "File Type",
+    title: "Record Type",
     key: "0-2",
-    dataIndex: "fileType",
+    dataIndex: "recordType",
     visible: true,
     width: 150
   },
@@ -269,7 +269,7 @@ const ResultsTabularView = (props) => {
         primaryKey: primaryKeyValue,
         identifier: <Tooltip title={isUri && item.uri}>{isUri ? ".../" + document : itemIdentifier}</Tooltip>,
         entityName: <span data-testid={`${itemEntityName}-${primaryKeyValue}`}>{itemEntityName}</span>,
-        fileType: <span data-testid={`${item.format}-${primaryKeyValue}`}>{item.format}</span>,
+        recordType: <span data-testid={`${item.format}-${primaryKeyValue}`}>{item.format}</span>,
         createdOn: dateConverter(createdOn),
         uri: item.uri,
         primaryKeyPath: path,
