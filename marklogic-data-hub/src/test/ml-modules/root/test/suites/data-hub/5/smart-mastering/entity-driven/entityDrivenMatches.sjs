@@ -20,6 +20,7 @@ function verifyResults(content, results) {
     let mergeActionObject = fn.head(mergeAction).toObject();
     let customActionObject = fn.head(customAction).toObject();
     let notifyActionObject = fn.head(notifyAction).toObject();
+    let customActionMatchResults = customActionObject.actions[0].matchResults[0];
     return assertions.concat([
         test.assertEqual(2, mergeActionObject.uris.length, `merge action should be only on 2 URIs. Results: ${JSON.stringify(mergeActionObject)}`),
         test.assertTrue(mergeActionObject.uris.some((uri) => /CustMatchMerge1\./.test(uri)), `merge action should have URI matching "CustMatchMerge1.". Results: ${JSON.stringify(mergeActionObject)}`),
@@ -28,7 +29,8 @@ function verifyResults(content, results) {
         test.assertTrue(notifyActionObject.uris.some((uri) => uri === mergeURI), `notify action should have the merge URI . Results: ${JSON.stringify(notifyActionObject)}`),
         test.assertTrue(notifyActionObject.uris.some((uri) => /CustMatchNotify\./.test(uri)), `notify action should have URI matching "CustMatchNotify.". Results: ${JSON.stringify(notifyActionObject)}`),
         test.assertEqual(1, customActionObject.actions[0].matchResults.length, `custom action should be only on 1 match result for household. Results: ${JSON.stringify(customActionObject)}`),
-        test.assertTrue(/CustMatchHousehold\./.test(customActionObject.actions[0].matchResults[0].uri), `custom action should have URI matching "CustMatchHousehold.". Results: ${JSON.stringify(customActionObject)}`)
+        test.assertTrue(/CustMatchHousehold\./.test(customActionMatchResults.uri), `custom action should have URI matching "CustMatchHousehold.". Results: ${JSON.stringify(customActionObject)}`),
+        test.assertEqual("8.5", customActionMatchResults.score, `custom action match score should be 8.5 (lastName: 2.5 + billingAddress: 5 + shippingAddress: 2 + reduce for household: -1). Results: ${JSON.stringify(customActionMatchResults)}`)
     ]);
 }
 function testJsonMatches() {
