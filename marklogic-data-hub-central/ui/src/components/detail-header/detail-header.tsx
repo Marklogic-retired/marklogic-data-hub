@@ -124,7 +124,7 @@ const DetailHeader: React.FC<Props> = (props) => {
               </>
             ) : (
               <>
-                <Text type="secondary"> uri: </Text>
+                <Text type="secondary"> URI: </Text>
                 <Text data-cy="document-uri">{id}</Text>
               </>
             )}
