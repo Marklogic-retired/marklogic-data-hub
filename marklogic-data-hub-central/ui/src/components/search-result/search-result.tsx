@@ -36,7 +36,7 @@ const SearchResult: React.FC<Props> = (props) => {
 
   if (props.item.primaryKey && Object.keys(props.item.primaryKey).length) {
     primaryKeyValue = props.item.primaryKey.propertyValue;
-    primaryKey = props.item.primaryKey.propertyPath;
+    primaryKey = props.item.primaryKey.propertyPath === "uri" ? "URI": props.item.primaryKey.propertyPath;
   }
 
   if (props.item.hasOwnProperty("entityName")) {
