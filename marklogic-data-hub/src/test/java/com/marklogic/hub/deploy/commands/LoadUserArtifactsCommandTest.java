@@ -15,7 +15,6 @@
  */
 package com.marklogic.hub.deploy.commands;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -23,18 +22,20 @@ import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
-import com.marklogic.hub.dataservices.StepService;
 import com.marklogic.hub.impl.HubConfigImpl;
-import com.marklogic.hub.impl.ScaffoldingImpl;
 import com.marklogic.hub.step.StepDefinition;
 import com.marklogic.mgmt.util.ObjectMapperFactory;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -203,5 +204,50 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         ex = assertThrows(FailedRequestException.class,
             () -> loadUserArtifactsCommand.execute(commandContext));
         assertEquals(errorMessage, ex.getServerMessage());
+    }
+
+    @Test
+    void testForceLoadArtifacts() throws IOException {
+        //This does a force load of artifacts
+        runAsDataHubDeveloper();
+        installReferenceModelProject();
+        HubConfigImpl hubConfig = getHubConfig();
+        String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
+
+        Properties props1 = new Properties();
+        props1.load(FileUtils.openInputStream(new File(timestampFile)));
+
+        LoadUserArtifactsCommand loadUserArtifactsCommand = new LoadUserArtifactsCommand(hubConfig);
+        loadUserArtifactsCommand.setForceLoad(false);
+        loadUserArtifactsCommand.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
+
+        Properties props2 = new Properties();
+        props2.load(FileUtils.openInputStream(new File(timestampFile)));
+
+        //props1 and props2 should have same properties
+        props1.forEach((key, val) -> assertEquals(val, props2.getProperty((String) key)));
+        assertEquals(props1.size(), props2.size());
+
+        //modify flow files
+        Files.list(hubConfig.getFlowsDir()).forEach(path -> path.toFile().setLastModified(new Date().getTime()));
+
+        loadUserArtifactsCommand.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
+        Properties props3 = new Properties();
+        props3.load(FileUtils.openInputStream(new File(timestampFile)));
+        assertEquals(props2.size(), props3.size());
+        props2.forEach((key, val) -> {
+            if(key.toString().contains("flow.json")){
+                assertNotEquals(val, props3.getProperty((String) key));
+            }
+            else{
+                assertEquals(val, props3.getProperty((String) key));
+            }
+        });
+
+        installReferenceModelProject();
+        Properties props4 = new Properties();
+        props4.load(FileUtils.openInputStream(new File(timestampFile)));
+        assertEquals(props2.size(), props3.size());
+        props3.forEach((key, val) -> assertNotEquals(val, props4.getProperty((String) key)));
     }
 }

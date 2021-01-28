@@ -51,8 +51,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +69,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     private DocumentPermissionsParser documentPermissionsParser = new DefaultDocumentPermissionsParser();
     private ObjectMapper objectMapper;
     private TokenReplacer tokenReplacer;
+    private PropertiesModuleManager propertiesModuleManager;
 
     public void setForceLoad(boolean forceLoad) {
         this.forceLoad = forceLoad;
@@ -98,19 +101,20 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         return dirStr.matches(regex);
     }
 
-    private PropertiesModuleManager getModulesManager() {
+    private void initializeModulesManager() {
         String timestampFile = hubConfig.getHubProject().getUserModulesDeployTimestampFile();
-        PropertiesModuleManager pmm = new PropertiesModuleManager(timestampFile);
+        propertiesModuleManager = new PropertiesModuleManager(timestampFile);
 
         if (forceLoad) {
-            pmm.deletePropertiesFile();
+            propertiesModuleManager.deletePropertiesFile();
         }
-        return pmm;
+        propertiesModuleManager.initialize();
     }
 
     @Override
     public void execute(CommandContext context) {
         tokenReplacer = context.getAppConfig().buildTokenReplacer();
+        initializeModulesManager();
         loadUserArtifacts();
     }
 
@@ -152,14 +156,18 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         if (modelsPath.toFile().exists()) {
             ArrayNode modelsArray = objectMapper.createArrayNode();
             EntityDefModulesFinder modulesFinder = new EntityDefModulesFinder();
+            List<File> filesWritten = new ArrayList<>();
             Files.walkFileTree(modelsPath, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     logger.info("Loading models from directory " + dir);
                     modulesFinder.findModules(dir.toString()).getAssets().forEach(r -> {
-                        logger.info("Loading model from file: " + r.getFilename());
                         try {
-                            modelsArray.add(readArtifact(r.getFile()));
+                            if(shouldWriteArtifact(r.getFile())){
+                                logger.info("Loading model from file: " + r.getFilename());
+                                modelsArray.add(readArtifact(r.getFile()));
+                                filesWritten.add(r.getFile());
+                            }
                         }
                         catch (IOException e) {
                             throw new RuntimeException("Unable to read model file: " + r.getFilename() + "; cause: " + e.getMessage(), e);
@@ -171,6 +179,7 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             if (modelsArray.size() > 0) {
                 ModelsService.on(hubClient.getStagingClient()).saveModels(modelsArray);
                 ModelsService.on(hubClient.getFinalClient()).saveModels(modelsArray);
+                filesWritten.forEach(file-> propertiesModuleManager.saveLastLoadedTimestamp(file, new Date()));
             }
         }
     }
@@ -189,7 +198,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             DocumentWriteSet stagingMappingDocumentWriteSet = stagingDocMgr.newWriteSet();
             DocumentWriteSet finalMappingDocumentWriteSet = finalDocMgr.newWriteSet();
 
-            PropertiesModuleManager propertiesModuleManager = getModulesManager();
             ResourceToURI mappingResourceToURI = new ResourceToURI(){
                 public String toURI(Resource r) throws IOException {
                     return "/mappings/" + r.getFile().getParentFile().getName() + "/" + r.getFilename();
@@ -203,7 +211,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                         executeWalk(
                             dir,
                             mappingDefModulesFinder,
-                            propertiesModuleManager,
                             mappingResourceToURI,
                             buildMetadata(hubConfig.getMappingPermissions(), "http://marklogic.com/data-hub/mappings"),
                             stagingMappingDocumentWriteSet,
@@ -227,7 +234,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
     private void executeWalk(
         Path dir,
         ModulesFinder modulesFinder,
-        PropertiesModuleManager propertiesModuleManager,
         ResourceToURI resourceToURI,
         DocumentMetadataHandle metadata,
         DocumentWriteSet... writeSets
@@ -236,7 +242,6 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         for (Resource r : modules.getAssets()) {
             addResourceToWriteSets(
                 r,
-                propertiesModuleManager,
                 resourceToURI.toURI(r),
                 metadata,
                 writeSets
@@ -261,12 +266,11 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
 
     private void addResourceToWriteSets(
         Resource r,
-        PropertiesModuleManager propertiesModuleManager,
         String docId,
         DocumentMetadataHandle meta,
         DocumentWriteSet... writeSets
     ) throws IOException {
-        if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(r.getFile())) {
+        if (shouldWriteArtifact(r.getFile())) {
             JsonNode json = readArtifact(r.getFile());
 
             if (json instanceof ObjectNode && json.has("language")) {
@@ -286,6 +290,13 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         }
     }
 
+    private boolean shouldWriteArtifact(File file){
+        if (forceLoad || propertiesModuleManager.hasFileBeenModifiedSinceLastLoaded(file)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Loads steps, where the assumption is that the name of each directory under the steps path corresponds to a step
      * definition type. And thus each .step.json file in that directory should be loaded as a step.
@@ -300,15 +311,18 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
             for (File stepTypeDir : stepsPath.toFile().listFiles(File::isDirectory)) {
                 final String stepType = stepTypeDir.getName();
                 for (File stepFile : stepTypeDir.listFiles((File d, String name) -> name.endsWith(".step.json"))) {
-                    JsonNode step = readArtifact(stepFile);
-                    if (!step.has("name")) {
-                        throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
+                    if(shouldWriteArtifact(stepFile)){
+                        JsonNode step = readArtifact(stepFile);
+                        if (!step.has("name")) {
+                            throw new RuntimeException("Unable to load step from file: " + stepFile + "; no 'name' property found");
+                        }
+                        final String stepName = step.get("name").asText();
+                        logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
+                        //We want the contents of file in the project to overwrite the step if it's already present. Hence
+                        //steps are deployed with 'overwrite' flag set to true and 'throwErrorIfStepIsPresent' set to false.
+                        stepService.saveStep(stepType, step, true, false);
+                        propertiesModuleManager.saveLastLoadedTimestamp(stepFile, new Date());
                     }
-                    final String stepName = step.get("name").asText();
-                    logger.info(format("Loading step of type '%s' with name '%s'", stepType, stepName));
-                    //We want the contents of file in the project to overwrite the step if it's already present. Hence
-                    //steps are deployed with 'overwrite' flag set to true and 'throwErrorIfStepIsPresent' set to false.
-                    stepService.saveStep(stepType, step, true, false);
                 }
             }
         }
@@ -319,13 +333,16 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
         if (flowsPath.toFile().exists()) {
             ArtifactService service = ArtifactService.on(hubClient.getStagingClient());
             for (File file : flowsPath.toFile().listFiles(f -> f.isFile() && f.getName().endsWith(".flow.json"))) {
-                JsonNode flow = readArtifact(file);
-                if (!flow.has("name")) {
-                    throw new RuntimeException("Unable to load flow from file: " + file + "; no 'name' property found");
+                if(shouldWriteArtifact(file)){
+                    JsonNode flow = readArtifact(file);
+                    if (!flow.has("name")) {
+                        throw new RuntimeException("Unable to load flow from file: " + file + "; no 'name' property found");
+                    }
+                    final String flowName = flow.get("name").asText();
+                    logger.info(format("Loading flow with name '%s'", flowName));
+                    service.setArtifact("flow", flowName, flow);
+                    propertiesModuleManager.saveLastLoadedTimestamp(file, new Date());
                 }
-                final String flowName = flow.get("name").asText();
-                logger.info(format("Loading flow with name '%s'", flowName));
-                service.setArtifact("flow", flowName, flow);
             }
         }
     }
@@ -339,14 +356,17 @@ public class LoadUserArtifactsCommand extends AbstractCommand {
                 for (File defDir : typeDir.listFiles(File::isDirectory)) {
                     File stepDefFile = new File(defDir, defDir.getName() + ".step.json");
                     if (stepDefFile.exists()) {
-                        JsonNode stepDef = readArtifact(stepDefFile);
-                        if (!stepDef.has("name")) {
-                            throw new RuntimeException("Unable to load step definition from file: " + stepDefFile +
-                                "; no 'name' property was found");
+                        if(shouldWriteArtifact(stepDefFile)){
+                            JsonNode stepDef = readArtifact(stepDefFile);
+                            if (!stepDef.has("name")) {
+                                throw new RuntimeException("Unable to load step definition from file: " + stepDefFile +
+                                    "; no 'name' property was found");
+                            }
+                            final String stepDefName = stepDef.get("name").asText();
+                            logger.info(format("Loading step definition with type '%s' and name '%s'", stepDefType, stepDefName));
+                            service.setArtifact("stepDefinition", stepDefName, stepDef);
+                            propertiesModuleManager.saveLastLoadedTimestamp(stepDefFile, new Date());
                         }
-                        final String stepDefName = stepDef.get("name").asText();
-                        logger.info(format("Loading step definition with type '%s' and name '%s'", stepDefType, stepDefName));
-                        service.setArtifact("stepDefinition", stepDefName, stepDef);
                     } else {
                         logger.warn(format("Found step definition directory '%s', but did not find expected " +
                             "step definition file: '%s'", defDir.getAbsolutePath(), stepDefFile.getName()));
