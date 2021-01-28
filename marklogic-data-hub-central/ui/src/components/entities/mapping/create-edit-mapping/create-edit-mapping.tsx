@@ -186,8 +186,8 @@ const CreateEditMapping: React.FC<Props> = (props) => {
 
   const handleSearch = async (value: any) => {
     let databaseName = "staging";
-    if (props.sourceDatabase) {
-      databaseName = props.sourceDatabase.split("-")[2].toLowerCase();
+    if (props.isEditing) {
+      databaseName = props.stepData["sourceDatabase"] === "data-hub-FINAL" ? "final" : "staging";
     }
     if (value && value.length > 2) {
       try {
