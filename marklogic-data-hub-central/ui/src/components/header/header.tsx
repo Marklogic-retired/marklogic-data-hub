@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {RouteComponentProps, withRouter, useHistory} from "react-router-dom";
+import {RouteComponentProps, withRouter, useHistory, Link} from "react-router-dom";
 import axios from "axios";
 import {Layout, Icon, Avatar, Menu, Dropdown} from "antd";
 import {UserContext} from "../../util/user-context";
@@ -253,10 +253,10 @@ const Header:React.FC<Props> = (props) => {
     <>
       <Layout.Header className={styles.container}>
         <div className={styles.logoContainer} aria-label="header-logo">
-          <a href="https://www.marklogic.com/" aria-label="logo-link" className={styles.logo} tabIndex={1} ref={logoRef}
+          <Link to="/tiles" aria-label="logo-link" className={styles.logo} tabIndex={1} ref={logoRef}
             onKeyDown={logoKeyDownHandler} onMouseDown={logoClickHandler}>
             <Avatar className={styles.logo} src={logo} />
-          </a>
+          </Link>
           <div className={styles.vertical}></div>
         </div>
         <div className={styles.titleContainer} aria-label="title-container">

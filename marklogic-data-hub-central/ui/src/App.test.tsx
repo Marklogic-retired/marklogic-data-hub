@@ -43,7 +43,7 @@ describe("App component", () => {
     fireEvent.click(getByLabelText("tool-" + firstTool));
     await expect(getByLabelText("icon-" + firstTool)).toBeInTheDocument();
     expect(queryByText("overview")).not.toBeInTheDocument();
-    expect(getByLabelText("logo-link").href).toBe("https://www.marklogic.com/");
+    expect(getByLabelText("logo-link").href).toContain("/tiles");
     fireEvent.mouseDown(getByLabelText("title-link"));
     expect(getByLabelText("overview")).toBeInTheDocument();
   });
