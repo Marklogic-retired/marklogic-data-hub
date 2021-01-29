@@ -42,10 +42,13 @@
             .body {
                 padding: 0px 20px 15px 44px;
                 .docLink, .vidLink {
-                    font-size: 13px;
+                    font-size: 14px;
                     span {
                         color: #5B69AF;
                         cursor: pointer;
+                    }
+                    span:hover {
+                        color: #7FADE3;
                     }
                     :before {
                         content:"•";
