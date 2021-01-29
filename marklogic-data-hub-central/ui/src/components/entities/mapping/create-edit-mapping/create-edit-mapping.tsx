@@ -231,6 +231,9 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         if (mapName) {
           setIsValid(true);
           props.setIsValid(true);
+        } else {
+          setIsValid(false);
+          props.setIsValid(false);
         }
       } else {
         setIsValid(false);
@@ -358,7 +361,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
   };
 
   const propagateSrcValidity = () => {
-    if ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection")) {
+    if (mapName && ((collections && selectedSource === "collection") || (srcQuery && selectedSource !== "collection"))) {
       // Touched
       if (props.currentTab === props.tabKey) {
         props.setIsValid(true);
