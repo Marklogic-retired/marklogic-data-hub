@@ -231,6 +231,17 @@ const SelectedFacets: React.FC<Props> = (props) => {
         );
       })}
       {props.greyFacets.length > 0 &&
+        <MLTooltip title={"Clear unapplied facets"}>
+          <FontAwesomeIcon
+            icon={faWindowClose}
+            onClick={clearGreyFacets}
+            data-cy="clear-all-grey-button"
+            data-testid="clear-all-grey-button"
+            className={styles.closeIcon}
+            size="lg" />
+        </MLTooltip>
+      }
+      {props.greyFacets.length > 0 &&
         <MLTooltip title={"Apply facets"}>
           <FontAwesomeIcon
             icon={faCheckSquare}
@@ -240,17 +251,6 @@ const SelectedFacets: React.FC<Props> = (props) => {
             data-cy="facet-apply-button"
             data-testid="facet-apply-button"
           />
-        </MLTooltip>
-      }
-      {props.greyFacets.length > 0 &&
-        <MLTooltip title={"Clear unapplied facets"}>
-          <FontAwesomeIcon
-            icon={faWindowClose}
-            onClick={clearGreyFacets}
-            data-cy="clear-all-grey-button"
-            data-testid="clear-all-grey-button"
-            className={styles.closeIcon}
-            size="lg" />
         </MLTooltip>
       }
     </div>
