@@ -187,8 +187,8 @@
     <div
       mat-menu-item
       class="mat-menu-list-btn"
-      *ngFor="let function of functionLst | keyvalue"
-      (click)="insertFunction(function.key, indx, prop)"
-    >{{function.key}}</div>
+      *ngFor="let function of functionLst"
+      (click)="insertFunction(function.functionName, indx, prop)"
+    >{{function["functionName"]}}</div>
   </ng-template>
 </mat-menu>

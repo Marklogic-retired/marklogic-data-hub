@@ -78,7 +78,7 @@ export class MappingComponent implements OnInit {
   public mapping: any = new Mapping();
   private isSourceURIInvalid: boolean = false;
   public editURIVal: string;
-  public functionLst: object = {};
+  public functionLst: any = [];
 
   //Helper
 

@@ -19,7 +19,7 @@ export class EntityTableUiComponent implements OnChanges {
   @Input() showHeader: boolean; // Hide table header for nested
   @Input() nestedLevel: number; // For indenting
   @Input() srcProps: any;
-  @Input() functionLst: object;
+  @Input() functionLst: Array<any>;
   @Input() nmspace: object;
   @Input() currEntity:string;
   @Input() mapResp: any;
@@ -186,7 +186,9 @@ export class EntityTableUiComponent implements OnChanges {
   }
 
   functionsDef(funcName) {
-    return this.functionLst[funcName].signature
+    return this.functionLst.find(func => {
+      return func.functionName === funcName;
+    }).signature;
   }
 
   insertContent(content, index, prop) {
