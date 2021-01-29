@@ -137,7 +137,7 @@ describe("Mapping Card component", () => {
     const mappingArtifactByNameFunction = () => {
       return {sourceDatabase: "data-hub-STAGING"};
     };
-    let getByTestId;
+    let getByTestId, findByText;
     await act(async () => {
       const renderResults = render(
         <Router><MappingCard
@@ -147,16 +147,15 @@ describe("Mapping Card component", () => {
           canReadWrite={true}
         /></Router>);
       getByTestId = renderResults.getByTestId;
+      findByText = renderResults.findByText;
     });
 
     await act(async () => {
       await fireEvent.click(getByTestId("Mapping1-stepDetails"));
     });
 
-    //TODO: replace the below test that fails intermittently
-    // const orderDetailsNode = getByText("OrderDetails");
-    // expect(orderDetailsNode).toBeInTheDocument();
-    // expect(orderDetailsNode.parentNode).toHaveTextContent("OrderNS:");
+    const orderDetailsNode = await findByText("OrderDetails");
+    expect(orderDetailsNode.parentNode).toHaveTextContent("OrderNS:");
 
   });
 
