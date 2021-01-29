@@ -1,0 +1,74 @@
+{
+  "provenanceGranularityLevel": "fine",
+  "additionalCollections": [],
+  "sourceQuery": "cts.collectionQuery([\"map-persons\"])",
+  "targetEntity": "Person",
+  "sourceDatabase": "data-hub-FINAL",
+  "collections": [
+    "match-persons"
+  ],
+  "matchOptions": {
+    "dataFormat": "json",
+    "propertyDefs": {
+      "property": [
+        {
+          "localname": "DateOfBirth",
+          "name": "DateOfBirth"
+        },
+        {
+          "localname": "LastName",
+          "name": "LastName"
+        }
+      ]
+    },
+    "algorithms": {
+      "algorithm": [
+        {
+          "name": "dob-match",
+          "function": "dob-match",
+          "namespace": "http://marklogic.com/smart-mastering/algorithms",
+          "at": "/custom-xqy-matching-algo-dob.xqy"
+        }
+      ]
+    },
+    "collections": {
+      "content": []
+    },
+    "scoring": {
+      "add": [
+        {
+          "propertyName": "LastName",
+          "weight": "10"
+        }
+      ],
+      "expand": [
+        {
+          "propertyName": "DateOfBirth",
+          "algorithmRef": "dob-match",
+          "weight": "20"
+        }
+      ]
+    },
+    "actions": {
+      "action": []
+    },
+    "thresholds": {
+      "threshold": [
+        {
+          "above": "10",
+          "label": "Notify",
+          "action": "notify"
+        },
+        {
+          "above": "30",
+          "label": "Merge",
+          "action": "merge"
+        }
+      ]
+    },
+    "tuning": {
+      "maxScan": 200
+    }
+  }
+}
+

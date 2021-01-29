@@ -41,7 +41,7 @@ import module namespace coll = "http://marklogic.com/smart-mastering/collections
 import module namespace tel = "http://marklogic.com/smart-mastering/telemetry"
   at "/com.marklogic.smart-mastering/telemetry.xqy";
 import module namespace httputils="http://marklogic.com/data-hub/http-utils"
-at "/data-hub/5/impl/http-utils.xqy";
+  at "/data-hub/5/impl/http-utils.xqy";
 
 declare option xdmp:mapping "false";
 
@@ -331,13 +331,10 @@ declare function proc-impl:consolidate-notifies($all-matches as map:map, $merged
         else
           $key-uri
       return $updated-uri
-    return
-      fn:string-join((
-        $key-threshold,
-        for $uri in fn:distinct-values(($updated-key, $updated-notification-uris))
-        order by $uri
-        return $uri
-      ), $STRING-TOKEN)
+    let $distinct-uris := fn:distinct-values(($updated-key, $updated-notification-uris))
+    let $sorted-distinct-uris := for $uri in $distinct-uris order by $uri return $uri
+    where fn:count($sorted-distinct-uris) > 1
+    return fn:string-join(($key-threshold, $sorted-distinct-uris), $STRING-TOKEN)
   )
 };
 
