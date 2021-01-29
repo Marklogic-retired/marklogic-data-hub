@@ -1,5 +1,5 @@
 import React from "react";
-import {waitForElement, waitForElementToBeRemoved, render, cleanup, fireEvent, within} from "@testing-library/react";
+import {waitForElement, waitForElementToBeRemoved, render, wait, cleanup, fireEvent, within} from "@testing-library/react";
 import SourceToEntityMap from "./source-to-entity-map";
 import data from "../../../../assets/mock-data/curation/common.data";
 import {shallow} from "enzyme";
@@ -1097,7 +1097,7 @@ describe("RTL Source Selector/Source Search tests", () => {
 
   test("Right XPATH with source context",  async() => {
     axiosMock.post["mockImplementation"](data.mapProps.updateMappingArtifact);
-    const {getAllByText, getAllByRole, getByTestId, queryByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+    const {getAllByText, getAllByRole, getByTestId, queryByTestId, findByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
 
     let sourceSelector = getByTestId("items-listIcon");
 
@@ -1109,7 +1109,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     let nutFreeName = getAllByText("nutFreeName");
     expect(nutFreeName.length).toEqual(2);
     fireEvent.click(getAllByText("nutFreeName")[1]);
-    expect(await(waitForElement(() => getByTestId("successMessage"), {"timeout": 600})));
+    await wait(() => expect(findByTestId("successMessage")));
 
     let mapExp = getByTestId("items-mapexpression");
     //Right Xpath is populated
@@ -1121,7 +1121,7 @@ describe("RTL Source Selector/Source Search tests", () => {
     let firstName = getAllByText("FirstNamePreferred");
     fireEvent.click(firstName[2]);
     //mapping is saved
-    await (waitForElement(() => getByTestId("successMessage")));
+    await wait(() => expect(findByTestId("successMessage")));
     if (queryByTestId("successMessage")) {
       await (waitForElementToBeRemoved(() => (queryByTestId("successMessage"))));
     }
