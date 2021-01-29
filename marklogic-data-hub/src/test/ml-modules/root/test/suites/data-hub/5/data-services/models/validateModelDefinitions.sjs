@@ -17,7 +17,7 @@ function assertThrowsPropertyNameError(model, badPropertyName) {
     entityLib.validateModelDefinitions(model);
     throw new Error("Expected model to fail validation: " + xdmp.toJsonString(model));
   } catch (e) {
-    assertions.push(test.assertEqual("Invalid property name: " + badPropertyName + "; must start with a letter and can only contain letters, numbers, hyphens, and underscores.", e.message));
+    assertions.push(test.assertEqual("Invalid property name: " + badPropertyName + " in entity model ThisIsFine; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.", e.message));
   }
 }
 
@@ -57,4 +57,17 @@ assertions.push(
   }, "Cannot have spaces")
 );
 
+entityLib.validateModelDefinitions({
+  "PropsWithGermanCharacters": {
+    "properties": {
+      "prop1ä": {},
+      "prop2ö":{},
+      "prop3ü":{},
+      "prop4ß":{},
+      "prop5Ä":{},
+      "prop6Ö":{},
+      "prop7Ü":{}
+    }
+  }
+});
 assertions;
