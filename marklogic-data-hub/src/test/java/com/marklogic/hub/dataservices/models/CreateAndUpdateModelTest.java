@@ -176,7 +176,7 @@ public class CreateAndUpdateModelTest extends AbstractHubCoreTest {
             fail("Expected an error because of an invalid property name");
         } catch (Exception ex) {
             logger.info("Caught expected error: " + ex.getMessage());
-            assertTrue(ex.getMessage().contains("must start with a letter"));
+            assertTrue(ex.getMessage().contains("it must be a valid NCName"));
         }
     }
 }

@@ -370,8 +370,11 @@ function validateModelDefinitions(definitions) {
     }
     if (definitions[entityName].properties) {
       Object.keys(definitions[entityName].properties).forEach(propertyName => {
-        if (!pattern.test(propertyName)) {
-          throw new Error(`Invalid property name: ${propertyName}; must start with a letter and can only contain letters, numbers, hyphens, and underscores.`);
+        try{
+          fn.QName('',propertyName)
+        }
+        catch(ex){
+          throw new Error(`Invalid property name: ${propertyName} in entity model ${entityName}; it must be a valid NCName as defined at http://www.datypic.com/sc/xsd/t-xsd_Name.html.`);
         }
       });
     }
