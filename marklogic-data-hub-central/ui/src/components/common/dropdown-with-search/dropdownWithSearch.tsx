@@ -59,7 +59,7 @@ const DropDownWithSearch = (props) => {
   };
 
   const dropDownStyle: CSSProperties = {
-    maxHeight: "30vh",
+    maxHeight: "20vh",
   };
 
   useEffect(() => {
