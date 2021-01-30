@@ -7,112 +7,129 @@ import "cypress-wait-until";
 import mergingStepDetail from "../../../support/components/merging/merging-step-detail";
 import mergeStrategyModal from "../../../support/components/merging/merge-strategy-modal";
 import mergeRuleModal from "../../../support/components/merging/merge-rule-modal";
+import LoginPage from "../../../support/pages/login";
+
+const mergeStep = "mergeOrderTestStep";
 
 describe("Merging", () => {
 
-  beforeEach(() => {
+  before(() => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
-    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
-    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    LoginPage.postLogin();
   });
-
+  beforeEach(() => {
+    cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-match-merge-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+  });
   afterEach(() => {
     cy.resetTestUser();
   });
-
   after(() => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("merging", "mergeOrderTestStep");
+    cy.resetTestUser();
   });
-
-  it("can create/edit a merge step within the merge tab of curate tile,can create merge strategies/rules, can delete merge strategies/rules ", () => {
-    const mergeStep = "mergeOrderTestStep";
-
-    //Navigating to merge tab
+  it("Navigate to curate tab and Open Order entity", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.selectMergeTab("Order");
-
-    //Creating a new merge step
-    cy.waitUntil(() => curatePage.addNewStep()).click();
-
-    createEditStepDialog.stepNameInput().type(mergeStep);
-    createEditStepDialog.stepDescriptionInput().type("merge order step example");
+    cy.waitUntil(() => curatePage.addNewStep());
+  });
+  it("Creating a new merge step ", () => {
+    curatePage.addNewStep().should("be.visible").click();
+    createEditStepDialog.stepNameInput().type(mergeStep, {timeout: 2000});
+    createEditStepDialog.stepDescriptionInput().type("merge order step example", {timeout: 2000});
     createEditStepDialog.setSourceRadio("Query");
     createEditStepDialog.setQueryInput(`cts.collectionQuery(['${mergeStep}'])`);
-    createEditStepDialog.setTimestampInput().type("/envelop/headers/createdOn");
+    createEditStepDialog.setTimestampInput().type("/envelop/headers/createdOn", {timeout: 2000});
     createEditStepDialog.saveButton("merging").click();
+    cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(mergeStep);
-
-    //Editing the merge step
+  });
+  it("Validate step name is disabled, description, timestamp path and validate discard confirmation modal is displayed on click of cancel  ", () => {
     curatePage.editStep(mergeStep).click();
-
     createEditStepDialog.stepNameInput().should("be.disabled");
     createEditStepDialog.stepDescriptionInput().should("have.value", "merge order step example");
     createEditStepDialog.setTimestampInput().should("have.value", "/envelop/headers/createdOn");
-
-    //Editing the value to see if the confirmation dialogs are working fine.
-    createEditStepDialog.stepDescriptionInput().clear().type("UPDATED - merge order step example");
+    createEditStepDialog.stepDescriptionInput().clear().type("UPDATED - merge order step example", {timeout: 2000});
     createEditStepDialog.cancelButton("merging").click();
-
     confirmYesNo.getDiscardText().should("be.visible");
     confirmYesNo.getYesButton().click();
-
-    //Check if the changes are reverted back when discarded all changes.
+  });
+  it("Check if the changes are reverted back when discarded all changes ", () => {
     curatePage.editStep(mergeStep).click();
     createEditStepDialog.stepDescriptionInput().should("not.have.value", "UPDATED - merge order step example");
-
-    // Test advanced settings
+  });
+  it("Set Target Collection in advanced settings and click cancel ", () => {
     curatePage.switchEditAdvanced().click();
     advancedSettings.setTargetCollection("onMerge", "discardedMerged");
     advancedSettings.discardTargetCollection("onMerge");
+    cy.waitUntil(() => cy.findAllByText("discardedMerged").should("have.length", 0));
     cy.findAllByText("discardedMerged").should("not.exist");
     advancedSettings.cancelSettingsButton(mergeStep).click();
     confirmYesNo.getDiscardText().should("not.be.visible");
-
+  });
+  it("Save Target Collection in advanced settings ", () => {
     curatePage.editStep(mergeStep).click();
     curatePage.switchEditAdvanced().click();
     advancedSettings.setTargetCollection("onMerge", "keptMerged");
     advancedSettings.keepTargetCollection("onMerge");
+    cy.waitUntil(() => cy.findAllByText("keptMerged").should("have.length.gt", 0));
     cy.findAllByText("keptMerged").should("exist");
+  });
+  it("Validate when clicking on cancel with changes should display confirmation modal ", () => {
     advancedSettings.cancelSettingsButton(mergeStep).click();
     confirmYesNo.getDiscardText().should("be.visible");
     confirmYesNo.getNoButton().click();
-
     advancedSettings.saveSettingsButton(mergeStep).click();
+    cy.waitForAsyncRequest();
+  });
+  it("Validate when clicking on cancel without changes should not display confirmation modal ", () => {
     curatePage.editStep(mergeStep).click();
     curatePage.switchEditAdvanced().click();
     //cy.findAllByText('keptMerged').should('exist');
     advancedSettings.cancelSettingsButton(mergeStep).trigger("mouseover").dblclick();
-
-    //open matching step details
+    confirmYesNo.getDiscardText().should("not.be.visible");
+  });
+  it("Open matching step details ", () => {
     curatePage.openStepDetails(mergeStep);
     cy.contains("mergeOrderTestStep");
-
-    //add strategy
+  });
+  it("Add strategy", () => {
     mergingStepDetail.addStrategyButton().click();
     mergeStrategyModal.setStrategyName("myFavourite");
     mergeStrategyModal.addSliderOptionsButton().click();
     multiSlider.getHandleName("Length").should("be.visible");
     mergeStrategyModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("myFavourite").should("have.length.gt", 0));
     cy.findByText("myFavourite").should("exist");
+  });
+  it("Edit strategy", () => {
     cy.findByText("myFavourite").click();
-    //Edit strategy
     mergeStrategyModal.setStrategyName("myFavouriteEdited");
     mergeStrategyModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length.gt", 0));
     cy.findByText("myFavouriteEdited").should("exist");
-
-    //delele strategy
+  });
+  it("Cancel the strategy deletion ", () => {
     mergingStepDetail.getDeleteMergeStrategyButton("myFavouriteEdited").click();
     mergingStepDetail.getDeleteStrategyText().should("be.visible");
     mergingStepDetail.cancelMergeDeleteModalButton().click();
+    cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length.gt", 0));
     cy.findByText("myFavouriteEdited").should("exist");
+  });
+  it("Delete Strategy", () => {
     mergingStepDetail.getDeleteMergeStrategyButton("myFavouriteEdited").click();
     mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("myFavouriteEdited").should("have.length", 0));
     cy.findByText("myFavouriteEdited").should("not.exist");
-
-    //add merge rule of type custom
+  });
+  it("add merge rule of type custom ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     cy.contains("Add Merge Rule");
     mergeRuleModal.selectPropertyToMerge("orderId");
@@ -120,49 +137,72 @@ describe("Merging", () => {
     mergeRuleModal.setUriText("/custom/merge/strategy.sjs");
     mergeRuleModal.setFunctionText("customMergeFunction");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
     cy.findByText("orderId").click();
-    //Edit merge rule of type custom
+  });
+  it("Edit merge rule of type custom ", () => {
     mergeRuleModal.setFunctionText("customMergeFunctionEdited");
     mergeRuleModal.saveButton().click();
-
-    //delele merge rule of type custom
+    cy.waitForAsyncRequest();
+  });
+  it("Cancel merge rule deletion ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
     mergingStepDetail.getDeleteMergeRuleText().should("be.visible");
     mergingStepDetail.cancelMergeDeleteModalButton().click();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
+  });
+  it("Delete Rule", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
     mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length", 0));
     cy.findByText("orderId").should("not.exist");
-
-    //add merge rule of type strategy
+  });
+  it("add another strategy ", () => {
     mergingStepDetail.addStrategyButton().click();
     mergeStrategyModal.setStrategyName("myFavouriteStrategy");
     mergeStrategyModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("myFavouriteStrategy").should("have.length.gt", 0));
     cy.findByText("myFavouriteStrategy").should("exist");
+  });
+  it("add merge rule of type strategy ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     cy.contains("Add Merge Rule");
     mergeRuleModal.selectPropertyToMerge("shipRegion");
     mergeRuleModal.selectMergeTypeDropdown("Strategy");
     mergeRuleModal.selectStrategyName("myFavouriteStrategy");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
+  });
+  it("Edit merge rule of type strategy ", () => {
     cy.findByText("shipRegion").click();
-    //Edit merge rule of type strategy
     mergeRuleModal.selectPropertyToMerge("orderId");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
-
-    //delele merge rule of type custom
+  });
+  it("Cancel deletion of merge rule ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
     mergingStepDetail.getDeleteMergeRuleText().should("be.visible");
     mergingStepDetail.cancelMergeDeleteModalButton().click();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length.gt", 0));
     cy.findByText("orderId").should("exist");
+  });
+  it("Delete merge rule ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("orderId").click();
     mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("orderId").should("have.length", 0));
     cy.findByText("orderId").should("not.exist");
-
-    //add merge rule of type property-specific
+  });
+  it("add merge rule of type property-specific ", () => {
     mergingStepDetail.addMergeRuleButton().click();
     cy.contains("Add Merge Rule");
     mergeRuleModal.selectPropertyToMerge("shippedDate");
@@ -170,21 +210,30 @@ describe("Merging", () => {
     mergeRuleModal.addSliderOptionsButton().click();
     multiSlider.getHandleName("Length").should("be.visible");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("shippedDate").should("have.length.gt", 0));
     cy.findByText("shippedDate").should("exist");
+  });
+  it("Edit merge rule of type property-specific ", () => {
     cy.findByText("shippedDate").click();
-
-    //Edit merge rule of type property-specific
     mergeRuleModal.selectPropertyToMerge("shipRegion");
     mergeRuleModal.saveButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
-
-    //delele merge rule of type property-specific
+  });
+  it("Cancel deletion of merge rule of type property-specific ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("shipRegion").click();
     mergingStepDetail.getDeleteMergeRuleText().should("be.visible");
     mergingStepDetail.cancelMergeDeleteModalButton().click();
+    cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length.gt", 0));
     cy.findByText("shipRegion").should("exist");
+  });
+  it("Delete merge rule of type property-specific ", () => {
     mergingStepDetail.getDeleteMergeRuleButton("shipRegion").click();
     mergingStepDetail.confirmMergeDeleteModalButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => cy.findAllByText("shipRegion").should("have.length", 0));
     cy.findByText("shipRegion").should("not.exist");
   });
 });

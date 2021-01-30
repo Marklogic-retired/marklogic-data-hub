@@ -44,7 +44,7 @@ class CuratePage {
   }
 
   openStepDetails(stepName: string) {
-    cy.findByTestId(`${stepName}-stepDetails`).click();
+    cy.findByTestId(`${stepName}-stepDetails`).should("be.visible", {timeout: 5000}).click();
   }
 
   /**
@@ -125,11 +125,13 @@ class CuratePage {
 
   verifyStepNameIsVisible(stepName: string) {
     // cy.get('#name').should('be.visible');
+    cy.waitUntil(() => cy.findByLabelText(`${stepName}-step-label`).should("have.length.gt", 0));
     cy.findByLabelText(`${stepName}-step-label`).should("be.visible");
     cy.findByText(stepName).should("be.visible");
   }
 
   verifyStepNameIsVisibleEdit(stepName: string) {
+    cy.waitUntil(() => cy.findByLabelText(`${stepName}-step-label`).should("have.length.gt", 0));
     cy.findByLabelText(`${stepName}-step-label`).should("be.visible");
     cy.get(`[value=${stepName}]`).should("be.visible");
   }

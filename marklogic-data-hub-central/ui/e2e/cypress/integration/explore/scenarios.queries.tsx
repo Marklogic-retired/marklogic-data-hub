@@ -6,6 +6,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common/index";
 import "cypress-wait-until";
 import detailPage from "../../support/pages/detail";
+import LoginPage from "../../support/pages/login";
 
 describe("save/manage queries scenarios, developer role", () => {
 
@@ -13,6 +14,7 @@ describe("save/manage queries scenarios, developer role", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -499,6 +501,7 @@ describe("manage queries modal scenarios, developer role", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -561,6 +564,7 @@ describe("manage queries modal scenarios on zero sate page, developer role", () 
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
@@ -605,6 +609,7 @@ describe("User without hub-central-saved-query-user role should not see saved qu
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-user").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
@@ -614,6 +619,7 @@ describe("User without hub-central-saved-query-user role should not see saved qu
 
   after(() => {
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
   });
 
   it("verifies saved queries drop down does not exist", () => {
@@ -653,6 +659,7 @@ describe("manage queries modal scenarios on detail page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();

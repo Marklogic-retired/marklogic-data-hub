@@ -32,7 +32,7 @@ class CreateEditStepDialog {
      * @example cts.collectionQuery('order-input')
      */
   setQueryInput(str: string) {
-    cy.get("#srcQuery").type(str);
+    cy.get("#srcQuery").type(str, {timeout: 5000, delay: 0});
   }
 
   setTimestampInput() {

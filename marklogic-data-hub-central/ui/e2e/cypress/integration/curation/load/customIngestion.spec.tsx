@@ -2,6 +2,7 @@ import {Application} from "../../../support/application.config";
 import {tiles, toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
+import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Custom Ingestion", () => {
@@ -10,6 +11,7 @@ describe("Custom Ingestion", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-reader", "hub-central-step-runner").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
   });

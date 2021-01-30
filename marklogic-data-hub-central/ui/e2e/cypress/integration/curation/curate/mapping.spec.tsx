@@ -10,6 +10,7 @@ import browsePage from "../../../support/pages/browse";
 import curatePage from "../../../support/pages/curate";
 import runPage from "../../../support/pages/run";
 import detailPage from "../../../support/pages/detail";
+import LoginPage from "../../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Mapping", () => {
@@ -18,6 +19,7 @@ describe("Mapping", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer", "hub-central-mapping-writer", "hub-central-load-writer").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
   });

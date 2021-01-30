@@ -5,6 +5,7 @@ class MergeRuleModal {
     cy.findByLabelText(`${property}-option`).then($option => {
       $option[0].click();
     });
+    cy.waitUntil(() => cy.findByLabelText(`${property}-option`).should("not.be.visible", {timeout: 10000}));
   }
 
   selectMergeTypeDropdown(mergeType: string) {
