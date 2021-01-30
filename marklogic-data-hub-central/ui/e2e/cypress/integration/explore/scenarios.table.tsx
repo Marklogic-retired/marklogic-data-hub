@@ -4,6 +4,7 @@ import browsePage from "../../support/pages/browse";
 import {Application} from "../../support/application.config";
 import "cypress-wait-until";
 import {toolbar} from "../../support/components/common";
+import LoginPage from "../../support/pages/login";
 
 
 describe("table test scenarios", () => {
@@ -12,6 +13,7 @@ describe("table test scenarios", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -35,6 +37,7 @@ describe("column selector test scenarios", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
   });

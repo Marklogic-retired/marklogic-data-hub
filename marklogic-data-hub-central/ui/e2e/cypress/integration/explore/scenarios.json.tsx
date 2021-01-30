@@ -6,6 +6,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
+import LoginPage from "../../support/pages/login";
 
 describe("scenarios for All Data zero state and explore pages.", () => {
 
@@ -13,6 +14,7 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
@@ -105,6 +107,7 @@ describe("json scenario for snippet on browse documents page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
@@ -324,6 +327,7 @@ describe("json scenario for table on browse documents page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -635,6 +639,7 @@ describe("Verify numeric/date facet can be applied", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("pii-reader", "hub-central-developer").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();
@@ -673,6 +678,7 @@ describe("scenarios for final/staging databases for zero state and explore pages
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
   });
 
@@ -788,6 +794,7 @@ describe("verify sidebar footer functionality ", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.waitForSpinnerToDisappear();

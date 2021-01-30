@@ -6,6 +6,7 @@ import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
+import LoginPage from "../../support/pages/login";
 
 describe("xml scenario for snippet view on browse documents page", () => {
 
@@ -16,6 +17,7 @@ describe("xml scenario for snippet view on browse documents page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickFacetView();
@@ -129,6 +131,7 @@ describe("xml scenario for table on browse documents page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.clickTableView();
@@ -179,6 +182,7 @@ describe("xml scenario for All Data option and non-entity detail page", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
     cy.waitUntil(() => browsePage.getExploreButton()).click();
     browsePage.selectEntity("All Data");

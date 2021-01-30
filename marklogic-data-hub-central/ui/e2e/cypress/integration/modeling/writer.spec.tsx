@@ -11,6 +11,7 @@ import {
 import {confirmationModal, toolbar, tiles} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
 import {ConfirmationType} from "../../support/types/modeling-types";
+import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Writer Role", () => {
@@ -20,6 +21,7 @@ describe("Entity Modeling: Writer Role", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-entity-model-writer", "hub-central-saved-query-user").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });

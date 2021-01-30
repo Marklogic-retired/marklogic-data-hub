@@ -9,6 +9,7 @@ import {
 } from "../../support/components/model/index";
 import {confirmationModal, toolbar} from "../../support/components/common/index";
 import {Application} from "../../support/application.config";
+import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Reader Role", () => {
@@ -18,6 +19,7 @@ describe("Entity Modeling: Reader Role", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-entity-model-reader", "hub-central-saved-query-user").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });

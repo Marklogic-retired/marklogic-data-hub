@@ -3,6 +3,7 @@ import {tiles, toolbar} from "../../../support/components/common";
 import runPage from "../../../support/pages/run";
 import loadPage from "../../../support/pages/load";
 import browsePage from "../../../support/pages/browse";
+import LoginPage from "../../../support/pages/login";
 
 describe("Run Tile tests", () => {
 
@@ -10,6 +11,7 @@ describe("Run Tile tests", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-flow-writer").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getRunToolbarIcon()).click();
     cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
   });

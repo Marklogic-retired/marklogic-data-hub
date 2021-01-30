@@ -3,6 +3,7 @@ import {tiles, toolbar} from "../../../support/components/common";
 import loadPage from "../../../support/pages/load";
 import runPage from "../../../support/pages/run";
 import browsePage from "../../../support/pages/browse";
+import LoginPage from "../../../support/pages/login";
 
 describe("Default ingestion ", () => {
 
@@ -10,6 +11,7 @@ describe("Default ingestion ", () => {
     cy.visit("/");
     cy.contains(Application.title);
     cy.loginAsTestUserWithRoles("hub-central-load-writer", "hub-central-flow-writer").withRequest();
+    LoginPage.postLogin();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.stepName("ingestion-step").should("be.visible"));
   });
