@@ -35,6 +35,8 @@ public class HubCentralConverter extends LoggingObject {
     public void convertUserArtifacts() {
         flowConverter.convertFlows();
         convertEntityModels();
+
+        logger.warn("\nRemember to update your custom modules that accept match rulesets or merge rules as input. These rulesets, rules, and their associated options are now in the Hub Central format and are passed to XQuery functions as object-node() objects and to JavaScript functions as JSON objects.");
     }
 
     /**
