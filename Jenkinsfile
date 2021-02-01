@@ -130,7 +130,7 @@ def dhfWinTests(String mlVersion, String type){
 }
 def winParallel(){
 script{
-                                copyMSI "Release","10.0-5";
+                                copyMSI "Release","10.0-6";
                                 def pkgOutput=bat(returnStdout:true , script: '''
                         	                    cd xdmp/src
                         	                    for /f "delims=" %%a in ('dir /s /b *.msi') do set "name=%%~a"
@@ -183,7 +183,7 @@ def PRDraftCheck(){
 
 def runCypressE2e(){
     script{
-        copyRPM 'Release','10.0-5'
+        copyRPM 'Release','10.0-6'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         sh 'rm -rf *central*.rpm || true'
         copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
@@ -279,7 +279,7 @@ def flexcodeScanAndReport(){
 void UnitTest(){
     script{
         props = readProperties file:'data-hub/pipeline.properties';
-        copyRPM 'Release','10.0-5'
+        copyRPM 'Release','10.0-6'
         setUpML '$WORKSPACE/xdmp/src/Mark*.rpm'
         sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:bootstrap -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ |& tee console.log;sleep 10s;./gradlew ml-data-hub:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;./gradlew web:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-spark-connector:test -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;sleep 10s;./gradlew marklogic-data-hub-central:lintUI -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/;'
         junit '**/TEST-*.xml'
@@ -320,7 +320,7 @@ void PreBuildCheck() {
 void Tests(){
     script{
         props = readProperties file:'data-hub/pipeline.properties';
-        copyRPM 'Release','10.0-5'
+        copyRPM 'Release','10.0-6'
         mlHubHosts=setupMLDockerNodes 3
         env.mlHubHosts=mlHubHosts
         sh 'export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;export M2_HOME=$MAVEN_HOME/bin;export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin;cd $WORKSPACE/data-hub;rm -rf $GRADLE_USER_HOME/caches;set +e;./gradlew clean;./gradlew marklogic-data-hub:testAcceptance -i --stacktrace -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/ -PmlHost=${mlHubHosts};'
@@ -353,7 +353,7 @@ void BuildDatahub(){
 
 void dh5Example() {
     sh 'cd $WORKSPACE/data-hub/examples/dh-5-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-    copyRPM 'Release','10.0-5'
+    copyRPM 'Release','10.0-6'
     script{
         props = readProperties file:'data-hub/pipeline.properties';
         def dockerhost=setupMLDockerCluster 3
@@ -373,6 +373,76 @@ void dh5Example() {
                             "
                         '''
     }
+}
+
+void dhCustomHook() {
+                     sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     copyRPM 'Release','10.0-6'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;
+                            "
+                        '''
+                      }
+}
+
+void mappingExample() {
+                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     copyRPM 'Release','10.0-6'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/mapping-example; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true; \
+                            ./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true;
+                            "
+                        '''
+                        }
+}
+
+void smartMastering() {
+                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
+                     copyRPM 'Release','10.0-6'
+                     script{
+                        props = readProperties file:'data-hub/pipeline.properties';
+                        def dockerhost=setupMLDockerCluster 3
+                        sh '''
+                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
+                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
+                            export M2_HOME=$MAVEN_HOME/bin; \
+                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
+                            cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
+                            rm -rf $GRADLE_USER_HOME/caches; \
+                            ./gradlew -i hubInit -Ptesting=true; \
+                            cp ../../marklogic-data-hub/gradle.properties .; \
+                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
+                            ./gradlew hubRunFlow -PflowName=persons -Ptesting=true;
+                            "
+                        '''
+                        }
 }
 
 pipeline{
@@ -913,7 +983,7 @@ pipeline{
              stage('rh7_cluster_10.0-5'){
                 agent { label 'dhfLinuxAgent'}
                 steps{
-                     dhflinuxTests("10.0-5","Release");
+                     dhflinuxTests("10.0-5.3","Release");
                 }
                 post{
                   always{
@@ -929,8 +999,27 @@ pipeline{
                             }
                             }
               }
+		stage('rh7_cluster_10.0-6'){
+                agent { label 'dhfLinuxAgent'}
+                steps{
+                     dhflinuxTests("10.0-6","Release");
+                }
+                post{
+                  always{
+                      sh 'rm -rf $WORKSPACE/xdmp'
+                    }
+                            success {
+                              println("rh7_cluster_10.0-6 Tests Completed")
+                              sendMail Email,'<h3>Tests Passed on  10.0-6 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-6 | Cluster | Passed'
+                             }
+                             unstable {
+                                println("rh7_cluster_10.0-6 Tests Failed")
+                                sendMail Email,'<h3>Some Tests Failed on 10.0-6 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Linux RH7 | ML-10.0-6 | Cluster | Failed'
+                            }
+                            }
+              }
 		}
-		}
+	}
 		stage('example projects parallel'){
 		when {
 	            expression{
@@ -960,26 +1049,7 @@ pipeline{
             stage('dhf-customhook'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
-                      sh 'cd $WORKSPACE/data-hub/examples/dhf5-custom-hook;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-5'
-                     script{
-                        props = readProperties file:'data-hub/pipeline.properties';
-                        def dockerhost=setupMLDockerCluster 3
-                        sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
-                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
-                            export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
-                            cd $WORKSPACE/data-hub/examples/dhf5-custom-hook; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            ./gradlew -i hubInit -Ptesting=true; \
-                            cp ../../marklogic-data-hub/gradle.properties .; \
-                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=LoadOrders -Ptesting=true;
-                            "
-                        '''
-                        }
+                      dhCustomHook();
                      }
                  post{
                  always{
@@ -992,34 +1062,11 @@ pipeline{
                     sendMail Email,'<h3>dh5-customhook Failed on the  branch $BRANCH_NAME </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create a bug and fix issues in the example project</h4>',false,'dh5-customhook on $BRANCH_NAME Failed'
                  }
                  }
-
-
             }
             stage('mapping-example'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
-                     sh 'cd $WORKSPACE/data-hub/examples/mapping-example;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-5'
-                     script{
-                        props = readProperties file:'data-hub/pipeline.properties';
-                        def dockerhost=setupMLDockerCluster 3
-                        sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
-                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
-                            export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
-                            cd $WORKSPACE/data-hub/examples/mapping-example; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            ./gradlew -i hubInit -Ptesting=true; \
-                            cp ../../marklogic-data-hub/gradle.properties .; \
-                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=jsonToJson -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=jsonToXml -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=xmlToJson -Ptesting=true; \
-                            ./gradlew hubRunFlow -PflowName=xmlToXml -Ptesting=true;
-                            "
-                        '''
-                        }
+                    mappingExample()
                  }
                  post{
                  always{
@@ -1036,25 +1083,7 @@ pipeline{
             stage('smart-mastering-complete'){
                  agent { label 'dhfLinuxAgent'}
                 steps{
-                     sh 'cd $WORKSPACE/data-hub/examples/smart-mastering-complete;repo="    maven {url \'http://distro.marklogic.com/nexus/repository/maven-snapshots/\'}";sed -i "/repositories {/a$repo" build.gradle; '
-                     copyRPM 'Release','10.0-5'
-                     script{
-                        props = readProperties file:'data-hub/pipeline.properties';
-                        def dockerhost=setupMLDockerCluster 3
-                        sh '''
-                            docker exec -u builder -i '''+dockerhost+''' /bin/sh -c "su -builder;export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;\
-                            export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR; \
-                            export M2_HOME=$MAVEN_HOME/bin; \
-                            export PATH=$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH:$MAVEN_HOME/bin; \
-                            cd $WORKSPACE/data-hub/examples/smart-mastering-complete; \
-                            rm -rf $GRADLE_USER_HOME/caches; \
-                            ./gradlew -i hubInit -Ptesting=true; \
-                            cp ../../marklogic-data-hub/gradle.properties .; \
-                            ./gradlew -i mlDeploy -Ptesting=true -PmlUsername=admin -PmlPassword=admin; \
-                            ./gradlew hubRunFlow -PflowName=persons -Ptesting=true;
-                            "
-                        '''
-                        }
+                    smartMastering()
                  }
                  post{
                  always{
@@ -1068,7 +1097,7 @@ pipeline{
                  }
                  }
             }
-            }
+		}
 		}
 		stage('Windows Core Parallel'){
         		when {
@@ -1138,7 +1167,7 @@ pipeline{
                           }
                           }
         		}
-        		stage('w12_cluster_10.0-5'){
+        		stage('w12_cluster_10.0-6'){
         			agent { label 'dhfWinCluster'}
         			steps{
                             winParallel()
@@ -1148,12 +1177,12 @@ pipeline{
         				  	bat 'RMDIR /S/Q xdmp'
         				  }
                           success {
-                            println("w12_cluster_10.0-5 Tests Completed")
+                            println("w12_cluster_10.0-6 Tests Completed")
                             sendMail Email,'<h3>Tests Passed on Released 10.0 ML Server Cluster on Windows Platform</h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-5 | Cluster | Passed'
                            }
                            unstable {
-                              println("w12_cluster_10.0-5 Tests Failed")
-                              sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-5 | Cluster | Failed'
+                              println("w12_cluster_10.0-6 Tests Failed")
+                              sendMail Email,'<h3>Some Tests Failed on Released 10.0 ML Server on Windows Platform </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Windows W2k12 | ML-10.0-6 | Cluster | Failed'
                           }
                           }
         		}
@@ -1225,17 +1254,17 @@ pipeline{
         		stage('qs_rh7_10-release'){
                 			agent { label 'lnx-dhf-jenkins-slave-2'}
                 			steps{
-                                 dhfqsLinuxTests("10.0-5","Release")
+                                 dhfqsLinuxTests("10.0-6","Release")
                 			}
                 			post{
 
                                   success {
                                     println("qs_rh7_10-release Tests Completed")
-                                    sendMail Email,'<h3>Quick start End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-5 | Cluster | Passed'
+                                    sendMail Email,'<h3>Quick start End-End Tests Passed on Released 10.0 ML Server Cluster </h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-6 | Cluster | Passed'
                                    }
                                    unstable {
                                       println("qs_rh7_10-release Tests Failed")
-                                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-5 | Cluster | Failed'
+                                      sendMail Email,'<h3>Some Quick Start End-End Tests Failed on Released 10.0 ML Server Cluster </h3><h4><a href=${JENKINS_URL}/blue/organizations/jenkins/Datahub_CI/detail/$JOB_BASE_NAME/$BUILD_ID/tests><font color=red>Check the Test Report</font></a></h4><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4><h4>Please create bugs for the failed regressions and fix them</h4>',false,'$BRANCH_NAME branch | Quick Start End-End | Linux RH7 | ML-10.0-6 | Cluster | Failed'
                                   }
                                   }
                 		}
