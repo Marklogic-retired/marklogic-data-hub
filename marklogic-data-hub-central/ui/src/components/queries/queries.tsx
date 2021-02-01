@@ -145,11 +145,19 @@ const Query: React.FC<Props> = (props) => {
   const isSaveQueryChanged = () => {
     if (currentQuery && currentQuery.hasOwnProperty("savedQuery") && currentQuery.savedQuery.hasOwnProperty("query")) {
       if (currentQuery.savedQuery.name !== searchOptions.selectedQuery) {
-        for (let key of savedQueries) {
-          if (key.savedQuery.name === searchOptions.selectedQuery) {
-            setCurrentQuery(key);
-            setCurrentQueryName(key.savedQuery.name);
-            setCurrentQueryDescription(key.savedQuery.description);
+        if (Array.isArray(savedQueries) === false) {
+          if (savedQueries.savedQuery.name === searchOptions.selectedQuery) {
+            setCurrentQuery(savedQueries.savedQuery);
+            setCurrentQueryName(savedQueries.savedQuery.name);
+            setCurrentQueryDescription(savedQueries.savedQuery.description);
+          }
+        } else {
+          for (let key of savedQueries) {
+            if (key.savedQuery.name === searchOptions.selectedQuery) {
+              setCurrentQuery(key);
+              setCurrentQueryName(key.savedQuery.name);
+              setCurrentQueryDescription(key.savedQuery.description);
+            }
           }
         }
       }
@@ -505,7 +513,7 @@ const Query: React.FC<Props> = (props) => {
               }
             </div>
           </div>
-          {props.isSavedQueryUser && props.queries.length > 0 && <div style={hoverOverDropdown ? {marginLeft: "214px", marginTop: "-66px"} : {marginLeft: "214px"}}>
+          {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 && <div style={hoverOverDropdown ? {marginLeft: "214px", marginTop: "-66px"} : {marginLeft: "214px"}}>
             <MLTooltip title={"Edit query details"}>
               {hoverOverDropdown && <FontAwesomeIcon
                 icon={faPencilAlt}
@@ -526,7 +534,7 @@ const Query: React.FC<Props> = (props) => {
               />
             }
           </div>}
-          {props.isSavedQueryUser && props.queries.length > 0 &&
+          {props.isSavedQueryUser && searchOptions.selectedQuery !== "select a query" && props.queries.length > 0 &&
             <div style={{marginLeft: "234px", marginTop: "-23px"}}>
               <MLTooltip title={"Save a copy"}>
                 {hoverOverDropdown && <FontAwesomeIcon

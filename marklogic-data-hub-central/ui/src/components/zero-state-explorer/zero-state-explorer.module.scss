@@ -55,9 +55,9 @@
     width: 760px;
     max-width: 48vw;
     min-width: 750px;
-    height: 180px;
+    height: 240px;
     max-height: 15vw;
-    min-height: 160px;
+    min-height: 220px;
     padding: 1px;
     display: flex;
     align-items: center;
@@ -88,12 +88,14 @@
 
   .viewAs {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: center;
   }
 
   .database {
     display: flex;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: center;
   }
 
   .exploreButton {
@@ -102,11 +104,11 @@
   }
 
   .viewAsLabel {
-    margin: 5px 5px 5px 0px;
+    margin: 5px 10px 5px 0px;
   }
 
   .databaseLabel {
-    margin: 5px 5px 5px 0px;
+    margin: 5px 10px 5px 0px;
   }
 
   .query {
@@ -153,4 +155,16 @@
     font-size: 16px;
     margin-left: -5px; 
     margin-right: 5px;
+  }
+
+  .databaseSelector {
+    width: 160px;
+  }
+
+  .searchBar {
+    width: 700px;
+  }
+
+  .querySelector {
+    width: 300px;
   }

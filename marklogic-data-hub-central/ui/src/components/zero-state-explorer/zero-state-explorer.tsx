@@ -115,7 +115,7 @@ const ZeroStateExplorer = (props) => {
           </Col>
           <Col span={6} >
             <div className={styles.image}>
-              <img className={styles.graphic} src={graphic} alt={""}/>
+              <img className={styles.graphic} src={graphic} alt={""} />
             </div>
           </Col>
         </Row>
@@ -130,26 +130,10 @@ const ZeroStateExplorer = (props) => {
               <Card className={styles.largeCard} bordered={false}>
                 <Row>
                   <Col span={24}>
-                    <div className={styles.input}>
-                      <Input
-                        style={{width: 700}}
-                        placeholder="Enter text to search for"
-                        addonBefore={entityMenu}
-                        onChange={onChange}
-                        allowClear
-                        data-cy="search-bar"
-                        data-testid="search-bar"
-                      />
-                    </div>
-                  </Col>
-                </Row>
-                <Row>
-                  <br />
-                  <Col span={12}>
                     <div className={styles.database}>
                       <p className={styles.databaseLabel}>Database:</p>
                       <MLRadio.MLGroup
-                        style={{}}
+                        className={styles.databaseSelector}
                         buttonStyle="solid"
                         defaultValue={props.zeroStatePageDatabase}
                         name="radiogroup"
@@ -166,7 +150,26 @@ const ZeroStateExplorer = (props) => {
                       </MLRadio.MLGroup>
                     </div>
                   </Col>
-                  <Col span={12}>
+                </Row>
+                <br />
+                <Row>
+                  <Col span={24}>
+                    <div className={styles.input}>
+                      <Input
+                        className={styles.searchBar}
+                        placeholder="Enter text to search for"
+                        addonBefore={entityMenu}
+                        onChange={onChange}
+                        allowClear
+                        data-cy="search-bar"
+                        data-testid="search-bar"
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <br />
+                  <Col span={24}>
                     <div className={styles.viewAs}>
                       <p className={styles.viewAsLabel}>View As:</p>
                       <MLRadio.MLGroup
@@ -227,7 +230,7 @@ const ZeroStateExplorer = (props) => {
                   <Col span={24} >
                     <div id="query-selector" className={styles.query} >
                       <Select
-                        style={{width: 300}}
+                        className={styles.querySelector}
                         placeholder="Select a saved query"
                         onChange={onItemSelect}
                         data-testid="query-select"
