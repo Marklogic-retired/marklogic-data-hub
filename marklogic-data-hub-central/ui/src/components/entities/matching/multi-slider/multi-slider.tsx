@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Icon} from "antd";
-import {Slider, Handles, Ticks} from "@marklogic/react-compound-slider";
+import {Slider, Handles, Ticks, Rail, GetRailProps} from "@marklogic/react-compound-slider";
 import "./multi-slider.scss";
 import {MLTooltip} from "@marklogic/design-system";
 import {multiSliderTooltips} from "../../../../config/tooltips.config";
@@ -13,8 +13,18 @@ const MultiSlider = (props) => {
   const [activeHandleIdOptions, setActiveHandleIdOptions] = useState<object>({});
   const [tickValue, setTickValue] = useState<any>(0);
 
-
-
+  // props for slider rail
+  interface SliderRailProps {
+    getRailProps: GetRailProps;
+  }
+  const SliderRail: React.FC<SliderRailProps> = ({getRailProps}) => {
+    return (
+      <>
+        <div className={"sliderRail"} data-testid={`${props.type}-slider-rail`} {...getRailProps()} />
+        <div className={"sliderRail"} />
+      </>
+    );
+  };
 
   function Handle({handle: {id, value, percent},
     options: options,
@@ -190,7 +200,9 @@ const MultiSlider = (props) => {
             );
           }}
         </Handles>
-        <div className={"sliderRail"} data-testid={`${props.type}-slider-rail`}/>
+        <Rail>
+          {({getRailProps}) => <SliderRail getRailProps={getRailProps} />}
+        </Rail>
         <Ticks count={100}>
           {({ticks}) => (
             <div data-testid={`${props.type}-slider-ticks`} >
