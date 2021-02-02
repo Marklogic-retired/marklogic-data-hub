@@ -1,6 +1,6 @@
 xquery version "1.0-ml";
 
-(: Copyright (c) 2020 MarkLogic Corporation.  All Rights Reserved. :)
+(: Copyright (c) 2021 MarkLogic Corporation.  All Rights Reserved. :)
 
 module namespace rsrcmodupd = "http://marklogic.com/rest-api/models/resource-model-update";
 
