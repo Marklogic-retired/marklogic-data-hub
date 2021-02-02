@@ -69,7 +69,7 @@
     },
     "processedItemHashes": {
       "type": "array",
-      "description": "Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array; 'items' is used as these values are not always URIs",
+      "description": "Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array, combined with the flow name, step ID, and batch status; 'items' is used as these values are not always URIs",
       "items": {
         "type": "number"
       }
