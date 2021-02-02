@@ -17,7 +17,7 @@ import java.io.IOException;
 public class DataServiceGenerator {
 
     private final static String MODULE_TEMPLATE = "/**\n" +
-        " Copyright (c) 2020 MarkLogic Corporation\n" +
+        " Copyright (c) 2021 MarkLogic Corporation\n" +
         "\n" +
         " Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
         " you may not use this file except in compliance with the License.\n" +
