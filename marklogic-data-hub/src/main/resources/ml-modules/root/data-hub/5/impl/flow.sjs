@@ -177,21 +177,22 @@ class Flow {
    * @returns an array of items that should still be processed
    */
   filterItemsAlreadyProcessedByStep(items, flowName, stepId) {
+    // TODO This duplicates knowledge of hash construction with jobs.sjs. Will clean this up in 5.5 when we can create
+    // a better "utils" library that is not a class with a bunch of public functions.
+    const prefix = flowName + "|" + fn.lowerCase(stepId) + "|finished|";
+
     // A map is used in this script to avoid N calls to array.includes
-    const script = "var items; var flowName; var stepId; " +
-      "const itemHashes = items.map(item => xdmp.hash64(item)); " +
+    const script = "var items; var prefix; " +
+      "const itemHashes = items.map(item => xdmp.hash64(prefix + item)); " +
       "const processedItemHashesMap = cts.values(cts.jsonPropertyReference('processedItemHashes'), null, ['map'], cts.andQuery([" +
       "  cts.collectionQuery('Batch'), " +
-      "  cts.jsonPropertyValueQuery('flowName', flowName), " +
-      "  cts.jsonPropertyValueQuery('stepId', stepId, ['case-insensitive']), " +
-      "  cts.jsonPropertyValueQuery('batchStatus', 'finished'), " +
       "  cts.jsonPropertyRangeQuery('processedItemHashes', '=', itemHashes)" +
       "])); " +
-      "items.filter(item => !processedItemHashesMap[xdmp.hash64(item)]);";
+      "items.filter(item => !processedItemHashesMap[xdmp.hash64(prefix + item)]);";
 
     // xdmp.invokeFunction returns nothing, so using xdmp.eval
     return fn.head(xdmp.eval(script,
-      {items, flowName, stepId},
+      {items, prefix},
       {database: xdmp.database(this.config.JOBDATABASE)}
     ));
   }
@@ -302,7 +303,7 @@ class Flow {
     }
 
     this.writeProvenanceData(jobId, flowName, stepDefinition, flowStep);
-    this.updateBatchDocument(combinedOptions, items, writeTransactionInfo);
+    this.updateBatchDocument(flowName, flowStep, combinedOptions, items, writeTransactionInfo);
 
     let resp = {
       "jobId": this.globalContext.jobId,
@@ -500,18 +501,20 @@ class Flow {
    * Updates the batch document based on what's in the globalContext. This doesn't care about interceptors at all,
    * as those don't have any impact on the "items" that were the input to this transaction.
    *
+   * @param flowName
+   * @param flowStep
    * @param combinedOptions
    * @param items
    * @param writeTransactionInfo
    */
-  updateBatchDocument(combinedOptions = {}, items, writeTransactionInfo) {
+  updateBatchDocument(flowName, flowStep, combinedOptions = {}, items, writeTransactionInfo) {
     if (!combinedOptions.noBatchWrite && !combinedOptions.disableJobOutput) {
       let batchStatus = "finished";
       if (this.globalContext.failedItems.length) {
         batchStatus = this.globalContext.completedItems.length ? "finished_with_errors" : "failed";
       }
       jobsMod.updateBatch(
-        this.datahub, this.globalContext.jobId, this.globalContext.batchId, batchStatus, items,
+        this.datahub, this.globalContext.jobId, this.globalContext.batchId, flowName, flowStep, batchStatus, items,
         writeTransactionInfo, this.globalContext.batchErrors[0], combinedOptions
       );
     }

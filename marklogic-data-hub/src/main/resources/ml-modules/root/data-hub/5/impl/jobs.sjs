@@ -381,7 +381,9 @@ module.exports.updateJob = module.amp(
   });
 
 module.exports.updateBatch = module.amp(
-  function updateBatch(datahub, jobId, batchId, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
+  // TODO Should simplify the number of args here.  It's only called in one place, which means the caller - which
+  // has all of these parameters - should update the batch doc and then send it here to be updated via an amp.
+  function updateBatch(datahub, jobId, batchId, flowName, flowStep, batchStatus, items, writeTransactionInfo, error, combinedOptions) {
     let docObj = datahub.jobs.getBatchDoc(jobId, batchId);
     if(!docObj) {
       throw new Error("Unable to find batch document: "+ batchId);
@@ -392,7 +394,10 @@ module.exports.updateBatch = module.amp(
 
     // Only store this if the step wants it, so as to avoid storing this indexed data for steps that don't need it
     if (combinedOptions.enableExcludeAlreadyProcessed === true || combinedOptions.enableExcludeAlreadyProcessed === "true") {
-      docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(item));
+      const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
+      // stepId is lower-cased as DHF 5 doesn't guarantee that a step type is lower or upper case
+      const prefix = flowName + "|" + fn.lowerCase(stepId) + "|" + batchStatus + "|";
+      docObj.batch.processedItemHashes = items.map(item => xdmp.hash64(prefix + item));
     }
 
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
