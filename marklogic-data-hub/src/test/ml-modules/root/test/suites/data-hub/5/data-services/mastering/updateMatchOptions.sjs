@@ -238,6 +238,42 @@ const reduceAllMatchExpected =
   };
 
 // -----------------------------------------------
+// reduce/allMatch scenario 2, "address" property localname and name as arrays.
+// This might not be considered a valid pre-HC input, but the smart-mastering-complete
+// example project in 5.2 had one property with the localname and name as arrays containing
+// a single string. Different input but expecting same output.
+// -----------------------------------------------
+const reduceAllMatchInputWithArrayProperties =
+  {
+    "propertyDefs": {
+      "property": [
+        {
+          "namespace": "",
+          "localname": "lastName",
+          "name": "lastName"
+        },
+        {
+          "namespace": "",
+          "localname": ["address"],
+          "name": ["address"]
+        }
+      ]
+    },
+    "scoring": {
+      "reduce": [
+        {
+          "allMatch": {
+            "property": [ "address", "lastName" ]
+          },
+          "algorithmRef": "standard-reduction",
+          "weight": "5"
+        }
+      ]
+    }
+  };
+
+
+// -----------------------------------------------
 // large options, tests most cases
 // -----------------------------------------------
 const largeInput =
@@ -433,5 +469,8 @@ const largeExpected =
   test.assertEqualJson(normExpected, invokeService(normNegInput), "normalize weights, negative reduce"),
   test.assertEqualJson(normExpected, invokeService(normPosInput), "normalize weights, positive reduce"),
   test.assertEqualJson(reduceAllMatchExpected, invokeService(reduceAllMatchInput), "reduce allMatch"),
+  test.assertEqualJson(reduceAllMatchExpected, invokeService(reduceAllMatchInputWithArrayProperties), "reduce allMatch, property localname and name as arrays"),
   test.assertEqualJson(largeExpected, invokeService(largeInput), "large options, most cases")
 ];
+
+
