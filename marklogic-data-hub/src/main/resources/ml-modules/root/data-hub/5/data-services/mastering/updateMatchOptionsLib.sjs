@@ -249,7 +249,11 @@ function adjustWeight(weight, maxWeight) {
 function getEntityPropertyPath(propName, propertyDefinitions = {})
 {
   let propertyDefinition = propertyDefinitions[propName];
-  return propertyDefinition ? propertyDefinition.localname : propName;
+  let propPath = propertyDefinition ? propertyDefinition.localname : propName;
+  if (Array.isArray(propPath) && propPath.length === 1) {
+    propPath = propPath[0];
+  }
+  return propPath;
 }
 
 module.exports = {
