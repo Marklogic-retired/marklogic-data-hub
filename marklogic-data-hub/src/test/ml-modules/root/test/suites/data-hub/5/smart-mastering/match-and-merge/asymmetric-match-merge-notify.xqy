@@ -13,9 +13,11 @@ declare variable $module-permissions := (
   xdmp:permission("data-hub-module-reader", "read"), xdmp:permission("data-hub-module-writer", "update")
 );
 
+let $_ := (
 hub-test:load-artifacts($test:__CALLER_FILE__),
 test:load-test-file("custom-xqy-matching-algo-dob.xqy", xdmp:modules-database(), "/custom-xqy-matching-algo-dob.xqy", $module-permissions)
-
+)
+return ()
 ;
 
 xquery version "1.0-ml";

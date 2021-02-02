@@ -1,0 +1,23 @@
+{
+  "name": "ingestFlow",
+  "steps": {
+    "1": {
+      "name": "ingestAsXml",
+      "stepDefinitionName": "default-ingestion",
+      "stepDefinitionType": "INGESTION",
+      "options": {
+        "collections": [
+          "customer-xml"
+        ],
+        "outputFormat": "xml",
+        "targetDatabase": "data-hub-STAGING",
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      },
+      "fileLocations": {
+        "inputFilePath": "data/jsondata",
+        "inputFileType": "json",
+        "outputURIPrefix": "/xml/"
+      }
+    }
+  }
+}

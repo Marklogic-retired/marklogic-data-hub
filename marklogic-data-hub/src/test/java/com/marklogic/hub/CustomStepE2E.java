@@ -7,15 +7,16 @@ import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CustomStepE2E extends AbstractHubCoreTest {
 
+    final String resourceName = "mapping-test/modules/root/custom-modules/ingestion/LabsCore/main.sjs";
+    final String moduleUri = "/custom-modules/ingestion/LabsCore/main.sjs";
+
     @BeforeEach
-    void setup(){
+    void setup() {
         installProjectInFolder("mapping-test");
     }
 
@@ -33,28 +34,40 @@ public class CustomStepE2E extends AbstractHubCoreTest {
     }
 
     @Test
-    void runStepWithoutMainModule(){
-        runInModules("xdmp:document-delete(\"/custom-modules/ingestion/LabsCore/main.sjs\")");
-        makeInputFilePathsAbsoluteInFlow("Admissions");
-        RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
-        RunStepResponse ingestionStepResp = flowResponse.getStepResponses().get("2");
-        assertEquals(false, ingestionStepResp.isSuccess());
-        assertTrue(ingestionStepResp.getStepOutput().get(0).contains("Unable to access module: /custom-modules/ingestion/LabsCore/main.sjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."));
-
+    void runStepWithoutMainModule() {
+        try {
+            runInModules("xdmp:document-delete(\"/custom-modules/ingestion/LabsCore/main.sjs\")");
+            makeInputFilePathsAbsoluteInFlow("Admissions");
+            RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
+            RunStepResponse ingestionStepResp = flowResponse.getStepResponses().get("2");
+            assertEquals(false, ingestionStepResp.isSuccess());
+            assertTrue(ingestionStepResp.getStepOutput().get(0).contains("Unable to access module: /custom-modules/ingestion/LabsCore/main.sjs. Verify that this module is in your modules database and that your user account has a role that grants read and execute permission to this module."));
+        } finally {
+            reloadLabsCoreModule();
+        }
     }
 
     @Test
-    void runMainWithCompilationError() throws IOException {
-        String resourceName = "mapping-test/modules/root/custom-modules/ingestion/LabsCore/main.sjs";
-        String module = getResource(resourceName);
-        //This is done to introduce a compilation error in the sjs module.
-        StringHandle handle = new StringHandle(module.replaceFirst("options", "options{}"));
-        getHubClient().getModulesClient().newTextDocumentManager().write("/custom-modules/ingestion/LabsCore/main.sjs", buildMetadataWithModulePermissions()
-            , handle);
-        makeInputFilePathsAbsoluteInFlow("Admissions");
-        RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
-        RunStepResponse ingestionStepResp = flowResponse.getStepResponses().get("2");
-        assertEquals(false, ingestionStepResp.isSuccess());
-        assertTrue(ingestionStepResp.getStepOutput().get(0).contains("Unable to run module: /custom-modules/ingestion/LabsCore/main.sjs"));
+    void runMainWithCompilationError() {
+        try {
+            String module = getResource(resourceName);
+            //This is done to introduce a compilation error in the sjs module.
+            StringHandle handle = new StringHandle(module.replaceFirst("options", "options{}"));
+            getHubClient().getModulesClient().newTextDocumentManager().write(moduleUri, buildMetadataWithModulePermissions(), handle);
+            makeInputFilePathsAbsoluteInFlow("Admissions");
+            RunFlowResponse flowResponse = runFlow(new FlowInputs("Admissions", "2"));
+            RunStepResponse ingestionStepResp = flowResponse.getStepResponses().get("2");
+            assertEquals(false, ingestionStepResp.isSuccess());
+            assertTrue(ingestionStepResp.getStepOutput().get(0).contains("Unable to run module: " + moduleUri));
+        } finally {
+            reloadLabsCoreModule();
+        }
     }
+
+    // This is done so that other tests taht depend on this module aren't affected when we break it
+    private void reloadLabsCoreModule() {
+        getHubClient().getModulesClient().newTextDocumentManager().write(moduleUri, buildMetadataWithModulePermissions(),
+            new StringHandle(getResource(resourceName)));
+    }
+
 }
