@@ -1,0 +1,17 @@
+{
+  "Region": "Asia",
+  "Country": "India",
+  "@SalesID": "12345",
+  "Item Type": "Personal Care",
+  "Sales Channel": "Online",
+  "Order Priority": "H",
+  "Order Date": "7/3/2015",
+  "Order ID": "987149329",
+  "Ship Date": "7/24/2015",
+  "Units Sold": "86",
+  "Unit Price": "8.73",
+  "Unit Cost": "560.67",
+  "Total Revenue": "70996.78",
+  "Total Cost": "49225.62",
+  "Total Profit": "21761.16"
+}
