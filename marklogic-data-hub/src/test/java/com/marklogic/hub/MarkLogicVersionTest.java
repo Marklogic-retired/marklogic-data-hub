@@ -17,6 +17,7 @@ package com.marklogic.hub;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,58 +43,54 @@ public class MarkLogicVersionTest {
 
     @Test
     void isVersionCompatibleWith520Roles() {
-        Map<String, Boolean> versionMap = Map.of(
-                "9.0-20200909", false,
-                "9.0-10.2", false,
-                "10.0-20200909", true,
-                "10.0-2.1", false,
-                "10.0-3", true,
-                "10.0-3.1", true,
-                "11.0-10.2", true
-        );
+        Map<String, Boolean> versionMap = new HashMap<>();
+        versionMap.put("9.0-20200909", false);
+        versionMap.put("9.0-10.2", false);
+        versionMap.put("10.0-20200909", true);
+        versionMap.put("10.0-2.1", false);
+        versionMap.put("10.0-3", true);
+        versionMap.put("10.0-3.1", true);
+        versionMap.put("11.0-10.2", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).isVersionCompatibleWith520Roles(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
     @Test
     void supportsRangeIndexConstraints() {
-        Map<String, Boolean> versionMap = Map.of(
-                "9.0-20200909", false,
-                "9.0-10.2", false,
-                "10.0-20200909", true,
-                "10.0-3.1", false,
-                "10.0-4", true,
-                "10.0-4.1", true,
-                "11.0-10.2", true
-        );
+        Map<String, Boolean> versionMap = new HashMap<>();
+        versionMap.put("9.0-20200909", false);
+        versionMap.put("9.0-10.2", false);
+        versionMap.put("10.0-20200909", true);
+        versionMap.put("10.0-3.1", false);
+        versionMap.put("10.0-4", true);
+        versionMap.put("10.0-4.1", true);
+        versionMap.put("11.0-10.2", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).supportsRangeIndexConstraints(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
     @Test
     void supportsDataHubFramework() {
-        Map<String, Boolean> versionMap = Map.of(
-                "9.0-20200909", true,
-                "9.0-10.2", false,
-                "9.0-11", true,
-                "9.0-11.1", true,
-                "10.0-20200909", true,
-                "10.0-2", false,
-                "10.0-2.1", true,
-                "10.0-4.1", true,
-                "11.0-10.2", true
-        );
+        Map<String, Boolean> versionMap = new HashMap<>();
+        versionMap.put("9.0-20200909", true);
+        versionMap.put("9.0-10.2", false);
+        versionMap.put("9.0-11", true);
+        versionMap.put("9.0-11.1", true);
+        versionMap.put("10.0-20200909", true);
+        versionMap.put("10.0-2", false);
+        versionMap.put("10.0-2.1", true);
+        versionMap.put("10.0-4.1", true);
+        versionMap.put("11.0-10.2", true);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).supportsDataHubFramework(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 
     @Test
     void cannotUpdateAmps() {
-        Map<String, Boolean> versionMap = Map.of(
-                "9.0-20200909", false,
-                "9.0-10.2", false,
-                "10.0-20200909", false,
-                "10.0-2.1", false,
-                "10.0-4.4", true,
-                "11.0-10.2", false
-        );
+        Map<String, Boolean> versionMap = new HashMap<>();
+        versionMap.put("9.0-20200909", false);
+        versionMap.put("9.0-10.2", false);
+        versionMap.put("10.0-20200909", false);
+        versionMap.put("10.0-2.1", false);
+        versionMap.put("10.0-4.4", true);
+        versionMap.put("11.0-10.2", false);
         versionMap.forEach((version, aBoolean) -> assertEquals(new MarkLogicVersion(version).cannotUpdateAmps(), aBoolean, "Expected " + aBoolean + " for " + version));
     }
 }

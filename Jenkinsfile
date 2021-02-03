@@ -119,12 +119,12 @@ def dhfWinTests(String mlVersion, String type){
         	        ''').trim().split();
         def bldPath=bldOutput[bldOutput.size()-1]
         setupMLWinCluster bldPath,pkgLoc
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat clean'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-        bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat clean'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+        bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
         junit '**/TEST-*.xml'
     }
 }
@@ -144,12 +144,12 @@ script{
                                 	        ''').trim().split();
                                 def bldPath=bldOutput[bldOutput.size()-1]
                                 setupMLWinCluster bldPath,pkgLoc,"w2k16-10-dhf-2,w2k16-10-dhf-3"
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat clean'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
-                                bat 'set PATH=C:\\Program Files\\Java\\jdk-11.0.2\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat clean'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub:bootstrapAndTest  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-central:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat ml-data-hub:test  || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\bin;$PATH & cd data-hub & gradlew.bat web:test || exit /b 0'
+                                bat 'set PATH=C:\\Program Files\\Java\\jdk1.8.0_72\\bin;$PATH & cd data-hub & gradlew.bat marklogic-data-hub-spark-connector:test  || exit /b 0'
                                 junit '**/TEST-*.xml'
                             }
 }
@@ -188,14 +188,14 @@ def runCypressE2e(){
         sh 'rm -rf *central*.rpm || true'
         copyArtifacts filter: '**/*.rpm', fingerprintArtifacts: true, flatten: true, projectName: '${JOB_NAME}', selector: specific('${BUILD_NUMBER}')
         sh(script:'''#!/bin/bash
-            export JAVA_HOME=~/java/jdk-11.0.2
+            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
             sudo mladmin install-hubcentral $WORKSPACE/*central*.rpm;
             sudo mladmin add-javahome-hubcentral $JAVA_HOME
             sudo mladmin add-hubcentral-property hubUseLocalDefaults=true
             sudo mladmin start-hubcentral
         ''')
         sh(script:'''#!/bin/bash
-            export JAVA_HOME=~/java/jdk-11.0.2
+            export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
             export M2_LOCAL_REPO=$WORKSPACE/$M2_HOME_REPO
             export GRADLE_USER_HOME=$WORKSPACE$GRADLE_DIR;
             export PATH=$M2_LOCAL_REPO:$JAVA_HOME/bin:$GRADLE_USER_HOME:$PATH;
@@ -453,7 +453,7 @@ pipeline{
   	buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '30', numToKeepStr: '')
 	}
 	environment{
-	JAVA_HOME_DIR="~/java/jdk-11.0.2"
+	JAVA_HOME_DIR="~/java/jdk1.8.0_72"
 	GRADLE_DIR="/.gradle"
 	MAVEN_HOME="/usr/local/maven"
 	M2_HOME_REPO="/repository"

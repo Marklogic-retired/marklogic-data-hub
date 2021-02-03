@@ -110,8 +110,7 @@ public class FlowRunnerImpl implements FlowRunner {
         this.flowManager = new FlowManagerImpl(hubClient);
     }
 
-    @Deprecated(since = "5.3.0-beta; must be retained because the 5.2 dh-5-example project used it in an example. " +
-        "Should use FlowRunnerImpl(HubClient) instead.")
+    @Deprecated // since 5.3.0-beta; must be retained because the 5.2 dh-5-example project used it in an example. Should use FlowRunnerImpl(HubClient) instead.
     public FlowRunnerImpl(HubConfig hubConfig) {
         this(hubConfig.newHubClient());
     }

@@ -111,7 +111,7 @@ public class EntityManagerService {
         return getEntity(newEntity.getName());
     }
 
-    @Deprecated(since = "DHF 5.3.0; use ModelsService instead")
+    @Deprecated // since DHF 5.3.0; use ModelsService instead
     public EntityModel saveEntity(EntityModel entity) throws IOException {
         JsonNode node = entity.toJson();
         String fullpath = entity.getFilename();

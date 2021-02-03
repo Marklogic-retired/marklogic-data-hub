@@ -39,8 +39,8 @@ plugins {
 
 apply plugin: "com.gradle.plugin-publish"
 
-sourceCompatibility = "9"
-targetCompatibility = "9"
+sourceCompatibility = "8"
+targetCompatibility = "8"
 
 bootJar.enabled = false
 jar.enabled = true

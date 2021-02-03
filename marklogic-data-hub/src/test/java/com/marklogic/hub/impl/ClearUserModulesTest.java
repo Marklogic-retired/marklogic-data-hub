@@ -11,10 +11,7 @@ import com.marklogic.client.io.QueryOptionsListHandle;
 import com.marklogic.client.io.StringHandle;
 import com.marklogic.hub.AbstractHubCoreTest;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.marklogic.hub.DatabaseKind;
 import com.marklogic.hub.HubConfig;
@@ -130,7 +127,7 @@ class ClearUserModulesTest extends AbstractHubCoreTest {
             JsonNode resourceExtensionsList = resourceExtensionsManager.listServices(new JacksonHandle()).get();
             List<String> resourceExtensions = resourceExtensionsList.findValuesAsText("name");
 
-            return List.of(optionsMap.keySet(), transforms, resourceExtensions);
+            return Arrays.asList(optionsMap.keySet(), transforms, resourceExtensions);
         }
 
         private void setModuleCounts(){

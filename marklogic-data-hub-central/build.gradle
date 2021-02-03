@@ -25,8 +25,8 @@ apply plugin: "com.github.node-gradle.node"
 apply plugin: "jsonschema2pojo"
 apply from: 'build-rpm.gradle'
 
-sourceCompatibility = "9"
-targetCompatibility = "9"
+sourceCompatibility = "8"
+targetCompatibility = "8"
 
 // See https://github.com/snyk/gradle-plugin for docs
 snyk {

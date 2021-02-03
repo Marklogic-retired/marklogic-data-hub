@@ -68,7 +68,7 @@ public interface EntityManager {
 
     List<HubEntity> getEntities(Boolean extendSubEntities);
 
-    @Deprecated(since = "DHF 5.3.0; use ModelsService instead")
+    @Deprecated // since DHF 5.3.0; use ModelsService instead
     HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException;
 
     void deleteEntity(String entity) throws IOException;
