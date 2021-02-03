@@ -6,7 +6,7 @@ const getUris = async (stepName: string, count: number) => {
 };
 
 const getDoc = async (stepName: string, docUri: string) => {
-  let resp = await axios.get(`/api/steps/mapping/${stepName}/doc?docUri=${docUri}`);
+  let resp = await axios.get(`/api/steps/mapping/${stepName}/doc?docUri=${encodeURIComponent(docUri)}`);
   return resp;
 };
 
