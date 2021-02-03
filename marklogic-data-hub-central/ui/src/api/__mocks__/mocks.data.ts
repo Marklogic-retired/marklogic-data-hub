@@ -93,7 +93,7 @@ const curateAPI = (axiosMock) => {
         "data": ["/testdoc.xml"],
         "status": 200
       });
-    case `/api/steps/mapping/${curateData.mappings.data[0].artifacts[0].name}/doc?docUri=/testdoc.xml`:
+    case `/api/steps/mapping/${curateData.mappings.data[0].artifacts[0].name}/doc?docUri=${encodeURIComponent("/testdoc.xml")}`:
       return Promise.resolve({status: 200, data: `<Order xmlns="https://www.w3schools.com/OrderNS">
   <RequiredDate>1996-09-23T13:27:06</RequiredDate>
   <ShipName>B's Beverages</ShipName>
