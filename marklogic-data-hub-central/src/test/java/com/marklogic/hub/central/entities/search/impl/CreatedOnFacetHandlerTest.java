@@ -88,7 +88,7 @@ public class CreatedOnFacetHandlerTest extends AbstractFacetHandlerTest {
 
         assertEquals(startDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
         assertEquals(endDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
-        assertEquals(Duration.between(startDateTime, endDateTime).dividedBy(Duration.ofDays(1)), 1);
+        assertEquals(1, getDurationInSeconds(startDateTime, endDateTime));
     }
 
     @Test
@@ -100,14 +100,13 @@ public class CreatedOnFacetHandlerTest extends AbstractFacetHandlerTest {
         dateRange = createdOnFacetHandler.computeDateRange(facetData, facetInputs);
         startDateTime = ZonedDateTime.parse(dateRange.get("startDateTime"), CreatedOnFacetHandler.DATE_TIME_FORMAT);
         endDateTime = ZonedDateTime.parse(dateRange.get("endDateTime"), CreatedOnFacetHandler.DATE_TIME_FORMAT);
-        ZonedDateTime currentDateTime = LocalDate.now().atStartOfDay().atZone(zoneId);
+        currentDateTime = LocalDate.now().atStartOfDay().atZone(zoneId);
 
         assertEquals(startDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
         assertEquals(endDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
-        assertEquals(Duration.between(startDateTime, endDateTime).dividedBy(Duration.ofDays(1)),
-                Duration.between(startDateTime, currentDateTime).dividedBy(Duration.ofDays(1)) + 1);
-
+        assertEquals(getDurationInSeconds(startDateTime, endDateTime), getDurationInSeconds(startDateTime, currentDateTime) + 1);
     }
+
     @Test
     public void testThisMonthDateRange() {
         stringValues = Arrays.asList("This Month", zoneOffset);
@@ -121,9 +120,8 @@ public class CreatedOnFacetHandlerTest extends AbstractFacetHandlerTest {
 
         assertEquals(startDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
         assertEquals(endDateTime.getOffset().getTotalSeconds()/60, Integer.parseInt(stringValues.get(1)));
-        assertEquals(Duration.between(startDateTime, endDateTime).dividedBy(Duration.ofDays(1)),
-                Duration.between(startDateTime, currentDateTime).dividedBy(Duration.ofDays(1)) + 1);
-        assertEquals(Duration.between(startDateTime, endDateTime).dividedBy(Duration.ofDays(1)), currentDateTime.getDayOfMonth());
+        assertEquals(getDurationInSeconds(startDateTime, endDateTime), getDurationInSeconds(startDateTime, currentDateTime) + 1);
+        assertEquals(getDurationInSeconds(startDateTime, endDateTime), currentDateTime.getDayOfMonth());
     }
 
     // try block test
@@ -171,5 +169,9 @@ public class CreatedOnFacetHandlerTest extends AbstractFacetHandlerTest {
         facetData.setRangeValues(rangeValues);
 
         assertThrows(DataHubException.class, () -> createdOnFacetHandler.computeDateRange(facetData, facetInputs));
+    }
+
+    private long getDurationInSeconds(ZonedDateTime start, ZonedDateTime end) {
+        return Duration.between(start, end).dividedBy(Duration.ofDays(1).getSeconds()).getSeconds();
     }
 }

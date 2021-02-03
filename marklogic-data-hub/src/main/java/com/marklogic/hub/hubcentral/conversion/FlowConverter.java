@@ -45,6 +45,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -361,7 +362,9 @@ public class FlowConverter extends LoggingObject {
         stepArtifact.remove("options");
         JsonNode options = inlineStep.get("options");
         if (options != null) {
-            Set<String> fieldsNotToBeCopied = Set.of("mapping", "sourceCollection");
+            Set<String> fieldsNotToBeCopied = new HashSet<>();
+            fieldsNotToBeCopied.add("mapping");
+            fieldsNotToBeCopied.add("sourceCollection");
             //Don't remove any properties from 'options' for custom steps and convert them as is
             options.fields().forEachRemaining(kv -> {
                 if (!fieldsNotToBeCopied.contains(kv.getKey()) || inlineStep.get("stepDefinitionType").asText().equals(StepDefinitionType.CUSTOM.toString())) {

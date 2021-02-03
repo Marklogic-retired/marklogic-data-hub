@@ -395,7 +395,7 @@ public class EntityManagerImpl extends LoggingObject implements EntityManager {
         return entities;
     }
 
-    @Deprecated(since = "DHF 5.3.0; use ModelsService instead")
+    @Deprecated // since DHF 5.3.0; use ModelsService instead
     public HubEntity saveEntity(HubEntity entity, Boolean rename) throws IOException {
         JsonNode node = entity.toJson();
         ObjectMapper objectMapper = new ObjectMapper();

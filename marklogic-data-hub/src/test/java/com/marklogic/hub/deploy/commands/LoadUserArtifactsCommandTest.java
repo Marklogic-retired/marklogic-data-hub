@@ -228,7 +228,8 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         props1.forEach((key, val) -> assertEquals(val, props2.getProperty((String) key)));
         assertEquals(props1.size(), props2.size());
 
-        //modify flow files
+        // Wait a second, and then modify each flow file to ensure it has a timestamp more recent than what was recorded before
+        sleep(1000);
         Files.list(hubConfig.getFlowsDir()).forEach(path -> path.toFile().setLastModified(new Date().getTime()));
 
         loadUserArtifactsCommand.execute(new CommandContext(hubConfig.getAppConfig(), hubConfig.getManageClient(), null));
@@ -236,11 +237,12 @@ public class LoadUserArtifactsCommandTest extends AbstractHubCoreTest {
         props3.load(FileUtils.openInputStream(new File(timestampFile)));
         assertEquals(props2.size(), props3.size());
         props2.forEach((key, val) -> {
+            String timestamp = props3.getProperty((String)key);
             if(key.toString().contains("flow.json")){
-                assertNotEquals(val, props3.getProperty((String) key));
+                assertNotEquals(val, timestamp, "Expected values to not be equal: " + val + "; " + timestamp + "; key: " + key);
             }
             else{
-                assertEquals(val, props3.getProperty((String) key));
+                assertEquals(val, timestamp, "Expected equal values for key: " + key);
             }
         });
 

@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SessionMonitorInterceptor implements HandlerInterceptor {
-    static final Map<String, Object> stompHeaders = new HashMap<>() {{
+    static final Map<String, Object> stompHeaders = new HashMap<String, Object>() {{
         put("content-type","application/json");
     }};
 

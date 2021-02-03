@@ -14,9 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
 
@@ -145,7 +143,9 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         ObjectNode db = getDatabaseProperties(getHubClient().getDbName(DatabaseKind.FINAL));
 
         ArrayNode array = (ArrayNode) db.get("field");
-        List fieldsToBeRemoved = new ArrayList(List.of("myField", "fieldWithNamespace"));
+        List fieldsToBeRemoved = new ArrayList();
+        fieldsToBeRemoved.add("myField");
+        fieldsToBeRemoved.add("fieldWithNamespace");
         for (int i = 0; i < array.size(); i++) {
             JsonNode field = array.get(i);
             if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {
@@ -156,7 +156,9 @@ public class DeployDatabaseFieldCommandTest extends AbstractHubCoreTest {
         }
 
         array = (ArrayNode) db.get("range-field-index");
-        fieldsToBeRemoved = new ArrayList(List.of("myField", "fieldWithNamespace"));
+        fieldsToBeRemoved = new ArrayList();
+        fieldsToBeRemoved.add("myField");
+        fieldsToBeRemoved.add("fieldWithNamespace");
         for (int i = 0; i < array.size(); i++) {
             JsonNode field = array.get(i);
             if ("myField".equals(field.get("field-name").asText()) || "fieldWithNamespace".equals(field.get("field-name").asText())) {

@@ -127,9 +127,9 @@ class FlowConverterTest extends AbstractHubCoreTest {
         JsonNode customStep2 = readJsonObject(customSteps.resolve("generate-dictionary.step.json").toFile());
         JsonNode customStep3 = readJsonObject(customSteps.resolve("custom-mapping-step.step.json").toFile());
 
-        assertEquals(List.of("master-customer", "Customer", "custom-mastering" ), getCollectionsAsList(customStep1));
-        assertEquals(List.of("generate-dictionary", "Customer"), getCollectionsAsList(customStep2));
-        assertEquals(List.of("custom-mapping-step" ), getCollectionsAsList(customStep3));
+        assertEquals(Arrays.asList("master-customer", "Customer", "custom-mastering" ), getCollectionsAsList(customStep1));
+        assertEquals(Arrays.asList("generate-dictionary", "Customer"), getCollectionsAsList(customStep2));
+        assertEquals(Arrays.asList("custom-mapping-step" ), getCollectionsAsList(customStep3));
 
         verifyOptions(customStep1, mapper.valueToTree(customMasterFlow.getStep("3").getOptions()));
         verifyOptions(customStep2, mapper.valueToTree(customMasterFlow.getStep("1").getOptions()));
@@ -283,17 +283,17 @@ class FlowConverterTest extends AbstractHubCoreTest {
     }
 
     private void verifyOptions(JsonNode step, JsonNode options){
-        Set fieldNotExpected ;
+        List<String> fieldNotExpected ;
         if ("mapping".equalsIgnoreCase(step.get("stepDefinitionType").asText())){
-            fieldNotExpected = Set.of("outputFormat", "mapping");
+            fieldNotExpected = Arrays.asList("outputFormat", "mapping");
         }
         else if ("ingestion".equalsIgnoreCase(step.get("stepDefinitionType").asText())){
-            fieldNotExpected = Set.of("outputFormat");
+            fieldNotExpected = Arrays.asList("outputFormat");
         }
         // in case of custom steps, "collections" have been tested separately,"outputFormat", "targetEntity" properties
         // are removed from converted steps
         else {
-            fieldNotExpected = Set.of("outputFormat", "targetEntity", "collections");
+            fieldNotExpected = Arrays.asList("outputFormat", "targetEntity", "collections");
         }
 
         options.fields().forEachRemaining(kv -> {
