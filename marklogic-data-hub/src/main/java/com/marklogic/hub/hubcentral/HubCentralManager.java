@@ -24,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Properties;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -71,13 +73,27 @@ public class HubCentralManager extends LoggingObject {
             HubConfigImpl hubConfig = new HubConfigImpl(hubProject);
             hubConfig.initHubProject();
             writeHubCentralFilesToProject(hubProject, hubClient);
-            hubProject.exportProject(outputStream, true);
+            writeDhsGradlePropertiesFile(hubProject);
+            hubProject.exportProject(outputStream, Stream.of("gradle-local.properties", "gradle-dhs.properties").collect(Collectors.toList()));
         } catch (IOException ex) {
             throw new RuntimeException("Unable to download project files as a zip, cause: " + ex.getMessage(), ex);
         }
         finally {
             IOUtils.closeQuietly(outputStream);
             FileUtils.deleteQuietly(projectPath.toFile());
+        }
+    }
+
+    private void writeDhsGradlePropertiesFile(HubProjectImpl hubProject) {
+        try (OutputStream outputStream = new FileOutputStream(hubProject.getProjectDir().resolve("gradle-dhs.properties").toFile())) {
+            Properties properties = new Properties();
+            properties.setProperty("mlHost", "");
+            properties.setProperty("mlUsername", "");
+            properties.setProperty("mlPassword", "");
+            properties.setProperty("hubDhs", "true");
+            properties.store(outputStream, null);
+        } catch (IOException ex) {
+            throw new RuntimeException("Unable to write gradle-dhs.properties, cause: " + ex.getMessage(), ex);
         }
     }
 
