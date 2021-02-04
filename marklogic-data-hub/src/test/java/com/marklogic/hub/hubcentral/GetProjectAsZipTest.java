@@ -30,6 +30,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
     private AllArtifactsProject project;
     private List<ZipEntry> artifactZipEntries;
     private Properties gradleProps = new Properties();
+    private Properties gradleDhsProps = new Properties();
 
     @Test
     void forbiddenUser() {
@@ -108,6 +109,10 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
                 InputStream input = zip.getInputStream(entry);
                 gradleProps.load(input);
             }
+            if("gradle-dhs.properties".equals(entry.getName())){
+                InputStream input = zip.getInputStream(entry);
+                gradleDhsProps.load(input);
+            }
             if(Stream.of(artifactDirs).anyMatch(entry.getName()::startsWith) && !entry.isDirectory()){
                 artifactZipEntries.add(entry);
             }
@@ -122,6 +127,11 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
         assertEquals(String.valueOf(HubConfig.DEFAULT_FINAL_PORT), gradleProps.getProperty("mlFinalPort"));
         assertEquals(HubConfig.DEFAULT_JOB_NAME, gradleProps.getProperty("mlJobAppserverName"));
 
+        assertEquals("", gradleDhsProps.getProperty("mlUsername"));
+        assertEquals("", gradleDhsProps.getProperty("mlPassword"));
+        assertEquals("", gradleDhsProps.getProperty("mlHost"));
+        assertEquals("true", gradleDhsProps.getProperty("hubDhs"));
+
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/custom/"));
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/ingestion/"));
         assertTrue(zipProjectEntries.contains("src/main/ml-modules/root/custom-modules/mapping/"));
@@ -130,6 +140,7 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
 
         assertTrue(zipProjectEntries.contains("build.gradle"));
         assertTrue(zipProjectEntries.contains("gradle-local.properties"));
+        assertTrue(zipProjectEntries.contains("gradle-dhs.properties"));
         assertTrue(zipProjectEntries.contains("gradle.properties"));
         assertTrue(zipProjectEntries.contains("gradlew"));
         assertTrue(zipProjectEntries.contains("gradlew.bat"));

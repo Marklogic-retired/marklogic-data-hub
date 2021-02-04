@@ -29,28 +29,15 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.FileCopyUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -516,7 +503,7 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
             location.getParentFile().mkdirs();
         }
         try(FileOutputStream out = new FileOutputStream(location)) {
-            exportProject(out, false);
+            exportProject(out, new ArrayList<>());
         } catch (Exception e) {
             throw new RuntimeException("Unable to export project, cause: " + e.getMessage(), e);
         }
@@ -524,17 +511,17 @@ public class HubProjectImpl extends LoggingObject implements HubProject {
 
     @Override
     public void exportProject(OutputStream outputStream) {
-        exportProject(outputStream, false);
+        exportProject(outputStream, new ArrayList<>());
     }
 
-    public void exportProject(OutputStream outputStream, boolean includeGradleLocal){
+    public void exportProject(OutputStream outputStream, List<String> additionalFilesTobeAdded){
         Stream<String> filesToBeAddedToZip = Stream.of("entities", "flows", "src/main", "step-definitions", "steps", "gradle",
             "gradlew", "gradlew.bat", "build.gradle", "gradle.properties");
-        if(includeGradleLocal){
-            writeToStream(outputStream, Stream.concat(filesToBeAddedToZip, Stream.of("gradle-local.properties")));
+        if(additionalFilesTobeAdded.isEmpty()){
+            writeToStream(outputStream, filesToBeAddedToZip);
         }
         else{
-            writeToStream(outputStream, filesToBeAddedToZip);
+            writeToStream(outputStream, Stream.concat(filesToBeAddedToZip, additionalFilesTobeAdded.stream()));
         }
     }
     private void writeToStream(OutputStream out, Stream<String> filesToBeAddedToZip) {
