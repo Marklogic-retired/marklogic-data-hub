@@ -119,11 +119,11 @@ public class BatchSchema {
     @JsonPropertyDescription("Starting in 5.3.0, this is not necessarily 'uris' and should be thought of as 'items', as other values besides URIs are possible")
     private List<String> uris = new ArrayList<String>();
     /**
-     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array; 'items' is used as these values are not always URIs
+     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array, combined with the flow name, step ID, and batch status; 'items' is used as these values are not always URIs
      * 
      */
     @JsonProperty("processedItemHashes")
-    @JsonPropertyDescription("Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array; 'items' is used as these values are not always URIs")
+    @JsonPropertyDescription("Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array, combined with the flow name, step ID, and batch status; 'items' is used as these values are not always URIs")
     private List<Double> processedItemHashes = new ArrayList<Double>();
     /**
      * The URI of the module that an error occurred in
@@ -154,11 +154,11 @@ public class BatchSchema {
     @JsonPropertyDescription("Concatenation of an error's name, code, and message")
     private String error;
     /**
-     * The error object as created by MarkLogic
+     * Contains several properties from the original error created by MarkLogic, along with 'uri' if available
      * 
      */
     @JsonProperty("completeError")
-    @JsonPropertyDescription("The error object as created by MarkLogic")
+    @JsonPropertyDescription("Contains several properties from the original error created by MarkLogic, along with 'uri' if available")
     private CompleteError completeError;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -378,7 +378,7 @@ public class BatchSchema {
     }
 
     /**
-     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array; 'items' is used as these values are not always URIs
+     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array, combined with the flow name, step ID, and batch status; 'items' is used as these values are not always URIs
      * 
      */
     @JsonProperty("processedItemHashes")
@@ -387,7 +387,7 @@ public class BatchSchema {
     }
 
     /**
-     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array; 'items' is used as these values are not always URIs
+     * Added in 5.4.0; an array of 64-bit hashes for each item in the 'uris' array, combined with the flow name, step ID, and batch status; 'items' is used as these values are not always URIs
      * 
      */
     @JsonProperty("processedItemHashes")
@@ -468,7 +468,7 @@ public class BatchSchema {
     }
 
     /**
-     * The error object as created by MarkLogic
+     * Contains several properties from the original error created by MarkLogic, along with 'uri' if available
      * 
      */
     @JsonProperty("completeError")
@@ -477,7 +477,7 @@ public class BatchSchema {
     }
 
     /**
-     * The error object as created by MarkLogic
+     * Contains several properties from the original error created by MarkLogic, along with 'uri' if available
      * 
      */
     @JsonProperty("completeError")

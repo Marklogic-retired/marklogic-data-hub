@@ -25,7 +25,16 @@
     },
     "jobStatus": {
       "type": "string",
-      "description": "This isn't an enum, as its value will refer to step numbers that can't be enumerated. See the JobStatus.java class for more information."
+      "description": "The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed",
+      "enum": [
+        "canceled",
+        "failed",
+        "finished",
+        "finished_with_errors",
+        "running",
+        "started",
+        "stop-on-error"
+      ]
     },
     "timeStarted": {
       "type": "string",

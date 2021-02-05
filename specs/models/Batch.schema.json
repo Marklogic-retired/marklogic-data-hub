@@ -92,7 +92,22 @@
     },
     "completeError": {
       "type": "object",
-      "description": "The error object as created by MarkLogic"
+      "description": "Contains several properties from the original error created by MarkLogic, along with 'uri' if available",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "string"
+        }, 
+        "uri": {
+          "type": "string",
+          "description": "Will be populated when the step configuration does not have 'acceptsBatch' set to 'true'"
+        }
+      }
     }
   }
 }

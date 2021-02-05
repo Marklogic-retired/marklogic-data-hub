@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://marklogic.com/data-hub/MergeJobReport.schema.json",
+  "title": "MergeJobReport",
+  "description": "Captures a summary of the results of a merging or mastering step",
+  "type": "object",
+  "properties": {
+    "jobID": {
+      "type": "string"
+    },
+    "jobReportID": {
+      "type": "string"
+    },
+    "flowName": {
+      "type": "string"
+    },
+    "stepName": {
+      "type": "string"
+    },
+    "numberOfDocumentsProcessed": {
+      "type": "integer"
+    },
+    "numberOfDocumentsSuccessfullyProcessed": {
+      "type": "integer"
+    },
+    "resultingMerges": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "The number of documents merged by this step"
+        }, 
+        "query": {
+          "type": "string",
+          "description": "A Search string for finding documents merged by this step"
+        }
+      }
+    },
+    "documentsArchived": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "The number of documents archived by this step"
+        }, 
+        "query": {
+          "type": "string",
+          "description": "A Search string for finding documents archived by this step"
+        }
+      }
+    },
+    "masterDocuments": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "The number of documents mastered by this step"
+        }, 
+        "query": {
+          "type": "string",
+          "description": "A Search string for finding documents mastered by this step"
+        }
+      }
+    },
+    "notificationDocuments": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "The number of notification documents created by this step"
+        }, 
+        "query": {
+          "type": "string",
+          "description": "A Search string for finding notification documents created by this step"
+        }
+      }
+    },
+    "collectionsInformation": {
+      "type": "object",
+      "description": "Defines collection names associated with the possible outputs of this step",
+      "properties": {
+        "archivedCollection": {
+          "type": "string"
+        },
+        "contentCollection": {
+          "type": "string"
+        },
+        "mergedCollection": {
+          "type": "string"
+        },
+        "notificationCollection": {
+          "type": "string"
+        },
+        "auditingCollection": {
+          "type": "string"
+        }
+      }
+    },
+    "matchProvenanceQuery": {
+      "type": "string",
+      "description": "A query that can be run to find provenance data associated with the documents merged by this step"
+    }
+  }
+}
