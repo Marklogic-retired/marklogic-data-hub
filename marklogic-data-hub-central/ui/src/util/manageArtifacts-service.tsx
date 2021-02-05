@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const getMappingValidationResp = async (mapName: string, map, uri:string, dbName:string) => {
-  let resp = await axios.post(`/api/artifacts/mapping/validation?uri=${uri}&db=${dbName}`, map);
+  let resp = await axios.post(`/api/artifacts/mapping/validation?uri=${encodeURIComponent(uri)}&db=${dbName}`, map);
   return resp;
 };
 
