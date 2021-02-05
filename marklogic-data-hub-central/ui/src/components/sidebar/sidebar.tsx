@@ -60,7 +60,7 @@ const Sidebar: React.FC<Props> = (props) => {
     if (props.facets) {
       props.selectedEntities.length === 1 ? setActiveKey(["database", "entityProperties"]) : setActiveKey(["database", "hubProperties", "entityProperties"]);
       for (let i in hubFacets) {
-        if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i].facetName)) {
+        if (searchOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName) || greyedOptions.selectedFacets.hasOwnProperty(hubFacets[i] && hubFacets[i].facetName)) {
           setActiveKey(["database", "hubProperties", "entityProperties"]);
         }
       }
@@ -74,7 +74,7 @@ const Sidebar: React.FC<Props> = (props) => {
 
       let selectedHubFacets: any = [];
       for (let facet in searchOptions.selectedFacets) {
-        let hubFacetValue = filteredHubFacets.find(hubFacet => hubFacet.facetName === facet);
+        let hubFacetValue = filteredHubFacets.find(hubFacet => hubFacet && hubFacet.facetName === facet);
         if (hubFacetValue) {
           selectedHubFacets.push(hubFacetValue);
         }
