@@ -244,6 +244,7 @@ const CreateEditMapping: React.FC<Props> = (props) => {
 
   const handleChange = (event) => {
     if (event.target.id === "name") {
+      let isSpecialChars = false;
       if (event.target.value === " ") {
         setMapNameTouched(false);
       } else {
@@ -253,10 +254,11 @@ const CreateEditMapping: React.FC<Props> = (props) => {
         //check value does not contain special chars and leads with a letter
         if (event.target.value !== "" && !(/^[a-zA-Z][a-zA-Z0-9\-_]*$/g.test(event.target.value))) {
           setInvalidChars(true);
+          isSpecialChars = true;
         } else {
           setInvalidChars(false);
         }
-        if (event.target.value.length > 0) {
+        if (event.target.value.length > 0 && !isSpecialChars) {
           if (collections|| srcQuery) {
             setIsValid(true);
             props.setIsValid(true);
