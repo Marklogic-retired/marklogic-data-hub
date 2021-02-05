@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 
 /**
@@ -59,12 +61,12 @@ public class JobSchema {
     @JsonProperty("lastCompletedStep")
     private Integer lastCompletedStep;
     /**
-     * This isn't an enum, as its value will refer to step numbers that can't be enumerated. See the JobStatus.java class for more information.
+     * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
      * 
      */
     @JsonProperty("jobStatus")
-    @JsonPropertyDescription("This isn't an enum, as its value will refer to step numbers that can't be enumerated. See the JobStatus.java class for more information.")
-    private String jobStatus;
+    @JsonPropertyDescription("The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed")
+    private JobSchema.JobStatus jobStatus;
     /**
      * dateTime at which the job started
      * 
@@ -171,20 +173,20 @@ public class JobSchema {
     }
 
     /**
-     * This isn't an enum, as its value will refer to step numbers that can't be enumerated. See the JobStatus.java class for more information.
+     * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
      * 
      */
     @JsonProperty("jobStatus")
-    public String getJobStatus() {
+    public JobSchema.JobStatus getJobStatus() {
         return jobStatus;
     }
 
     /**
-     * This isn't an enum, as its value will refer to step numbers that can't be enumerated. See the JobStatus.java class for more information.
+     * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
      * 
      */
     @JsonProperty("jobStatus")
-    public void setJobStatus(String jobStatus) {
+    public void setJobStatus(JobSchema.JobStatus jobStatus) {
         this.jobStatus = jobStatus;
     }
 
@@ -353,6 +355,55 @@ public class JobSchema {
         }
         JobSchema rhs = ((JobSchema) other);
         return ((((((((((((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId)))&&((this.jobStatus == rhs.jobStatus)||((this.jobStatus!= null)&&this.jobStatus.equals(rhs.jobStatus))))&&((this.stepResponses == rhs.stepResponses)||((this.stepResponses!= null)&&this.stepResponses.equals(rhs.stepResponses))))&&((this.timeEnded == rhs.timeEnded)||((this.timeEnded!= null)&&this.timeEnded.equals(rhs.timeEnded))))&&((this.externalMetadata == rhs.externalMetadata)||((this.externalMetadata!= null)&&this.externalMetadata.equals(rhs.externalMetadata))))&&((this.lastAttemptedStep == rhs.lastAttemptedStep)||((this.lastAttemptedStep!= null)&&this.lastAttemptedStep.equals(rhs.lastAttemptedStep))))&&((this.timeStarted == rhs.timeStarted)||((this.timeStarted!= null)&&this.timeStarted.equals(rhs.timeStarted))))&&((this.additionalProperties == rhs.additionalProperties)||((this.additionalProperties!= null)&&this.additionalProperties.equals(rhs.additionalProperties))))&&((this.user == rhs.user)||((this.user!= null)&&this.user.equals(rhs.user))))&&((this.lastCompletedStep == rhs.lastCompletedStep)||((this.lastCompletedStep!= null)&&this.lastCompletedStep.equals(rhs.lastCompletedStep))))&&((this.flow == rhs.flow)||((this.flow!= null)&&this.flow.equals(rhs.flow))));
+    }
+
+
+    /**
+     * The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed
+     * 
+     */
+    public enum JobStatus {
+
+        CANCELED("canceled"),
+        FAILED("failed"),
+        FINISHED("finished"),
+        FINISHED_WITH_ERRORS("finished_with_errors"),
+        RUNNING("running"),
+        STARTED("started"),
+        STOP_ON_ERROR("stop-on-error");
+        private final String value;
+        private final static Map<String, JobSchema.JobStatus> CONSTANTS = new HashMap<String, JobSchema.JobStatus>();
+
+        static {
+            for (JobSchema.JobStatus c: values()) {
+                CONSTANTS.put(c.value, c);
+            }
+        }
+
+        private JobStatus(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+
+        @JsonValue
+        public String value() {
+            return this.value;
+        }
+
+        @JsonCreator
+        public static JobSchema.JobStatus fromValue(String value) {
+            JobSchema.JobStatus constant = CONSTANTS.get(value);
+            if (constant == null) {
+                throw new IllegalArgumentException(value);
+            } else {
+                return constant;
+            }
+        }
+
     }
 
 }
