@@ -54,7 +54,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [data, setData] = useState<any[]>([]);
   const [entities, setEntites] = useState<any[]>([]);
   const [entityDefArray, setEntityDefArray] = useState<any[]>([]);
-  const [facets, setFacets] = useState();
+  const [facets, setFacets] = useState<any>();
   const [isLoading, setIsLoading] = useState(true);
   const [totalDocuments, setTotalDocuments] = useState(0);
   const [tableView, toggleTableView] = useState(JSON.parse(getUserPreferences(user.name)).tableView);
@@ -138,6 +138,31 @@ const Browse: React.FC<Props> = ({location}) => {
     }
   };
 
+  const fetchUpdatedSearchResults = () => {
+    let entityTypesExistOrNoEntityTypeIsSelected = (entities.length > 0 || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined));
+    let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (entities.length > 0 || cardView);
+    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView && entities.length > 0);
+    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView);
+    let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType);
+    let notSelectingCardViewWhenNoEntities = !cardView && (!searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
+
+    if (entityTypesExistOrNoEntityTypeIsSelected &&
+      (
+        defaultOptionsForPageRefresh ||
+        selectingAllEntitiesOption ||
+        selectingAllDataOption ||
+        selectingEntityType
+      )) {
+      getSearchResults(entities);
+    } else {
+      if (notSelectingCardViewWhenNoEntities) {
+        setData([]);
+        setFacets({});
+        setTotalDocuments(0);
+      }
+    }
+  };
+
   useEffect(() => {
     getEntityModel();
     initializeUserPreferences();
@@ -150,14 +175,8 @@ const Browse: React.FC<Props> = ({location}) => {
     if (searchOptions.nextEntityType && searchOptions.nextEntityType !== "All Data") {
       setCardView(false);
     }
-    if ((entities.length || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined)) &&
-      (!searchOptions.nextEntityType ||
-        (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView) ||
-        (searchOptions.nextEntityType === "All Data" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView) ||
-        (!["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType)
-      )) {
-      getSearchResults(entities);
-    }
+
+    fetchUpdatedSearchResults();
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
   useEffect(() => {

@@ -207,4 +207,30 @@ describe("Results Table view component", () => {
     validateTableRow(resultsTable, urisBasedOnDescendingNickNames);
 
   });
+
+  test("Results table with no data renders when All Entities option is selected but no entities are available", async () => {
+    const {getByText} = render(
+      <Router>
+        <ResultsTabularView
+          data={[]}
+          entityPropertyDefinitions={[]}
+          selectedPropertyDefinitions={[]}
+          entityDefArray={[]}
+          columns={[]}
+          hasStructured={false}
+          selectedEntities={[]}
+        />
+      </Router>
+    );
+
+    // Check table column headers are rendered
+    expect(getByText("Identifier")).toBeInTheDocument();
+    expect(getByText("Entity Type")).toBeInTheDocument();
+    expect(getByText("Record Type")).toBeInTheDocument();
+    expect(getByText("Created")).toBeInTheDocument();
+    expect(getByText("Detail View")).toBeInTheDocument();
+
+    // Check for Empty Table
+    expect(getByText(/No Data/i)).toBeInTheDocument();
+  });
 });
