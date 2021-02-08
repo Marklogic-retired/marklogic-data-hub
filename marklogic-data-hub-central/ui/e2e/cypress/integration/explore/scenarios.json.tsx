@@ -7,6 +7,7 @@ import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
 import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
+import runPage from "../../support/pages/run";
 
 describe("scenarios for All Data zero state and explore pages.", () => {
 
@@ -831,5 +832,47 @@ describe("verify sidebar footer functionality ", () => {
     browsePage.getFacetItemCheckbox("name", "Adams Cole").should("not.be.checked");
     browsePage.getClearAllFacetsButton().should("be.disabled");
     browsePage.getApplyFacetsButton().should("be.disabled");
+  });
+});
+
+describe("Verify gray facets don't persist upon switching between views", () => {
+
+  beforeEach(() => {
+    cy.visit("/");
+    cy.contains(Application.title);
+    cy.loginAsDeveloper().withRequest();
+    LoginPage.postLogin();
+    cy.waitUntil(() => toolbar.getExploreToolbarIcon()).click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+  });
+
+  it("Verify gray facets don't persist when switching between browse, zero state explorer and run views", () => {
+    //verify gray facets don't persist when switching between browse and zero state explorer views.
+    browsePage.selectEntity("Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getGreySelectedFacets("Alice").should("exist");
+    toolbar.getExploreToolbarIcon().click();
+    cy.waitUntil(() => browsePage.getExploreButton()).click();
+    browsePage.clickFacetView();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.waitForTableToLoad();
+    browsePage.getGreySelectedFacets("Alice").should("not.exist");
+
+    //verify gray facets don't persist when switching between browse and run views.
+    browsePage.selectEntity("Person");
+    browsePage.getFacetItemCheckbox("fname", "Alice").click();
+    browsePage.getGreySelectedFacets("Alice").should("exist");
+    toolbar.getRunToolbarIcon().click();
+    cy.waitUntil(() => runPage.getFlowName("personJSON").should("be.visible"));
+    runPage.expandFlow("personJSON");
+    runPage.runStep("mapPersonJSON").click();
+    cy.verifyStepRunResult("success", "Mapping", "mapPersonJSON");
+    runPage.explorerLink().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.waitForTableToLoad();
+    browsePage.getGreySelectedFacets("Alice").should("not.exist");
   });
 });

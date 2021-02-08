@@ -37,6 +37,7 @@ const Browse: React.FC<Props> = ({location}) => {
   } = useContext(UserContext);
   const {
     searchOptions,
+    greyedOptions,
     setEntityClearQuery,
     setLatestJobFacet,
     resetSearchOptions,
@@ -45,7 +46,8 @@ const Browse: React.FC<Props> = ({location}) => {
     setPageQueryOptions,
     setDatabase,
     setLatestDatabase,
-    setEntityDefinitionsArray
+    setEntityDefinitionsArray,
+    clearAllGreyFacets
   } = useContext(SearchContext);
   const searchBarRef = useRef<HTMLDivElement>(null);
   const authorityService = useContext(AuthoritiesContext);
@@ -165,6 +167,10 @@ const Browse: React.FC<Props> = ({location}) => {
   }, []);
 
   useEffect(() => {
+    if (searchOptions.zeroState && Object.keys(greyedOptions.selectedFacets).length) {
+      clearAllGreyFacets();
+    }
+
     if (location.state && location.state.hasOwnProperty("savedQuery")) {
       let savedQuery = location.state["savedQuery"];
       let options: QueryOptions = {
