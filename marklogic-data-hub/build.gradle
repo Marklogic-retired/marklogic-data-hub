@@ -196,7 +196,7 @@ node {
   version = '14.15.4'
 
   // // Version of npm to use.
-  npmVersion = '6.13.1'
+  npmVersion = '6.14.10'
 
   download = true
   distBaseUrl = "${nodeDistributionBaseUrl}"
