@@ -10,6 +10,10 @@
   height: 10px;
 }
 
+.iconHover:hover{
+    color: var(--hoverColor);
+}
+
 .tabular {
     margin-top: 20px;
     overflow: auto;
@@ -47,4 +51,8 @@
   font-weight: 200;
   top: 3px;
   display: inline-block;
+}
+
+.jsonIcon:hover:before{
+    color: var(--hoverColor);
 }

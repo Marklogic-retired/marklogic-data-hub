@@ -426,6 +426,7 @@ const Query: React.FC<Props> = (props) => {
                 <MLTooltip title={"Save changes"}>
                   <FontAwesomeIcon
                     icon={faSave}
+                    className={styles.iconHover}
                     title="save-changes"
                     onClick={() => setOpenSaveChangesModal(true)}
                     data-testid="save-changes-modal"
@@ -470,6 +471,7 @@ const Query: React.FC<Props> = (props) => {
                 <MLTooltip title={"Discard changes"}>
                   <FontAwesomeIcon
                     icon={faUndo}
+                    className={styles.iconHover}
                     title="discard-changes"
                     onClick={() => setOpenDiscardChangesModal(true)}
                     style={props.queries.length > 0 ? {
@@ -518,6 +520,7 @@ const Query: React.FC<Props> = (props) => {
             <MLTooltip title={"Edit query details"}>
               {hoverOverDropdown && <FontAwesomeIcon
                 icon={faPencilAlt}
+                className={styles.iconHover}
                 title="edit-query"
                 size="lg"
                 onClick={() => setOpenEditDetail(true)}
@@ -540,6 +543,7 @@ const Query: React.FC<Props> = (props) => {
               <MLTooltip title={"Save a copy"}>
                 {hoverOverDropdown && <FontAwesomeIcon
                   icon={faCopy}
+                  className={styles.iconHover}
                   size="lg"
                   onClick={() => setOpenSaveCopyModal(true)}
                   style={{width: "15px", color: "#5b69af", cursor: "pointer"}}
@@ -572,6 +576,7 @@ const Query: React.FC<Props> = (props) => {
             }}>
               <Tooltip title={"Clear query"}>
                 <FontAwesomeIcon
+                  className={styles.iconHover}
                   icon={faWindowClose}
                   title={"reset-changes"}
                   size="lg"

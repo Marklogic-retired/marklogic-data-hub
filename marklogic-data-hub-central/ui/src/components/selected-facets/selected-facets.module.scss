@@ -34,9 +34,15 @@
   margin-right: 6px;
   margin-left: 6px;
   cursor: pointer;
+  &:hover{
+    color: var(--hoverColor);
+  }
 }
 
 .closeIcon {
   color: #5b69af;
   cursor: pointer;
+  &:hover{
+    color: var(--hoverColor);
+  }
 }

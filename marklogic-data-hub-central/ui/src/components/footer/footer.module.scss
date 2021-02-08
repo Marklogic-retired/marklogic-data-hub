@@ -13,3 +13,8 @@ div.content {
 		outline-offset: -1px;
 	}
 }
+
+.linkStyle:hover {
+        color : var(--hoverColor) !important;
+    }
+

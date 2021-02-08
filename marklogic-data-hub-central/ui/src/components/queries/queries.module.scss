@@ -17,6 +17,10 @@
   text-overflow: ellipsis;
 }
 
+.iconHover:hover{
+  color: var(--hoverColor) !important;
+}
+
 .disabledSaveIcon {
   color: grey;
   opacity: 0.5;

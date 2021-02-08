@@ -26,6 +26,9 @@
         font-size: 14px;
         cursor: pointer;
     }
+    .deleteIcon:hover{
+        color: var(--hoverColor);
+    }
 
     .disabledDeleteIcon {
         color: rgba(0, 0, 0, 0.65);
@@ -36,6 +39,9 @@
     .flowName {
         color: #3f4692;
         cursor: pointer;
+        &:hover{
+            color: var(--hoverColor);
+        }
     }
 
     .disabledFlowName {
@@ -64,7 +70,7 @@
                 top: 1px;
                 display: inline-block;
                 padding-right: 10px;
-                color: #5B69AF;
+                color: var(--hoverColor);
                 border-color: #5B69AF;
                 font-size: 20px;
                 cursor: pointer;

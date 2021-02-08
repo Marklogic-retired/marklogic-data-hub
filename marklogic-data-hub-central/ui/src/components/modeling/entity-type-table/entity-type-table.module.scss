@@ -5,6 +5,9 @@
   margin-right: 8px;
   margin-bottom: 2px;
   color: #5B69AF;
+  &:hover{
+      color:var(--hoverColor) !important;
+  }
 }
 .iconTrash {
   color: #B32424;
@@ -24,6 +27,9 @@
   font-size: 22px;
   margin-right: 8px;
   margin-bottom: 2px;
+  &:hover{
+      color:var(--hoverColor) !important;
+  }
 }
 
 .iconSaveReadOnly {
@@ -49,4 +55,11 @@ td.tableText, td.rightHeader {
   color: #5B69AF;
   cursor: pointer;
   margin-top: 15px;
+  &:hover{
+      color: var(--hoverColor);
+  }
+}
+
+.iconHover:hover{
+  color: var(--hoverColor) !important;
 }

@@ -21,7 +21,7 @@ const Footer = (props) => {
         <span>© {currentYear} MarkLogic Corporation</span>
         |
         <span tabIndex={0} onKeyDown={linkWrapperKeyDown} className={styles.link}>
-          <a tabIndex={-1} ref={linkRef} href="https://www.marklogic.com/privacy/" style={linkStyle}>Privacy</a>
+          <a className={styles.linkStyle} tabIndex={-1} ref={linkRef} href="https://www.marklogic.com/privacy/" style={linkStyle}>Privacy</a>
         </span>
       </div>
     </Layout.Footer>

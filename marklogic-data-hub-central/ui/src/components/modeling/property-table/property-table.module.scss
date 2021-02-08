@@ -50,6 +50,9 @@
   font-size: 21px;
   margin-left: 11px;
   color: #B32424;
+  &:hover{
+      color:var(--hoverColor) !important;
+  }
 }
 
 .iconTrashReadOnly {
@@ -66,4 +69,7 @@
 .link {
   color: #5B69AF;
   cursor: pointer;
+  &:hover{
+      color: var(--hoverColor);
+  }
 }

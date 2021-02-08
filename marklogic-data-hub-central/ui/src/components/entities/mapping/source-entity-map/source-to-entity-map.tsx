@@ -1061,6 +1061,7 @@ const SourceToEntityMap = (props) => {
 
   const columnOptionsSelector =
         <Dropdown overlay={columnOptionsDropdown}
+          className={styles.dropdownHover}
           trigger={["click"]}
           onVisibleChange={handleColOptMenuVisibleChange}
           visible={colOptMenuVisible}

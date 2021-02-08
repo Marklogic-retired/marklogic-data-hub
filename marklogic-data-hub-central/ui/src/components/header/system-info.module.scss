@@ -36,10 +36,9 @@
 
   .copyIcon:hover {
     cursor: pointer;
-    color: #44499C;
+    color: var(--hoverColor);
     margin-left: 15px;
   }
-
 
   .cardsContainer {
     width: 100%;

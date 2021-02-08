@@ -710,7 +710,7 @@ const MappingCard: React.FC<Props> = (props) => {
             >
               <Card
                 actions={[
-                  <MLTooltip title={"Step Details"} placement="bottom"><i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
+                  <MLTooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                   <MLTooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
                   <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={["click"]} disabled = {!props.canWriteFlow}>
                     {props.canReadWrite ?<MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}

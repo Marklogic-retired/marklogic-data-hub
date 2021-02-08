@@ -34,7 +34,7 @@ const CustomCard: React.FC<Props> = (props) => {
             <Card
               actions={[
                 <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom">
-                  <span onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
+                  <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
                 </MLTooltip>,
               ]}
               className={styles.cardStyle}

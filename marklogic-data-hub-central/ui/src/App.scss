@@ -11,7 +11,6 @@ body {
   overflow: hidden;
 }
 
-
 .contentContainer{
   top: 70px;
   position: relative;
@@ -27,9 +26,11 @@ body {
   background-color: #2B333C;
 }
 .ant-menu-dark{
-    background-color: #2B333C;
+  background-color: #2B333C;
 }
-
+:root{
+  --hoverColor: #7FADE3;
+}
 /* Ensure footer is pinned to bottom of browser or end of content */
 #root {
   height: 100%;

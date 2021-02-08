@@ -11,7 +11,7 @@
 }
 
 #switch-view .ant-radio-group-large .ant-radio-button-wrapper:hover {
-    color: #7F86B5 ;
+    color: var(--hoverColor);
   }
 
 .radioGroupView:focus-within {

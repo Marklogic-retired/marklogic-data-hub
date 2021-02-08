@@ -3,10 +3,10 @@
     src: url(../../fonts/ML_IconFont.ttf) format('truetype');
 }
 
-.AddToFlowIcon::before { 
+.AddToFlowIcon::before {
     content: "\61";
     font-family: AddToFlowIcon;
-    font-size: 24px; 
+    font-size: 24px;
     position: relative;
     color: #44499C;
     padding-right: 6px;
@@ -15,10 +15,13 @@
     cursor: pointer;
 }
 
-.disabledAddToFlowIcon::before { 
+.AddToFlowIcon:hover::before{
+    color: var(--hoverColor);
+}
+.disabledAddToFlowIcon::before {
     content: "\61";
     font-family: AddToFlowIcon;
-    font-size: 24px; 
+    font-size: 24px;
     position: relative;
     color: rgba(0, 0, 0, 0.35);
     padding-right: 6px;
