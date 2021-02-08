@@ -158,12 +158,29 @@ describe("Steps settings component", () => {
   });
 
   test("Verify rendering of edit Merging step", async () => {
-    const {getByText, getByLabelText} = render(
+    const {getByText, getByLabelText, getByTestId, queryByText} = render(
       <Steps {...data.editMerging} />
     );
 
     expect(getByText("Merging Step Settings")).toBeInTheDocument();
     expect(getByLabelText("Close")).toBeInTheDocument();
+
+    // Additional collection change doesn't trigger Discard Changes alert (DHFPROD-6660)
+    await wait(() => {
+      fireEvent.click(getByText("Advanced"));
+    });
+    fireEvent.click(getByTestId("onMerge-edit"));
+    await wait(() => {
+      expect(getByLabelText("additionalColl-select-onMerge")).toBeInTheDocument();
+    });
+    let collectionInput = getByLabelText("additionalColl-select-onMerge").getElementsByTagName("input").item(0)!;
+    fireEvent.input(collectionInput, {target: {value: "newCollection"}});
+    fireEvent.keyDown(collectionInput, {keyCode: 13, key: "Enter"});
+    fireEvent.click(getByTestId("onMerge-keep"));
+    expect(getByText("newCollection")).toBeInTheDocument();
+    fireEvent.click(getByTestId("AdvancedMatching-cancel-settings"));
+    expect(queryByText("Discard changes?")).not.toBeInTheDocument();
+
   });
 
   test("Verify rendering of Custom step", async () => {

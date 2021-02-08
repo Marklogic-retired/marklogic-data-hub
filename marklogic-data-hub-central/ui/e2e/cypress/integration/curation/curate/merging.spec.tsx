@@ -79,11 +79,9 @@ describe("Merging", () => {
     cy.waitUntil(() => cy.findAllByText("keptMerged").should("have.length.gt", 0));
     cy.findAllByText("keptMerged").should("exist");
   });
-  it("Validate when clicking on cancel with changes should display confirmation modal ", () => {
+  it("Validate when canceling with Target Collection changes should not display confirmation modal (DHFPROD-6660)", () => {
     advancedSettings.cancelSettingsButton(mergeStep).click();
-    confirmYesNo.getDiscardText().should("be.visible");
-    confirmYesNo.getNoButton().click();
-    advancedSettings.saveSettingsButton(mergeStep).click();
+    confirmYesNo.getDiscardText().should("not.be.visible");
     cy.waitForAsyncRequest();
   });
   it("Validate when clicking on cancel without changes should not display confirmation modal ", () => {

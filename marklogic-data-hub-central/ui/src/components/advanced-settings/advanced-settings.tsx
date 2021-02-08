@@ -217,9 +217,11 @@ const AdvancedSettings: React.FC<Props> = (props) => {
     props.setPayload(getPayload());
   };
 
-  // On change of any form field (or on init), update the changed flag for parent
   useEffect(() => {
-    props.setHasChanged(hasFormChanged());
+    // Advanced Target Collections saves independently so don't check here on change (DHFPROD-6660)
+    if (!usesAdvancedTargetCollections) {
+      props.setHasChanged(hasFormChanged());
+    }
     props.setPayload(getPayload());
   }, [targetCollections, advancedTargetCollectionsTouched, defaultTargetCollections, defaultCollections]);
 
