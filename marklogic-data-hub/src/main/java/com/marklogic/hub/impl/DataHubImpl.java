@@ -1025,14 +1025,35 @@ public class DataHubImpl implements DataHub, InitializingBean {
         logger.info("Count of user and hub artifacts read into memory: " + userAndHubArtifacts.size());
 
         final DatabaseManager databaseManager = new DatabaseManager(hubClientToUse.getManageClient());
-        Stream.of(hubClientToUse.getDbName(DatabaseKind.STAGING), hubClientToUse.getDbName(DatabaseKind.FINAL), hubClientToUse.getDbName(DatabaseKind.JOB)).forEach(db -> {
-            logger.info("Clearing database: " + db);
-            final boolean catchException = false;
-            databaseManager.clearDatabase(db, catchException);
-        });
 
-        writeUserAndHubArtifacts(hubClientToUse, userAndHubArtifacts);
+        // Jobs is cleared first; in case this fails, there's no chance of staging/final having been cleared and their
+        // artifacts not being reloaded
+        clearDatabase(databaseManager, hubClientToUse.getDbName(DatabaseKind.JOB));
+
+        final String stagingDbName = hubClientToUse.getDbName(DatabaseKind.STAGING);
+        try {
+            clearDatabase(databaseManager, stagingDbName);
+        } finally {
+            // Still attempt to write artifacts in case the ML error still resulted in the database (or most of it) being cleared
+            writeUserAndHubArtifacts(hubClientToUse.getStagingClient().newJSONDocumentManager(), userAndHubArtifacts, stagingDbName);
+        }
+
+        final String finalDbName = hubClientToUse.getDbName(DatabaseKind.FINAL);
+        try {
+            clearDatabase(databaseManager, finalDbName);
+        } finally {
+            // Still attempt to write artifacts in case the ML error still resulted in the database (or most of it) being cleared
+            writeUserAndHubArtifacts(hubClientToUse.getFinalClient().newJSONDocumentManager(), userAndHubArtifacts, finalDbName);
+        }
         logger.info("Finished clearing user data; time elapsed: " + (System.currentTimeMillis() - start));
+    }
+
+    private void clearDatabase(DatabaseManager databaseManager, String databaseName) {
+        long start = System.currentTimeMillis();
+        logger.info("Clearing database: " + databaseName);
+        final boolean catchException = false;
+        databaseManager.clearDatabase(databaseName, catchException);
+        logger.info("Finished clearing database: " + databaseName + "; time elapsed: " + (System.currentTimeMillis() - start));
     }
 
     /**
@@ -1061,25 +1082,11 @@ public class DataHubImpl implements DataHub, InitializingBean {
         return docs;
     }
 
-    /**
-     * After clearing the databases of user data, write the user and hub artifacts back to staging and final.
-     *
-     * @param hubClientToUse
-     * @param userAndHubArtifacts
-     */
-    private void writeUserAndHubArtifacts(HubClient hubClientToUse, List<DocumentWriteOperation> userAndHubArtifacts) {
-        JSONDocumentManager stagingManager = hubClientToUse.getStagingClient().newJSONDocumentManager();
-        JSONDocumentManager finalManager = hubClientToUse.getFinalClient().newJSONDocumentManager();
-        DocumentWriteSet stagingSet = stagingManager.newWriteSet();
-        DocumentWriteSet finalSet = finalManager.newWriteSet();
-        userAndHubArtifacts.forEach(doc -> {
-            stagingSet.add(doc);
-            finalSet.add(doc);
-        });
-        logger.info("Writing user and hub artifacts to staging; count: " + stagingSet.size());
-        stagingManager.write(stagingSet);
-        logger.info("Writing user and hub artifacts to final; count: " + stagingSet.size());
-        finalManager.write(finalSet);
-        logger.info("Finished writing user and hub artifacts to staging and final");
+    private void writeUserAndHubArtifacts(JSONDocumentManager mgr, List<DocumentWriteOperation> userAndHubArtifacts, String databaseName) {
+        DocumentWriteSet writeSet = mgr.newWriteSet();
+        userAndHubArtifacts.forEach(doc -> writeSet.add(doc));
+        logger.info("Writing user and hub artifacts to " + databaseName + "; count: " + writeSet.size());
+        mgr.write(writeSet);
+        logger.info("Finished writing user and hub artifacts to " + databaseName);
     }
 }
