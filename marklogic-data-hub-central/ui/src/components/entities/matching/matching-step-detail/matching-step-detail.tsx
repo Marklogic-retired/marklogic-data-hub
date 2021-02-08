@@ -224,7 +224,7 @@ const MatchingStepDetail: React.FC = () => {
   const getRulesetName = (rulesetComb) => {
     let matchRules = rulesetComb.matchRules;
     let rulesetName = rulesetComb.rulesetName;
-    if (Array.isArray(matchRules) && matchRules.length) {
+    if (!rulesetComb.rulesetName && Array.isArray(matchRules) && matchRules.length) {
       rulesetName = matchRules[0].entityPropertyPath + " - " + matchRules[0].matchAlgorithm;
     }
 
