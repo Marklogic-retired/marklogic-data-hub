@@ -237,7 +237,7 @@ const MergingCard: React.FC<Props> = (props) => {
   const renderCardActions = (step, index) => {
     return [
       <MLTooltip title={"Step Details"} placement="bottom">
-        <i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}>
+        <i className={styles.stepDetails}>
           <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
       </MLTooltip>,
@@ -268,7 +268,7 @@ const MergingCard: React.FC<Props> = (props) => {
 
       props.canWriteMatchMerge ? (
         <MLTooltip title={"Delete"} placement="bottom">
-          <i key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
+          <i className={styles.deleteIcon}key ="last" role="delete-merging button" data-testid={step.name+"-delete"} onClick={() => deleteStepClicked(step.name)}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/>
           </i>
         </MLTooltip>

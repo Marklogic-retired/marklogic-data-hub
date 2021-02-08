@@ -2,6 +2,7 @@ import React, {useState, useContext} from "react";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {SearchContext} from "../../util/search-context";
+import styles from "../query-export/query-export.module.scss";
 import ExportQueryModal from "./query-export-modal/query-export-modal";
 import {UserContext} from "../../util/user-context";
 import {getExportPreview} from "../query-export/export-preview/export-preview";
@@ -68,7 +69,7 @@ const QueryExport = (props) => {
     <div>
       <ExportQueryModal hasStructured={hasStructured} getPreview={getPreview} tableColumns={tableColumns} tableData={tableData} exportModalVisibility={exportModalVisibility} setExportModalVisibility={setExportModalVisibility} columns={props.columns} />
       <MLTooltip title="Export results with the displayed columns to CSV." placement="topRight">
-        <FontAwesomeIcon style={{cursor: "pointer"}} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" />
+        <FontAwesomeIcon className={styles.fileExportIcon} icon={faFileExport} size="lg" onClick={displayModal} data-testid="query-export" />
       </MLTooltip>
     </div>
   );

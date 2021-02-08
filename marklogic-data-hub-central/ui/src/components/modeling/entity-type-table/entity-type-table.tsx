@@ -258,6 +258,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                     state: {entity: parseText[0]}
                   }}
                   data-testid={parseText[0] + "-instance-count"}
+                  className={styles.iconHover}
                 >
                   {instanceCount}
                 </Link>
@@ -296,6 +297,7 @@ const EntityTypeTable: React.FC<Props> = (props) => {
                   state: {entityName: parseText[0], jobId: parseText[1]}
                 }}
                 data-testid={parseText[0]+ "-last-processed"}
+                className={styles.iconHover}
               >
                 {displayDate}
               </Link>

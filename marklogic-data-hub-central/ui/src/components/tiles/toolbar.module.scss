@@ -37,4 +37,7 @@
     .toolTallWrapper {
         height: 120px;
     }
+    :hover {
+        color: var(--hoverColor) !important;
+    }
 }

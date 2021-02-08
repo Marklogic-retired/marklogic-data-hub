@@ -230,7 +230,7 @@ const ResultsTabularView = (props) => {
                 }
               }} id={"instance"}
               data-cy="instance">
-                <Tooltip title={"Show the processed data"} placement="topRight"><FontAwesomeIcon icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
+                <Tooltip title={"Show the processed data"} placement="topRight"><FontAwesomeIcon className={styles.iconHover} icon={faExternalLinkAlt} size="sm" data-testid={`${primaryKeyValue}-detailOnSeparatePage`} /></Tooltip>
               </Link>
               <Link to={{
                 pathname: `${path.pathname}`,
@@ -253,7 +253,7 @@ const ResultsTabularView = (props) => {
               data-cy="source">
                 <Tooltip title={"Show the complete " + item.format.toUpperCase()} placement="topRight">
                   {item.format.toUpperCase() === "XML" ?
-                    <FontAwesomeIcon icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
+                    <FontAwesomeIcon className={styles.iconHover} icon={faCode} size="sm" data-testid={`${primaryKeyValue}-sourceOnSeparatePage`} />
                     :
                     <span className={styles.jsonIcon} data-testid={`${primaryKeyValue}-sourceOnSeparatePage`}></span>
                   }

@@ -22,6 +22,9 @@
 .editLoadConfig{
     color: #44499C;
     cursor: pointer;
+    &:hover{
+        color:var(--hoverColor) !important;
+    }
 }
 
 .popover {
@@ -69,7 +72,9 @@
     align-items: 'flex-start';
     cursor: pointer;
     padding-bottom: 2px;
-
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
 }
 
 .disabledDeleteIcon {
@@ -101,6 +106,9 @@
     padding-right: 7px;
     color: #44499C;
     cursor: pointer;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .sourceFormatFS{

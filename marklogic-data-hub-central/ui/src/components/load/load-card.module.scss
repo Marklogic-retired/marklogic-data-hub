@@ -57,6 +57,9 @@
     color: #67749c;
     margin-bottom: 0px;
     cursor: pointer;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 .plusIconDisabled{
     font-size: 80px;
@@ -68,6 +71,9 @@
 }
 .editIcon{
     font-size: 20px;
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
 }
 .addNewContent {
     font-size: 20px;
@@ -97,6 +103,9 @@
 .runIcon {
     font-size: 19px;
     padding-top: 2px;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .cardLinks {
@@ -114,6 +123,9 @@
     padding: 20px 8px 8px 8px;
     font-size: 14px;
     cursor: pointer;
+    &:hover{
+        color:var(--hoverColor) !important;
+    }
 }
 
 .cardDisabledLink {
@@ -144,8 +156,15 @@
     padding-bottom: 100%;
 }
 
+.deleteIcon:hover{
+    color: var(--hoverColor);
+}
+
 .stepLink {
     color: #44499C;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .stepLinkExisting {
@@ -156,3 +175,4 @@
 .stepLinkSelect {
     margin-top: 5px;
 }
+

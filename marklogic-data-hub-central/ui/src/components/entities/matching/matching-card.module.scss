@@ -15,6 +15,9 @@ border: 1px solid #67749c;
 }
 .editIcon {
 font-size: 20px;
+&:hover{
+    color: var(--hoverColor);
+  }
 }
 .addNewCardDisabled{
 width: 300px;
@@ -76,6 +79,9 @@ margin-top: 14px;
 color: #67749c;
 margin-bottom: 0px;
 cursor: pointer;
+&:hover{
+    color: var(--hoverColor);
+  }
 }
 .addNewContent {
 font-size: 20px;
@@ -111,6 +117,9 @@ background-color: #ecf6fe;
 padding: 20px 8px 8px 8px;
 font-size: 14px;
 cursor: pointer;
+&:hover{
+    color: var(--hoverColor);
+  }
 }
 
 .cardDisabledLink {
@@ -137,6 +146,9 @@ margin-bottom: 10px;
 
 .stepLink {
   color: #44499C;
+  &:hover{
+    color: var(--hoverColor);
+  }
 }
 
 .stepLinkExisting {
@@ -151,6 +163,9 @@ margin-bottom: 10px;
 .runIcon {
   font-size: 19px;
   padding-top: 2px;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .disabledRunIcon {
@@ -158,4 +173,17 @@ margin-bottom: 10px;
   opacity: 0.5;
   padding-bottom: 2px;
   cursor: not-allowed !important;
+}
+
+.stepDetails{
+    font-size: 16px;
+    margin-left: -5px;
+    margin-right: 5px;
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
+.deleteIcon:hover{
+    color: var(--hoverColor);
 }

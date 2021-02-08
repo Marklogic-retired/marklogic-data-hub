@@ -48,7 +48,7 @@
                         cursor: pointer;
                     }
                     span:hover {
-                        color: #7FADE3;
+                        color: var(--hoverColor) ;
                     }
                     :before {
                         content:"•";

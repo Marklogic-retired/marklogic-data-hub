@@ -237,7 +237,7 @@ const MatchingCard: React.FC<Props> = (props) => {
   const renderCardActions = (step, index) => {
     return [
       <MLTooltip title={"Step Details"} placement="bottom">
-        <i style={{fontSize: "16px", marginLeft: "-5px", marginRight: "5px"}}>
+        <i className={styles.stepDetails}>
           <FontAwesomeIcon icon={faPencilAlt} data-testid={`${step.name}-stepDetails`} onClick={() => openStepDetails(step)}/>
         </i>
       </MLTooltip>,
@@ -274,7 +274,7 @@ const MatchingCard: React.FC<Props> = (props) => {
         </MLTooltip>
       ) : (
         <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}>
-          <i role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
+          <i className={styles.deleteIcon} role="disabled-delete-merging button" data-testid={step.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}>
             <FontAwesomeIcon icon={faTrashAlt} className={styles.disabledDeleteIcon} size="lg"/>
           </i>
         </MLTooltip>

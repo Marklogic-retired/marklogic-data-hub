@@ -128,6 +128,12 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.dropdownHover{
+    &:hover{
+        color: var(--hoverColor);
+    }
+}
+
 .checkBoxItem{
     line-height: 2vh;
     margin-top: 4px;
@@ -282,6 +288,9 @@ hr {
     margin-top: 4px;
     font-size: 20px;
     cursor: pointer;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .functionIcon{
@@ -298,6 +307,9 @@ hr {
     text-align: center;
     align-items: center;
     margin-top: 5px;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 .questionCircle {
     font-size: 12px;
@@ -492,5 +504,8 @@ hr {
     .stepSettingsLabel {
         display: inline-block;
         margin-left: 6px;
+    }
+    &:hover{
+        color: var(--hoverColor);
     }
 }

@@ -26,4 +26,7 @@
         display: inline-block;
         margin-left: 6px;
     }
+    &:hover{
+        color: var(--hoverColor);
+    }
 }

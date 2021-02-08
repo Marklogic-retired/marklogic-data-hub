@@ -45,6 +45,9 @@
 .trashIcon {
   font-size: 20px;
   color: #B32424;
+  &:hover{
+      color: var(--hoverColor);
+  }
 }
 
 .addFooter {

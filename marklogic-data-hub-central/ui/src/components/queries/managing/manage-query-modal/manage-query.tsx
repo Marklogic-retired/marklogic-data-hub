@@ -270,11 +270,11 @@ const QueryModal = (props) => {
           name: query["savedQuery"]["name"],
           description: query["savedQuery"]["description"],
           edited: queryDateConverter(query["savedQuery"]["systemMetadata"]["lastUpdatedDateTime"]),
-          edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" />,
-          export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" />,
+          edit: <FontAwesomeIcon icon={faPencilAlt} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>,
+          export: <FontAwesomeIcon icon={faFileExport} color="#5B69AF" size="lg" className={styles.manageQueryIconsHover}/>,
           // TODO: Uncomment once link for query is implemented
           // link: <FontAwesomeIcon icon={faLink} color='#5B69AF' size='lg' />,
-          delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" />
+          delete: <FontAwesomeIcon icon={faTrashAlt} color="#B32424" size="lg" className={styles.manageQueryIconsHover}/>
         }
       );
     });
