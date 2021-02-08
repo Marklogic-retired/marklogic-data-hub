@@ -26,16 +26,26 @@ function calculateMatchingActivity(step)
   rulesetNameObjectMap = {};
   // ruleset name array, sorted in weight descending order (rulesetNames)
   let rulesetNames = [];
+  let reduceRulesetNames = [];
   step.matchRulesets.forEach(obj => {
+    rulesetNameObjectMap[obj.name] = obj;
     if (!obj.reduce  || obj.reduce == "false") {
-      rulesetNameObjectMap[obj.name] = obj;
       rulesetNames.push(obj.name);
+    } else {
+      reduceRulesetNames.push(obj.name);
     }
   });
+  // sort positive rulesets
   rulesetNames = rulesetNames.sort(
     function(a, b) {
       return rulesetNameObjectMap[b].weight - rulesetNameObjectMap[a].weight;
     }
+  );
+  // sort reduce rulesets
+  reduceRulesetNames = reduceRulesetNames.sort(
+      function(a, b) {
+        return rulesetNameObjectMap[b].weight - rulesetNameObjectMap[a].weight;
+      }
   );
 
   // keys are threshold scores, values are threshold objects
@@ -93,24 +103,28 @@ function calculateMatchingActivity(step)
         "minimumMatchContributions": []
       };
       let comboNameArrays = combinations.get(score);
+      let reduceRulesets = reduceRulesetNames.map((name) => rulesetNameObjectMap[name]);
       for (let comboNames of comboNameArrays) {
         let mmc = [];
         for (let name of comboNames) {
           let ruleset = rulesetNameObjectMap[name];
-          let rules = ruleset.matchRules;
-          let resRules = [];
-          for (let rule of rules) {
-            let resRule = {
-              "entityPropertyPath": rule.entityPropertyPath,
-              "matchAlgorithm": rule.matchType
-            }
-            resRules.push(resRule);
+          mmc.push(buildRulesetObject(ruleset));
+        }
+        if (reduceRulesets.length) {
+          let weight = mmc.reduce((prev, next) => prev + next.weight, 0);
+          let reduceRulesetCombinations = rulesetsCombosAboveScore(reduceRulesets, weight - score);
+          if (reduceRulesetCombinations.length) {
+            reduceRulesetCombinations.forEach((reduceRulesetCombination) => {
+              reduceRulesetCombination = reduceRulesetCombination.map((reduceRuleset) => {
+                let rulesetObject = buildRulesetObject(reduceRuleset);
+                // indicate the query must be not true
+                rulesetObject.rulesetName = `NOT ${rulesetObject.rulesetName}`;
+                return rulesetObject;
+              });
+              ta.minimumMatchContributions.push(mmc.concat(reduceRulesetCombination));
+            });
+            continue;
           }
-          mmc.push({
-            "rulesetName": ruleset.name,
-            "weight": ruleset.weight,
-            "matchRules": resRules
-          });
         }
         ta.minimumMatchContributions.push(mmc);
       }
@@ -188,6 +202,66 @@ function combos(cumuRulesets, cumuWeight, lastScore, remainingRulesets)
         remainingRulesets.slice(i + 1)
       );
     }
+  }
+}
+
+function buildRulesetObject(ruleset) {
+  let rules = ruleset.matchRules;
+  let resRules = [];
+  for (let rule of rules) {
+    let resRule = {
+      "entityPropertyPath": rule.entityPropertyPath,
+      "matchAlgorithm": rule.matchType
+    }
+    resRules.push(resRule);
+  }
+  return {
+    "rulesetName": ruleset.name,
+    "weight": ruleset.weight,
+    "matchRules": resRules
+  };
+}
+
+function rulesetsCombosAboveScore(rulesets, score) {
+  if (rulesets && rulesets.length) {
+    return rulesets
+        // add individual rulesets at or above the score to their own array
+        .filter((ruleset) => ruleset.weight > score)
+        .map((ruleset) => [ruleset])
+        // calculate combinations of rulesets at or above the score to their own array
+        .concat(rulesetsCombosAboveScoreRecursion(
+            rulesets
+                .filter((ruleset) => ruleset.weight < score),
+            0,
+            score,
+            []
+        ));
+  }
+}
+
+function rulesetsCombosAboveScoreRecursion(
+    remainingRulesets,
+    combinedWeight,
+    score,
+    accumulatedRulesets
+)
+{
+  if (score === 0 || combinedWeight > score) {
+    return accumulatedRulesets;
+  } else {
+    let results = [];
+    remainingRulesets.forEach((ruleset, i) => {
+      let subCombo = rulesetsCombosAtAndAboveScoreRecursion(
+          remainingRulesets.slice(i + 1),
+          combinedWeight + ruleset.weight,
+          score,
+          accumulatedRulesets.concat([ruleset])
+      );
+      if (subCombo.length) {
+        results.push(subCombo);
+      }
+    });
+    return results;
   }
 }
 

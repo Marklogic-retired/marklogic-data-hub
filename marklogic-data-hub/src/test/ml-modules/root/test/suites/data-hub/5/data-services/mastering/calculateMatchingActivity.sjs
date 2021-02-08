@@ -48,7 +48,7 @@ const step1 =
       },
       {
         "name": "hairColor",
-        "weight": 2,
+        "weight": 1,
         "reduce": true,
         "matchRules": [
           {
@@ -104,252 +104,282 @@ const step1 =
 ;
 
 const expected1 =
-  {
-    "scale": {
-      "max": 12,
-      "min": 6.5
-    },
-    "thresholdActions": [
-      {
-        "name": "sameThreshold",
-        "action": "merge",
-        "minimumMatchContributions": [
-          [
-            {
-              "rulesetName": "socialSecurityNumber",
-              "weight": 13,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "ssn",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            }
-          ],
-          [
-            {
-              "rulesetName": "billingAddress",
-              "weight": 5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "billing.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "billing.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "name",
-              "weight": 3.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "doubleMetaphone"
-                }
-              ]
-            },
-            {
-              "rulesetName": "shippingAddress",
-              "weight": 2,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "shipping.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "shipping.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "lastName",
-              "weight": 1.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "custom"
-                }
-              ]
-            }
+    {
+      "scale":
+          {
+            "max": 12,
+            "min": 6.5
+          },
+      "thresholdActions": [
+        {
+          "name": "sameThreshold",
+          "action": "merge",
+          "minimumMatchContributions": [
+            [
+              {
+                "rulesetName": "socialSecurityNumber",
+                "weight": 13,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "ssn",
+                    "matchAlgorithm": "exact"
+                  }]
+              }],
+            [
+              {
+                "rulesetName": "billingAddress",
+                "weight": 5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "billing.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "billing.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "name",
+                "weight": 3.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "doubleMetaphone"
+                  }]
+              },
+              {
+                "rulesetName": "shippingAddress",
+                "weight": 2,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "shipping.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "shipping.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "lastName",
+                "weight": 1.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "custom"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }]
           ]
-        ]
-      },
-      {
-        "name": "household",
-        "action": "custom",
-        "minimumMatchContributions": [
-          [
-            {
-              "rulesetName": "billingAddress",
-              "weight": 5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "billing.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "billing.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "name",
-              "weight": 3.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "doubleMetaphone"
-                }
-              ]
-            }
-          ],
-          [
-            {
-              "rulesetName": "billingAddress",
-              "weight": 5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "billing.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "billing.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "shippingAddress",
-              "weight": 2,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "shipping.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "shipping.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "lastName",
-              "weight": 1.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "custom"
-                }
-              ]
-            }
+        },
+        {
+          "name": "household",
+          "action": "custom",
+          "minimumMatchContributions": [
+            [
+              {
+                "rulesetName": "billingAddress",
+                "weight": 5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "billing.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "billing.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "name",
+                "weight": 3.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "doubleMetaphone"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }],
+            [
+              {
+                "rulesetName": "billingAddress",
+                "weight": 5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "billing.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "billing.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "shippingAddress",
+                "weight": 2,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "shipping.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "shipping.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "lastName",
+                "weight": 1.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "custom"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }]
           ]
-        ]
-      },
-      {
-        "name": "similarThreshold",
-        "action": "notify",
-        "minimumMatchContributions": [
-          [
-            {
-              "rulesetName": "billingAddress",
-              "weight": 5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "billing.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "billing.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "shippingAddress",
-              "weight": 2,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "shipping.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "shipping.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            }
-          ],
-          [
-            {
-              "rulesetName": "billingAddress",
-              "weight": 5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "billing.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "billing.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "lastName",
-              "weight": 1.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "custom"
-                }
-              ]
-            }
-          ],
-          [
-            {
-              "rulesetName": "name",
-              "weight": 3.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "doubleMetaphone"
-                }
-              ]
-            },
-            {
-              "rulesetName": "shippingAddress",
-              "weight": 2,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "shipping.street",
-                  "matchAlgorithm": "exact"
-                },
-                {
-                  "entityPropertyPath": "shipping.zip.fiveDigit",
-                  "matchAlgorithm": "exact"
-                }
-              ]
-            },
-            {
-              "rulesetName": "lastName",
-              "weight": 1.5,
-              "matchRules": [
-                {
-                  "entityPropertyPath": "name",
-                  "matchAlgorithm": "custom"
-                }
-              ]
-            }
+        },
+        {
+          "name": "similarThreshold",
+          "action": "notify",
+          "minimumMatchContributions": [
+            [
+              {
+                "rulesetName": "billingAddress",
+                "weight": 5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "billing.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "billing.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "shippingAddress",
+                "weight": 2,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "shipping.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "shipping.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }],
+            [
+              {
+                "rulesetName": "billingAddress",
+                "weight": 5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "billing.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "billing.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "lastName",
+                "weight": 1.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "custom"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }],
+            [
+              {
+                "rulesetName": "name",
+                "weight": 3.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "doubleMetaphone"
+                  }]
+              },
+              {
+                "rulesetName": "shippingAddress",
+                "weight": 2,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "shipping.street",
+                    "matchAlgorithm": "exact"
+                  },
+                  {
+                    "entityPropertyPath": "shipping.zip.fiveDigit",
+                    "matchAlgorithm": "exact"
+                  }]
+              },
+              {
+                "rulesetName": "lastName",
+                "weight": 1.5,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "name",
+                    "matchAlgorithm": "custom"
+                  }]
+              },
+              {
+                "rulesetName": "NOT hairColor",
+                "weight": 1,
+                "matchRules": [
+                  {
+                    "entityPropertyPath": "hairColor",
+                    "matchAlgorithm": "exact"
+                  }]
+              }]
           ]
-        ]
-      }
-    ]
-  }
+        }]
+    }
 ;
 
 [
