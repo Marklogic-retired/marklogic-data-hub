@@ -150,10 +150,10 @@ task generateSchemaPojos {
 
 node {
     // Version of node to use.
-    version = '12.18.3'
+    version = '14.15.4'
 
     // // Version of npm to use.
-    npmVersion = '6.14.6'
+    npmVersion = '6.14.10'
 
     download = true
     distBaseUrl = "${nodeDistributionBaseUrl}"
