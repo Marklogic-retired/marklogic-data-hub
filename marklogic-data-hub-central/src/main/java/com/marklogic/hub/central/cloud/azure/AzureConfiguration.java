@@ -21,15 +21,20 @@ import com.azure.storage.blob.BlobClientBuilder;
 import com.marklogic.hub.central.web.SslUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 
 import java.io.InputStream;
+
+import static com.marklogic.hub.central.cloud.Constants.CERTIFICATE_KEY_STORE_PASSWORD;
 
 @Configuration
 @Profile("azure")
@@ -37,26 +42,33 @@ public class AzureConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(AzureConfiguration.class);
 
-    @Value("${key-store-password}")
-    private String keyStorePassword;
+    @Autowired
+    AzureKeyVaultSecret azureKeyVaultSecret;
 
-    @Value("${azure.storage.endpoint}")
+    @Value("${azure.storage.endpoint:}")
     private String endpoint;
 
-    @Value("${azure.storage.containerName}")
+    @Value("${azure.storage.containerName:}")
     private String containerName;
 
-    @Value("${azure.storage.blobName}")
+    @Value("${azure.storage.blobName:}")
     private String blobName;
 
     @Bean
+    @Primary
+    @ConditionalOnProperty(name = "hubRetrieveCertificate", havingValue = "true")
     public ServerProperties serverProperties() {
-        return SslUtil.buildServerProperties(keyStorePassword);
+        return SslUtil.buildServerProperties(retrieveKeyStorePassword());
     }
 
     @Bean
+    @ConditionalOnProperty(name = "hubRetrieveCertificate", havingValue = "true")
     public WebServerFactoryCustomizer<TomcatServletWebServerFactory> tomcatSslStoreCustomizer() {
-        return SslUtil.configureSslStoreProvider(keyStorePassword, retrieveKeyStoreFile());
+        return SslUtil.configureSslStoreProvider(retrieveKeyStorePassword(), retrieveKeyStoreFile());
+    }
+
+    private String retrieveKeyStorePassword() {
+        return azureKeyVaultSecret.getParameter(CERTIFICATE_KEY_STORE_PASSWORD);
     }
 
     private InputStream retrieveKeyStoreFile() {

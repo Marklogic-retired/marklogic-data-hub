@@ -78,10 +78,8 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.7.2"
     implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
 
-    // Excluding okhttp3 dependency as it bumps down the dependency from 4.4.0 to 3.x
-    implementation ('com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:2.2.4') {
-        exclude group: "com.squareup.okhttp3", module: "okhttp"
-    }
+    implementation 'com.azure:azure-identity:1.2.0'
+    implementation 'com.azure:azure-security-keyvault-secrets:4.2.3'
     implementation 'com.azure:azure-storage-blob:12.8.0'
     implementation 'com.amazonaws:aws-java-sdk-s3:1.11.847'
     implementation 'com.amazonaws:aws-java-sdk-ssm:1.11.847'
