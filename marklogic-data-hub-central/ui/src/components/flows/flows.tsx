@@ -690,7 +690,7 @@ const Flows: React.FC<Props> = (props) => {
         );
       });
       return (
-        <Panel header={flowHeader(flowName, i)} key={i} extra={panelActions(flowName, i)}>
+        <Panel header={flowHeader(flowName, i)} key={i} extra={panelActions(flowName, i)} id={flowName} >
           <div className={styles.panelContent} ref={flowPanels[flowName]}>
             {cards}
           </div>

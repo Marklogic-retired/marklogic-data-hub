@@ -82,6 +82,10 @@ class RunPage {
   explorerLink() {
     return cy.findByTestId("explorer-link");
   }
+
+  expandFlow(flowName: string) {
+    return cy.get(`#${flowName}`).click();
+  }
 }
 
 const runPage = new RunPage();
