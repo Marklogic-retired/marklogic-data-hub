@@ -104,6 +104,11 @@ const ZeroStateExplorer = (props) => {
 
   const onDatabaseChange = (val) => {
     setZeroStatePageDatabase(val);
+    if (val === "staging") {
+      handleOptionSelect("All Data");
+    } else {
+      handleOptionSelect("All Entities");
+    }
   };
 
   return (

@@ -50,4 +50,22 @@ describe("zero state explorer component", () => {
     fireEvent.click(exploreButton);
     expect(exploreButton.onclick).toHaveBeenCalledTimes(1);
   });
+
+  test("Verify entity dropdown option auto selection", () => {
+    const {getByText, getByLabelText, queryByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
+    const finalButton = getByLabelText("switch-database-final");
+    const stagingButton = getByLabelText("switch-database-staging");
+
+    //verify auto selection of All Data option when staging database is selected
+    stagingButton && fireEvent.click(stagingButton);
+    expect(getByText("All Data")).toBeInTheDocument();
+    expect(getByText("All Data")).toBeVisible();
+    expect(queryByText("All Entities")).toBeNull();
+
+    //verify auto selection of All Entities option when final database is selected
+    finalButton && fireEvent.click(finalButton);
+    expect(getByText("All Entities")).toBeInTheDocument();
+    expect(getByText("All Entities")).toBeVisible();
+    expect(queryByText("All Data")).toBeNull();
+  });
 });
