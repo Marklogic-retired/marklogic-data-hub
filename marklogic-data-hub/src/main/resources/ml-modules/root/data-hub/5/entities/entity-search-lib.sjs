@@ -285,7 +285,8 @@ function getEntitySources(docUri) {
   }
 
   if (doc.toObject() && doc.toObject().envelope && doc.toObject().envelope.headers && doc.toObject().envelope.headers.sources) {
-    sourcesArr = doc.toObject().envelope.headers.sources;
+    const sources = doc.toObject().envelope.headers.sources;
+    sourcesArr = Array.isArray(sources) ? sources : [sources];
   }
   return sourcesArr.length ? handleDuplicateSources("datahubSourceName",sourcesArr) : sourcesArr;
 }
@@ -489,11 +490,15 @@ function addDocumentMetadataToSearchResults(searchResponse) {
     let hubMetadata = {};
     const docUri = result.uri;
     const documentMetadata = xdmp.documentGetMetadata(docUri);
+    const sources = getEntitySources(docUri);
     if(documentMetadata) {
       hubMetadata["lastProcessedByFlow"] = documentMetadata.datahubCreatedInFlow;
       hubMetadata["lastProcessedByStep"] = documentMetadata.datahubCreatedByStep;
       hubMetadata["lastProcessedDateTime"] = documentMetadata.datahubCreatedOn;
-      hubMetadata["sources"] = getEntitySources(docUri);
+    }
+
+    if(sources.length) {
+      hubMetadata["sources"] = sources;
     }
     result["documentSize"] = getDocumentSize(cts.doc(docUri));
     result["hubMetadata"] = hubMetadata;

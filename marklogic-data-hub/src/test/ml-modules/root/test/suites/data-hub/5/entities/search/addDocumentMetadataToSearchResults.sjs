@@ -91,7 +91,7 @@ function verifyMetadataForDocumentWithPartialMetadata() {
     test.assertEqual(null, response.results[0].hubMetadata.lastProcessedByFlow),
     test.assertEqual("map-step", response.results[0].hubMetadata.lastProcessedByStep),
     test.assertEqual(null, response.results[0].hubMetadata.lastProcessedDateTime),
-    test.assertEqual(0, response.results[0].hubMetadata.sources.length)
+    test.assertEqual(null, response.results[0].hubMetadata.sources)
   ];
 }
 
@@ -125,8 +125,32 @@ function verifyDocumentSizes() {
   ]
 }
 
+function verifySourcesIsArray() {
+  let response = {
+    "snippet-format": "snippet",
+    "total": 2,
+    "results": [
+      {
+        "index": 1,
+        "uri": "/content/sally.json"
+      },
+      {
+        "index": 2,
+        "uri": "/content/recordWithSourcesObject.json"
+      }
+    ]
+  };
+
+  entitySearchLib.addDocumentMetadataToSearchResults(response);
+  return[
+    test.assertTrue(Array.isArray(response.results[0].hubMetadata.sources)),
+    test.assertTrue(Array.isArray(response.results[1].hubMetadata.sources))
+  ];
+}
+
 []
     .concat(verifyMetadataForDocumentWithAllMetadata())
     .concat(verifyMetadataForDocumentWithoutMetadata())
     .concat(verifyMetadataForDocumentWithPartialMetadata())
-    .concat(verifyDocumentSizes());
+    .concat(verifyDocumentSizes())
+    .concat(verifySourcesIsArray());
