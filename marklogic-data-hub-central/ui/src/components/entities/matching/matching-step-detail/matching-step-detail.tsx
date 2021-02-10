@@ -242,6 +242,38 @@ const MatchingStepDetail: React.FC = () => {
 
       <div className={styles.matchingDetailContainer}>
 
+        <div className={styles.matchCombinationsContainer}>
+          <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
+
+          {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
+            <Row gutter={[24, 24]} type="flex">
+              {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
+                return <Col span={8} key={`${combinationsObject["name"]}-${i}`}>
+                  <div className={styles.matchCombinationsColsContainer}>
+                    <Card bordered={false} className={styles.matchCombinationsCardStyle}>
+                      <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
+                        <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
+
+                        {combinationsObject.minimumMatchContributions?.map((minMatchArray, index) => {
+                          return <div key={`${minMatchArray[0]["rulsetName"]}-${index}`}>{minMatchArray.map((obj, index, arr) => {
+                            if (arr.length - 1 === index) {
+                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
+                            } else {
+                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>;
+                            }
+                          })}</div>;
+
+                        })}
+                      </div>
+                    </Card>
+                  </div>
+                </Col>;
+              })
+              }
+            </Row> : <p aria-label="noMatchedCombinations">Add thresholds and rulesets to the following sliders to determine which combinations of qualifying rulesets would meet each threshold.</p>
+          }
+        </div>
+
         <div className={styles.stepNumberContainer}>
           <NumberIcon value={1} />
           <div className={styles.stepText}>Configure your thresholds</div>
@@ -299,38 +331,6 @@ const MatchingStepDetail: React.FC = () => {
             </div>
           </div>
           <MultiSlider options={matchingStep.matchRulesets && matchingStep.matchRulesets.length ? matchRuleSetOptions : []} handleSlider={handleSlider} handleDelete={handleSliderDelete} handleEdit={handleSliderEdit} type={"ruleSet"}/>
-        </div>
-
-        <div className={styles.matchCombinationsContainer}>
-          <div aria-label="matchCombinationsHeading" className={styles.matchCombinationsHeading}>Possible Combinations of Matched Rulesets</div>
-
-          {matchingActivity?.thresholdActions && matchingActivity?.thresholdActions.length ?
-            <Row gutter={[24, 24]} type="flex">
-              {matchingActivity?.thresholdActions?.map((combinationsObject, i, combArr) => {
-                return <Col span={8} key={`${combinationsObject["name"]}-${i}`}>
-                  <div className={styles.matchCombinationsColsContainer}>
-                    <Card bordered={false} className={styles.matchCombinationsCardStyle}>
-                      <div className={combArr.length > 1 ? styles.colsWithoutDivider : styles.colsWithSingleMatch}>
-                        <div className={styles.combinationlabel} aria-label={`combinationLabel-${combinationsObject.name}`}>Minimum combinations for <strong>{combinationsObject.name}</strong> threshold:</div>
-
-                        {combinationsObject.minimumMatchContributions?.map((minMatchArray, index) => {
-                          return <div key={`${minMatchArray[0]["rulsetName"]}-${index}`}>{minMatchArray.map((obj, index, arr) => {
-                            if (arr.length - 1 === index) {
-                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)}</span>;
-                            } else {
-                              return <span key={`${combinationsObject.name}-${index}`} aria-label={`rulesetName-${combinationsObject.name}-${obj.rulesetName}`}>{getRulesetName(obj)} <span className={styles.period}></span> </span>;
-                            }
-                          })}</div>;
-
-                        })}
-                      </div>
-                    </Card>
-                  </div>
-                </Col>;
-              })
-              }
-            </Row> : <p aria-label="noMatchedCombinations">Add thresholds and rulesets to above scales to see which combinations of qualifying rulesets would meet each threshold.</p>
-          }
         </div>
 
       </div>

@@ -421,7 +421,7 @@ const ErrorTooltips = {
 
 /* --- SLIDER --- */
 const multiSliderTooltips = {
-  priorityOrder: 'The length weights and source weights plotted on a continuum from low to high. Each weight indicates the importance of the length or source when merging documents.',
+  priorityOrder: 'The length weights and source weights plotted on a slider from low to high. Each weight indicates the importance of the length or source when merging documents.',
   timeStamp: 'Timestamp cannot be moved or deleted.',
   viewOnlyTooltip: 'Click the strategy name to change the priority order.'
 };

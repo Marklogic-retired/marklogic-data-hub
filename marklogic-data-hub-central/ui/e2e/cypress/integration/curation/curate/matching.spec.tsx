@@ -66,6 +66,7 @@ describe("Matching", () => {
     cy.contains("The Matching step defines the criteria for comparing documents, as well as the actions to take based on the degree of similarity, which is measured as weights.");
     matchingStepDetail.showThresholdTextMore().should("not.be.visible");
     matchingStepDetail.showThresholdTextLess().should("be.visible");
+    multiSlider.getRulesetSliderOptions().trigger("mouseover");
     matchingStepDetail.showRulesetTextMore().should("not.be.visible");
     matchingStepDetail.showRulesetTextLess().should("be.visible");
   });
@@ -167,6 +168,7 @@ describe("Matching", () => {
     matchingStepDetail.getSliderDeleteText().should("be.visible");
     matchingStepDetail.confirmSliderOptionDeleteButton().click();
     cy.waitForAsyncRequest();
+    cy.findByLabelText("noMatchedCombinations").trigger("mouseover");
     cy.waitUntil(() => cy.findByLabelText("noMatchedCombinations").should("have.length.gt", 0));
     multiSlider.getHandleName("customerId").should("not.exist");
     matchingStepDetail.getDefaultTextNoMatchedCombinations().should("be.visible");
