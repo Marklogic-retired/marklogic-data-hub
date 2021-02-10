@@ -806,4 +806,35 @@ describe("manage queries modal scenarios on detail page", () => {
     browsePage.getAppliedFacets("Alice").should("exist");
     browsePage.getSelectedQuery().should("contain", "person-query");
   });
+
+  it("verify editing previously saved query, updates the currently applied query name in browse page", () => {
+    browsePage.getSelectedEntity().should("contain", "All Entities");
+    browsePage.getSaveQueriesDropdown().should("be.visible");
+    browsePage.selectQuery("person-query");
+
+    //verify the applied query details on Browse page
+    cy.waitForAsyncRequest();
+    browsePage.waitForSpinnerToDisappear();
+    browsePage.getSelectedEntity().should("contain", "Person");
+    browsePage.getSelectedQuery().should("contain", "person-query");
+
+    //verify the manage queries modal button is visible
+    browsePage.getManageQueriesButton().should("be.visible");
+
+    //open manage queries modal dialog and apply previosly saved query
+    browsePage.getManageQueriesModalOpened();
+    queryComponent.getManageQueryModal().should("be.visible");
+
+    //Editing the query
+    queryComponent.getEditQuery().click();
+    queryComponent.getEditQueryName().clear();
+    queryComponent.getEditQueryName().type("edited-person-query");
+    queryComponent.getSubmitButton().click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => browsePage.getManageQueryCloseIcon().should("be.visible")).click();
+    cy.waitUntil(() => queryComponent.getManageQueryModal().should("not.be.visible"));
+
+    //Check if the current query name is updated in browse page or not
+    browsePage.getSelectedQuery().should("contain", "edited-person-query");
+  });
 });

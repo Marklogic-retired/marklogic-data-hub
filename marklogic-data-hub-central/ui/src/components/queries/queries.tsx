@@ -358,7 +358,8 @@ const Query: React.FC<Props> = (props) => {
   useEffect(() => {
     if (Object.entries(currentQuery).length !== 0 && searchOptions.selectedQuery !== "select a query") {
       setHoverOverDropdown(true);
-      setCurrentQueryDescription(currentQuery["savedQuery"]["description"]);
+      setCurrentQueryName(currentQuery.hasOwnProperty("name") ? currentQuery["name"] : currentQuery["savedQuery"]["name"]);
+      setCurrentQueryDescription(currentQuery.hasOwnProperty("description") ? currentQuery["description"] : currentQuery["savedQuery"]["description"]);
     } else {
       setHoverOverDropdown(false);
       setCurrentQueryDescription("");
