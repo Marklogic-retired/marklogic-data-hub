@@ -260,7 +260,7 @@ const ResultsTabularView = (props) => {
                 </Tooltip>
               </Link>
             </div>;
-    if (props.selectedEntities?.length === 0) {
+    if (props.selectedEntities?.length === 0 && item.hasOwnProperty("entityName")) {
       let itemIdentifier = item.identifier?.propertyValue;
       let itemEntityName = item.entityName;
       let document = item.uri.split("/")[item.uri.split("/").length - 1];
@@ -419,18 +419,18 @@ const ResultsTabularView = (props) => {
         {props.selectedEntities?.length !== 0 ? <div className={styles.columnSelector} data-cy="column-selector">
           <ColumnSelector popoverVisibility={popoverVisibility} setPopoverVisibility={setPopoverVisibility} entityPropertyDefinitions={props.entityPropertyDefinitions} selectedPropertyDefinitions={props.selectedPropertyDefinitions} setColumnSelectorTouched={props.setColumnSelectorTouched} columns={props.columns} primaryKey={primaryKey} />
         </div> : ""}
-
       </div>
       <div className={styles.tabular}>
         <MLTable bordered
           data-testid="result-table"
           rowKey="uri"
-          dataSource={dataSource}
+          dataSource={props.isLoading ? [] : dataSource}
           columns={tableHeaders}
           onChange={handleChange}
           expandedRowRender={tableHeaders.length > 0 ? expandedRowRender : null}
           pagination={false}
           defaultShowEmbeddedTableBodies={true}
+          loading={props.isLoading}
         />
       </div>
     </>
