@@ -24,6 +24,10 @@ class MultiSlider {
     return cy.findByTestId("ruleSet-slider-rail");
   }
 
+  getRulesetSliderOptions() {
+    return cy.findByTestId("ruleSet-slider-options");
+  }
+
   sliderTooltipValue(val: string) {
     cy.get("div[class=\"tooltipValue\"]").should("contain.text", val);
   }
