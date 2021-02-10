@@ -50,7 +50,7 @@ function main(content, options) {
   // instance['$attachments'] = doc;
 
   //for ES models, you will want to specify entity/version if they are not already part of your instance
-  //instance['$title'] = 'myEntity';
+  //instance['$type'] = 'myEntity';
   //instance['$version'] = '0.0.1'
 
   //insert code here to manipulate the instance, triples, headers, uri, context metadata, etc.
