@@ -3,12 +3,18 @@ import {Modal, Form, Input} from "antd";
 import styles from "./edit-query-dialog.module.scss";
 import {UserContext} from "../../../../util/user-context";
 import {MLButton} from "@marklogic/design-system";
+import {SearchContext} from "../../../../util/search-context";
 
 
 const EditQueryDialog = (props) => {
   const {
     handleError
   } = useContext(UserContext);
+
+  const {
+    searchOptions,
+    setSelectedQuery
+  } = useContext(SearchContext);
 
   const [query, setQuery] = useState(props.query);
   const [queryName, setQueryName] = useState("");
@@ -74,6 +80,11 @@ const EditQueryDialog = (props) => {
       let status = await props.editQuery(query);
       if (status && status.code === 200) {
         props.setEditModalVisibility(false);
+        if (searchOptions.selectedQuery !== "select a query" &&
+          query.savedQuery.name !== searchOptions.selectedQuery &&
+          props.currentQueryName === searchOptions.selectedQuery) {
+          setSelectedQuery(query.savedQuery.name);
+        }
       }
     } catch (error) {
       if (error.response.status === 400) {
