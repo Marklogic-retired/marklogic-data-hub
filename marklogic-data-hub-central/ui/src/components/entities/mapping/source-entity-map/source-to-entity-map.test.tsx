@@ -431,7 +431,15 @@ describe("RTL Source-to-entity map tests", () => {
 
   test("Verify evaluation of valid expression for mapping writer user", async () => {
     axiosMock.post["mockImplementation"](jest.fn(() => Promise.resolve({status: 200, data: data.testJSONResponse})));
-    const {getByText, getByTestId, queryByTestId} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+    const {getByText, getByTestId, queryByTestId, queryAllByText} = render(<SourceToEntityMap {...data.mapProps} mappingVisible={true} />);
+
+    await(waitForElement(() => getByTestId("proteinId-srcValue")));
+    expect(getByTestId("proteinId-srcValue")).toHaveTextContent("123EAC");
+
+    fireEvent.mouseOver(getByText("123EAC"));
+    //Verify there is no tooltip.
+    expect(queryAllByText("123EAC")).toHaveLength(1);
+
     let propNameExpression = getByText("testNameInExp");
     let propAttributeExpression = getByText("placeholderAttribute");
 

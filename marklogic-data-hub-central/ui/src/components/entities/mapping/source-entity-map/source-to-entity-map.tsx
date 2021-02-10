@@ -565,7 +565,7 @@ const SourceToEntityMap = (props) => {
       ellipsis: true,
       sorter: (a: any, b: any) => a.val?.localeCompare(b.val),
       width: "40%",
-      render: (text, row) => (<div data-testid = {row.key +"-srcValue"} className = {styles.sourceValue}>{(text || text === "") ? <MLTooltip title={text}>{getTextforSourceValue(text, row)}</MLTooltip> : ""}</div>)
+      render: (text, row) => (<div data-testid = {row.key +"-srcValue"} className = {styles.sourceValue}>{(text || text === "") ?  getTextforSourceValue(text, row) : ""}</div>)
     }
   ];
 
@@ -652,24 +652,32 @@ const SourceToEntityMap = (props) => {
 
   const getTextforSourceValue = (text, row) => {
     let arr = typeof(text) === "string" ? text.split(", ") : text;
+    let stringLenWithoutEllipsis = 14;
+    let requiresToolTip = false;
+    let response;
     if (Array.isArray(arr)) {
+      requiresToolTip = (arr[0] ? arr[0].length > stringLenWithoutEllipsis : false) || (arr[1] ? arr[1].length > stringLenWithoutEllipsis : false);
       if (arr.length >= 2) {
         let xMore = <span className="moreVal">{"(" + (arr.length - 2) + " more)"}</span>;
-        let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, "...")}</span>;
-        let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], 14, "...")}</span>;
+        let itemOne = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
+        let itemTwo = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[1], stringLenWithoutEllipsis, "...")}</span>;
         let fullItem = <span>{itemOne}{"\n"}{itemTwo}</span>;
         if (arr.length === 2) {
-          return <p>{fullItem}</p>;
+          response =  <p>{fullItem}</p>;
         } else {
-          return <p>{fullItem}{"\n"}{xMore}</p>;
+          //If there are more than 2 elements in array, tooltip is required.
+          requiresToolTip = true;
+          response =  <p>{fullItem}{"\n"}{xMore}</p>;
         }
       } else {
-        return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], 14, "...")}</span>;
+        response = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(arr[0], stringLenWithoutEllipsis, "...")}</span>;
       }
 
     } else {
-      return <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, 14, "...")}</span>;
+      requiresToolTip = text.length > stringLenWithoutEllipsis;
+      response = <span className={getClassNames(srcFormat, row.datatype)}>{getInitialChars(text, stringLenWithoutEllipsis, "...")}</span>;
     }
+    return requiresToolTip ?  <MLTooltip placement="bottom" title={text}>{response}</MLTooltip> : response;
   };
 
   //Response from server already is an array for multiple values, string for single value
