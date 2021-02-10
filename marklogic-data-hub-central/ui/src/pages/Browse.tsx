@@ -85,8 +85,6 @@ const Browse: React.FC<Props> = ({location}) => {
       }
     } catch (error) {
       handleError(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -141,10 +139,10 @@ const Browse: React.FC<Props> = ({location}) => {
   const fetchUpdatedSearchResults = () => {
     let entityTypesExistOrNoEntityTypeIsSelected = (entities.length > 0 || (searchOptions.nextEntityType === "All Data" || searchOptions.nextEntityType === "All Entities" || searchOptions.nextEntityType === undefined));
     let defaultOptionsForPageRefresh = !searchOptions.nextEntityType && (entities.length > 0 || cardView);
-    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && !cardView && entities.length > 0);
-    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !searchOptions.entityTypeIds.length && !searchOptions.selectedTableProperties.length && cardView);
+    let selectingAllEntitiesOption = (searchOptions.nextEntityType === "All Entities" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && !cardView && entities.length > 0);
+    let selectingAllDataOption = (searchOptions.nextEntityType === "All Data" && !isColumnSelectorTouched && !searchOptions.entityTypeIds.length && cardView && entities.length > 0);
     let selectingEntityType = (searchOptions.nextEntityType && !["All Entities", "All Data"].includes(searchOptions.nextEntityType) && searchOptions.entityTypeIds[0] === searchOptions.nextEntityType);
-    let notSelectingCardViewWhenNoEntities = !cardView && (!searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
+    let notSelectingCardViewWhenNoEntities = !cardView && (!entities.length && !searchOptions.entityTypeIds.length || !searchOptions.nextEntityType);
 
     if (entityTypesExistOrNoEntityTypeIsSelected &&
       (
@@ -175,7 +173,6 @@ const Browse: React.FC<Props> = ({location}) => {
     if (searchOptions.nextEntityType && searchOptions.nextEntityType !== "All Data") {
       setCardView(false);
     }
-
     fetchUpdatedSearchResults();
   }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
 
@@ -508,9 +505,10 @@ const Browse: React.FC<Props> = ({location}) => {
                           selectedEntities={searchOptions.entityTypeIds}
                           setColumnSelectorTouched={setColumnSelectorTouched}
                           tableView={tableView}
+                          isLoading={isLoading}
                         />
                       </div>
-                      : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
+                      : isLoading ? <></> : <div id="snippetViewResult" className={styles.snippetViewResult} ref={resultsRef} onScroll={onResultScroll}><SearchResults data={data} entityDefArray={entityDefArray} tableView={tableView} columns={columns} /></div>
                     )}
                 </div>
                 <br />
