@@ -516,3 +516,7 @@ task testUnit(type: Test) {
     }
 }
 
+// Avoids a bug in Java 1.8 with reading zip files in our tests. See https://bugs.openjdk.java.net/browse/JDK-8156179
+tasks.withType(Test) {
+    jvmArgs += "-Dsun.zip.disableMemoryMapping=true"
+}
