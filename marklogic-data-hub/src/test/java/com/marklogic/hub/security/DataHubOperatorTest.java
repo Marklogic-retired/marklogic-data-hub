@@ -1,7 +1,15 @@
 package com.marklogic.hub.security;
 
+import com.marklogic.client.ForbiddenUserException;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.io.StringHandle;
+import com.marklogic.client.query.QueryManager;
+import com.marklogic.client.query.RawQueryByExampleDefinition;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -31,5 +39,27 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
             "The entity models and generated artifacts in the schema databases are known to have a tde-view/read " +
                 "permissions on them. Since they may have no other read permissions, the operator requires this so that " +
                 "it can read entity models.");
+    }
+
+    @Test
+    void testQBE(){
+        writeFinalJsonDoc("doc1.json", "{\"itemPrice\": 10}");
+        writeFinalJsonDoc("doc2.json", "{\"itemPrice\": 5}");
+
+        QueryManager queryMgr = runAsDataHubOperator().getFinalClient().newQueryManager();
+        String rawJSONQuery = "{ \"$query\": {\n" +
+            "    \"$and\": [\n" +
+            "        {\"itemPrice\" : { \"$ge\": 6 } },\n" +
+            "        {\"itemPrice\" : { \"$le\": 12 } } ],\n" +
+            "    \"$filtered\": true\n" +
+            "}}";
+        StringHandle rawHandle = new StringHandle(rawJSONQuery).withFormat(Format.JSON);
+        RawQueryByExampleDefinition querydef = queryMgr.newRawQueryByExampleDefinition(rawHandle);
+        SearchHandle resultsHandle = queryMgr.search(querydef, new SearchHandle());
+        assertEquals(1, resultsHandle.getTotalResults(), "QBE works for a user with 'data-hub-operator' as he has 'eval-search-string' privilege");
+
+        QueryManager queryManager = runAsTestUserWithRoles("data-hub-common").getFinalClient().newQueryManager();
+        assertThrows(ForbiddenUserException.class, ()->queryManager.search(queryManager.newRawQueryByExampleDefinition(rawHandle), new SearchHandle()),
+            "QBE doesn't work for a user with 'data-hub-common' as he doesn't have 'eval-search-string' privilege");
     }
 }
