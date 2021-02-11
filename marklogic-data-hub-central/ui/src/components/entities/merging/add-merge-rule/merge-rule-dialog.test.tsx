@@ -6,7 +6,7 @@ import {CurationContext} from "../../../../util/curation-context";
 import {customerMergingStep} from "../../../../assets/mock-data/curation/curation-context-mock";
 import {updateMergingArtifact} from "../../../../api/merging";
 import userEvent from "@testing-library/user-event";
-import {multiSliderTooltips} from "../../../../config/tooltips.config";
+import {MergeRuleTooltips, multiSliderTooltips} from "../../../../config/tooltips.config";
 
 
 jest.mock("../../../../api/merging");
@@ -110,7 +110,7 @@ describe("Merge Rule Dialog component", () => {
     expect(getByTestId("priorityOrderSlider")).toBeInTheDocument();
 
     //Verify priority Order slider tooltip
-    userEvent.hover(getAllByLabelText("icon: question-circle")[2]);
+    userEvent.hover(getAllByLabelText("icon: question-circle")[3]);
     expect((await(waitForElement(() => getByText(multiSliderTooltips.priorityOrder))))).toBeInTheDocument();
 
     //Timestamp handle is visible by default
@@ -176,7 +176,7 @@ describe("Merge Rule Dialog component", () => {
     expect(mockMergingUpdate).toHaveBeenCalledTimes(1);
   });
 
-  it("Verify Add Merge Rule dialog with existing rule for property fails validation", () => {
+  it("Verify Add Merge Rule dialog with existing rule for property is disabled in the dropdown", async() => {
     const {getByText, getByTestId, getByLabelText} = render(
       <CurationContext.Provider value={customerMergingStep}>
         <MergeRuleDialog
@@ -189,17 +189,18 @@ describe("Merge Rule Dialog component", () => {
     fireEvent.click(getByText("Select property"));
     fireEvent.click(getByText("name"));
 
+    //Verify property dropdown tooltip
+    userEvent.hover(getByLabelText("icon: question-circle"));
+    expect((await(waitForElement(() => getByText(MergeRuleTooltips.disabledProperties))))).toBeInTheDocument();
+
     //Selecting the merge type to Property-Specific
     fireEvent.click(getByLabelText("mergeType-select"));
     fireEvent.click(getByTestId("mergeTypeOptions-Property-specific"));
 
     let saveButton = getByText("Save");
 
-    fireEvent.click(saveButton); //Will throw an error because name already has a merge rule.
-
-    //verify if the below error message is displayed properly
-    expect(getByText("Property cannot be referenced in multiple merge rules")).toBeInTheDocument();
-
+    fireEvent.click(saveButton);
+    expect(getByText("Property is required")).toBeInTheDocument();//Will throw an error because name already has a merge rule.
     expect(data.mergeRuleDataProps.setOpenMergeRuleDialog).toHaveBeenCalledTimes(0);
     expect(mockMergingUpdate).toHaveBeenCalledTimes(0);
   });

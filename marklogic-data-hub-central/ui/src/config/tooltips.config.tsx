@@ -563,7 +563,8 @@ const MergeRuleTooltips = {
   namespace: 'The namespace of the module that contains the function to run.',
   maxValues: 'The maximum number of values to allow in the merged property. The default is 99.',
   maxSources: 'The maximum number of data sources from which to get values to merge. To copy values from a single source, set to 1.',
-  priorityOrder: 'The relative importance of each metadata when merging documents.'
+  priorityOrder: 'The relative importance of each metadata when merging documents.',
+  disabledProperties: 'Disabled properties in the list are already used in other rules.'
 };
 
 /* TO BE DEPRECATED. Please use MergingStepIntros.main. */

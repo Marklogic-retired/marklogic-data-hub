@@ -1,10 +1,10 @@
-import React from "react";
+import React, {useContext} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {MLTreeSelect} from "@marklogic/design-system";
 import styles from "./entity-property-tree-select.module.scss";
 import arrayIcon from "../../assets/icon_array.png";
-
+import {CurationContext} from "../../util/curation-context";
 import {Definition, Property} from "../../types/modeling-types";
 
 type Props = {
@@ -23,6 +23,10 @@ const DEFAULT_ENTITY_DEFINITION: Definition = {
 
 
 const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
+
+  const {curationOptions} = useContext(CurationContext);
+  let mergeRulesData = curationOptions.activeStep.stepArtifact.mergeRules;
+  let newMergeRuleOptions:any[] = curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && mergeRulesData.map(i => i.entityPropertyPath);
 
   const onChange = (value) => {
     props.onValueSelected(value);
@@ -80,6 +84,8 @@ const EntityPropertyTreeSelect: React.FC<Props> = (props) => {
   const renderPropertyOptions = props.propertyDropdownOptions.map((property, index) => {
     if (property.datatype === "structured") {
       return renderStrucuturedPropertyOption(property, property.name);
+    } else if (curationOptions.activeStep.stepArtifact.hasOwnProperty("mergeRules") && newMergeRuleOptions.indexOf(property.name)!==-1) {
+      return <MLTreeNode key={index} value={property.name} disabled title={renderBasicPropertyTitle(property)}/>;
     } else {
       return <MLTreeNode key={index} value={property.name} title={renderBasicPropertyTitle(property)}/>;
     }
