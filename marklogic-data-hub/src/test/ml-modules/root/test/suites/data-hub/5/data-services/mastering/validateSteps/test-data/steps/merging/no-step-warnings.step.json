@@ -1,0 +1,19 @@
+{
+  "name" : "no-step-warnings",
+  "description" : "",
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "provenanceGranularityLevel" : "fine",
+  "additionalCollections" : [ ],
+  "sourceQuery" : "cts.collectionQuery([\"map-persons\"])",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "match-persons", "Person" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "validateMergeEntity",
+  "stepId" : "no-step-warnings-merging",
+  "mergeRules" : [ {
+    "entityPropertyPath": "property1",
+    "maxSources": 1
+  } ]
+}

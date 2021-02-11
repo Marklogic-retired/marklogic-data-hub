@@ -1,0 +1,19 @@
+{
+  "name" : "targetEntityType-in-additionalCollections",
+  "description" : "",
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "provenanceGranularityLevel" : "fine",
+  "additionalCollections" : [ "validateMergeEntity" ],
+  "sourceQuery" : "cts.collectionQuery([\"dataHubMatchSummary-validateMergeEntity\"])",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "match-persons", "Person" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "validateMergeEntity",
+  "stepId" : "targetEntityType-in-additionalCollections-merging",
+  "mergeRules" : [ {
+    "entityPropertyPath": "property1",
+    "maxSources": 1
+  } ]
+}

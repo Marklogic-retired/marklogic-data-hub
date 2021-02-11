@@ -78,6 +78,7 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
 
     @Test
     void permittedReadUser() throws Exception {
+        installOnlyReferenceModelEntities();
         loginAsTestUserWithRoles("hub-central-match-merge-writer");
 
         postJson(PATH, newDefaultMergingStep("firstStep"));
@@ -90,6 +91,11 @@ public class MergingStepControllerTest extends AbstractStepControllerTest {
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
             });
         getJson(PATH + "/firstStep/calculateMergingActivity")
+                .andDo(result -> {
+                    MockHttpServletResponse response = result.getResponse();
+                    assertEquals(HttpStatus.OK.value(), response.getStatus());
+                });
+        getJson(PATH + "/firstStep/validate")
                 .andDo(result -> {
                     MockHttpServletResponse response = result.getResponse();
                     assertEquals(HttpStatus.OK.value(), response.getStatus());

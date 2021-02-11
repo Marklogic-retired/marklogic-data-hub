@@ -1,0 +1,17 @@
+{
+  "info" : {
+    "title" : "validateMergeEntity",
+    "version" : "0.0.1",
+    "baseUri" : "http://marklogic.com/",
+    "description" : "A validateMergeEntity entity for test case"
+  },
+  "definitions" : {
+    "validateMergeEntity" : {
+      "properties": {
+        "property1": {
+          "datatype": "string"
+        }
+      }
+    }
+  }
+}

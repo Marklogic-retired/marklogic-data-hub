@@ -1,5 +1,5 @@
 {
-  "name" : "sourceCollection-in-additionalCollections",
+  "name" : "temporalCollection-in-additionalCollections",
   "description" : "",
   "stepDefinitionName" : "default-matching",
   "stepDefinitionType" : "MATCHING",
@@ -11,7 +11,7 @@
   "targetDatabase" : "data-hub-FINAL",
   "targetFormat" : "json",
   "targetEntityType" : "Person",
-  "stepId" : "match-persons-matching",
+  "stepId" : "temporalCollection-in-additionalCollections-matching",
   "matchRulesets" : [ ],
   "thresholds" : [ ]
 }

@@ -213,6 +213,7 @@ declare function es-impl:get-definition-properties(
         let $property-path := $property-title
         let $collation := fn:head(($property/collation, fn:default-collation()))
         let $datatype := if (fn:exists($property/items/datatype)) then $property/items/datatype else $property/datatype
+        let $allows-multiple-values := $property/datatype = "array"
         let $options := (
           "type=" || $datatype,
           if ($datatype eq "string") then
@@ -233,6 +234,7 @@ declare function es-impl:get-definition-properties(
               => map:with("pathExpression", $path-expression)
               => map:with("propertyPath", $property-path)
               => map:with("isIndexed", $is-indexed)
+              => map:with("allowsMultipleValues", $allows-multiple-values)
               => map:with("datatype", $datatype)
               => map:with("indexOptions", $options)
               => map:with("indexReference",

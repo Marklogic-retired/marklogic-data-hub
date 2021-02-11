@@ -1,0 +1,19 @@
+{
+  "name" : "temporalCollection-in-additionalCollections",
+  "description" : "",
+  "stepDefinitionName" : "default-merging",
+  "stepDefinitionType" : "MERGING",
+  "provenanceGranularityLevel" : "fine",
+  "additionalCollections" : [ "collection1", "myTemporalCollection" ],
+  "sourceQuery" : "cts.collectionQuery([\"map-persons\"])",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "match-persons", "Person" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "validateMergeEntity",
+  "stepId" : "temporalCollection-in-additionalCollections-merging",
+  "mergeRules" : [ {
+    "entityPropertyPath": "property1",
+    "maxSources": 1
+  } ]
+}
