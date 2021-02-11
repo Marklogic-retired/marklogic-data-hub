@@ -369,14 +369,11 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
 
   const handleSubmit =  (event) => {
     event.preventDefault();
-    let newStepArtifact: MergingStep = curationOptions.activeStep.stepArtifact;
     let propertyErrorMessage = "";
     let mergeTypeErrorMessage = "";
     let strategyNameErrorMessage = "";
     if (property === "" || property === undefined) {
       propertyErrorMessage = "Property is required";
-    } else if (newStepArtifact.mergeRules.some((rule) => rule.entityPropertyPath === property) && !props.isEditRule) {
-      propertyErrorMessage = "Property cannot be referenced in multiple merge rules";
     }
     if (mergeType === "" || mergeType === undefined) {
       mergeTypeErrorMessage = "Merge type is required";
@@ -518,13 +515,15 @@ const MergeRuleDialog: React.FC<Props> = (props) => {
             id="propertyName"
             validateStatus={propertyErrorMessage ? "error" : ""}
             help={propertyErrorMessage}
-          >
-            <EntityPropertyTreeSelect
+          ><EntityPropertyTreeSelect
               propertyDropdownOptions={entityTypeDefinition.properties}
               entityDefinitionsArray={curationOptions.entityDefinitionsArray}
               value={property}
               onValueSelected={handleProperty}
             />
+            <MLTooltip title={MergeRuleTooltips.disabledProperties}>
+              <Icon type="question-circle" className={styles.questionCircle} theme="filled" />
+            </MLTooltip>
           </Form.Item>
           <Form.Item
             label={<span aria-label="formItem-MergeType">Merge Type:&nbsp;<span className={styles.asterisk}>*</span>&nbsp;</span>}
