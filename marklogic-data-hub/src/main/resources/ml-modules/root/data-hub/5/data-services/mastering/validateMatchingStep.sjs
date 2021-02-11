@@ -17,46 +17,27 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-match-merge", "execute");
 
-const temporalLib = require("/data-hub/5/temporal/hub-temporal.sjs");
-
-function warningObject(level, message) {
-  return {
-    "level": level,
-    "message": message
-  };
-}
-
 var stepName;
 
-const levelWarn = "warn";
-
+const common = require("/data-hub/5/data-services/mastering/validateStepCommonLib.sjs");
 const step = require('/data-hub/5/artifacts/core.sjs').getArtifact("matching", stepName);
 
 let warnings = [];
 
-if (step.additionalCollections) {
-  if (step.targetEntityType && step.additionalCollections.includes(step.targetEntityType)) {
-    warnings.push(warningObject(levelWarn, "Warning: Target Collections includes the target entity type " + step.targetEntityType));
+if (step.additionalCollections && step.additionalCollections.length) {
+  let targetTypeWarning = common.targetEntityCollectionWarning(step.targetEntityType, step.additionalCollections);
+  if (targetTypeWarning) {
+    warnings.push(targetTypeWarning);
   }
 
-  if (step.sourceQuery && step.sourceQuery.startsWith("cts.collectionQuery")) {
-    let sourceCollection = step.sourceQuery.substring(
-      step.sourceQuery.lastIndexOf("[") + 2,
-      step.sourceQuery.lastIndexOf("]") - 1
-    );
-    if (step.additionalCollections.includes(sourceCollection)) {
-      warnings.push(warningObject(levelWarn, "Warning: Target Collections includes the source collection " + sourceCollection));
-    }
+  let sourceCollectionWarning = common.sourceCollectionWarning(step.targetEntityType, step.additionalCollections);
+  if (sourceCollectionWarning) {
+    warnings.push(sourceCollectionWarning);
   }
 
-  let addlTempColls = [];
-  for (let tempColl of temporalLib.getTemporalCollections()) {
-    if (step.additionalCollections.includes(tempColl.toString())) {
-      addlTempColls.push(tempColl);
-    }
-  }
-  if (addlTempColls.length > 0) {
-    warnings.push(warningObject(levelWarn, "Warning: Target Collections includes temporal collection(s): " + addlTempColls.join(', ')));
+  let temporalCollectionsWarning = common.temporalCollectionsWarning(step.additionalCollections);
+  if (temporalCollectionsWarning) {
+    warnings.push(temporalCollectionsWarning);
   }
 }
 

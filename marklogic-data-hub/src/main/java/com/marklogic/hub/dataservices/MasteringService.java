@@ -48,11 +48,12 @@ public interface MasteringService {
             private BaseProxy baseProxy;
 
             private BaseProxy.DBFunctionRequest req_calculateMergingActivity;
+            private BaseProxy.DBFunctionRequest req_validateMatchingStep;
             private BaseProxy.DBFunctionRequest req_updateMergeOptions;
             private BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
             private BaseProxy.DBFunctionRequest req_updateMatchOptions;
             private BaseProxy.DBFunctionRequest req_getDefaultCollections;
-            private BaseProxy.DBFunctionRequest req_validateMatchingStep;
+            private BaseProxy.DBFunctionRequest req_validateMergingStep;
 
             private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -60,6 +61,8 @@ public interface MasteringService {
 
                 this.req_calculateMergingActivity = this.baseProxy.request(
                     "calculateMergingActivity.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_validateMatchingStep = this.baseProxy.request(
+                    "validateMatchingStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
                 this.req_updateMergeOptions = this.baseProxy.request(
                     "updateMergeOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_calculateMatchingActivity = this.baseProxy.request(
@@ -68,8 +71,8 @@ public interface MasteringService {
                     "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getDefaultCollections = this.baseProxy.request(
                     "getDefaultCollections.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
-                this.req_validateMatchingStep = this.baseProxy.request(
-                    "validateMatchingStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_validateMergingStep = this.baseProxy.request(
+                    "validateMergingStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -79,6 +82,21 @@ public interface MasteringService {
                     );
             }
             private com.fasterxml.jackson.databind.JsonNode calculateMergingActivity(BaseProxy.DBFunctionRequest request, String stepName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                          ).responseSingle(false, Format.JSON)
+                );
+            }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName) {
+                return validateMatchingStep(
+                    this.req_validateMatchingStep.on(this.dbClient), stepName
+                    );
+            }
+            private com.fasterxml.jackson.databind.JsonNode validateMatchingStep(BaseProxy.DBFunctionRequest request, String stepName) {
               return BaseProxy.JsonDocumentType.toJsonNode(
                 request
                       .withParams(
@@ -148,17 +166,17 @@ public interface MasteringService {
             }
 
             @Override
-            public com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName) {
-                return validateMatchingStep(
-                    this.req_validateMatchingStep.on(this.dbClient), stepName
-                );
+            public com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName) {
+                return validateMergingStep(
+                    this.req_validateMergingStep.on(this.dbClient), stepName
+                    );
             }
-            private com.fasterxml.jackson.databind.JsonNode validateMatchingStep(BaseProxy.DBFunctionRequest request, String stepName) {
-                return BaseProxy.JsonDocumentType.toJsonNode(
-                    request
-                        .withParams(
-                            BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
-                        ).responseSingle(false, Format.JSON)
+            private com.fasterxml.jackson.databind.JsonNode validateMergingStep(BaseProxy.DBFunctionRequest request, String stepName) {
+              return BaseProxy.JsonDocumentType.toJsonNode(
+                request
+                      .withParams(
+                          BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                          ).responseSingle(false, Format.JSON)
                 );
             }
         }
@@ -173,6 +191,14 @@ public interface MasteringService {
    * @return	as output
    */
     com.fasterxml.jackson.databind.JsonNode calculateMergingActivity(String stepName);
+
+  /**
+   * Invokes the validateMatchingStep operation on the database server
+   *
+   * @param stepName	provides input
+   * @return	Returns an array of zero or more warning objects; each object has "level" and "message" properties
+   */
+    com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName);
 
   /**
    * Invokes the updateMergeOptions operation on the database server
@@ -206,11 +232,12 @@ public interface MasteringService {
    */
     com.fasterxml.jackson.databind.JsonNode getDefaultCollections(String entityType);
 
-    /**
-     * Invokes the validateMatchingStep operation on the database server
-     *
-     * @param stepName	provides input
-     * @return	as output
-     */
-    com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName);
+  /**
+   * Provides feedback in the form of errors and warnings about a merge step.
+   *
+   * @param stepName	provides input
+   * @return	Returns an array of zero or more warning objects; each object has "level" and "message" properties
+   */
+    com.fasterxml.jackson.databind.JsonNode validateMergingStep(String stepName);
+
 }

@@ -874,17 +874,19 @@ declare function merge-impl:build-merge-rules-info(
     for $merge-rule in $merge-rules
     let $merge-rule := merge-impl:expand-merge-rule($merge-options, $merge-rule)
     let $property-name := fn:string(fn:head($merge-rule/(@property-name|propertyName|entityPropertyPath|documentXPath)))
+    let $target-entity-property-info := $target-entity-properties-info ! map:get(., $property-name)
     let $property-def := $property-defs/(*:property|*:properties)[(@name|name) = $property-name]
     let $path := fn:head((
         $merge-rule/documentXPath,
         $property-def/(@path|path),
-        $target-entity-properties-info ! map:get(., $property-name) ! map:get(., "pathExpression")
+        $target-entity-property-info ! map:get(., "pathExpression")
       ))
     let $property-qname := fn:head((
         $property-def[localname] ! fn:QName(fn:string(./namespace), fn:string(./localname)),
         $property-def[@localname] ! fn:QName(fn:string(./@namespace), fn:string(./@localname)),
         $target-entity-type-def ! fn:QName(fn:string(./namespaceURI), $property-name)
       ))
+    let $allows-multiple-values := $target-entity-property-info ! map:get(., "allowsMultipleValues")
     let $to-property-values-key := fn:string(fn:head(($property-def/(@path|path),$property-name)))
     let $to-property-values := $property-names-to-values => map:get($to-property-values-key)
     let $algorithm-name := if (fn:exists($merge-rule/mergeModuleFunction[fn:normalize-space(.)])) then
@@ -895,6 +897,7 @@ declare function merge-impl:build-merge-rules-info(
     return (
       xdmp:trace($const:TRACE-MERGE-RESULTS, "Explicit merge for property: " || $property-name),
       map:entry("propertyName", $property-name)
+        => map:with("allowsMultipleValues", $allows-multiple-values)
         => map:with("propertyQName", $property-qname)
         => map:with("documentToValuesFunction", $to-property-values)
         => map:with("mergeAlgorithm", $merge-algorithm)
@@ -908,7 +911,9 @@ declare function merge-impl:build-merge-rules-info(
     let $prefix := $top-level-property-name || "."
     where fn:empty($explicit-merge-rules[map:get(., "propertyName")[. = $top-level-property-name or fn:starts-with(., $prefix)]])
     return
-      let $path := $target-entity-properties-info ! map:get(., $top-level-property-name) ! map:get(., "pathExpression")
+      let $target-entity-property-info := $target-entity-properties-info ! map:get(., $top-level-property-name)
+      let $path := $target-entity-property-info ! map:get(., "pathExpression")
+      let $allows-multiple-values := $target-entity-property-info ! map:get(., "allowsMultipleValues")
       let $to-property-values := $property-names-to-values => map:get($top-level-property-name)
       let $merge-rule := merge-impl:expand-merge-rule($merge-options, ())
       let $property-qname := fn:QName(fn:string($target-entity-type-def/namespaceURI), $top-level-property-name)
@@ -918,6 +923,7 @@ declare function merge-impl:build-merge-rules-info(
           $default-merge-rule-info,
           map:entry("propertyName", $top-level-property-name)
             => map:with("path", $path)
+            => map:with("allowsMultipleValues", $allows-multiple-values)
             => map:with("propertyQName", $property-qname)
             => map:with("documentToValuesFunction", $to-property-values)
             => map:with("mergeRule", $merge-rule)
