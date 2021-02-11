@@ -47,6 +47,11 @@
       "kind": "execute"
     },
     {
+      "privilege-name": "eval-search-string",
+      "action": "http://marklogic.com/xdmp/privileges/eval-search-string",
+      "kind": "execute"
+    },
+    {
       "privilege-name": "xdmp:xslt-eval",
       "action": "http://marklogic.com/xdmp/privileges/xslt-eval",
       "kind": "execute"
