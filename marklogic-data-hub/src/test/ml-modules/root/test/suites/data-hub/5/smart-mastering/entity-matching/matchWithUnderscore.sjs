@@ -18,7 +18,7 @@ else {
   });
 
   hubTest.runWithRolesAndPrivileges(['hub-central-step-runner'], [], function () {
-    const content = datahub.flow.findMatchingContent(flowName, stepNumber, options, null);
+    const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
     datahub.flow.runFlow(flowName, sem.uuidString(), content, options, stepNumber);
   });
 

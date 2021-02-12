@@ -14,7 +14,7 @@ function flowWorksWithValues() {
             uris: "test-data"
         };
 
-        const content = datahub.flow.findMatchingContent(flowName, "1", options, null);
+        const content = datahub.flow.findMatchingContent(flowName, "1", options);
         assertions.push(
             test.assertEqual(1, content.length),
             test.assertEqual("test-data", content[0].uri,

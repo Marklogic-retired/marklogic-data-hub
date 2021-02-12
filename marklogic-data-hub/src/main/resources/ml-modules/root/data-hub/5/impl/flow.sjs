@@ -116,10 +116,9 @@ class Flow {
    * @param flowName
    * @param stepNumber
    * @param options
-   * @param filterQuery
    * @return {*}
    */
-  findMatchingContent(flowName, stepNumber, options, filterQuery) {
+  findMatchingContent(flowName, stepNumber, options) {
     // getFlow will throw an error if the flow cannot be found
     const flow = this.getFlow(flowName);
 
@@ -160,9 +159,6 @@ class Flow {
     }
 
     let sourceDatabase = combinedOptions.sourceDatabase || this.globalContext.sourceDatabase;
-    if (filterQuery) {
-      query = cts.andQuery([query, filterQuery]);
-    }
     return this.datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
   }
 

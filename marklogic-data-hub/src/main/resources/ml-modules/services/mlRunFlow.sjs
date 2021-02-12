@@ -38,7 +38,7 @@ function post(context, params, input) {
       performanceMetrics: !!options.performanceMetrics
     });
 
-    const content = datahub.flow.findMatchingContent(flowName, stepNumber, options, null);
+    const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
     return datahub.flow.runFlow(flowName, params["job-id"], content, options, stepNumber);
   }
 }

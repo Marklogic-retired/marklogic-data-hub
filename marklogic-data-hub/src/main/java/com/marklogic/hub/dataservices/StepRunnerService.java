@@ -3,9 +3,6 @@ package com.marklogic.hub.dataservices;
 // IMPORTANT: Do not edit. This file is generated.
 
 import com.marklogic.client.io.Format;
-import java.io.Reader;
-import com.marklogic.client.SessionState;
-import java.util.stream.Stream;
 
 
 import com.marklogic.client.DatabaseClient;
@@ -50,38 +47,14 @@ public interface StepRunnerService {
             private DatabaseClient dbClient;
             private BaseProxy baseProxy;
 
-            private BaseProxy.DBFunctionRequest req_runSteps;
             private BaseProxy.DBFunctionRequest req_processBatch;
 
             private StepRunnerServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
                 this.baseProxy = new BaseProxy("/data-hub/5/data-services/stepRunner/", servDecl);
 
-                this.req_runSteps = this.baseProxy.request(
-                    "runSteps.sjs", BaseProxy.ParameterValuesKind.MULTIPLE_NODES);
                 this.req_processBatch = this.baseProxy.request(
                     "processBatch.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
-            }
-            @Override
-            public SessionState newSessionState() {
-              return baseProxy.newSessionState();
-            }
-
-            @Override
-            public Stream<Reader> runSteps(Reader endpointState, SessionState session, Reader workUnit) {
-                return runSteps(
-                    this.req_runSteps.on(this.dbClient), endpointState, session, workUnit
-                    );
-            }
-            private Stream<Reader> runSteps(BaseProxy.DBFunctionRequest request, Reader endpointState, SessionState session, Reader workUnit) {
-              return BaseProxy.JsonDocumentType.toReader(
-                request
-                      .withSession("session", session, true)
-                      .withParams(
-                          BaseProxy.documentParam("endpointState", true, BaseProxy.JsonDocumentType.fromReader(endpointState)),
-                          BaseProxy.documentParam("workUnit", false, BaseProxy.JsonDocumentType.fromReader(workUnit))
-                          ).responseMultiple(true, Format.JSON)
-                );
             }
 
             @Override
@@ -102,23 +75,6 @@ public interface StepRunnerService {
 
         return new StepRunnerServiceImpl(db, serviceDeclaration);
     }
-    /**
-     * Creates an object to track a session for a set of operations
-     * that require session state on the database server.
-     *
-     * @return	an object for session state
-     */
-    SessionState newSessionState();
-
-  /**
-   * This is intended to be used by Bulk IO, but a functionName is required to generate a Java interface
-   *
-   * @param endpointState	provides input
-   * @param session	provides input
-   * @param workUnit	provides input
-   * @return	as output
-   */
-    Stream<Reader> runSteps(Reader endpointState, SessionState session, Reader workUnit);
 
   /**
    * Replacement for the mlRunFlow REST extension; processes a batch of items using the given flow and step

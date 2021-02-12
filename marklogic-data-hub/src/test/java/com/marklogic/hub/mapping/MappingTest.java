@@ -48,42 +48,9 @@ public class MappingTest extends AbstractHubCoreTest {
         RunFlowResponse flowResponse = runFlow("CustomerXML", "1", "2");
         RunStepResponse mappingJob = flowResponse.getStepResponses().get("2");
         assertTrue(mappingJob.isSuccess(), "Mapping job failed: "+mappingJob.stepOutput);
-        verifyMappingResultsAreCorrect();
-    }
-
-    private void verifyMappingResultsAreCorrect() {
         assertEquals(1, getFinalDocCount("CustomerXMLMapping"));
         assertEquals(1, getDocCountByQuery(HubConfig.DEFAULT_FINAL_NAME, "cts:and-query((cts:json-property-value-query('id', 'ALFKI', 'exact'), cts:collection-query('CustomerXMLMapping')))"),
             "Attribute properly mapped");
-    }
-
-    /**
-     * This test verifies that the Bulk API can be used against the runSteps endpoint. Eventually, this code will move
-     * into the application to be reused.
-     *
-     * @throws Exception
-     */
-    @Test
-    void runMappingStepViaDataServicesEndpoint() {
-        runAsDataHubOperator();
-        runFlow("CustomerXML", "1");
-
-        OutputEndpoint.BulkOutputCaller bulkCaller = OutputEndpoint.on(
-            getHubClient().getStagingClient(),
-            getHubClient().getModulesClient().newJSONDocumentManager().read("/data-hub/5/data-services/stepRunner/runSteps.api", new JacksonHandle())
-        ).bulkCaller();
-
-        ObjectMapper mapper = new ObjectMapper();
-        ObjectNode workUnit = mapper.createObjectNode();
-        workUnit.put("flowName", "CustomerXML");
-        workUnit.putArray("steps").add("2");
-
-        bulkCaller.setWorkUnit(new JacksonHandle(workUnit));
-        bulkCaller.setEndpointState(new JacksonHandle(mapper.createObjectNode()));
-        bulkCaller.setOutputListener(response -> logger.info(NodeConverter.InputStreamToString(response)));
-        bulkCaller.awaitCompletion();
-
-        verifyMappingResultsAreCorrect();
     }
 
     @Test
