@@ -50,6 +50,16 @@ class AuthTest extends AbstractMvcTest {
     }
 
     @Test
+    void loginWithDataHubDeveloper() throws Exception {
+        setTestUserRoles("data-hub-developer");
+        String payload = buildLoginPayload(testConstants.TEST_USER_USERNAME);
+        mockMvc
+            .perform(post(LOGIN_URL).contentType(MediaType.APPLICATION_JSON).content(payload))
+            .andExpect(status().isForbidden());
+
+    }
+
+    @Test
     void loginWithDataHubManagerAndLogout() throws Exception {
         loginAsUser(testConstants.ENVIRONMENT_MANAGER_USERNAME).andDo(
             result -> {
