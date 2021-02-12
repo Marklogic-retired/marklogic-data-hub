@@ -8,11 +8,8 @@ const xqueryLib = require('xquery-lib.xqy')
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
-var entityModel = null;
 
 function main(content, options) {
-  //let's set our output format, so we know what we're exporting
-  let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
     datahub.debug.log({

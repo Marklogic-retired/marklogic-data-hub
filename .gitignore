@@ -7,7 +7,7 @@
 npm-debug.log
 marklogic-data-hub/bin/
 marklogic-data-hub/src/main/resources/ml-modules/root/trace-ui
-web/bin/
+bin
 ml-data-hub-plugin/bin
 build/
 out/
@@ -29,7 +29,6 @@ node_modules/
 *.iws
 *.db
 ye-olde-project
-/bin/
 examples/dh-5-example/input
 installer.log
 .java-version

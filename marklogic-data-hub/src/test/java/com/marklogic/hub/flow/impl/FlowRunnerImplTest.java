@@ -1,9 +1,14 @@
 package com.marklogic.hub.flow.impl;
 
+import com.marklogic.hub.flow.Flow;
+import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class FlowRunnerImplTest {
 
@@ -23,5 +28,35 @@ public class FlowRunnerImplTest {
         assertEquals("someone", response.getUser());
         assertEquals("3", response.getLastAttemptedStep());
         assertEquals("2", response.getLastCompletedStep());
+    }
+
+    @Test
+    void configureStopOnError() {
+        FlowRunnerImpl flowRunner = new FlowRunnerImpl();
+        Flow flow = new FlowImpl();
+
+        Map<String, Object> options = new HashMap<>();
+        options.put("stopOnError", true);
+        flowRunner.configureStopOnError(flow, options);
+        assertTrue(flow.isStopOnError());
+
+        flow = new FlowImpl();
+        options.put("stopOnError", "true");
+        flowRunner.configureStopOnError(flow, options);
+        assertTrue(flow.isStopOnError());
+
+        flow = new FlowImpl();
+        options.put("stopOnError", "true");
+        flowRunner.configureStopOnError(flow, options);
+        assertTrue(flow.isStopOnError());
+
+        flow = new FlowImpl();
+        options.put("stopOnError", "false");
+        flowRunner.configureStopOnError(flow, options);
+        assertFalse(flow.isStopOnError());
+
+        flow = new FlowImpl();
+        flowRunner.configureStopOnError(flow, new HashMap<>());
+        assertFalse(flow.isStopOnError());
     }
 }

@@ -139,7 +139,7 @@ public class CommandLineFlowInputs {
     }
 
     protected Map<String, Object> buildFlowOptions() {
-        String optionsString = null;
+        String optionsString;
         if (StringUtils.isNotEmpty(optionsFile)) {
             try {
                 optionsString = new String(FileCopyUtils.copyToByteArray(new File(optionsFile)));
@@ -150,15 +150,24 @@ public class CommandLineFlowInputs {
             optionsString = optionsJSON;
         }
 
+        Map<String, Object> optionsMap = null;
         if (StringUtils.isNotEmpty(optionsString)) {
             try {
-                return new ObjectMapper().readValue(optionsString, new TypeReference<Map<String, Object>>() {
-                });
+                optionsMap = new ObjectMapper().readValue(optionsString, new TypeReference<Map<String, Object>>() {});
             } catch (IOException ex) {
                 throw new RuntimeException("Unable to parse JSON options string: " + optionsString, ex);
             }
         }
-        return null;
+
+        // Needed to force the flow to stop, not just the step
+        if (this.failHard) {
+            if (optionsMap == null) {
+                optionsMap = new HashMap<>();
+            }
+            optionsMap.put("stopOnError", true);
+        }
+
+        return optionsMap;
     }
 
     public String getFlowName() {

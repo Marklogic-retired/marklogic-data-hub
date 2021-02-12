@@ -26,9 +26,14 @@ import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.DeleteQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.hub.AbstractHubCoreTest;
+import com.marklogic.hub.FlowManager;
 import com.marklogic.hub.HubConfig;
+import com.marklogic.hub.dataservices.ArtifactService;
+import com.marklogic.hub.dataservices.FlowService;
+import com.marklogic.hub.flow.Flow;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
+import com.marklogic.hub.impl.FlowManagerImpl;
 import com.marklogic.hub.job.JobStatus;
 import com.marklogic.hub.step.RunStepResponse;
 import org.junit.jupiter.api.Assertions;
@@ -374,21 +379,36 @@ public class FlowRunnerTest extends AbstractHubCoreTest {
 
     @Test
     public void testRunFlowStopOnError(){
+        verifyFlowStopsOnError(new HashMap<>());
+    }
+
+    @Test
+    void testStopOnErrorViaOptions() {
+        // Verify that stopOnError in options works by first modifying the flow so it doesn't have stopOnError=true
+        FlowManager mgr = new FlowManagerImpl(getHubConfig());
+        Flow flow = mgr.getFlow("testFlow");
+        flow.setStopOnError(false);
+        mgr.saveFlow(flow);
+
+        Map<String, Object> options = new HashMap<>();
+        options.put("stopOnError", true);
+        verifyFlowStopsOnError(options);
+    }
+
+    private void verifyFlowStopsOnError(Map<String, Object> options) {
         runAsDataHubOperator();
 
-        Map<String,Object> opts = new HashMap<>();
-
-        opts.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
-        opts.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        options.put("targetDatabase", HubConfig.DEFAULT_STAGING_NAME);
+        options.put("sourceDatabase", HubConfig.DEFAULT_STAGING_NAME);
         Map<String,String> mapping = new HashMap<>();
         mapping.put("name", "non-existent-mapping");
         mapping.put("version", "1");
-        opts.put("mapping", mapping);
+        options.put("mapping", mapping);
 
-        RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), opts, null);
+        RunFlowResponse resp = runFlow("testFlow", "1,6", UUID.randomUUID().toString(), options, null);
         flowRunner.awaitCompletion();
-        Assertions.assertTrue(getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll") == 1);
-        Assertions.assertTrue(JobStatus.STOP_ON_ERROR.toString().equalsIgnoreCase(resp.getJobStatus()));
+        assertEquals(1, getDocCount(HubConfig.DEFAULT_STAGING_NAME, "xml-coll"));
+        assertEquals(JobStatus.STOP_ON_ERROR.toString(), resp.getJobStatus());
     }
 
     @Test
