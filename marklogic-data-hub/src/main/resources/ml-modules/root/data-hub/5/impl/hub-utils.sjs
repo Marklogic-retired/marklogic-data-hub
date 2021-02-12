@@ -94,12 +94,6 @@ class HubUtils {
     this.queryLatest(function () {
       let results = cts.search(query, cts.indexOrder(cts.uriReference()));
 
-      // Option for limiting the number of results that are processed. Needed for the Data Services
-      // endpoint, but could be used by the REST endpoint as well.
-      if (options.contentDescriptorLimit) {
-        results = fn.subsequence(results, 1, options.contentDescriptorLimit);
-      }
-
       for (let doc of results) {
         content.push({
           uri: xdmp.nodeUri(doc),

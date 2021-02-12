@@ -36,5 +36,5 @@ const datahub = DataHubSingleton.instance({
   performanceMetrics: !!options.performanceMetrics
 });
 
-const content = datahub.flow.findMatchingContent(flowName, stepNumber, options, null);
+const content = datahub.flow.findMatchingContent(flowName, stepNumber, options);
 datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
