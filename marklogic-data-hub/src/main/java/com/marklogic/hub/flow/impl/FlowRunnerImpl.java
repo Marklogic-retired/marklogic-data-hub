@@ -184,6 +184,8 @@ public class FlowRunnerImpl implements FlowRunner {
             disableJobOutput = false;
         }
 
+        configureStopOnError(flow, options);
+
         if(stepNums == null) {
             stepNums = new ArrayList<>(flow.getSteps().keySet());
         }
@@ -226,6 +228,22 @@ public class FlowRunnerImpl implements FlowRunner {
             initializeFlow(stepRunnerFactory, jobId);
         }
         return response;
+    }
+
+    /**
+     * To support the "failHard" parameter in CommandLineFlowInputs, this method checks for stopOnError in the options
+     * map. If true, this will set stopOnError in the flow. That will cause no other steps to be run once a step fails.
+     *
+     * @param flow
+     * @param options
+     */
+    protected void configureStopOnError(Flow flow, Map<String, Object> options) {
+        if (options != null) {
+            Object value = options.get("stopOnError");
+            if (Boolean.TRUE.equals(value) || "true".equals(value)) {
+                flow.setStopOnError(true);
+            }
+        }
     }
 
     private void initializeFlow(StepRunnerFactory stepRunnerFactory, String jobId) {

@@ -11,8 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandLineFlowInputsTest {
 
@@ -47,6 +46,9 @@ public class CommandLineFlowInputsTest {
 
         Map<String, Object> options = flowInputs.getOptions();
         assertEquals("world", options.get("hello"));
+        assertEquals(true, options.get("stopOnError"), "When failHard=true, stopOnError needs to be set to true " +
+            "so that the flow will be stopped when a step has a failure (whereas stopOnFailure only stops the step). " +
+            "stopOnError is added to the options because it's not step-level config, and thus shouldn't be in stepConfig.");
 
         Map<String, Object> stepConfig = flowInputs.getStepConfig();
         assertEquals(Boolean.TRUE, stepConfig.get("stopOnFailure"));
@@ -83,5 +85,28 @@ public class CommandLineFlowInputsTest {
         assertEquals("red", values.get(0));
         assertEquals("green", values.get(1));
         assertEquals("blue", values.get(2));
+    }
+
+    @Test
+    void onlyFailHardIsSet() {
+        CommandLineFlowInputs inputs = new CommandLineFlowInputs();
+        inputs.setFailHard(true);
+
+        FlowInputs flowInputs = inputs.buildFlowInputs().getLeft();
+        assertEquals(true, flowInputs.getOptions().get("stopOnError"), "An options map should be built even though " +
+            "the user didn't provide any options, since stopOnError needs to be added to it");
+        assertEquals(true, flowInputs.getStepConfig().get("stopOnFailure"));
+    }
+
+    @Test
+    void failHardIsFalse() {
+        CommandLineFlowInputs inputs = new CommandLineFlowInputs();
+        inputs.setFailHard(false);
+
+        FlowInputs flowInputs = inputs.buildFlowInputs().getLeft();
+        assertNull(flowInputs.getOptions(), "Since failHard was not set to true, " +
+            "stopOnError should not be in the options, and the options should be null since no other options were provided");
+        assertFalse(flowInputs.getStepConfig().containsKey("stopOnFailure"), "Since failHard was not set to true, " +
+            "stopOnFailure should not be in the stepConfig");
     }
 }
