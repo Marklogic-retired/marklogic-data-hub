@@ -286,7 +286,7 @@ const AdvancedSettings: React.FC<Props> = (props) => {
   };
 
   const isPermissionsValid = () => {
-    if (targetPermissions && targetPermissions.trim().length === 0) {
+    if (targetPermissions.trim().length === 0) {
       setPermissionValidationError(AdvancedSettingsMessages.targetPermissions.incorrectFormat);
       props.setIsValid(false);
       return false;
