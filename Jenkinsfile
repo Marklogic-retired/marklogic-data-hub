@@ -304,17 +304,22 @@ void UnitTest(){
 }
 
 void PreBuildCheck() {
+
  if(env.CHANGE_ID){
-   if(PRDraftCheck()){ sh 'exit 1' }
-   def reviewState=getReviewState()
-   if((!env.CHANGE_TITLE.startsWith("DHFPROD-")) && (!env.CHANGE_TITLE.startsWith("DEVO-"))){
-     sh 'exit 1'
-   }
-   println(reviewState)
-   if((reviewState.equalsIgnoreCase("CHANGES_REQUESTED"))){ sh 'exit 1' }
+
+  if(PRDraftCheck()){ sh 'exit 1' }
+
+  if((!env.CHANGE_TITLE.startsWith("DHFPROD-")) && (!env.CHANGE_TITLE.startsWith("DEVO-"))){ sh 'exit 1' }
+
+  if(getReviewState().equalsIgnoreCase("CHANGES_REQUESTED")){
+       println(reviewState)
+       sh 'exit 1'
+  }
+
  }
  def obj=new abortPrevBuilds();
  obj.abortPrevBuilds();
+
 }
 
 void Tests(){
@@ -470,14 +475,13 @@ pipeline{
 	    post{
 	        failure{
 	            script{
-                    def email;
-                    if(env.CHANGE_AUTHOR){
-                    	def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
-                    	 email=getEmailFromGITUser author
-                    }else{
-                    email=Email
-                    }
-                    sendMail email,'<h3>Pipeline Failed as there is no JIRA ID. Please add JIRA ID to the <a href=${CHANGE_URL}>PR Title</a></h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'NO JIRA ID for $BRANCH_NAME | pipeline Failed  '
+                 def email;
+                 if(env.CHANGE_AUTHOR){
+                   def author=env.CHANGE_AUTHOR.toString().trim().toLowerCase()
+                   email=getEmailFromGITUser author
+                  }else{ email=Email  }
+
+                 sendMail email,'<h3>Pipeline Failed possibly because there is no JIRA ID. Please add JIRA ID to the <a href=${CHANGE_URL}>PR Title</a></h3><h4><a href=${RUN_DISPLAY_URL}>Check the Pipeline View</a></h4><h4> <a href=${BUILD_URL}/console> Check Console Output Here</a></h4>',false,'NO JIRA ID for $BRANCH_NAME | pipeline Failed  '
 	            }
 	        }
 	    }
@@ -632,7 +636,7 @@ pipeline{
 		count++;
 		    props = readProperties file:'data-hub/pipeline.properties';
 		    def reviewState=getReviewState()
-			if((env.CHANGE_TITLE.split(':')[1].contains("Automated PR")) || reviewState.equalsIgnoreCase("APPROVED")){
+			if(env.CHANGE_TITLE.split(':')[1].contains("Automated PR")){
 				println("Automated PR")
 				sh 'exit 0'
 			}
