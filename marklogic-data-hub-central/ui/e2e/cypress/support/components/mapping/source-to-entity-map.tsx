@@ -4,7 +4,7 @@ class SourceToEntityMap {
   }
 
   testMap() {
-    return cy.findByTestId("Test-btn");
+    return cy.get("#Test-btn");
   }
 
   navigateUrisRight() {
@@ -113,6 +113,10 @@ class SourceToEntityMap {
    */
   setXpathExpressionInput(propertyName: string, value: string) {
     cy.findByTestId(`${propertyName}-mapexpression`).type(value);
+  }
+
+  validateMapValues(propertyName: string, value:string) {
+    cy.findByTestId(`${propertyName}-value`).find(".ml-tooltip-container").should("have.text", value);
   }
 }
 
