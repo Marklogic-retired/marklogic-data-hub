@@ -32,6 +32,7 @@ describe("Mapping", () => {
     cy.loginAsDeveloper().withRequest();
     cy.deleteSteps("ingestion", "loadOrder", "loadOrderCustomHeader");
     cy.deleteSteps("mapping", "mapOrder", "mapOrderCustomHeader");
+    cy.deleteSteps("mapping", "mapCustomer");
     cy.deleteFlows("orderFlow", "orderCustomHeaderFlow");
   });
 
@@ -108,16 +109,66 @@ describe("Mapping", () => {
     advancedSettingsDialog.setStepInterceptor("curateTile/orderDateInterceptor");
 
     createEditMappingDialog.saveButton().click({force: true});
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
 
     //verify that step details automatically opens after step creation
     curatePage.verifyStepDetailsOpen(mapStep);
+
+    //Validate xpath expressions are blank by default
+    curatePage.xpathExpression("orderId").should("have.value", "");
+    curatePage.xpathExpression("address").should("have.value", "");
+    curatePage.xpathExpression("city").should("have.value", "");
+    curatePage.xpathExpression("state").should("have.value", "");
+    curatePage.xpathExpression("orderDetails").should("have.value", "");
+    curatePage.xpathExpression("productID").should("have.value", "");
+    curatePage.xpathExpression("unitPrice").should("have.value", "");
+    curatePage.xpathExpression("quantity").should("have.value", "");
+    curatePage.xpathExpression("discount").should("have.value", "");
+    curatePage.xpathExpression("shipRegion").should("have.value", "");
+    curatePage.xpathExpression("shippedDate").should("have.value", "");
+
+    //Map source to entity
+    sourceToEntityMap.setXpathExpressionInput("orderId", "OrderID");
+    sourceToEntityMap.setXpathExpressionInput("address", "/");
+    sourceToEntityMap.setXpathExpressionInput("city", "ShipCity");
+    sourceToEntityMap.setXpathExpressionInput("state", "ShipAddress");
+    sourceToEntityMap.setXpathExpressionInput("orderDetails", "/");
+    sourceToEntityMap.setXpathExpressionInput("productID", "OrderDetails/ProductID");
+    sourceToEntityMap.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
+    sourceToEntityMap.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
+    sourceToEntityMap.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
+    sourceToEntityMap.setXpathExpressionInput("shipRegion", "ShipRegion");
+    sourceToEntityMap.setXpathExpressionInput("shippedDate", "ShippedDate");
+    curatePage.dataPresent().should("be.visible");
+    sourceToEntityMap.expandCollapseEntity().click();
+
+    //Test the mappings
+    cy.waitUntil(() => sourceToEntityMap.testMap().should("be.enabled"));
+    sourceToEntityMap.testMap().click();
+    sourceToEntityMap.validateMapValues("orderId", "10259");
+    sourceToEntityMap.validateMapValues("address", "");
+    sourceToEntityMap.validateMapValues("city", "Houston");
+    sourceToEntityMap.validateMapValues("state", "100 Main Street");
+    sourceToEntityMap.validateMapValues("orderDetails", "");
+    sourceToEntityMap.validateMapValues("productID", "77");
+    sourceToEntityMap.validateMapValues("unitPrice", "70.4");
+    sourceToEntityMap.validateMapValues("quantity", "72");
+    sourceToEntityMap.validateMapValues("discount", "0");
+    sourceToEntityMap.validateMapValues("shipRegion", "region1\nregion4\n");
+    sourceToEntityMap.validateMapValues("shippedDate", "1996-07-17T00:28:30");
+
     //close modal
     cy.get("body").type("{esc}");
 
     curatePage.verifyStepNameIsVisible(mapStep);
 
-    // Open step settings and switch to Advanced tab
-    cy.waitUntil(() => curatePage.editStep(mapStep).click({force: true}));
+    // Open step details and switch to Advanced tab in step settings
+    curatePage.openStepDetails(mapStep);
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    sourceToEntityMap.testMap().click();
+    sourceToEntityMap.validateMapValues("orderId", "10259");
+    sourceToEntityMap.stepSettingsLink().click();
     curatePage.switchEditAdvanced().click();
 
     //interceptor should already be set during creation
@@ -142,22 +193,9 @@ describe("Mapping", () => {
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();
 
-    // map source to entity
+    // link to settings and back
     curatePage.openSourceToEntityMap("Order", mapStep);
     cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should("be.visible")).click();
-    sourceToEntityMap.setXpathExpressionInput("orderId", "OrderID");
-    sourceToEntityMap.setXpathExpressionInput("address", "/");
-    sourceToEntityMap.setXpathExpressionInput("city", "ShipCity");
-    sourceToEntityMap.setXpathExpressionInput("state", "ShipAddress");
-    sourceToEntityMap.setXpathExpressionInput("orderDetails", "/");
-    sourceToEntityMap.setXpathExpressionInput("productID", "OrderDetails/ProductID");
-    sourceToEntityMap.setXpathExpressionInput("unitPrice", "head(OrderDetails/UnitPrice)");
-    sourceToEntityMap.setXpathExpressionInput("quantity", "OrderDetails/Quantity");
-    sourceToEntityMap.setXpathExpressionInput("discount", "head(OrderDetails/Discount)");
-    sourceToEntityMap.setXpathExpressionInput("shipRegion", "ShipRegion");
-    sourceToEntityMap.setXpathExpressionInput("shippedDate", "ShippedDate");
-
-    // link to settings and back
     sourceToEntityMap.stepSettingsLink().click();
     cy.waitUntil(() => createEditMappingDialog.stepDetailsLink().click());
     cy.waitUntil(() => sourceToEntityMap.expandCollapseEntity().should("be.visible"));
@@ -180,6 +218,21 @@ describe("Mapping", () => {
     //Verifying the properties added by load and mapping custom hooks respectively
     cy.contains("primaryKey");
     cy.contains("uriFromCustomHook");
+
+    //Create a map step under another entity", () => {
+    // create mapping step
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    cy.waitUntil(() => curatePage.addNewStep().click());
+    createEditMappingDialog.setMappingName("mapCustomer");
+    createEditMappingDialog.setSourceRadio("Query");
+    createEditMappingDialog.setQueryInput(`cts.collectionQuery(['loadCustomersJSON'])`);
+    createEditMappingDialog.saveButton().click({force: true});
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => curatePage.dataPresent().should("be.visible"));
+    //close modal
+    cy.get("body").type("{esc}");
   });
 
   it("can create a load step with a custom header, can create a mapping step with a custom header, and run both steps and verify in the detail view, ", () => {

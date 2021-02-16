@@ -176,6 +176,14 @@ class CuratePage {
   confirmAddStepToFlow(stepName: string, flowName: string) {
     cy.findByTestId(`${stepName}-to-${flowName}-Confirm`).click();
   }
+
+  dataPresent() {
+    return cy.get("#dataPresent");
+  }
+
+  xpathExpression(propertyName: string) {
+    return cy.findByTestId(`${propertyName}-mapexpression`);
+  }
 }
 
 const curatePage = new CuratePage();
