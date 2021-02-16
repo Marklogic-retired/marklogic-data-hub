@@ -1,0 +1,17 @@
+{
+  "name" : "targetEntityType-in-additionalCollections",
+  "description" : "",
+  "stepDefinitionName" : "default-matching",
+  "stepDefinitionType" : "MATCHING",
+  "provenanceGranularityLevel" : "fine",
+  "additionalCollections" : [ "Person" ],
+  "sourceQuery" : "cts.collectionQuery([\"map-persons\"])",
+  "sourceDatabase" : "data-hub-FINAL",
+  "collections" : [ "match-persons", "Person" ],
+  "targetDatabase" : "data-hub-FINAL",
+  "targetFormat" : "json",
+  "targetEntityType" : "Person",
+  "stepId" : "match-persons-matching",
+  "matchRulesets" : [ ],
+  "thresholds" : [ ]
+}
