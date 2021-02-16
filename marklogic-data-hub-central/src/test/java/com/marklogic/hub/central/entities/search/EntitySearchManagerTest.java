@@ -87,14 +87,21 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         getHubClient().getFinalClient().newServerEval().javascript(collectionDeleteQuery).evalAs(String.class);
 
         runAsHubCentralUser();
-        StringHandle results = new EntitySearchManager(getHubClient()).search(new SearchQuery());
-
+        SearchQuery searchQuery = new SearchQuery();
         int count = getDocumentCount(getHubClient().getFinalClient());
+
+        searchQuery.getQuery().setHideHubArtifacts(true);
+        StringHandle results = new EntitySearchManager(getHubClient()).search(searchQuery);
         ObjectNode node = readJsonObject(results.get());
+        assertEquals(0, node.get("total").asInt(), "Expected 0 total documents; an empty search should result in a count equal " +
+                "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
+
+        searchQuery.getQuery().setHideHubArtifacts(false);
+        results = new EntitySearchManager(getHubClient()).search(searchQuery);
+        node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
                 "to all the docs that the user can read in the database", count));
 
-        SearchQuery searchQuery = new SearchQuery();
         searchQuery.getQuery().setEntityTypeIds(Arrays.asList("Some-entityType"));
         assertNull(new EntitySearchManager(getHubClient()).search(searchQuery), "Entity Model with name Some-entityType doesn't exist ");
     }
@@ -324,9 +331,19 @@ public class EntitySearchManagerTest extends AbstractHubCentralTest {
         DatabaseClient client = databaseType.equalsIgnoreCase("staging") ? getHubClient().getStagingClient() : getHubClient().getFinalClient();
 
         int count = getDocumentCount(client);
-        StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(new SearchQuery());
+
+        SearchQuery searchQuery = new SearchQuery();
+        searchQuery.getQuery().setHideHubArtifacts(false);
+
+        StringHandle results = new EntitySearchManager(getHubClient(), databaseType).search(searchQuery);
         ObjectNode node = readJsonObject(results.get());
         assertEquals(count, node.get("total").asInt(), String.format("Expected %s total documents; an empty search should result in a count equal " +
                 "to all the docs that the user can read in the database", count));
+
+        searchQuery.getQuery().setHideHubArtifacts(true);
+        results = new EntitySearchManager(getHubClient(), databaseType).search(searchQuery);
+        node = readJsonObject(results.get());
+        assertEquals(2, node.get("total").asInt(), "Expected 2 total documents; an empty search should result in a count equal " +
+                "to all the docs that the user can read in the database excluding hub artifacts as setHideHubArtifacts is true");
     }
 }
