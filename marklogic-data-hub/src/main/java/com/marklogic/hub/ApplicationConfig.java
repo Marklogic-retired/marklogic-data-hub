@@ -2,9 +2,6 @@ package com.marklogic.hub;
 
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +13,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan(basePackages = {"com.marklogic.hub.impl", "com.marklogic.hub.legacy.impl", "com.marklogic.hub.deploy.commands",
     "com.marklogic.hub.job.impl", "com.marklogic.hub.flow.impl", "com.marklogic.hub.step", "com.marklogic.hub.util"})
-@EnableAutoConfiguration
 public class ApplicationConfig {
 
     /**
@@ -30,10 +26,6 @@ public class ApplicationConfig {
         return new HubConfigImpl(new HubProjectImpl());
     }
 
-    public static void main(String[] args) {
-        LoggerFactory.getLogger(ApplicationConfig.class).info("Starting Data Hub Application Context");
-        SpringApplication.run(ApplicationConfig.class);
-    }
 
 }
 

@@ -6,8 +6,6 @@ plugins {
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'org.springframework.boot' version '2.1.15.RELEASE'
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'com.marklogic.ml-development-tools' version '5.3.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
@@ -71,9 +69,6 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
     }
 
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.15.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.15.RELEASE'
-
     compile 'com.marklogic:mlcp-util:0.9.0'
     compile 'com.marklogic:marklogic-data-movement-components:2.2.1'
 
@@ -136,21 +131,28 @@ task extractFastXmlParserZip(type: Copy) {
 // Ensure that the fast-xml-parser files are available before any DHF jars are built
 processResources.dependsOn extractFastXmlParserZip
 
-
-// The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
-// This jar is only meant to be used by the DHS team for installing DHF into DHS
-bootJar {
-    archiveClassifier = "installer"
-    mainClassName = "com.marklogic.hub.dhs.installer.Main"
-    from("src/main/installer") {
-        include "logback.xml"
+task installerJar(type: Jar) {
+    description = "Build an executable jar for installing DHF into DHS"
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.dhs.installer.Main"
     }
+    archiveClassifier = "installer"
     from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
+    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    from("src/main/installer") {
+        include "logback.xml"
+    }
+    with jar
 }
+build.dependsOn installerJar
 
 task installDhfIntoDhs(type: Exec) {
     description = "Builds and runs the DHF installer for DHS"
@@ -165,7 +167,7 @@ task installDhfIntoDhs(type: Exec) {
         "dhsInstall"
     ]
 }
-installDhfIntoDhs.dependsOn bootJar
+installDhfIntoDhs.dependsOn installerJar
 
 task clientJar(type: Jar) {
     description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
@@ -183,7 +185,6 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    exclude "spring-boot*.jar"
     from("src/main/clientJar") {
         include "logback.xml"
     }
@@ -291,10 +292,6 @@ jar{
     enabled = true
 }
 
-bootRun {
-    enabled = false
-}
-
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
@@ -340,7 +337,7 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact bootJar
+            artifact installerJar
             artifact clientJar
 
             pom.withXml {

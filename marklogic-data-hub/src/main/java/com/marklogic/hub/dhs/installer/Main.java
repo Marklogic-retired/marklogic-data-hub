@@ -6,9 +6,8 @@ import com.marklogic.hub.ApplicationConfig;
 import com.marklogic.hub.dhs.installer.command.CanInstallDhsCommand;
 import com.marklogic.hub.dhs.installer.command.InstallIntoDhsCommand;
 import com.marklogic.hub.dhs.installer.command.VerifyDhfInDhsCommand;
-import org.springframework.boot.Banner;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * Intended for installing and upgrading DHF via a command-line interface. It is expected to be run as the main class
@@ -35,10 +34,7 @@ public class Main {
         } else {
             InstallerCommand command = (InstallerCommand) commander.getCommands().get(parsedCommand).getObjects().get(0);
 
-            SpringApplication app = new SpringApplication(ApplicationConfig.class);
-            app.setBannerMode(Banner.Mode.OFF);
-
-            ConfigurableApplicationContext context = app.run();
+            ConfigurableApplicationContext context = new AnnotationConfigApplicationContext(ApplicationConfig.class);
             try {
                 command.run(context, options);
             } finally {
