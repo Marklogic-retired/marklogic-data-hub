@@ -53,6 +53,7 @@ task updateVersion {
             "marklogic-data-hub/src/main/resources/scaffolding/build_gradle",
             "marklogic-data-hub/src/main/java/com/marklogic/hub/impl/VersionInfo.java",
             "marklogic-data-hub/src/main/resources/hub-internal-config/security/roles/data-hub-admin.json",
+            "marklogic-data-hub-central/ui/e2e/hc-qa-project/build.gradle",
             "examples/dh-5-example/build.gradle",
             "examples/dhf5-custom-hook/build.gradle",
             "examples/insurance/build.gradle",
