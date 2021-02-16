@@ -15,7 +15,6 @@ import com.marklogic.hub.HubTestBase;
 import com.marklogic.hub.deploy.commands.CreateGranularPrivilegesCommand;
 import com.marklogic.hub.deploy.commands.GenerateFunctionMetadataCommand;
 import com.marklogic.hub.test.HubConfigInterceptor;
-import com.marklogic.hub.test.HubConfigObjectFactory;
 import com.marklogic.hub.test.HubCoreTestConfig;
 import com.marklogic.mgmt.ManageClient;
 import com.marklogic.mgmt.api.API;
@@ -27,10 +26,9 @@ import com.marklogic.mgmt.mapper.DefaultResourceMapper;
 import com.marklogic.mgmt.resource.security.PrivilegeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -43,12 +41,9 @@ public class TestAppInstaller {
     private final static Logger logger = LoggerFactory.getLogger(TestAppInstaller.class);
 
     public static void main(String[] args) {
-        SpringApplication app = new SpringApplication(HubCoreTestConfig.class);
-        app.setWebApplicationType(WebApplicationType.NONE);
-        ConfigurableApplicationContext ctx = app.run();
+        ConfigurableApplicationContext applicationContext = new AnnotationConfigApplicationContext(HubCoreTestConfig.class);
         try {
-            HubConfigObjectFactory factory = ctx.getBean(HubConfigInterceptor.class).getHubConfigObjectFactory();
-            String[] hosts = factory.getHosts();
+            String[] hosts = applicationContext.getBean(HubConfigInterceptor.class).getHubConfigObjectFactory().getHosts();
             logger.info("Will install test app on hosts: " + Arrays.asList(hosts));
             ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
             taskExecutor.setCorePoolSize(hosts.length);
@@ -56,14 +51,14 @@ public class TestAppInstaller {
             taskExecutor.setWaitForTasksToCompleteOnShutdown(true);
             taskExecutor.afterPropertiesSet();
             for (int i = 0; i < hosts.length; i++) {
-                taskExecutor.execute(new InstallerThread(ctx));
+                taskExecutor.execute(new InstallerThread(applicationContext));
             }
             // Installation should normally just take a couple minutes
             taskExecutor.setAwaitTerminationSeconds(600);
             taskExecutor.shutdown();
             logger.info("Finished installing test app on hosts: " + Arrays.asList(hosts));
         } finally {
-            ctx.close();
+            applicationContext.close();
             // LoadUserModulesCommand may cause hanging because its thread pool is not shutdown;
             // will investigate in 5.5.0, doing system.exit for now
             System.exit(0);

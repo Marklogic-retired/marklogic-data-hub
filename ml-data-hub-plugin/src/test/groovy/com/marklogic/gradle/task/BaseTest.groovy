@@ -42,9 +42,7 @@ import org.custommonkey.xmlunit.XMLUnit
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.rules.TemporaryFolder
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
-import org.springframework.util.ReflectionUtils
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
 import spock.lang.Specification
@@ -52,14 +50,10 @@ import spock.lang.Specification
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.parsers.ParserConfigurationException
-import java.lang.reflect.Field
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.stream.Collectors
-import java.util.stream.Stream
 
-@EnableAutoConfiguration
 class BaseTest extends Specification {
 
     // this value is for legacy purposes.  on dev should always be 5
