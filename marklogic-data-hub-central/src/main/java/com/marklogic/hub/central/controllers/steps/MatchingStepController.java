@@ -72,6 +72,14 @@ public class MatchingStepController extends BaseController {
         return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).calculateMatchingActivity(stepName));
     }
 
+    @RequestMapping(value = "/{stepName}/validate", method = RequestMethod.GET)
+    @ResponseBody
+    @ApiOperation(value = "Validate the matching step")
+    @Secured("ROLE_readMatching")
+    public ResponseEntity<JsonNode> validateMatchingStep(@PathVariable String stepName) {
+        return ResponseEntity.ok(MasteringService.on(getHubClient().getStagingClient()).validateMatchingStep(stepName));
+    }
+
     private StepService newService() {
         return StepService.on(getHubClient().getStagingClient());
     }
