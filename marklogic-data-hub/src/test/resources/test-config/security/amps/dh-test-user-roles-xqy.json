@@ -1,0 +1,7 @@
+{
+  "namespace": "http://marklogic.com/data-hub/test",
+  "local-name" : "run-with-roles-and-privileges",
+  "document-uri" : "/test/data-hub-test-helper.xqy",
+  "modules-database" : "%%mlModulesDbName%%",
+  "role" : [ "data-hub-test-internal" ]
+}
