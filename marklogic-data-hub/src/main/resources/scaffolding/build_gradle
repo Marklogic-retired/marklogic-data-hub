@@ -8,5 +8,5 @@ plugins {
     // Applies the Data Hub Gradle plugin, which extends ml-gradle with behavior specific to Data Hub.
     // For more information on this plugin, see https://docs.marklogic.com/datahub/tools/gradle/dhf-gradle-plugin.html .
     // For more information on ml-gradle, see https://github.com/marklogic-community/ml-gradle .
-    id 'com.marklogic.ml-data-hub' version '5.4-SNAPSHOT'
+    id 'com.marklogic.ml-data-hub' version '5.5-SNAPSHOT'
 }
