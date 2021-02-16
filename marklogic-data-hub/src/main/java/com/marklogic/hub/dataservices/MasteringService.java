@@ -52,6 +52,7 @@ public interface MasteringService {
             private BaseProxy.DBFunctionRequest req_calculateMatchingActivity;
             private BaseProxy.DBFunctionRequest req_updateMatchOptions;
             private BaseProxy.DBFunctionRequest req_getDefaultCollections;
+            private BaseProxy.DBFunctionRequest req_validateMatchingStep;
 
             private MasteringServiceImpl(DatabaseClient dbClient, JSONWriteHandle servDecl) {
                 this.dbClient  = dbClient;
@@ -67,6 +68,8 @@ public interface MasteringService {
                     "updateMatchOptions.sjs", BaseProxy.ParameterValuesKind.SINGLE_NODE);
                 this.req_getDefaultCollections = this.baseProxy.request(
                     "getDefaultCollections.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
+                this.req_validateMatchingStep = this.baseProxy.request(
+                    "validateMatchingStep.sjs", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC);
             }
 
             @Override
@@ -143,6 +146,21 @@ public interface MasteringService {
                           ).responseSingle(false, Format.JSON)
                 );
             }
+
+            @Override
+            public com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName) {
+                return validateMatchingStep(
+                    this.req_validateMatchingStep.on(this.dbClient), stepName
+                );
+            }
+            private com.fasterxml.jackson.databind.JsonNode validateMatchingStep(BaseProxy.DBFunctionRequest request, String stepName) {
+                return BaseProxy.JsonDocumentType.toJsonNode(
+                    request
+                        .withParams(
+                            BaseProxy.atomicParam("stepName", false, BaseProxy.StringType.fromString(stepName))
+                        ).responseSingle(false, Format.JSON)
+                );
+            }
         }
 
         return new MasteringServiceImpl(db, serviceDeclaration);
@@ -188,4 +206,11 @@ public interface MasteringService {
    */
     com.fasterxml.jackson.databind.JsonNode getDefaultCollections(String entityType);
 
+    /**
+     * Invokes the validateMatchingStep operation on the database server
+     *
+     * @param stepName	provides input
+     * @return	as output
+     */
+    com.fasterxml.jackson.databind.JsonNode validateMatchingStep(String stepName);
 }
