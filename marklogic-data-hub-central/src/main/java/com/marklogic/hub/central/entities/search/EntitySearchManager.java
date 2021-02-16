@@ -53,6 +53,7 @@ import java.io.Reader;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,13 @@ public class EntitySearchManager {
 
     private static final String MASTERING_AUDIT_COLLECTION_NAME = "mdm-auditing";
     private static final String[] IGNORED_SM_COLLECTION_SUFFIX = {"auditing", "notification"};
+    private static final List<String> ARTIFACT_COLLECTION_NAMES = Arrays.asList(
+            "http://marklogic.com/data-hub/flow",
+            "http://marklogic.com/data-hub/step-definition",
+            "http://marklogic.com/data-hub/steps",
+            "http://marklogic.com/entity-services/models",
+            "http://marklogic.com/data-hub/mappings"
+    );
 
     private static final String CSV_CONTENT_TYPE = "text/csv";
     private static final String CSV_FILE_EXTENSION = ".csv";
@@ -74,11 +82,9 @@ public class EntitySearchManager {
     private static Map<String, FacetHandler> facetHandlerMap;
     private DatabaseClient searchDatabaseClient;
     private DatabaseClient savedQueryDatabaseClient;
-    private ModelManager modelManager;
 
     public EntitySearchManager(HubClient hubClient) {
         this.searchDatabaseClient = hubClient.getFinalClient();
-        this.modelManager = new ModelManager(hubClient);
         initializeFacetHandlerMap();
     }
 
@@ -91,7 +97,6 @@ public class EntitySearchManager {
             QUERY_OPTIONS = "exp-final-entity-options";
         }
         this.savedQueryDatabaseClient = hubClient.getFinalClient();
-        this.modelManager = new ModelManager(hubClient);
         initializeFacetHandlerMap();
     }
 
@@ -149,20 +154,15 @@ public class EntitySearchManager {
         List<StructuredQueryDefinition> queries = new ArrayList<>();
 
         final String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
-
         // Filtering search results for docs related to an entity
+        String[] excludedCollections = getExcludedCollections(searchQuery);
+        StructuredQueryDefinition finalCollQuery;
         if (entityTypeCollections != null && entityTypeCollections.length > 0) {
-            // Collections that have the mastering audit and notification docs. Excluding docs from
-            // these collection in search results
-            String[] excludedCollections = getExcludedCollections(
-                    searchQuery.getQuery().getEntityTypeIds());
-
-            StructuredQueryDefinition finalCollQuery = queryBuilder
-                    .andNot(queryBuilder.collection(entityTypeCollections),
-                            queryBuilder.collection(excludedCollections));
-
-            queries.add(finalCollQuery);
+            finalCollQuery = queryBuilder.andNot(queryBuilder.collection(entityTypeCollections), queryBuilder.collection(excludedCollections));
+        } else {
+            finalCollQuery = queryBuilder.not(queryBuilder.collection(excludedCollections));
         }
+        queries.add(finalCollQuery);
 
         // Filtering by facets
         searchQuery.getQuery().getSelectedFacets().forEach((facetType, data) -> {
@@ -186,14 +186,21 @@ public class EntitySearchManager {
         facetHandlerMap.put(Constants.CREATED_ON_CONSTRAINT_NAME, new CreatedOnFacetHandler());
     }
 
-    private String[] getExcludedCollections(List<String> entityNames) {
+    private String[] getExcludedCollections(SearchQuery searchQuery) {
         List<String> excludedCol = new ArrayList<>();
-        entityNames.forEach(name -> {
-            for (String suffix : IGNORED_SM_COLLECTION_SUFFIX) {
-                excludedCol.add(String.format("sm-%s-%s", name, suffix));
-            }
-        });
-        excludedCol.add(MASTERING_AUDIT_COLLECTION_NAME);
+        String[] entityTypeCollections = searchQuery.getQuery().getEntityTypeCollections();
+        if (entityTypeCollections != null && entityTypeCollections.length > 0) {
+            searchQuery.getQuery().getEntityTypeIds().forEach(name -> {
+                for (String suffix : IGNORED_SM_COLLECTION_SUFFIX) {
+                    excludedCol.add(String.format("sm-%s-%s", name, suffix));
+                }
+            });
+            excludedCol.add(MASTERING_AUDIT_COLLECTION_NAME);
+        }
+
+        if (searchQuery.getQuery().isHideHubArtifacts()) {
+            excludedCol.addAll(ARTIFACT_COLLECTION_NAMES);
+        }
         return excludedCol.toArray(new String[0]);
     }
 

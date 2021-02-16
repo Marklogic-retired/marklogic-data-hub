@@ -5,7 +5,7 @@ import detailPage from "../../support/pages/detail";
 import {Application} from "../../support/application.config";
 import {toolbar} from "../../support/components/common";
 import "cypress-wait-until";
-import detailPageNonEntity from "../../support/pages/detail-nonEntity";
+// import detailPageNonEntity from "../../support/pages/detail-nonEntity";
 import LoginPage from "../../support/pages/login";
 import runPage from "../../support/pages/run";
 
@@ -68,22 +68,25 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     cy.waitForAsyncRequest();
     cy.contains("Showing 1-2 of 2 results", {timeout: 10000});
 
-    //Verifying non-entity detail page for JSON document
+    // Commenting out this test as the search endpoint will not return datahub artifacts.
+    // The test will be handle as part of DHFPROD-6670
+
+    // Verifying non-entity detail page for JSON document
     browsePage.clearSearchText();
 
-    cy.waitUntil(() => browsePage.getNavigationIconForDocument("/steps/custom/mapping-step.step.json")).click();
-    browsePage.waitForSpinnerToDisappear();
-
-    detailPageNonEntity.getDocumentUri().should("contain", "/steps/custom/mapping-step.step.json");
-    detailPageNonEntity.getSourceTable().should("exist");
-    detailPageNonEntity.getHistoryTable().should("exist");
-    detailPage.getDocumentJSON().should("exist");
-    detailPageNonEntity.clickBackButton();
-
-    browsePage.waitForSpinnerToDisappear();
-    cy.waitForAsyncRequest();
-    browsePage.getSelectedEntity().should("contain", "All Data");
-    browsePage.getDatabaseButton("final").should("have.attr", "checked");
+    // cy.waitUntil(() => browsePage.getNavigationIconForDocument("/steps/custom/mapping-step.step.json")).click();
+    // browsePage.waitForSpinnerToDisappear();
+    //
+    // detailPageNonEntity.getDocumentUri().should("contain", "/steps/custom/mapping-step.step.json");
+    // detailPageNonEntity.getSourceTable().should("exist");
+    // detailPageNonEntity.getHistoryTable().should("exist");
+    // detailPage.getDocumentJSON().should("exist");
+    // detailPageNonEntity.clickBackButton();
+    //
+    // browsePage.waitForSpinnerToDisappear();
+    // cy.waitForAsyncRequest();
+    // browsePage.getSelectedEntity().should("contain", "All Data");
+    // browsePage.getDatabaseButton("final").should("have.attr", "checked");
 
     //verify Explorer Search option entity dropdown doesn't default to 'All Data' for subsequent navigations
     toolbar.getLoadToolbarIcon().click();

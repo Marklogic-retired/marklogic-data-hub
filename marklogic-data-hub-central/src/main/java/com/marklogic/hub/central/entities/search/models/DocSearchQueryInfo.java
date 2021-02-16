@@ -23,11 +23,13 @@ import java.util.Map;
 
 public class DocSearchQueryInfo {
 
+  private boolean hideHubArtifacts;
   private String searchText;
   private List<String> entityTypeIds;
   private Map<String, FacetData> selectedFacets;
 
   public DocSearchQueryInfo() {
+    this.hideHubArtifacts = true;
     this.searchText = "";
     this.entityTypeIds = new ArrayList<>();
     this.selectedFacets = new HashMap<>();
@@ -48,6 +50,14 @@ public class DocSearchQueryInfo {
           return filteredTypes.toArray(new String[]{});
       }
       return null;
+  }
+
+  public boolean isHideHubArtifacts() {
+    return hideHubArtifacts;
+  }
+
+  public void setHideHubArtifacts(boolean hideHubArtifacts) {
+    this.hideHubArtifacts = hideHubArtifacts;
   }
 
   public String getSearchText() {
