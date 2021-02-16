@@ -224,9 +224,15 @@ def runCypressE2e(){
             export NODE_HOME=$NODE_HOME_DIR/bin;
             export PATH=$NODE_HOME:$PATH
             cd $WORKSPACE/data-hub/marklogic-data-hub-central/ui/e2e
-            npm run cy:run || true;
+            npm run cy:run |& tee -a e2e_err.log;
         '''
         )
+
+        def output=readFile 'data-hub/marklogic-data-hub-central/ui/e2e/e2e_err.log'
+        if(output.contains("npm ERR!")){
+            currentBuild.result='UNSTABLE';
+        }
+
         junit '**/e2e/**/*.xml'
     }
 }
