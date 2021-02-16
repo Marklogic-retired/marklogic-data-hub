@@ -1,0 +1,15 @@
+{
+    "functionName": "validateMatchingStep",
+    "params": [
+        {
+            "name": "stepName",
+            "datatype": "string"
+        }
+    ],
+    "return": {
+        "desc": "Returns an array of zero or more warning objects; each object has \"level\" and \"message\" properties",
+        "datatype": "jsonDocument",
+        "$javaClass": "com.fasterxml.jackson.databind.JsonNode"
+    }
+}
+
