@@ -401,7 +401,7 @@ module.exports.updateBatch = module.amp(
     }
 
     if (batchStatus === "finished" || batchStatus === "finished_with_errors" || batchStatus === "failed") {
-      docObj.batch.timeEnded = fn.currentDateTime();
+      docObj.batch.timeEnded = fn.currentDateTime().add(xdmp.elapsedTime());
     }
     if(error){
       // Sometimes we don't get the stackFrames

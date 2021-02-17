@@ -1,0 +1,16 @@
+{
+  "name": "customFlowWithSleep",
+  "steps": {
+    "1": {
+      "name": "customStepWithSleep",
+      "stepDefinitionName": "customStepWithSleep-step",
+      "stepDefinitionType": "CUSTOM",
+      "options": {
+        "sourceQuery": "cts.collectionQuery('Customer')",
+        "sourceDatabase": "data-hub-STAGING",
+        "targetDatabase": "data-hub-FINAL",
+        "permissions": "data-hub-common,read,data-hub-common,update"
+      }
+    }
+  }
+}
