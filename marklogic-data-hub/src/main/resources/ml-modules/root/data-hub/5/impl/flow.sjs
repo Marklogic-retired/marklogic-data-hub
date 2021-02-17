@@ -143,7 +143,7 @@ class Flow {
         const stepId = flowStep.stepId ? flowStep.stepId : flowStep.name + "-" + flowStep.stepDefinitionType;
         const filteredItems = this.filterItemsAlreadyProcessedByStep(uris, flowName, stepId);
         if (filteredItems.length != uris.length) {
-          xdmp.trace(datahub.consts.TRACE_RUN_STEP, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
+          xdmp.trace(datahub.consts.TRACE_FLOW_RUNNER, 'excludeAlreadyProcessed filtered out some items; previous count: ' + uris.length + '; new count: ' + filteredItems.length);
         }
         uris = filteredItems;
       }
@@ -545,7 +545,7 @@ class Flow {
           const isMappingStep = flowStep.stepDefinitionName === "entity-services-mapping";
 
           if (isFineGranularity && isMappingStep) {
-            xdmp.trace(this.datahub.consts.TRACE_RUN_STEP, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
+            xdmp.trace(this.datahub.consts.TRACE_FLOW_RUNNER, `'provenanceGranularityLevel' for step '${flowStep.name}' is set to 'fine'. This is not supported for mapping steps. Coarse provenance data will be generated instead.`);
           }
 
           const provResult = isFineGranularity && !isMappingStep && content.provenance ?
