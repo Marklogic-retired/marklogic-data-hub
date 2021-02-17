@@ -59,10 +59,27 @@ const ZeroStateExplorer = (props) => {
   };
 
   const options = dropdownOptions.map((entity, index) => {
+    let renderEntity = entity;
+    if (entity === "All Entities") {
+      renderEntity = (
+        <span className={styles.iconDropdownContainer}>
+          <div id="all-entities" className="curateIcon"></div>
+          <div>All Entities</div>
+        </span>
+      );
+    } else if (entity === "All Data") {
+      renderEntity = (
+        <span className={styles.iconDropdownContainer}>
+          <div id="all-data" className="loadIcon"></div>
+          <div>All Data</div>
+        </span>
+      );
+    }
+
     return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: "default"}}>
       {entity}
     </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
-      {entity}
+      {renderEntity}
     </Option>;
   });
 
