@@ -63,6 +63,11 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Data");
+
+    browsePage.getIncludeHubArtifactsSwitch().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+
     browsePage.search("Adams");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -99,6 +104,30 @@ describe("scenarios for All Data zero state and explore pages.", () => {
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
     browsePage.getSelectedEntity().should("contain", "All Entities");
+  });
+
+  it("verify Include Hub Data artifacts switch for All Data option on browse page", () => {
+    //switch on zero state page and select query parameters for final database
+    cy.waitUntil(() => browsePage.getFinalDatabaseButton()).click();
+    browsePage.getFinalDatabaseButton().click();
+    browsePage.getTableViewButton().click();
+    browsePage.selectEntity("All Data");
+    browsePage.getExploreButton().click();
+    //verify the query data for final database on explore page
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+
+    //Include Data Hub Artifacts switch should not be checked by default
+    browsePage.getIncludeHubArtifactsSwitch().should("not.be.checked");
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    browsePage.getAllDataSnippetByUri("/steps/custom/mapping-step.step.json").should("not.exist");
+
+    //Toggle the switch to see if the hub artifact is visible now
+    browsePage.getIncludeHubArtifactsSwitch().click();
+    browsePage.waitForSpinnerToDisappear();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => browsePage.getAllDataSnippetByUri("/steps/custom/mapping-step.step.json")).should("exist");
   });
 });
 

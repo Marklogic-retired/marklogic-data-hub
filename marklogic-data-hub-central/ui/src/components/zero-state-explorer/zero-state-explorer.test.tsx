@@ -44,7 +44,7 @@ describe("zero state explorer component", () => {
   });
 
   test("Verify onClickExplore gets called", () => {
-    const {getByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
+    const {getByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()} toggleDataHubArtifacts={jest.fn()}/>);
     const exploreButton = getByText("Explore");
     exploreButton.onclick = jest.fn();
     fireEvent.click(exploreButton);
@@ -52,7 +52,7 @@ describe("zero state explorer component", () => {
   });
 
   test("Verify entity dropdown option auto selection", () => {
-    const {getByText, getByLabelText, queryByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()}/>);
+    const {getByText, getByLabelText, queryByText} = render(<ZeroStateExplorer entities={entities} setEntity={jest.fn()} isSavedQueryUser={true} queries={queries} hasStructured={false} setCardView={jest.fn()} columns={columns} setIsLoading={jest.fn()} tableView={true} toggleTableView={jest.fn()} setDatabasePreferences={jest.fn()} toggleDataHubArtifacts={jest.fn()}/>);
     const finalButton = getByLabelText("switch-database-final");
     const stagingButton = getByLabelText("switch-database-staging");
 

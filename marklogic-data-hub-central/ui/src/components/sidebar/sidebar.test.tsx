@@ -167,5 +167,36 @@ describe("Sidebar createdOn face time window dropdown", () => {
     expect(document.querySelector("#hub-properties [data-icon=down]")).not.toHaveStyle("transform: rotate(-90deg);");
   });
 
+  test("Verify Include Data Hub Artifacts switch is rendered properly and user is able to toggle it", () => {
+    const {getByTestId} = render(
+      <Sidebar
+        entityDefArray={entityDefArray}
+        facets={searchPayloadFacets}
+        selectedEntities={["Customer"]}
+        facetRender={jest.fn()}
+        checkFacetRender={jest.fn()}
+        database="final"
+        setDatabasePreferences={jest.fn()}
+        cardView={true}
+        hideDataHubArtifacts={true}
+        setHubArtifactsVisibilityPreferences={jest.fn()}
+      />
+    );
+
+    const includeHubArtifactsSwitch = getByTestId("toggleHubArtifacts");
+    includeHubArtifactsSwitch.onclick = jest.fn();
+
+    expect(includeHubArtifactsSwitch).not.toBeChecked(); //Siwtch is not checked by default
+
+    userEvent.click(includeHubArtifactsSwitch); //Enabling the switch
+    expect(includeHubArtifactsSwitch).toBeChecked();
+    expect(includeHubArtifactsSwitch.onclick).toHaveBeenCalledTimes(1);
+
+    userEvent.click(includeHubArtifactsSwitch); //Disabling the switch
+    expect(includeHubArtifactsSwitch).not.toBeChecked();
+    expect(includeHubArtifactsSwitch.onclick).toHaveBeenCalled();
+
+  });
+
 
 });

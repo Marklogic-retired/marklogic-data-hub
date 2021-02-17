@@ -649,6 +649,10 @@ class BrowsePage {
     return cy.findByTestId(`${docUri}-detailOnSeparatePage`);
   }
 
+  getIncludeHubArtifactsSwitch() {
+    return cy.findByTestId("toggleHubArtifacts");
+  }
+
 }
 
 const browsePage = new BrowsePage();

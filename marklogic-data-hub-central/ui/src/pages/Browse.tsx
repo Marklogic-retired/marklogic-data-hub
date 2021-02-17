@@ -71,6 +71,7 @@ const Browse: React.FC<Props> = ({location}) => {
   const [zeroStatePageDatabase, setZeroStatePageDatabase] = useState("final");
   const resultsRef = useRef<HTMLDivElement>(null);
   const [cardView, setCardView] = useState(location && location.state && location.state["isEntityInstance"] ? true : JSON.parse(getUserPreferences(user.name)).cardView ? true : false);
+  const [hideDataHubArtifacts, toggleDataHubArtifacts] = useState(JSON.parse(getUserPreferences(user.name)).query.hideHubArtifacts);
 
   const getEntityModel = async () => {
     try {
@@ -102,6 +103,7 @@ const Browse: React.FC<Props> = ({location}) => {
             searchText: searchOptions.query,
             entityTypeIds: cardView ? [] : searchOptions.entityTypeIds.length ? searchOptions.entityTypeIds : allEntities,
             selectedFacets: searchOptions.selectedFacets,
+            hideHubArtifacts: cardView ? hideDataHubArtifacts : true
           },
           propertiesToDisplay: searchOptions.selectedTableProperties,
           start: searchOptions.start,
@@ -177,7 +179,7 @@ const Browse: React.FC<Props> = ({location}) => {
     }
 
     fetchUpdatedSearchResults();
-  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type]);
+  }, [searchOptions, searchOptions.zeroState === false && entities, user.error.type, hideDataHubArtifacts]);
 
   useEffect(() => {
     if (location.state && location.state["zeroState"] === false && location.state["isBackToResultsClicked"]) {
@@ -299,7 +301,8 @@ const Browse: React.FC<Props> = ({location}) => {
       query: {
         searchText: searchOptions.query,
         entityTypeIds: searchOptions.entityTypeIds,
-        selectedFacets: searchOptions.selectedFacets
+        selectedFacets: searchOptions.selectedFacets,
+        hideHubArtifacts: cardView ? hideDataHubArtifacts : true
       },
       pageLength: searchOptions.pageLength,
       pageNumber: searchOptions.pageNumber,
@@ -337,6 +340,16 @@ const Browse: React.FC<Props> = ({location}) => {
         database: option
       };
       updateUserPreferences(user.name, newOptions);
+    }
+  };
+
+  const setHubArtifactsVisibilityPreferences = (option: boolean) => {
+    toggleDataHubArtifacts(option);
+    let userPreferences = getUserPreferences(user.name);
+    if (userPreferences) {
+      let preferenceOptions = JSON.parse(userPreferences);
+      preferenceOptions.query["hideHubArtifacts"] = option;
+      updateUserPreferences(user.name, preferenceOptions);
     }
   };
 
@@ -395,7 +408,7 @@ const Browse: React.FC<Props> = ({location}) => {
     return (
       <>
         <Query queries={queries || []} setQueries={setQueries} isSavedQueryUser={isSavedQueryUser} columns={columns} setIsLoading={setIsLoading} entities={entities} selectedFacets={[]} greyFacets={[]} entityDefArray={entityDefArray} isColumnSelectorTouched={isColumnSelectorTouched} setColumnSelectorTouched={setColumnSelectorTouched} database={zeroStatePageDatabase} setCardView={setCardView} cardView={cardView}/>
-        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} />
+        <ZeroStateExplorer entities={entities} isSavedQueryUser={isSavedQueryUser} queries={queries} columns={columns} setIsLoading={setIsLoading} tableView={tableView} toggleTableView={toggleTableView} setCardView={setCardView} setDatabasePreferences={setDatabasePreferences} zeroStatePageDatabase={zeroStatePageDatabase} setZeroStatePageDatabase={setZeroStatePageDatabase} toggleDataHubArtifacts={toggleDataHubArtifacts}/>
       </>
     );
   } else {
@@ -416,6 +429,9 @@ const Browse: React.FC<Props> = ({location}) => {
             checkFacetRender={updateCheckedFacets}
             setDatabasePreferences={setDatabasePreferences}
             greyFacets={greyFacets}
+            setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}
+            hideDataHubArtifacts={hideDataHubArtifacts}
+            cardView={cardView}
           />
           <SidebarFooter />
         </Sider>
@@ -432,7 +448,7 @@ const Browse: React.FC<Props> = ({location}) => {
             <>
               {/* TODO Fix searchBar widths, it currently overlaps at narrow browser widths */}
               <div className={styles.searchBar} ref={searchBarRef}>
-                <SearchBar entities={entities} cardView={cardView} />
+                <SearchBar entities={entities} cardView={cardView} setHubArtifactsVisibilityPreferences={setHubArtifactsVisibilityPreferences}/>
                 <SearchSummary
                   total={totalDocuments}
                   start={searchOptions.start}
