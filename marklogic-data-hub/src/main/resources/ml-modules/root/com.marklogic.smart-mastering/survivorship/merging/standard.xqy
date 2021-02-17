@@ -51,8 +51,8 @@ declare function merging:standard(
   $property-spec as node()?
 )
 {
-  let $max-sources := fn:number(fn:head(($property-spec/(@max-sources|maxSources), 99)))
-  let $max-values := fn:number(fn:head(($property-spec/(@max-values|maxValues), 99)))
+  let $max-sources := fn:number(fn:head(($property-spec/(@max-sources|maxSources)[. castable as xs:decimal], 99)))
+  let $max-values := fn:number(fn:head(($property-spec/(@max-values|maxValues)[. castable as xs:decimal], 99)))
   let $_trace := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then
       xdmp:trace($const:TRACE-MERGE-RESULTS,
         fn:string-join(
