@@ -6,14 +6,20 @@ import com.marklogic.hub.HubClient;
 import com.marklogic.hub.test.TestObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -113,7 +119,14 @@ public class AllArtifactsProject extends TestObject {
 
     private void readZipArtifacts() throws IOException {
         ZipFile zip = new ZipFile(hubCentralFilesZipFile);
-        readZipArtifacts(zip, zip.entries());
+        InputStream zipFileStream = new FileInputStream(hubCentralFilesZipFile);
+        ZipInputStream zipInputStream = new ZipInputStream(zipFileStream);
+        List<ZipEntry> entries = new ArrayList<>();
+        ZipEntry ze;
+        while((ze  = zipInputStream.getNextEntry()) != null){
+            entries.add(ze);
+        }
+        readZipArtifacts(zip, Collections.enumeration(entries));
         zip.close();
     }
 
