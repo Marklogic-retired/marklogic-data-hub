@@ -1,0 +1,9 @@
+{
+  "lang": "zxx",
+  "name": "customStepWithSleep-step",
+  "type": "CUSTOM",
+  "options": {
+    "outputFormat": "json"
+  },
+  "modulePath": "/custom-modules/custom/customStepWithSleep/customStepWithSleep.sjs"
+}
