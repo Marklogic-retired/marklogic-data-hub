@@ -111,7 +111,7 @@ const Load: React.FC = () => {
     } catch (error) {
       let message = error.response.data.message;
       console.error("Error getting load steps", message);
-      handleError(error);
+      if (error.response.status !== 403) handleError(error);
     }
   };
 
