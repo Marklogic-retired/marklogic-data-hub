@@ -308,3 +308,33 @@ ul.ant-cascader-menu:nth-child(2) {
   outline: none;
   box-shadow: 0 0 2px 2px #7f86b5 inset;
 }
+
+/* styling for explore zero-state dropdown */
+#entity-select.ant-select {
+  background: #5B69AF;
+  color: #fff;
+  .ant-select-selection-selected-value {
+    color: #FFF
+  }
+}
+
+#all-entities.curateIcon:before, #all-data.loadIcon:before {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+  min-height: 24px;
+  margin-top: 3px;
+  border: none;
+  background-color: transparent;
+}
+
+.ant-select-dropdown-menu-item > span > div:last-child {
+  font-weight: 400;
+  margin-top: 3px;
+}
+
+.ant-input-search > .ant-input-wrapper > .ant-input-group-addon {
+  background-color: #5B69AF;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}

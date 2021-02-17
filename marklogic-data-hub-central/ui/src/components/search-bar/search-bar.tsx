@@ -17,10 +17,30 @@ const SearchBar: React.FC<Props> = props => {
   const dividerOption = <Divider className={styles.dividerOption}/>;
   const dropdownOptions = ["All Data", dividerOption, "All Entities", dividerOption, ...props.entities];
 
-  const options = dropdownOptions.map((entity, index) =>
-    index === 1 || index === 3 ? <Option value={index} key={index} disabled={true} style={{cursor: "default"}}>{entity}</Option>
-      : <Option value={entity} key={index} data-cy={`entity-option-${entity}`}>{entity}</Option>
-  );
+  const options = dropdownOptions.map((entity, index) => {
+    let renderEntity = entity;
+    if (entity === "All Entities") {
+      renderEntity = (
+        <span className={styles.iconDropdownContainer}>
+          <div id="all-entities" className="curateIcon"></div>
+          <div>All Entities</div>
+        </span>
+      );
+    } else if (entity === "All Data") {
+      renderEntity = (
+        <span className={styles.iconDropdownContainer}>
+          <div id="all-data" className="loadIcon"></div>
+          <div>All Data</div>
+        </span>
+      );
+    }
+
+    return index === 1 || index === 3 ? <Option key={index} value={index} disabled={true} style={{cursor: "default"}}>
+      {entity}
+    </Option> : <Option key={index} value={entity} data-cy={`entity-option-${entity}`}>
+      {renderEntity}
+    </Option>;
+  });
 
   const entityMenu = (
     <div>
