@@ -29,6 +29,7 @@ const ZeroStateExplorer = (props) => {
 
   const onClickExplore = () => {
     props.setCardView(cardView);
+    props.toggleDataHubArtifacts(true);
     let options: QueryOptions = {
       searchText: searchQuery,
       entityTypeIds: dropDownValue === "All Entities" || dropDownValue === "All Data" ? [] : [dropDownValue],

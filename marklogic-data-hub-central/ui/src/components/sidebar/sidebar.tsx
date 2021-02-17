@@ -12,7 +12,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import NumericFacet from "../numeric-facet/numeric-facet";
 import DateFacet from "../date-facet/date-facet";
 import DateTimeFacet from "../date-time-facet/date-time-facet";
-import {MLTooltip, MLRadio} from "@marklogic/design-system";
+import {MLTooltip, MLRadio, MLSwitch} from "@marklogic/design-system";
 import {getUserPreferences, updateUserPreferences} from "../../services/user-preferences";
 import {UserContext} from "../../util/user-context";
 
@@ -29,6 +29,9 @@ interface Props {
   checkFacetRender: (facets: any) => void;
   setDatabasePreferences: (option: string) => void;
   greyFacets: any;
+  setHubArtifactsVisibilityPreferences: any;
+  hideDataHubArtifacts: boolean;
+  cardView: boolean;
 }
 
 const Sidebar: React.FC<Props> = (props) => {
@@ -514,6 +517,14 @@ const Sidebar: React.FC<Props> = (props) => {
             </MLRadio.MLButton>
           </MLRadio.MLGroup>
         </Panel>
+
+        {props.cardView ? <div className={styles.toggleDataHubArtifacts}>
+          <MLSwitch size="small" defaultChecked={!props.hideDataHubArtifacts} onChange={value => props.setHubArtifactsVisibilityPreferences(!value)} data-testid="toggleHubArtifacts"/> Include Data Hub artifacts<MLTooltip
+            title={tooltips.includingDataHubArtifacts}>
+            <FontAwesomeIcon className={styles.infoIcon} icon={faInfoCircle} size="sm" data-testid="info-tooltip-toggleDataHubArtifacts" />
+          </MLTooltip>
+        </div> : ""}
+
         {props.selectedEntities.length === 1 && (
           <Panel id="entity-properties" header={<div className={styles.title}>Entity Properties</div>} key="entityProperties" style={facetPanelStyle}>
             {entityFacets.length ? entityFacets.map((facet, index) => {

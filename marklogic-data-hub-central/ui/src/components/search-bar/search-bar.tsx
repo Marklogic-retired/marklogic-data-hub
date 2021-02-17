@@ -6,6 +6,7 @@ import {SearchContext} from "../../util/search-context";
 interface Props {
   entities: any;
   cardView: boolean;
+  setHubArtifactsVisibilityPreferences: any;
 }
 
 const SearchBar: React.FC<Props> = props => {
@@ -57,6 +58,9 @@ const SearchBar: React.FC<Props> = props => {
 
   const handleOptionSelect = (option: any) => {
     setNextEntity(option);
+    if (props.cardView) {
+      props.setHubArtifactsVisibilityPreferences(true);
+    }
   };
 
   const handleSearch = (searchString: string) => {
