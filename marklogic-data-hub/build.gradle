@@ -1,13 +1,11 @@
 plugins {
     id 'net.saliman.properties'
-    id 'java'
+    id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'org.springframework.boot' version '2.1.15.RELEASE'
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'com.marklogic.ml-development-tools' version '5.3.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
@@ -61,27 +59,24 @@ configurations {
 dependencies {
     // Forcing use of 1.3.71 - which is what OkHttp 4.7.2 wants, which is what Java Client 5.3 uses - so that 1.2.x
     // versions don't come onto the classpath
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
+    api "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
 
-    compile(project(":marklogic-data-hub-api")) {
+    api(project(":marklogic-data-hub-api")) {
         // Oddly, the OkHttp 4.4.0 dependency includes version 1.2.70 and 1.3.x of these dependencies. This causes
         // class conflict errors. So they're excluded from here, and we force inclusion of 1.3.x below.
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
     }
 
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.15.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.15.RELEASE'
+    api 'com.marklogic:mlcp-util:0.9.0'
+    api 'com.marklogic:marklogic-data-movement-components:2.2.1'
 
-    compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:marklogic-data-movement-components:2.2.1'
-
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.apache.commons:commons-text:1.1'
+    api 'commons-io:commons-io:2.4'
+    api 'org.apache.commons:commons-text:1.1'
     datahubLogging 'ch.qos.logback:logback-classic:1.2.3'
     // For installer program
-    compile "com.beust:jcommander:1.72"
+    api "com.beust:jcommander:1.72"
 
     testFixturesApi(testCompile(project(":marklogic-data-hub-test")))
 
@@ -115,10 +110,6 @@ dependencies {
     mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.0"
 }
 
-import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.resource.hosts.HostManager
-
-
 configurations.all {
     exclude group: "org.slf4j", module: "slf4j-log4j12"
     exclude group: "log4j", module: "log4j"
@@ -136,21 +127,28 @@ task extractFastXmlParserZip(type: Copy) {
 // Ensure that the fast-xml-parser files are available before any DHF jars are built
 processResources.dependsOn extractFastXmlParserZip
 
-
-// The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
-// This jar is only meant to be used by the DHS team for installing DHF into DHS
-bootJar {
-    archiveClassifier = "installer"
-    mainClassName = "com.marklogic.hub.dhs.installer.Main"
-    from("src/main/installer") {
-        include "logback.xml"
+task installerJar(type: Jar) {
+    description = "Build an executable jar for installing DHF into DHS"
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.dhs.installer.Main"
     }
+    archiveClassifier = "installer"
     from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
+    from(configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+    from("src/main/installer") {
+        include "logback.xml"
+    }
+    with jar
 }
+build.dependsOn installerJar
 
 task installDhfIntoDhs(type: Exec) {
     description = "Builds and runs the DHF installer for DHS"
@@ -165,7 +163,7 @@ task installDhfIntoDhs(type: Exec) {
         "dhsInstall"
     ]
 }
-installDhfIntoDhs.dependsOn bootJar
+installDhfIntoDhs.dependsOn installerJar
 
 task clientJar(type: Jar) {
     description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
@@ -178,12 +176,11 @@ task clientJar(type: Jar) {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
+    from(configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    exclude "spring-boot*.jar"
     from("src/main/clientJar") {
         include "logback.xml"
     }
@@ -291,10 +288,6 @@ jar{
     enabled = true
 }
 
-bootRun {
-    enabled = false
-}
-
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
@@ -340,7 +333,7 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact bootJar
+            artifact installerJar
             artifact clientJar
 
             pom.withXml {
