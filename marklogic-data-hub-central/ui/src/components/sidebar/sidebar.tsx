@@ -189,8 +189,12 @@ const Sidebar: React.FC<Props> = (props) => {
       if (Object.entries(searchOptions.selectedFacets).length === 0) {
         //setAllSearchFacets({});
         setAllSelectedFacets({});
+        setDateRangeValue("select time");
       } else {
         setAllSelectedFacets(searchOptions.selectedFacets);
+        if (!Object.keys(searchOptions.selectedFacets).some(item => item === "createdOnRange")) {
+          setDateRangeValue("select time");
+        }
       }
       props.checkFacetRender([]);
     }
@@ -650,7 +654,7 @@ const Sidebar: React.FC<Props> = (props) => {
               onChange={value => handleOptionSelect(value)}
               getPopupContainer={() => document.getElementById("date-select") || document.body}
             >{dateRangeOptions.map((timeBucket, index) => {
-                return <Option key={index} value={timeBucket}>
+                return <Option key={index} value={timeBucket} data-testid={`date-select-option-${timeBucket}`}>
                   {timeBucket}
                 </Option>;
               })

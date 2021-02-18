@@ -653,6 +653,17 @@ class BrowsePage {
     return cy.findByTestId("toggleHubArtifacts");
   }
 
+  getCreatedOnFacet() {
+    return cy.get("#date-select");
+  }
+
+  getSelectedOptionForCreatedOnFacet() {
+    return this.getCreatedOnFacet().invoke("text");
+  }
+
+  selectCreatedOnRangeOption(option: string) {
+    return cy.findByTestId(`date-select-option-${option}`).click();
+  }
 }
 
 const browsePage = new BrowsePage();
