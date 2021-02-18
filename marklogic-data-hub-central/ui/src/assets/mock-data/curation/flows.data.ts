@@ -315,13 +315,39 @@ const mappings = {"data":
       "permissions": "data-hub-common,read,data-hub-common,update",
       "sourceDatabase": "data-hub-STAGING",
       "targetDatabase": "data-hub-FINAL",
-      "collections": ["Mapping1", "Customer"],
+      "collections": ["Mapping2", "Customer"],
       "additionalCollections": ["customerCollection"],
       "validateEntity": false,
       "lastUpdated": "2020-10-01T02:38:00.169198-07:00"
     }
   ]
-}
+},
+{
+  "entityType": "Customer",
+  "entityTypeId": "Customer",
+  "artifacts": [
+    {
+      "name": "Mapping3",
+      "targetEntityType": "Customer",
+      "description": "",
+      "selectedSource": "collection",
+      "sourceQuery": "cts.collectionQuery(['default-ingestion'])",
+      "properties": {
+        "customerId": {
+          "sourcedFrom": "PIN"
+        }
+      },
+      "provenanceGranularityLevel": "coarse",
+      "batchSize": 50,
+      "permissions": "data-hub-common,read,data-hub-common,update",
+      "sourceDatabase": "data-hub-STAGING",
+      "targetDatabase": "data-hub-FINAL",
+      "collections": ["Mapping3", "Customer"],
+      "additionalCollections": ["customerCollection"],
+      "validateEntity": false,
+      "lastUpdated": "2020-01-12T13:21:00.169198-07:00"
+    }
+  ]}
 ],
 "status": 200
 };

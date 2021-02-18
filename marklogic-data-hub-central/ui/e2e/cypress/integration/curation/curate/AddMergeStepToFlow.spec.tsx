@@ -106,13 +106,18 @@ describe("Add Merge step to a flow", () => {
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });
+  it("Delete the merge step", () => {
+    runPage.deleteStep(mergeStep).click();
+    loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
+  });
   it("Navigating to merge tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Add the Merge step to new flow from run tile and should automatically run", () => {
+  it("Add the Merge step to new flow from card run button and should automatically run", () => {
     curatePage.runStepInCardView(mergeStep).click();
     curatePage.runInNewFlow(mergeStep).click();
     cy.findByText("New Flow").should("be.visible");
@@ -136,14 +141,59 @@ describe("Add Merge step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMergeTab("Customer");
   });
-  it("Add the Merge step to an existing flow from run tile and should automatically run", () => {
+  it("Add the Merge step to an existing flow from card run button and should automatically run", () => {
     curatePage.runStepInCardView(mergeStep).click();
-    curatePage.runStepInExistingFlow(mergeStep, flowName2);
-    curatePage.addStepToFlowRunConfirmationMessage();
-    curatePage.confirmAddStepToFlow(mergeStep, flowName2);
+    curatePage.runStepSelectFlowConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Merge", mergeStep);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
+    cy.verifyStepRunResult("success", "Merging", mergeStep);
+    tiles.closeRunMessage();
+  });
+  it("Navigating to merge tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMergeTab("Customer");
+  });
+  it("Run the Merge step from card run button and should automatically run in the flow where step exists", () => {
+    curatePage.runStepInCardView(mergeStep).click();
+    curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
+    curatePage.confirmContinueRun();
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Merge", mergeStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
+    cy.verifyStepRunResult("success", "Merging", mergeStep);
+    tiles.closeRunMessage();
+  });
+  it("Navigating to merge tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMergeTab("Customer");
+  });
+  it("Add the merge step to a second flow and verify it was added", () => {
+    curatePage.openExistingFlowDropdown("Customer", mergeStep);
+    curatePage.getExistingFlowFromDropdown(flowName1).click();
+    curatePage.addStepToFlowConfirmationMessage();
+    curatePage.confirmAddStepToFlow(mergeStep, flowName1);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Merge", mergeStep);
+  });
+  it("Navigating to merge tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMergeTab("Customer");
+  });
+  it("Run the Merge step from card run button and should display all flows where step exists, choose one to automatically run in", () => {
+    curatePage.runStepInCardView(mergeStep).click();
+    curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName1);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Merge", mergeStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
     cy.verifyStepRunResult("success", "Merging", mergeStep);
     tiles.closeRunMessage();
   });

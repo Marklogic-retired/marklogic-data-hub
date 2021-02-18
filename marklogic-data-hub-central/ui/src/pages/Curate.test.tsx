@@ -40,16 +40,16 @@ describe("Curate component", () => {
     expect(queryByText("Match")).not.toBeInTheDocument();
     expect(queryByText("Merge")).not.toBeInTheDocument();
 
-    expect(getByText("Mapping2")).toBeInTheDocument();
+    expect(getByText("Mapping3")).toBeInTheDocument();
 
     // test edit
-    fireEvent.click(getByTestId("Mapping2-edit"));
+    fireEvent.click(getByTestId("Mapping3-edit"));
     expect(await(waitForElement(() => getByText("Mapping Step Settings")))).toBeInTheDocument();
     expect(getAllByText("Save")[0]).toBeDisabled();
     fireEvent.click(getAllByText("Cancel")[0]);
 
     // test delete
-    expect(queryByTestId("Mapping2-delete")).not.toBeInTheDocument();
+    expect(queryByTestId("Mapping3-delete")).not.toBeInTheDocument();
   });
 
   test("Verify writeMapping authority can edit mapping configs and settings", async () => {

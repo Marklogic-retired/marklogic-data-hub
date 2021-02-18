@@ -118,9 +118,8 @@ class CuratePage {
     return cy.findByTestId(`${stepName}-run-flowsList`);
   }
 
-  runStepInExistingFlow(stepName: string, flowName: string) {
-    this.runExistingFlowsList(stepName).click({force: true});
-    cy.findByLabelText(`${flowName}-run-option`).click({force: true});
+  selectFlowToRunIn(flowName: string) {
+    cy.findByTestId(`${flowName}-run-step`).click();
   }
 
   verifyStepNameIsVisible(stepName: string) {
@@ -169,8 +168,20 @@ class CuratePage {
     return cy.findByLabelText("step-in-flow");
   }
 
-  addStepExistingToFlowRunConfirmationMessage() {
-    return cy.findByLabelText("step-in-flow-run");
+  runStepSelectFlowConfirmation() {
+    return cy.findByLabelText("step-in-no-flows-confirmation");
+  }
+
+  runStepExistsOneFlowConfirmation() {
+    return cy.findByLabelText("run-step-one-flow-confirmation");
+  }
+
+  runStepExistsMultFlowsConfirmation() {
+    return cy.findByLabelText("run-step-mult-flows-confirmation");
+  }
+
+  confirmContinueRun() {
+    cy.findByLabelText("continue-confirm").click();
   }
 
   confirmAddStepToFlow(stepName: string, flowName: string) {

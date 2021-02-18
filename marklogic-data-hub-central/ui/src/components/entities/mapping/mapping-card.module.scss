@@ -76,6 +76,14 @@
     }
 
 }
+
+.plusIconNewFlow {
+  font-size: 15px;
+  color: #44499C;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
 .addNewContent {
     font-size: 20px;
     color: #67749c;
@@ -102,6 +110,20 @@
         color: var(--hoverColor);
     }
 
+}
+
+.flowSelectGrid {
+    font-size: 16px;
+    padding-top: 30px;
+}
+
+.runNewFlow {
+    display: flex;
+}
+
+.verticalDiv {
+    margin-left: 15px;
+    height: 55vh;
 }
 
 .cardLinks {
@@ -167,6 +189,18 @@
     &:hover{
         color: var(--hoverColor);
     }
+}
+
+.stepLink:hover {
+  cursor: pointer;
+  .plusIconNewFlow {
+    color: var(--hoverColor);
+  }
+}
+
+.newFlowStepLink {
+  margin-left: 5px;
+  color: var(--hoverColor);
 }
 
 .stepLinkExisting {

@@ -29,6 +29,7 @@ describe("Default ingestion ", () => {
   it("Verifies CRUD functionality from list view", () => {
     let stepName = "cyListView";
     let flowName = "newE2eFlow";
+    let flowName2 = "newE2eFlow2";
     //Verify Cancel
     loadPage.loadView("table").click();
     loadPage.addNewButton("list").click();
@@ -118,7 +119,7 @@ describe("Default ingestion ", () => {
     // Verify that change was NOT saved.
     loadPage.stepName(stepName).click();
     loadPage.stepDescription("UPDATE2").should("be.visible");
-    loadPage.stepDescription("DISCARD").should("not.be.visible");
+    loadPage.stepDescription("DISCARD").should("not.exist");
     loadPage.cancelButton().click();
 
     //Cancel Add to New Flow
@@ -141,10 +142,9 @@ describe("Default ingestion ", () => {
     //Verify Run in an existing flow
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
-    loadPage.runStepInCardView(stepName).click();
-    loadPage.runStepInExistingFlow(stepName, flowName);
-    loadPage.addStepToFlowRunConfirmationMessage().should("be.visible");
-    loadPage.confirmationOptions("Yes").click();
+    loadPage.runStep(stepName).click();
+    loadPage.runStepSelectFlowConfirmation().should("be.visible");
+    loadPage.selectFlowToRunIn(flowName);
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1.json");
@@ -155,11 +155,14 @@ describe("Default ingestion ", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName).should("not.be.visible");
 
     //Verify Run in a new flow
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
-    loadPage.runStepInCardView(stepName).click();
+    loadPage.runStep(stepName).click();
+    //Just deleted flow should not be visible on flows list
+    cy.findByText(flowName).should("not.be.visible");
     loadPage.runInNewFlow(stepName).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
@@ -170,13 +173,50 @@ describe("Default ingestion ", () => {
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
-    runPage.deleteStep(stepName).click();
-    loadPage.confirmationOptions("Yes").click();
 
-    //Delete the flow
+    //Verify Run Load step in flow where step exists, should run automatically
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.loadView("table").click();
+    loadPage.runStep(stepName).click();
+    loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
+    loadPage.confirmContinueRun();
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.uploadFile("input/test-1.json");
+    cy.verifyStepRunResult("success", "Ingestion", stepName);
+    tiles.closeRunMessage();
+
+    // add step to a new flow
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.loadView("table").click();
+    loadPage.addStepToNewFlowListView(stepName);
+    cy.findByText("New Flow").should("be.visible");
+    runPage.setFlowName(flowName2);
+    runPage.setFlowDescription(`${flowName2} description`);
+    loadPage.confirmationOptions("Save").click();
+    cy.verifyStepAddedToFlow("Load", stepName);
+
+    //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    loadPage.loadView("table").click();
+    loadPage.runStep(stepName).click();
+    loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    loadPage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.uploadFile("input/test-1.json");
+    cy.verifyStepRunResult("success", "Ingestion", stepName);
+    tiles.closeRunMessage();
+
+    //Delete the flows
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.deleteFlow(flowName2).click();
+    runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
+    loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName2).should("not.be.visible");
 
     //Verify Delete
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
@@ -192,7 +232,8 @@ describe("Default ingestion ", () => {
 
   it("Verifies CRUD functionality from card view and run in a flow", () => {
     let stepName = "cyCardView";
-    let flowName= "newE2eFlow";
+    let flowName = "newE2eFlow";
+    let flowName2 = "newE2eFlow2";
     //Verify Cancel
     loadPage.loadView("th-large").click();
     loadPage.addNewButton("card").click();
@@ -277,10 +318,9 @@ describe("Default ingestion ", () => {
     //Verify Run Load step in an Existing Flow
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
-    loadPage.runStepInCardView(stepName).click();
-    loadPage.runStepInExistingFlow(stepName, flowName);
-    loadPage.addStepToFlowRunConfirmationMessage().should("be.visible");
-    loadPage.confirmationOptions("Yes").click();
+    loadPage.runStep(stepName).click();
+    loadPage.runStepSelectFlowConfirmation().should("be.visible");
+    loadPage.selectFlowToRunIn(flowName);
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running, test with invalid input
     cy.uploadFile("input/test-1");
@@ -299,11 +339,14 @@ describe("Default ingestion ", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName).should("not.be.visible");
 
     //Verify Run Load step in a New Flow
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
-    loadPage.runStepInCardView(stepName).click();
+    loadPage.runStep(stepName).click();
+    //Just deleted flow should not be visible on flows list
+    cy.findByText(flowName).should("not.be.visible");
     loadPage.runInNewFlow(stepName).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
@@ -311,6 +354,40 @@ describe("Default ingestion ", () => {
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", stepName);
     //Upload file to start running
+    cy.uploadFile("input/test-1.json");
+    cy.verifyStepRunResult("success", "Ingestion", stepName);
+    tiles.closeRunMessage();
+
+    //Verify Run Load step in flow where step exists, should run automatically
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    loadPage.runStep(stepName).click();
+    loadPage.runStepExistsOneFlowConfirmation().should("be.visible");
+    loadPage.confirmContinueRun();
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Load", stepName);
+    cy.uploadFile("input/test-1.json");
+    cy.verifyStepRunResult("success", "Ingestion", stepName);
+    tiles.closeRunMessage();
+
+    // add step to a new flow
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    loadPage.addStepToNewFlow(stepName);
+    cy.findByText("New Flow").should("be.visible");
+    runPage.setFlowName(flowName2);
+    runPage.setFlowDescription(`${flowName2} description`);
+    loadPage.confirmationOptions("Save").click();
+    cy.verifyStepAddedToFlow("Load", stepName);
+
+    //Verify Run Load step where step exists in multiple flows, choose one to automatically run in
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+    loadPage.runStep(stepName).click();
+    loadPage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    loadPage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Load", stepName);
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
@@ -338,10 +415,15 @@ describe("Default ingestion ", () => {
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
 
-    //Delete the flow
+    //Delete the flows
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName).should("not.be.visible");
+    runPage.deleteFlow(flowName2).click();
+    runPage.deleteFlowConfirmationMessage(flowName2).should("be.visible");
+    loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName2).should("not.be.visible");
 
     //Verify Delete step
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();

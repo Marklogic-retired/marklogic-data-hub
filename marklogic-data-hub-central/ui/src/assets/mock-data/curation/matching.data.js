@@ -117,6 +117,28 @@ export const matchingStep = {
       "customHook": {},
       "matchRulesets": [],
       "thresholds": []
+    },
+    {
+      "name": "matchCustomers123",
+      "stepDefinitionName": "default-matching",
+      "stepDefinitionType": "matching",
+      "stepId": "matchCustomersEmpty-matching",
+      "targetEntityType": "http://example.org/Customer-0.0.1/Customer",
+      "description": "",
+      "lastUpdated": "2020-09-25T09:40:08.300673-07:00",
+      "selectedSource": "collection",
+      "sourceQuery": "cts.collectionQuery(['Customer'])",
+      "collections": ["matchCustomers"],
+      "additionalCollections": [],
+      "sourceDatabase": "data-hub-FINAL",
+      "targetDatabase": "data-hub-FINAL",
+      "targetFormat": "JSON",
+      "permissions": "data-hub-common,read,data-hub-common-writer,update",
+      "provenanceGranularityLevel": "fine",
+      "interceptors": [],
+      "customHook": {},
+      "matchRulesets": [],
+      "thresholds": []
     }
   ]
 };

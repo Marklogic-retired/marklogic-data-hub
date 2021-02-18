@@ -151,6 +151,31 @@ export const mergingStep = {
       },
       mergeStrategies: [],
       mergeRules: [],
+    },
+    {
+      name: "mergeCustomers123",
+      stepDefinitionName: "default-merging",
+      stepDefinitionType: "merging",
+      stepId: "mergeCustomers-merging",
+      lastUpdated: "2020-09-25T09:40:08.300673-07:00",
+      targetEntityType: "http://example.org/Customer-0.0.1/Customer",
+      description: "",
+      selectedSource: "collection",
+      sourceQuery: "cts.collectionQuery(['matchCustomers'])",
+      collections: ["mergeCustomers"],
+      additionalCollections: [],
+      sourceDatabase: "data-hub-FINAL",
+      targetDatabase: "data-hub-FINAL",
+      targetFormat: "JSON",
+      permissions: "data-hub-common,read,data-hub-common-writer,update",
+      timestamp: "/envelope/headers/createdOn",
+      provenanceGranularityLevel: "fine",
+      lastUpdatedLocation: {
+        namespaces: {es: "http://marklogic.com/entity-services"},
+        documentXPath: "/es:envelope/es:headers/timestamp"
+      },
+      mergeStrategies: [],
+      mergeRules: [],
     }
   ]
 };

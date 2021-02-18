@@ -298,15 +298,13 @@ describe("Load data component", () => {
     //Verify run step in an existing flow where step does not exist yet
 
     //Click play button 'Run' icon
-    fireEvent.click(getByTestId("testLoadXML-run"));
+    fireEvent.click(getByTestId("testLoad123-run"));
 
-    //'Run in an existing Flow'
-    fireEvent.click(getByTestId("testLoadXML-run-flowsList"));
-    fireEvent.click(getByLabelText("FlowStepNoExist-run-option"));
+    //Modal with options to run in an existing or new flow should appear
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
 
-    //Dialog appears, click 'Yes' button
-    expect(getByLabelText("step-not-in-flow-run")).toBeInTheDocument();
-    fireEvent.click(getByTestId("testLoadXML-to-FlowStepNoExist-Confirm"));
+    //Select flow to add and run step in
+    fireEvent.click(getByTestId("FlowStepNoExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
@@ -332,13 +330,42 @@ describe("Load data component", () => {
     //Click play button 'Run' icon
     fireEvent.click(getByTestId("testLoadXML-run"));
 
-    //'Run in an existing Flow'
-    fireEvent.click(getByTestId("testLoadXML-run-flowsList"));
-    fireEvent.click(getByLabelText("FlowStepExist-run-option"));
+    //Confirmation modal for directly running the step in its flow should appear
+    expect(getByLabelText("run-step-one-flow-confirmation")).toBeInTheDocument();
 
-    //Dialog appears, click 'Yes' button
-    expect(getByLabelText("step-in-flow-run")).toBeInTheDocument();
-    fireEvent.click(getByTestId("testLoadXML-to-FlowStepExist-Confirm"));
+    //Click Continue to confirm
+    fireEvent.click(getByLabelText("continue-confirm"));
+
+    //Check if the /tiles/run/run-step route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+  });
+
+  test("Load List - Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readIngestion", "writeIngestion", "writeFlow"]);
+    const {getByLabelText, getByTestId} = render(
+      <MemoryRouter>
+        <AuthoritiesContext.Provider value={authorityService}>
+          <LoadList
+            {...data.loadData}
+            flows={data.flowsAdd}
+            canWriteFlow={true}
+            addStepToFlow={jest.fn()}
+            addStepToNew={jest.fn()} />
+        </AuthoritiesContext.Provider>
+      </MemoryRouter>
+    );
+
+    //Verify run step in an existing flow where step exists in more than one flow
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("testLoad-run"));
+
+    //Modal with list of flows where step exists to select one to run in
+    expect(getByLabelText("run-step-mult-flows-confirmation")).toBeInTheDocument();
+
+    //Select flow to run step in
+    fireEvent.click(getByTestId("FlowStepMultExist-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
@@ -377,6 +404,21 @@ describe("Load data component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
     //TODO- E2E test to check if the Run tile is loaded or not.
+
+
+    //Verify run step in a new flow
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("testLoadXML-run"));
+
+    //Modal with option to add and run in a new flow should appear
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+
+    //Select "New Flow" option to add and run in a new flow
+    fireEvent.click(getByTestId("testLoadXML-run-toNewFlow"));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
 
   });
 

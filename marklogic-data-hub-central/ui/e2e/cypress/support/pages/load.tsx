@@ -82,11 +82,6 @@ class LoadPage {
   addStepToFlowConfirmationMessage() {
     return cy.findByLabelText("step-not-in-flow");
   }
-
-  addStepToFlowRunConfirmationMessage() {
-    return cy.findByLabelText("step-not-in-flow-run");
-  }
-
   addStepExistingToFlowConfirmationMessage() {
     return cy.findByLabelText("step-in-flow");
   }
@@ -95,6 +90,25 @@ class LoadPage {
     return cy.findByLabelText("step-in-flow-run");
   }
 
+  runStepSelectFlowConfirmation() {
+    return cy.findByLabelText("step-in-no-flows-confirmation");
+  }
+
+  selectFlowToRunIn(flowName: string) {
+    cy.findByTestId(`${flowName}-run-step`).click();
+  }
+
+  runStepExistsOneFlowConfirmation() {
+    return cy.findByLabelText("run-step-one-flow-confirmation");
+  }
+
+  runStepExistsMultFlowsConfirmation() {
+    return cy.findByLabelText("run-step-mult-flows-confirmation");
+  }
+
+  confirmContinueRun() {
+    cy.findByLabelText("continue-confirm").click();
+  }
   pagination() {
 
   }
@@ -256,21 +270,12 @@ class LoadPage {
     return cy.findByTestId(`${stepName}-edit`);
   }
 
-  runStepInCardView(stepName: string) {
+  runStep(stepName: string) {
     return cy.findByTestId(`${stepName}-run`);
   }
 
   runInNewFlow(stepName: string) {
     return cy.findByTestId(`${stepName}-run-toNewFlow`);
-  }
-
-  runExistingFlowsList(stepName: string) {
-    return cy.findByTestId(`${stepName}-run-flowsList`);
-  }
-
-  runStepInExistingFlow(stepName: string, flowName: string) {
-    this.runExistingFlowsList(stepName).click({force: true});
-    cy.findByLabelText(`${flowName}-run-option`).click({force: true});
   }
 
   addToNewFlow(stepName: string) {
