@@ -663,6 +663,17 @@ describe("json scenario for table on browse documents page", () => {
     browsePage.getFacetItemCheckbox("name", "Powers Bauer").should("not.be.checked");
     browsePage.getFacetItemCheckbox("email", "mcgeeburch@nutralab.com").should("not.be.checked");
   });
+
+  it("Apply Created On range facet and clear while its still grey", () => {
+    browsePage.getSelectedEntity().should("contain", "All Entities");
+    browsePage.getTotalDocuments().should("be.greaterThan", 25);
+    browsePage.getCreatedOnFacet().click();
+    browsePage.selectCreatedOnRangeOption("Today");
+    browsePage.getSelectedOptionForCreatedOnFacet().should("contain", "Today");
+    browsePage.getClearGreyFacets().click();
+    browsePage.getSelectedOptionForCreatedOnFacet().should("contain", "select time");
+    browsePage.getTotalDocuments().should("be.greaterThan", 25);
+  });
 });
 
 
