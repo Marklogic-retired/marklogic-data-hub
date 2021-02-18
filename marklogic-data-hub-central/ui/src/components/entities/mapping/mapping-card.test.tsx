@@ -267,13 +267,11 @@ describe("Mapping Card component", () => {
     //Click play button 'Run' icon
     fireEvent.click(getByTestId("Mapping2-run"));
 
-    //'Run in an existing Flow'
-    fireEvent.click(getByTestId("Mapping2-run-flowsList"));
-    fireEvent.click(getByLabelText("testFlow-run-option"));
+    //Modal with options to run in an existing or new flow should appear
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
 
-    //Dialog appears, click 'Yes' button
-    expect(getByLabelText("step-not-in-flow-run")).toBeInTheDocument();
-    fireEvent.click(getByTestId("Mapping2-to-testFlow-Confirm"));
+    //Select flow to add and run step in
+    fireEvent.click(getByTestId("testFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
@@ -315,27 +313,63 @@ describe("Mapping Card component", () => {
     //Click play button 'Run' icon
     fireEvent.click(getByTestId("Mapping1-run"));
 
-    //'Run in an existing Flow'
-    fireEvent.click(getByTestId("Mapping1-run-flowsList"));
-    fireEvent.click(getByLabelText("testFlow-run-option"));
+    //Confirmation modal for directly running the step in its flow should appear
+    expect(getByLabelText("run-step-one-flow-confirmation")).toBeInTheDocument();
 
-    //Dialog appears, click 'Yes' button
-    expect(getByLabelText("step-in-flow-run")).toBeInTheDocument();
-    fireEvent.click(getByTestId("Mapping1-to-testFlow-Confirm"));
+    //Click Continue to confirm
+    fireEvent.click(getByLabelText("continue-confirm"));
+
+    //Check if the /tiles/run/run-step route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+
+  });
+
+
+  test("Run step in an existing flow where step exists in MORE THAN ONE flow", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping", "writeFlow"]);
+    const mapping = data.mappings.data[2].artifacts;
+    const flows = [{name: "testStepInMultFlow", steps: [{stepName: "Mapping3"}]}, {name: "mappingFlow", steps: [{stepName: "Mapping3"}]}];
+    let getByLabelText, getByTestId;
+    await act(async () => {
+      const renderResults = render(
+        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+          {...mappingProps}
+          data={mapping}
+          flows={flows}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></MemoryRouter>
+      );
+      getByLabelText = renderResults.getByLabelText;
+      getByTestId = renderResults.getByTestId;
+    });
+
+    //Verify run step in an existing flow where step exists in more than one flow
+
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("Mapping3-run"));
+
+    //Modal with list of flows where step exists to select one to run in
+    expect(getByLabelText("run-step-mult-flows-confirmation")).toBeInTheDocument();
+
+    //Select flow to run step in
+    fireEvent.click(getByTestId("testStepInMultFlow-run-step"));
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
-
   });
 
   test("Adding the step to a new flow", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readMapping", "writeMapping", "writeFlow"]);
+    const mapping = data.mappings.data[0].artifacts;
     let getByText, getByTestId;
     await act(async () => {
       const renderResults = render(
         <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
           {...mappingProps}
+          data={mapping}
           canReadWrite={true}
           canWriteFlow={true}
         /></AuthoritiesContext.Provider></MemoryRouter>
@@ -362,13 +396,36 @@ describe("Mapping Card component", () => {
       expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add");
     });
 
-    //Verify run step in an new flow
+  });
+
+  test("Running the step in a new flow", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readMapping", "writeMapping", "writeFlow"]);
+    const mapping = data.mappings.data[1].artifacts;
+    let getByTestId, getByLabelText;
+    await act(async () => {
+      const renderResults = render(
+        <MemoryRouter><AuthoritiesContext.Provider value={authorityService}><MappingCard
+          {...mappingProps}
+          data={mapping}
+          canReadWrite={true}
+          canWriteFlow={true}
+        /></AuthoritiesContext.Provider></MemoryRouter>
+      );
+      getByTestId = renderResults.getByTestId;
+      getByLabelText = renderResults.getByLabelText;
+    });
+
+    //Verify run step in a new flow
 
     //Click play button 'Run' icon
-    fireEvent.click(getByTestId("Mapping1-run"));
+    fireEvent.click(getByTestId("Mapping2-run"));
 
-    //'Run in a new Flow'
-    fireEvent.click(getByTestId("Mapping1-run-toNewFlow"));
+    //Modal with option to add and run in a new flow should appear
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+
+    //Select "New Flow" option to add and run in a new flow
+    fireEvent.click(getByTestId("Mapping2-run-toNewFlow"));
 
     //Check if the /tiles/run/add-run route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });

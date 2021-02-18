@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
 import styles from "./mapping-card.module.scss";
-import {Card, Icon, Dropdown, Row, Col, Modal, Select, Menu} from "antd";
+import {Card, Icon, Divider, Row, Col, Modal, Select} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTrashAlt} from "@fortawesome/free-regular-svg-icons";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
@@ -40,6 +40,10 @@ const MappingCard: React.FC<Props> = (props) => {
   const [mapName, setMapName] = useState("");
   const [dialogVisible, setDialogVisible] = useState(false);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [runNoFlowsDialogVisible, setRunNoFlowsDialogVisible] = useState(false);
+  const [runOneFlowDialogVisible, setRunOneFlowDialogVisible] = useState(false);
+  const [runMultFlowsDialogVisible, setRunMultFlowsDialogVisible] = useState(false);
+  const [flowsWithStep, setFlowsWithStep] = useState<any[]>([]);
   const [mappingArtifactName, setMappingArtifactName] = useState("");
   const [mappingVisible, setMappingVisible] = useState(false);
   const [sourceData, setSourceData] = useState<any[]>([]);
@@ -52,7 +56,6 @@ const MappingCard: React.FC<Props> = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selected, setSelected] = useState({}); // track Add Step selections so we can reset on cancel
   const [selectVisible, setSelectVisible] = useState(false);
-  const [addRun, setAddRun] = useState(false);
   const [openStepSettings, setOpenStepSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -130,6 +133,9 @@ const MappingCard: React.FC<Props> = (props) => {
   const onCancel = () => {
     setDialogVisible(false);
     setAddDialogVisible(false);
+    setRunNoFlowsDialogVisible(false);
+    setRunOneFlowDialogVisible(false);
+    setRunMultFlowsDialogVisible(false);
     setSelected({}); // reset menus on cancel
   };
 
@@ -575,15 +581,6 @@ const MappingCard: React.FC<Props> = (props) => {
     let selectedNew = {...selected};
     selectedNew[obj.loadName] = obj.flowName;
     setSelected(selectedNew);
-    setAddRun(false);
-    handleStepAdd(obj.mappingName, obj.flowName);
-  }
-
-  function handleSelectAddRun(obj) {
-    let selectedNew = {...selected};
-    selectedNew[obj.loadName] = obj.flowName;
-    setSelected(selectedNew);
-    setAddRun(true);
     handleStepAdd(obj.mappingName, obj.flowName);
   }
 
@@ -594,74 +591,77 @@ const MappingCard: React.FC<Props> = (props) => {
     return result;
   };
 
+  const countStepInFlow = (mappingName) => {
+    let result : string[] = [];
+    if (props.flows) props.flows.forEach(f => f["steps"].findIndex(s => s.stepName === mappingName) > -1 ? result.push(f.name) : "");
+    return result;
+  };
+
   const handleStepAdd = (mappingName, flowName) => {
     setMappingArtifactName(mappingName);
     setFlowName(flowName);
     setAddDialogVisible(true);
   };
 
+  const handleStepRun = (mappingName) => {
+    setMappingArtifactName(mappingName);
+    let stepInFlows = countStepInFlow(mappingName);
+    setFlowsWithStep(stepInFlows);
+    if (stepInFlows.length > 1) {
+      setRunMultFlowsDialogVisible(true);
+    } else if (stepInFlows.length === 1) {
+      setRunOneFlowDialogVisible(true);
+    } else {
+      setRunNoFlowsDialogVisible(true);
+    }
+  };
+
+  const handleAddRun = async (flowName) => {
+    await props.addStepToFlow(mappingArtifactName, flowName, "mapping");
+    setRunNoFlowsDialogVisible(false);
+
+    history.push({
+      pathname: "/tiles/run/add-run",
+      state: {
+        flowName: flowName,
+        flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
+        existingFlow: true,
+        addFlowDirty: true,
+        stepToAdd: mappingArtifactName,
+        stepDefinitionType: "mapping"
+      }
+    });
+  };
+
+  const onContinueRun = () => {
+    history.push({
+      pathname: "/tiles/run/run-step",
+      state: {
+        flowName: flowsWithStep[0],
+        stepToAdd: mappingArtifactName,
+        stepDefinitionType: "mapping",
+        targetEntityType: props.entityModel.entityTypeId,
+        existingFlow: false,
+        flowsDefaultKey: [props.flows.findIndex(el => el.name === flowsWithStep[0])],
+      }
+    });
+  };
+
+
   const onAddOk = async (lName, fName) => {
     await props.addStepToFlow(lName, fName, "mapping");
     setAddDialogVisible(false);
 
-    if (addRun) {
-      history.push({
-        pathname: "/tiles/run/add-run",
-        state: {
-          flowName: fName,
-          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-          existingFlow: true,
-          addFlowDirty: true,
-          stepToAdd: mappingArtifactName,
-          stepDefinitionType: "mapping"
-        }
-      });
-    } else {
-      history.push({
-        pathname: "/tiles/run/add",
-        state: {
-          flowName: fName,
-          addFlowDirty: true,
-          flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
-          existingFlow: true
-        }
-      });
-    }
+    history.push({
+      pathname: "/tiles/run/add",
+      state: {
+        flowName: fName,
+        addFlowDirty: true,
+        flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+        existingFlow: true
+      }
+    });
   };
-
-  const menu = (name) => (
-    <Menu style={{right: "80px"}}>
-      <Menu.Item key="0">
-        { <Link data-testid="link" id="tiles-add-run" to={
-          {pathname: "/tiles/run/add-run",
-            state: {
-              stepToAdd: name,
-              stepDefinitionType: "mapping",
-              targetEntityType: props.entityModel.entityTypeId,
-              existingFlow: false
-            }}}><div className={styles.stepLink} data-testid={`${name}-run-toNewFlow`}>Run step in a new flow</div></Link>}
-      </Menu.Item>
-      <Menu.Item key="1">
-        <div className={styles.stepLinkExisting} data-testid={`${name}-run-toExistingFlow`}>Run step in an existing flow
-          <div className={styles.stepLinkSelect} onClick={(event) => { event.stopPropagation(); event.preventDefault(); }}>
-            <Select
-              style={{width: "100%"}}
-              value={selected[name] ? selected[name] : undefined}
-              onChange={(flowName) => handleSelectAddRun({flowName: flowName, mappingName: name})}
-              placeholder="Select Flow"
-              defaultActiveFirstOption={false}
-              disabled={!props.canWriteFlow}
-              data-testid={`${name}-run-flowsList`}
-            >
-              { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                <Option aria-label={`${f.name}-run-option`} value={f.name} key={i}>{f.name}</Option>
-              )) : null}
-            </Select>
-          </div>
-        </div>
-      </Menu.Item>
-    </Menu>
-  );
 
   const addConfirmation = (
     <Modal
@@ -675,9 +675,88 @@ const MappingCard: React.FC<Props> = (props) => {
     >
       <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
         { isStepInFlow(mappingArtifactName, flowName) ?
-          !addRun ? <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> : <p aria-label="step-in-flow-run">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance and run it?</p>
-          : !addRun ? <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p> : <p aria-label="step-not-in-flow-run">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong> and run it?</p>
+          <p aria-label="step-in-flow">The step <strong>{mappingArtifactName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{mappingArtifactName}</strong> to the flow <strong>{flowName}</strong>?</p>
         }
+      </div>
+    </Modal>
+  );
+
+  const runNoFlowsConfirmation = (
+    <Modal
+      visible={runNoFlowsDialogVisible}
+      cancelText="Cancel"
+      okButtonProps={{style: {display: "none"}}}
+      onCancel={() => onCancel()}
+      width={650}
+      maskClosable={false}
+    >
+      <div aria-label="step-in-no-flows-confirmation" style={{fontSize: "16px"}}>Choose the flow in which to add and run the step <strong>{mappingArtifactName}</strong>.</div>
+      <Row className={styles.flowSelectGrid}>
+        <Col span={11}>
+          <div>{props.flows.map((flow, i) => (
+            <p className={styles.stepLink} data-testid={`${flow.name}-run-step`} key={i} onClick={() => handleAddRun(flow.name)}>{flow.name}</p>
+          ))}</div>
+        </Col>
+        <Col span={2}>
+          <Divider type="vertical" className={styles.verticalDiv}></Divider>
+        </Col>
+        <Col span={11}>
+          <Link data-testid="link" id="tiles-add-run-new-flow" to={
+            {pathname: "/tiles/run/add-run",
+              state: {
+                stepToAdd: mappingArtifactName,
+                stepDefinitionType: "mapping",
+                targetEntityType: props.entityModel.entityTypeId,
+                existingFlow: false
+              }}}><div className={styles.stepLink} data-testid={`${mappingArtifactName}-run-toNewFlow`}><Icon type="plus-circle" className={styles.plusIconNewFlow} theme="filled"/>New flow</div></Link>
+        </Col>
+      </Row>
+    </Modal>
+  );
+
+  const runOneFlowConfirmation = (
+    <Modal
+      visible={runOneFlowDialogVisible}
+      okText={<div aria-label="continue-confirm">Continue</div>}
+      onOk={() => onContinueRun()}
+      cancelText="Cancel"
+      onCancel={() => onCancel()}
+      width={650}
+      maskClosable={false}
+    >
+      <div aria-label="run-step-one-flow-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+        <div>
+          <div aria-label="step-in-one-flow">Running the step <strong>{mappingArtifactName}</strong> in the flow <strong>{flowsWithStep}</strong></div>
+        </div>
+      </div>
+    </Modal>
+  );
+
+  const runMultFlowsConfirmation = (
+    <Modal
+      visible={runMultFlowsDialogVisible}
+      cancelText="Cancel"
+      okButtonProps={{style: {display: "none"}}}
+      onCancel={() => onCancel()}
+      width={650}
+      maskClosable={false}
+    >
+      <div aria-label="run-step-mult-flows-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+        <div aria-label="step-in-mult-flows">Choose the flow in which to run the step <strong>{mappingArtifactName}</strong>.</div>
+        <div className = {styles.flowSelectGrid}>{flowsWithStep.map((flowName, i) => (
+          <Link data-testid="link" id="tiles-run-step" key={i} to={
+            {pathname: "/tiles/run/run-step",
+              state: {
+                flowName: flowName,
+                stepToAdd: mappingArtifactName,
+                stepDefinitionType: "mapping",
+                targetEntityType: props.entityModel.entityTypeId,
+                existingFlow: false,
+                flowsDefaultKey: [props.flows.findIndex(el => el.name === flowName)],
+              }}}><p className={styles.stepLink} data-testid={`${flowName}-run-step`}>{flowName}</p></Link>
+        ))}
+        </div>
       </div>
     </Modal>
   );
@@ -712,9 +791,7 @@ const MappingCard: React.FC<Props> = (props) => {
                 actions={[
                   <MLTooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
                   <MLTooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
-                  <Dropdown data-testid={`${elem.name}-dropdown`} overlay={menu(elem.name)} trigger={["click"]} disabled = {!props.canWriteFlow}>
-                    {props.canReadWrite ?<MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>}
-                  </Dropdown>,
+                  props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>,
                   props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-delete-mapping button" data-testid={elem.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
                 ]}
                 className={styles.cardStyle}
@@ -790,6 +867,9 @@ const MappingCard: React.FC<Props> = (props) => {
         isLoading={isLoading}
         openStepSettings={OpenStepSettings}/>
       {addConfirmation}
+      {runNoFlowsConfirmation}
+      {runOneFlowConfirmation}
+      {runMultFlowsConfirmation}
       <Steps
         // Basic Settings
         isEditing={isEditing}

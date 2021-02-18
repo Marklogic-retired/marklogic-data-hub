@@ -237,6 +237,7 @@ describe("Mapping", () => {
 
   it("can create a load step with a custom header, can create a mapping step with a custom header, and run both steps and verify in the detail view, ", () => {
     const flowName = "orderCustomHeaderFlow";
+    const flowName2 = "orderE2eFlow";
     const loadStep = "loadOrderCustomHeader";
     const mapStep = "mapOrderCustomHeader";
     // create load step
@@ -256,7 +257,7 @@ describe("Mapping", () => {
     // add custom header to load step
     advancedSettingsDialog.setHeaderContent("loadTile/customHeader");
     advancedSettingsDialog.saveSettings(loadStep).click();
-    advancedSettingsDialog.saveSettings(loadStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(loadStep).should("not.be.exist");
 
     // add step to a new flow
     loadPage.addStepToNewFlow(loadStep);
@@ -298,7 +299,7 @@ describe("Mapping", () => {
     // add custom header
     advancedSettingsDialog.setHeaderContent("curateTile/customHeader");
     cy.waitUntil(() => advancedSettingsDialog.saveSettings(mapStep).click({force: true}));
-    advancedSettingsDialog.saveSettings(mapStep).should("not.be.visible");
+    advancedSettingsDialog.saveSettings(mapStep).should("not.exist");
 
     // map source to entity
     curatePage.openSourceToEntityMap("Order", mapStep);
@@ -341,9 +342,8 @@ describe("Mapping", () => {
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
-    curatePage.runStepInExistingFlow(mapStep, flowName);
-    curatePage.addStepToFlowRunConfirmationMessage().should("be.visible");
-    curatePage.confirmAddStepToFlow(mapStep, flowName);
+    curatePage.runStepSelectFlowConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName);
     //Step should automatically run
     cy.verifyStepRunResult("success", "Mapping", mapStep);
     tiles.closeRunMessage();
@@ -352,18 +352,58 @@ describe("Mapping", () => {
     runPage.deleteFlow(flowName).click();
     runPage.deleteFlowConfirmationMessage(flowName).should("be.visible");
     loadPage.confirmationOptions("Yes").click();
+    runPage.getFlowName(flowName).should("not.be.visible");
 
     //Verify Run Map step in a new Flow
     toolbar.getCurateToolbarIcon().click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Order");
     curatePage.runStepInCardView(mapStep).click();
+    //Just deleted flow should not be visible on flows list
+    cy.findByText(flowName).should("not.be.visible");
     curatePage.runInNewFlow(mapStep).click({force: true});
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName);
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     //Step should automatically run
+    cy.verifyStepRunResult("success", "Mapping", mapStep);
+    tiles.closeRunMessage();
+
+    //Verify Run Map step in flow where step exists, should run automatically
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Order");
+    curatePage.runStepInCardView(mapStep).click();
+    curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
+    curatePage.confirmContinueRun();
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Map", mapStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
+    cy.verifyStepRunResult("success", "Mapping", mapStep);
+    tiles.closeRunMessage();
+
+    // add step to a new flow
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Order");
+    curatePage.addToNewFlow("Order", mapStep);
+    cy.findByText("New Flow").should("be.visible");
+    runPage.setFlowName(flowName2);
+    runPage.setFlowDescription(`${flowName2} description`);
+    loadPage.confirmationOptions("Save").click();
+    cy.verifyStepAddedToFlow("Map", mapStep);
+
+    //Verify Run Map step where step exists in multiple flows, choose one to automatically run in
+    toolbar.getCurateToolbarIcon().click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Order");
+    curatePage.runStepInCardView(mapStep).click();
+    curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Map", mapStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName).should("be.visible"));
     cy.verifyStepRunResult("success", "Mapping", mapStep);
 
     runPage.explorerLink().click();

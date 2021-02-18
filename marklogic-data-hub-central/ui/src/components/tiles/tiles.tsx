@@ -159,7 +159,7 @@ const Tiles: React.FC<Props> = (props) => {
             title={options["title"]}
             renderToolbar={renderHeader}
           >
-            {!props.newStepToFlowOptions?.addingStepToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
+            {!props.newStepToFlowOptions?.routeToFlow ? props.view : <Run newStepToFlowOptions={props.newStepToFlowOptions}/>}
           </MosaicWindow>
         );
       }}

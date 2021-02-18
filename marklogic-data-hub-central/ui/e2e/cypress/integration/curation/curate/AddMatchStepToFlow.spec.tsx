@@ -104,13 +104,18 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
+  it("Delete the match step", () => {
+    runPage.deleteStep(matchStep).click();
+    loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
+  });
   it("Navigating to match tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to new flow from run tile and should automatically run", () => {
+  it("Add the Match step to new flow from card run button and should automatically run", () => {
     curatePage.runStepInCardView(matchStep).click();
     curatePage.runInNewFlow(matchStep).click();
     cy.findByText("New Flow").should("be.visible");
@@ -134,14 +139,59 @@ describe("Add Matching step to a flow", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to an existing flow from run tile and should automatically run", () => {
+  it("Add the Match step to an existing flow from card run button and should automatically run", () => {
     curatePage.runStepInCardView(matchStep).click();
-    curatePage.runStepInExistingFlow(matchStep, flowName2);
-    curatePage.addStepToFlowRunConfirmationMessage();
-    curatePage.confirmAddStepToFlow(matchStep, flowName2);
+    curatePage.runStepSelectFlowConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName2);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
     cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
+    cy.verifyStepRunResult("success", "Matching", matchStep);
+    tiles.closeRunMessage();
+  });
+  it("Navigating to match tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMatchTab("Customer");
+  });
+  it("Run the Match step from card run button and should automatically run in the flow where step exists", () => {
+    curatePage.runStepInCardView(matchStep).click();
+    curatePage.runStepExistsOneFlowConfirmation().should("be.visible");
+    curatePage.confirmContinueRun();
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Match", matchStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName2).should("be.visible"));
+    cy.verifyStepRunResult("success", "Matching", matchStep);
+    tiles.closeRunMessage();
+  });
+  it("Navigating to match tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMatchTab("Customer");
+  });
+  it("Add the match step to a second flow and verify it was added", () => {
+    curatePage.openExistingFlowDropdown("Customer", matchStep);
+    curatePage.getExistingFlowFromDropdown(flowName1).click();
+    curatePage.addStepToFlowConfirmationMessage();
+    curatePage.confirmAddStepToFlow(matchStep, flowName1);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Match", matchStep);
+  });
+  it("Navigating to match tab", () => {
+    cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
+    cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
+    curatePage.toggleEntityTypeId("Customer");
+    curatePage.selectMatchTab("Customer");
+  });
+  it("Run the Match step from card run button and should display all flows where step exists, choose one to automatically run in", () => {
+    curatePage.runStepInCardView(matchStep).click();
+    curatePage.runStepExistsMultFlowsConfirmation().should("be.visible");
+    curatePage.selectFlowToRunIn(flowName1);
+    cy.waitForAsyncRequest();
+    cy.verifyStepAddedToFlow("Match", matchStep);
+    cy.waitUntil(() => runPage.getFlowName(flowName1).should("be.visible"));
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
