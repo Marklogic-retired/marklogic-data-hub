@@ -256,11 +256,12 @@ public class FlowControllerTest extends AbstractMvcTest {
         loginAsTestUserWithRoles("hub-central-step-runner");
 
         final String flowName = "testCsvFlow";
+        final String csvContentWithThousandLines = readStringFromClasspath("sampleData/SalaryTable.csv");
 
         // Run the step
         flowController.setFlowRunnerConsumer((FlowRunner::awaitCompletion));
         final String[] jobIds = new String[1];
-        MockMultipartFile file1 = new MockMultipartFile("files","file1.csv", MediaType.TEXT_PLAIN, "name\nJoe".getBytes(StandardCharsets.UTF_8));
+        MockMultipartFile file1 = new MockMultipartFile("files","file1.csv", MediaType.TEXT_PLAIN, csvContentWithThousandLines.getBytes(StandardCharsets.UTF_8));
         mockMvc.perform(multipart(PATH + "/{flowName}/steps/{stepNumber}", flowName, "1")
                 .file(file1)
                 .session(mockHttpSession))
@@ -271,6 +272,10 @@ public class FlowControllerTest extends AbstractMvcTest {
                     "client can then query for job status; response: " + response);
                     jobIds[0] = response.get("jobId").asText();
                 });
+
+        String rawDataCount = getHubClient().getStagingClient().newServerEval().javascript("cts.estimate(cts.collectionQuery('rawData'))").evalAs(String.class);
+        assertEquals("1000", rawDataCount, "Expecting 1000 docs in the rawData collection, as there are 1000 lines in the CSV file");
+
         // Check on the Job
         getJson("/api/jobs/" + URLEncoder.encode(jobIds[0],"UTF-8"))
                 .andExpect(status().isOk())

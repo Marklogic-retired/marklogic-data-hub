@@ -1,5 +1,6 @@
 package com.marklogic.hub.hubcentral.conversion;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -65,11 +66,11 @@ public class HubCentralConverter extends LoggingObject {
         File[] entityModelDefs = entityModelsDir.listFiles((dir, name) -> name.endsWith(EntityManagerImpl.ENTITY_FILE_EXTENSION));
 
         for (File entityModelDef : entityModelDefs) {
-            ObjectNode entityModelNode = null;
+            JsonNode entityModelNode = null;
             String fileName = entityModelDef.getName();
             try {
                 FileInputStream fileInputStream = new FileInputStream(entityModelDef);
-                entityModelNode = (ObjectNode) mapper.readTree(fileInputStream);
+                entityModelNode = mapper.readTree(fileInputStream);
                 fileInputStream.close();
             } catch (IOException e) {
                 logger.warn(format("Ignoring %s entity model definition as malformed JSON content is found", fileName));
@@ -126,7 +127,7 @@ public class HubCentralConverter extends LoggingObject {
         }
     }
 
-    protected boolean entityModelRequiresConversion(String fileName, ObjectNode entityModelNode) {
+    protected boolean entityModelRequiresConversion(String fileName, JsonNode entityModelNode) {
         if (!entityModelValidForConversion(fileName, entityModelNode)) {
             return false;
         }
@@ -136,7 +137,7 @@ public class HubCentralConverter extends LoggingObject {
                 entityModelNode.get("pathRangeIndex") != null;
     }
 
-    protected boolean entityModelValidForConversion(String fileName, ObjectNode entityModelNode) {
+    protected boolean entityModelValidForConversion(String fileName, JsonNode entityModelNode) {
         if (entityModelNode == null) {
             logger.warn(format("No content exist in the entity model definition %s and can not be converted", fileName));
             return false;
