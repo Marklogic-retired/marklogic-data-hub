@@ -4,7 +4,7 @@ buildscript {
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.8.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.8.RELEASE"
 		classpath "com.github.node-gradle:gradle-node-plugin:2.2.4"
         classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.0.2'
 	}
