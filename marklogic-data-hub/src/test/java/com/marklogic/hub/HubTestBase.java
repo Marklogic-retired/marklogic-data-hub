@@ -55,14 +55,16 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -476,22 +478,28 @@ public class HubTestBase extends AbstractHubTest {
         }
     }
 
-    protected void extractZipToProjectDirectory(File project) throws IOException {
-        ZipFile zip = new ZipFile(project);
-        Enumeration<?> entries = zip.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if(!entry.isDirectory()){
-                int entrySize = (int) entry.getSize();
-                byte[] buffer = new byte[entrySize];
-                zip.getInputStream(entry).read(buffer, 0, entrySize);
-
-                File file = new File(getHubProject().getProjectDir().toFile(), entry.getName());
-                file.getParentFile().mkdirs();
-                FileCopyUtils.copy(buffer, file);
+    protected void extractZipToProjectDirectory(File zipFile) throws IOException {
+        try(ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFile))){
+            ZipEntry entry = zipIn.getNextEntry();
+            while (entry != null) {
+                if (!entry.isDirectory()) {
+                    File file = new File(getHubProject().getProjectDir().toFile(), entry.getName());
+                    file.getParentFile().mkdirs();
+                    extractFile(zipIn, file);
+                }
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
             }
-
-
         }
+    }
+
+    private void extractFile(ZipInputStream zipIn, File file) throws IOException {
+       try(BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file))){
+           byte[] bytesIn = new byte[4096];
+           int read;
+           while ((read = zipIn.read(bytesIn)) != -1) {
+               bos.write(bytesIn, 0, read);
+           }
+       }
     }
 }
