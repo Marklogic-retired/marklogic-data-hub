@@ -6,12 +6,12 @@ import com.marklogic.hub.HubConfig;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,25 +100,29 @@ public class GetProjectAsZipTest extends AbstractHubCoreTest {
         zipProjectEntries = new HashSet<>();
         artifactZipEntries = new ArrayList<>();
         ZipFile zip = new ZipFile(zipProjectFile);
-        Enumeration<?> entries = zip.entries();
+
         String[] artifactDirs = {"flows", "steps", "entities", "src/main/entity-config", "src/main/ml-config/security/protected-paths",
             "src/main/ml-config/security/query-rolesets"};
 
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry) entries.nextElement();
-            if("gradle.properties".equals(entry.getName())){
-                InputStream input = zip.getInputStream(entry);
-                gradleProps.load(input);
-            }
-            if("gradle-dhs.properties".equals(entry.getName())){
-                InputStream input = zip.getInputStream(entry);
-                gradleDhsProps.load(input);
-            }
-            if(Stream.of(artifactDirs).anyMatch(entry.getName()::startsWith) && !entry.isDirectory()){
-                artifactZipEntries.add(entry);
-            }
-            else{
-                zipProjectEntries.add(entry.getName());
+        try(ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipProjectFile))){
+            ZipEntry entry = zipIn.getNextEntry();
+            while (entry != null) {
+                if("gradle.properties".equals(entry.getName())){
+                    InputStream input = zip.getInputStream(entry);
+                    gradleProps.load(input);
+                }
+                if("gradle-dhs.properties".equals(entry.getName())){
+                    InputStream input = zip.getInputStream(entry);
+                    gradleDhsProps.load(input);
+                }
+                if(Stream.of(artifactDirs).anyMatch(entry.getName()::startsWith) && !entry.isDirectory()){
+                    artifactZipEntries.add(entry);
+                }
+                else{
+                    zipProjectEntries.add(entry.getName());
+                }
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
             }
         }
     }
