@@ -20,7 +20,7 @@ package com.marklogic.gradle.task
 
 import com.marklogic.gradle.exception.FlowNameRequiredException
 import com.marklogic.gradle.exception.HubNotInstalledException
-import com.marklogic.hub.cli.client.CommandLineFlowInputs
+import com.marklogic.hub.impl.CommandLineFlowInputs
 import com.marklogic.hub.flow.FlowInputs
 import com.marklogic.hub.flow.FlowRunner
 import com.marklogic.hub.flow.RunFlowResponse

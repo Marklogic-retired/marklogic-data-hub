@@ -8,7 +8,9 @@ import com.marklogic.appdeployer.command.Command;
 import com.marklogic.appdeployer.command.CommandContext;
 import com.marklogic.appdeployer.impl.SimpleAppDeployer;
 import com.marklogic.client.DatabaseClient;
+import com.marklogic.client.FailedRequestException;
 import com.marklogic.client.document.JSONDocumentManager;
+import com.marklogic.client.eval.EvalResultIterator;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.JacksonHandle;
 import com.marklogic.hub.*;
@@ -17,6 +19,7 @@ import com.marklogic.hub.dhs.DhsDeployer;
 import com.marklogic.hub.flow.FlowInputs;
 import com.marklogic.hub.flow.RunFlowResponse;
 import com.marklogic.hub.flow.impl.FlowRunnerImpl;
+import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.HubConfigImpl;
 import com.marklogic.hub.impl.HubProjectImpl;
 import com.marklogic.hub.impl.Versions;
@@ -35,6 +38,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -459,6 +463,62 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         return Integer.parseInt(client.newServerEval().javascript(query).evalAs(String.class));
     }
 
+    protected int getStagingDocCount() {
+        return getStagingDocCount(null);
+    }
+
+    protected int getStagingDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_STAGING_NAME, collection);
+    }
+
+    protected int getFinalDocCount() {
+        return getFinalDocCount(null);
+    }
+
+    protected int getFinalDocCount(String collection) {
+        return getDocCount(HubConfig.DEFAULT_FINAL_NAME, collection);
+    }
+
+    protected int getTracingDocCount() {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "trace");
+    }
+
+    protected int getJobDocCount() {
+        return getDocCount(HubConfig.DEFAULT_JOB_NAME, "job");
+    }
+
+    protected int getDocCount(String database, String collection) {
+        String collectionName = "";
+        if (collection != null) {
+            collectionName = "'" + collection + "'";
+        }
+        String val = getClientByName(database).newServerEval().xquery("xdmp:estimate(fn:collection(" + collectionName + "))").evalAs(String.class);
+        return Integer.parseInt(val);
+    }
+
+    protected DatabaseClient getClientByName(String databaseName) {
+        HubClient hc = getHubClient();
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.STAGING))) {
+            return hc.getStagingClient();
+        }
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.FINAL))) {
+            return hc.getFinalClient();
+        }
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.JOB))) {
+            return hc.getJobsClient();
+        }
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.MODULES))) {
+            return hc.getModulesClient();
+        }
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.STAGING_SCHEMAS))) {
+            return getHubConfig().getAppConfig().newAppServicesDatabaseClient(databaseName);
+        }
+        if (databaseName.equalsIgnoreCase(hc.getDbName(DatabaseKind.FINAL_SCHEMAS))) {
+            return getHubConfig().getAppConfig().newAppServicesDatabaseClient(databaseName);
+        }
+        throw new IllegalArgumentException("Doesn't support: " + databaseName);
+    }
+
     protected JsonNode findFirstBatchDocument(String jobId) {
         String query = format("collection('Batch')[/batch/jobId = '%s']", jobId);
         return getHubClient().getJobsClient().newServerEval().xquery(query).eval(new JacksonHandle()).get();
@@ -481,6 +541,26 @@ public abstract class AbstractHubTest extends AbstractHubClientTest {
         }
         finally {
             hubConfig.setIsProvisionedEnvironment(isProvisioned);
+        }
+    }
+
+    public void clearUserModules() {
+        new DataHubImpl(getHubConfig()).clearUserModules(Arrays.asList("marklogic-unit-test"));
+    }
+
+    protected void installHubArtifacts() {
+        new LoadHubArtifactsCommand(getHubConfig()).execute(newCommandContext());
+    }
+
+    protected void installHubModules() {
+        new LoadHubModulesCommand(getHubConfig()).execute(newCommandContext());
+    }
+
+    protected EvalResultIterator runInDatabase(String query, String databaseName) {
+        try {
+            return getClientByName(databaseName).newServerEval().xquery(query).eval();
+        } catch (FailedRequestException e) {
+            throw new RuntimeException(e);
         }
     }
 }

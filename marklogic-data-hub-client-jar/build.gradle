@@ -1,0 +1,49 @@
+plugins {
+    id "java"
+    id "io.snyk.gradle.plugin.snykplugin" version "0.4"
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+group = 'com.marklogic'
+
+// See https://github.com/snyk/gradle-plugin for docs
+snyk {
+    severity = 'medium'
+    api = snykToken
+    autoDownload = true
+    autoUpdate = true
+}
+
+repositories {
+    jcenter()
+}
+
+ext {
+    junitPlatformVersion = '1.4.2'
+    junitJupiterVersion  = '5.4.2'
+}
+
+dependencies {
+    compile(project(":marklogic-data-hub"))
+    compile "com.beust:jcommander:1.72"
+    runtime 'ch.qos.logback:logback-classic:1.2.3'
+
+    testImplementation(testFixtures(project(":marklogic-data-hub")))
+    testCompile "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
+    testCompile "org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}"
+    testCompile "org.junit.platform:junit-platform-commons:${junitPlatformVersion}"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "com.marklogic.hub.clientjar.Main"
+    }
+    from(configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }) {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+}

@@ -1,13 +1,11 @@
 plugins {
     id 'net.saliman.properties'
-    id 'java'
+    id 'java-library'
     id 'java-test-fixtures'
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.7.2'
     id 'com.marklogic.ml-gradle' version '4.1.1'
     id "com.github.node-gradle.node" version "2.2.4"
-    id 'org.springframework.boot' version '2.1.15.RELEASE'
-    id "io.spring.dependency-management" version "1.0.7.RELEASE"
     id 'com.marklogic.ml-development-tools' version '5.3.0'
 
     // Declaring this at each subproject level, as declaring it at root level resulted in an error about the plugin
@@ -52,36 +50,23 @@ ext {
     thirdPartySourcePath = "src/main/resources/ml-modules/root/data-hub/third-party"
 }
 
-// This enables including a logging jar in the application artifacts produced by this project - the installer and the client jars
-// without that jar ending up in the library artifact.
-configurations {
-    datahubLogging
-}
-
 dependencies {
     // Forcing use of 1.3.71 - which is what OkHttp 4.7.2 wants, which is what Java Client 5.3 uses - so that 1.2.x
     // versions don't come onto the classpath
-    compile "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
+    api "org.jetbrains.kotlin:kotlin-stdlib:1.3.71"
+    api "org.jetbrains.kotlin:kotlin-stdlib-common:1.3.71"
 
-    compile(project(":marklogic-data-hub-api")) {
+    api(project(":marklogic-data-hub-api")) {
         // Oddly, the OkHttp 4.4.0 dependency includes version 1.2.70 and 1.3.x of these dependencies. This causes
         // class conflict errors. So they're excluded from here, and we force inclusion of 1.3.x below.
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
     }
 
-    compile group: 'org.springframework.boot', name: 'spring-boot', version: '2.1.15.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.1.15.RELEASE'
-
-    compile 'com.marklogic:mlcp-util:0.9.0'
-    compile 'com.marklogic:marklogic-data-movement-components:2.2.1'
-
-    compile 'commons-io:commons-io:2.4'
-    compile 'org.apache.commons:commons-text:1.1'
-    datahubLogging 'ch.qos.logback:logback-classic:1.2.3'
-    // For installer program
-    compile "com.beust:jcommander:1.72"
+    api 'com.marklogic:mlcp-util:0.9.0'
+    api 'com.marklogic:marklogic-data-movement-components:2.2.1'
+    api 'commons-io:commons-io:2.4'
+    api 'org.apache.commons:commons-text:1.1'
 
     testFixturesApi(testCompile(project(":marklogic-data-hub-test")))
 
@@ -95,8 +80,9 @@ dependencies {
 
     // For managing a pool of HubConfigImpl objects
     testFixturesApi "org.apache.commons:commons-pool2:2.8.1"
-
+    testFixturesApi "org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}"
     testFixturesApi 'xmlunit:xmlunit:1.3'
+
     testCompile 'org.skyscreamer:jsonassert:1.5.0'
     testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
     testCompile 'org.easymock:easymock:3.4'
@@ -115,10 +101,6 @@ dependencies {
     mlBundle "com.marklogic:marklogic-unit-test-modules:1.0.0"
 }
 
-import com.marklogic.mgmt.ManageClient
-import com.marklogic.mgmt.resource.hosts.HostManager
-
-
 configurations.all {
     exclude group: "org.slf4j", module: "slf4j-log4j12"
     exclude group: "log4j", module: "log4j"
@@ -135,61 +117,6 @@ task extractFastXmlParserZip(type: Copy) {
 
 // Ensure that the fast-xml-parser files are available before any DHF jars are built
 processResources.dependsOn extractFastXmlParserZip
-
-
-// The Spring Boot bootJar task produces an executable jar with all dependencies that runs the DHF installer
-// This jar is only meant to be used by the DHS team for installing DHF into DHS
-bootJar {
-    archiveClassifier = "installer"
-    mainClassName = "com.marklogic.hub.dhs.installer.Main"
-    from("src/main/installer") {
-        include "logback.xml"
-    }
-    from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-}
-
-task installDhfIntoDhs(type: Exec) {
-    description = "Builds and runs the DHF installer for DHS"
-    workingDir = "."
-    commandLine = "java"
-    args = [
-        "-jar", "build/libs/marklogic-data-hub-${version}-installer.jar",
-        "--path", "build/dhsInstaller",
-        "--host", mlHost,
-        "--username", mlUsername,
-        "--password", mlPassword,
-        "dhsInstall"
-    ]
-}
-installDhfIntoDhs.dependsOn bootJar
-
-task clientJar(type: Jar) {
-    description = "Build an executable jar to be used by DHF clients; as of 5.2.0, this is just for running flows"
-    manifest {
-        attributes "Main-Class": "com.marklogic.hub.cli.client.Main"
-    }
-    archiveClassifier = "client"
-    from(configurations.datahubLogging.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    from(configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }) {
-        exclude "META-INF/*.SF"
-        exclude "META-INF/*.DSA"
-        exclude "META-INF/*.RSA"
-    }
-    exclude "spring-boot*.jar"
-    from("src/main/clientJar") {
-        include "logback.xml"
-    }
-    with jar
-}
-build.dependsOn clientJar
 
 node {
   // Version of node to use.
@@ -291,10 +218,6 @@ jar{
     enabled = true
 }
 
-bootRun {
-    enabled = false
-}
-
 javadoc {
    options.overview = 'src/main/resources/overview.html'
 }
@@ -340,8 +263,6 @@ publishing {
             from components.java
             artifact sourcesJar
             artifact javadocJar
-            artifact bootJar
-            artifact clientJar
 
             pom.withXml {
                 asNode().appendNode('description', pomCustomizations.textdescription.text())
@@ -476,11 +397,6 @@ task testDhsTests(type: Test) {
         exclude 'com/marklogic/hub/dataservices/VerifyEndpointPrivileges*'
 
         include 'com/marklogic/hub/dhs/**'
-        // Doesn't work in DHS because the options expected to be created already exist
-        exclude '**/CopyQueryOptionsCommandTest*'
-        // Not run in DHS because it has to re-install DHF modules, which messes up what the DHF installer did
-        exclude '**/UpdateDhsRestExtensionPermissionsTest*'
-
         include 'com/marklogic/hub/flow/**'
         include 'com/marklogic/hub/hubcentral/**'
         include 'com/marklogic/hub/mapping/**'
