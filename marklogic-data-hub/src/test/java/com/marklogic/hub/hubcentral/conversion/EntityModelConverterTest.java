@@ -40,97 +40,97 @@ public class EntityModelConverterTest extends AbstractHubCoreTest {
     }
 
     @Test
-    void testEntityModelValidForConversion() {
+    void testEntityModelValidForConversion() throws Exception {
         HubProject hubProject = getHubConfig().getHubProject();
         HubCentralConverter hubCentralConverter = new HubCentralConverter(getHubConfig());
         Path entitiesDir = hubProject.getHubEntitiesDir();
 
         String currentFileName = "Customer.entity.json";
         JsonNode customerEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) customerEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, customerEntity));
 
         currentFileName = "NoInfo.entity.json";
         JsonNode noInfoEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noInfoEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, noInfoEntity));
 
         currentFileName = "NoInfoTitle.entity.json";
         JsonNode noInfoTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noInfoTitleEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, noInfoTitleEntity));
 
         currentFileName = "EmptyTitle.entity.json";
         JsonNode emptyTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) emptyTitleEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, emptyTitleEntity));
 
         currentFileName = "NoDefinitions.entity.json";
         JsonNode noDefinitionsEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noDefinitionsEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, noDefinitionsEntity));
 
         currentFileName = "NoEntityType.entity.json";
         JsonNode noEntityTypeEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noEntityTypeEntity));
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, noEntityTypeEntity));
 
         currentFileName = "NoProperties.entity.json";
         JsonNode noPropertiesEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noPropertiesEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, noPropertiesEntity));
 
         currentFileName = "NoIndexArrays.entity.json";
         JsonNode noIndexArraysEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) noIndexArraysEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, noIndexArraysEntity));
 
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
+        assertTrue(hubCentralConverter.entityModelValidForConversion(currentFileName, missingIndexedPropertyEntity));
 
         currentFileName = "EmptyFile.entity.json";
-        JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, (ObjectNode) emptyFileEntity));
+        JsonNode emptyFileEntity = objectMapper.readTree(entitiesDir.resolve(currentFileName).toFile());
+        assertFalse(hubCentralConverter.entityModelValidForConversion(currentFileName, emptyFileEntity));
     }
 
     @Test
-    void testEntityModelRequiresConversion() {
+    void testEntityModelRequiresConversion() throws Exception {
         HubProject hubProject = getHubConfig().getHubProject();
         HubCentralConverter hubCentralConverter = new HubCentralConverter(getHubConfig());
         Path entitiesDir = hubProject.getHubEntitiesDir();
 
         String currentFileName = "Customer.entity.json";
         JsonNode customerEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) customerEntity));
+        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, customerEntity));
 
         currentFileName = "NoInfo.entity.json";
         JsonNode noInfoEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noInfoEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noInfoEntity));
 
         currentFileName = "NoInfoTitle.entity.json";
         JsonNode noInfoTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noInfoTitleEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noInfoTitleEntity));
 
         currentFileName = "EmptyTitle.entity.json";
         JsonNode emptyTitleEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) emptyTitleEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, emptyTitleEntity));
 
         currentFileName = "NoDefinitions.entity.json";
         JsonNode noDefinitionsEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noDefinitionsEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noDefinitionsEntity));
 
         currentFileName = "NoEntityType.entity.json";
         JsonNode noEntityTypeEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noEntityTypeEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noEntityTypeEntity));
 
         currentFileName = "NoProperties.entity.json";
         JsonNode noPropertiesEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noPropertiesEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noPropertiesEntity));
 
         currentFileName = "NoIndexArrays.entity.json";
         JsonNode noIndexArraysEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) noIndexArraysEntity));
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, noIndexArraysEntity));
 
         currentFileName = "MissingIndexedProperty.entity.json";
         JsonNode missingIndexedPropertyEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) missingIndexedPropertyEntity));
+        assertTrue(hubCentralConverter.entityModelRequiresConversion(currentFileName, missingIndexedPropertyEntity));
 
         currentFileName = "EmptyFile.entity.json";
-        JsonNode emptyFileEntity = readJsonObject(entitiesDir.resolve(currentFileName).toFile());
-        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, (ObjectNode) emptyFileEntity));
+        JsonNode emptyFileEntity = objectMapper.readTree(entitiesDir.resolve(currentFileName).toFile());
+        assertFalse(hubCentralConverter.entityModelRequiresConversion(currentFileName, emptyFileEntity));
     }
 
     @Test

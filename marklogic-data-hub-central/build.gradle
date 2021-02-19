@@ -4,7 +4,7 @@ buildscript {
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
-		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.2.8.RELEASE"
+		classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.8.RELEASE"
 		classpath "com.github.node-gradle:gradle-node-plugin:2.2.4"
         classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.0.2'
 	}
@@ -79,7 +79,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.7.2"
 
     // Excluding okhttp3 dependency as it bumps down the dependency from 4.4.0 to 3.x
-    implementation ('com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:2.2.4') {
+    implementation ('com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:2.3.5') {
         exclude group: "com.squareup.okhttp3", module: "okhttp"
     }
     implementation 'com.azure:azure-storage-blob:12.8.0'
