@@ -203,6 +203,7 @@ def runCypressE2e(){
             rm -rf $M2_LOCAL_REPO || true
             mkdir -p $M2_LOCAL_REPO
             cd $WORKSPACE/data-hub;
+            ./gradlew marklogic-data-hub-api:build -x test -i;
             ./gradlew publishToMavenLocal -Dmaven.repo.local=$M2_LOCAL_REPO -PnodeDistributionBaseUrl=http://node-mirror.eng.marklogic.com:8080/
             '''
         )
