@@ -23,7 +23,7 @@ jest.mock("react-router-dom", () => ({
 const entityModel = {model: customerEntityDef.definitions};
 const defaultProps = {
   mergingStepsArray: mergingStepsArray,
-  flows: [{name: "customerJSONFlow"}, {name: "customerXMLFlow"}],
+  flows: [{name: "customerJSONFlow", steps: [{stepName: "mergeCustomers"}, {stepName: "mergeCustomers123"}]}, {name: "customerXMLFlow", steps: [{stepName: "mergeCustomers123"}]}],
   entityName: customerEntityDef.info.title,
   deleteMergingArtifact: jest.fn(),
   createMergingArtifact: jest.fn(),
@@ -56,10 +56,12 @@ describe("Merging cards view component", () => {
     expect(getByLabelText("icon: plus-circle")).toBeInTheDocument();
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
+    expect(getByText("mergeCustomers123")).toBeInTheDocument();
 
     //Verify if the card renders fine
     expect(getByTestId("mergeCustomers-edit")).toBeInTheDocument();
     expect(getByTestId("mergeCustomersEmpty-edit")).toBeInTheDocument();
+    expect(getByTestId("mergeCustomers123-edit")).toBeInTheDocument();
     expect(queryAllByRole("disabled-delete-merging")).toHaveLength(0);
 
     // check if delete tooltip appears and user is able to proceed with deletion of the step
@@ -160,8 +162,8 @@ describe("Merging cards view component", () => {
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
-  it("can add a step to new flow from run menu", () => {
-    const {getByText, getByTestId} =  render(
+  it("can add/run a step in a new flow from run button", () => {
+    const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
       </Router>
@@ -170,8 +172,8 @@ describe("Merging cards view component", () => {
     expect(getByText("mergeCustomers")).toBeInTheDocument();
     userEvent.click(getByTestId("mergeCustomers-run"));
     wait(() => {
-      expect(getByText("Run Step in a new flow")).toBeInTheDocument();
-      userEvent.click(getByText("Run Step in a new flow"));
+      expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+      userEvent.click(getByTestId("mergeCustomers-run-toNewFlow"));
     });
     wait(() => {
       expect(screen.getByText("NewFlow")).toBeInTheDocument();
@@ -183,42 +185,52 @@ describe("Merging cards view component", () => {
   });
 
   it("can add a step to an existing flow", () => {
-    const {getByText, getByTestId, getByLabelText, queryByText} =  render(
+    const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
       </Router>
     );
 
-    expect(getByText("mergeCustomers")).toBeInTheDocument();
+    expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
 
     //mouseover to trigger flow menu
-    fireEvent.mouseOver(getByTestId("Customer-mergeCustomers-step"));
+    fireEvent.mouseOver(getByTestId("Customer-mergeCustomersEmpty-step"));
     wait(() => {
-      expect(getByText("Run Step in an existing flow")).toBeInTheDocument();
-      //mouse out for card view
-      fireEvent.mouseOut(getByTestId("Customer-mergeCustomers-step"));
+      expect(getByText("Add step to an existing flow")).toBeInTheDocument();
+      fireEvent.click(getByTestId(`mergeCustomersEmpty-flowsList`));
+      fireEvent.click(getByLabelText("customerJSONFlow-option"));
     });
 
     wait(() => {
-      expect(queryByText("Run Step in an existing flow")).toBeNull();
-      fireEvent.mouseOver(getByTestId("Customer-mergeCustomers-step"));
-    });
-
-    wait(() => {
-      expect(getByText("Run Step in an existing flow")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomers-flowsList"));
-      userEvent.click(getByLabelText("customerJSONFlow-option"));
-    });
-
-    wait(() => {
-      expect(getByLabelText("step-not-in-flow-run")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomers-to-test-Confirm"));
+      expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
+      userEvent.click(getByTestId("mergeCustomersEmpty-to-test-Confirm"));
     });
     // Check if the /tiles/run/add route has been called
     wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
   });
 
-  it("can add a step to an existing flow from run menu", () => {
+  it("can run a step in an existing flow where step DOES NOT exist", () => {
+    const {getByText, getByTestId, getByLabelText} =  render(
+      <Router>
+        <MergingCard {...defaultProps}/>
+      </Router>
+    );
+
+    expect(getByText("mergeCustomersEmpty")).toBeInTheDocument();
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("mergeCustomersEmpty-run"));
+
+    //Modal with options to run in an existing or new flow should appear
+    expect(getByLabelText("step-in-no-flows-confirmation")).toBeInTheDocument();
+
+    //Select flow to add and run step in
+    fireEvent.click(getByTestId("customerJSONFlow-run-step"));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
+  });
+
+  it("can run a step in an existing flow where step DOES exist", () => {
     const {getByText, getByTestId, getByLabelText} =  render(
       <Router>
         <MergingCard {...defaultProps}/>
@@ -226,18 +238,38 @@ describe("Merging cards view component", () => {
     );
 
     expect(getByText("mergeCustomers")).toBeInTheDocument();
-    userEvent.click(getByTestId("mergeCustomers-run"));
-    wait(() => {
-      expect(getByText("Run Step in an existing flow")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomers-run-flowsList"));
-      userEvent.click(getByLabelText("customerJSONFlow-run-option"));
-    });
-    wait(() => {
-      expect(getByLabelText("step-not-in-flow-run")).toBeInTheDocument();
-      userEvent.click(getByTestId("mergeCustomers-to-test-Confirm"));
-    });
-    // Check if the /tiles/run/add route has been called
-    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("mergeCustomers-run"));
+
+    //Confirmation modal for directly running the step in its flow should appear
+    expect(getByLabelText("run-step-one-flow-confirmation")).toBeInTheDocument();
+
+    //Click Continue to confirm
+    fireEvent.click(getByLabelText("continue-confirm"));
+
+    //Check if the /tiles/run/run-step route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/run-step"); });
+  });
+
+  it("can run a step in an existing flow where step exists in MORE THAN ONE flow", () => {
+    const {getByText, getByTestId, getByLabelText} =  render(
+      <Router>
+        <MergingCard {...defaultProps}/>
+      </Router>
+    );
+
+    expect(getByText("mergeCustomers123")).toBeInTheDocument();
+    //Click play button 'Run' icon
+    fireEvent.click(getByTestId("mergeCustomers123-run"));
+
+    //Modal with list of flows where step exists to select one to run in
+    expect(getByLabelText("run-step-mult-flows-confirmation")).toBeInTheDocument();
+
+    //Select flow to run step in
+    fireEvent.click(getByTestId("customerXMLFlow-run-step"));
+
+    //Check if the /tiles/run/add-run route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add-run"); });
   });
 
   it("can open step settings and navigate to merge step details", () => {

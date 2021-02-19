@@ -116,18 +116,34 @@ const Flows: React.FC<Props> = (props) => {
     }
     // Get the latest job info when a step is added to an existing flow from Curate or Load Tile
     if (JSON.stringify(props.flows) !== JSON.stringify([])) {
+      let stepsInFlow = props.flows[props.newStepToFlowOptions?.flowsDefaultKey]?.steps;
       if (props.newStepToFlowOptions && props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.existingFlow && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
         getFlowWithJobInfo(props.newStepToFlowOptions.flowsDefaultKey);
         if (startRun) {
           //run step after step is added to an existing flow
           if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
             setShowUploadError(false);
-            setRunningStep(props.flows[props.newStepToFlowOptions.flowsDefaultKey].steps[props.flows[props.newStepToFlowOptions.flowsDefaultKey].steps.length - 1]);
+            setRunningStep(stepsInFlow[stepsInFlow.length - 1]);
             setRunningFlow(props.newStepToFlowOptions?.flowName);
             openFilePicker();
             setStartRun(false);
           } else {
-            props.runStep(props.newStepToFlowOptions?.flowName, props.flows[props.newStepToFlowOptions.flowsDefaultKey].steps[props.flows[props.newStepToFlowOptions.flowsDefaultKey].steps.length - 1]);
+            props.runStep(props.newStepToFlowOptions?.flowName, stepsInFlow[stepsInFlow.length - 1]);
+            setStartRun(false);
+          }
+        }
+      //run step that is already inside a flow
+      } else if (props.newStepToFlowOptions && !props.newStepToFlowOptions.addingStepToFlow && props.newStepToFlowOptions.startRunStep && props.newStepToFlowOptions.flowsDefaultKey && props.newStepToFlowOptions.flowsDefaultKey !== -1) {
+        let runStepNum = stepsInFlow.findIndex(s => s.stepName === props.newStepToFlowOptions?.newStepName);
+        if (startRun) {
+          if (props.newStepToFlowOptions.stepDefinitionType === "ingestion") {
+            setShowUploadError(false);
+            setRunningStep(stepsInFlow[runStepNum]);
+            setRunningFlow(props.newStepToFlowOptions?.flowName);
+            openFilePicker();
+            setStartRun(false);
+          } else {
+            props.runStep(props.newStepToFlowOptions?.flowName, stepsInFlow[runStepNum]);
             setStartRun(false);
           }
         }
@@ -141,8 +157,6 @@ const Flows: React.FC<Props> = (props) => {
             setRunningStep(props.flows[index].steps[0]);
             setRunningFlow(addedFlowName);
             openFilePicker();
-            setAddedFlowName("");
-            setStartRun(false);
           } else {
             props.runStep(addedFlowName, props.flows[index].steps[0]);
             setAddedFlowName("");
@@ -279,12 +293,17 @@ const Flows: React.FC<Props> = (props) => {
 
   const openFilePicker = () => {
     open();
+    setStartRun(false);
   };
 
   useEffect(() => {
     acceptedFiles.forEach(file => {
       setFileList(prevState => [...prevState, file]);
     });
+    if (startRun) {
+      setAddedFlowName("");
+      setStartRun(false);
+    }
   }, [acceptedFiles]);
 
   useEffect(() => {

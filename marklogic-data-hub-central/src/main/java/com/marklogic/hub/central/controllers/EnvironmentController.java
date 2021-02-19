@@ -16,6 +16,7 @@
 package com.marklogic.hub.central.controllers;
 
 import com.marklogic.hub.central.HubCentral;
+import com.marklogic.hub.central.pendo.PendoKeyProvider;
 import com.marklogic.hub.hubcentral.HubCentralManager;
 import com.marklogic.hub.impl.DataHubImpl;
 import com.marklogic.hub.impl.VersionInfo;
@@ -43,6 +44,9 @@ public class EnvironmentController extends BaseController {
 
     @Autowired
     Environment environment;
+
+    @Autowired
+    PendoKeyProvider pendoKeyProvider;
 
     @RequestMapping(value = "/api/environment/downloadHubCentralFiles", produces = "application/zip", method = RequestMethod.GET)
     @Secured("ROLE_downloadProjectFiles")
@@ -86,7 +90,7 @@ public class EnvironmentController extends BaseController {
         info.dataHubVersion = versionInfo.getHubVersion();
         info.marklogicVersion = versionInfo.getMarkLogicVersion();
         info.host = hubCentral.getHost();
-        info.pendoKey = "dummy-key-f7d836d7-2afa-40a6-44e4-f32f58cb35a";
+        info.pendoKey = pendoKeyProvider.getPendoKey();
         info.sessionTimeout = environment.getProperty("server.servlet.session.timeout");
         Object hubCentralSessionToken = session.getAttribute("hubCentralSessionToken");
         if (hubCentralSessionToken != null) {

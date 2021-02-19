@@ -43,6 +43,13 @@
     border: none;
 }
 
+.plusIconNewFlow {
+  font-size: 15px;
+  color: #44499C;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
 .settingsIcon {
     color: #44499C;
     font-size: 19px;
@@ -50,6 +57,9 @@
 
 .stepLink {
     color: #44499C;
+    &:hover{
+        color: var(--hoverColor);
+    }
 }
 
 .stepLinkExisting {
@@ -109,6 +119,32 @@
     &:hover{
         color: var(--hoverColor);
     }
+}
+
+.flowSelectGrid {
+  font-size: 16px;
+  padding-top: 30px;
+}
+
+.runNewFlow {
+  display: flex;
+}
+
+.verticalDiv {
+  margin-left: 15px;
+  height: 55vh;
+}
+
+.stepLink:hover {
+  cursor: pointer;
+  .plusIconNewFlow {
+    color: var(--hoverColor);
+  }
+}
+
+.newFlowStepLink {
+  margin-left: 5px;
+  color: var(--hoverColor);
 }
 
 .sourceFormatFS{

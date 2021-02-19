@@ -128,7 +128,7 @@ class BrowsePage {
   }
 
   clickClearFacetSearchSelection(facet: string) {
-    cy.findByTestId(`clear-${facet}`).click();
+    cy.findByTestId(`clear-${facet}`).trigger("mouseover").dblclick({force: true});
     this.waitForSpinnerToDisappear();
   }
 
@@ -615,6 +615,10 @@ class BrowsePage {
     return cy.findByTestId("export-warning");
   }
 
+  getStructuredDataCancel() {
+    return cy.get(".ant-modal-footer > div > :nth-child(1)");
+  }
+
   //get snippet view result list
   getSnippetViewResult() {
     return cy.get("#snippetViewResult");
@@ -663,6 +667,18 @@ class BrowsePage {
 
   selectCreatedOnRangeOption(option: string) {
     return cy.findByTestId(`date-select-option-${option}`).click();
+  }
+
+  showMoreCollection() {
+    cy.findByTestId("show-more-collection").click({force: true});
+  }
+
+  backToResults() {
+    cy.get(".ant-page-header-back-button").click({force: true});
+  }
+
+  sliderMinimum() {
+    return cy.findByTestId("numeric-slider-min");
   }
 }
 

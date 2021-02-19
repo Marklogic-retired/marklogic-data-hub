@@ -43,7 +43,7 @@ const flowsAdd = [
     name: "FlowStepNoExist",
     steps: [
       {
-        stepNume: "1",
+        stepNum: "1",
         stepName: "testLoad456", // has step NOT IN loadData
         stepDefinitionType: "Load Data",
         stepId: "testLoad456-ingestion",
@@ -55,14 +55,33 @@ const flowsAdd = [
     name: "FlowStepExist",
     steps: [
       {
-        stepNume: "2",
+        stepNum: "1",
         stepName: "testLoadXML", // has step IN loadData
         stepDefinitionType: "Load Data",
         stepId: "testLoadXML-ingestion",
         format: "xml"
       },
+      {
+        stepNum: "2",
+        stepName: "testLoad", // step exists in more than one flow
+        stepDefinitionType: "Load Data",
+        stepId: "testLoad-ingestion",
+        format: "json"
+      }
     ]
   },
+  {
+    name: "FlowStepMultExist",
+    steps: [
+      {
+        stepNum: "1",
+        stepName: "testLoad", // step exists in more than one flow
+        stepDefinitionType: "Load Data",
+        stepId: "testLoad-ingestion",
+        format: "json",
+      }
+    ]
+  }
 ];
 
 const loadData = {

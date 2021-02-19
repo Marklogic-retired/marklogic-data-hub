@@ -104,7 +104,7 @@ describe("Tiles View component tests for Developer user", () => {
 
     fireEvent.click(getByText("Customer"));
 
-    fireEvent.mouseOver(getByText("Mapping2"));
+    fireEvent.mouseOver(getByText("Mapping3"));
 
     expect(getByText("Add step to a new flow"));
     expect(getByText("Add step to an existing flow"));
