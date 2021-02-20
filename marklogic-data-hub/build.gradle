@@ -208,9 +208,9 @@ task generateSparkInterface(type: com.marklogic.client.tools.gradle.EndpointProx
 // When publishing the DHF core jar, or building it for release, it needs to have the compiled trace-ui files in it so
 // that the trace-ui feature is available for those users that are aware of it. Otherwise, copyUIAssets is not executed as it can take a couple
 // minutes to finish, and it's not typically needed during local development.
-if (gradle.startParameter.taskNames*.toLowerCase().contains("publish") || gradle.startParameter.taskNames*.toLowerCase().contains("build")) {
-    processResources.dependsOn copyUIAssets
-}
+// if (gradle.startParameter.taskNames*.toLowerCase().contains("publish") || gradle.startParameter.taskNames*.toLowerCase().contains("build")) {
+//     processResources.dependsOn copyUIAssets
+// }
 
 tasks.clean.dependsOn cleanUI
 
