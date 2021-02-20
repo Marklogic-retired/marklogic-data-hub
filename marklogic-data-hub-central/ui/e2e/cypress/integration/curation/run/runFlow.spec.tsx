@@ -18,6 +18,7 @@ describe("Run Tile tests", () => {
 
   after(() => {
     cy.deleteRecordsInFinal("master-xml-person", "mapPersonXML");
+    cy.deleteFlows("testPersonXML");
     cy.resetTestUser();
   });
 

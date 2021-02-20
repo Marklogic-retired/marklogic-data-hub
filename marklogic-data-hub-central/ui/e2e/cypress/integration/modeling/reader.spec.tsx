@@ -13,7 +13,6 @@ import LoginPage from "../../support/pages/login";
 import "cypress-wait-until";
 
 describe("Entity Modeling: Reader Role", () => {
-
   //login with valid account
   beforeEach(() => {
     cy.visit("/");
@@ -23,12 +22,10 @@ describe("Entity Modeling: Reader Role", () => {
     cy.waitUntil(() => toolbar.getModelToolbarIcon()).click();
     entityTypeTable.waitForTableToLoad();
   });
-
   after(() => {
     //resetting the test user back to only have 'hub-central-user' role
     cy.resetTestUser();
   });
-
   it("can navigate by clicking instance count and last processed, can not create, edit, or delete entity models", () => {
     // Removed navigation tests unitl DHFPROD-6152 is resolved
 
@@ -50,55 +47,43 @@ describe("Entity Modeling: Reader Role", () => {
     // tiles.getModelTile().should('exist');
 
     modelPage.getAddEntityButton().click({force: true});
-    cy.wait(100);
     entityTypeModal.getAddButton().should("not.be.visible");
 
     modelPage.getSaveAllButton().click({force: true});
-    cy.wait(100);
     confirmationModal.getSaveAllEntityText().should("not.be.visible");
 
     modelPage.getRevertAllButton().click({force: true});
-    cy.wait(100);
     confirmationModal.getRevertEntityText().should("not.be.visible");
 
     entityTypeTable.getEntity("Customer").click({force: true});
-    cy.wait(100);
     propertyModal.getSubmitButton().should("not.be.visible");
 
     entityTypeTable.getDeleteEntityIcon("Customer").click({force: true});
-    cy.wait(100);
     confirmationModal.getDeleteEntityStepText().should("not.be.visible");
 
     entityTypeTable.getRevertEntityIcon("Customer").click({force: true});
-    cy.wait(100);
     confirmationModal.getRevertEntityText().should("not.be.visible");
 
     entityTypeTable.getSaveEntityIcon("Customer").click({force: true});
-    cy.wait(100);
     confirmationModal.getSaveEntityText().should("not.be.visible");
 
     entityTypeTable.getExpandEntityIcon("Customer").click();
     propertyTable.getAddPropertyButton("Customer").should("be.visible").click({force: true});
-    cy.wait(100);
     propertyModal.getSubmitButton().should("not.be.visible");
 
     propertyTable.getDeletePropertyIcon("Customer", "pin").click({force: true});
-    cy.wait(100);
     confirmationModal.getDeletePropertyStepWarnText().should("not.be.visible");
 
     propertyTable.getAddPropertyToStructureType("Address").click({force: true});
-    cy.wait(100);
     propertyModal.getStructuredTypeName().should("not.be.visible");
 
     propertyTable.expandStructuredTypeIcon("shipping").click();
     propertyTable.expandStructuredTypeIcon("zip").click();
 
     propertyTable.getAddPropertyToStructureType("Zip").click({force: true});
-    cy.wait(100);
     propertyModal.getStructuredTypeName().should("not.be.visible");
 
     propertyTable.getDeleteStructuredPropertyIcon("Customer", "Zip", "fiveDigit").click({force: true});
-    cy.wait(100);
     confirmationModal.getDeletePropertyStepWarnText().should("not.be.visible");
   });
 });

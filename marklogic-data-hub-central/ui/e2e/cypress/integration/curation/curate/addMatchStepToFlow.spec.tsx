@@ -33,11 +33,9 @@ describe("Add Matching step to a flow", () => {
     cy.deleteFlows("matchE2ETest", "matchE2ETestRun");
     cy.resetTestUser();
   });
-  it("Navigating to curate tab", () => {
+  it("Navigating to Customer Match tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
-  });
-  it("Open Customer entity", () => {
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
@@ -51,20 +49,18 @@ describe("Add Matching step to a flow", () => {
     cy.waitForAsyncRequest();
     curatePage.verifyStepNameIsVisible(matchStep);
   });
-  it("Create match step with duplicate name", () => {
+  it("Create match step with duplicate name and verify duplicate name modal is displayed", () => {
     cy.waitUntil(() => curatePage.addNewStep()).click();
     createEditStepDialog.stepNameInput().type(matchStep);
     createEditStepDialog.setSourceRadio("Query");
     createEditStepDialog.setQueryInput("test");
     createEditStepDialog.saveButton("matching").click();
     cy.waitForAsyncRequest();
-  });
-  it("Verify duplicate name modal is displayed", () => {
     loadPage.duplicateStepErrorMessage();
     loadPage.confirmationOptions("OK").click();
     loadPage.duplicateStepErrorMessageClosed();
   });
-  it("Add the Match step to new flow and validate the step was added", () => {
+  it("Add the Match step to new flow and Run the step(new)", () => {
     curatePage.addToNewFlow("Customer", matchStep);
     cy.findByText("New Flow").should("be.visible");
     runPage.setFlowName(flowName1);
@@ -72,33 +68,27 @@ describe("Add Matching step to a flow", () => {
     loadPage.confirmationOptions("Save").click();
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
-  });
-  it("Run the match step and verify success message(new)", () => {
     runPage.runStep(matchStep).click();
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
-  it("Delete the step", () => {
+  it("Delete the step and Navigate back to match tab", () => {
     runPage.deleteStep(matchStep).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-  });
-  it("Navigate back to match tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
     curatePage.selectMatchTab("Customer");
   });
-  it("Add the Match step to an existing flow and validate the step was added", () => {
+  it("Add the Match step to an existing flow and Run the step(existing)", () => {
     curatePage.openExistingFlowDropdown("Customer", matchStep);
     curatePage.getExistingFlowFromDropdown(flowName1).click();
     curatePage.addStepToFlowConfirmationMessage();
     curatePage.confirmAddStepToFlow(matchStep, flowName1);
     cy.waitForAsyncRequest();
     cy.verifyStepAddedToFlow("Match", matchStep);
-  });
-  it("Run the match step and verify success message(existing)", () => {
     runPage.runStep(matchStep).click();
     cy.waitForAsyncRequest();
     cy.verifyStepRunResult("success", "Matching", matchStep);
@@ -128,12 +118,10 @@ describe("Add Matching step to a flow", () => {
     cy.verifyStepRunResult("success", "Matching", matchStep);
     tiles.closeRunMessage();
   });
-  it("Delete the match step", () => {
+  it("Delete the match step and Navigate back to match tab", () => {
     runPage.deleteStep(matchStep).click();
     loadPage.confirmationOptions("Yes").click();
     cy.waitForAsyncRequest();
-  });
-  it("Navigating to match tab", () => {
     cy.waitUntil(() => toolbar.getCurateToolbarIcon()).click();
     cy.waitUntil(() => curatePage.getEntityTypePanel("Customer").should("be.visible"));
     curatePage.toggleEntityTypeId("Customer");
