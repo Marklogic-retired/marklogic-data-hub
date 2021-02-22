@@ -111,8 +111,8 @@ Cypress.Commands.add("logout", () => {
 });
 
 Cypress.Commands.add("verifyStepAddedToFlow", (stepType, stepName) => {
-  cy.findAllByText(stepType).last().should("be.visible");
-  cy.findAllByText(stepName).last().should("be.visible");
+  cy.findByText(stepType).should("be.visible");
+  cy.findByText(stepName).should("be.visible");
 });
 
 Cypress.Commands.add("waitForModalToDisappear", () => {
