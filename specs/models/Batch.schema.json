@@ -55,10 +55,33 @@
       "type": "string"
     },
     "writeTimeStamp": {
-      "type": "string"
+      "type": "string",
+      "description": "Captures date and time of the first write that occurs ('first' is only relevant when multiple steps are run)"
     },
     "writeTrnxID": {
-      "type": "string"
+      "type": "string",
+      "description": "Captures transaction ID of the first write that occurs ('first' is only relevant when multiple steps are run)"
+    },
+    "writeTransactions": {
+      "type": "object",
+      "description": "Captures information about each transaction that writes documents outputted by a step",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9]+$": {
+          "type": "object",
+          "description": "Name of the database to which the transaction wrote",
+          "properties": {
+            "transactionId": {
+              "type": "string",
+              "description": "ID of the transaction, as returned by xdmp.transaction"
+            },
+            "transactionDateTime": {
+              "type": "string",
+              "description": "Date and time at which the transaction was written"
+            }  
+          }
+        }
+      }
     },
     "uris": {
       "type": "array",
@@ -106,6 +129,27 @@
         "uri": {
           "type": "string",
           "description": "Will be populated when the step configuration does not have 'acceptsBatch' set to 'true'"
+        }
+      }
+    },
+    "stepResults": {
+      "description": "When steps are connected, an object will exist for each step that was run on the batch",
+      "type": "array",
+      "items": {
+        "description": "In addition to below properties, contains each of the following top-level properties: stepId, step, stepNumber, uris, processedItemHashes, fileName, lineNumber, errorStack, error, completeError",
+        "type": "object",
+          "stepStartedDateTime": {
+            "type": "string",
+            "description": "dateTime at which processing of the step started"
+          },
+          "stepEndedDateTime": {
+            "type": "string",
+            "description": "dateTime at which processing of the step ended"
+          },
+          "stepDuration": {
+            "type": "string",
+            "description": "Difference, as a duration, between stepStartedDateTime and stepEndedDateTime"
+          }
         }
       }
     }
