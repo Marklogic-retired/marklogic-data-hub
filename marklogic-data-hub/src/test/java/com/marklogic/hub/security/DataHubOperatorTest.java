@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * This includes most of the privileges inherited by flow-operator-role, as this role is intended to replace that
@@ -43,6 +44,7 @@ public class DataHubOperatorTest extends AbstractSecurityTest {
 
     @Test
     void testQBE(){
+        assumeTrue(isVersionCompatibleWith520Roles());
         writeFinalJsonDoc("doc1.json", "{\"itemPrice\": 10}");
         writeFinalJsonDoc("doc2.json", "{\"itemPrice\": 5}");
 
