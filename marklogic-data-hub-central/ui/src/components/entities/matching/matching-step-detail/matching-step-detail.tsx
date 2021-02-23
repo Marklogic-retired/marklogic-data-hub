@@ -91,8 +91,7 @@ const MatchingStepDetail: React.FC = () => {
   const matchRuleSetOptions = matchingStep.matchRulesets && matchingStep.matchRulesets.map((i) => {
     const firstMatchRule = i.matchRules[0];
     const firstMatchRuleType = firstMatchRule ? firstMatchRule.matchType : "";
-    // reduce is a special case that applies to an entire ruleset
-    const rulesetType = i.reduce ? "reduce" : firstMatchRuleType;
+    const rulesetType = firstMatchRuleType;
     const matchRuleOptionsObject = {
       props: [{
         prop: i.name.split(" -")[0],
