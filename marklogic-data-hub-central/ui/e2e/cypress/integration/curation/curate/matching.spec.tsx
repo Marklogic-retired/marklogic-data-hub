@@ -158,10 +158,10 @@ describe("Matching", () => {
   it("Edit ruleset", () => {
     multiSlider.editOption("customerId");
     cy.contains("Edit Match Ruleset for Single Property");
-    rulesetSingleModal.selectMatchTypeDropdown("reduce");
+    rulesetSingleModal.selectMatchTypeDropdown("exact");
     rulesetSingleModal.saveButton().click();
     cy.waitForAsyncRequest();
-    cy.waitUntil(() => cy.findByLabelText("customerId-reduce").should("have.length.gt", 0));
+    cy.waitUntil(() => cy.findByLabelText("customerId-exact").should("have.length.gt", 0));
   });
   it("Delele ruleset", () => {
     multiSlider.deleteOption("customerId");
