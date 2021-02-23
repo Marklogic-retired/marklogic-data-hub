@@ -24,9 +24,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     @Value("${mlHost:localhost}")
     String host;
 
-    @Value("${hubUseLocalDefaults:false}")
-    boolean useLocalDefaults;
-
     /**
      * When the application starts up, initialize a project at the configured project path. This will go away before
      * 5.3.0, once Hub Central no longer depends on a HubProject. In the meantime, we need this as a bridge.
@@ -34,10 +31,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         logger.info("Will connect to MarkLogic host: " + host);
-
-        if (useLocalDefaults) {
-            logger.info("Local defaults of digest authentication and no SSL will be used when connecting to MarkLogic");
-        }
         logger.info("Hub Central is available at port: " + environment.getProperty("server.port"));
     }
 
@@ -68,11 +61,6 @@ public class HubCentral extends LoggingObject implements InitializingBean {
         Properties primaryProperties = new Properties();
         primaryProperties.setProperty("mlUsername", username);
         primaryProperties.setProperty("mlPassword", password);
-
-        if (useLocalDefaults) {
-            primaryProperties.setProperty("hubDhs", "false");
-            primaryProperties.setProperty("hubSsl", "false");
-        }
 
         return propertyName -> {
             String value = primaryProperties.getProperty(propertyName);

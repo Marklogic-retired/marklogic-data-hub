@@ -53,7 +53,7 @@ def dhfCypressE2ETests(String mlVersion, String type){
                     cd marklogic-data-hub-central/ui/e2e;
                     chmod +x setup.sh;
                     ./setup.sh dhs=false mlHost=localhost;
-                    nohup java -jar $WORKSPACE/$WAR_NAME --hubUseLocalDefaults=true >> nohup.out &
+                    nohup java -jar $WORKSPACE/$WAR_NAME >> nohup.out &
                     sleep 10s;
                     mkdir -p output;
                     docker build . -t cypresstest;
@@ -191,7 +191,6 @@ def runCypressE2e(){
             export JAVA_HOME=`eval echo "$JAVA_HOME_DIR"`;
             sudo mladmin install-hubcentral $WORKSPACE/*central*.rpm;
             sudo mladmin add-javahome-hubcentral $JAVA_HOME
-            sudo mladmin add-hubcentral-property hubUseLocalDefaults=true
             sudo mladmin start-hubcentral
         ''')
         sh(script:'''#!/bin/bash
