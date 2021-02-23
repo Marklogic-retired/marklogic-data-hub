@@ -21,10 +21,11 @@
  * resides in this module to promote reuse and also simplify upgrades as Entity Services changes within MarkLogic.
  */
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
+const config = require("/com.marklogic.hub/config.sjs");
 const consts = require("/data-hub/5/impl/consts.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 /**
  * @return an array of strings, one for each EntityType
@@ -209,9 +210,8 @@ function getModelCollection() {
 function deleteModel(entityName) {
   const uri = getModelUri(entityName);
   if (fn.docAvailable(uri)) {
-    const dataHub = DataHubSingleton.instance();
-    [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE].forEach(db => {
-      dataHub.hubUtils.deleteDocument(uri, db);
+    [config.STAGINGDATABASE, config.FINALDATABASE].forEach(db => {
+      hubUtils.deleteDocument(uri, db);
     });
   }
 }
@@ -286,16 +286,15 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
         });
     });
 
-  const dataHub = DataHubSingleton.instance();
   const permissions = getModelPermissions();
 
   // This does not reuse writeModel because we do not want to hit the xdmp.documentInsert line. This requires the
   // deleteModel.sjs endpoint to then have declareUpdate. But when that is added, the call to deleteDocument then hangs.
-  const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
+  const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
   [...affectedModels].forEach(model => {
     databases.forEach(db => {
       const entityName = getModelName(model);
-      dataHub.hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
     });
   });
 }
@@ -308,8 +307,7 @@ function deleteModelReferencesInOtherModels(entityModelUri, entityTypeId) {
  * @param model
  */
 function writeModel(entityName, model) {
-  const dataHub = DataHubSingleton.instance();
-  writeModelToDatabases(entityName, model, [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE]);
+  writeModelToDatabases(entityName, model, [config.STAGINGDATABASE, config.FINALDATABASE]);
 }
 
 /**
@@ -334,9 +332,7 @@ function writeModelToDatabases(entityName, model, databases) {
     validateModelDefinitions(model.definitions);
   }
 
-  const dataHub = DataHubSingleton.instance();
-
-  dataHub.hubUtils.replaceLanguageWithLang(model);
+  hubUtils.replaceLanguageWithLang(model);
 
   const permissions = getModelPermissions();
 
@@ -347,19 +343,17 @@ function writeModelToDatabases(entityName, model, databases) {
     if (db === xdmp.databaseName(xdmp.database())) {
       xdmp.documentInsert(entityLib.getModelUri(entityName), model, permissions, getModelCollection());
     } else {
-      dataHub.hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
+      hubUtils.writeDocument(entityLib.getModelUri(entityName), model, permissions, getModelCollection(), db)
     }
   });
 }
 
 function getModelPermissions() {
-  const dataHub = DataHubSingleton.instance();
-
   let permsString = "%%mlEntityModelPermissions%%";
   permsString = permsString.indexOf("%mlEntityModelPermissions%") > -1 ?
     "data-hub-entity-model-reader,read,data-hub-entity-model-writer,update" :
     permsString;
-  return dataHub.hubUtils.parsePermissions(permsString);
+  return hubUtils.parsePermissions(permsString);
 }
 
 function validateModelDefinitions(definitions) {

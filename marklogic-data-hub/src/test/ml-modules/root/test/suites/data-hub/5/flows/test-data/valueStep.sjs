@@ -1,5 +1,6 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function main(contentItem, options) {
   const collectionValue = contentItem.uri;
@@ -11,7 +12,7 @@ function main(contentItem, options) {
     value: datahub.flow.flowUtils.makeEnvelope(instance, {}, [], "json"),
     context: {
       collections: ["test-data"],
-      permissions: datahub.hubUtils.parsePermissions("data-hub-operator,read,data-hub-operator,update")
+      permissions: hubUtils.parsePermissions("data-hub-operator,read,data-hub-operator,update")
     }
   };
 }

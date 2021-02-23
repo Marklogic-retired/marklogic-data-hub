@@ -12,6 +12,8 @@
  */
 'use strict';
 
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
 class Jobs {
 
   constructor(config = null, datahub = null) {
@@ -20,19 +22,12 @@ class Jobs {
     }
     this.config = config;
     this.jobPermissions = this.buildJobPermissions(config);
-
-    if (datahub) {
-      this.hubutils = datahub.hubUtils;
-    } else {
-      const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-      this.hubutils = new HubUtils();
-    }
   }
 
   createJob(flowName, id = null ) {
     let job = null;
     if(!id) {
-      id = this.hubutils.uuid();
+      id = sem.uuidString();
     }
     job = {
       job: {
@@ -48,7 +43,7 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
+    hubUtils.writeDocument("/jobs/"+job.job.jobId+".json", job, this.jobPermissions,  ['Jobs','Job'], this.config.JOBDATABASE);
     return job;
   }
 
@@ -66,7 +61,7 @@ class Jobs {
 
   getJobDocWithId(jobId) {
     let jobUri = "/jobs/" + jobId + ".json";
-    return fn.head(this.hubutils.queryLatest(function() {
+    return fn.head(hubUtils.invokeFunction(function() {
         let jobDoc = cts.doc(jobUri);
         if (cts.contains(jobDoc, cts.jsonPropertyValueQuery("jobId", jobId))) {
           return jobDoc.toObject();
@@ -76,7 +71,7 @@ class Jobs {
   }
 
   getJobDocWithUri(jobUri) {
-    return fn.head(this.hubutils.queryLatest(function() {
+    return fn.head(hubUtils.invokeFunction(function() {
       if (xdmp.documentGetCollections(jobUri).includes("Job")) {
         return cts.doc(jobUri).toObject();
       }
@@ -88,7 +83,7 @@ class Jobs {
       cts.jsonPropertyValueQuery("jobId", jobId)]));
     for (let doc of uris) {
       if (fn.docAvailable(doc)){
-        this.hubutils.deleteDocument(doc, this.config.JOBDATABASE);
+        hubUtils.deleteDocument(doc, this.config.JOBDATABASE);
       }
     }
   }
@@ -117,7 +112,7 @@ class Jobs {
   getJobDocs(status) {
     let docs = [];
     let query = [cts.directoryQuery("/jobs/"), cts.jsonPropertyWordQuery("jobStatus", status.toString().toLowerCase())];
-    this.hubutils.queryLatest(function() {
+    hubUtils.invokeFunction(function() {
       let uris = cts.uris("", null ,cts.andQuery(query));
       for (let doc of uris) {
         docs.push(cts.doc(doc).toObject());
@@ -127,7 +122,7 @@ class Jobs {
   }
 
   getLatestJobDocPerFlow(flowNames = cts.values(cts.jsonPropertyReference("flow"))) {
-    return fn.head(this.hubutils.queryLatest(function(){
+    return fn.head(hubUtils.invokeFunction(function(){
       let timeQuery = [];
       for(let flowName of flowNames) {
         let time = cts.values(cts.jsonPropertyReference("timeStarted"), null, ["descending","limit=1"], cts.jsonPropertyRangeQuery("flow", "=", flowName));
@@ -219,7 +214,7 @@ class Jobs {
   }
 
   getJobDocsByFlow(flowName) {
-    return this.hubutils.queryLatest(function() {
+    return hubUtils.invokeFunction(function() {
       let query = [cts.collectionQuery('Job'),  cts.jsonPropertyValueQuery('flow', flowName, "case-insensitive")];
       let jobDoc = cts.search(cts.andQuery(query));
       if (jobDoc) {
@@ -247,7 +242,7 @@ class Jobs {
     let batch = {
       batch: {
         jobId: job.jobId,
-        batchId: this.hubutils.uuid(),
+        batchId: sem.uuidString(),
         flowName: job.flow,
         stepId : stepId,
         step: flowStep,
@@ -264,7 +259,7 @@ class Jobs {
       }
     };
 
-    this.hubutils.writeDocument(
+    hubUtils.writeDocument(
       "/jobs/batches/" + batch.batch.batchId + ".json", batch,
       this.jobPermissions, ['Jobs','Batch'], this.config.JOBDATABASE
     );
@@ -278,7 +273,7 @@ class Jobs {
     if (step) {
       query.push(cts.jsonPropertyValueQuery("stepNumber", step));
     }
-    this.hubutils.queryLatest(function () {
+    hubUtils.invokeFunction(function () {
       let uris = cts.uris("", null, cts.andQuery(query));
       for (let doc of uris) {
         docs.push(cts.doc(doc).toObject());
@@ -288,7 +283,7 @@ class Jobs {
   }
 
   getBatchDocWithUri(batchUri) {
-    return fn.head(this.hubutils.queryLatest(function() {
+    return fn.head(hubUtils.invokeFunction(function() {
       if (xdmp.documentGetCollections(batchUri).includes("Batch")) {
         return cts.doc(batchUri).toObject();
       }
@@ -296,7 +291,7 @@ class Jobs {
   }
 
   getBatchDoc(jobId, batchId) {
-    return fn.head(this.hubutils.queryLatest(function () {
+    return fn.head(hubUtils.invokeFunction(function () {
       const batchDoc = fn.head(cts.search(
         cts.andQuery([
           cts.directoryQuery("/jobs/batches/"),
@@ -345,7 +340,7 @@ module.exports.updateJob = module.amp(
       stepResp.stepStartTime = tempTime;
       stepResp.stepEndTime = fn.currentDateTime();
       if (stepResp.stepDefinitionName && stepResp.stepDefinitionType) {
-        let stepDef = fn.head(datahub.hubUtils.queryLatest(function () {
+        let stepDef = fn.head(hubUtils.invokeFunction(function () {
             return datahub.flow.stepDefinition.getStepDefinitionByNameAndType(stepResp.stepDefinitionName, stepResp.stepDefinitionType);
           },
           datahub.config.FINALDATABASE
@@ -358,24 +353,23 @@ module.exports.updateJob = module.amp(
           // a better error will be thrown later when the step is run and the module cannot be found.
         }
         if (jobsReportFun) {
-          let flowStep = fn.head(datahub.hubUtils.queryLatest(function () {
+          let flowStep = fn.head(hubUtils.invokeFunction(function () {
               return datahub.flow.getFlow(stepResp.flowName).steps[step];
             }, datahub.config.FINALDATABASE
           ));
           let options = Object.assign({}, stepDef.options, flowStep.options);
-          let jobReport = fn.head(datahub.hubUtils.queryLatest(function () {
+          let jobReport = fn.head(hubUtils.invokeFunction(function () {
               return jobsReportFun(jobId, stepResp, options);
             },
             options.targetDatabase || datahub.config.FINALDATABASE
           ));
           if (jobReport) {
-            datahub.hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs', 'JobReport'], datahub.config.JOBDATABASE);
+            hubUtils.writeDocument(`/jobs/reports/${stepResp.flowName}/${step}/${jobId}.json`, jobReport, datahub.jobs.jobPermissions, ['Jobs', 'JobReport'], datahub.config.JOBDATABASE);
           }
         }
       }
     }
-    //Update the job doc
-    datahub.hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
+    hubUtils.writeDocument("/jobs/"+ jobId +".json", jobDoc, datahub.jobs.jobPermissions, ['Jobs','Job'], datahub.config.JOBDATABASE);
     resp = jobDoc;
     return resp;
   });
@@ -420,8 +414,7 @@ module.exports.updateBatch = module.amp(
     }
     docObj.batch.writeTrnxID = writeTransactionInfo.transaction;
     docObj.batch.writeTimeStamp = writeTransactionInfo.dateTime;
-    datahub.hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
-
+    hubUtils.writeDocument("/jobs/batches/"+ batchId +".json", docObj, datahub.jobs.jobPermissions, ['Jobs','Batch'], datahub.config.JOBDATABASE);
   });
 module.exports.Jobs = Jobs;
 

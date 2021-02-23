@@ -17,6 +17,7 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const matcher = require('/com.marklogic.smart-mastering/matcher.xqy');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function get(context, params) {
   return post(context, params, null);
@@ -51,7 +52,7 @@ function post(context, params, input) {
   let combinedOptions = Object.assign({}, stepDetailsOptions, flowOptions, stepRefOptions, inputOptions, params);
   let sourceDatabase = combinedOptions.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
   let matchOptions = new NodeBuilder().addNode({ options: combinedOptions.matchOptions }).toNode();
-  return fn.head(datahub.hubUtils.queryLatest(
+  return fn.head(hubUtils.invokeFunction(
     function() {
       let doc = uri ? cts.doc(uri) : inMemDocument;
       return matcher.resultsToJson(matcher.findDocumentMatchesByOptions(

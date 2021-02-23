@@ -15,6 +15,7 @@
  */
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function get(context, params) {}
 
@@ -41,9 +42,9 @@ function post(context, params, input) {
   combinedOptions.noWrite = params.preview === 'true';
   combinedOptions.acceptsBatch = true;
   let jobId = params["job-id"];
-  let uris = datahub.hubUtils.normalizeToArray(params.uri);
+  let uris = hubUtils.normalizeToArray(params.uri);
   let query = cts.documentQuery(uris);
-  let content = datahub.hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
+  let content = hubUtils.queryToContentDescriptorArray(query, combinedOptions, sourceDatabase);
   let results = datahub.flow.runFlow(flowName, jobId, content, combinedOptions, stepNumber);
   return {
     'success': results.errorCount === 0,
@@ -75,9 +76,9 @@ function deleteFunction(context, params) {
   let jobId = params["job-id"];
   // build combined options
   let sourceDatabase = options.sourceDatabase || datahub.flow.globalContext.sourceDatabase;
-  let mergeURIs = datahub.hubUtils.normalizeToArray(params.mergeURI);
+  let mergeURIs = hubUtils.normalizeToArray(params.mergeURI);
   let query = cts.documentQuery(mergeURIs);
-  let content = datahub.hubUtils.queryToContentDescriptorArray(query, options, sourceDatabase);
+  let content = hubUtils.queryToContentDescriptorArray(query, options, sourceDatabase);
   let results = datahub.flow.runFlow(flowName, jobId, content, options, stepNumber);
   return {
     'success': results.errorCount === 0,
