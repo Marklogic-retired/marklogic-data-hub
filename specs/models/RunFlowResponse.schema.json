@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://marklogic.com/data-hub/RunFlowResponse.schema.json",
+  "title": "RunFlowResponse",
+  "description": "Defines the output produced by FlowRunner after running a flow; JSON schema representation of the RunFlowResponse.java class",
+  "type": "object",
+  "properties": {
+    "jobId": {
+      "type": "string",
+      "description": "Unique identifier for this job. If not user-specified, should be a UUID"
+    },
+    "flowName": {
+      "type": "string",
+      "description": "The name of the flow, now the flow object"
+    },
+    "user": {
+      "type": "string",
+      "description": "Name of the MarkLogic user that ran this job"
+    },
+    "lastAttemptedStep": {
+      "type": "integer"
+    },
+    "lastCompletedStep": {
+      "type": "integer"
+    },
+    "jobStatus": {
+      "type": "string",
+      "description": "The status is 'started' when the Job document is first created, and it is then modified to one of the other values as steps are completed",
+      "enum": [
+        "canceled",
+        "failed",
+        "finished",
+        "finished_with_errors",
+        "running",
+        "started",
+        "stop-on-error"
+      ]
+    },
+    "startTime": {
+      "type": "string",
+      "description": "dateTime at which the job started"
+    },
+    "endTime": {
+      "type": "string",
+      "description": "dateTime at which the job ended"
+    },
+    "stepResponses": {
+      "type": "object",
+      "description": "For each step that was executed, a key with a name equaling the step number of the step will be present",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9]+$": {
+          "properties": {
+            "jobId": {
+              "type": "string"
+            },
+            "flowName": {
+              "type": "string"
+            },
+            "stepName": {
+              "type": "string"
+            },
+            "stepDefinitionName": {
+              "type": "string"
+            },
+            "stepDefinitionType": {
+              "type": "string"
+            },
+            "targetEntityType": {
+              "type": "string",
+              "description": "Will be populated if the step defines a targetEntityType"
+            },
+            "targetDatabase": {
+              "type": "string",
+              "description": "The database that the step writes to"
+            },
+            "stepOutput": {
+              "type": "array",
+              "description": "Array of error messages",
+              "items": {
+                "type": "string"
+              }
+            },
+            "fullOutput": {
+              "type": "object",
+              "description": "A map of URI to documents; populated via the undocumented 'fullOutput' step option"
+            },
+            "status": {
+              "type": "string",
+              "description": "Not an enum, as its values refer to step numbers"
+            },
+            "totalEvents": {
+              "type": "integer",
+              "description": "An 'event' is an item (usually a URI) that is processed by a step"
+            },
+            "successfulEvents": {
+              "type": "integer"
+            },
+            "failedEvents": {
+              "type": "integer"
+            },
+            "successfulBatches": {
+              "type": "integer"
+            },
+            "failedBatches": {
+              "type": "integer"
+            },
+            "success": {
+              "type": "string"
+            },
+            "stepStartTime": {
+              "type": "string"
+            },
+            "stepEndTime": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
