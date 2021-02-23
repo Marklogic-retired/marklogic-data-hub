@@ -21,7 +21,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender} =  render(
+    const {queryByText, getByText, getByLabelText, rerender} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -44,6 +44,9 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("customerId"));
 
@@ -63,7 +66,7 @@ describe("Matching Ruleset Single Modal component", () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
-    const {queryByText, getByText, rerender} =  render(
+    const {queryByText, getByText, getByLabelText, rerender} =  render(
       <CurationContext.Provider value={customerMatchingStep}>
         <RulesetSingleModal
           isVisible={false}
@@ -86,6 +89,9 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("nicknames"));
 
@@ -117,6 +123,9 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("nicknames"));
 
@@ -150,6 +159,9 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("orders"));
 
@@ -183,6 +195,9 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    expect(getByLabelText("reduceToggle")).toBeInTheDocument();
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("nicknames"));
 
@@ -201,7 +216,7 @@ describe("Matching Ruleset Single Modal component", () => {
     });
   });
 
-  it("can select Reduce ruleset type and click save", async () => {
+  it("can toggle Reduce ruleset, select Exact ruleset type and click save", async () => {
     mockMatchingUpdate.mockResolvedValueOnce({status: 200, data: {}});
     const toggleModalMock = jest.fn();
 
@@ -216,17 +231,20 @@ describe("Matching Ruleset Single Modal component", () => {
     );
 
     expect(queryByText("Add Match Ruleset for Single Property")).toBeInTheDocument();
+    expect(getByText("Reduce Weight")).toBeInTheDocument();
+    userEvent.click(screen.getByLabelText("reduceToggle"));
+
     userEvent.click(screen.getByText("Select property"));
     userEvent.click(screen.getByText("nicknames"));
 
     userEvent.click(screen.getByText("Select match type"));
-    userEvent.click(screen.getByText("Reduce"));
+    userEvent.click(screen.getByText("Exact"));
 
     userEvent.click(getByText("Save"));
     await wait(() => {
       const expectedMatchStep = {...customerMatchingStep.curationOptions.activeStep.stepArtifact};
       expectedMatchStep.matchRulesets = [...expectedMatchStep.matchRulesets, {
-        name: "nicknames - Reduce",
+        name: "nicknames - Exact",
         reduce: true,
         weight: 0,
         matchRules: [

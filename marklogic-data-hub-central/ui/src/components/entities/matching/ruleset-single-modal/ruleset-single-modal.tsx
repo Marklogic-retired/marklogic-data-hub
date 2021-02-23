@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {Modal, Form, Input, Icon} from "antd";
+import {Modal, Form, Input, Icon, Switch} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLayerGroup} from "@fortawesome/free-solid-svg-icons";
 import {MLButton, MLTooltip, MLSelect} from "@marklogic/design-system";
@@ -34,7 +34,6 @@ const MATCH_TYPE_OPTIONS = [
   {name: "Exact", value: "exact"},
   {name: "Synonym", value: "synonym"},
   {name: "Double Metaphone", value: "doubleMetaphone"},
-  {name: "Reduce", value: "reduce"},
   {name: "Zip", value: "zip"},
   {name: "Custom", value: "custom"},
 ];
@@ -82,6 +81,8 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
   const [discardChangesVisible, setDiscardChangesVisible] = useState(false);
 
+  const [reduceValue, setReduceValue] = useState(false);
+
   useEffect(() => {
     if (props.isVisible && curationOptions.entityDefinitionsArray.length > 0 && curationOptions.activeStep.entityName !== "") {
       let entityTypeDefinition: Definition = curationOptions.entityDefinitionsArray.find(entityDefinition => entityDefinition.name === curationOptions.activeStep.entityName) || DEFAULT_ENTITY_DEFINITION;
@@ -92,13 +93,10 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let editRuleset = props.editRuleset;
       setSelectedProperty(editRuleset.name.split(" ")[0]);
       let matchType = editRuleset["matchRules"][0]["matchType"];
-      // reduce is applied to an entire ruleset.
       if (editRuleset.reduce) {
-        setMatchType("reduce");
-      } else {
-        setMatchType(matchType);
+        setReduceValue(true);
       }
-
+      setMatchType(matchType);
       if (matchType === "custom") {
         setUriValue(editRuleset["matchRules"][0]["algorithmModulePath"]);
         setFunctionValue(editRuleset["matchRules"][0]["algorithmModuleFunction"]);
@@ -200,6 +198,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
   const resetModal = () => {
     setSelectedProperty(undefined);
     setMatchType(undefined);
+    setReduceValue(false);
     setPropertyTypeErrorMessage("");
     setMatchTypeErrorMessage("");
     setThesaurusValue("");
@@ -228,6 +227,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     setIsUriTouched(false);
     setIsFunctionTouched(false);
     setIsNamespaceTouched(false);
+    setReduceValue(false);
   };
 
   const onSubmit = (event) => {
@@ -248,21 +248,18 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
 
     switch (matchType) {
     case "exact":
-    case "reduce":
     case "zip":
     {
-
       let matchRule: MatchRule = {
         entityPropertyPath: propertyName,
-        // the reduce logic is applied to the entire ruleset
-        matchType: matchType === "reduce" ? "exact" : matchType,
+        matchType: matchType,
         options: {}
       };
 
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
-        ...(matchType === "reduce" && {reduce: true}),
+        ...({reduce: reduceValue}),
         matchRules: [matchRule]
       };
 
@@ -295,6 +292,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        ...({reduce: reduceValue}),
         matchRules: [synonymMatchRule]
       };
 
@@ -334,6 +332,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        ...({reduce: reduceValue}),
         matchRules: [doubleMetaphoneMatchRule]
       };
 
@@ -373,6 +372,7 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
       let matchRuleset: MatchRuleset = {
         name: rulesetName,
         weight: Object.keys(props.editRuleset).length !== 0 ? props.editRuleset["weight"] : 0,
+        ...({reduce: reduceValue}),
         matchRules: [customMatchRule]
       };
 
@@ -711,6 +711,14 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
     </div>
   );
 
+  const onToggleReduce = (checked) => {
+    if (checked) {
+      setReduceValue(true);
+    } else {
+      setReduceValue(false);
+    }
+  };
+
   return (
     <Modal
       visible={props.isVisible}
@@ -727,6 +735,14 @@ const MatchRulesetModal: React.FC<Props> = (props) => {
         id="matching-single-ruleset"
         onSubmit={onSubmit}
       >
+        <Form.Item>
+          <span className={styles.reduceWeightText}>Reduce Weight</span>
+          <Switch className={styles.reduceToggle} onChange={onToggleReduce} defaultChecked={props.editRuleset.reduce} aria-label="reduceToggle"></Switch>
+          {/*tooltip content yet to be finalized*/}
+          <MLTooltip>
+            <Icon type="question-circle" className={styles.icon} theme="filled" />
+          </MLTooltip>
+        </Form.Item>
         <Form.Item
           className={styles.formItem}
           label={<span>
