@@ -15,6 +15,7 @@
 */
 'use strict';
 const defaultConfig = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const ps = require('/MarkLogic/provenance');
 const op = require('/MarkLogic/optic');
 
@@ -34,13 +35,6 @@ class Provenance {
     this.config.JOBDATABASE         = defaultConfig.JOBDATABASE || 'data-hub-JOBS';
     this.config.autoCommit          = config && config.autoCommit !== undefined ? config.autoCommit : true;
     this.config.commitQueue         = [];
-    if (datahub) {
-      this.hubutils = datahub.hubUtils;
-    } else {
-      this.hubutils = {
-        capitalize: (str) => { return (str) ? str.charAt(0).toUpperCase() + str.slice(1) : str; }
-      };
-    }
   }
 
   granularityLevel(level = null) {
@@ -176,7 +170,7 @@ class Provenance {
       declareUpdate();
       const ps = require('/MarkLogic/provenance');
       xdmp.securityAssert("http://marklogic.com/xdmp/privileges/ps-user", "execute");
-      
+
       for (let recordDetails of recordsQueue) {
         let options = recordDetails.options || {};
         options.dateTime = String(fn.currentDateTime());
@@ -250,7 +244,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'ingestion' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:IngestionStep','dhf:IngestionStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -294,7 +288,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'mapping' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MappingStep','dhf:MappingStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -339,7 +333,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'mastering' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MasteringStep','dhf:MasteringStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -384,7 +378,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'matching' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MatchingStep','dhf:MatchingStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -429,7 +423,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'merging' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:MergingStep','dhf:MergingStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -473,7 +467,7 @@ class Provenance {
     let provId = `${jobId + flowId + 'custom' + docURI}`;
     let provTypes = ['ps:Flow','ps:Entity','dhf:Entity','dhf:CustomStep','dhf:CustomStepEntity'];
     if (info && info.status)
-      provTypes.push('dhf:Doc' + this.hubutils.capitalize(info.status));
+      provTypes.push('dhf:Doc' + hubUtils.capitalize(info.status));
 
     let recordOpts = {
       provTypes,
@@ -509,7 +503,7 @@ class Provenance {
     let resp;
     let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, info);
     if (!(isValid instanceof Error)) {
-      let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
+      let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
       resp = this['_create' + capitalizedStepType + 'StepRecord'](jobId, flowId, stepName, stepDefinitionName, docURI, info);
     } else {
       resp = isValid
@@ -541,7 +535,7 @@ class Provenance {
     let isValid = this._validateCreateStepParams(jobId, flowId, stepName, stepDefinitionName, stepDefinitionType, docURI, info);
     if (!(isValid instanceof Error)) {
       if (properties && properties.length > 0) {
-        let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
+        let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
         for (let i=0; i<properties.length; i++) {
           let property = properties[i];
           let encodedPropertyName = property;
@@ -622,7 +616,7 @@ class Provenance {
     if (!(isValid instanceof Error)) {
       if (docURIs && docURIs.length > 0 &&
         propertyProvIds && propertyProvIds.length > 0) {
-        let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
+        let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
         let provId = `${jobId + flowId + stepDefinitionType + docURIs.concat()}_${propertyName}_${activity}`;
         let encodedPropertyName = propertyName;
         if (!xdmp.castableAs("http://www.w3.org/2001/XMLSchema", "QName", encodedPropertyName)) {
@@ -672,7 +666,7 @@ class Provenance {
     if (!(isValid instanceof Error)) {
       if (documentProvIds && documentProvIds.length > 0 &&
         alteredPropertyProvIds && alteredPropertyProvIds.length > 0) {
-        let capitalizedStepType = this.hubutils.capitalize(stepDefinitionType);
+        let capitalizedStepType = hubUtils.capitalize(stepDefinitionType);
         let provId = `${jobId + flowId + stepDefinitionType + newDocURI}`;
         let provTypes = ['ps:Flow','ps:Entity','dhf:AlteredEntity',`dhf:${capitalizedStepType}AlteredEntity`];
         let recordOpts = {
@@ -720,81 +714,6 @@ class Provenance {
     }
   }
 
-  // /**
-  //  * @desc Create a provenance record when a Job is created immediately executed
-  //  * @param {string} jobId - the ID of the job being executed (unique), this will generate
-  //  * @param {string} flowId - the unique ID of the flow
-  //  * @param {Object} info
-  //  * @param {string} info.status - the status of the job:
-  //  *                               ie. created/updated/deleted.
-  //  *                               Value is passed through to "provTypes".
-  //  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
-  //  */
-  // createJobRecord(jobId, flowId, info) {
-  //   let resp;
-  //   let provId = this.hubutils.uuid();
-  //   let isProvInfoMetaValid = this._validProvInfoMetadata(info);
-
-  //   if (!(isProvInfoMetaValid instanceof Error)) {
-  //     let jobProvTypes = (info.status === 'started') ?
-  //       ['ps:FlowRun', 'dhf:Job', 'dhf:Job' + this.hubutils.capitalize(info.status)] :
-  //       ['ps:Flow', 'dhf:Job', 'dhf:Job' + this.hubutils.capitalize(info.status)];
-  //     let recordOpts = {
-  //       "provTypes" : jobProvTypes,
-  //       "relations":{
-  //         "generatedBy": jobId,
-  //         "associatedWith": flowId
-  //       }
-  //     }
-
-  //     if (this.config.autoCommit)
-  //       resp = this._createRecord(provId, recordOpts, info.metadata);
-  //     else {
-  //       this._queueForCommit(provId, recordOpts, info.metadata);
-  //       resp = provId; // will commit later, _createRecord just returns provId
-  //     }
-  //   } else {
-  //     resp = isProvInfoMetaValid;
-  //   }
-
-  //   return resp;
-  // }
-
-  // /**
-  //  * @desc Create a provenance record when a Flow is created
-  //  * @param flowId - the name of the flow (unique)
-  //  * @param {Object} info
-  //  * @param {string} info.status - the status of the flow:
-  //  *                               ie. created/updated/deleted.
-  //  *                               Value is passed through to "provTypes".
-  //  * @param {string} [info.metadata] - key/value pairs to document with the provenance record
-  //  */
-  // createFlowRecord(flowId, info) {
-  //   let resp;
-  //   let provId = this.hubutils.uuid();
-  //   let isProvInfoMetaValid = this._validProvInfoMetadata(info);
-
-  //   if (!(isProvInfoMetaValid instanceof Error)) {
-  //     let flowProvTypes = ['ps:Flow', 'dhf:Flow', 'dhf:Flow' + this.hubutils.capitalize(info.status)];
-  //     let recordOpts = {
-  //       "provTypes" : flowProvTypes,
-  //       "relations":{
-  //         "associatedWith": flowId
-  //       }
-  //     }
-  //     if (this.config.autoCommit)
-  //       resp = this._createRecord(provId, recordOpts, info.metadata);
-  //     else {
-  //       this._queueForCommit(provId, recordOpts, info.metadata);
-  //       resp = provId; // will commit later, _createRecord just returns provId
-  //     }
-  //   } else {
-  //     resp = isProvInfoMetaValid;
-  //   }
-
-  //   return resp;
-  // }
-
   /**
    * @desc Create a provenance record when a Flow is created
    * @param docURI - The URI of the document
@@ -812,15 +731,15 @@ class Provenance {
             location: docURI
           }
         };
-        // TODO: change "out" so output for a single prov record is 
+        // TODO: change "out" so output for a single prov record is
         // combined into a single Object in the Array
         var out = {
           dateTime: '?',
-          provTypes: '?',  
+          provTypes: '?',
           attributes : {'location' : '?'}
         };
         let kvPattern = ps.opTriplePattern(match, out);
-        op.fromTriples(kvPattern).result().toArray();  
+        op.fromTriples(kvPattern).result().toArray();
         `,
         { docURI },
         {

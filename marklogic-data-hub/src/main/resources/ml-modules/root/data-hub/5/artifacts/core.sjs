@@ -25,9 +25,9 @@ const Mastering = require('./mastering');
 const StepDef = require('./stepDefinition');
 const CustomStep = require('./customStep')
 
+const consts = require('/data-hub/5/impl/consts.sjs');
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const dataHub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 // define constants for caching expensive operations
 const cachedArtifacts = {};
@@ -55,7 +55,7 @@ function getArtifacts(artifactType, groupByEntityType = entityServiceDrivenArtif
 
     if (queries.length) {
       // Since these are user-specific artifacts, hub artifacts (flows and step definitions) are excluded
-      queries.push(cts.notQuery(cts.collectionQuery(dataHub.consts.HUB_ARTIFACT_COLLECTION)));
+      queries.push(cts.notQuery(cts.collectionQuery(consts.HUB_ARTIFACT_COLLECTION)));
 
       if (groupByEntityType) {
         return getArtifactsGroupByEntity(queries)
@@ -128,7 +128,7 @@ function deleteArtifact(artifactType, artifactName, artifactVersion = 'latest') 
     const node = getArtifactNode(artifactType, artifactName, artifactVersion);
 
     for (const db of artifactLibrary.getStorageDatabases()) {
-        dataHub.hubUtils.deleteDocument(xdmp.nodeUri(node), db);
+        hubUtils.deleteDocument(xdmp.nodeUri(node), db);
     }
     delete cachedArtifacts[artifactKey];
     return { success: true };
@@ -165,10 +165,10 @@ function setArtifact(artifactType, artifactName, artifact) {
     }
 
     artifact.lastUpdated = fn.string(fn.currentDateTime());
-    dataHub.hubUtils.replaceLanguageWithLang(artifact);
+    hubUtils.replaceLanguageWithLang(artifact);
 
     for (const db of artifactDatabases) {
-        dataHub.hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
+        hubUtils.writeDocument(`${artifactDirectory}${xdmp.urlEncode(artifactName)}${artifactFileExtension}`, artifact, artifactPermissions, artifactCollections, db);
     }
     cachedArtifacts[artifactKey] = artifact;
 

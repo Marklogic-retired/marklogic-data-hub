@@ -5,6 +5,7 @@ const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs'
 const es = require('/MarkLogic/entity-services/entity-services');
 const entityValidationLib = require('entity-validation-lib.sjs');
 const xqueryLib = require('xquery-lib.xqy')
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
@@ -102,7 +103,7 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
 
   headers = flowUtils.mergeHeaders(headers, docHeaders, outputFormat);
   headers = flowUtils.updateHeaders(headers, outputFormat);
-  triples = triples.concat(datahub.hubUtils.normalizeToArray(docTriples));
+  triples = triples.concat(hubUtils.normalizeToArray(docTriples));
   let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
   if (outputFormat === datahub.flow.flowUtils.consts.JSON) {

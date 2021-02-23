@@ -4,6 +4,7 @@ const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
 const es = require('/MarkLogic/entity-services/entity-services');
 const entityLib = require("/data-hub/5/impl/entity-lib.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
@@ -226,7 +227,7 @@ function getTargetEntity(targetEntityType) {
 
 function retrieveFunctionImports() {
   let customImports = [];
-  let shimURIs = datahub.hubUtils.queryLatest(function() {
+  let shimURIs = hubUtils.invokeFunction(function() {
     return cts.uris(null, null, cts.collectionQuery('http://marklogic.com/entity-services/function-metadata/compiled'));
   }, xdmp.databaseName(xdmp.modulesDatabase()));
   for (let uri of shimURIs) {
@@ -473,7 +474,7 @@ function getXQueryLib() {
 }
 
 function getMarkLogicMappingFunctions() {
-  return fn.head(datahub.hubUtils.queryLatest(function() {
+  return fn.head(hubUtils.invokeFunction(function() {
     let fnMetadata = fn.collection("http://marklogic.com/entity-services/function-metadata")
     let ns = {"m":"http://marklogic.com/entity-services/mapping"};
     const functionMap = new Map();

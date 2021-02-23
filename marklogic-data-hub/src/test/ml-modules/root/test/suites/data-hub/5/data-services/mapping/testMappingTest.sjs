@@ -1,7 +1,7 @@
-const test = require("/test/test-helper.xqy");
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const dataHub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
 const hubTest = require("/test/data-hub-test-helper.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const test = require("/test/test-helper.xqy");
 
 const testEntityModel = {
     "info": {
@@ -61,8 +61,8 @@ function invokeService(jsonMapping, uri, database) {
 function testMappings() {
   const perms = [xdmp.permission("data-hub-common", "read"), xdmp.permission("data-hub-operator", "read"), xdmp.permission("data-hub-operator", "update")];
 
-    dataHub.hubUtils.writeDocument("/test/entities/Customer.entity.json", testEntityModel , perms, ['http://marklogic.com/entity-services/models'], dataHub.config.FINALDATABASE);
-    dataHub.hubUtils.writeDocument("/test/customer100.json", testEntityInstance , perms, ['Customer'], dataHub.config.FINALDATABASE);
+    hubUtils.writeDocument("/test/entities/Customer.entity.json", testEntityModel , perms, ['http://marklogic.com/entity-services/models'], config.FINALDATABASE);
+    hubUtils.writeDocument("/test/customer100.json", testEntityInstance , perms, ['Customer'], config.FINALDATABASE);
 
     const result =  invokeService(validMapping,'/test/customer100.json', 'data-hub-FINAL');
     const errorResult = invokeService(invalidMapping,'/test/customer100.json', 'data-hub-FINAL');
@@ -76,8 +76,8 @@ function testMappings() {
 }
 
 function clean() {
-    dataHub.hubUtils.deleteDocument("/test/customer100.json", dataHub.config.FINALDATABASE);
-    dataHub.hubUtils.deleteDocument("/test/entities/Customer.entity.json", dataHub.config.FINALDATABASE);
+    hubUtils.deleteDocument("/test/customer100.json", config.FINALDATABASE);
+    hubUtils.deleteDocument("/test/entities/Customer.entity.json", config.FINALDATABASE);
 }
 
 []
