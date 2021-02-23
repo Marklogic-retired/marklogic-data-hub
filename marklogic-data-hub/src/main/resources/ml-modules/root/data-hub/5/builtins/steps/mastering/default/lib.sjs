@@ -13,8 +13,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const mergeImpl = require("/com.marklogic.smart-mastering/survivorship/merging/base.xqy");
 const masteringCollections = require("/com.marklogic.smart-mastering/impl/collections.xqy");
 const masteringConsts = require("/com.marklogic.smart-mastering/constants.xqy");
@@ -26,7 +26,7 @@ const emptySequence = Sequence.from([]);
 function matchDetailsByMergedQuery(mergedQuery) {
   let mergedURIs = cts.uris(null, [], mergedQuery);
   let output = {};
-  datahub.hubUtils.queryLatest(
+  hubUtils.invokeFunction(
     function () {
       for (let docURI of mergedURIs) {
         let match = {
@@ -43,7 +43,7 @@ function matchDetailsByMergedQuery(mergedQuery) {
         output[docURI] = result && result.matchedDocuments  ? xdmp.unquote(result.matchedDocuments) : null;
       }
     },
-    datahub.config.JOBDATABASE
+    config.JOBDATABASE
   );
   return output;
 }
@@ -224,9 +224,9 @@ function jobReport(jobID, stepResponse, options, reqOptProperties = requiredOpti
       query: `createdByJob:"${jobID}" AND Collection:"${collectionsInformation.notificationCollection}"`
     },
     collectionsInformation,
-    matchProvenanceQuery: `// Run this against the '${options.targetDatabase || datahub.config.FINALDATABASE}' database with a privileged user
-    const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs'); 
-    
+    matchProvenanceQuery: `// Run this against the '${options.targetDatabase || config.FINALDATABASE}' database with a privileged user
+    const masteringLib = require('/data-hub/5/builtins/steps/mastering/default/lib.sjs');
+
     let mergedAndNotifiedQuery = cts.andQuery([
       cts.fieldWordQuery('datahubCreatedByJob', '${jobID}'),
       cts.orQuery([

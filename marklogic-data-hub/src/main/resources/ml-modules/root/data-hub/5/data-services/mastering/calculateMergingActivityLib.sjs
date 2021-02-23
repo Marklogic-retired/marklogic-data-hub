@@ -15,14 +15,15 @@
  */
 'use strict';
 
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
 const currentDatabaseName = xdmp.databaseName(xdmp.database());
 
 function calculateMergingActivity(step)
 {
     let sourceDatabaseName = step.sourceDatabase || currentDatabaseName;
     if (sourceDatabaseName !== currentDatabaseName) {
-        const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
-        return new HubUtils().queryLatest(function () {
+        return hubUtils.invokeFunction(function () {
             return internalCalculateMergingActivity(step);
         }, sourceDatabaseName);
     } else {

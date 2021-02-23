@@ -17,13 +17,10 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-mapping", "execute");
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
 const esMappingLib = require("/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs");
-const dataHub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 var jsonMapping, uri, database;
-dataHub.hubUtils.queryLatest(function () {
-        return esMappingLib.validateAndRunMapping(jsonMapping.toObject(), uri);
-    },
-    database
-);
+hubUtils.invokeFunction(function () {
+  return esMappingLib.validateAndRunMapping(jsonMapping.toObject(), uri);
+}, database);

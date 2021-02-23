@@ -3,6 +3,7 @@ const es = require('/MarkLogic/entity-services/entity-services');
 const esMappingLib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function mlGenerateFunctionMetadata(context, params, content) {
   let uri = context.uri;
@@ -35,7 +36,7 @@ function mlGenerateFunctionMetadata(context, params, content) {
       // does not have this permission on it, which is expected to be on every other DHF module.
       xdmp.permission("rest-extension-user", "execute")
     ]);
-    let writeInfo = datahub.hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
+    let writeInfo = hubUtils.writeDocument(uriVal + ".xml", metadataXml, permissions, [collection], datahub.config.MODULESDATABASE);
     if (writeInfo && fn.exists(writeInfo.transaction)) {
       // try/catch workaround to avoid XSLT-UNBPRFX error. See https://bugtrack.marklogic.com/52870
       try {

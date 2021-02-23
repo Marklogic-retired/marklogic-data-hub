@@ -1,5 +1,4 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const match = require('/data-hub/5/builtins/steps/mastering/default/matching.sjs');
 const test = require("/test/test-helper.xqy");
 
@@ -20,13 +19,13 @@ function verifySingleValueResults(content, results) {
     ]);
 }
 function testSingleValueJsonMatches() {
-    const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustBillingCityStateMatch2.json'), {}, xdmp.databaseName(xdmp.database()));
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustBillingCityStateMatch2.json'), {}, xdmp.databaseName(xdmp.database()));
     const results = fn.head(match.main(content, { stepId: 'matchCustomerBillingCityState-matching'})).value;
     return verifySingleValueResults(content, results);
 }
 
 function testSingleValueNamespacedXmlMatches() {
-    const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustBillingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustBillingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
     const results = fn.head(match.main(content, { stepId: 'matchNSCustomerBillingCityState-matching'})).value;
     return [] // verifySingleValueResults(content, results);
 }
@@ -49,13 +48,13 @@ function verifySingleValueArrayResults(content, results) {
   ]);
 }
 function testSingleValueArrayJsonMatches() {
-  const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustShippingCityStateMatch2.json'), {}, xdmp.databaseName(xdmp.database()));
+  const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustShippingCityStateMatch2.json'), {}, xdmp.databaseName(xdmp.database()));
   const results = fn.head(match.main(content, { stepId: 'matchCustomerShippingCityState-matching'})).value;
   return verifySingleValueArrayResults(content, results);
 }
 
 function testSingleValueArrayNamespacedXmlMatches() {
-  const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustShippingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
+  const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustShippingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
   const results = fn.head(match.main(content, { stepId: 'matchNSCustomerShippingCityState-matching'})).value;
   return verifySingleValueArrayResults(content, results);
 }
@@ -79,13 +78,13 @@ function verifyMultiValueArrayResults(content, results) {
   ]);
 }
 function testMultiValueArrayJsonMatches() {
-  const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustShippingCityStateMatch4.json'), {}, xdmp.databaseName(xdmp.database()));
+  const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustShippingCityStateMatch4.json'), {}, xdmp.databaseName(xdmp.database()));
   const results = fn.head(match.main(content, { stepId: 'matchCustomerShippingCityState-matching'})).value;
   return verifyMultiValueArrayResults(content, results);
 }
 
 function testMultiValueArrayNamespacedXmlMatches() {
-  const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustShippingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
+  const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustShippingCityStateMatch2.xml'), {}, xdmp.databaseName(xdmp.database()));
   const results = fn.head(match.main(content, { stepId: 'matchNamespacedCustomers-matching'})).value;
   return [] //verifyMultiValueArrayResults(content, results);
 }

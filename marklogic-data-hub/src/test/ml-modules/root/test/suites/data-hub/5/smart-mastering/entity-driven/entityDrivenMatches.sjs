@@ -1,5 +1,4 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 const match = require('/data-hub/5/builtins/steps/mastering/default/matching.sjs');
 const test = require("/test/test-helper.xqy");
 
@@ -34,13 +33,13 @@ function verifyResults(content, results) {
     ]);
 }
 function testJsonMatches() {
-    const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustMatchMerge2.json'), {}, xdmp.databaseName(xdmp.database()));
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/CustMatchMerge2.json'), {}, xdmp.databaseName(xdmp.database()));
     const results = fn.head(match.main(content, { stepId: 'matchCustomers-matching'})).value;
     return verifyResults(content, results);
 }
 
 function testNamespacedXmlMatches() {
-    const content = datahub.hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustMatchMerge2.xml'), {}, xdmp.databaseName(xdmp.database()));
+    const content = hubUtils.queryToContentDescriptorArray(cts.documentQuery('/content/NsCustMatchMerge2.xml'), {}, xdmp.databaseName(xdmp.database()));
     const results = fn.head(match.main(content, { stepId: 'matchNamespacedCustomers-matching'})).value;
     return verifyResults(content, results);
 }
