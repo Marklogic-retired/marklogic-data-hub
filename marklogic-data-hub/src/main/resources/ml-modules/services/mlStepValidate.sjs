@@ -16,6 +16,7 @@
 'use strict';
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function get(context, params) {
   return post(context, params, null);
@@ -41,7 +42,7 @@ function post(context, params, input) {
 
     let operatorRole = xdmp.role(datahub.config.FLOWOPERATORROLE).toString();
     try{
-      modPerms = fn.head(datahub.hubUtils.queryLatest(function () {
+      modPerms = fn.head(hubUtils.invokeFunction(function () {
         if (fn.docAvailable(modPath)){
           return xdmp.documentGetPermissions(modPath);
         }

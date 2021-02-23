@@ -21,6 +21,7 @@ const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
 const quickStartRequiredOptionProperty = 'mergeOptions';
 const hubCentralRequiredOptionProperty = 'mergeRules';
 const requiredOptionProperties = [[quickStartRequiredOptionProperty, hubCentralRequiredOptionProperty]];
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function main(content, options) {
   let isSeparateMergeStep = false;
@@ -123,7 +124,7 @@ function main(content, options) {
 
 function applyPermissionsFromOptions(results, options) {
   if (options.permissions) {
-    const parsedPermissions = datahub.hubUtils.parsePermissions(options.permissions);
+    const parsedPermissions = hubUtils.parsePermissions(options.permissions);
     for (var result of results) {
       if (result['$delete'] == true) {
         continue;
@@ -143,7 +144,6 @@ function applyPermissionsFromOptions(results, options) {
 
 function jobReport(jobID, stepResponse, options) {
   if (stepResponse.success && stepResponse.successfulEvents) {
-    const hubUtils = datahub.hubUtils;
     const query = options.sourceQuery;
     let urisEval;
     if (!query || /^\s*cts\.(uris|values)\(.*\)\s*$/.test(query)) {

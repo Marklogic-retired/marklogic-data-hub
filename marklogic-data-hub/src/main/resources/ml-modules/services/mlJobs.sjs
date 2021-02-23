@@ -18,6 +18,7 @@ const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 const jobsMod = require("/data-hub/5/impl/jobs.sjs");
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 function get(context, params) {
   let jobId = params["jobid"];
@@ -38,7 +39,7 @@ function get(context, params) {
     resp = datahub.jobs.getJobDocs(status);
   }
   else if (fn.exists(latest)) {
-    flowNames = (fn.exists(flowNames)) ? datahub.hubUtils.normalizeToSequence(flowNames) : datahub.hubUtils.normalizeToSequence(flow);
+    flowNames = (fn.exists(flowNames)) ? hubUtils.normalizeToSequence(flowNames) : hubUtils.normalizeToSequence(flow);
     if (fn.empty(flowNames)) {
       resp = datahub.jobs.getLatestJobDocPerFlow();
     } else {

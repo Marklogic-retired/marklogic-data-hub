@@ -19,12 +19,13 @@
 
 xdmp.securityAssert("http://marklogic.com/data-hub/privileges/read-flow", "execute");
 
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+
 var name;
 
 let flowWithStepDetails = require('./flow-lib.sjs').getFlowsWithStepDetails(name);
-fn.head(datahub.hubUtils.queryLatest(function() {
+fn.head(hubUtils.invokeFunction(function() {
   flowWithStepDetails["steps"].forEach((step) => {
     const jobQueries = [];
     jobQueries.push(cts.collectionQuery('Job'));
@@ -45,5 +46,5 @@ fn.head(datahub.hubUtils.queryLatest(function() {
       }
     }
   });
-}, datahub.config.JOBDATABASE));
+}, config.JOBDATABASE));
 flowWithStepDetails;

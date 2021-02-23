@@ -21,6 +21,7 @@ const quickStartRequiredOptionProperty = 'matchOptions';
 const hubCentralRequiredOptionProperty = 'matchRulesets';
 const emptySequence = Sequence.from([]);
 const httpUtils = require("/data-hub/5/impl/http-utils.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 /**
  * Filters out content that has either already been processed by the running Job or are side-car documents not intended for matching against
@@ -93,7 +94,7 @@ function buildResult(matchSummaryJson, options, collections) {
   };
 
   if (options.permissions) {
-    result.context.permissions = datahub.hubUtils.parsePermissions(options.permissions);
+    result.context.permissions = hubUtils.parsePermissions(options.permissions);
     result.context.permissions = result.context.permissions.concat(xdmp.defaultPermissions());
   }
 

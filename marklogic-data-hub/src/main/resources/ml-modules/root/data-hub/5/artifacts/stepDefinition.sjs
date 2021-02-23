@@ -15,13 +15,11 @@
  */
 'use strict';
 
-const DataHubSingleton = require('/data-hub/5/datahub-singleton.sjs');
-const dataHub = DataHubSingleton.instance();
-
-const HubUtils = require("/data-hub/5/impl/hub-utils.sjs");
+const config = require("/com.marklogic.hub/config.sjs");
+const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 const collections = ['http://marklogic.com/data-hub/step-definition'];
-const databases = [dataHub.config.STAGINGDATABASE, dataHub.config.FINALDATABASE];
+const databases = [config.STAGINGDATABASE, config.FINALDATABASE];
 const requiredProperties = ['name'];
 
 function getNameProperty() {
@@ -42,7 +40,7 @@ function getPermissions() {
   permsString = permsString.indexOf("%mlStepDefinitionPermissions%") > -1 ?
     "data-hub-step-definition-reader,read,data-hub-step-definition-writer,update" :
     permsString;
-  return new HubUtils().parsePermissions(permsString);
+  return hubUtils.parsePermissions(permsString);
 }
 
 function getArtifactNode(artifactName, artifactVersion) {

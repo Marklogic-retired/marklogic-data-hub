@@ -85,8 +85,7 @@ public class WriteDocumentsTest extends AbstractHubCoreTest {
 
     private void testWriteDocuments() {
         String results = eval("'use strict';\n" +
-            "const HubUtils = require('/data-hub/5/impl/hub-utils.sjs');\n" +
-            "const hubUtils = new HubUtils();\n" +
+            "const hubUtils = require('/data-hub/5/impl/hub-utils.sjs');\n" +
             "const temporal = require('/MarkLogic/temporal.xqy');\n" +
             "\n" +
             "const temporalCollections = temporal.collections().toArray();\n" +
