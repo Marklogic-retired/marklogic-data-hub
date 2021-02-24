@@ -804,7 +804,7 @@ describe("RTL Source-to-entity map tests", () => {
 
     // Click next, URI index is 2
     fireEvent.click(getByTestId("navigate-uris-right"));
-    uriIndex = within(getByLabelText("uriIndex"));
+    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
     expect(uriIndex.getByText("2")).toBeInTheDocument();
 
     // Close mapping modal
@@ -1139,5 +1139,34 @@ describe("RTL Source Selector/Source Search tests", () => {
     //Right Xpath is populated (and not nutFreeName/FirstNamePreferred since sourceContext is set)
     expect(mapExp).toHaveTextContent("FirstNamePreferred");
   });
+
+  test("Verify the index value changes correspondently to left or right document uri button click",  async() => {
+    const {getByLabelText, getByTestId} = render(<SourceToEntityMap {...data.mapProps}  mappingVisible={true}/>);
+
+    // URI index starts at 1
+    let uriIndex = within(getByLabelText("uriIndex"));
+    expect(uriIndex.getByText("1")).toBeInTheDocument();
+
+    // Click next, URI index is 2
+    fireEvent.click(getByTestId("navigate-uris-right"));
+    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
+    expect(uriIndex.getByText("2")).toBeInTheDocument();
+
+    // Click next, URI index is 3
+    fireEvent.click(getByTestId("navigate-uris-right"));
+    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
+    expect(uriIndex.getByText("3")).toBeInTheDocument();
+
+    // Click previous, URI index is 2
+    fireEvent.click(getByTestId("navigate-uris-left"));
+    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
+    expect(uriIndex.getByText("2")).toBeInTheDocument();
+
+    // Click previous, URI index is 1
+    fireEvent.click(getByTestId("navigate-uris-left"));
+    uriIndex = await waitForElement(() => within(getByLabelText("uriIndex")));
+    expect(uriIndex.getByText("1")).toBeInTheDocument();
+  });
+
 });
 

@@ -11,6 +11,7 @@ import DropDownWithSearch from "../../../common/dropdown-with-search/dropdownWit
 import SplitPane from "react-split-pane";
 import Highlighter from "react-highlight-words";
 import {MLButton, MLTooltip, MLCheckbox, MLSpin} from "@marklogic/design-system";
+import SourceNavigation from "../source-navigation/source-navigation";
 
 const SourceToEntityMap = (props) => {
 
@@ -205,59 +206,19 @@ const SourceToEntityMap = (props) => {
 
   //To handle navigation buttons
   const onNavigateURIList = (index) => {
-    const end = props.docUris.length - 1;
-    // Not at beginning or end of range
-    if (index > 0 && index < end) {
-      props.setDisableURINavLeft(false);
-      props.setDisableURINavRight(false);
+    onUpdateURINavButtons(props.docUris[index]).then(() => {
       setUriIndex(index);
       setSrcURI(props.docUris[index]);
-      onUpdateURINavButtons(props.docUris[index]);
-
-    } else if (index === 0) { // At beginning of range
-      props.setDisableURINavLeft(true);
-      if (end > 0) {
-        props.setDisableURINavRight(false);
-      }
-      setUriIndex(index);
-      setSrcURI(props.docUris[index]);
-      onUpdateURINavButtons(props.docUris[index]);
-    } else if (index === end) { // At end of range
-      if (end > 0) {
-        props.setDisableURINavLeft(false);
-      }
-      props.setDisableURINavRight(true);
-      setUriIndex(index);
-      setSrcURI(props.docUris[index]);
-      onUpdateURINavButtons(props.docUris[index]);
-    } else {
-      if (index < 0) {      // Before beginning of range
-        props.setDisableURINavLeft(true);
-      } else {       // After end of range
-        props.setDisableURINavRight(true);
-      }
-    }
+    });
   };
-  const onUpdateURINavButtons = (uri) => {
-    props.fetchSrcDocFromUri(props.mapData.name, uri, props.mapIndex);
+  const onUpdateURINavButtons = async (uri) => {
+    await props.fetchSrcDocFromUri(props.mapData.name, uri, props.mapIndex);
     if (isTestClicked) {
       getMapValidationResp(uri);
     }
   };
 
-  const navigationButtons = <span className={styles.navigate_source_uris}>
-    <MLButton className={styles.navigate_uris_left} data-testid="navigate-uris-left" onClick={() => onNavigateURIList(uriIndex - 1)} disabled={props.disableURINavLeft}>
-      <Icon type="left" className={styles.navigateIcon} />
-    </MLButton>
-        &nbsp;
-    <div aria-label="uriIndex" className={styles.URI_Index}><p>{uriIndex + 1}</p></div>
-        &nbsp;
-    <MLButton className={styles.navigate_uris_right} data-testid="navigate-uris-right" onClick={() => onNavigateURIList(uriIndex + 1)} disabled={props.disableURINavRight}>
-      <Icon type="right" className={styles.navigateIcon} />
-    </MLButton>
-  </span>;
-
-  //Code for navigation buttons ends here
+  const navigationButtons = <SourceNavigation currentIndex={uriIndex} startIndex={0} endIndex={props.docUris && props.docUris.length - 1} handleSelection={onNavigateURIList} />;
 
   //Set the mapping expressions, if already exists.
   const initializeMapExpressions = () => {

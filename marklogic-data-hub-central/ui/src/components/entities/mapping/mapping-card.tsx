@@ -71,11 +71,6 @@ const MappingCard: React.FC<Props> = (props) => {
   //For storing docURIs
   const [docUris, setDocUris] = useState<any[]>([]);
 
-  //For handling docUris navigation
-  const [disableURINavLeft, setDisableURINavLeft] = useState(true);
-  const [disableURINavRight, setDisableURINavRight] = useState(false);
-
-
   //For storing  mapping functions
   const [mapFunctions, setMapFunctions] = useState([]);
 
@@ -178,7 +173,6 @@ const MappingCard: React.FC<Props> = (props) => {
       let response = await getUris(stepName, 20);
       if (response.status === 200) {
         if (response.data.length > 0) {
-          setDisableURINavRight(response.data.length > 1 ? false : true);
           setDocUris(response.data);
           setSourceURI(response.data[0]);
           fetchSrcDocFromUri(stepName, response.data[0]);
@@ -855,10 +849,6 @@ const MappingCard: React.FC<Props> = (props) => {
         extractCollectionFromSrcQuery={extractCollectionFromSrcQuery}
         fetchSrcDocFromUri={fetchSrcDocFromUri}
         docUris={docUris}
-        disableURINavLeft={disableURINavLeft}
-        disableURINavRight={disableURINavRight}
-        setDisableURINavLeft={setDisableURINavLeft}
-        setDisableURINavRight={setDisableURINavRight}
         sourceDatabaseName={sourceDatabaseName}
         mapFunctions={mapFunctions}
         namespaces={namespaces}
