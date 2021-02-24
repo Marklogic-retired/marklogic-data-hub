@@ -404,6 +404,7 @@ describe("save/manage queries scenarios, developer role", () => {
     //verifying the confirmation modal displays if no query selected and selected columns changed
     browsePage.selectEntity("Customer");
     browsePage.getSelectedEntity().should("contain", "Customer");
+    browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click();
     browsePage.getColumnSelector().should("be.visible");
     browsePage.selectColumnSelectorProperty("status");
@@ -417,6 +418,7 @@ describe("save/manage queries scenarios, developer role", () => {
     browsePage.getSaveQueriesDropdown().should("be.visible");
     browsePage.selectQuery("reset-query");
     //changing the selecte column list should trigger modal confirmation
+    browsePage.getColumnSelectorIcon().should("be.visible");
     browsePage.getColumnSelectorIcon().click();
     browsePage.getColumnSelector().should("be.visible");
     browsePage.selectColumnSelectorProperty("status");

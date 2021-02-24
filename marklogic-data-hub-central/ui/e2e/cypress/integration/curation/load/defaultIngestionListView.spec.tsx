@@ -128,11 +128,15 @@ describe("Validate CRUD functionality from list view", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", stepName);
+  });
+  it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("Yes").click();
+    cy.waitForAsyncRequest();
+    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
+    cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
   });
   it("Verify Run in an existing flow", () => {
-    cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     loadPage.loadView("table").click();
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
