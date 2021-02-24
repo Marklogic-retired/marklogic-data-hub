@@ -8,7 +8,7 @@ const inst = require('/MarkLogic/entity-services/entity-services-instance');
 const mappingLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 const sem = require("/MarkLogic/semantics.xqy");
 const semPrefixes = {es: 'http://marklogic.com/entity-services#'};
-const dhMappingTrace = 'DH-MAPPING';
+const dhMappingTrace = 'hub-mapping';
 const dhMappingTraceIsEnabled = xdmp.traceEnabled(dhMappingTrace);
 let xqueryLib = null;
 
