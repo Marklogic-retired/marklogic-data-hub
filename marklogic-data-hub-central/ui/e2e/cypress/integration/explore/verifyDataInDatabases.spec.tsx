@@ -36,6 +36,8 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     browsePage.getAllDataSnippetByUri("/json/customers/Cust2.json").should("contain", "ColeAdams");
   });
   it("Select query parameters for final database", () => {
+    browsePage.clearSearchText();
+    browsePage.waitForSpinnerToDisappear();
     browsePage.search("Barbi");
     browsePage.waitForSpinnerToDisappear();
     cy.waitForAsyncRequest();
@@ -154,19 +156,21 @@ describe("Verify All Data for final/staging databases and non-entity detail page
     //Verify if the pagination gets reset upon cliking on database buttons
     browsePage.clearSearchText();
     browsePage.selectEntity("All Entities");
-    browsePage.getPaginationPageSizeOptions().then(attr => {
-      attr[0].click();
+    browsePage.getTotalDocuments().then(val => {
+      browsePage.getPaginationPageSizeOptions().then(attr => {
+        attr[0].click();
+      });
+      browsePage.getPageSizeOption("10 / page").click();
+      browsePage.waitForSpinnerToDisappear();
+      browsePage.clickPaginationItem(4);
+      browsePage.waitForSpinnerToDisappear();
+      browsePage.getStagingDatabaseButton().click();
+      browsePage.waitForSpinnerToDisappear();
+      browsePage.getFinalDatabaseButton().click();
+      browsePage.waitForSpinnerToDisappear();
+      cy.contains("Showing 1-20 of "+val+" results", {timeout: 5000});
+      browsePage.getTotalDocuments().should("be.equal", val);
     });
-    browsePage.getPageSizeOption("10 / page").click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.clickPaginationItem(4);
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.getStagingDatabaseButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    browsePage.getFinalDatabaseButton().click();
-    browsePage.waitForSpinnerToDisappear();
-    cy.contains("Showing 1-20 of 36 results", {timeout: 5000});
-    browsePage.getTotalDocuments().should("be.equal", 36);
   });
   it("Switch to staging database and verify the number of documents for the search string is 0", () => {
     browsePage.getStagingDatabaseButton().click();

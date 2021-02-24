@@ -101,12 +101,15 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     runPage.setFlowDescription(`${flowName} description`);
     loadPage.confirmationOptions("Save").click();
     cy.verifyStepAddedToFlow("Load", stepName);
+  });
+  it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("Yes").click();
-  });
-  it("Verify Run Load step in an Existing Flow", () => {
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+  });
+  it("Verify Run Load step in an Existing Flow", () => {
     loadPage.runStep(stepName).click();
     loadPage.runStepSelectFlowConfirmation().should("be.visible");
     loadPage.selectFlowToRunIn(flowName);
@@ -179,12 +182,15 @@ describe("Validate CRUD functionality from card view and run in a flow", () => {
     cy.uploadFile("input/test-1.json");
     cy.verifyStepRunResult("success", "Ingestion", stepName);
     tiles.closeRunMessage();
+  });
+  it("Delete the step and Navigate back to load step", () => {
     runPage.deleteStep(stepName).click();
     loadPage.confirmationOptions("Yes").click();
-  });
-  it("Verify Add to Existing Flow after changing source/target format to TEXT", () => {
+    cy.waitForAsyncRequest();
     cy.waitUntil(() => toolbar.getLoadToolbarIcon()).click();
     cy.waitUntil(() => loadPage.addNewButton("card").should("be.visible"));
+  });
+  it("Verify Add to Existing Flow after changing source/target format to TEXT", () => {
     loadPage.loadView("th-large").click();
     loadPage.editStepInCardView(stepName).click();
     loadPage.selectSourceFormat("TEXT");
