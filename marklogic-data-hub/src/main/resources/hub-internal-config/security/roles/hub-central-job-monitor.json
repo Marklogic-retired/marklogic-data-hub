@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-job-monitor",
+  "description": "Permits access to Hub Central and job monitoring features in DHF",
+  "role": [
+    "data-hub-job-monitor",
+    "hub-central-user"
+  ]
+}
