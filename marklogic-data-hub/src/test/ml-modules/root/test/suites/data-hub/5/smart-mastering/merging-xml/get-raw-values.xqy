@@ -23,7 +23,7 @@ declare namespace endswith = "endswith";
 
 declare option xdmp:mapping "false";
 
-let $options := merge-impl:get-options($lib:OPTIONS-NAME-PATH, $const:FORMAT-XML)
+let $options := merge-impl:get-JSON-options($lib:OPTIONS-NAME-PATH)
 
 let $compiled-merge-options := merge-impl:compile-merge-options($options)
 

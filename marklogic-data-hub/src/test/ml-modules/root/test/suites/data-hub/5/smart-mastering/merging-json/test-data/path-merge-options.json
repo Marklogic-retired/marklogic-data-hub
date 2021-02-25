@@ -1,0 +1,101 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "SOURCE2",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "shallow",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "SOURCE1",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "deep",
+        "algorithmRef": "combine",
+        "maxValues": "1"
+      }
+    ],
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        },
+        {
+          "path": "/envelope/headers/shallow",
+          "name": "shallow"
+        },
+        {
+          "path": "/envelope/headers/custom/this/has/a/deep/path",
+          "name": "deep"
+        }
+      ],
+      "namespaces": {
+        "m": "http://marklogic.com/smart-mastering/merging"
+      }
+    },
+    "algorithms": {
+      "collections": {
+        "onMerge": "",
+        "onNotification": "",
+        "onArchive": "",
+        "onNoMatch": ""
+      },
+      "custom": [
+        {
+          "name": "combine",
+          "function": "combine",
+          "at": "/test/suites/data-hub/5/smart-mastering/merging-json/test-data/combine-json.xqy",
+          "namespace": "http://marklogic.com/smart-mastering/merging"
+        }
+      ]
+    }
+  }
+}

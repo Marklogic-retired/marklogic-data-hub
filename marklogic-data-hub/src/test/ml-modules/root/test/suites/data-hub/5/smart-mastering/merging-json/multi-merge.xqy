@@ -46,7 +46,7 @@ let $_ :=
       document {
         merging:save-merge-models-by-uri(
           map:keys($lib:TEST-DATA),
-          merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML))
+          merging:get-JSON-options($lib:OPTIONS-NAME2))
       }
     },
     $lib:INVOKE_OPTIONS
@@ -63,7 +63,7 @@ let $merged-doc :=
       document {
         merging:save-merge-models-by-uri(
           $second-merge-uris,
-          merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML)
+          merging:get-JSON-options($lib:OPTIONS-NAME2)
         )
       }
     },
@@ -154,7 +154,7 @@ let $assertions := (
     "id": $smid,
     "merge-options": object-node {
     "lang": "zxx",
-    "value": "/com.marklogic.smart-mastering/options/merging/test-options.xml"
+    "value": "/com.marklogic.smart-mastering/options/merging/test-options2.json"
     }
     }
   let $expected-triples :=
@@ -251,6 +251,7 @@ let $assertions := (
       }
     }
   return (
+    xdmp:log($merged-doc),
     if (fn:deep-equal($expected, $merged-doc)) then
       test:success()
     else
