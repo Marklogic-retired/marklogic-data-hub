@@ -1,18 +1,27 @@
 import React, {useState} from "react";
 import styles from "./custom-card.module.scss";
-import {Card, Row, Col} from "antd";
+import {Card, Row, Col, Modal, Select} from "antd";
 import {convertDateFromISO, getInitialChars, extractCollectionFromSrcQuery} from "../../../util/conversionFunctions";
 import {AdvCustomTooltips} from "../../../config/tooltips.config";
 import {MLTooltip} from "@marklogic/design-system";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Steps from "../../steps/steps";
 import {faEye} from "@fortawesome/free-solid-svg-icons";
+import {Link, useHistory} from "react-router-dom";
+import {SecurityTooltips} from "../../../config/tooltips.config";
 
+const {Option} = Select;
 
 interface Props {
-    data: any;
-    canReadOnly: boolean,
-    canReadWrite: boolean
+  data: any;
+  flows: any;
+  entityTypeTitle: any;
+  canReadOnly: any;
+  canReadWrite: any;
+  canWriteFlow: any;
+  entityModel: any;
+  addStepToFlow: any;
+  addStepToNew: any;
 }
 
 const CustomCard: React.FC<Props> = (props) => {
@@ -20,36 +29,196 @@ const CustomCard: React.FC<Props> = (props) => {
   const [stepData, setStepData] = useState({});
   const [openStepSettings, setOpenStepSettings] = useState(false);
 
+  // show add-to-flow options when hovering
+  const [showLinks, setShowLinks] = useState("");
+  const [selectVisible, setSelectVisible] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  // show confirmation dialog to add step to flow
+  const [addDialogVisible, setAddDialogVisible] = useState(false);
+
+  // selected step name and flow name when adding step
+  const [stepName, setStepName] = useState("");
+  const [flowName, setFlowName] = useState("");
+  const [selected, setSelected] = useState({});
+
+  let history = useHistory();
+
+  // helper functions
+  const isStepInFlow = (stepName, flowName) => {
+    let result = false, flow;
+    if (props.flows) flow = props.flows.find(f => f.name === flowName);
+    if (flow) result = flow["steps"].findIndex(s => s.stepName === stepName) > -1;
+    return result;
+  };
+
+  // mouse over/mouse leave events with card body (shows/hides add-to-flow options)
+  function handleMouseOver(e, name) {
+    setStepName(name);
+    setSelectVisible(true);
+    setTooltipVisible(true);
+    if (typeof e.target.className === "string" &&
+            (e.target.className === "ant-card-body" ||
+             e.target.className.startsWith("custom-card_cardContainer") ||
+             e.target.className.startsWith("custom-card_formatFileContainer") ||
+             e.target.className.startsWith("custom-card_sourceQuery") ||
+             e.target.className.startsWith("custom-card_lastUpdatedStyle"))
+    ) {
+      setShowLinks(name);
+    }
+  }
+  function handleMouseLeave() {
+    setShowLinks("");
+    setSelectVisible(false);
+    setTooltipVisible(false);
+  }
+
   const OpenStepSettings = (index) => {
     setStepData(prevState => ({...prevState, ...props.data[index]}));
     setOpenStepSettings(true);
   };
 
+  // confirmation dialog to add flow to step
+  const onAddOk = async (lName, fName) => {
+    await props.addStepToFlow(lName, fName, "custom");
+    setAddDialogVisible(false);
+
+    history.push({
+      pathname: "/tiles/run/add",
+      state: {
+        flowName: fName,
+        addFlowDirty: true,
+        flowsDefaultKey: [props.flows.findIndex(el => el.name === fName)],
+        existingFlow: true
+      }
+    });
+  };
+  const onCancel = () => {
+    setAddDialogVisible(false);
+    setSelected({}); // reset menus on cancel
+  };
+  const addConfirmation = (
+    <Modal
+      visible={addDialogVisible}
+      okText={<div data-testid={`${stepName}-to-${flowName}-Confirm`}>Yes</div>}
+      cancelText="No"
+      onOk={() => onAddOk(stepName, flowName)}
+      onCancel={() => onCancel()}
+      width={400}
+      maskClosable={false}
+    >
+      <div aria-label="add-step-confirmation" style={{fontSize: "16px", padding: "10px"}}>
+        { isStepInFlow(stepName, flowName) ?
+          <p aria-label="step-in-flow">The step <strong>{stepName}</strong> is already in the flow <strong>{flowName}</strong>. Would you like to add another instance?</p> :
+          <p aria-label="step-not-in-flow">Are you sure you want to add the step <strong>{stepName}</strong> to the flow <strong>{flowName}</strong>?</p>
+        }
+      </div>
+    </Modal>
+  );
+
+  // select dropdown when adding step
+  function handleSelect(obj) {
+    let selectedNew = {...selected};
+    selectedNew[obj.loadName] = obj.flowName;
+    setSelected(selectedNew);
+    handleStepAdd(obj.stepName, obj.flowName);
+  }
+  const handleStepAdd = (stepName, flowName) => {
+    setStepName(stepName);
+    setFlowName(flowName);
+    setAddDialogVisible(true);
+  };
+
   return (
     <div className={styles.customContainer}>
       <Row gutter={16} type="flex" >
-        {props && props.data.length > 0 ? props.data.map((elem, index) => (
+        {
+          props && props.data.length > 0 ? props.data.map((elem, index) => (
 
-          <Col key={index}>
-            <Card
-              actions={[
-                <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom">
-                  <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
-                </MLTooltip>,
-              ]}
-              className={styles.cardStyle}
-              size="small"
-            >
-              <div className={styles.formatFileContainer}>
-                <span className={styles.customNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
+            <Col key={index}>
+              <div
+                data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
+                onMouseOver={(e) => handleMouseOver(e, elem.name)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Card
+                  actions={[
+                    <MLTooltip title={AdvCustomTooltips.viewCustom} placement="bottom">
+                      <span className={styles.viewStepSettingsIcon} onClick={() => OpenStepSettings(index)} role="edit-custom button" data-testid={elem.name+"-edit"}><FontAwesomeIcon icon={faEye}/> View Step Settings</span>
+                    </MLTooltip>,
+                  ]}
+                  className={styles.cardStyle}
+                  size="small"
+                >
+                  <div className={styles.formatFileContainer}>
+                    <span className={styles.customNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
+                  </div>
+                  <br />
+                  {elem.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery, 32, "...")}</div>}
+                  <br /><br />
+                  <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                  <div className={styles.cardLinks} style={{display: showLinks === elem.name ? "block" : "none"}}>
+                    {
+                      props.canWriteFlow ?
+                        <Link id="tiles-run-add" to={
+                          {
+                            pathname: "/tiles/run/add",
+                            state: {
+                              stepToAdd: elem.name,
+                              targetEntityType: props.entityModel.entityTypeId,
+                              stepDefinitionType: "custom"
+                            }
+                          }
+                        }>
+                          <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>
+                          Add step to a new flow
+                          </div>
+                        </Link>
+                        :
+                        <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}>
+                        Add step to a new flow
+                        </div>
+                    }
+                    <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
+                      Add step to an existing flow
+                      {
+                        /** dropdown of flow names to add this custom step to */
+                        selectVisible ?
+                          <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}>
+                            <div className={styles.cardLinkSelect} data-testid={`add-${elem.name}-select`}>
+                              <Select
+                                style={{width: "100%"}}
+                                value={selected[elem.name] ? selected[elem.name] : undefined}
+                                onChange={(flowName) => handleSelect({flowName: flowName, stepName: elem.name})}
+                                placeholder="Select Flow"
+                                defaultActiveFirstOption={false}
+                                disabled={!props.canWriteFlow}
+                                data-testid={`${elem.name}-flowsList`}
+                                getPopupContainer={() => document.getElementById("entityTilesContainer") || document.body}
+                              >
+                                {
+                                  props.flows && props.flows.length > 0 ?
+                                    props.flows.map((f, i) => (
+                                      <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
+                                    ))
+                                    : null
+                                }
+                              </Select>
+                            </div>
+                          </MLTooltip>
+                          :
+                          null
+                      }
+                    </div>
+                  </div>
+                </Card>
               </div>
-              <br />
-              {elem.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery, 32, "...")}</div>}
-              <br /><br />
-              <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-            </Card>
-          </Col>
-        )) : <span></span> }</Row>
+            </Col>
+          ))
+            : <span></span>
+        }
+      </Row>
+      {addConfirmation}
       <Steps
         // Basic Settings
         isEditing={true}

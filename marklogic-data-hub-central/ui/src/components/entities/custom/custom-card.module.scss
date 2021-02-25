@@ -44,3 +44,45 @@
 .viewStepSettingsIcon:hover{
     color: var(--hoverColor);
 }
+
+.cardLinks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.cardLink {
+    color: #3f4692;
+    background-color: #ecf6fe;
+    padding: 20px 8px 8px 8px;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover{
+        color: var(--hoverColor) !important;
+    }
+}
+
+.cardDisabledLink {
+    color: #3f4692;
+    background-color: #ecf6fe;
+    padding: 20px 8px 8px 8px;
+    font-size: 14px;
+    cursor: not-allowed;
+}
+
+.cardNonLink {
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #ecf6fe;
+    margin-bottom: 0px;
+    padding: 8px;
+    font-size: 14px;
+    cursor: default;
+}
+
+.cardLinkSelect {
+    margin-top: 7px;
+    margin-bottom: 10px;
+}

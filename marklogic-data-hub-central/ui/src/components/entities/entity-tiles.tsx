@@ -362,8 +362,15 @@ const EntityTiles = (props) => {
       output = <div className={styles.cardView}>
         <div className={styles.customEntityTitle} aria-label={"customEntityTitle"}>You can create Custom steps either manually or using Gradle, then deploy them. Deployed Custom steps appear here. Hub Central only allows running Custom steps, not editing or deleting them.</div>
         <CustomCard data={ customCardData ? sortStepsByUpdated(customCardData.artifacts) : []}
+          flows={props.flows}
+          entityTypeTitle={entityType}
+          entityModel={props.entityModels[entityType]}
           canReadOnly={props.canReadCustom}
-          canReadWrite = {props.canWriteCustom}/>
+          canReadWrite = {props.canWriteCustom}
+          addStepToFlow={props.addStepToFlow}
+          addStepToNew={props.addStepToNew}
+          canWriteFlow={props.canWriteFlow}
+        />
       </div>;
     } else {
       output = <div><br/>This functionality implemented yet.</div>;
@@ -407,8 +414,15 @@ const EntityTiles = (props) => {
             <div className={styles.customNoEntityTitle} aria-label={"customNoEntityTitle"}>Steps that are created outside Hub Central and are not associated with any entity type appear here. Hub Central only allows running these steps, not editing or deleting them.</div>
             {props.canReadCustom ? <div className={styles.cardView}>
               <CustomCard data={customArtifactsWithoutEntity}
+                flows={props.flows}
+                entityTypeTitle={/** entityType */""}
+                entityModel={/** props.entityModels[entityType] */""}
                 canReadOnly={props.canReadCustom}
-                canReadWrite = {props.canWriteCustom}/>
+                canReadWrite = {props.canWriteCustom}
+                canWriteFlow={props.canWriteFlow}
+                addStepToFlow={props.addStepToFlow}
+                addStepToNew={props.addStepToNew}
+              />
             </div>: null}
           </Panel>: null}
       </Collapse>

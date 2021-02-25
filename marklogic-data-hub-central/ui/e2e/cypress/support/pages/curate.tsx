@@ -74,6 +74,10 @@ class CuratePage {
     cy.findByTestId(`${entityTypeId}-Match`).click();
   }
 
+  selectCustomTab(entityTypeId: string) {
+    cy.findByTestId(`${entityTypeId}-Custom`).click();
+  }
+
   addNewStep() {
     return cy.findByLabelText("icon: plus-circle");
   }

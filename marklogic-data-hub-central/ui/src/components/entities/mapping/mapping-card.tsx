@@ -780,62 +780,92 @@ const MappingCard: React.FC<Props> = (props) => {
             <br/>
             <p className={styles.addNewContent}>Add New</p>
           </Card></MLTooltip>
-        </Col>}{props.data && props.data.length > 0 ? props.data.map((elem, index) => (
-          <Col key={index}>
-            <div
-              data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
-              onMouseOver={(e) => handleMouseOver(e, elem.name)}
-              onMouseLeave={(e) => handleMouseLeave()}
-            >
-              <Card
-                actions={[
-                  <MLTooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
-                  <MLTooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
-                  props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>,
-                  props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-delete-mapping button" data-testid={elem.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
-                ]}
-                className={styles.cardStyle}
-                size="small"
-              >
-                <div className={styles.formatFileContainer}>
-                  <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
+        </Col>}
+        {
+          props.data && props.data.length > 0 ?
+            props.data.map((elem, index) => (
+              <Col key={index}>
+                <div
+                  data-testid={`${props.entityTypeTitle}-${elem.name}-step`}
+                  onMouseOver={(e) => handleMouseOver(e, elem.name)}
+                  onMouseLeave={(e) => handleMouseLeave()}
+                >
+                  <Card
+                    actions={[
+                      <MLTooltip title={"Step Details"} placement="bottom"><i className={styles.stepDetails}><FontAwesomeIcon icon={faPencilAlt} onClick={() => openSourceToEntityMapping(elem.name, index)} data-testid={`${elem.name}-stepDetails`}/></i></MLTooltip>,
+                      <MLTooltip title={"Step Settings"} placement="bottom"><i className={styles.editIcon} role="edit-mapping button" key ="last"><FontAwesomeIcon icon={faCog} data-testid={elem.name+"-edit"} onClick={() => OpenStepSettings(index)}/></i></MLTooltip>,
+                      props.canReadWrite ? <MLTooltip title={"Run"} placement="bottom"><i aria-label="icon: run"><Icon type="play-circle" theme="filled" className={styles.runIcon} data-testid={elem.name+"-run"} onClick={() => handleStepRun(elem.name)}/></i></MLTooltip> : <MLTooltip title={"Run: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-run-mapping button" data-testid={elem.name+"-disabled-run"}><Icon type="play-circle" theme="filled" onClick={(event) => event.preventDefault()} className={styles.disabledIcon}/></i></MLTooltip>,
+                      props.canReadWrite ? <MLTooltip title={"Delete"} placement="bottom"><i key ="last" role="delete-mapping button" data-testid={elem.name+"-delete"} onClick={() => handleCardDelete(elem.name)}><FontAwesomeIcon icon={faTrashAlt} className={styles.deleteIcon} size="lg"/></i></MLTooltip> : <MLTooltip title={"Delete: " + SecurityTooltips.missingPermission} placement="bottom" overlayStyle={{maxWidth: "200px"}}><i role="disabled-delete-mapping button" data-testid={elem.name+"-disabled-delete"} onClick={(event) => event.preventDefault()}><FontAwesomeIcon icon={faTrashAlt} className={styles.disabledIcon} size="lg"/></i></MLTooltip>,
+                    ]}
+                    className={styles.cardStyle}
+                    size="small"
+                  >
+                    <div className={styles.formatFileContainer}>
+                      <span aria-label={`${elem.name}-step-label`} className={styles.mapNameStyle}>{getInitialChars(elem.name, 27, "...")}</span>
 
-                </div><br />
-                {elem.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery, 32, "...")}</div>}
-                <br /><br />
-                <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
-                <div className={styles.cardLinks} style={{display: showLinks === elem.name ? "block" : "none"}}>
-                  { props.canWriteFlow ? <Link id="tiles-run-add" to={
-                    {pathname: "/tiles/run/add",
-                      state: {
-                        stepToAdd: elem.name,
-                        targetEntityType: props.entityModel.entityTypeId,
-                        stepDefinitionType: "mapping"
-                      }}}><div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}> Add step to a new flow</div></Link> : <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}> Add step to a new flow</div> }
-                  <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
-                                        Add step to an existing flow
-                    {selectVisible ? <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}>
-                      <Select
-                        style={{width: "100%"}}
-                        value={selected[elem.name] ? selected[elem.name] : undefined}
-                        onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
-                        placeholder="Select Flow"
-                        defaultActiveFirstOption={false}
-                        disabled={!props.canWriteFlow}
-                        data-testid={`${elem.name}-flowsList`}
-                        getPopupContainer={() => document.getElementById("entityTilesContainer") || document.body}
-                      >
-                        { props.flows && props.flows.length > 0 ? props.flows.map((f, i) => (
-                          <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
-                        )) : null}
-                      </Select>
-                    </div></MLTooltip> : null}
-                  </div>
+                    </div><br />
+                    {elem.selectedSource === "collection" ? <div className={styles.sourceQuery}>Collection: {extractCollectionFromSrcQuery(elem.sourceQuery)}</div> : <div className={styles.sourceQuery}>Source Query: {getInitialChars(elem.sourceQuery, 32, "...")}</div>}
+                    <br /><br />
+                    <p className={styles.lastUpdatedStyle}>Last Updated: {convertDateFromISO(elem.lastUpdated)}</p>
+                    <div className={styles.cardLinks} style={{display: showLinks === elem.name ? "block" : "none"}}>
+                      {
+                        props.canWriteFlow ?
+                          <Link id="tiles-run-add" to={
+                            {
+                              pathname: "/tiles/run/add",
+                              state: {
+                                stepToAdd: elem.name,
+                                targetEntityType: props.entityModel.entityTypeId,
+                                stepDefinitionType: "mapping"
+                              }
+                            }
+                          }>
+                            <div className={styles.cardLink} data-testid={`${elem.name}-toNewFlow`}>
+                          Add step to a new flow
+                            </div>
+                          </Link>
+                          :
+                          <div className={styles.cardDisabledLink} data-testid={`${elem.name}-disabledToNewFlow`}>
+                        Add step to a new flow
+                          </div>
+                      }
+                      <div className={styles.cardNonLink} data-testid={`${elem.name}-toExistingFlow`}>
+                      Add step to an existing flow
+                        {
+                          selectVisible ?
+                            <MLTooltip title={"Curate: "+SecurityTooltips.missingPermission} placement={"bottom"} visible={tooltipVisible && !props.canWriteFlow}><div className={styles.cardLinkSelect}>
+                              <Select
+                                style={{width: "100%"}}
+                                value={selected[elem.name] ? selected[elem.name] : undefined}
+                                onChange={(flowName) => handleSelect({flowName: flowName, mappingName: elem.name})}
+                                placeholder="Select Flow"
+                                defaultActiveFirstOption={false}
+                                disabled={!props.canWriteFlow}
+                                data-testid={`${elem.name}-flowsList`}
+                                getPopupContainer={() => document.getElementById("entityTilesContainer") || document.body}
+                              >
+                                {
+                                  props.flows && props.flows.length > 0 ?
+                                    props.flows.map((f, i) => (
+                                      <Option aria-label={`${f.name}-option`} value={f.name} key={i}>{f.name}</Option>
+                                    ))
+                                    :
+                                    null
+                                }
+                              </Select>
+                            </div></MLTooltip>
+                            :
+                            null
+                        }
+                      </div>
+                    </div>
+                  </Card>
                 </div>
-              </Card>
-            </div>
-          </Col>
-        )) : <span></span> }</Row>
+              </Col>
+            ))
+            : <span></span>
+        }
+      </Row>
       {deleteConfirmation}
       <SourceToEntityMap
         sourceData={sourceData}
