@@ -1,0 +1,14 @@
+{
+  "role-name": "data-hub-job-monitor",
+  "description": "This role grants access to read job monitoring related data",
+  "role": [
+    "data-hub-job-reader"
+  ],
+  "privilege": [
+    {
+      "privilege-name": "data-hub-job-monitor",
+      "action": "http://marklogic.com/data-hub/privileges/monitor-jobs",
+      "kind": "execute"
+    }
+  ]
+}

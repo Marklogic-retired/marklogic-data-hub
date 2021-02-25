@@ -8,6 +8,7 @@
     "rest-reader",
     "data-hub-module-reader",
     "data-hub-job-reader",
+    "data-hub-job-monitor",
     "data-hub-flow-reader",
     "data-hub-mapping-reader",
     "data-hub-entity-model-reader",

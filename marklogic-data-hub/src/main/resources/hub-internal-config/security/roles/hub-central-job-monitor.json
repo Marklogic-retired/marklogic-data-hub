@@ -1,0 +1,8 @@
+{
+  "role-name": "hub-central-job-monitor",
+  "description": "This role grants access to Hub Central and to read job monitoring related data",
+  "role": [
+    "data-hub-job-monitor",
+    "hub-central-user"
+  ]
+}
