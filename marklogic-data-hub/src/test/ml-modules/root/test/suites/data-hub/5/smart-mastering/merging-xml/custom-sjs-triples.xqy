@@ -22,7 +22,7 @@ declare option xdmp:update "false";
 declare option xdmp:mapping "false";
 
 (: Merge a couple documents :)
-let $options := merging:get-options($lib:OPTIONS-NAME-CUST-TRIPS-SJS, $const:FORMAT-XML)
+let $options := merging:get-JSON-options($lib:OPTIONS-NAME-CUST-TRIPS-SJS)
 let $merged-doc :=
   xdmp:invoke-function(
     function() {

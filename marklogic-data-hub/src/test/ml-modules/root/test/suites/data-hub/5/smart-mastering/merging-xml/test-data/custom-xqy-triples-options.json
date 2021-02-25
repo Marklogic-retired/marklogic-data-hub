@@ -1,0 +1,60 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "tripleMerge": {
+      "function": "custom-trips",
+      "namespace": "http://marklogic.com/smart-mastering/merging",
+      "at": "/custom-triple-merge-xqy.xqy",
+      "someParam": "3"
+    },
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "maxValues": "1",
+        "length": {
+          "weight": "8"
+        },
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        }
+      }
+    ],
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        }
+      ]
+    }
+  }
+}

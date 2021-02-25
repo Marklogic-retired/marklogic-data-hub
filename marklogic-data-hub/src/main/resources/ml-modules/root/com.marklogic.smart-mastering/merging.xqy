@@ -139,7 +139,17 @@ declare function merging:get-option-names($format as xs:string)
 };
 
 (:
- : Return all previously save merge options.
+ : Return all previously saved merge options.
+ :
+ : @return An array of JSON options objects.
+ :)
+declare function merging:get-JSON-options()
+{
+  impl:get-JSON-options()
+};
+
+(:
+ : Return all previously saved merge options.
  :
  : @param $format  either $const:FORMAT-XML or $const:FORMAT-JSON
  : @return A sequence of elements with the options or a JSON array with option objects.
@@ -173,4 +183,35 @@ declare function merging:save-options(
 ) as empty-sequence()
 {
   impl:save-options($name, $options)
+};
+
+(:
+ : Retrieve a named set of merge options from the DB, stored as JSON, returned as JSON.
+ :
+ : @param $options-name  the name under which the options were saved
+ : @return A JSON object
+ :)
+declare function merging:get-JSON-options($options-name as xs:string)
+{
+  impl:get-JSON-options($options-name)
+};
+
+(: call from JavaScript as getJsonOptions() :)
+declare function merging:get-json-options($options-name as xs:string)
+{
+  impl:get-JSON-options($options-name)
+};
+
+(:
+ : Save a set of merging options to the database as JSON.
+ : @param $name  the name under which the options are to be stored
+ : @param $options  the JSON options.
+ : @return ()
+ :)
+declare function merging:save-JSON-options(
+  $name as xs:string,
+  $options as node()
+) as empty-sequence()
+{
+  impl:save-JSON-options($name, $options)
 };

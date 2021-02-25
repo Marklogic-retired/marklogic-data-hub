@@ -23,8 +23,8 @@ declare option xdmp:mapping "false";
 declare function plugin:collect(
   $options as map:map) as xs:string*
 {
-  let $merge-options := merging:get-options($options => map:get("options"), $const:FORMAT-XML)
-  let $matching-options := matcher:get-options(fn:string($merge-options/merging:match-options), $const:FORMAT-XML)
+  let $merge-options := merging:get-JSON-options($options => map:get("options"))
+  let $matching-options := matcher:get-options(fn:string($merge-options => map:get("matchOptions"), $const:FORMAT-XML)
   return
     cts:uris((), (), cts:and-query((
       coll:content-collections($matching-options) ! cts:collection-query(.),

@@ -11,11 +11,14 @@ import module namespace const = "http://marklogic.com/smart-mastering/constants"
 
 
 let $actual := merging:get-option-names($const:FORMAT-JSON)
+let $log := xdmp:log($actual)
 
 return (
   test:assert-same-values(
-    ($lib:OPTIONS-NAME, $lib:OPTIONS-NAME-STRATEGIES, $lib:OPTIONS-NAME-COMPLETE, $lib:OPTIONS-NAME-CUST-XQY,
-     $lib:OPTIONS-NAME-CUST-SJS, $lib:OPTIONS-NAME-PATH, $lib:NESTED-OPTIONS
+    (
+      $lib:OPTIONS-NAME, $lib:OPTIONS-NAME2, $lib:OPTIONS-NAME-STRATEGIES,
+      $lib:OPTIONS-NAME-COMPLETE, $lib:OPTIONS-NAME-CUST-XQY, $lib:OPTIONS-NAME-CUST-SJS,
+      $lib:OPTIONS-NAME-PATH, $lib:NESTED-OPTIONS
     ),
     $actual/node()/fn:string()
   )

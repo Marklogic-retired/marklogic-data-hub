@@ -41,7 +41,7 @@ for $uri in cts:uris()
 return xdmp:log($uri)
 ,
 
-merging:save-options($lib:MERGE-OPTIONS-NAME, test:get-test-file("merge-options.xml"))
+merging:save-JSON-options($lib:MERGE-OPTIONS-NAME, test:get-test-file("merge-options.json"))
 ,
 for $uri in ($lib:URI-DOB1, $lib:URI-DOB2)
 let $doc := test:get-test-file(map:get($lib:TEST-DATA, $uri))
@@ -79,7 +79,7 @@ let $actual :=
   xdmp:invoke-function(
     function() {
       let $match-options := matcher:get-options($lib:MATCH-OPTIONS-CUST-DOB-NAME, $const:FORMAT-XML)
-      let $merge-options := merging:get-options($lib:MERGE-OPTIONS-NAME, $const:FORMAT-XML)
+      let $merge-options := merging:get-JSON-options($lib:MERGE-OPTIONS-NAME)
       return process:process-match-and-merge-with-options(($lib:URI-DOB2, $lib:URI-DOB1), $merge-options, $match-options, cts:true-query(), fn:false())
     },
     $lib:INVOKE_OPTIONS
