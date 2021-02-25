@@ -49,14 +49,14 @@ let $_ :=
       document {
         merging:save-merge-models-by-uri(
           map:keys($lib:TEST-DATA),
-          merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML))
+          merging:get-JSON-options($lib:OPTIONS-NAME))
       }
     },
     $lib:INVOKE_OPTIONS
   )
 
 let $merged-uri := xdmp:invoke-function(
-  function() {(cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1]},
+  function() { (cts:uris((), (), cts:collection-query($const:MERGED-COLL)))[1] },
   $lib:INVOKE_OPTIONS
 )
 let $second-merge-uris := ("/source/3/doc3.xml", $merged-uri)
@@ -66,7 +66,7 @@ let $merged-doc :=
       document {
         merging:save-merge-models-by-uri(
           $second-merge-uris,
-          merging:get-options($lib:OPTIONS-NAME, $const:FORMAT-XML)
+          merging:get-JSON-options($lib:OPTIONS-NAME)
         )
       }
     },
@@ -118,7 +118,7 @@ let $assertions := xdmp:eager(
         </sm:source>
       </sm:sources>
       <sm:merge-options xml:lang="zxx">
-        <sm:value>/com.marklogic.smart-mastering/options/merging/{$lib:OPTIONS-NAME}.xml</sm:value>
+        <sm:value>/com.marklogic.smart-mastering/options/merging/{$lib:OPTIONS-NAME}.json</sm:value>
       </sm:merge-options>
       <shallow>shallow value 1</shallow>
       <shallow>shallow value 2</shallow>
@@ -225,6 +225,11 @@ let $assertions := xdmp:eager(
     </es:triples>
   let $expected := <es:envelope xmlns:es="http://marklogic.com/entity-services">{$expected-headers}{$expected-triples}{$expected-instance}</es:envelope>
   return (
+    xdmp:log("expected headers"),
+    xdmp:log($expected-headers),
+    xdmp:log("actual headers"),
+    xdmp:log($merged-doc/es:headers),
+
     test-ext:assert-equal-tidy-xml($expected-headers, $merged-doc/es:headers),
     test-ext:assert-equal-tidy-xml($expected-triples, $merged-doc/es:triples),
     test-ext:assert-equal-tidy-xml($expected-instance, $merged-doc/es:instance)

@@ -23,7 +23,7 @@ let $merged-doc :=
     function() {
       merging:save-merge-models-by-uri(
         map:keys($lib:NESTED-DATA),
-        merging:get-options($lib:NESTED-OPTIONS, $const:FORMAT-XML))
+        merging:get-JSON-options($lib:NESTED-OPTIONS))
     },
     $lib:INVOKE_OPTIONS
   )

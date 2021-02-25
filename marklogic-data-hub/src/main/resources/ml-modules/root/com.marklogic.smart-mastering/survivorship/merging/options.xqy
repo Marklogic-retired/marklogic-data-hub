@@ -42,16 +42,34 @@ declare variable $event-names-xml as xs:QName+ := (xs:QName("merging:on-merge"),
  : Functions related to merge options.
  :~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~:)
 
+declare function merge-impl:get-JSON-options() as object-node()*
+{
+  let $query :=
+    cts:and-query((
+      cts:collection-query($const:OPTIONS-COLL),
+      (: In future version, remove mdm-merge collection from query
+        Currently part of the query to avoid breaking changes.
+      :)
+      cts:collection-query(('mdm-merge', $const:MERGE-OPTIONS-COLL))
+    ))
+  let $options := cts:search(doc(), $query, "unfiltered")
+  return $options/object-node()
+  (:
+  return array-node { $options ! xdmp:from-json(.) }
+  :)
+};
+
 declare function merge-impl:get-options($format as xs:string)
 {
-  let $options :=
-    cts:search(fn:collection(), cts:and-query((
-        cts:collection-query($const:OPTIONS-COLL),
-        (: In future version, remove mdm-merge collection from query
-          Currently part of the query to avoid breaking changes.
-        :)
-        cts:collection-query(('mdm-merge',$const:MERGE-OPTIONS-COLL))
-    )))/merging:options
+  let $query :=
+    cts:and-query((
+      cts:collection-query($const:OPTIONS-COLL),
+      (: In future version, remove mdm-merge collection from query
+        Currently part of the query to avoid breaking changes.
+      :)
+      cts:collection-query(('mdm-merge', $const:MERGE-OPTIONS-COLL))
+    ))
+  let $options := cts:search(fn:collection(), $query)/merging:options
   return
     if ($format eq $const:FORMAT-XML) then
       $options
@@ -63,7 +81,9 @@ declare function merge-impl:get-options($format as xs:string)
 
 declare function merge-impl:get-options($options-name, $format as xs:string)
 {
-  let $options := fn:doc($MERGING-OPTIONS-DIR||$options-name||".xml")/merging:options
+  let $options-uri := $MERGING-OPTIONS-DIR || $options-name || ".xml"
+  let $options := fn:doc($options-uri)/merging:options
+  let $log := xdmp:log($options)
   return
     if ($format eq $const:FORMAT-XML) then
       $options
@@ -73,11 +93,22 @@ declare function merge-impl:get-options($options-name, $format as xs:string)
       httputils:throw-bad-request(xs:QName("SM-INVALID-FORMAT"), "merge-impl:get-options called with invalid format " || $format)
 };
 
+declare function merge-impl:get-JSON-options($options-name as xs:string) as object-node()?
+{
+  let $log := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then xdmp:trace($const:TRACE-MERGE-RESULTS, "get-JSON-options: " || $options-name) else ()
+  let $options-uri := $MERGING-OPTIONS-DIR || $options-name || ".json"
+  let $options := fn:doc($options-uri)/object-node()
+  let $log := if (xdmp:trace-enabled($const:TRACE-MERGE-RESULTS)) then xdmp:trace($const:TRACE-MERGE-RESULTS, $options) else ()
+  return $options (: ! xdmp:from-json(.) :)
+};
+
 declare function merge-impl:save-options(
   $name as xs:string,
   $options as node()
 ) as empty-sequence()
 {
+  let $_ := fn:error((), "Don't call this")
+
   let $options :=
     if ($options instance of document-node()) then
       $options/node()
@@ -90,11 +121,24 @@ declare function merge-impl:save-options(
       $options
   return
     xdmp:document-insert(
-      $MERGING-OPTIONS-DIR||$name||".xml",
+      $MERGING-OPTIONS-DIR || $name || ".xml",
       $options,
       config:get-default-data-hub-permissions(),
       ($const:OPTIONS-COLL, $const:MERGE-OPTIONS-COLL)
     )
+};
+
+declare function merge-impl:save-JSON-options(
+  $name as xs:string,
+  $options as node())
+  as empty-sequence()
+{
+  xdmp:document-insert(
+    $MERGING-OPTIONS-DIR || $name || ".json",
+    $options,
+    config:get-default-data-hub-permissions(),
+    ($const:OPTIONS-COLL, $const:MERGE-OPTIONS-COLL)
+  )
 };
 
 declare variable $options-json-config := merge-impl:_options-json-config();
@@ -119,7 +163,9 @@ declare function merge-impl:remove-whitespace($xml)
 (:
  : Convert merge options from XML to JSON.
  :)
-declare function merge-impl:options-to-json($options-xml as element(merging:options))
+declare function merge-impl:options-to-json(
+  $options-xml as element(merging:options))
+  as node()?
 {
   if (fn:exists($options-xml)) then
     xdmp:to-json(
@@ -296,7 +342,15 @@ declare function merge-impl:build-namespace-map($source as element()?)
 declare function merge-impl:options-from-json($options-json as item())
   as element(merging:options)
 {
-  let $options-json := if ($options-json instance of json:object) then xdmp:to-json($options-json)/object-node() else $options-json
+  (: let $_ := fn:error((), "Don't call this") :)
+
+  let $options-json :=
+    if ($options-json instance of json:object) then
+      xdmp:to-json($options-json)/object-node()
+    else if ($options-json instance of document-node()) then
+      $options-json/object-node()
+    else
+      $options-json
   return
     <options xmlns="http://marklogic.com/smart-mastering/merging">
       {
@@ -415,11 +469,12 @@ declare private function merge-impl:construct-merging-element($options-json as o
   }
 };
 
-declare variable $merge-spec-json-config := json:config("custom")
-      => map:with("element-namespace", "http://marklogic.com/smart-mastering/merging")
-      => map:with("camel-case", fn:true())
-      => map:with("whitespace", "ignore")
-      => map:with("attribute-names", ("default", "name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources", "documentUri"));
+declare variable $merge-spec-json-config :=
+  json:config("custom")
+    => map:with("element-namespace", "http://marklogic.com/smart-mastering/merging")
+    => map:with("camel-case", fn:true())
+    => map:with("whitespace", "ignore")
+    => map:with("attribute-names", ("default", "name", "weight", "strategy", "propertyName", "algorithmRef", "maxValues", "maxSources", "documentUri"));
 
 declare function merge-impl:propertyspec-to-xml($merging-objects as item()*, $type as xs:QName) as element()* {
   let $normalized-merging-objects :=
@@ -507,17 +562,25 @@ declare function merge-impl:_options-json-config()
 declare function merge-impl:get-option-names($format as xs:string)
 {
   if ($format eq $const:FORMAT-XML) then
-    let $options := cts:uris('', (), cts:and-query((
-        cts:collection-query($const:OPTIONS-COLL),
-        (: In future version, remove mdm-merge collection from query
-          Currently part of the query to avoid breaking changes.
-        :)
-        cts:collection-query(('mdm-merge',$const:MERGE-OPTIONS-COLL))
-      )))
-    let $option-names := $options ! fn:replace(
-      fn:replace(., $MERGING-OPTIONS-DIR, ""),
-      "\.xml$", ""
-    )
+    let $options-uris :=
+      cts:uris('', (),
+        cts:and-query((
+          cts:collection-query($const:OPTIONS-COLL),
+          (: In future version, remove mdm-merge collection from query
+            Currently part of the query to avoid breaking changes.
+          :)
+          cts:collection-query(('mdm-merge', $const:MERGE-OPTIONS-COLL))
+        ))
+      )
+    let $option-names :=
+      $options-uris !
+        fn:replace(
+          fn:replace(
+            fn:replace(., $MERGING-OPTIONS-DIR, ""),
+            "\.xml$", ""
+          ),
+          "\.json$", ""
+        )
     return
       element merging:options {
         for $name in $option-names

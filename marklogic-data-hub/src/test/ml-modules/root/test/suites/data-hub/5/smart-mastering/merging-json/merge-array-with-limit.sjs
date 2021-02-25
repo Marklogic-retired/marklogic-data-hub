@@ -10,7 +10,7 @@ const test = require("/test/test-helper.xqy");
 const lib = require("lib/lib.xqy");
 
 
-let options = test.getTestFile("merge-options-with-array-limit.xml").root;
+let options = test.getTestFile("merge-options-with-array-limit.json").root;
 
 let mergedDoc = merging.buildMergeModelsByUri(
   ['/source/1/doc1.json','/source/2/doc2.json'],

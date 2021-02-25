@@ -1,0 +1,82 @@
+{
+  "options": {
+    "matchOptions": "basic",
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "maxValues": "1",
+        "length": {
+          "weight": "8"
+        },
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        }
+      },
+      {
+        "propertyName": "customThing",
+        "algorithmRef": "customThing",
+        "maxValues": "1",
+        "goHigh": "true"
+      }
+    ],
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        },
+        {
+          "namespace": "",
+          "localname": "CustomThing",
+          "name": "customThing"
+        }
+      ]
+    },
+    "algorithms": {
+      "collections": {
+        "onMerge": "",
+        "onNotification": "",
+        "onArchive": "",
+        "onNoMatch": ""
+      },
+      "custom": [
+        {
+          "name": "customThing",
+          "function": "customThing",
+          "at": "/test/suites/data-hub/5/smart-mastering/merging-json/test-data/custom-merge-sjs.sjs",
+          "namespace": ""
+        }
+      ]
+    }
+  }
+}
+

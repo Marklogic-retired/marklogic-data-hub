@@ -1,0 +1,119 @@
+{
+  "options": {
+    "matchOptions": "match-options",
+    "merging": [
+      {
+        "propertyName": "ssn",
+        "sourceRef": {
+          "documentUri": "docA"
+        }
+      },
+      {
+        "propertyName": "name",
+        "maxValues": "1",
+        "doubleMetaphone": {
+          "distanceThreshold": "50"
+        },
+        "synonymsSupport": "true",
+        "thesaurus": "/mdm/config/thesauri/first-name-synonyms.xml",
+        "length": {
+          "weight": "8"
+        }
+      },
+      {
+        "propertyName": "address",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "CRM",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "dob",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "Oracle",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "caseStartDate",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "sourceWeights": [
+          {
+            "source": {
+              "name": "CRM",
+              "weight": "10"
+            }
+          }
+        ]
+      },
+      {
+        "propertyName": "incidentDate",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "length": {
+          "weight": "10"
+        }
+      },
+      {
+        "propertyName": "sex",
+        "algorithmRef": "standard",
+        "maxValues": "1",
+        "length": {
+          "weight": "10"
+        }
+      }
+    ],
+    "propertyDefs": {
+      "properties": [
+        {
+          "namespace": "",
+          "localname": "IdentificationID",
+          "name": "ssn"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonName",
+          "name": "name"
+        },
+        {
+          "namespace": "",
+          "localname": "Address",
+          "name": "address"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonBirthDate",
+          "name": "dob"
+        },
+        {
+          "namespace": "",
+          "localname": "CaseStartDate",
+          "name": "caseStartDate"
+        },
+        {
+          "namespace": "",
+          "localname": "IncidentCategoryCodeDate",
+          "name": "incidentDate"
+        },
+        {
+          "namespace": "",
+          "localname": "PersonSex",
+          "name": "sex"
+        }
+      ]
+    }
+  }
+}
