@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react";
 import {Modal, Tabs} from "antd";
 import CreateEditLoad from "../load/create-edit-load/create-edit-load";
-import CreateEditMapping from "../entities/mapping/create-edit-mapping/create-edit-mapping";
 import CreateEditStep from "../entities/create-edit-step/create-edit-step";
 import ViewCustom from "../entities/custom/view-custom/view-custom";
 import AdvancedSettings from "../advanced-settings/advanced-settings";
@@ -138,14 +137,14 @@ const Steps: React.FC<Props> = (props) => {
     stepData={props.stepData}
   />);
 
-  const createEditMapping = (<CreateEditMapping
+  const createEditMapping = (<CreateEditStep
     {...createEditDefaults}
     isEditing={props.isEditing}
-    createMappingArtifact={createStep}
-    updateMappingArtifact={updateStep}
-    stepData={props.stepData}
+    editStepArtifactObject={props.stepData}
+    stepType={StepType.Mapping}
     targetEntityType={props.targetEntityType}
-    sourceDatabase={props.sourceDatabase}
+    createStepArtifact={createStep}
+    updateStepArtifact={updateStep}
   />);
 
   const createEditMatching = (<CreateEditStep
