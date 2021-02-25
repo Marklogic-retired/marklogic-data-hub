@@ -51,6 +51,43 @@ describe("Custom Card component", () => {
     await waitForElement(() => getByText(AdvCustomTooltips.viewCustom));
   });
 
+  test("Can add step to flow", async () => {
+    const authorityService = new AuthoritiesService();
+    authorityService.setAuthorities(["readCustom"]);
+    let customData = data.customSteps.data.stepsWithEntity[0].artifacts;
+    let flows = data.flows.data;
+    const {getByText, getByLabelText, getByTestId} = render(
+      <Router><AuthoritiesContext.Provider value={authorityService}>
+        <CustomCard
+          data={customData}
+          flows={flows}
+          canReadOnly={true}
+          canReadWrite={false}
+          canWriteFlow={true}
+          entityModel={{entityTypeId: "Customer"}}
+          addStepToFlow={() => {}}
+        />
+      </AuthoritiesContext.Provider></Router>);
+
+    expect(getByText("customJSON")).toBeInTheDocument();
+
+    // hover over card to see options
+    fireEvent.mouseOver(getByText("customJSON"));
+    expect(getByTestId("customJSON-toNewFlow")).toBeInTheDocument(); // 'Add to a new Flow'
+    expect(getByTestId("customJSON-toExistingFlow")).toBeInTheDocument(); // 'Add to an existing Flow'
+
+    // Open menu, choose flow
+    fireEvent.click(getByTestId("customJSON-flowsList"));
+    fireEvent.click(getByLabelText("testFlow-option"));
+
+    // Dialog appears, click 'Yes' button
+    expect(getByLabelText("step-not-in-flow")).toBeInTheDocument();
+    fireEvent.click(getByTestId("customJSON-to-testFlow-Confirm"));
+
+    // Check if the /tiles/run/add route has been called
+    wait(() => { expect(mockHistoryPush).toHaveBeenCalledWith("/tiles/run/add"); });
+  });
+
   test("Open advanced settings", async () => {
     const authorityService = new AuthoritiesService();
     authorityService.setAuthorities(["readCustom"]);
