@@ -19,6 +19,8 @@ const datahub = new DataHub();
 // Require module for mapping latitude and longitude from zip codes
 const zipcodeData = require("/custom-modules/utils/zipcodeData.sjs");
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options) {
 
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -28,9 +30,9 @@ function main(content, options) {
     doc = fn.head(doc.root);
   }
 
-  let instance = datahub.flow.flowUtils.getInstance(doc).toObject() || {};
-  let triples = datahub.flow.flowUtils.getTriples(doc) || [];
-  let headers = datahub.flow.flowUtils.getHeaders(doc) || {};
+  let instance = flowUtils.getInstance(doc).toObject() || {};
+  let triples = flowUtils.getTriples(doc) || [];
+  let headers = flowUtils.getHeaders(doc) || {};
 
   instance['$attachments'] = doc.toObject().envelope.instance;
 
@@ -43,7 +45,7 @@ function main(content, options) {
   }
 
   //form our envelope here now, specifying our output format
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  let envelope = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //assign our envelope value
   content.value = envelope;

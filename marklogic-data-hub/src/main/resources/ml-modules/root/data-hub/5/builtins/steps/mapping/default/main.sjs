@@ -1,14 +1,12 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const lib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
 // caching mappings in key to object since tests can have multiple mappings run in same transaction
 var mappings = {};
 var entityModel = null;
 
 function main(content, options) {
-  let id = content.uri;
-  //let's set our output format, so we know what we're exporting
-  let inputFormat = options.inputFormat ? options.inputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
   if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
     datahub.debug.log({
@@ -88,7 +86,7 @@ function main(content, options) {
   //now let's make our attachments, if it's xml, it'll be passed as string
   instance['$attachments'] = doc;
   // fix the document URI if the format changes
-  content.uri = datahub.flow.flowUtils.properExtensionURI(content.uri, outputFormat);
+  content.uri = flowUtils.properExtensionURI(content.uri, outputFormat);
 
   content.value = buildEnvelope(doc, instance, outputFormat, options);
   content.provenance = { [content.uri]: provenance };
@@ -97,7 +95,6 @@ function main(content, options) {
 
 // Extracted for unit testing purposes
 function buildEnvelope(doc, instance, outputFormat, options) {
-  let flowUtils = datahub.flow.flowUtils;
   let triples = [];
   let headers = flowUtils.createHeaders(options);
 

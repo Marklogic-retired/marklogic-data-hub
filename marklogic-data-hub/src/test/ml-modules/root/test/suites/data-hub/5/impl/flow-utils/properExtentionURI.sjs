@@ -1,7 +1,6 @@
 const test = require("/test/test-helper.xqy");
 
-const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
-const flowUtils = new FlowUtils();
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 
 [
   test.assertEqual('/test.json', flowUtils.properExtensionURI('/test.json', 'json')),

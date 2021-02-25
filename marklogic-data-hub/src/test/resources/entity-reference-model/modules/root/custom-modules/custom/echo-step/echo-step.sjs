@@ -1,5 +1,4 @@
-const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
-const datahub = DataHubSingleton.instance();
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 
 /**
@@ -9,7 +8,7 @@ function main(contentItem, options) {
   const instance = cts.doc(contentItem.uri).toObject();
   return {
     uri: "/echo" + contentItem.uri,
-    value: datahub.flow.flowUtils.makeEnvelope(instance, {}, [], "json"),
+    value: flowUtils.makeEnvelope(instance, {}, [], "json"),
     context: {
       permissions: hubUtils.parsePermissions("data-hub-operator,read,data-hub-operator,update")
     }

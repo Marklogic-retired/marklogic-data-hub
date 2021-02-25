@@ -1,6 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options) {
 
   //grab the doc id/uri
@@ -48,20 +50,20 @@ function main(content, options) {
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  let instance = datahub.flow.flowUtils.getInstance(doc);
+  let instance = flowUtils.getInstance(doc);
 
   // get triples, return null if empty or cannot be found
-  let triples = datahub.flow.flowUtils.getTriples(doc);
+  let triples = flowUtils.getTriples(doc);
 
   //gets headers, return null if cannot be found
-  let headers = datahub.flow.flowUtils.getHeaders(doc);
+  let headers = flowUtils.getHeaders(doc);
 
 
   //insert code to manipulate the instance, triples, headers, uri, context metadata, etc.
 
 
   //form our envelope here now, specifying our output format
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  let envelope = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //assign our envelope value
   content.value = envelope;

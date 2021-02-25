@@ -18,7 +18,7 @@ function checkPermissions() {
 function moduleStaticCheck() {
 xdmp.log(stepValidate.staticCheck("/test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs"));
   return [
-    test.assertEqual("JS-JAVASCRIPT: let id = content.uri; -- Error running JavaScript request: SyntaxError: Unexpected identifier in /test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs, at 31:2 [javascript]"
+    test.assertEqual("JS-JAVASCRIPT: let id = content.uri; -- Error running JavaScript request: SyntaxError: Unexpected identifier in /test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs, at 33:2 [javascript]"
     , stepValidate.staticCheck("/test/suites/data-hub/5/impl/extensions/lib/invalidModule.sjs"),
       "Invalid module"),
     test.assertEqual(null, stepValidate.staticCheck("/data-hub/5/impl/flow.sjs"),

@@ -1,8 +1,9 @@
 const DataHubSingleton = require("/data-hub/5/datahub-singleton.sjs");
 const datahub = DataHubSingleton.instance();
+const consts = require('/data-hub/5/impl/consts.sjs');
 const defaultLib = require('/data-hub/5/builtins/steps/mapping/default/lib.sjs');
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const lib = require('/data-hub/5/builtins/steps/mapping/entity-services/lib.sjs');
-const es = require('/MarkLogic/entity-services/entity-services');
 const entityValidationLib = require('entity-validation-lib.sjs');
 const xqueryLib = require('xquery-lib.xqy')
 const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
@@ -11,13 +12,13 @@ const hubUtils = require("/data-hub/5/impl/hub-utils.sjs");
 var mappings = {};
 
 function main(content, options) {
-  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
-  if (outputFormat !== datahub.flow.consts.JSON && outputFormat !== datahub.flow.consts.XML) {
+  let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : consts.DEFAULT_FORMAT;
+  if (outputFormat !== consts.JSON && outputFormat !== consts.XML) {
     datahub.debug.log({
-      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.',
+      message: 'The output format of type ' + outputFormat + ' is invalid. Valid options are ' + consts.XML + ' or ' + consts.JSON + '.',
       type: 'error'
     });
-    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + datahub.flow.consts.XML + ' or ' + datahub.flow.consts.JSON + '.');
+    throw Error('The output format of type ' + outputFormat + ' is invalid. Valid options are ' + consts.XML + ' or ' + consts.JSON + '.');
   }
 
   let doc = content.value;
@@ -71,7 +72,7 @@ function main(content, options) {
     throw Error(e);
   }
   // fix the document URI if the format changes
-  content.uri = datahub.flow.flowUtils.properExtensionURI(content.uri, outputFormat);
+  content.uri = flowUtils.properExtensionURI(content.uri, outputFormat);
 
   // Must validate before building an envelope so that validaton errors can be added to the headers
   entityValidationLib.validateEntity(newInstance, options, entity.info);
@@ -87,7 +88,6 @@ function main(content, options) {
 
 // Extracted for unit testing purposes
 function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
-  let flowUtils = datahub.flow.flowUtils;
   let triples = [];
   let headers = flowUtils.createHeaders(options);
 
@@ -106,9 +106,9 @@ function buildEnvelope(entityInfo, doc, instance, outputFormat, options) {
   triples = triples.concat(hubUtils.normalizeToArray(docTriples));
   let attachments = flowUtils.cleanData(doc, "content", outputFormat);
   let nb = new NodeBuilder().startDocument();
-  if (outputFormat === datahub.flow.flowUtils.consts.JSON) {
+  if (outputFormat === consts.JSON) {
     if ((!doc instanceof Element && !doc instanceof XMLDocument) && (doc instanceof Object || doc instanceof ObjectNode)) {
-      attachments = datahub.flow.flowUtils.jsonToXml(attachments);
+      attachments = flowUtils.jsonToXml(attachments);
     }
     nb.addNode({
       envelope: {

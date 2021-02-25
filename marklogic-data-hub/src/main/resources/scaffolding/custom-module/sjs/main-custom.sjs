@@ -25,6 +25,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options) {
 
   //grab the doc id/uri
@@ -73,19 +75,19 @@ function main(content, options) {
   }
 
   //get our instance, default shape of envelope is envelope/instance, else it'll return an empty object/array
-  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getInstance(doc)
-  let instance = datahub.flow.flowUtils.getInstanceAsObject(doc) || {};
+  //If 'doc' is an xml document,  use flowUtils.getInstance(doc)
+  let instance = flowUtils.getInstanceAsObject(doc) || {};
 
   // get triples, return null if empty or cannot be found
-  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getTriples(doc)
-  let triples = datahub.flow.flowUtils.getTriplesAsObject(doc) || [];
+  //If 'doc' is an xml document,  use flowUtils.getTriples(doc)
+  let triples = flowUtils.getTriplesAsObject(doc) || [];
 
   //gets headers, return null if cannot be found
-  //If 'doc' is an xml document,  use datahub.flow.flowUtils.getHeaders(doc)
-  let headers = datahub.flow.flowUtils.getHeadersAsObject(doc) || {};
+  //If 'doc' is an xml document,  use flowUtils.getHeaders(doc)
+  let headers = flowUtils.getHeadersAsObject(doc) || {};
 
   //If your instance is xml and you want to set attachments, you will first want to convert it to json.
-  //instance = datahub.flow.flowUtils.xmlToJson(instance);
+  //instance = flowUtils.xmlToJson(instance);
 
   //If you want to set attachments, uncomment here
   // instance['$attachments'] = doc;
@@ -99,11 +101,11 @@ function main(content, options) {
 
 
   //form our envelope here now, specifying our output format
-  let envelope = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  let envelope = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   //create our return content object, we have a handy helper function for creating a json scaffolding, but you
   //can also do a node-based one by using nodebuilder, especially if you're dealing with xml!
-  let newContent = datahub.flow.flowUtils.createContentAsObject();
+  let newContent = flowUtils.createContentAsObject();
 
   //assign our envelope value
   newContent.value = envelope;

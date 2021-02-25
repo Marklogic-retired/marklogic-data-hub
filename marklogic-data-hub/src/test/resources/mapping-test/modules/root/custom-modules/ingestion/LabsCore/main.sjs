@@ -1,6 +1,8 @@
 const DataHub = require("/data-hub/5/datahub.sjs");
 const datahub = new DataHub();
 
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+
 function main(content, options) {
 
   let outputFormat = options.outputFormat ? options.outputFormat.toLowerCase() : datahub.flow.consts.DEFAULT_FORMAT;
@@ -10,12 +12,12 @@ function main(content, options) {
     return content;
   }
   else if (instance.nodeType === Node.TEXT_NODE) {
-    instance = datahub.flow.flowUtils.parseText(instance, outputFormat);
+    instance = flowUtils.parseText(instance, outputFormat);
   }
 
   let triples = [];
-  let headers = datahub.flow.flowUtils.createHeaders(options);
-  content.value = datahub.flow.flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
+  let headers = flowUtils.createHeaders(options);
+  content.value = flowUtils.makeEnvelope(instance, headers, triples, outputFormat);
 
   return content;
 }

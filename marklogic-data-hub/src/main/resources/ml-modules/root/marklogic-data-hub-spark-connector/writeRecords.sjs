@@ -20,7 +20,7 @@ declareUpdate();
 // No privilege required: This endpoint is called by the spark connector.
 
 const consts = require("/data-hub/5/impl/consts.sjs");
-const FlowUtils = require("/data-hub/5/impl/flow-utils.sjs");
+const flowUtils = require("/data-hub/5/impl/flow-utils.sjs");
 const temporal = require("/MarkLogic/temporal.xqy");
 const writeLib = require("writeLib.sjs");
 
@@ -29,8 +29,6 @@ const inputArray = writeLib.normalizeInputToArray(input);
 
 const insertOptions = writeLib.buildInsertOptions(endpointConstants);
 const headers = writeLib.buildHeaders(endpointConstants);
-
-const flowUtils = new FlowUtils();
 
 inputArray.forEach(record => {
   const uri = writeLib.generateUri(record, endpointConstants);
